@@ -1,10 +1,7 @@
-#!/usr/bin/env sh
-echo "[husky]: start validate commit message"
+echo "[wuh.site]: start validate commit message"
 
 # 读取提交消息文件内容
 commit_msg_file=$1
 commit_msg=$(cat $commit_msg_file)
-
-echo "commit_msg: $commit_msg"
 
 commitlint --edit $1

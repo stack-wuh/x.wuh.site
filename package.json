@@ -7,7 +7,8 @@
   "scripts": {
     "dev:web": "pnpm --filter wuh.site run dev",
     "build:web": "pnpm --filter wuh.site run build",
-    "start:web": "pnpm --filter wuh.site run start"
+    "start:web": "pnpm --filter wuh.site run start",
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/**"
