@@ -8,7 +8,8 @@
     "dev:web": "pnpm --filter wuh.site run dev",
     "build:web": "pnpm --filter wuh.site run build",
     "start:web": "pnpm --filter wuh.site run start",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "workspaces": [
     "packages/**"
@@ -22,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "@wuh.site/components": "workspace:^",
+    "conventional-changelog-cli": "^5.0.0",
     "next": "15.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
