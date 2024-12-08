@@ -1,0 +1,36 @@
+{
+  "name": "x.wuh.site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "博客项目相关的系列仓库, 全套使用Nextjs搭建",
+  "main": "index.js",
+  "scripts": {
+    "dev:web": "pnpm --filter wuh.site run dev",
+    "build:web": "pnpm --filter wuh.site run build",
+    "start:web": "pnpm --filter wuh.site run start"
+  },
+  "workspaces": [
+    "packages/**"
+  ],
+  "keywords": [
+    "wuh.site",
+    "blog",
+    "吴尒红"
+  ],
+  "author": "shadow <wuh201314@foxmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@wuh.site/components": "workspace:^",
+    "next": "15.0.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.4",
+    "typescript": "^5"
+  }
+}
