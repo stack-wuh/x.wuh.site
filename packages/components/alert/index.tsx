@@ -1,15 +1,11 @@
 'use client';
 
 import * as React from 'react'
-import styles from '../themes/alert.module.css'
+import styles from '../themes/alert.module.scss'
 
 const Alert: React.FC = () => {
   return <div className={styles.wAlert}>
-    <p>Alert<style jsx>{`
-      p {
-        color: red;
-      }
-    `}</style></p>
+    <p className="title-1">Alert</p>
   </div>
 }
 

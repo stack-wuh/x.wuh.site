@@ -27,6 +27,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@wuh.site/components": "workspace:^",
+		"classnames": "^2.5.1",
 		"conventional-changelog-cli": "^5.0.0",
 		"next": "15.0.4",
 		"react": "^19.0.0",
