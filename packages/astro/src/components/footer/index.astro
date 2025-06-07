@@ -1,0 +1,30 @@
+---
+interface Props {
+  /** 页脚名称 */
+  name?: String
+}
+
+const config = {
+  MoPSF: '粤公网安备44030002001803号',
+  MIIT: '鄂ICP备20001814号-1'
+}
+---
+
+<footer class='inline-flex flex-col items-center w-full px-8 py-4 border-t border-gray-200'>
+  <div class='inline-flex flex-col gap-2 items-center'>
+    <div class='text-sm'>
+      由<strong>
+        <a class='text-blue-500' target='_blank' href='https://astro.build/'>Astro</a>、
+        <a class='text-blue-500' target='_blank' href='https://www.mongodb.com/'>Mongodb</a>和
+        <a class='text-blue-500' target="_blank" href='https://nestjs.com/'>Nest.js</a>
+        </strong>
+      强力驱动
+    </div>
+    <div class='inline-flex gap-2 items-center flex-col sm:flex-row sm:gap-4'>
+      <a class='text-blue-500 text-xs text-right sm:w-[220px]' target='_blank' href=`https://beian.miit.gov.cn/#/Integrated/index?domain=wuh.site`>{config.MIIT}</a>
+      <span class="w-px h-full bg-gray-300 mx-auto hidden sm:inline"></span>
+      <a class='text-blue-500 text-xs sm:w-[220px]' target='_blank' href=`https://beian.mps.gov.cn/#/query/webSearch?domain=${config.MoPSF}`>{config.MoPSF}</a>
+    </div>
+    <span class='text-xs'>Copyright ©2025 Shadow</span>
+  </div>
+</footer>

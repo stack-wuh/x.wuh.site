@@ -8,6 +8,7 @@
 		"dev:web": "pnpm --filter wuh.site run dev",
 		"build:web": "pnpm --filter wuh.site run build",
 		"start:web": "pnpm --filter wuh.site run start",
+    "dev:astro": "pnpm --filter @wuh.site/astro run dev",
 		"prepare": "husky",
 		"changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
 		"version:major": "standard-version -r major",

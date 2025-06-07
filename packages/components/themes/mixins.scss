@@ -8,9 +8,9 @@
 
 // 利用flex布局实现的水平+垂直居中
 @mixin flexCenter() {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
   flex-wrap: nowrap;
 }
 

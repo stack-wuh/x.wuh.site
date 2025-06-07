@@ -1,0 +1,9 @@
+@import './normal.css';
+@import 'tailwindcss';
+
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}

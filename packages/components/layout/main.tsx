@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 import classnames from 'classnames'
+
+import Footer from './footer'
 import styles from '../themes/layout.module.scss'
 
 type propsTypes = {
@@ -14,11 +16,7 @@ const HeaderContent = () => {
   return (<div>Header</div>)
 }
 
-const FooterContent = () => {
-  return (<div>Footer</div>)
-}
-
-const Main:React.FC = (props: propsTypes) => {
+const Main:React.FC<propsTypes> = (props: propsTypes) => {
   return <body className={classnames({
     [styles.wLayout]: true
   })}>
@@ -35,7 +33,7 @@ const Main:React.FC = (props: propsTypes) => {
     <footer className={classnames({
       [styles.wFooter]: true
     })}>
-      { props.footer || <FooterContent /> }
+      { props.footer || <Footer /> }
     </footer>
   </body>
 }
