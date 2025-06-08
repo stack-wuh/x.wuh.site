@@ -1,0 +1,23 @@
+---
+
+interface Props {
+  title: string,
+  description: string,
+  updated: string,
+  comments: number
+}
+
+const props = Astro.props as Props
+const updateDateTime = new Date(props.updated).toLocaleString()
+---
+
+<div class="list-card border border-1 border-gray-300 rounded-md p-4 shadow-md">
+  <p>{props.title}</p>
+  <p>{props.description}</p>
+  <p>
+    <span>上次更新时间: <time>{updateDateTime}</time></span>
+  </p>
+  <p>
+    <span>评论数: <time>{props.comments}</time></span>
+  </p>
+</div>
