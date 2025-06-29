@@ -4,6 +4,8 @@
   "exclude": ["dist"],
   "compilerOptions": {
     "baseUrl": "./",
+    "strictNullChecks": true,
+    "allowJs": true,
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -11,7 +13,8 @@
       "@pages/*": ["src/pages/*"],
       "@styles/*": ["src/styles/*"],
       "@types/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@https/*": ["src/https/*"]
     }
   }
 }

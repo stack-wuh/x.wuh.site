@@ -1,23 +1,26 @@
 ---
+import { Image } from 'astro:assets'
+import type { TPostsHit } from '@https/interface.ts'
+import dayjs from '@utils/day.ts'
 
-interface Props {
-  title: string,
-  description: string,
-  updated: string,
-  comments: number
+const props = Astro.props as TPostsHit
+
+const toEncodeUrl = (id: string) => {
+  return ['/posts', encodeURIComponent(id)].join('/')
 }
 
-const props = Astro.props as Props
-const updateDateTime = new Date(props.updated).toLocaleString()
+const updatedAt = new dayjs(props.updated_at).format('yyyy-MM-DD HH:mm')
 ---
 
-<div class="list-card border border-1 border-gray-300 rounded-md p-4 shadow-md">
-  <p>{props.title}</p>
-  <p>{props.description}</p>
-  <p>
-    <span>上次更新时间: <time>{updateDateTime}</time></span>
-  </p>
-  <p>
-    <span>评论数: <time>{props.comments}</time></span>
-  </p>
-</div>
+<a href={toEncodeUrl(props.title)}>
+  <div data-id={props.title} class='w-full border border-1 border-gray-300 rounded-md p-4 shadow-md inline-flex hover:shadow-lg cursor-pointer'>
+    <Image src={props.cover_img} decoding='async' loading='lazy' alt='cover' width={160} height={60} />
+    <div class='inline-flex flex-col gap-2 ml-4 w-full'>
+      <p class="text-base">{props.title}</p>
+      <p class="text-sm">{props.sub_title}</p>
+      <p class="text-sm">
+        <span>上次更新时间: <time>{updatedAt}</time></span>
+      </p>
+    </div>
+  </div>
+</a>

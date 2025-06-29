@@ -1,0 +1,43 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import markdownIt from 'markdown-it'
+import hljs from 'highlight.js'
+import { getCollection } from 'astro:content';
+import * as services from '@/https/services.ts'
+import './styles/github.markdown.css'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog')
+
+  return posts.map((item) => {
+    return { params: { id: decodeURIComponent(item.id) }, props: { post: item } }
+  })
+}
+
+const props = Astro.props
+
+const info = await services.getPostInfo({ id: props.post.id })
+const md = markdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  breaks: true,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value
+      } catch (__) {}
+    }
+
+    return ''
+  }
+})
+
+const content = md.render(info.hits.body).replace(/<img(.*?)>/gi, '<img$1 loading="lazy">')
+---
+
+<Layout>
+  <section class='w-20/24 mx-auto max-w-2xl md:max-w-4xl lg:max-w-6xl px-4 py-8 overflow-y-auto overflow-x-hidden'>
+    <article class='markdown-body' set:html={content} />
+  </section>
+</Layout>

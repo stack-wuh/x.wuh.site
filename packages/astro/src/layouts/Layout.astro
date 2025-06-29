@@ -2,6 +2,7 @@
 import Head from '../components/head.astro'
 import Header from '../components/header/index.astro'
 import Footer from '../components/footer/index.astro'
+import { ClientRouter } from "astro:transitions";
 import '../styles/global.css'
 ---
 
@@ -11,14 +12,17 @@ import '../styles/global.css'
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 		<meta name="generator" content={Astro.generator} />
     <Head></Head>
+    <ClientRouter />
 	</head>
-	<body class="flex flex-col min-h-screen">
+	<body class="flex flex-col w-full min-h-screen">
     <Header />
     <div class="flex flex-1 pt-[54px]">
       <aside></aside>
-      <main class="flex-1 px-8 py-4">
+      <main class="flex-1">
         <slot />
       </main>
     </div>

@@ -1,22 +1,16 @@
 ---
+import * as services from '@https/services.ts'
+import type { TPostsHit } from '@https/interface.ts'
 import ListCard from './card.astro'
 
-interface IData {
-  title: string,
-  body: string,
-  updated_at: string,
-  comments: number
-}
-
-const response = await fetch('https://api.github.com/repos/stack-wuh/blog/issues')
-const data: IData[] = await response.json()
-console.log('====> dataList: ', data)
+const response = await services.getPosts()
+const data = response.hits
 ---
 
-<div class="list w-full flex flex-col gap-4">
+<div class='w-20/24 md:max-w-4xl mx-auto my-6 flex flex-col gap-4'>
   {
-    data.map(item => {
-      return (<ListCard title={item.title} description={item.body.slice(0, 50)} updated={item.updated_at} comments={item.comments} />)
+    data.map((item: TPostsHit) => {
+      return <ListCard title={item.title} sub_title={item.sub_title} cover_img={item.cover_img} updated_at={item.updated_at} created_at={item.created_at} />
     })
   }
 </div>

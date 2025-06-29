@@ -7,6 +7,7 @@ export default defineConfig({
   redirects: {
     '/blog/about': 'https://wuh.site'
   },
+  site: 'https://wuh.site',
   server: {
     port: 4040
   },
