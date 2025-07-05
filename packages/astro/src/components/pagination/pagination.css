@@ -1,0 +1,12 @@
+.w-pagination {
+  position: relative;
+}
+
+.w-pagination .prev-pager-btn {
+  position: relative;
+}
+
+.separator-btn {
+  background: lightgray;
+  clip-path: polygon(25% 0%,50% 49%,26% 100%,0% 100%,25% 50%,0% 0%);
+}

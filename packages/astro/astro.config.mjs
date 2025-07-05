@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcssPlugin from '@tailwindcss/vite';
+import solid from '@astrojs/solid-js';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
   server: {
     port: 4040
   },
+  integrations: [solid()],
   vite: {
     resolve: {
       alias: {
@@ -19,6 +21,6 @@ export default defineConfig({
     },
     plugins: [
       tailwindcssPlugin()
-    ]
+    ],
   }
 });

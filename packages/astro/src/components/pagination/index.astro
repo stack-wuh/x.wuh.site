@@ -1,0 +1,25 @@
+---
+import type { TPager } from '@https/interface.ts'
+import './pagination.css'
+
+const props = Astro.props as TPager
+
+const isLastPage = props.page >= props.pageTotal
+const spetFL = isLastPage ? 1 : props.pageTotal - props.page
+---
+
+<div class='w-pagination w-full border p-2 text-sm bg-white rounded-sm overflow-hidden border-gray-200'>
+  <div class='w-full h-4 inline-flex items-center justify-between'>
+    <div class='last-pager-btn w-2/3'>悟已往之不谏, 知来者之可追({props.page}/{props.pageTotal})</div>
+    <div class:list={{ 'separator-btn': true, [`w-${spetFL * 8}`]: true, [`h-${spetFL * 8}`]: true }}></div>
+    {
+      isLastPage ? (
+        <div class='w-1/6 cursor-not-allowed text-gray-400'>空空如也~~</div>
+      ) : (
+        <div class='next-pager-btn w-1/6 cursor-pointer'>
+          <a href="/posts/types">远眺山河</a>
+        </div>
+      )
+    }
+  </div>
+</div>
