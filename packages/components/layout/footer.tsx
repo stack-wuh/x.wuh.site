@@ -16,7 +16,7 @@ const FooterWrapper = styled.div`
 `
 
 const footerConf = {
-  solgon: '驿寄梅花, 鱼传尺素',
+  slogan: '驿寄梅花, 鱼传尺素',
   title: '你也想起舞吗',
   MIIT: '鄂ICP备20001814号-1',
   MoPSF: '粤公网安备44030002001803号',
@@ -27,7 +27,7 @@ const Footer = () => {
   return (
     <FooterWrapper>
       <Flex>
-        <div>{footerConf.solgon}</div>
+        <div>{footerConf.slogan}</div>
         <div>{footerConf.title}</div>
       </Flex>
       <Flex>
