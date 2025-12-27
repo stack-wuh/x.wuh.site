@@ -7,3 +7,13 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* 隐藏滚动条但保留功能的CSS */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE 和 Edge */
+    scrollbar-width: none;  /* Firefox */
+}

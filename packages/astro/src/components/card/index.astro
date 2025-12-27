@@ -1,0 +1,12 @@
+---
+
+---
+
+<div class='w-full h-22/24 flex justify-center items-center '>
+  <div class='w-5/6 h-5/6 backdrop-blur-sm rounded-sm p-4'>
+    {
+      Astro.slots.has('header') && (<slot name="header"></slot>)
+    }
+    <slot></slot>
+  </div>
+</div>

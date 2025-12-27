@@ -1,0 +1,55 @@
+---
+const url = Astro.url
+const pathname = url.pathname
+
+/** 导航列表 */
+const navList = [
+  {
+    title: '首页',
+    href: '/',
+    active: pathname === '/'
+  },
+  {
+    title: '归档',
+    href: '/types',
+    active: pathname === '/types'
+  },
+  {
+    title: '关于我',
+    href: '/about',
+    active: pathname === '/about'
+  }
+]
+---
+
+<header class='strick top-0 w-full h-[54px] inline-flex items-center justify-start'>
+  <div class="inline-flex items-center justify-start w-full h-full px-16 backdrop-blur-sm">
+  <div class='avatar-wrapper inline-flex items-center gap-2'>
+    <img src='https://src.wuh.site/web/avatar.jpeg' alt='avatar' width='40px' />
+    <span class='text-xs text-white'>纤云弄巧, 飞星传恨</span>
+  </div>
+
+  <nav class='flex-1 flex justify-end text-sm'>
+    <ul class='inline-flex items-center gap-2 text-white group'>
+      {
+        navList.map((nav) => {
+          return (
+            <li>
+              <a
+                href={nav.href}
+                class:list={{
+                  'hover:bg-blue-100 hover:text-blue-600 px-3 py-1 transition duration-300 rounded': true,
+                  'group-hover:text-blue-300 group-hover:bg-transparent': true,
+                  'bg-blue-100': nav.active
+                }}
+              >
+                {nav.title}
+              </a>
+            </li>
+          )
+        })
+      }
+    </ul>
+  </nav>
+  </div>
+</header>

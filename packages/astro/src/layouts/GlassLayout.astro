@@ -1,0 +1,33 @@
+---
+import Head from '../components/head.astro'
+import Header from '../components/header/glass.index.astro'
+import Footer from '../components/footer/index.astro'
+import { ClientRouter } from "astro:transitions";
+import '../styles/global.css'
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+		<meta name="generator" content={Astro.generator} />
+    <Head></Head>
+    <ClientRouter />
+	</head>
+	<body class="w-full min-h-screen">
+    <main class="flex! flex-col h-full bg-[url(https://d.jiandan.link/unsplash/photo-1486246772917-8947d0f7f541)] bg-center bg-cover bg-no-repeat">
+      <Header />
+      <div class="flex flex-1">
+        <aside></aside>
+        <div class="flex-1 overflow-x-hidden">
+          <slot />
+        </div>
+      </div>
+      <Footer />
+    </main>
+	</body>
+</html>

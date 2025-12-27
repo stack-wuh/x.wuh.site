@@ -1,0 +1,39 @@
+---
+import GlassLayout from '../layouts/GlassLayout.astro'
+import GlassCard from '../components/card/index.astro'
+import * as services from '@https/services.ts'
+import type { TPostsHit } from '@https/interface.ts'
+
+
+const getNextPage = async () => {
+  const response = await services.getPosts()
+  const data = response.hits
+  const pager = response.pager
+
+  return { data, pager }
+}
+
+const { data, pager } = await getNextPage()
+---
+
+<GlassLayout>
+<spline-viewer style="width: 100px; height: 100px;" url="https://prod.spline.design/L2ygepAy7iRCo47x/scene.splinecode"></spline-viewer>
+  <GlassCard>
+    <div slot="header" class="w-full h-8/24">
+      <p>悟已往之不谏, 知来者之可追</p>
+    </div>
+    <div class='w-full h-11/24 inline-flex gap-8 overflow-x-auto no-scrollbar'>
+      {
+        data.map((item: TPostsHit) => {
+          return (
+            <a class="block h-full" href={`/posts/${item.title}`}>
+              <div style={{ backgroundImage: `url(${item.cover_img})`, backgroundSize: 'cover', backgroundPosition: 'center' }} class:list={['w-72', 'h-full', 'flex-none', 'rounded-md', 'cursor-pointer']}></div>
+            </a>
+          )
+        })
+      }
+    </div>
+  </GlassCard>
+</GlassLayout>
+
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.22/build/spline-viewer.js"></script>
