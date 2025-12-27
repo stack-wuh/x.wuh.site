@@ -35,7 +35,7 @@
 5. [[packages/config]] ts配置文件
 
 ### 项目管理
-<a href="https://wuh.site" target="_blank"><img width="1440" height="813" alt="image" src="https://github.com/user-attachments/assets/4adac2ec-c083-4bc0-bc8e-f3a8dad3a9be" /></a>
+<a href="https://github.com/users/stack-wuh/projects/6" target="_blank"><img width="1440" height="813" alt="image" src="https://github.com/user-attachments/assets/4adac2ec-c083-4bc0-bc8e-f3a8dad3a9be" /></a>
 
 
 ### 开源许可
