@@ -1,8 +1,19 @@
-'use client';
-
 import * as React from 'react'
-import classnames from 'classnames'
-import styles from '../themes/layout.module.scss'
+import styled from 'styled-components'
+import { Flex } from '../themes/global'
+
+const FooterWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: ${(props) => props.theme.fontSizes.base};
+  line-height: 1.5;
+  text-align: center;
+`
 
 const footerConf = {
   solgon: '驿寄梅花, 鱼传尺素',
@@ -13,15 +24,24 @@ const footerConf = {
 }
 
 const Footer = () => {
-  return <div className={classnames({
-    [styles.footerWrapper]: true
-  })}>
-    <div>{footerConf.solgon}</div>
-    <div>{footerConf.title}</div>
-    <div>{footerConf.MIIT}</div>
-    <div>{footerConf.MoPSF}</div>
-    <div>{footerConf.copyright}</div>
-  </div>
+  return (
+    <FooterWrapper>
+      <Flex>
+        <div>{footerConf.solgon}</div>
+        <div>{footerConf.title}</div>
+      </Flex>
+      <Flex>
+        <div>{footerConf.MIIT}</div>
+        <div>{footerConf.MoPSF}</div>
+      </Flex>
+      <Flex>
+        <div>由next.js、mongodb和nest.js 强力驱动</div>
+      </Flex>
+      <Flex>
+        <div>{footerConf.copyright}</div>
+      </Flex>
+    </FooterWrapper>
+  )
 }
 
 export default Footer
