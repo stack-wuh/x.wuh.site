@@ -1,5 +1,5 @@
 .page {
-  --background: #fafafa;
+  /* --background: #fafafa;
   --foreground: #fff;
 
   --text-primary: #000;
@@ -7,14 +7,14 @@
 
   --button-primary-hover: #383838;
   --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+  --button-secondary-border: #ebebeb; */
 
   display: flex;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
   font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  background-color: var(--background-color);
 }
 
 .main {
@@ -127,7 +127,7 @@ a.secondary {
     filter: invert();
   }
 
-  .page {
+  /* .page {
     --background: #000;
     --foreground: #000;
 
@@ -137,5 +137,5 @@ a.secondary {
     --button-primary-hover: #ccc;
     --button-secondary-hover: #1a1a1a;
     --button-secondary-border: #1a1a1a;
-  }
+  } */
 }

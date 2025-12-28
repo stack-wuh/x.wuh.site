@@ -1,4 +1,5 @@
 import { Tokens, cssVariablesTokens } from './tokens'
+import themeColors from './generator-color'
 export const DefaultTheme: Tokens = {
   colors: {
     primary: '#007bff',
@@ -10,6 +11,12 @@ export const DefaultTheme: Tokens = {
     text: '#212529',
     background: '#ffffff'
   },
+  primary: themeColors.primary,
+  danger: themeColors.danger,
+  success: themeColors.success,
+  warning: themeColors.warning,
+  normal: themeColors.normal,
+  background: themeColors.background,
   spaces: {
     none: '0px',
     xs: '4px',
@@ -42,26 +49,6 @@ export const DefaultTheme: Tokens = {
     xl: '18px',
     '2xl': '20px',
     '3xl': '24px'
-  },
-  gradients: {
-    light: {
-      primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      success: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      danger: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      warning: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-      ocean: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)',
-      sunset: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      deepSpace: 'linear-gradient(135deg, #1a2980 0%, #26d0ce 100%)'
-    },
-    dark: {
-      primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      success: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      danger: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      warning: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-      ocean: 'linear-gradient(135deg, #2b5876 0%, #4e4376 100%)',
-      sunset: 'linear-gradient(135deg, #870000 0%, #190a05 100%)',
-      deepSpace: 'linear-gradient(135deg, #000428 0%, #004e92 100%)'
-    }
   }
 }
 
@@ -74,6 +61,72 @@ export const cssVariablesGenerator = (theme: Tokens): cssVariablesTokens => {
       '--danger-color': theme.colors.danger,
       '--warning-color': theme.colors.warning,
       '--info-color': theme.colors.info
+    },
+    primary: {
+      '--primary-color-100': theme.primary.light[100],
+      '--primary-color-200': theme.primary.light[200],
+      '--primary-color-300': theme.primary.light[300],
+      '--primary-color-400': theme.primary.light[400],
+      '--primary-color-500': theme.primary.light[500],
+      '--primary-color-600': theme.primary.light[600],
+      '--primary-color-700': theme.primary.light[700],
+      '--primary-color-800': theme.primary.light[800],
+      '--primary-color-900': theme.primary.light[900]
+    },
+    normal: {
+      '--normal-color-100': theme.normal.light[100],
+      '--normal-color-200': theme.normal.light[200],
+      '--normal-color-300': theme.normal.light[300],
+      '--normal-color-400': theme.normal.light[400],
+      '--normal-color-500': theme.normal.light[500],
+      '--normal-color-600': theme.normal.light[600],
+      '--normal-color-700': theme.normal.light[700],
+      '--normal-color-800': theme.normal.light[800],
+      '--normal-color-900': theme.normal.light[900]
+    },
+    success: {
+      '--success-color-100': theme.success.light[100],
+      '--success-color-200': theme.success.light[200],
+      '--success-color-300': theme.success.light[300],
+      '--success-color-400': theme.success.light[400],
+      '--success-color-500': theme.success.light[500],
+      '--success-color-600': theme.success.light[600],
+      '--success-color-700': theme.success.light[700],
+      '--success-color-800': theme.success.light[800],
+      '--success-color-900': theme.success.light[900]
+    },
+    danger: {
+      '--danger-color-100': theme.danger.light[100],
+      '--danger-color-200': theme.danger.light[200],
+      '--danger-color-300': theme.danger.light[300],
+      '--danger-color-400': theme.danger.light[400],
+      '--danger-color-500': theme.danger.light[500],
+      '--danger-color-600': theme.danger.light[600],
+      '--danger-color-700': theme.danger.light[700],
+      '--danger-color-800': theme.danger.light[800],
+      '--danger-color-900': theme.danger.light[900]
+    },
+    warning: {
+      '--warning-color-100': theme.warning.light[100],
+      '--warning-color-200': theme.warning.light[200],
+      '--warning-color-300': theme.warning.light[300],
+      '--warning-color-400': theme.warning.light[400],
+      '--warning-color-500': theme.warning.light[500],
+      '--warning-color-600': theme.warning.light[600],
+      '--warning-color-700': theme.warning.light[700],
+      '--warning-color-800': theme.warning.light[800],
+      '--warning-color-900': theme.warning.light[900]
+    },
+    background: {
+      '--background-color-100': theme.background.light[100],
+      '--background-color-200': theme.background.light[200],
+      '--background-color-300': theme.background.light[300],
+      '--background-color-400': theme.background.light[400],
+      '--background-color-500': theme.background.light[500],
+      '--background-color-600': theme.background.light[600],
+      '--background-color-700': theme.background.light[700],
+      '--background-color-800': theme.background.light[800],
+      '--background-color-900': theme.background.light[900]
     },
     spaces: {
       '--space-none': theme.spaces.none,
