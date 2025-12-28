@@ -22,8 +22,7 @@ const Footer = () => {
           <div>{footerConf.copyright}</div>
         </Column>
         <Column>
-          <div>{footerConf.slogan}</div>
-          <div>{footerConf.title}</div>
+          <div>{footerConf.slogan} · {footerConf.title}</div>
           <div>{footerConf.marked}</div>
         </Column>
       </Row>
