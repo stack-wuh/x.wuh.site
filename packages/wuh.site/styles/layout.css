@@ -1,0 +1,166 @@
+.layout {
+	position: relative;
+	width: 100%;
+	padding-top: 5.33rem;
+	box-sizing: border-box;
+	overflow: hidden;
+	transition-property: width, height, border-radius;
+	transition-timing-function: var(--transition-ease);
+	transition-duration: 0.8s;
+	transition-delay: 0.5s;
+}
+
+.layout .app-root {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+}
+
+.layout header.header {
+	width: 100%;
+	height: 5rem;
+	box-sizing: border-box;
+	position: fixed;
+	top: 0;
+	z-index: 999;
+}
+
+.layout footer.footer {
+	width: inherit;
+	height: 6.66rem;
+	box-sizing: border-box;
+}
+
+.layout main.main-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	padding: 0 1.5rem;
+	margin: 0 auto;
+	min-height: calc(100vh - 13.66rem);
+	transition-property: width, min-height, padding;
+	transition-duration: 0.8s;
+	transition-delay: 0.5s;
+	transition-timing-function: var(--transition-linear);
+	overflow: hidden;
+}
+
+.layout .main-nav {
+	width: 180px;
+	margin-right: 1.66rem;
+	position: relative;
+	transition-property: transform, margin-right;
+	transition-timing-function: var(--transition-linear);
+	transition-duration: 0.8s;
+}
+
+.layout .main-nav nav {
+	width: 180px;
+	height: 60vh;
+	max-height: 60vh;
+}
+
+.layout .main-aside {
+	width: 160px;
+	transition: transform var(--transition-ease),
+		visibility var(--transition-linear), opacity var(--transition-linear);
+}
+
+.layout-mobile footer.footer {
+	height: 5rem;
+}
+
+.layout .main {
+	flex: 1 0 auto;
+	width: 560px;
+}
+
+.layout .mobile-main {
+	padding: 0 1.33rem;
+	padding-bottom: 0.66rem;
+}
+
+.layout .tablet-main {
+	padding: 0 1.33rem;
+	padding-bottom: 0.66rem;
+}
+
+.layout .is-pc {
+	width: 1076px;
+}
+
+.layout .config > * {
+	transition: var(--transition-base);
+}
+
+.layout .background {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	background: url(../public/images/redux_mbox.webp) center center repeat;
+	background-attachment: fixed;
+	opacity: 0.15;
+}
+
+@media screen and (max-width: 979px) {
+	.layout .main-nav {
+		position: absolute;
+		opacity: 0;
+		z-index: -1;
+		transform: translateX(-200%);
+		transition-property: transform, opacity;
+		transition-timing-function: var(--transition-ease-in);
+		transition-duration: 0.5s;
+		transition-delay: 2s;
+	}
+
+	.layout .main-aside {
+		visibility: hidden;
+		position: absolute;
+		opacity: 0;
+	}
+}
+
+/** Transition Line **/
+.transition-line {
+	background: linear-gradient(90deg, #ffec3d, #0ebeff);
+	background-size: 0 3px;
+	background-repeat: no-repeat;
+	background-position: 0 100%;
+	transition: 1s all;
+}
+
+.transition-line:hover {
+	background-size: 100% 3px;
+}
+
+.transition-text {
+	background: linear-gradient(
+		90deg,
+		var(--color-primary-5),
+		var(--color-primary-3)
+	);
+	background-size: 0 100px;
+	background-repeat: no-repeat;
+	background-position: 0 100%;
+	background-clip: text;
+	color: inherit;
+	transition: 0.5s all linear;
+}
+
+.transition-text:hover {
+	background-size: 100% 100%;
+	color: transparent;
+}
+
+/** Base Layout 基础布局 **/
+.page {
+	width: inherit;
+	height: inherit;
+	padding: 4em;
+	min-height: 100vh;
+	box-sizing: border-box;
+	background-color: var(--background-color-primary);
+}

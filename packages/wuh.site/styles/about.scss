@@ -1,0 +1,114 @@
+$name: 'ww_about';
+
+.#{$name} {
+  position: relative;
+  font-size: var(--font-size-base);
+  overflow: hidden;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    padding: 8px 0;
+    vertical-align: baseline;
+  }
+
+  li i {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+
+  &__list {
+    border-radius: 3px;
+    padding: 0.2em;
+    box-sizing: border-box;
+    background-color: var(--color-gray-3);
+    color: var(--color-base-8);
+    border: 1px solid var(--color-gray-1);
+    text-decoration: none none var transparent;
+    transition: all 0.5s ease;
+  }
+
+  .icon-outer {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .icon-outer i {
+    font-size: 14px;
+  }
+
+  .icon-outer-github {
+    background: linear-gradient(45deg, #8e8787, #24282d);
+  }
+
+  .icon-outer-twitter {
+    background: linear-gradient(45deg, #78bae2, #1b95e0);
+  }
+
+  .icon-outer:hover {
+    cursor: pointer;
+  }
+
+  .icon-link {
+    font-size: 24px !important;
+    text-decoration: none;
+  }
+
+  .flex-align-center {
+    align-items: center;
+  }
+
+  .text-wave {
+    text-decoration: underline wavy var(--color-primary-4);
+    transition: var(--transition-base);
+
+    &:hover {
+      text-decoration: underline dotted var(--color-primary-4);
+      color: var(--color-primary-5);
+      transition: var(--transition-base);
+    }
+  }
+
+  .text-link {
+    color: inherit;
+    transition: var(--transition-base);
+
+    &:hover {
+      color: var(--color-primary-6);
+      text-decoration: underline double var(--color-primary-5);
+      transition: var(--transition-base);
+    }
+  }
+
+  .text-none {
+    text-decoration: none;
+    transition: var(--transition-base);
+  }
+
+  .text-bg-line {
+    background:
+      linear-gradient(90deg, #ffc53d, #fffbe6),
+      linear-gradient(90deg, #fffbe6, #faad14);
+    background-size: 100% 2px, 0 2px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition: var(--transition-base);
+
+    &:hover {
+      background-size: 0 2px, 100% 2px;
+      background-position: right bottom;
+      color: #faad14;
+      transition: var(--transition-base);
+    }
+  }
+}

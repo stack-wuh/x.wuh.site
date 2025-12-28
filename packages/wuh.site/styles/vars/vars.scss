@@ -1,0 +1,6 @@
+/** size type **/
+$font-size-base: 14px;
+$compose-base: 8px;
+$sizes: ((small, $font-size-base - 2px, #{$compose-base}/2),
+  (middle, $font-size-base, $compose-base),
+  (large, $font-size-base+2px, $compose-base*2));

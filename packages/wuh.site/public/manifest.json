@@ -1,0 +1,33 @@
+{
+  "short_name": "wuh.site",
+  "name": "wuh.site -- 日积跬步,以致千里 -- wuh.site",
+  "description": "嗯嗯~~不要停步不前,每一天都要做出改变",
+  "icons": [
+    {
+      "src": "/icons/192.png",
+      "type": "image/png",
+      "size": "192*192"
+    },
+    {
+      "src": "/icons/144.png",
+      "type": "image/png",
+      "size": "144*144"
+    },
+    {
+      "src": "/icons/32.png",
+      "type": "image/png",
+      "size": "32*32"
+    },
+    {
+      "src": "/icons/16.png",
+      "type": "image/png",
+      "size": "16*16"
+    }
+  ],
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "theme_color": "#005af0",
+  "background_color": "#fff",
+  "orientation": "portrait"
+}

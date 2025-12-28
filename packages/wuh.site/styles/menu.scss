@@ -1,0 +1,42 @@
+$name: 'ww_menu';
+
+.#{$name} {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  user-select: none;
+
+  &-item {
+    height: 40px;
+    padding: 0 12px;
+    margin-bottom: var(--margin-base);
+    text-align: left;
+    line-height: 40px;
+    color: var(--nav-color-text);
+    border-radius: var(--border-radius-base);
+    transition: var(--transition-base);
+    font-size: 15px;
+    letter-spacing: 2px;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+
+    &:hover {
+      background-color: var(--nav-color-background-active);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all .5s ease;
+    }
+  }
+
+  .is-active {
+    color: var(--color-base-8);
+    background-color: var(--nav-color-background-active);
+    border-radius: 4px;
+    transition: all .5s ease;
+  }
+
+  .is-link {
+    margin-top: var(--margin-base-2);
+  }
+}

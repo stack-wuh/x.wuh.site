@@ -1,0 +1,115 @@
+$name: 'ww_divider';
+
+.#{$name} {
+  position: relative;
+  width: inherit;
+  height: auto;
+  border: none;
+  outline: none;
+
+  &__inner {
+    position: relative;
+    background-color: transparent;
+    height: 1px;
+  }
+
+  @keyframes fade_size {
+    0% {
+      background-position: 0% 100%;
+    }
+
+    30% {
+      background-position: 0% 100%;
+    }
+
+    100% {
+      background-position: 50% 100%;
+    }
+  }
+
+  &__line {
+    position: relative;
+    width: inherit;
+    height: inherit;
+    background: linear-gradient(90deg, red, blue, rgba(0, 0, 0, .6), blue, red);
+    transition: var(--transition-base);
+  }
+
+  &__text {
+    position: absolute;
+    top: 50%;
+    padding: 0 1em;
+    text-align: center;
+    transform: translateX(0) translateY(-50%);
+    background-color: var(--color-background-primary);
+  }
+
+  .is-text {
+    &-left {
+      .ww_divider__text {
+        left: 4em;
+      }
+
+      .ww_divider__line {
+        background: linear-gradient(90deg, red .5em, blue 1em, blue 2em, red);
+      }
+    }
+
+    &-center {
+      .ww_divider__text {
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+      }
+
+      .ww_divider__line {
+        background: linear-gradient(90deg, red, blue, rgba(0, 0, 0, .6), blue, red);
+      }
+    }
+
+    &-right {
+      .ww_divider__text {
+        right: 4em;
+      }
+
+      .ww_divider__line {
+        background: linear-gradient(-90deg, red .5em, blue 1em, blue 2em, red)
+      }
+    }
+
+    transition: var(--transition-base);
+  }
+
+  .disabled-linear-gradient {
+    .ww_divider__line {
+      background: var(--color-base-6);
+    }
+  }
+
+  .is-small {
+    font-size: calc(var(--font-size-base) / 2);
+    padding: calc(var(--padding-base)/2);
+    margin: var(--margin-base) 0;
+  }
+
+  .is-middle {
+    font-size: calc(var(--font-size-base) / 2);
+    padding: calc(var(--padding-base)/2);
+    margin: var(--margin-base-2) 0;
+  }
+
+  .is-large {
+    font-size: calc(var(--font-size-base) / 2);
+    padding: calc(var(--padding-base)/2);
+    margin: var(--margin-base-3) 0;
+  }
+
+  transition: var(--transition-base);
+}
+
+.is-transition {
+  background: linear-gradient(90deg, var(--color-background-primary) 29%, var(--color-yellow-3) 37%, var(--color-background-primary) 43%);
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+  background-position: 0% 100%;
+  animation: 4s fade_size 2s linear alternate infinite;
+}

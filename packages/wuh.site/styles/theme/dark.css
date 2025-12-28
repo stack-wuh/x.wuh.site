@@ -1,0 +1,70 @@
+[data-theme-mode='dark'] {
+	/**
+    Color Dark List
+    定义Dark模式下的反色
+  **/
+	--color-base: #141313;
+	--color-base-10: #fafafa;
+	--color-base-9: #f8f8f8;
+	--color-base-8: #f3f3f3;
+	--color-base-7: #e8e7e7;
+	--color-base-6: #dcdcdc;
+	--color-base-5: #adacac;
+	--color-base-4: #7e7d7d;
+	--color-base-3: #5b5a5a;
+	--color-base-2: #454545;
+	--color-base-1: #2c2b2b;
+
+	/** 中性色彩 **/
+	--color-gray-1: #000000;
+	--color-gray-2: #141414;
+	--color-gray-3: #1f1f1f;
+	--color-gray-4: #262626;
+	--color-gray-5: #434343;
+	--color-gray-6: #8c8c8c;
+
+	--primary-color: #f0f6fc;
+
+	/******* 文字类型 *******/
+	--color-text-primary: #58a6ff;
+	--color-text-less: #b3b8bd;
+
+	/******* 背景色 *******/
+	--color-background-primary: var(--color-base);
+	--color-background-revert: #fffcfa;
+
+	/******** Header *********/
+	--color-background-header: rgb(0 0 0 / 52%);
+	--color-shadow: rgb(17 17 17 / 70%);
+
+	/***   Border    ***/
+	--color-border: #8e8c8c;
+	--color-border-pain: rgb(0 0 0);
+
+	/** Alert **/
+	--alert-color-background: var(--color-yellow-9);
+
+	/* Button */
+	--color-background-button: #333;
+	--color-default-button: #fff;
+	--loadmore-button-large: var(--color-yellow-2);
+	--loadmore-button-medium: var(--color-yellow-3);
+	--loadmore-button-regular: var(--color-yellow-4);
+
+	/** Link **/
+	--color-text-link: var(--color-4);
+	--color-link-primary: var(--color-primary-4);
+
+	--contrast-img: contrast(0.85);
+
+	/** opacity **/
+	--background-text-color: rgba(255, 255, 225, 0.2);
+
+	/** Nav **/
+	--nav-color-text: #999;
+	--nav-color-background-active: var(--color-gray-5);
+
+	/** Disabled **/
+	--color-disabled: #999;
+	--color-disabled-less: rgba(153, 153, 153, 0.5);
+}

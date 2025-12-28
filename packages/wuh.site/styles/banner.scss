@@ -1,0 +1,235 @@
+$name: 'ww_banner';
+$gallery: 'ww_gallery';
+
+.#{$name} {
+  position: relative;
+  padding-bottom: var(--padding-base-2);
+
+  &__item {
+    position: relative;
+    height: 140px;
+    width: 100%;
+    padding: var(--padding-base);
+    border-radius: var(--border-radius-base);
+    background-color: var(--color-base-2) !important;
+    z-index: 999 !important;
+    overflow: hidden;
+    transition: var(--transition-base);
+
+    &:hover {
+      cursor: pointer;
+
+      .#{$name}__title {
+        opacity: 1;
+
+        &--text {
+          background: linear-gradient(45deg, var(--color-warning-6), var(--color-warning-2));
+          transform: rotateZ(0deg);
+          transition: var(--transition-base);
+        }
+
+        .icon-affix-right {
+          opacity: 1;
+          transition: opacity .3s linear;
+          transition-delay: .5s;
+        }
+      }
+    }
+  }
+
+  // Hack 兼容异步加载样式表
+  .slick-list {
+      overflow: hidden;
+      margin: 0;
+      padding: 0
+  }
+
+  .slick-list:focus {
+      outline: 0
+  }
+
+  .slick-list.dragging {
+      cursor: pointer;
+      cursor: hand
+  }
+
+  .slick-slide {
+      float: left;
+      height: 100%;
+      min-height: 1px
+  }
+
+  [dir=rtl] .slick-slide {
+      float: right
+  }
+  // Hack--end 兼容异步加载样式表
+
+  &__bg {
+    background-size: 100% !important;
+    background-position: center !important;
+
+    &:hover {
+      background-size: 120% !important;
+      transition: var(--transition-base);
+    }
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    position: relative;
+    width: fit-content;
+    color: var(--color-text-primary);
+    opacity: .7;
+
+    &--text {
+      position: relative;
+      display: inline-block;
+      padding: var(--padding-base);
+      border-radius: var(--border-radius-base);
+      background-color: var(--color-base-4);
+      color: inherit;
+      transform: rotateZ(44deg) translateX(-2px) translateY(34px);
+      transition: var(--transition-base);
+      z-index: 99 !important;
+
+      &::after {
+        position: absolute;
+        top: -4px;
+        right: 0;
+        content: '';
+        width: 100%;
+        height: 2px;
+        z-index: 1 !important;
+        background-color: var(--color-base-4);
+      }
+    }
+
+    .icon-affix {
+      position: absolute;
+      top: -0.5em;
+      font-size: 22px;
+      z-index: 100 !important;
+
+      &-left {
+        left: 0;
+      }
+
+      &-right {
+        right: 0;
+        opacity: 0;
+      }
+    }
+  }
+
+  .slick-dots-list {
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    display: flex !important;
+    align-items: center;
+    width: 100%;
+    height: 20px;
+    padding: var(--padding-base);
+    overflow: hidden;
+    list-style: none;
+
+    .slick-active {
+      background-color: var(--color-base-3);
+    }
+
+    li {
+      width: 24px;
+      min-height: 2px;
+      margin-right: 8px;
+      box-sizing: border-box;
+      z-index: 99 !important;
+      background-color: var(--color-base-10);
+      transition: var(--transition-base);
+
+      &:hover {
+        background-color: var(--color-base-3);
+        transition: var(--transition-base);
+      }
+
+      button {
+        display: none;
+      }
+    }
+  }
+}
+
+.#{$gallery} {
+  position: relative;
+  height: 40em;
+  background-image: url(https://src.wuh.site/cover.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  &__item {
+    position: relative;
+    height: 40em;
+    width: 100%;
+    padding: var(--padding-base);
+    border-radius: var(--border-radius-base);
+    background-color: var(--color-base-2) !important;
+    z-index: 999 !important;
+    overflow: hidden;
+    transition: var(--transition-base);
+  }
+
+  &__bg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat;
+  }
+
+  &__footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 114px;
+    padding: var(--padding-base);
+    box-sizing: border-box;
+    background-color: rgba($color: #333, $alpha: 0.6);
+    color: #fff;
+  }
+
+  &__desc {
+    p {
+      padding: 0;
+      margin: 0;
+    }
+
+    &--title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 2;
+    }
+
+    &--desc {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+  }
+
+  &__btns {
+    display: flex;
+    align-items: center;
+    margin-top: var(--margin-base);
+
+    &--item {
+      margin-right: var(--margin-base);
+      color: #fff;
+    }
+  }
+}

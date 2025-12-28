@@ -1,0 +1,140 @@
+:root {
+	--padding-base: 8px;
+	--margin-base: 8px;
+	--border-radius-base: 3px;
+	--border-width-base: 1px;
+	--transition-base: all 0.5s ease;
+	--font-size-base: 14px;
+	--font-weight-base: 400;
+	--line-height-base: 22px;
+	--color-default: #0875e6;
+	--color-text-base: #a6a6a6;
+	--color-link: #1890ff;
+	--color-border: #d9d9d9;
+	--color-white-pure: #fff;
+	--color-black-pure: #000;
+
+	/** Function Colors 功能色彩 **/
+	--color-danger: #ff4d4f;
+	--color-warning: #faad14;
+	--color-success: #52c41a;
+	--color-link: #1890ff;
+
+	/* Padding */
+	--padding-base-2: calc(2 * var(--padding-base));
+	--padding-base-3: calc(3 * var(--padding-base));
+	--padding-base-4: calc(4 * var(--padding-base));
+
+	/* Margin */
+	--margin-base-2: calc(2 * var(--margin-base));
+	--margin-base-3: calc(3 * var(--margin-base));
+	--margin-base-4: calc(4 * var(--margin-base));
+
+	/** Font **/
+	--font-weight-regular: var(--font-size-base);
+	--font-weight-medium: var(calc(--font-size-base + 100));
+	--font-weight-large: var(calc(--font-size-base + 200));
+
+	--font-size-regular: var(--font-size-base);
+	--font-size-medium: calc(var(--font-size-base) + 2px);
+	--font-size-large: calc(var(--font-size-base) + 4px);
+	--font-size-less: calc(var(--font-size-base) - 2px);
+
+	/** Line Height **/
+	--line-height-regular: calc(var(--font-size-regular) + 10 - 2);
+	--line-height-medium: calc(var(--font-size-medium) + 10 - 2);
+	--line-height-large: calc(var(--font-size-large) + 10 - 2);
+
+	/** Border **/
+	--border-base: var(--border-width-base) solid var(--color-base-4);
+
+	/** Color List **/
+	--color-primary-1: #e6f6ff;
+	--color-primary-2: #abdfff;
+	--color-primary-3: #82cbff;
+	--color-primary-4: #59b4ff;
+	--color-primary-5: #2e93f2;
+	--color-primary-7: #0056bf;
+	--color-primary-8: #004099;
+	--color-primary-9: #002c73;
+	--color-primary-10: #001b4d;
+
+	/** Success colors **/
+	--color-success-1: #f6ffed;
+	--color-success-2: #d9f7be;
+	--color-success-3: #b7eb8f;
+	--color-success-4: #95de64;
+	--color-success-5: #73d13d;
+	--color-success-6: #52c41a;
+	--color-success-7: #389e0d;
+	--color-success-8: #237804;
+	--color-success-9: #135200;
+	--color-success-10: #092b00;
+
+	/** Danger colors **/
+	--color-danger-1: #fff1f0;
+	--color-danger-2: #ffccc7;
+	--color-danger-3: #ffa39e;
+	--color-danger-4: #ff7875;
+	--color-danger-5: #ff4d4f;
+	--color-danger-6: #f5222d;
+	--color-danger-7: #cf1322;
+	--color-danger-8: #a8071a;
+	--color-danger-9: #820014;
+	--color-danger-10: #5c0011;
+
+	/** Warning colors **/
+	--color-warning-1: #fffbe6;
+	--color-warning-2: #fff1b8;
+	--color-warning-3: #ffe58f;
+	--color-warning-4: #ffd666;
+	--color-warning-5: #ffc53d;
+	--color-warning-6: #faad14;
+	--color-warning-7: #d48806;
+	--color-warning-8: #ad6800;
+	--color-warning-9: #874d00;
+	--color-warning-10: #613400;
+
+	/** Info colors **/
+	--color-link-1: #e6f7ff;
+	--color-link-2: #bae7ff;
+	--color-link-3: #91d5ff;
+	--color-link-4: #69c0ff;
+	--color-link-5: #40a9ff;
+	--color-link-6: #096dd9;
+	--color-link-7: #096dd9;
+	--color-link-8: #0050b3;
+	--color-link-9: #003a8c;
+	--color-link-10: #002766;
+
+	/** Sunrise Colors **/
+	--color-yellow-1: #feffe6;
+	--color-yellow-2: #ffffb8;
+	--color-yellow-3: #fffb8f;
+	--color-yellow-4: #fff566;
+	--color-yellow-5: #ffec3d;
+	--color-yellow-6: #fadb14;
+	--color-yellow-7: #d4b106;
+	--color-yellow-8: #ad8b00;
+	--color-yellow-9: #876800;
+	--color-yellow-10: #614700;
+
+	/** Geekblue Colors **/
+	--color-geekblue-1: #f0f5ff;
+	--color-geekblue-2: #d6e4ff;
+	--color-geekblue-3: #adc6ff;
+	--color-geekblue-4: #85a5ff;
+	--color-geekblue-5: #597ef7;
+	--color-geekblue-6: #2f54eb;
+	--color-geekblue-7: #1d39c4;
+	--color-geekblue-8: #10239e;
+	--color-geekblue-9: #061178;
+	--color-geekblue-10: #030852;
+
+	/* tarnstion */
+	--transition-linear: cubic-bezier(0.82, 0.53, 0.58, 0.57);
+	--transition-ease: cubic-bezier(0.05, 0.35, 0.89, 0.46);
+	--transition-ease-out: cubic-bezier(0.53, 0.4, 0.15, 0.71);
+	--transition-ease-in-out: cubic-bezier(0, 1.19, 1, -0.27);
+	--transition-ease-in: cubic-bezier(0.2, 0.46, 0.43, 0.06);
+}

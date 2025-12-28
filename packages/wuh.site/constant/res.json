@@ -1,0 +1,83 @@
+{
+  "banner": {
+    "msg": "操作成功",
+    "code": 20000,
+    "data": {
+      "count": 3,
+      "current": 1,
+      "pageSize": 10,
+      "rows": [{
+          "title": "javascript中的继承",
+          "cover": "https://src.wuh.site/2021-05/2021-05-10-102644.png",
+          "href": "/post/2021-05/javascript中的继承",
+          "tag": "github",
+          "alt": "原创·github"
+        },
+        {
+          "title": "搬山计划",
+          "cover": "https://src.wuh.site/2021-05/2021-05-07/cover.jpeg",
+          "href": "/post/2021-05/搬山计划",
+          "tag": "zhihu",
+          "alt": "原创·知乎"
+        },
+        {
+          "title": "2021年度总结",
+          "cover": "https://src.wuh.site/2021-04-07/sss.webp",
+          "href": "/post/2021-04/2021年度总结",
+          "tag": "yuque",
+          "alt": "原创·语雀"
+        }
+      ]
+    }
+  },
+  "gallery": {
+    "msg": "操作成功",
+    "code": 20000,
+    "data": {
+      "count": 5,
+      "pageSize": 10,
+      "current": 1,
+      "rows": [{
+          "url": "https://src.wuh.site/gallery/douban/p2658084408.webp",
+          "alt": "douban zhijiang",
+          "title": "美丽湖北，美丽枝江"
+        },
+        {
+          "url": "https://src.wuh.site/gallery/douban/p2658084417.webp",
+          "alt": "douban zhijiang",
+          "title": "美丽湖北，美丽枝江"
+        },
+        {
+          "url": "https://src.wuh.site/gallery/douban/p2658084425.webp",
+          "alt": "douban zhijiang",
+          "title": "美丽湖北，美丽枝江"
+        },
+        {
+          "url": "https://src.wuh.site/gallery/douban/p2658084428.webp",
+          "alt": "douban zhijiang",
+          "title": "美丽湖北，美丽枝江"
+        },
+        {
+          "url": "https://src.wuh.site/gallery/douban/p2658084436.webp",
+          "alt": "douban zhijiang",
+          "title": "美丽湖北，美丽枝江"
+        }
+      ]
+    }
+  },
+  "playlist": {
+    "msg": "操作成功",
+    "code": 20000,
+    "data": {
+      "count": 10,
+      "pageSize": 10,
+      "current": 1,
+      "rows": [{
+        "id": 1370879975,
+        "name": "人间不值得",
+        "by": "黄诗扶",
+        "url": "https://src.wuh.site/media/rjbzd.mp3"
+      }]
+    }
+  }
+}

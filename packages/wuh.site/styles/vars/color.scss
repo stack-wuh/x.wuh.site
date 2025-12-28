@@ -1,0 +1,43 @@
+$color_yuque: #31cc79;
+$color_github: #6f42c1;
+$color_zhihu: #0d87ea;
+$color_qqzone: #fece00;
+$color_wechat: #69bb63;
+$color_github_dark: #181616;
+$color_gitbook: #3a84ff;
+$color_twitter: #5ed7fc;
+$color_yuque_icon: #31cc79;
+$color_link: #181616;
+$color_qq: #019df7;
+$color_weibo: #e6172d;
+
+$color_tag: ((github, $color_github),
+  (yuque, $color_yuque),
+  (zhihu, $color_zhihu),
+  (qqzone, $color_qqzone),
+  (wechat, $color_wechat),
+  (gitbook, $color_gitbook),
+  (twitter, $color_twitter));
+
+$color_alert: ((success, var(--color-success-3), var(--color-success-7)),
+  (warning, var(--color-warning-3), var(--color-warning-7)),
+  (error, var(--color-danger-3), var(--color-danger-7)),
+  (info, var(--color-link-3), var(--color-link-7)));
+
+$color_btn_link: ((zhihu, $color_zhihu),
+  (github, $color_github),
+  (qq, $color_qq),
+  (wechat, $color_wechat),
+  (weopen, $color_wechat),
+  (gitbook, $color_gitbook),
+  (twitter, $color_twitter),
+  (yuque, $color_yuque));
+
+$color_btn_state: ((dark, red), (light, blue), (zh-cn, black), (en, red));
+
+$color_btn_share: ((qq, $color_qq),
+  (qqzone, $color_qqzone),
+  (zhihu, $color_zhihu),
+  (twitter, $color_twitter),
+  (weibo, $color_weibo),
+  (link, #91d5ff));

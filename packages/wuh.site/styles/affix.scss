@@ -1,0 +1,19 @@
+$name: 'ww_affix';
+
+.#{$name} {
+  width: inherit;
+  height: inherit;
+  overflow: hidden;
+
+  &__inner {
+    position: fixed;
+
+    &--left {
+      left: 0;
+    }
+
+    &--right {
+      right: 0;
+    }
+  }
+}

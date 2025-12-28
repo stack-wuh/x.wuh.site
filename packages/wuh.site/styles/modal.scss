@@ -1,0 +1,120 @@
+$prefix: ww_modal;
+
+.#{$prefix} {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  color: #333;
+  border-radius: var(--border-radius);
+  background-color: rgba($color: #333, $alpha: 0.5);
+  z-index: 999999 !important;
+  transition: background-color .3s ease;
+  overflow: scroll;
+
+  &__outer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 80%;
+    margin: 4em auto;
+  }
+
+  &__inner {
+    position: relative;
+    padding: var(--padding-base);
+    background-color: #fff;
+    color: #333;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 48px;
+    padding: var(--padding-base);
+    background-color: #fff;
+    box-sizing: border-box;
+    border-bottom: 1px solid #eee;
+    border-top-left-radius: var(--border-radius-base);
+    border-top-right-radius: var(--border-radius-base);
+
+    &--fixed {
+      position: sticky;
+      top: 0;
+      right: 0;
+      left: 0;
+      width: 100%;
+      z-index: 99999;
+    }
+
+    &--left {
+      .icon-prefix {
+        margin-right: .5em;
+      }
+
+      .icon-suffix {
+        margin-left: .5em;
+      }
+    }
+
+    &--right {
+      padding: 4px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--padding-base);
+    box-sizing: border-box;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    border-bottom-left-radius: var(--border-radius-base);
+    border-bottom-right-radius: var(--border-radius-base);
+
+    &--left {
+      justify-content: flex-start;
+    }
+
+    &--center {
+      justify-content: center;
+    }
+
+    &--right {
+      justify-content: flex-end;
+    }
+  }
+}
+
+.alert-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.alert-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.alert-exit {
+  opacity: 1;
+}
+
+.alert-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms, transform 300ms;
+}

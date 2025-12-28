@@ -1,0 +1,43 @@
+@import './vars/function.scss';
+$name: 'ww_tag';
+
+.#{$name} {
+  width: fit-content;
+  height: auto;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-less);
+  line-height: 1.2;
+  overflow: hidden;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    padding: calc(var(--padding-base)/4) calc(var(--padding-base)/2);
+    color: var(--color-base);
+    border-radius: var(--border-radius-base);
+    background-color: var(--color-primary-4);
+    transition: var(--transition-base);
+
+    &:hover {
+      transition: var(--transition-base);
+    }
+  }
+
+  &__icon {
+    padding-right: .5em;
+    font-size: var(--font-size-less);
+    line-height: 1.5;
+  }
+
+  .is-ghost {
+    background-color: var(--color-base-2) !important;
+    border: 1px solid var(--color-base-6) !important;
+    color: var(--color-base-8) !important;
+  }
+
+  @include getTagColors($name);
+  @include getSizes();
+}
