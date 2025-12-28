@@ -26,11 +26,14 @@
       "@wuh.site/components/*": [
         "../components/*"
       ],
+      "@wuh.site/config/*": [
+        "../config/*"
+      ],
+      "@wuh.site/hooks/*": [
+        "../hooks/*"
+      ],
       "@/*": [
         "./*"
-      ],
-      "@/styles/*": [
-        "./styles/*"
       ]
     }
   },
@@ -40,7 +43,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "wuh.site/types/**/*.ts",
+    "wuh.site/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
