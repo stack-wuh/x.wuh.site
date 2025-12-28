@@ -1,0 +1,42 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feat'
+      - 'styles'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'bugfix'
+      - 'bug'
+  - title: '📖 Document'
+    labels:
+      - 'document'
+  - title: '🔆 Maintenance'
+    labels: 
+      - 'chore'
+      - 'build'
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&#@`'
+exclude-labels:
+  - 'skip-changelog'
+sort-by: title
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+template: |
+  ## Changes
+
+  $CHANGES
+
+  ## Contributors
+  
+  $CONTRIBUTORS

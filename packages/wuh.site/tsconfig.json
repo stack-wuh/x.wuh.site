@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "baseUrl": ".",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -9,31 +10,61 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": [
-        "./*"
+        "."
+      ],
+      "@/pages/*": [
+        "pages/*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/middlewares/*": [
+        "middlewares/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
+      "@/db/*": [
+        "db/*"
+      ],
+      "@/layout/*": [
+        "layout/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/store/*": [
+        "store/*"
+      ],
+      "@/constant/*": [
+        "constant/*"
+      ],
+      "@/__utils/*": [
+        "__utils/*"
+      ],
+      "@/redux/*": [
+        "redux/*"
       ]
-    }
+    },
+    "incremental": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
     "next-env.d.ts",
-    "dist/types/**/*.ts"
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

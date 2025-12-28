@@ -1,0 +1,51 @@
+@import './vars/function.scss';
+$name: 'ww_empty';
+
+.#{$name} {
+  width: inherit;
+  height: inherit;
+  outline: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+
+  &__inner {
+    position: relative;
+    padding: var(--padding-base);
+    margin-bottom: var(--margin-base);
+    font-size: 2rem;
+    color: var(--color-disabled);
+    box-sizing: border-box;
+    border-radius: var(--border-radius-base);
+    background-color: var(--color-base-2);
+    user-select: none;
+
+    &--start {
+      @include getFlexbox(flex-start, center);
+    }
+
+    &--center {
+      @include getFlexbox(center, center);
+    }
+
+    &--end {
+      @include getFlexbox(flex-end, center);
+    }
+  }
+
+  &__inner--small {
+    padding: calc(var(--padding-base)/2);
+    margin-bottom: calc(var(--margin-base)/2);
+  }
+
+  &__inner--middle {
+    padding: var(--padding-base);
+  }
+
+  &__inner--large {
+    padding: calc(var(--padding-base)*2);
+    margin-bottom: calc(var(--margin-base)*2);
+  }
+
+  transition: var(--transition-base);
+}

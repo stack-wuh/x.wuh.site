@@ -1,0 +1,43 @@
+$prefix: 'ww_audio';
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  padding: 0 1em;
+
+  &:hover {
+    cursor: pointer;
+
+    .#{$prefix}__head {
+      color: var(--text-color-base);
+      transition: var(--transition-base);
+    }
+
+    .#{$prefix}__space {
+      i {
+        color: var(--text-color-base);
+        transition: var(--transition-base);
+      }
+    }
+  }
+
+  &__head {
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: var(--color-base-7);
+    transition: var(--transition-base);
+  }
+
+  &__space {
+    background-color: var(--background-color-base);
+
+    i {
+      font-size: 13px;
+      color: var(--color-base-7);
+      transition: var(--transition-base);
+    }
+  }
+}

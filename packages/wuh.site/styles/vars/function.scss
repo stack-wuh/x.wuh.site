@@ -1,0 +1,119 @@
+@import './color.scss';
+@import './vars.scss';
+
+$row: flex-start;
+$col: flex-start;
+$wrap: wrap;
+
+@mixin getFlexbox ($row: $row, $col: $col, $wrap: $wrap) {
+  display: flex;
+  justify-content: $row;
+  align-items: $col;
+  flex-wrap: $wrap;
+}
+
+@mixin getTagColors($prefix) {
+
+  @each $label,
+  $color in $color_tag {
+    .#{$prefix}--#{$label} {
+      color: var(--color-base);
+      background-color: $color;
+      border-color: rgba($color, .7);
+    }
+
+    .#{$prefix}--#{$label}--ghost {
+      color: $color !important;
+      background-color: rgba($color, .1) !important;
+      border: 1px solid rgba($color, .8) !important;
+    }
+  }
+}
+
+@mixin getAlertColors ($prefix) {
+
+  @each $label,
+  $bg,
+  $color in $color_alert {
+    .#{$prefix}__inner--#{$label} {
+      background-color: $bg;
+
+      .#{$prefix}__icon {
+        color: $color;
+      }
+    }
+  }
+}
+
+@mixin getBtnLinkColors ($prefix) {
+
+  @each $label,
+  $bg in $color_btn_link {
+    .#{$prefix}__link--#{$label} {
+      color: var(--color-base-5);
+
+      &:hover {
+        padding-left: 1.2em;
+        color: var(--color-base-2) !important;
+        background-color: $bg !important;
+        transition: var(--transition-base);
+      }
+    }
+  }
+}
+
+@mixin getBtnStateColors ($prefix) {
+
+  @each $label,
+  $color in $color_btn_state {
+    .#{$prefix}__state {
+      border-left: 2px solid transparent;
+
+      &--#{$label} {
+        border-left: 2px solid $color !important;
+        transition: var(--transition-base);
+
+        &:hover {
+          border-left: 2px solid blue !important;
+          transition: var(--transition-base);
+        }
+      }
+    }
+  }
+}
+
+@mixin getBtnShareColors($prefix) {
+
+  @each $label,
+  $color in $color_btn_share {
+    .#{$prefix}__share {
+      &--#{$label} {
+        color: var(--color-base-5);
+        border-radius: 100%;
+        outline: 1px solid transparent !important;
+        transition: var(--transition-base);
+
+
+        &:hover {
+          border-radius: var(--border-radius-base);
+          background-color: rgba($color, .2);
+          color: $color !important;
+          outline: 1px solid rgba($color, .6) !important;
+          transition: var(--transition-base);
+        }
+      }
+    }
+  }
+}
+
+@mixin getSizes () {
+
+  @each $size,
+  $fontsize,
+  $padding in $sizes {
+    .is-#{$size} {
+      font-size: $fontsize;
+      padding: $padding;
+    }
+  }
+}

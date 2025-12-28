@@ -1,4 +1,4 @@
-import {  Tokens, cssVariablesTokens } from './tokens';
+import { Tokens, cssVariablesTokens } from './tokens'
 export const DefaultTheme: Tokens = {
   colors: {
     primary: '#007bff',
@@ -19,7 +19,7 @@ export const DefaultTheme: Tokens = {
     lg: '16px',
     xl: '24px',
     '2xl': '32px',
-    '3xl': '48px',
+    '3xl': '48px'
   },
   fontSizes: {
     none: '0px',
@@ -30,7 +30,7 @@ export const DefaultTheme: Tokens = {
     lg: '20px',
     xl: '24px',
     '2xl': '30px',
-    '3xl': '36px',
+    '3xl': '36px'
   },
   borderRadius: {
     none: '0px',
@@ -41,19 +41,39 @@ export const DefaultTheme: Tokens = {
     lg: '16px',
     xl: '18px',
     '2xl': '20px',
-    '3xl': '24px',
+    '3xl': '24px'
+  },
+  gradients: {
+    light: {
+      primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      success: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      danger: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      warning: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+      ocean: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)',
+      sunset: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      deepSpace: 'linear-gradient(135deg, #1a2980 0%, #26d0ce 100%)'
+    },
+    dark: {
+      primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      success: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      danger: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      warning: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+      ocean: 'linear-gradient(135deg, #2b5876 0%, #4e4376 100%)',
+      sunset: 'linear-gradient(135deg, #870000 0%, #190a05 100%)',
+      deepSpace: 'linear-gradient(135deg, #000428 0%, #004e92 100%)'
+    }
   }
 }
 
 export const cssVariablesGenerator = (theme: Tokens): cssVariablesTokens => {
   return {
     colors: {
-      '--primary-color':  theme.colors.primary,
+      '--primary-color': theme.colors.primary,
       '--secondary-color': theme.colors.secondary,
       '--success-color': theme.colors.success,
       '--danger-color': theme.colors.danger,
       '--warning-color': theme.colors.warning,
-      '--info-color': theme.colors.info,
+      '--info-color': theme.colors.info
     },
     spaces: {
       '--space-none': theme.spaces.none,
@@ -84,6 +104,35 @@ export const cssVariablesGenerator = (theme: Tokens): cssVariablesTokens => {
       '--border-radius-lg': theme.borderRadius.lg,
       '--border-radius-xl': theme.borderRadius.xl,
       '--border-radius-2xl': theme.borderRadius['2xl']
-    },
+    }
   }
+}
+
+/**
+ * @NOTE 获取spacing有效值
+ *
+ * @param { string|number } value - spacing值
+ * @param { Tokens } theme - 主题对象
+ * @returns { string } - 有效的spacing值
+ */
+export const getSpacingValue = (value: string | number, theme?: Tokens): string => {
+  if (typeof value === 'number') {
+    return `${value}px`
+  }
+
+  if (typeof value === 'string') {
+    const spaceValue = theme?.spaces?.[value as keyof typeof theme.spaces]
+    if (spaceValue) {
+      return spaceValue
+    }
+
+    // 如果是 CSS 单位直接返回
+    if (/(px|em|rem|%|vh|vw)$/.test(value)) {
+      return value
+    }
+
+    return `${value}px`
+  }
+
+  return '0'
 }

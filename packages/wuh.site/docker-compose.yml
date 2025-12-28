@@ -1,0 +1,7 @@
+version: "3"
+
+services: 
+  nextjs_app:
+    build: ./
+    ports: 
+      - 3100:3000

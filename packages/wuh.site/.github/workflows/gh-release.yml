@@ -1,0 +1,38 @@
+#
+# 自动更新发布CHANGELOG_ZH.MD文档
+# refs: https://github.com/actions/upload-release-asset
+#
+#
+
+name: Upload Release Asset
+
+on:
+  pull_request: 
+    types: [opened]
+
+jobs:
+  upload_release:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.*'
+
+      - name: Install && Build
+        run: |
+          yarn config set registry https://registry.npm.taobao.org 
+          yarn add  conventional-changelog-cli -g
+          yarn release
+
+      - name: Commit
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git status
+          git add CHANGELOG.MD
+          git commit -m "docs(changelog): :notebook: 更新日志" -a
+          git push origin main

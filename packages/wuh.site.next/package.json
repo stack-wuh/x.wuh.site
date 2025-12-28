@@ -1,9 +1,9 @@
 {
-  "name": "@wuh.site/app",
-  "version": "0.1.0",
+  "name": "@wuh.site/next",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "NODE_OPTIONS=--max-old-space-size=4096 next build --turbo",
     "start": "next start",
     "lint": "eslint"

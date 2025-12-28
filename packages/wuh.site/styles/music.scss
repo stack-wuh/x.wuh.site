@@ -1,0 +1,31 @@
+$prefix: ww_music;
+
+.#{$prefix} {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  &__wrap-list {
+    margin-right: 4em;
+  }
+
+  &__wrap-item {
+    height: 2.2em;
+    padding: 0 1em;
+    line-height: 2.2em;
+    border: 1px solid #eee;
+    transition: all .5s ease-in;
+
+    &:hover {
+      cursor: pointer;
+      border: 1px solid var(--color-primary-3);
+      background-color: #fff;
+      transition: all .5s ease;
+    }
+  }
+
+  .is-active {
+    background-color: #fff;
+    border: 1px solid var(--color-primary-3);
+  }
+}

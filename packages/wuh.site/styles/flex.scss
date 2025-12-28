@@ -1,0 +1,33 @@
+$name: ww_flex;
+
+.#{$name} {
+  position: relative;
+  width: fit-content;
+  overflow: hidden;
+
+  &__list {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  &__item {
+    position: relative;
+
+    &:not(:last-of-type) {
+      margin-right: var(--margin-base);
+    }
+  }
+
+  .is-horizontal {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .is-vertical {
+    display: flex;
+    flex-direction: column;
+  }
+}

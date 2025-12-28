@@ -1,0 +1,11 @@
+User-agent: Googlebot
+Disallow: /nogooglebot/
+Disallow: /scripts
+Disallow: /icons
+
+User-agent: *
+Allow: /
+Disallow: /scripts
+Disallow: /icons
+
+Sitemap: https://wuh.site/sitemap.xml

@@ -26,11 +26,14 @@
       "@wuh.site/components/*": [
         "../components/*"
       ],
+      "@wuh.site/config/*": [
+        "../config/*"
+      ],
+      "@wuh.site/hooks/*": [
+        "../hooks/*"
+      ],
       "@/*": [
         "./*"
-      ],
-      "@/styles/*": [
-        "./styles/*"
       ]
     }
   },
@@ -38,8 +41,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "global.d.ts",
-    "styled.d.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",

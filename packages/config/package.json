@@ -1,0 +1,11 @@
+{
+  "name": "@wuh.site/types",
+  "version": "1.0.0",
+  "description": "wuh.site@types",
+  "main": "index.d.ts",
+  "keywords": [
+    "wuh.site@types"
+  ],
+  "author": "shadow <wuh131420@foxmail.com>",
+  "license": "ISC"
+}
