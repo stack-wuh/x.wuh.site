@@ -14,22 +14,32 @@ const Footer = () => {
   return (
     <SpaceBetween
       gap={20}
-      style={{ padding: 'var(--space-xl) var(--space-2xl)', backgroundColor: 'var(--background-color)', color: 'var(--text-color)', fontSize: 'var(--font-size-base)' }}
+      style={{
+        padding: 'var(--space-xl) var(--space-2xl)',
+        backgroundColor: 'var(--background-color)',
+        color: 'var(--text-color)',
+        fontSize: 'var(--font-size-base)'
+      }}
     >
       <Row gap={'3xl'}>
         <Column>
           <Image src={'/logo.svg'} alt={'logo'} width={100} height={60} />
-          <div>{footerConf.copyright}</div>
         </Column>
         <Column>
-          <div>{footerConf.slogan} · {footerConf.title}</div>
-          <div>{footerConf.marked}</div>
+          <div>{footerConf.slogan}</div>
+          <div>{footerConf.copyright}</div>
         </Column>
       </Row>
-      <Column>
-        <div>{footerConf.MIIT}</div>
-        <div>{footerConf.MoPSF}</div>
-      </Column>
+      <Row gap={'3xl'}>
+        <Column>
+          <div>{footerConf.title}</div>
+          <div>{footerConf.marked}</div>
+        </Column>
+        <Column>
+          <div>{footerConf.MIIT}</div>
+          <div>{footerConf.MoPSF}</div>
+        </Column>
+      </Row>
     </SpaceBetween>
   )
 }
