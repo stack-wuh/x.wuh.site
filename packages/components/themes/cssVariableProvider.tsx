@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
+import { TBaseColorLevel } from './tokens'
 
 export const CssVariableStyles = createGlobalStyle`
   html, body {
@@ -61,17 +62,55 @@ export const CssVariableStyles = createGlobalStyle`
     }
 
   :root {
-    --primary-color: ${(props) => props.theme.colors.primary};
-    --secondary-color: ${(props) => props.theme.colors.secondary};
-    --success-color: ${(props) => props.theme.colors.success};
-    --danger-color: ${(props) => props.theme.colors.danger};
-    --warning-color: ${(props) => props.theme.colors.warning};
-    --info-color: ${(props) => props.theme.colors.info};
-    --text-color: ${(props) => props.theme.colors.text};
-    --background-color: ${(props) => props.theme.colors.background};
-    ${(props) => Object.keys(props.theme.gradients.light).map((key) => {
-      return `--gradient-${key}: ${props.theme.gradients.light[key as keyof typeof props.theme.gradients.light]};`
-    }).join(';')}
+    --primary-color: ${(props) => props.theme.primary.light['500']};
+    --secondary-color: ${(props) => props.theme.normal.light['500']};
+    --success-color: ${(props) => props.theme.success.light['500']};
+    --danger-color: ${(props) => props.theme.danger.light['500']};
+    --warning-color: ${(props) => props.theme.warning.light['500']};
+    --text-color: ${(props) => props.theme.normal.light['800']};
+    --background-color: ${(props) => props.theme.background.light['900']};
+
+    ${(props) =>
+      Object.keys(props.theme.primary.light)
+        .map((key) => {
+          return `--primary-${key}: ${props.theme.primary.light[key as unknown as keyof TBaseColorLevel]};`
+        })
+        .join(';')}
+
+    ${(props) =>
+      Object.keys(props.theme.normal.light)
+        .map((key) => {
+          return `--normal-${key}: ${props.theme.normal.light[key as unknown as keyof TBaseColorLevel]};`
+        })
+        .join(';')}
+
+      ${(props) =>
+        Object.keys(props.theme.success.light)
+          .map((key) => {
+            return `--success-${key}: ${props.theme.success.light[key as unknown as keyof TBaseColorLevel]};`
+          })
+          .join(';')}
+
+        ${(props) =>
+          Object.keys(props.theme.danger.light)
+            .map((key) => {
+              return `--danger-${key}: ${props.theme.danger.light[key as unknown as keyof TBaseColorLevel]};`
+            })
+            .join(';')}
+
+        ${(props) =>
+          Object.keys(props.theme.warning.light)
+            .map((key) => {
+              return `--warning-${key}: ${props.theme.warning.light[key as unknown as keyof TBaseColorLevel]};`
+            })
+            .join(';')}
+
+            ${(props) =>
+              Object.keys(props.theme.background.light)
+                .map((key) => {
+                  return `--background-${key}: ${props.theme.background.light[key as unknown as keyof TBaseColorLevel]};`
+                })
+                .join(';')}
   }
 
   @media (prefers-color-scheme: dark) {
@@ -79,17 +118,55 @@ export const CssVariableStyles = createGlobalStyle`
       color-scheme: dark;
     }
     :root {
-      --primary-color: ${(props) => props.theme.colors.primary};
-      --secondary-color: ${(props) => props.theme.colors.secondary};
-      --success-color: ${(props) => props.theme.colors.success};
-      --danger-color: ${(props) => props.theme.colors.danger};
-      --warning-color: ${(props) => props.theme.colors.warning};
-      --info-color: ${(props) => props.theme.colors.info};
-      --text-color: ${(props) => props.theme.colors.background};
-      --background-color: ${(props) => props.theme.colors.text};
-      ${(props) => Object.keys(props.theme.gradients.dark).map((key) => {
-        return `--gradient-${key}: ${props.theme.gradients.dark[key as keyof typeof props.theme.gradients.dark]};`
-      }).join(';')}
+      --primary-color: ${(props) => props.theme.primary.dark['500']};
+      --secondary-color: ${(props) => props.theme.normal.dark['500']};
+      --success-color: ${(props) => props.theme.success.dark['500']};
+      --danger-color: ${(props) => props.theme.danger.dark['500']};
+      --warning-color: ${(props) => props.theme.warning.dark['500']};
+      --text-color: ${(props) => props.theme.normal.dark['800']};
+      --background-color: ${(props) => props.theme.background.dark['500']};
+
+      ${(props) =>
+        Object.keys(props.theme.primary.dark)
+          .map((key) => {
+            return `--primary-${key}: ${props.theme.primary.dark[key as unknown as keyof TBaseColorLevel]};`
+          })
+          .join(';')}
+
+    ${(props) =>
+      Object.keys(props.theme.normal.dark)
+        .map((key) => {
+          return `--normal-${key}: ${props.theme.normal.dark[key as unknown as keyof TBaseColorLevel]};`
+        })
+        .join(';')}
+
+      ${(props) =>
+        Object.keys(props.theme.success.dark)
+          .map((key) => {
+            return `--success-${key}: ${props.theme.success.dark[key as unknown as keyof TBaseColorLevel]};`
+          })
+          .join(';')}
+
+        ${(props) =>
+          Object.keys(props.theme.danger.dark)
+            .map((key) => {
+              return `--danger-${key}: ${props.theme.danger.dark[key as unknown as keyof TBaseColorLevel]};`
+            })
+            .join(';')}
+
+        ${(props) =>
+          Object.keys(props.theme.warning.dark)
+            .map((key) => {
+              return `--warning-${key}: ${props.theme.warning.dark[key as unknown as keyof TBaseColorLevel]};`
+            })
+            .join(';')}
+
+            ${(props) =>
+              Object.keys(props.theme.background.dark)
+                .map((key) => {
+                  return `--background-${key}: ${props.theme.background.dark[key as unknown as keyof TBaseColorLevel]};`
+                })
+                .join(';')}
     }
   }
 `
