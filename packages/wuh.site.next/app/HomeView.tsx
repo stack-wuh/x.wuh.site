@@ -118,6 +118,16 @@ const Card = styled.a`
     box-shadow: 0 4px 14px rgba(0,0,0,.06);
     transform: translateY(-2px);
   }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-800);
+    border-color: var(--normal-600);
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+
+    &:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+    }
+  }
 `
 
 const CardHeader = styled.div`
@@ -138,12 +148,23 @@ const Lang = styled.span`
   background: var(--background-200);
   padding: 2px var(--space-sm);
   border-radius: 64px;
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-700);
+    color: var(--text-primary);
+    opacity: 0.85;
+  }
 `
 
 const Desc = styled.p`
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   min-height: 40px;
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-primary);
+    opacity: 0.8;
+  }
 `
 
 const Meta = styled.div`
@@ -151,6 +172,11 @@ const Meta = styled.div`
   justify-content: space-between;
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-primary);
+    opacity: 0.7;
+  }
 `
 
 const Empty = styled.div`
@@ -158,6 +184,11 @@ const Empty = styled.div`
   text-align: center;
   color: var(--text-secondary);
   padding: var(--space-xl) 0;
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-primary);
+    opacity: 0.7;
+  }
 `
 
 const HeaderRow = styled.div`

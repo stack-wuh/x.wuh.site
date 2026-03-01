@@ -8,13 +8,13 @@ const CHINA_RED = '#E60000'
 const defaultThemeColors = generate(CHINA_RED, { theme: 'default', backgroundColor: '#fef6f6' })
 const darkThemeColors = generate(CHINA_RED, { theme: 'dark', backgroundColor: '#1a0808' })
 
-// 中性/正文色：Light 深灰，Dark 浅灰
+// 中性/正文色：Light 深灰，Dark 浅灰（调整为更浅的灰色以提高对比度）
 const defaultTextColors = generate('#434343', { theme: 'default' })
-const darkTextColors = generate('#e8e8e8', { theme: 'dark' })
+const darkTextColors = generate('#ffffff', { theme: 'dark' })
 
-// 背景色阶：与主色协调 — Light 极浅红/暖白，Dark 深红黑（随系统 prefers-color-scheme 切换）
+// 背景色阶：与主色协调 — Light 极浅红/暖白，Dark 深色（调整为更深的颜色以提高对比度）
 const defaultBackgroundColors = generate('#fef6f6', { theme: 'default' })
-const darkBackgroundColors = generate('#1a0808', { theme: 'dark' })
+const darkBackgroundColors = generate('#0a0404', { theme: 'dark' })
 
 const toColorLevels = (colors: string[]): TBaseColorLevel => {
   return colors.slice(0, 9).reduce((acc, curr, index) => {

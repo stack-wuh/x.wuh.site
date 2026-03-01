@@ -2,7 +2,6 @@
 import * as React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../button'
-import { TBaseColorLevel } from '../themes/tokens'
 
 type ShareType = 'wechat' | 'qq' | 'weibo' | 'twitter' | 'email' | 'link' | 'copy' | 'custom'
 
@@ -48,6 +47,10 @@ const SContainer = styled.div`
   margin-top: 48px;
   border-top: 1px solid var(--normal-300);
   animation: ${fadeIn} 0.4s ease;
+
+  @media (prefers-color-scheme: dark) {
+    border-top-color: var(--normal-600);
+  }
 `
 
 const SLabel = styled.p`
@@ -55,6 +58,11 @@ const SLabel = styled.p`
   color: var(--text-secondary);
   margin: 0;
   font-weight: 500;
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-primary);
+    opacity: 0.8;
+  }
 `
 
 const SGroup = styled.div<{ $gap: number }>`
@@ -105,6 +113,20 @@ const SShareButton = styled.button<{ $size: SharedLinkGroupSize; $hasLink: boole
   &:active {
     transform: translateY(0) scale(1.02);
   }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-700);
+    border-color: var(--normal-500);
+    color: var(--text-primary);
+
+    &:hover {
+      background: var(--normal-600);
+      border-color: var(--primary-color);
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--background-dark-500), 0 0 0 4px var(--primary-400);
+    }
+  }
 `
 
 const SIcon = styled.span`
@@ -120,6 +142,11 @@ const SIcon = styled.span`
   ${SShareButton}:hover & {
     color: var(--primary-color);
     animation: ${iconBounce} 0.5s ease;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-primary);
+    opacity: 0.85;
   }
 `
 
@@ -142,6 +169,12 @@ const STitle = styled.span`
   ${SShareButton}:hover & {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-800);
+    color: var(--text-primary);
+    border-color: var(--normal-500);
   }
 `
 
