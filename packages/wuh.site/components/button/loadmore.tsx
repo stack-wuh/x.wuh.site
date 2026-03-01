@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import classnames from 'classnames'
 import { useDebounceFn } from 'ahooks'
 import * as gtag from '@/lib/gtag'
+import Button from '@wuh.site/components/button'
 
 type sizes = 'small' | 'middle' | 'large'
 
@@ -45,7 +46,7 @@ const LoadMore = (props: loadButtonTypeProps) => {
         <div className="rg">
           <div className="scroll" />
           <div className="label" />
-          <button disabled={disabled}>{children}</button>
+          <Button variant='text' color='primary' disabled={disabled}>{children}</Button>
         </div>
       </div>
     </div>

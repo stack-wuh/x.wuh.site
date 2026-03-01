@@ -17,7 +17,7 @@ export const CssVariableStyles = createGlobalStyle`
     text-decoration: none;
   }
   a:hover {
-    color: var(--primary-600);
+    text-decoration: underline;
   }
 
   * {
@@ -75,8 +75,13 @@ export const CssVariableStyles = createGlobalStyle`
     --success-color: ${(props) => props.theme.success.light['500']};
     --danger-color: ${(props) => props.theme.danger.light['500']};
     --warning-color: ${(props) => props.theme.warning.light['500']};
-    --text-color: ${(props) => props.theme.normal.light['800']};
+    --text-color: ${(props) => props.theme.normal.light['900']};
+    --text-primary: ${(props) => props.theme.normal.light['900']};
+    --text-secondary: ${(props) => props.theme.normal.light['700']};
+    --text-muted: ${(props) => props.theme.normal.light['600']};
     --background-color: ${(props) => props.theme.background.light['900']};
+    --transition-fast: 200ms;
+    --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
 
     ${(props) =>
       Object.keys(props.theme.primary.light)
@@ -131,8 +136,13 @@ export const CssVariableStyles = createGlobalStyle`
       --success-color: ${(props) => props.theme.success.dark['500']};
       --danger-color: ${(props) => props.theme.danger.dark['500']};
       --warning-color: ${(props) => props.theme.warning.dark['500']};
-      --text-color: ${(props) => props.theme.normal.dark['800']};
-      --background-color: ${(props) => props.theme.background.dark['900']};
+      --text-color: ${(props) => props.theme.normal.dark['100']};
+      --text-primary: ${(props) => props.theme.normal.dark['100']};
+      --text-secondary: ${(props) => props.theme.normal.dark['300']};
+      --text-muted: ${(props) => props.theme.normal.dark['400']};
+      --background-color: ${(props) => props.theme.background.dark['500']};
+      --transition-fast: 200ms;
+      --elevation-soft: 0 4px 14px rgba(0,0,0,.12);
 
       ${(props) =>
         Object.keys(props.theme.primary.dark)
