@@ -17,7 +17,7 @@
 /.next/
 /out/
 /node_modules
-/wuh.site
+/dist.wuh.site
 
 # production
 /build

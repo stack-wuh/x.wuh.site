@@ -1,14 +1,20 @@
 import { generate, red, redDark, orange, orangeDark, green, greenDark } from '@ant-design/colors'
 import { TBaseColorLevel } from './tokens'
 
-const defaultThemeColors = generate('#8d21ec', { theme: 'default', backgroundColor: '#eee' })
-const darkThemeColors = generate('#8d21ec', { theme: 'dark', backgroundColor: '#212529'})
+// 中国红主色（RGB 230,0,0 / PANTONE 186 C）
+const CHINA_RED = '#E60000'
 
-const defaultTextColors = generate('#746a6a', { theme: 'default' })
-const darkTextColors = generate('#e7b6b7', { theme: 'dark' })
+// Light 模式：浅色背景上的中国红衍生色阶
+const defaultThemeColors = generate(CHINA_RED, { theme: 'default', backgroundColor: '#fef6f6' })
+const darkThemeColors = generate(CHINA_RED, { theme: 'dark', backgroundColor: '#1a0808' })
 
-const defaultBackgroundColors = generate('#f5f5f5', { theme: 'default' })
-const darkBackgroundColors = generate('#212529', { theme: 'dark' })
+// 中性/正文色：Light 深灰，Dark 浅灰
+const defaultTextColors = generate('#434343', { theme: 'default' })
+const darkTextColors = generate('#e8e8e8', { theme: 'dark' })
+
+// 背景色阶：与主色协调 — Light 极浅红/暖白，Dark 深红黑（随系统 prefers-color-scheme 切换）
+const defaultBackgroundColors = generate('#fef6f6', { theme: 'default' })
+const darkBackgroundColors = generate('#1a0808', { theme: 'dark' })
 
 const toColorLevels = (colors: string[]): TBaseColorLevel => {
   return colors.slice(0, 9).reduce((acc, curr, index) => {

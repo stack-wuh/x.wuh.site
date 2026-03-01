@@ -32,13 +32,13 @@ const StyledButton = styles.button<IButtonProps>`
   }};
   border: none;
   border-radius: 4px;
-  background-color: var(--button-primary-color, #007bff);
-  color: var(--button-text-color, #ffffff);
+  background-color: var(--primary-color, #E60000);
+  color: var(--background-100, #ffffff);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: var(--, #0056b3);
+    background-color: var(--primary-600, #b30000);
   }
 
   & .iconfont {
