@@ -2,6 +2,7 @@ import * as React from 'react'
 import Affix from '@/components/affix'
 import Modal from '@/components/modal'
 import ModalList from '@/components/banner/gallery'
+import Button from '@wuh.site/components/button'
 
 const Gallery = () => {
   const [visible, setvisible] = React.useState(false)
@@ -17,11 +18,9 @@ const Gallery = () => {
         <ModalList data={[1, 2, 3, 4]} onClose={() => setvisible(false)} />
       </Modal>
       <Affix offsetY={'70vh'}>
-        <button
-          className="ww_button__gallery transition-fade-color"
-          onClick={() => setvisible(true)}>
+        <Button variant='filled' color='primary' onClick={() => setvisible(true)}>
           故乡山川
-        </button>
+        </Button>
       </Affix>
     </>
   )

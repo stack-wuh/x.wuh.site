@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
+import Button from '@wuh.site/components/button'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -46,14 +47,14 @@ export default async function Home() {
             <p className={styles.subtitle}>React / Vue / 工程化 / 可视化</p>
           </div>
           <div className={styles.ctas}>
-            <a className={styles.primary} href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer'>
+            <Button href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' variant='filled' color='primary'>
               <Image src='/vercel.svg' alt='blog' width={16} height={16} />
               知识库
-            </a>
-            <a className={styles.secondary} href='https://github.com/stack-wuh' target='_blank' rel='noopener noreferrer'>
+            </Button>
+            <Button href='https://github.com/stack-wuh' target='_blank' rel='noopener noreferrer' variant='outlined' color='primary'>
               <Image src='/globe.svg' alt='github' width={16} height={16} />
               GitHub
-            </a>
+            </Button>
           </div>
         </section>
 
@@ -78,8 +79,22 @@ export default async function Home() {
         </section>
 
         <section className={styles.footerCtas}>
-          <a className={styles.outlineLink} href='mailto:shadow_u@foxmail.com'>联系我</a>
-          <a className={styles.outlineLink} href='/design/system-color'>色彩系统</a>
+          <Button
+            href='mailto:shadow_u@foxmail.com'
+            variant='filled'
+            color='primary'
+            size='small'
+          >
+            联系我
+          </Button>
+          <Button
+            href='/design/system-color'
+            variant='text'
+            color='primary'
+            size='small'
+          >
+            色彩系统
+          </Button>
         </section>
       </main>
     </div>
