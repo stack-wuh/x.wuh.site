@@ -1,7 +1,5 @@
 import { Metadata } from 'next'
-import Image from 'next/image'
-import Button from '@wuh.site/components/button'
-import styles from './page.module.css'
+import HomeView from './HomeView'
 
 export const metadata: Metadata = {
   title: 'wuh.site · 前端工程师的作品与笔记',
@@ -37,66 +35,30 @@ async function getRepos(): Promise<Repo[]> {
 
 export default async function Home() {
   const repos = await getRepos()
-  return (
-    <div className={styles.root}>
-      <main className={styles.main}>
-        <section className={styles.hero}>
-          <div className={styles.brand}>
-            <Image className={styles.logo} src='/logo.svg' alt='wuh.site.logo' width={180} height={108} priority />
-            <h1 className={styles.title}>stack-wuh的博客</h1>
-            <p className={styles.subtitle}>React / Vue / 工程化 / 可视化</p>
-          </div>
-          <div className={styles.ctas}>
-            <Button href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' variant='filled' color='primary'>
-              <Image src='/vercel.svg' alt='blog' width={16} height={16} />
-              知识库
-            </Button>
-            <Button href='https://github.com/stack-wuh' target='_blank' rel='noopener noreferrer' variant='outlined' color='primary'>
-              <Image src='/globe.svg' alt='github' width={16} height={16} />
-              GitHub
-            </Button>
-          </div>
-        </section>
+  const posts = await getFeaturedIssues()
+  return <HomeView repos={repos} posts={posts} />
+}
 
-        <section className={styles.projects}>
-          <h2>精选项目</h2>
-          <div className={styles.grid}>
-            {repos.length === 0 && <div className={styles.empty}>暂时无法获取 GitHub 数据</div>}
-            {repos.map(repo => (
-              <a key={repo.html_url} className={styles.card} href={repo.homepage || repo.html_url} target='_blank' rel='noopener noreferrer'>
-                <div className={styles.cardHeader}>
-                  <span className={styles.cardName}>{repo.name}</span>
-                  {repo.language && <span className={styles.lang}>{repo.language}</span>}
-                </div>
-                {repo.description && <p className={styles.desc}>{repo.description}</p>}
-                <div className={styles.meta}>
-                  <span>⭐ {repo.stargazers_count}</span>
-                  <span>⇢ 查看</span>
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
+type Issue = {
+  id: number
+  number: number
+  title: string
+  html_url: string
+  comments: number
+  created_at: string
+  labels: { name: string }[]
+}
 
-        <section className={styles.footerCtas}>
-          <Button
-            href='mailto:shadow_u@foxmail.com'
-            variant='filled'
-            color='primary'
-            size='small'
-          >
-            联系我
-          </Button>
-          <Button
-            href='/design/system-color'
-            variant='text'
-            color='primary'
-            size='small'
-          >
-            色彩系统
-          </Button>
-        </section>
-      </main>
-    </div>
-  )
+async function getFeaturedIssues(): Promise<Issue[]> {
+  try {
+    const res = await fetch('https://api.github.com/repos/stack-wuh/blog/issues?per_page=6&state=open&sort=update', {
+      headers: { 'Accept': 'application/vnd.github+json' },
+      next: { revalidate: 1800 }
+    })
+    if (!res.ok) return []
+    const data = (await res.json()) as Issue[]
+    return data
+  } catch {
+    return []
+  }
 }

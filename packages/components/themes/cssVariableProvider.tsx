@@ -80,6 +80,8 @@ export const CssVariableStyles = createGlobalStyle`
     --text-secondary: ${(props) => props.theme.normal.light['700']};
     --text-muted: ${(props) => props.theme.normal.light['600']};
     --background-color: ${(props) => props.theme.background.light['900']};
+    --transition-fast: 200ms;
+    --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
 
     ${(props) =>
       Object.keys(props.theme.primary.light)
@@ -139,6 +141,8 @@ export const CssVariableStyles = createGlobalStyle`
       --text-secondary: ${(props) => props.theme.normal.dark['300']};
       --text-muted: ${(props) => props.theme.normal.dark['400']};
       --background-color: ${(props) => props.theme.background.dark['500']};
+      --transition-fast: 200ms;
+      --elevation-soft: 0 4px 14px rgba(0,0,0,.12);
 
       ${(props) =>
         Object.keys(props.theme.primary.dark)
