@@ -213,7 +213,7 @@ export default function HomeView({ repos, posts }: Props) {
           <Grid>
             {posts.length === 0 && <Empty>暂时无法获取 Issues 数据</Empty>}
             {posts.map(post => (
-              <Card key={post.id} href={post.html_url} target='_blank' rel='noopener noreferrer'>
+              <Card key={post.id} href={`/post/${post.number}`} >
                 <CardHeader>
                   <CardName>{post.title}</CardName>
                   {post.labels?.length > 0 && <Lang>{post.labels.map(l => l.name).slice(0, 2).join(' · ')}</Lang>}
