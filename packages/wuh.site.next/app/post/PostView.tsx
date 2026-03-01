@@ -2,6 +2,7 @@
 import styled from 'styled-components'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
+import SharedLinkGroup from '@wuh.site/components/shared-link-group'
 
 type Issue = {
   id: number
@@ -175,6 +176,15 @@ const Empty = styled.div`
   padding: 80px 0;
 `
 
+const copyToClipboard = async (text: string): Promise<boolean> => {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export default function PostView({ issue }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -285,6 +295,47 @@ export default function PostView({ issue }: Props) {
   }
 
   const date = new Date(issue.created_at).toLocaleDateString()
+
+  const shareItems = [
+    {
+      type: 'wechat' as const,
+      href: '#',
+      title: '分享到微信'
+    },
+    {
+      type: 'qq' as const,
+      href: '#',
+      title: '分享到QQ'
+    },
+    {
+      type: 'weibo' as const,
+      href: '#',
+      title: '分享到微博'
+    },
+    {
+      type: 'twitter' as const,
+      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(issue.title)}&url=${encodeURIComponent(issue.html_url)}`,
+      title: '分享到Twitter'
+    },
+    {
+      type: 'email' as const,
+      href: `mailto:?subject=${encodeURIComponent(issue.title)}&body=${encodeURIComponent(`查看这篇文章：${issue.html_url}`)}`,
+      title: '邮件分享'
+    },
+    {
+      type: 'link' as const,
+      title: '复制链接',
+      onClick: async () => {
+        const success = await copyToClipboard(issue.html_url)
+        if (success) {
+          alert('链接已复制到剪贴板')
+        } else {
+          alert('复制失败，请手动复制')
+        }
+      }
+    }
+  ]
+
   return (
     <Container ref={containerRef}>
       <Header>
@@ -299,6 +350,7 @@ export default function PostView({ issue }: Props) {
         </MetaRow>
       </Header>
       <Article dangerouslySetInnerHTML={{ __html: issue?.body_html ?? '' }} />
+      <SharedLinkGroup items={shareItems} size="medium" label="分享到" />
       <Toolbar>
         <Link href="/">返回首页</Link>
         <a href={issue.html_url} target="_blank" rel="noopener noreferrer">
