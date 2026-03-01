@@ -12,6 +12,14 @@ export const CssVariableStyles = createGlobalStyle`
     background-color: var(--background-color);
   }
 
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--primary-600);
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -124,7 +132,7 @@ export const CssVariableStyles = createGlobalStyle`
       --danger-color: ${(props) => props.theme.danger.dark['500']};
       --warning-color: ${(props) => props.theme.warning.dark['500']};
       --text-color: ${(props) => props.theme.normal.dark['800']};
-      --background-color: ${(props) => props.theme.background.dark['500']};
+      --background-color: ${(props) => props.theme.background.dark['900']};
 
       ${(props) =>
         Object.keys(props.theme.primary.dark)

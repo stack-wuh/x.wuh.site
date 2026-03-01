@@ -45,7 +45,9 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "wuh.site/types/**/*.ts",
-    "wuh.site/dev/types/**/*.ts"
+    "wuh.site/dev/types/**/*.ts",
+    "dist.wuh.site/types/**/*.ts",
+    "dist.wuh.site/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

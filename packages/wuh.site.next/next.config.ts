@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   compress: true,
   devIndicators: false,
-  distDir: 'wuh.site',
+  distDir: 'dist.wuh.site',
   generateEtags: false,
   typescript: {
     ignoreBuildErrors: false,

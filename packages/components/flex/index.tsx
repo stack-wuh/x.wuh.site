@@ -4,6 +4,28 @@ import { getSpacingValue } from '@wuh.site/components/themes/index'
 import { Tokens } from '@wuh.site/components/themes/tokens'
 import { IFlexProps, TFlexGap, TFlexSpace } from './types'
 
+/** 仅用于 styled 的 transient props，不会透传到 DOM */
+interface IStyledFlexTransientProps {
+  $direction?: IFlexProps['direction']
+  $justifyContent?: IFlexProps['justifyContent']
+  $alignItems?: IFlexProps['alignItems']
+  $gap?: IFlexProps['gap']
+  $wrap?: IFlexProps['wrap']
+  $padding?: IFlexProps['padding']
+  $margin?: IFlexProps['margin']
+  $inline?: IFlexProps['inline']
+  $width?: IFlexProps['width']
+  $height?: IFlexProps['height']
+  $fullWidth?: IFlexProps['fullWidth']
+  $fullHeight?: IFlexProps['fullHeight']
+  $flex?: IFlexProps['flex']
+  $flexGrow?: IFlexProps['flexGrow']
+  $flexShrink?: IFlexProps['flexShrink']
+  $flexBasis?: IFlexProps['flexBasis']
+  $alignSelf?: IFlexProps['alignSelf']
+  $order?: IFlexProps['order']
+}
+
 /**
  * @NOTE 处理gap间距
  * @param gap
@@ -32,88 +54,119 @@ const parseMarginPadding = (value: TFlexSpace, theme: Tokens): string => {
   return getSpacingValue(value, theme)
 }
 
-const StyledFlex = styled.div<IFlexProps>`
-  display: ${(props) => (props.inline ? 'inline-flex' : 'flex')};
-  flex-direction: ${(props) => props.direction ?? 'row'};
-  justify-content: ${(props) => props.justifyContent ?? 'flex-start'};
-  align-items: ${(props) => props.alignItems ?? 'flex-start'};
-  flex-wrap: ${(props) => (props.wrap ? 'wrap' : 'nowrap')};
+const StyledFlex = styled.div<IStyledFlexTransientProps & { theme?: Tokens }>`
+  display: ${(props) => (props.$inline ? 'inline-flex' : 'flex')};
+  flex-direction: ${(props) => props.$direction ?? 'row'};
+  justify-content: ${(props) => props.$justifyContent ?? 'flex-start'};
+  align-items: ${(props) => props.$alignItems ?? 'flex-start'};
+  flex-wrap: ${(props) => (props.$wrap ? 'wrap' : 'nowrap')};
   box-sizing: border-box;
   ${(props) =>
-    props.gap &&
+    props.$gap &&
+    props.theme &&
     css`
-      gap: ${parsGap(props.gap, props.theme)};
+      gap: ${parsGap(props.$gap, props.theme)};
     `}
   ${(props) =>
-    props.padding &&
+    props.$padding &&
+    props.theme &&
     css`
-      padding: ${parseMarginPadding(props.padding, props.theme)};
+      padding: ${parseMarginPadding(props.$padding, props.theme)};
     `}
   ${(props) =>
-    props.margin &&
+    props.$margin &&
+    props.theme &&
     css`
-      margin: ${parseMarginPadding(props.margin, props.theme)};
+      margin: ${parseMarginPadding(props.$margin, props.theme)};
     `}
   ${(props) =>
-    props.width &&
+    props.$width &&
     css`
-      width: ${props.width};
+      width: ${props.$width};
     `}
   ${(props) =>
-    props.height &&
+    props.$height &&
     css`
-      height: ${props.height};
+      height: ${props.$height};
     `}
   ${(props) =>
-    props.fullWidth &&
+    props.$fullWidth &&
     css`
       width: 100%;
     `}
   ${(props) =>
-    props.fullHeight &&
+    props.$fullHeight &&
     css`
       height: 100%;
     `}
   ${(props) =>
-    props.flex &&
+    props.$flex &&
     css`
-      flex: ${props.flex};
+      flex: ${props.$flex};
     `}
 
   & > * {
     ${(props) =>
-      props.flexBasis &&
+      props.$flexBasis &&
       css`
-        flex-basis: ${props.flexBasis};
+        flex-basis: ${props.$flexBasis};
       `}
     ${(props) =>
-      props.flexGrow &&
+      props.$flexGrow &&
       css`
-        flex-grow: ${props.flexGrow};
+        flex-grow: ${props.$flexGrow};
       `}
     ${(props) =>
-      props.flexShrink &&
+      props.$flexShrink &&
       css`
-        flex-shrink: ${props.flexShrink};
+        flex-shrink: ${props.$flexShrink};
       `}
     ${(props) =>
-      props.order &&
+      props.$order &&
       css`
-        order: ${props.order};
+        order: ${props.$order};
       `}
     ${(props) =>
-      props.alignSelf &&
+      props.$alignSelf &&
       css`
-        align-self: ${props.alignSelf};
+        align-self: ${props.$alignSelf};
       `}
   }
 `
 
+const FLEX_ONLY_KEYS: (keyof IFlexProps)[] = [
+  'direction', 'justifyContent', 'alignItems', 'gap', 'wrap', 'padding', 'margin',
+  'inline', 'width', 'height', 'fullWidth', 'fullHeight', 'flex', 'flexGrow',
+  'flexShrink', 'flexBasis', 'alignSelf', 'order'
+]
+
 export const Flex = React.forwardRef<HTMLDivElement, IFlexProps>((props, ref) => {
+  const domProps = { ...props }
+  FLEX_ONLY_KEYS.forEach((key) => delete (domProps as Record<string, unknown>)[key])
+
   return (
-    <StyledFlex ref={ref} {...props}>
-      {props.children}
-    </StyledFlex>
+    <StyledFlex
+      ref={ref}
+      $direction={props.direction}
+      $justifyContent={props.justifyContent}
+      $alignItems={props.alignItems}
+      $gap={props.gap}
+      $wrap={props.wrap}
+      $padding={props.padding}
+      $margin={props.margin}
+      $inline={props.inline}
+      $width={props.width}
+      $height={props.height}
+      $fullWidth={props.fullWidth}
+      $fullHeight={props.fullHeight}
+      $flex={props.flex}
+      $flexGrow={props.flexGrow}
+      $flexShrink={props.flexShrink}
+      $flexBasis={props.flexBasis}
+      $alignSelf={props.alignSelf}
+      $order={props.order}
+      {...domProps}
+    />
   )
 })
 

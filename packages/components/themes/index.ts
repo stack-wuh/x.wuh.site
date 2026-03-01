@@ -2,7 +2,7 @@ import { Tokens, cssVariablesTokens } from './tokens'
 import themeColors from './generator-color'
 export const DefaultTheme: Tokens = {
   colors: {
-    primary: '#007bff',
+    primary: '#E60000', // 中国红
     secondary: '#6c757d',
     success: '#28a745',
     danger: '#dc3545',
