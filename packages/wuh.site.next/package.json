@@ -3,25 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
-    "build": "NODE_OPTIONS=--max-old-space-size=4096 next build --turbo",
+    "dev": "next dev",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=2048\" next build",
+    "build:debug": "NODE_OPTIONS=\"--max-old-space-size=2048 --trace-warnings\" next build --debug",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@wuh.site/components": "workspace:^",
     "ahooks": "^3.7.1",
-    "next": "16.0.7",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "next": "15.1.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@ant-design/colors": "^7.2.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.10.0",
     "eslint": "^9",
-    "eslint-config-next": "16.0.7",
+    "eslint-config-next": "15.1.0",
     "typescript": "^5"
   }
 }
