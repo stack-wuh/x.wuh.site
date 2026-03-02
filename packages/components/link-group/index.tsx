@@ -2,7 +2,6 @@
 import * as React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../button'
-import { TBaseColorLevel } from '../themes/tokens'
 
 type LinkType = 'wechat' | 'qq' | 'twitter' | 'email' | 'github' | 'douban' | 'custom'
 
@@ -90,6 +89,17 @@ const SLink = styled.a<{ $size: LinkGroupSize }>`
   &:active {
     transform: translateY(-1px) scale(1.02);
   }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-800);
+
+    &:hover {
+      background: var(--normal-700);
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--normal-900), 0 0 0 4px var(--primary-400);
+    }
+  }
 `
 
 const SIcon = styled.span`
@@ -127,6 +137,12 @@ const STitle = styled.span`
   ${SLink}:hover & {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-900);
+    color: var(--text-primary);
+    border-color: var(--normal-600);
   }
 `
 

@@ -53,6 +53,11 @@ const LabelChip = styled.span`
   border-radius: 999px;
   padding: 2px 8px;
   color: var(--text-secondary);
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-700);
+    color: var(--text-primary);
+  }
 `
 
 const Article = styled.article`
@@ -152,6 +157,42 @@ const Article = styled.article`
   th, td {
     border: 1px solid var(--normal-300);
     padding: 8px 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-800);
+    border-color: var(--normal-600);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+    code {
+      background: var(--normal-700);
+      color: var(--text-primary);
+    }
+    pre {
+      background: var(--normal-900);
+      border-color: var(--normal-600);
+    }
+    .copy-btn {
+      background: var(--normal-700);
+      border-color: var(--normal-500);
+      color: var(--text-primary);
+    }
+    .anchor {
+      color: var(--normal-400);
+    }
+    tr:nth-child(odd) td {
+      background: var(--normal-750);
+    }
+    blockquote {
+      border-left-color: var(--normal-500);
+    }
+    th, td {
+      border-color: var(--normal-600);
+      color: var(--text-primary);
+    }
+    th {
+      background: var(--normal-700);
+    }
   }
 `
 

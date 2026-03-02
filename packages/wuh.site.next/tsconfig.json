@@ -47,7 +47,11 @@
     "wuh.site/types/**/*.ts",
     "wuh.site/dev/types/**/*.ts",
     "dist.wuh.site/types/**/*.ts",
-    "dist.wuh.site/dev/types/**/*.ts"
+    "dist.wuh.site/dev/types/**/*.ts",
+    "dist.wuh.site.next/types/**/*.ts",
+    "dist.wuh.site.next/dev/types/**/*.ts",
+    "./dist/wuh.site.next/types/**/*.ts",
+    "./dist/wuh.site.next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
