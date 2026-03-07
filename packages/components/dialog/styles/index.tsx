@@ -1,6 +1,8 @@
+'use client'
+
 import styled, { css, keyframes } from 'styled-components'
 
-export const enterAnimation = keyframes`
+const enterAnimation = keyframes`
   from {
     opacity: 0;
     transform: translateY(12px) scale(0.98);
@@ -11,19 +13,7 @@ export const enterAnimation = keyframes`
   }
 `
 
-export const Barrier = styled.div<{ $zIndex: number; $fullScreen: boolean }>`
-  position: fixed;
-  inset: 0;
-  z-index: ${({ $zIndex }) => $zIndex};
-  display: flex;
-  align-items: ${({ $fullScreen }) => ($fullScreen ? 'stretch' : 'center')};
-  justify-content: center;
-  padding: ${({ $fullScreen }) => ($fullScreen ? '0' : 'clamp(16px, 4vw, 48px)')};
-  pointer-events: auto;
-  background: transparent;
-`
-
-export const dialogSurfaceBase = css<{ $fullScreen: boolean; $width: number | string; $height?: number | string; $disableAnimation: boolean }>`
+const dialogSurfaceBase = css<{ $fullScreen: boolean; $width: number | string; $height?: number | string; $disableAnimation: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -59,6 +49,18 @@ export const dialogSurfaceBase = css<{ $fullScreen: boolean; $width: number | st
         animation: none;
       }
     `}
+`
+
+export const Barrier = styled.div<{ $zIndex: number; $fullScreen: boolean }>`
+  position: fixed;
+  inset: 0;
+  z-index: ${({ $zIndex }) => $zIndex};
+  display: flex;
+  align-items: ${({ $fullScreen }) => ($fullScreen ? 'stretch' : 'center')};
+  justify-content: center;
+  padding: ${({ $fullScreen }) => ($fullScreen ? '0' : 'clamp(16px, 4vw, 48px)')};
+  pointer-events: auto;
+  background: transparent;
 `
 
 export const DialogSurface = styled.div<{ $fullScreen: boolean; $width: number | string; $height?: number | string; $disableAnimation: boolean }>`
