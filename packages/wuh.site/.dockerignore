@@ -1,7 +1,0 @@
-node_modules
-output/analyze
-README.md
-docker-compose.yml
-bin/*
-.git
-npm-debug.log
