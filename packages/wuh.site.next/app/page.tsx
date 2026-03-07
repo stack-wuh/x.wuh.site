@@ -46,7 +46,7 @@ type Issue = {
   html_url: string
   comments: number
   created_at: string
-  labels: { name: string }[]
+  labels: { name: string; color?: string | null }[]
 }
 
 async function getFeaturedIssues(): Promise<Issue[]> {
