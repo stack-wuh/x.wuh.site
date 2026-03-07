@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "NODE_OPTIONS=\"--max-old-space-size=2048\" next build",
     "build:debug": "NODE_OPTIONS=\"--max-old-space-size=2048 --trace-warnings\" next build --debug",
     "start": "next start",

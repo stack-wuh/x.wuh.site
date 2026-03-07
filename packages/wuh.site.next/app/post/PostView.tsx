@@ -11,7 +11,7 @@ type Issue = {
   html_url: string
   comments: number
   created_at: string
-  labels: { name: string }[]
+  labels: { name: string; color?: string | null }[]
   body?: string
   body_html?: string
 }
@@ -46,6 +46,7 @@ const MetaRow = styled.div`
   gap: var(--space-sm);
   color: var(--text-muted);
   font-size: var(--font-size-sm);
+  align-items: center;
 `
 
 const LabelChip = styled.span`

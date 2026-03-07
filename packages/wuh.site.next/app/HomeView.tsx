@@ -3,6 +3,9 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import Button from '@wuh.site/components/button'
 import LinkGroup from '@wuh.site/components/link-group'
+import Tag from '@wuh.site/components/tag'
+
+const TAG_DISPLAY_LIMIT = 3
 
 type Repo = {
   name: string
@@ -14,6 +17,11 @@ type Repo = {
   fork: boolean
 }
 
+type TagItem = {
+  name: string
+  color?: string | null
+}
+
 type Props = {
   repos: Repo[]
   posts: {
@@ -23,7 +31,7 @@ type Props = {
     html_url: string
     comments: number
     created_at: string
-    labels: { name: string }[]
+    labels: TagItem[]
   }[]
 }
 
@@ -132,14 +140,19 @@ const Card = styled.a`
 
 const CardHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  width: 100%;
+  align-items: flex-start;
 `
 
 const CardName = styled.span`
   font-weight: 600;
   font-size: var(--font-size-md);
   color: var(--text-primary);
+  flex: 1 1 auto;
+  min-width: 200px;
 `
 
 const Lang = styled.span`
@@ -154,6 +167,15 @@ const Lang = styled.span`
     color: var(--text-primary);
     opacity: 0.85;
   }
+`
+
+const CardTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 160px;
+  justify-content: flex-start;
 `
 
 const Desc = styled.p`
@@ -172,6 +194,8 @@ const Meta = styled.div`
   justify-content: space-between;
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+  align-items: center;
+  min-height: 24px;
 
   @media (prefers-color-scheme: dark) {
     color: var(--text-primary);
@@ -247,7 +271,13 @@ export default function HomeView({ repos, posts }: Props) {
               <Card key={post.id} href={`/post/${post.number}`} >
                 <CardHeader>
                   <CardName>{post.title}</CardName>
-                  {post.labels?.length > 0 && <Lang>{post.labels.map(l => l.name).slice(0, 2).join(' · ')}</Lang>}
+                  {post.labels?.length > 0 && (
+                    <CardTags>
+                      {post.labels.slice(0, TAG_DISPLAY_LIMIT).map(label => (
+                        <Tag key={`${post.id}-${label.name}`} label={label.name} color={label.color} />
+                      ))}
+                    </CardTags>
+                  )}
                 </CardHeader>
                 <Desc>发布于 {new Date(post.created_at).toLocaleDateString()}</Desc>
                 <Meta>
