@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 import SharedLinkGroup from '@wuh.site/components/shared-link-group'
+import Tag from '@wuh.site/components/tag'
 
 type Issue = {
   id: number
@@ -49,84 +50,139 @@ const MetaRow = styled.div`
   align-items: center;
 `
 
-const LabelChip = styled.span`
-  background: var(--background-200);
-  border-radius: 999px;
-  padding: 2px 8px;
-  color: var(--text-secondary);
+const TagGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`
+
+const ArticleCard = styled.section`
+  background: var(--background-100);
+  border: 1px solid var(--normal-300);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--elevation-soft);
+
+  @media (max-width: 640px) {
+    padding: 20px;
+  }
 
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-700);
-    color: var(--text-primary);
+    background: var(--normal-800);
+    border-color: var(--normal-600);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   }
 `
 
-const Article = styled.article`
-  background: var(--background-100);
-  border: 1px solid var(--normal-300);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--elevation-soft);
-  line-height: 1.85;
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
-  word-wrap: break-word;
+const MarkdownBody = styled.article`
+  --github-border: rgba(208, 215, 222, 0.8);
+  --github-muted: #57606a;
+  --atom-inline-bg: rgba(106, 115, 125, 0.15);
+  --atom-inline-border: rgba(106, 115, 125, 0.4);
+  --atom-pre-bg: #fafbfc;
+  --atom-pre-border: rgba(208, 215, 222, 0.8);
 
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    margin: 1.5em 0 0.6em;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-primary);
+  word-break: break-word;
+
+  @media (prefers-color-scheme: dark) {
+    --github-border: rgba(110, 118, 129, 0.4);
+    --github-muted: #8b949e;
+    --atom-inline-bg: rgba(87, 96, 106, 0.35);
+    --atom-inline-border: rgba(87, 96, 106, 0.6);
+    --atom-pre-bg: #1f2329;
+    --atom-pre-border: rgba(87, 96, 106, 0.7);
     color: var(--text-primary);
   }
-  h1 { font-size: var(--font-size-2xl); }
-  h2 { font-size: var(--font-size-xl); }
-  h3 { font-size: var(--font-size-lg); }
-  h4, h5, h6 { font-size: var(--font-size-md); }
 
-  p { margin: 1em 0; }
-  a { color: var(--primary-color); text-decoration: underline; }
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 32px 0 16px;
+    color: inherit;
+  }
+
+  h1, h2 {
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--github-border);
+  }
+
+  h1 { font-size: 2.1em; }
+  h2 { font-size: 1.7em; }
+  h3 { font-size: 1.4em; }
+  h4 { font-size: 1.2em; }
+  h5 { font-size: 1.05em; }
+  h6 { font-size: 1em; color: var(--github-muted); }
+
+  p {
+    margin: 16px 0;
+  }
+
+  a {
+    color: var(--primary-color);
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 3px;
+  }
+
   code {
-    background: var(--background-200);
-    padding: 2px 6px;
-    border-radius: 6px;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
     font-size: 0.95em;
+    background: var(--atom-inline-bg);
+    padding: 0.15em 0.4em;
+    border-radius: 6px;
+    border: 1px solid var(--atom-inline-border);
   }
+
   pre {
-    background: var(--background-200);
-    border: 1px solid var(--normal-300);
+    background: var(--atom-pre-bg);
+    border: 1px solid var(--atom-pre-border);
     border-radius: 12px;
-    padding: 16px;
+    padding: 18px 20px;
     overflow: auto;
+    font-size: 0.95em;
     position: relative;
+    margin: 24px 0;
   }
+
   pre code {
     background: transparent;
     padding: 0;
+    border: none;
+    display: block;
   }
+
   .copy-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: var(--font-size-xs);
-    background: var(--background-100);
-    border: 1px solid var(--normal-300);
-    color: var(--text-secondary);
-    padding: 4px 8px;
+    top: 10px;
+    right: 12px;
+    font-size: 12px;
     border-radius: 8px;
+    border: 1px solid var(--atom-pre-border);
+    background: rgba(32, 35, 42, 0.05);
+    color: var(--github-muted);
+    padding: 4px 10px;
     cursor: pointer;
-    transition: all var(--transition-fast) ease;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
+
   .copy-btn:hover {
-    color: var(--text-primary);
-    border-color: var(--primary-color);
+    background: rgba(98, 114, 164, 0.15);
+    color: #528bff;
+    border-color: #528bff;
   }
+
   .anchor {
-    margin-left: 8px;
-    color: var(--normal-500);
-    text-decoration: none;
+    margin-left: 6px;
     opacity: 0;
-    transition: opacity var(--transition-fast) ease;
+    text-decoration: none;
+    color: var(--github-muted);
+    transition: opacity 0.2s ease;
   }
+
   h1:hover .anchor,
   h2:hover .anchor,
   h3:hover .anchor,
@@ -135,65 +191,94 @@ const Article = styled.article`
   h6:hover .anchor {
     opacity: 1;
   }
-  img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  tr:nth-child(odd) td {
-    background: var(--background-100);
-  }
+
   blockquote {
-    margin: 1em 0;
-    padding: 0 1em;
-    color: var(--text-secondary);
-    border-left: 4px solid var(--normal-300);
+    margin: 16px 0;
+    padding: 0.25em 1em;
+    border-left: 4px solid var(--github-border);
+    color: var(--github-muted);
+    background: rgba(175, 184, 193, 0.12);
+    border-radius: 6px;
   }
-  ul, ol { margin: 1em 0 1em 1.5em; }
+
+  ul,
+  ol {
+    margin: 16px 0 16px 1.8em;
+  }
+
+  li + li {
+    margin-top: 6px;
+  }
+
+  .task-list-item {
+    list-style: none;
+    margin-left: -1.4em;
+  }
+
+  .task-list-item input {
+    margin-right: 0.5em;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1em 0;
-  }
-  th, td {
-    border: 1px solid var(--normal-300);
-    padding: 8px 12px;
+    margin: 24px 0;
+    font-size: 0.95em;
   }
 
-  @media (prefers-color-scheme: dark) {
-    background: var(--normal-800);
-    border-color: var(--normal-600);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  th,
+  td {
+    border: 1px solid var(--github-border);
+    padding: 10px 14px;
+    text-align: left;
+  }
 
-    code {
-      background: var(--normal-700);
-      color: var(--text-primary);
-    }
-    pre {
-      background: var(--normal-900);
-      border-color: var(--normal-600);
-    }
-    .copy-btn {
-      background: var(--normal-700);
-      border-color: var(--normal-500);
-      color: var(--text-primary);
-    }
-    .anchor {
-      color: var(--normal-400);
-    }
-    tr:nth-child(odd) td {
-      background: var(--normal-750);
-    }
-    blockquote {
-      border-left-color: var(--normal-500);
-    }
-    th, td {
-      border-color: var(--normal-600);
-      color: var(--text-primary);
-    }
-    th {
-      background: var(--normal-700);
-    }
+  th {
+    background: rgba(175, 184, 193, 0.25);
+    font-weight: 600;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: var(--background-100);
+  }
+
+  hr {
+    border: none;
+    border-bottom: 1px solid var(--github-border);
+    margin: 32px 0;
+  }
+
+  kbd {
+    display: inline-block;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    background: var(--github-inline-bg);
+    border: 1px solid var(--github-border);
+    border-radius: 6px;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  details {
+    border: 1px solid var(--github-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    background: var(--github-code-bg);
+    margin: 16px 0;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .hljs {
+    background: transparent;
+    color: inherit;
   }
 `
 
@@ -233,28 +318,43 @@ export default function PostView({ issue }: Props) {
     const cssId = 'hljs-atom-style'
     const darkHref = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css'
     const lightHref = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css'
-    function applyTheme() {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    const media =
+      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+        ? window.matchMedia('(prefers-color-scheme: dark)')
+        : undefined
+
+    const applyTheme = () => {
+      const prefersDark = media ? media.matches : false
       const link = document.getElementById(cssId) as HTMLLinkElement | null
+      const href = prefersDark ? darkHref : lightHref
       if (link) {
-        link.href = prefersDark ? darkHref : lightHref
+        link.href = href
       } else {
         const newLink = document.createElement('link')
         newLink.id = cssId
         newLink.rel = 'stylesheet'
-        newLink.href = prefersDark ? darkHref : lightHref
+        newLink.href = href
         document.head.appendChild(newLink)
       }
     }
+
     applyTheme()
+    if (media) {
+      if (media.addEventListener) {
+        media.addEventListener('change', applyTheme)
+      } else if (media.addListener) {
+        media.addListener(applyTheme)
+      }
+    }
+
     const scriptId = 'hljs-lib'
+
     function enhanceDom() {
       const root = containerRef.current
       if (!root) return
       const pres = root.querySelectorAll('article pre')
       pres.forEach((pre) => {
         if (pre.querySelector('.copy-btn')) return
-        pre.setAttribute('style', (pre.getAttribute('style') || '') + ';position:relative;')
         const btn = document.createElement('button')
         btn.className = 'copy-btn'
         btn.textContent = '复制'
@@ -276,7 +376,10 @@ export default function PostView({ issue }: Props) {
       headings.forEach((h) => {
         const text = h.textContent?.trim() || ''
         if (!text) return
-        const slug = text.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '')
+        const slug = text
+          .toLowerCase()
+          .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+          .replace(/^-+|-+$/g, '')
         if (!h.id) h.id = slug
         if (!h.querySelector('.anchor')) {
           const a = document.createElement('a')
@@ -287,21 +390,26 @@ export default function PostView({ issue }: Props) {
         }
       })
     }
+
     function runHighlight() {
+      const root = containerRef.current
+      if (!root) return
       try {
         // @ts-expect-error hljs is provided by CDN script
         if (window.hljs && typeof window.hljs.highlightAll === 'function') {
           // @ts-expect-error hljs is provided by CDN script
           window.hljs.highlightAll()
         } else {
-          const blocks = document.querySelectorAll('pre code')
+          const blocks = root.querySelectorAll('pre code')
           blocks.forEach((b) => {
             b.classList.add('hljs')
           })
         }
+      } finally {
         enhanceDom()
-      } catch {}
+      }
     }
+
     if (!document.getElementById(scriptId)) {
       const script = document.createElement('script')
       script.id = scriptId
@@ -310,6 +418,16 @@ export default function PostView({ issue }: Props) {
       document.body.appendChild(script)
     } else {
       runHighlight()
+    }
+
+    return () => {
+      if (media) {
+        if (media.removeEventListener) {
+          media.removeEventListener('change', applyTheme)
+        } else if (media.removeListener) {
+          media.removeListener(applyTheme)
+        }
+      }
     }
   }, [issue?.body_html])
 
@@ -386,12 +504,21 @@ export default function PostView({ issue }: Props) {
           <span>发布于 {date}</span>
           <span>·</span>
           <span>评论 {issue.comments}</span>
-          {issue.labels?.slice(0, 4).map((l) => (
-            <LabelChip key={l.name}>{l.name}</LabelChip>
-          ))}
+          {issue.labels?.length ? (
+            <TagGroup>
+              {issue.labels.slice(0, 4).map((l) => (
+                <Tag key={`${issue.id}-${l.name}`} label={l.name} color={l.color} />
+              ))}
+            </TagGroup>
+          ) : null}
         </MetaRow>
       </Header>
-      <Article dangerouslySetInnerHTML={{ __html: issue?.body_html ?? '' }} />
+      <ArticleCard>
+        <MarkdownBody
+          className="markdown-body"
+          dangerouslySetInnerHTML={{ __html: issue?.body_html ?? '' }}
+        />
+      </ArticleCard>
       <SharedLinkGroup items={shareItems} size="medium" label="分享到" />
       <Toolbar>
         <Link href="/">返回首页</Link>
