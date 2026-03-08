@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Row, Column, SpaceBetween } from '@wuh.site/components/flex/index'
-import Image from 'next/image'
+import Image from '@wuh.site/components/image'
 
 const footerConf = {
   slogan: '驿寄梅花, 鱼传尺素',
@@ -23,7 +23,15 @@ const Footer = () => {
     >
       <Row gap={'3xl'}>
         <Column>
-          <Image src={'/logo.svg'} alt={'logo'} width={100} height={60} />
+          <Image
+            src={'/logo.svg'}
+            alt={'logo'}
+            width={100}
+            height={60}
+            showSkeleton={false}
+            inline
+            appearance='plain'
+          />
         </Column>
         <Column>
           <div>{footerConf.slogan}</div>

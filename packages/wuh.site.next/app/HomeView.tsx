@@ -1,9 +1,9 @@
 'use client'
-import Image from 'next/image'
 import styled from 'styled-components'
 import Button from '@wuh.site/components/button'
 import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
+import Image from '@wuh.site/components/image'
 
 const TAG_DISPLAY_LIMIT = 3
 
@@ -68,9 +68,23 @@ const Brand = styled.div`
   gap: var(--space-lg);
 `
 
-const StyledLogo = styled(Image)`
+const StyledLogo = styled(Image).attrs({
+  showSkeleton: false,
+  inline: true,
+  appearance: 'plain',
+  imageClassName: 'logo-img'
+})`
+  width: fit-content;
+
+  .logo-img {
+    display: block;
+    transition: filter 0.2s ease;
+  }
+
   @media (prefers-color-scheme: dark) {
-    filter: invert();
+    .logo-img {
+      filter: invert();
+    }
   }
 `
 
@@ -243,7 +257,15 @@ export default function HomeView({ repos, posts }: Props) {
           </Brand>
           <Ctas>
             <Button href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' variant='filled' color='primary'>
-              <Image src='/vercel.svg' alt='blog' width={16} height={16} />
+              <Image
+                src='/vercel.svg'
+                alt='blog'
+                width={16}
+                height={16}
+                inline
+                showSkeleton={false}
+                appearance='plain'
+              />
               知识库
             </Button>
             <LinkGroup
