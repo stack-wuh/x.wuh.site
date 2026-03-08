@@ -1,7 +1,12 @@
+#!/usr/bin/env sh
+
 echo "[wuh.site]: start validate commit message"
 
-# 读取提交消息文件内容
-commit_msg_file=$1
-commit_msg=$(cat $commit_msg_file)
+commit_msg_file="$1"
+if [ -z "$commit_msg_file" ] || [ ! -f "$commit_msg_file" ]; then
+  echo "[wuh.site]: skip commit message validation (missing COMMIT_EDITMSG)"
+  exit 0
+fi
 
-commitlint --edit $1
+# Use pnpm exec to avoid no-TTY stalls observed with direct node_modules/.bin/commitlint.
+pnpm exec commitlint --edit "$commit_msg_file"
