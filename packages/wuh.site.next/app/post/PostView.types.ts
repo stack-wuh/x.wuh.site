@@ -24,6 +24,10 @@ export type Issue = {
   body_html?: string
 }
 
+export type AdjacentIssue = Pick<Issue, 'number' | 'title'>
+
 export type PostViewProps = {
   issue: Issue | null
+  prevIssue: AdjacentIssue | null
+  nextIssue: AdjacentIssue | null
 }

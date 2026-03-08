@@ -18,11 +18,12 @@ import {
   Title,
   Toolbar,
 } from './styles'
-import { type Issue, type PostViewProps } from './PostView.types'
+import { type AdjacentIssue, type Issue, type PostViewProps } from './PostView.types'
 import { usePostImagePreview } from './usePostImagePreview'
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
 const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'
+const TOOLBAR_EMPTY_TEXT = '空空如也'
 
 const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
@@ -129,7 +130,36 @@ const createShareItems = (issue: Issue): ShareItem[] => [
   },
 ]
 
-export default function PostView({ issue }: PostViewProps) {
+const renderToolbarIcon = (direction: 'prev' | 'next') => (
+  <span className='toolbar-icon' aria-hidden='true'>
+    <svg viewBox='0 0 16 16' focusable='false'>
+      {direction === 'prev' ? <path d='M10.5 3.5L5.5 8l5 4.5' /> : <path d='M5.5 3.5L10.5 8l-5 4.5' />}
+    </svg>
+  </span>
+)
+
+const renderToolbarAction = (direction: 'prev' | 'next', targetIssue: AdjacentIssue | null) => {
+  const className = `toolbar-link ${direction}`
+  const label = targetIssue?.title?.trim() || TOOLBAR_EMPTY_TEXT
+
+  if (!targetIssue) {
+    return (
+      <span className={className} aria-disabled='true'>
+        {renderToolbarIcon(direction)}
+        <span className='toolbar-label'>{label}</span>
+      </span>
+    )
+  }
+
+  return (
+    <Link className={className} href={`/post/${targetIssue.number}`} title={targetIssue.title}>
+      {renderToolbarIcon(direction)}
+      <span className='toolbar-label'>{label}</span>
+    </Link>
+  )
+}
+
+export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps) {
   const { containerRef, previewProps } = usePostImagePreview(issue?.body_html)
 
   if (!issue) {
@@ -137,10 +167,8 @@ export default function PostView({ issue }: PostViewProps) {
       <Container>
         <Empty>未找到文章或网络错误</Empty>
         <Toolbar>
-          <Link href='/'>返回首页</Link>
-          <a href='https://github.com/stack-wuh/blog/issues' target='_blank' rel='noopener noreferrer'>
-            查看全部博客
-          </a>
+          {renderToolbarAction('prev', null)}
+          {renderToolbarAction('next', null)}
         </Toolbar>
       </Container>
     )
@@ -190,10 +218,8 @@ export default function PostView({ issue }: PostViewProps) {
       </ShareInfoCard>
 
       <Toolbar>
-        <Link href='/'>返回首页</Link>
-        <a href={issue.html_url} target='_blank' rel='noopener noreferrer'>
-          在 GitHub 查看
-        </a>
+        {renderToolbarAction('prev', prevIssue)}
+        {renderToolbarAction('next', nextIssue)}
       </Toolbar>
     </Container>
   )
