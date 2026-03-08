@@ -1,81 +1,110 @@
-# wuh.site
+# x.wuh.site
 
-![](https://img.shields.io/github/package-json/dependency-version/stack-wuh/x.wuh.site/react?style=social)
-![](https://img.shields.io/github/package-json/dependency-version/stack-wuh/x.wuh.site/next?style=social)
-![](https://img.shields.io/github/package-json/dependency-version/stack-wuh/x.wuh.site/preact?style=social)
-![](https://img.shields.io/github/package-json/v/stack-wuh/x.wuh.site/main?style=social)
-![](https://img.shields.io/github/v/release/stack-wuh/react-router-config?style=social)
-![](https://img.shields.io/github/last-commit/stack-wuh/wuh.site?style=social)
-![](https://img.shields.io/github/languages/top/stack-wuh/react-router-config?style=social)
-![](https://img.shields.io/github/commit-activity/m/stack-wuh/wuh.site?style=social)
-![](https://img.shields.io/github/repo-size/stack-wuh/react-router-config?style=social)
-![](https://img.shields.io/docker/pulls/shadowu/wuh.site?color=red&label=%E4%BD%BF%E7%94%A8%E6%AC%A1%E6%95%B0&logo=docker&logoColor=lightblue)
-![](https://img.shields.io/docker/image-size/shadowu/wuh.site?label=%E9%95%9C%E5%83%8F%E5%A4%A7%E5%B0%8F&logo=docker&logoColor=lightblue)
-![](https://img.shields.io/docker/v/shadowu/wuh.site?color=red&label=docker%20version&logo=docker&logoColor=lightblue)
+基于 `Next.js 15 + React 19 + styled-components` 的个人站点 monorepo，包含站点应用、组件库、共享 hooks 与类型配置。
 
+## 项目概览
 
-再次开启一段全新的旅程~~
+- 首页聚合 GitHub 仓库与文章信息。
+- 博客详情页通过 GitHub Issues API 拉取内容并渲染 Markdown。
+- 组件与主题能力拆分到 `@wuh.site/components`，支持统一设计 token。
+- 使用 `pnpm workspace` 管理多包依赖。
 
-> 使用 Nextjs，Mongodb 和 Nest.js 构建的个人网站    
-> 由 Koa.js 提供日志分析，ant-design-prod 搭建后台    
-> 使用pnpm进行包管理, 架构升级monorepo模式
+## 技术栈
 
-1. 架构升级,next项目中已升级为monorepo架构，使用pnpm workspace管理
-2. 技术栈升级，使用最新的版本的Next.js，开启turbo模式，尝试一下webpack5的全新功能
-3. 拆分component组件，将一些通用的组件拆分到独立的组件库中，方便多个项目进行复用
-4. css-in-js解决方案, 引入styled-components来实现css-in-js的方案，方便进行css的编写和管理
-5. 引入Astro，尝试一下新的静态站点生成器，提升站点的性能和SEO表现，用于管理片段化的笔记内容
+- Next.js 15（App Router）
+- React 19
+- TypeScript 5
+- styled-components 6
+- pnpm workspace（lockfile v9）
+- Husky + Commitlint（提交信息校验）
 
+## 仓库结构
 
-### 项目结构
-1. [[packages/components]] 独立为组件库
-2. [[packages/wuh.site.next]] next项目代码
-3. [[packages/astro]] 静态文档生成器
-4. [[packages/docs]] 文档项目
-5. [[packages/config]] ts配置文件
-
-### 项目管理
-<a href="https://github.com/users/stack-wuh/projects/6" target="_blank"><img width="1440" height="813" alt="image" src="https://github.com/user-attachments/assets/4adac2ec-c083-4bc0-bc8e-f3a8dad3a9be" /></a>
-
-
-### 开源许可
-
-![](https://img.shields.io/github/license/stack-wuh/wuh.site)
-
-### 启动项目
-
-#### 1.使用 git
-
-1. `main`分支, 由`Next12 + TypeScript + Webpack5 + SASS`构建的 TS 应用
-1. `master`分支, 由`create-react-app`创建的 react 项目
-1. `v2`分支为 `Nextjs11 + JS` 构建的 react 项目
-
-```bash
-git clone -b main https://github.com/stack-wuh/wuh.site.git wuh.site
-
-cd wuh.site
-yarn
-
-yarn run dev
+```text
+.
+├── packages
+│   ├── wuh.site.next     # 主站应用
+│   ├── components        # 组件库（@wuh.site/components）
+│   ├── hooks             # 共享 hooks（按目录管理）
+│   ├── config            # 类型/配置包（@wuh.site/types）
+│   └── docs              # 预留目录
+├── codex                 # Codex 任务与技能相关文档
+└── README.md
 ```
 
-#### 2.使用 docker
+## 快速开始
+
+### 环境要求
+
+- Node.js `>= 20`（建议）
+- pnpm `>= 9`
+
+### 安装依赖
 
 ```bash
-docker pull shadowu/wuh.site:latest
-
-docker-compose up -d
-
-# 制作镜像文件
-docker build -f Dockerfile -t shadowu/wuh.site:latest .
-
-# 或者使用docker指令启动镜像
-docker run --name nextjs_app_container -it -p 3100:3000 --restart=always shadowu/wuh.site:latest
+pnpm install
 ```
 
+### 启动开发
 
-[packages/components]: https://github.com/stack-wuh/wuh.site/tree/main/packages/components
-[packages/wuh.site.next]: https://github.com/stack-wuh/wuh.site/tree/main/packages/wuh.site.next
-[packages/astro]: https://github.com/stack-wuh/wuh.site/tree/main/packages/astro
-[packages/docs]: https://github.com/stack-wuh/wuh.site/tree/main/packages/docs
-[packages/config]: https://github.com/stack-wuh/wuh.site/tree/main/packages/config
+```bash
+pnpm dev:next
+```
+
+默认访问：`http://localhost:3000`
+
+## 常用命令
+
+```bash
+# 启动 Next 应用
+pnpm dev:next
+
+# 构建 Next 应用
+pnpm build:next
+
+# 生产环境启动
+pnpm start:next
+
+# Lint（仅 next 包）
+pnpm --filter @wuh.site/next run lint
+
+# 生成 changelog
+pnpm changelog
+
+# 语义化版本（major/minor/patch）
+pnpm version:major
+pnpm version:minor
+pnpm version:patch
+```
+
+> 说明：根目录里 `dev:web`、`build:web`、`dev:astro` 等脚本属于历史遗留，不是当前推荐入口。
+
+## 页面与数据来源
+
+- `/`：首页（拉取 `stack-wuh` GitHub 仓库与博客 issue 列表）
+- `/post/[number]`：博客详情（读取单篇 issue 并调用 GitHub Markdown API 渲染）
+- `/about`：关于页
+- `/design/system-color`：色彩系统展示页
+
+因为依赖 GitHub API，本地开发若频繁刷新可能触发匿名请求频率限制。
+
+## 组件库使用示例
+
+```tsx
+import Button from '@wuh.site/components/button'
+
+export default function Demo() {
+  return <Button variant='filled'>Hello</Button>
+}
+```
+
+更多组件可查看 [`packages/components`](./packages/components) 下各组件目录的 `readme.md`。
+
+## 提交规范
+
+- `commit-msg` hook 使用 `pnpm exec commitlint` 校验提交信息。
+- 支持的 commit type：`build`、`feat`、`chore`、`style`、`docs`、`ui`、`fix`、`refactor`、`ci`、`test`。
+
+## License
+
+ISC
