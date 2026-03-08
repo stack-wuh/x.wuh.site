@@ -12,8 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Custom dist directory
+    // Custom dist directories
+    "dist/**",
     "dist.wuh.site/**",
+    "dist.wuh.site.next/**",
+    "wuh.site/**",
   ]),
 ]);
 

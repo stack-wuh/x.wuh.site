@@ -7,7 +7,7 @@
     "build": "NODE_OPTIONS=\"--max-old-space-size=2048\" next build",
     "build:debug": "NODE_OPTIONS=\"--max-old-space-size=2048 --trace-warnings\" next build --debug",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint --cache --cache-location .eslintcache \"app/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@wuh.site/components": "workspace:^",
