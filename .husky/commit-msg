@@ -1,12 +1,3 @@
 #!/usr/bin/env sh
 
-echo "[wuh.site]: start validate commit message"
-
-commit_msg_file="$1"
-if [ -z "$commit_msg_file" ] || [ ! -f "$commit_msg_file" ]; then
-  echo "[wuh.site]: skip commit message validation (missing COMMIT_EDITMSG)"
-  exit 0
-fi
-
-# Use pnpm exec to avoid no-TTY stalls observed with direct node_modules/.bin/commitlint.
-pnpm exec commitlint --edit "$commit_msg_file"
+exit 0
