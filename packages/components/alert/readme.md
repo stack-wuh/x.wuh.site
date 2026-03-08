@@ -13,6 +13,7 @@ const shareItems: ShareItem[] = [
 ]
 
 <Alert
+  framed={false}
   title='文章补充信息'
   summary='用于说明来源、转载与项目归属。'
   updatedAt='2026-03-08T08:30:00.000Z'
@@ -31,6 +32,8 @@ const shareItems: ShareItem[] = [
 | Prop | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `variant` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 提示样式类型 |
+| `framed` | `boolean` | `true` | 是否渲染 Alert 自带外框；嵌入 `Card` 时建议设为 `false` |
+| `showHeader` | `boolean` | `true` | 是否展示头部（图标 + 标题 + 摘要） |
 | `title` | `ReactNode` | `'冗余信息'` | 标题 |
 | `summary` | `ReactNode` | `以下为文章补充说明...` | 标题下说明 |
 | `updatedAt` | `string \| number \| Date` | `undefined` | 更新时间（组件内格式化到分钟） |

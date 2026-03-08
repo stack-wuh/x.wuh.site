@@ -41,6 +41,8 @@ export type AlertLabel = {
 
 export interface AlertProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
   variant?: AlertVariant
+  framed?: boolean
+  showHeader?: boolean
   title?: React.ReactNode
   summary?: React.ReactNode
   icon?: React.ReactNode
@@ -72,6 +74,8 @@ const formatDateTimeToMinute = (value?: DateInput | null) => {
 const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, ref) {
   const {
     variant = 'info',
+    framed = true,
+    showHeader = true,
     title = '冗余信息',
     summary = '以下为文章补充说明，便于转载与继续阅读。',
     icon,
@@ -94,30 +98,34 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
   const resolvedRole = role ?? (variant === 'warning' || variant === 'error' ? 'alert' : 'status')
   const resolvedAriaLive = ariaLiveProp ?? (resolvedRole === 'alert' ? 'assertive' : 'polite')
   const formattedUpdatedAt = formatDateTimeToMinute(updatedAt)
+  const shouldRenderHeader = showHeader && (title || summary || icon || closable)
 
   return (
     <AlertContainer
       ref={ref}
       $variant={variant}
+      $framed={framed}
       role={resolvedRole}
       aria-live={resolvedAriaLive}
       className={className}
       {...rest}
     >
-      <Head>
-        <HeadContent>
-          <IconBadge aria-hidden='true'>{icon ?? 'i'}</IconBadge>
-          <TitleWrap>
-            <Title>{title}</Title>
-            {summary ? <Summary>{summary}</Summary> : null}
-          </TitleWrap>
-        </HeadContent>
-        {closable ? (
-          <CloseButton type='button' onClick={onClose} aria-label='关闭提示'>
-            ×
-          </CloseButton>
-        ) : null}
-      </Head>
+      {shouldRenderHeader ? (
+        <Head>
+          <HeadContent>
+            <IconBadge aria-hidden='true'>{icon ?? 'i'}</IconBadge>
+            <TitleWrap>
+              {title ? <Title>{title}</Title> : null}
+              {summary ? <Summary>{summary}</Summary> : null}
+            </TitleWrap>
+          </HeadContent>
+          {closable ? (
+            <CloseButton type='button' onClick={onClose} aria-label='关闭提示'>
+              ×
+            </CloseButton>
+          ) : null}
+        </Head>
+      ) : null}
 
       <MetaGrid>
         {formattedUpdatedAt ? (

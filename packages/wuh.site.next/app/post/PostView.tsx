@@ -11,6 +11,7 @@ import {
   Header,
   MarkdownBody,
   MetaRow,
+  RedundantInfoCard,
   Title,
   Toolbar,
 } from './styles'
@@ -143,17 +144,19 @@ export default function PostView({ issue }: PostViewProps) {
       </ArticleCard>
 
       <ImagePreview {...previewProps} />
-      <Alert
-        title='文档冗余信息'
-        summary='本文信息来自 GitHub Issues，同步展示更新时间、来源与项目归属。'
-        updatedAt={updatedAt}
-        sourceLink={sourceLink}
-        projectLink={projectLink}
-        labels={alertLabels}
-        copyright={COPYRIGHT_TEXT}
-        shareItems={shareItems}
-        shareLabel='分享到'
-      />
+      <RedundantInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
+        <Alert
+          framed={false}
+          showHeader={false}
+          updatedAt={updatedAt}
+          sourceLink={sourceLink}
+          projectLink={projectLink}
+          labels={alertLabels}
+          copyright={COPYRIGHT_TEXT}
+          shareItems={shareItems}
+          shareLabel='分享到'
+        />
+      </RedundantInfoCard>
 
       <Toolbar>
         <Link href='/'>返回首页</Link>
