@@ -23,6 +23,11 @@ type Issue = {
   body: string
 }
 
+type AdjacentIssue = {
+  number: number
+  title: string
+}
+
 async function getIssue(num: string): Promise<Issue | null> {
   try {
     const res = await fetch(`https://api.github.com/repos/stack-wuh/blog/issues/${num}`, {
@@ -56,10 +61,39 @@ async function renderMarkdown(text: string): Promise<string> {
   }
 }
 
+async function getAdjacentIssue(issueNumber: number, offset: -1 | 1): Promise<AdjacentIssue | null> {
+  const adjacentNumber = issueNumber + offset
+  if (adjacentNumber <= 0) return null
+
+  try {
+    const res = await fetch(`https://api.github.com/repos/stack-wuh/blog/issues/${adjacentNumber}`, {
+      headers: { 'Accept': 'application/vnd.github+json' },
+      next: { revalidate: 1800 }
+    })
+    if (!res.ok) return null
+
+    const data = (await res.json()) as AdjacentIssue & { pull_request?: object }
+    if (data.pull_request) return null
+
+    return {
+      number: data.number,
+      title: data.title,
+    }
+  } catch {
+    return null
+  }
+}
+
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
   const { number } = await params
   const issue = await getIssue(number)
-  if (!issue) return <PostView issue={null} />
-  const body_html = await renderMarkdown(issue.body || '')
-  return <PostView issue={{ ...issue, body_html }} />
+  if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />
+
+  const [body_html, prevIssue, nextIssue] = await Promise.all([
+    renderMarkdown(issue.body || ''),
+    getAdjacentIssue(issue.number, -1),
+    getAdjacentIssue(issue.number, 1)
+  ])
+
+  return <PostView issue={{ ...issue, body_html }} prevIssue={prevIssue} nextIssue={nextIssue} />
 }
