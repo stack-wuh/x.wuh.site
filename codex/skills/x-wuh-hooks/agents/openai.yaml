@@ -1,0 +1,4 @@
+interface:
+  display_name: "x.wuh.site Hooks"
+  short_description: "Use local hooks for dialog, preview, and theme tokens."
+  default_prompt: "Use $x-wuh-hooks to implement state logic with packages/hooks in this repository."
