@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | Alert | `packages/components/alert/index.tsx` | Reusable post metadata panel with variant styles, update/source/project links, clickable labels and embedded share actions. |
 | Button | `packages/components/button/index.tsx` | Material-like variants (`filled/outlined/text`), link mode via `href`, legacy `type` mapping to color, tokenized sizing/colors. |
+| Card | `packages/components/card/index.tsx` | Material-like surface component with `elevation`/`variant` controls and compound slots: `Card.Header`, `Card.Content`, `Card.Actions`. |
 | Dialog | `packages/components/dialog/index.tsx` | Controlled modal with ESC/overlay close, body scroll lock, optional fullscreen, footer render function. Works well with `useDialog`. |
 | Flex (+ presets) | `packages/components/flex/index.tsx` | Token-aware spacing parser and many preset wrappers (`Row`, `Column`, `Center`, `SpaceBetween`, etc.). |
 | Image | `packages/components/image/index.tsx` | Wrapper around `next/image` with skeleton/error fallback/ratio/caption/overlay and appearance modes. |
@@ -19,7 +20,6 @@
 ## Placeholder or empty implementations (implement before use)
 
 - `packages/components/audio-player/index.tsx`
-- `packages/components/card/index.tsx`
 - `packages/components/col/index.tsx`
 - `packages/components/config-provider/index.tsx`
 - `packages/components/divider/index.tsx`
@@ -52,6 +52,7 @@ Use this setup pattern in app roots (already used in `packages/wuh.site.next/app
 ## Usage references
 
 - Button API: `packages/components/button/readme.md`
+- Card API: `packages/components/card/readme.md`
 - Dialog API: `packages/components/dialog/README.md`
 - Image API: `packages/components/image/readme.md`
 - ImagePreview API: `packages/components/image-preview/README.md`
