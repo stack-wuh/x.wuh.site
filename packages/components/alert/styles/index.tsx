@@ -34,24 +34,55 @@ const withVariant = (variant: AlertVariant) => {
   `
 }
 
-export const AlertContainer = styled.section<{ $variant: AlertVariant }>`
+export const AlertContainer = styled.section<{ $variant: AlertVariant; $framed: boolean }>`
   ${({ $variant }) => withVariant($variant)}
-  margin-top: var(--space-xl);
-  border: 1px solid var(--alert-border);
-  border-left: 4px solid var(--alert-accent);
-  background: linear-gradient(135deg, var(--alert-surface), transparent 60%), var(--background-100);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: var(--elevation-soft);
+  ${({ $framed }) => ($framed
+    ? css`
+        margin-top: var(--space-md);
+        border: 1px solid var(--alert-border);
+        border-radius: 12px;
+        padding: 14px;
+        background: linear-gradient(120deg, var(--alert-surface), transparent 60%), var(--background-100);
+        box-shadow: var(--elevation-soft);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 0 0 auto 0;
+          height: 3px;
+          background: var(--alert-accent);
+          opacity: 0.85;
+        }
+      `
+    : css`
+        margin-top: 0;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+      `)}
   color: var(--text-primary);
 
   @media (prefers-color-scheme: dark) {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 55%), var(--normal-800);
-    border-color: color-mix(in oklab, var(--alert-border) 75%, var(--normal-500) 25%);
+    ${({ $framed }) => ($framed
+      ? css`
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 55%), var(--background-100);
+          border-color: color-mix(in oklab, var(--alert-border) 75%, var(--normal-500) 25%);
+        `
+      : css`
+          background: transparent;
+        `)}
   }
 
   @media (max-width: 640px) {
-    padding: 16px;
+    ${({ $framed }) => ($framed
+      ? css`
+          padding: 12px;
+        `
+      : null)}
   }
 `
 
@@ -65,18 +96,18 @@ export const Head = styled.div`
 export const HeadContent = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
 `
 
 export const IconBadge = styled.span`
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   background: color-mix(in oklab, var(--alert-accent) 16%, transparent);
   color: var(--alert-accent);
   flex: 0 0 auto;
@@ -91,13 +122,14 @@ export const TitleWrap = styled.div`
 export const Title = styled.h2`
   margin: 0;
   font-size: var(--font-size-lg);
-  line-height: 1.35;
+  line-height: 1.3;
   letter-spacing: -0.01em;
 `
 
 export const Summary = styled.p`
   margin: 0;
   font-size: var(--font-size-sm);
+  line-height: 1.65;
   color: var(--text-secondary);
 `
 
@@ -122,69 +154,121 @@ export const CloseButton = styled.button`
 `
 
 export const MetaGrid = styled.dl`
-  margin: var(--space-md) 0 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  margin: var(--space-sm) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
 
-  @media (max-width: 860px) {
-    grid-template-columns: 1fr;
+export const MetaLabelIcon = styled.span`
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--alert-accent);
+  background: color-mix(in oklab, var(--alert-accent) 14%, transparent);
+  flex: 0 0 auto;
+  transition: transform 0.5s ease;
+
+  svg {
+    width: 11px;
+    height: 11px;
   }
 `
 
 export const MetaItem = styled.div`
   margin: 0;
-  padding: 10px 12px;
-  border: 1px solid var(--normal-300);
-  background: color-mix(in oklab, var(--background-100) 85%, var(--alert-surface) 15%);
-  border-radius: 10px;
+  padding: 8px 10px;
+  border: none;
+  background: color-mix(in oklab, var(--background-100) 88%, var(--alert-surface) 12%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+
+  &:hover ${MetaLabelIcon} {
+    transform: rotate(1turn);
+  }
 `
 
 export const MetaLabel = styled.dt`
   margin: 0;
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
 `
 
 export const MetaValue = styled.dd`
-  margin: 4px 0 0;
+  margin: 0;
   font-size: var(--font-size-sm);
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 auto;
 `
 
 export const MetaLink = styled.a`
-  margin: 4px 0 0;
+  margin: 0;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: var(--font-size-sm);
   line-height: 1.5;
   color: var(--primary-color);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-decoration: underline;
   text-decoration-thickness: 0.08em;
   text-underline-offset: 3px;
+  min-width: 0;
+  flex: 1 1 auto;
 
   &:hover {
     text-decoration-thickness: 0.12em;
   }
 `
 
-export const LabelSection = styled.div`
-  margin-top: var(--space-md);
-`
-
-export const LabelList = styled.div`
-  margin-top: 8px;
+export const LabelList = styled.dd`
+  margin: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--normal-400) 75%, transparent);
+    border-radius: 999px;
+  }
 `
 
 export const LabelLink = styled.a`
   display: inline-flex;
   text-decoration: none;
   border-radius: 999px;
+  flex: 0 0 auto;
 
   &:focus-visible {
     outline: 2px solid var(--primary-color);
@@ -192,19 +276,26 @@ export const LabelLink = styled.a`
   }
 `
 
-export const Copyright = styled.p`
-  margin: var(--space-md) 0 0;
-  font-size: var(--font-size-xs);
-  line-height: 1.6;
-  color: var(--text-muted);
-`
-
 export const ShareWrap = styled.div`
   margin-top: var(--space-sm);
 
   > div {
-    margin-top: 0;
-    padding: 16px 0 0;
-    border-top-style: dashed;
+    margin-top: 0 !important;
+    padding: 0 !important;
+    border-top: none !important;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  button {
+    background: transparent !important;
+    border-color: var(--normal-300) !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    button {
+      background: transparent !important;
+      border-color: var(--normal-500) !important;
+    }
   }
 `

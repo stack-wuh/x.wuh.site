@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import Alert, { type AlertLabel, type AlertLink, type ShareItem } from '@wuh.site/components/alert'
+import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
+import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
 
 import {
   ArticleCard,
@@ -11,6 +12,9 @@ import {
   Header,
   MarkdownBody,
   MetaRow,
+  RedundantInfoCard,
+  ShareCardInner,
+  ShareInfoCard,
   Title,
   Toolbar,
 } from './styles'
@@ -42,6 +46,28 @@ const toGithubWebUrl = (repositoryUrl?: string | null) => {
   return repositoryUrl
 }
 
+const toGithubIssuePathLabel = (url: string) => {
+  try {
+    const parsed = new URL(url)
+    if (!parsed.hostname.includes('github.com')) return url
+    const path = `${parsed.pathname}${parsed.search}${parsed.hash}`
+    return path || url
+  } catch {
+    const normalized = url.replace(/^https?:\/\/github\.com/i, '')
+    if (!normalized) return url
+    return normalized.startsWith('/') ? normalized : `/${normalized}`
+  }
+}
+
+const resolveUpdatedBy = (issue: Issue) => {
+  const login = issue.user?.login?.trim()
+  const userName = issue.user?.userName?.trim() || login || 'github.userName'
+  return {
+    userName,
+    userHomePage: login ? `https://github.com/${login}` : undefined,
+  }
+}
+
 const createProjectLink = (issue: Issue): AlertLink => {
   const href = toGithubWebUrl(issue.repository_url).replace(/\/+$/, '')
   const repoName = href.replace('https://github.com/', '')
@@ -52,7 +78,7 @@ const createProjectLink = (issue: Issue): AlertLink => {
 }
 
 const createSourceLink = (issue: Issue): AlertLink => ({
-  label: `Issue #${issue.number}`,
+  label: toGithubIssuePathLabel(issue.html_url),
   href: issue.html_url,
 })
 
@@ -122,6 +148,7 @@ export default function PostView({ issue }: PostViewProps) {
 
   const date = new Date(issue.created_at).toLocaleDateString()
   const updatedAt = issue.updated_at ?? issue.created_at
+  const { userName: updatedBy, userHomePage } = resolveUpdatedBy(issue)
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
   const alertLabels = createAlertLabels(issue)
@@ -143,17 +170,24 @@ export default function PostView({ issue }: PostViewProps) {
       </ArticleCard>
 
       <ImagePreview {...previewProps} />
-      <Alert
-        title='文档冗余信息'
-        summary='本文信息来自 GitHub Issues，同步展示更新时间、来源与项目归属。'
-        updatedAt={updatedAt}
-        sourceLink={sourceLink}
-        projectLink={projectLink}
-        labels={alertLabels}
-        copyright={COPYRIGHT_TEXT}
-        shareItems={shareItems}
-        shareLabel='分享到'
-      />
+      <RedundantInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
+        <Alert
+          framed={false}
+          showHeader={false}
+          updatedAt={updatedAt}
+          updatedBy={updatedBy}
+          updatedByLink={userHomePage}
+          sourceLink={sourceLink}
+          projectLink={projectLink}
+          labels={alertLabels}
+          license={COPYRIGHT_TEXT}
+        />
+      </RedundantInfoCard>
+      <ShareInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
+        <ShareCardInner>
+          <SharedLinkGroup items={shareItems} label='' />
+        </ShareCardInner>
+      </ShareInfoCard>
 
       <Toolbar>
         <Link href='/'>返回首页</Link>

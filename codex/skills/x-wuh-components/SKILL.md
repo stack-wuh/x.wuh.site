@@ -21,6 +21,7 @@ description: Implement and refactor UI in x.wuh.site with the local base compone
 
 ## Extension strategy
 - Extend existing implemented components directly when the requested behavior belongs to that component's scope.
+- For `Alert`, prefer metadata-row composition (`label: value`) and keep backward compatibility by layering new props (for example `updatedBy`, `license`) over old ones.
 - If the request targets a placeholder component folder, implement it in that folder instead of adding a one-off component elsewhere.
 - Update the corresponding `readme.md` or `README.md` when API surface changes.
 

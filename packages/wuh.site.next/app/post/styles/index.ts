@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Card from '@wuh.site/components/card'
 
 export const Container = styled.div`
   max-width: 860px;
@@ -50,6 +51,47 @@ export const ArticleCard = styled.section`
     background: var(--normal-800);
     border-color: var(--normal-600);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  }
+`
+
+export const RedundantInfoCard = styled(Card)`
+  margin-top: var(--space-md);
+  width: 100%;
+  border-radius: 12px;
+  border-color: color-mix(in oklab, var(--primary-color) 12%, var(--normal-300) 88%);
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--primary-color) 7%, transparent), transparent 52%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--background-100) 97%, var(--primary-color) 3%),
+      var(--background-100)
+    );
+  box-shadow: none;
+`
+
+export const ShareInfoCard = styled(RedundantInfoCard)`
+  margin-top: var(--space-sm);
+`
+
+export const ShareCardInner = styled.div`
+  > div {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    border-top: none !important;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  button {
+    background: transparent !important;
+    border-color: var(--normal-300) !important;
+    border-radius: 4px !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    button {
+      border-color: var(--normal-500) !important;
+    }
   }
 `
 
