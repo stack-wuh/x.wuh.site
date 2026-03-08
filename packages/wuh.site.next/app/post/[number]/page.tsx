@@ -15,6 +15,10 @@ type Issue = {
   comments: number
   created_at: string
   updated_at?: string
+  user?: {
+    login?: string | null
+    userName?: string | null
+  } | null
   labels: { name: string; color?: string | null; url?: string }[]
   body: string
 }

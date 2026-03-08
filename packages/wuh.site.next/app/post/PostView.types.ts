@@ -4,6 +4,11 @@ export type IssueLabel = {
   url?: string
 }
 
+export type IssueUser = {
+  login?: string | null
+  userName?: string | null
+}
+
 export type Issue = {
   id: number
   number: number
@@ -13,6 +18,7 @@ export type Issue = {
   comments: number
   created_at: string
   updated_at?: string
+  user?: IssueUser | null
   labels: IssueLabel[]
   body?: string
   body_html?: string

@@ -69,6 +69,32 @@ export const RedundantInfoCard = styled(Card)`
   box-shadow: none;
 `
 
+export const ShareInfoCard = styled(RedundantInfoCard)`
+  margin-top: var(--space-sm);
+`
+
+export const ShareCardInner = styled.div`
+  > div {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    border-top: none !important;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  button {
+    background: transparent !important;
+    border-color: var(--normal-300) !important;
+    border-radius: 4px !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    button {
+      border-color: var(--normal-500) !important;
+    }
+  }
+`
+
 export const MarkdownBody = styled.article`
   --github-border: rgba(208, 215, 222, 0.8);
   --github-muted: #57606a;

@@ -4,7 +4,7 @@
 
 | Component | Path | Notes |
 | --- | --- | --- |
-| Alert | `packages/components/alert/index.tsx` | Reusable post metadata panel with variant styles, update/source/project links, clickable labels and embedded share actions. |
+| Alert | `packages/components/alert/index.tsx` | Reusable post metadata panel with `label: value` rows (icon hover spin), supports `updatedBy` + second-level timestamp, path-style source label, license row, clickable labels and optional embedded share actions. |
 | Button | `packages/components/button/index.tsx` | Material-like variants (`filled/outlined/text`), link mode via `href`, legacy `type` mapping to color, tokenized sizing/colors. |
 | Card | `packages/components/card/index.tsx` | Material-like surface component with `elevation`/`variant` controls and compound slots: `Card.Header`, `Card.Content`, `Card.Actions`. |
 | Dialog | `packages/components/dialog/index.tsx` | Controlled modal with ESC/overlay close, body scroll lock, optional fullscreen, footer render function. Works well with `useDialog`. |
