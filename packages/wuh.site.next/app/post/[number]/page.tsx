@@ -11,9 +11,11 @@ type Issue = {
   number: number
   title: string
   html_url: string
+  repository_url?: string | null
   comments: number
   created_at: string
-  labels: { name: string; color?: string | null }[]
+  updated_at?: string
+  labels: { name: string; color?: string | null; url?: string }[]
   body: string
 }
 

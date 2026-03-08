@@ -4,6 +4,7 @@
 
 | Component | Path | Notes |
 | --- | --- | --- |
+| Alert | `packages/components/alert/index.tsx` | Reusable post metadata panel with variant styles, update/source/project links, clickable labels and embedded share actions. |
 | Button | `packages/components/button/index.tsx` | Material-like variants (`filled/outlined/text`), link mode via `href`, legacy `type` mapping to color, tokenized sizing/colors. |
 | Dialog | `packages/components/dialog/index.tsx` | Controlled modal with ESC/overlay close, body scroll lock, optional fullscreen, footer render function. Works well with `useDialog`. |
 | Flex (+ presets) | `packages/components/flex/index.tsx` | Token-aware spacing parser and many preset wrappers (`Row`, `Column`, `Center`, `SpaceBetween`, etc.). |
@@ -56,5 +57,6 @@ Use this setup pattern in app roots (already used in `packages/wuh.site.next/app
 - ImagePreview API: `packages/components/image-preview/README.md`
 - LinkGroup API: `packages/components/link-group/readme.md`
 - SharedLinkGroup API: `packages/components/shared-link-group/readme.md`
+- Alert API: `packages/components/alert/readme.md`
 - Tag API: `packages/components/tag/README.md`
 - Theme notes: `packages/components/themes/README.md`

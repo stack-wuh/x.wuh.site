@@ -1,9 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import Alert, { type AlertLabel, type AlertLink, type ShareItem } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
-import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
-import Tag from '@wuh.site/components/tag'
 
 import {
   ArticleCard,
@@ -12,12 +11,14 @@ import {
   Header,
   MarkdownBody,
   MetaRow,
-  TagGroup,
   Title,
   Toolbar,
 } from './styles'
 import { type Issue, type PostViewProps } from './PostView.types'
 import { usePostImagePreview } from './usePostImagePreview'
+
+const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
+const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'
 
 const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
@@ -27,6 +28,40 @@ const copyToClipboard = async (text: string): Promise<boolean> => {
     return false
   }
 }
+
+const createLabelHref = (labelName: string) => {
+  const query = encodeURIComponent(`is:issue label:"${labelName}"`)
+  return `${BLOG_PROJECT_URL}/issues?q=${query}`
+}
+
+const toGithubWebUrl = (repositoryUrl?: string | null) => {
+  if (!repositoryUrl) return BLOG_PROJECT_URL
+  if (repositoryUrl.startsWith('https://api.github.com/repos/')) {
+    return repositoryUrl.replace('https://api.github.com/repos/', 'https://github.com/')
+  }
+  return repositoryUrl
+}
+
+const createProjectLink = (issue: Issue): AlertLink => {
+  const href = toGithubWebUrl(issue.repository_url).replace(/\/+$/, '')
+  const repoName = href.replace('https://github.com/', '')
+  return {
+    label: repoName || 'stack-wuh/blog',
+    href,
+  }
+}
+
+const createSourceLink = (issue: Issue): AlertLink => ({
+  label: `Issue #${issue.number}`,
+  href: issue.html_url,
+})
+
+const createAlertLabels = (issue: Issue): AlertLabel[] =>
+  issue.labels.map((label) => ({
+    name: label.name,
+    color: label.color,
+    href: createLabelHref(label.name),
+  }))
 
 const createShareItems = (issue: Issue): ShareItem[] => [
   {
@@ -86,6 +121,10 @@ export default function PostView({ issue }: PostViewProps) {
   }
 
   const date = new Date(issue.created_at).toLocaleDateString()
+  const updatedAt = issue.updated_at ?? issue.created_at
+  const sourceLink = createSourceLink(issue)
+  const projectLink = createProjectLink(issue)
+  const alertLabels = createAlertLabels(issue)
   const shareItems = createShareItems(issue)
 
   return (
@@ -96,13 +135,6 @@ export default function PostView({ issue }: PostViewProps) {
           <span>发布于 {date}</span>
           <span>·</span>
           <span>评论 {issue.comments}</span>
-          {issue.labels?.length ? (
-            <TagGroup>
-              {issue.labels.slice(0, 4).map((label) => (
-                <Tag key={`${issue.id}-${label.name}`} label={label.name} color={label.color} />
-              ))}
-            </TagGroup>
-          ) : null}
         </MetaRow>
       </Header>
 
@@ -111,7 +143,17 @@ export default function PostView({ issue }: PostViewProps) {
       </ArticleCard>
 
       <ImagePreview {...previewProps} />
-      <SharedLinkGroup items={shareItems} size='medium' label='分享到' />
+      <Alert
+        title='文档冗余信息'
+        summary='本文信息来自 GitHub Issues，同步展示更新时间、来源与项目归属。'
+        updatedAt={updatedAt}
+        sourceLink={sourceLink}
+        projectLink={projectLink}
+        labels={alertLabels}
+        copyright={COPYRIGHT_TEXT}
+        shareItems={shareItems}
+        shareLabel='分享到'
+      />
 
       <Toolbar>
         <Link href='/'>返回首页</Link>
