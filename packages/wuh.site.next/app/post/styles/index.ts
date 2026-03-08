@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import Card from '@wuh.site/components/card'
+import Empty from '@wuh.site/components/empty'
 
 export const Container = styled.div`
   max-width: 860px;
@@ -455,8 +456,11 @@ export const Toolbar = styled.div`
   }
 `
 
-export const Empty = styled.div`
-  text-align: center;
-  color: var(--text-secondary);
-  padding: 80px 0;
+export const StatusEmpty = styled(Empty)`
+  margin-bottom: var(--space-lg);
+  min-height: 220px;
+`
+
+export const CommentPlaceholder = styled(Empty)`
+  margin-top: var(--space-md);
 `

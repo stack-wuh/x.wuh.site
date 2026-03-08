@@ -7,14 +7,15 @@ import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-lin
 
 import {
   ArticleCard,
+  CommentPlaceholder,
   Container,
-  Empty,
   Header,
   MarkdownBody,
   MetaRow,
   RedundantInfoCard,
   ShareCardInner,
   ShareInfoCard,
+  StatusEmpty,
   Title,
   Toolbar,
 } from './styles'
@@ -165,7 +166,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
   if (!issue) {
     return (
       <Container>
-        <Empty>未找到文章或网络错误</Empty>
+        <StatusEmpty title='未找到文章' description='请检查链接是否正确，或稍后再试。' />
         <Toolbar>
           {renderToolbarAction('prev', null)}
           {renderToolbarAction('next', null)}
@@ -216,6 +217,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
           <SharedLinkGroup items={shareItems} label='' />
         </ShareCardInner>
       </ShareInfoCard>
+      <CommentPlaceholder title='空空如也~' description='评论功能正在开发中，欢迎稍后回来留言交流。' />
 
       <Toolbar>
         {renderToolbarAction('prev', prevIssue)}
