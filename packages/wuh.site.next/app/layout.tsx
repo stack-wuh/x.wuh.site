@@ -3,6 +3,7 @@ import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { useEffect } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
 
 const geistSans = Geist({
@@ -20,6 +21,29 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  useEffect(() => {
+    let previousTitle: string | null = null
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        previousTitle = document.title
+        document.title = 'wuh.site · 月上柳梢头'
+        return
+      }
+
+      if (document.visibilityState === 'visible' && previousTitle) {
+        document.title = previousTitle
+        previousTitle = null
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
   return (
     <ThemeProvider>
       <StyledComponentsRegistry>

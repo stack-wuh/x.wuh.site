@@ -1,9 +1,9 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import PostView from '../PostView'
 
-export const metadata: Metadata = {
+const FALLBACK_METADATA: Metadata = {
   title: '博客详情 · wuh.site',
-  description: '从 GitHub Issues 渲染的博客文章详情'
+  description: '从 GitHub Issues 渲染的博客文章详情',
 }
 
 type Issue = {
@@ -81,6 +81,20 @@ async function getAdjacentIssue(issueNumber: number, offset: -1 | 1): Promise<Ad
     }
   } catch {
     return null
+  }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
+  const { number } = await params
+  const issue = await getIssue(number)
+
+  if (!issue) {
+    return FALLBACK_METADATA
+  }
+
+  return {
+    title: `wuh.site · ${issue.title} · 朝朝如念`,
+    description: FALLBACK_METADATA.description,
   }
 }
 

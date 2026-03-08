@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import HomeView from './HomeView'
 
 export const metadata: Metadata = {
-  title: 'wuh.site · 前端工程师的作品与笔记',
+  title: 'wuh.site · 朝朝如念',
   description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具'
 }
 
