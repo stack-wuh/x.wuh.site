@@ -17,6 +17,7 @@
 | LinkGroup | `packages/components/link-group/index.tsx` | Contact/social icon links with preset icon types and hover/focus animations. |
 | SharedLinkGroup | `packages/components/shared-link-group/index.tsx` | Share action group for article pages, supports link and callback actions. |
 | Tag | `packages/components/tag/index.tsx` | GitHub-like tag chip with hex color normalization and readable foreground auto-selection. |
+| Message | `packages/components/message/index.tsx` | Ant Design style global message with placements, auto-dismiss, close button, and status variants. |
 | Themes | `packages/components/themes/*` | `themeProvider`, `cssVariableProvider`, `registry`, tokens and color generation utilities. |
 | Layout footer/main | `packages/components/layout/*` | Project-specific layout/footer helpers (used in Next app layout). |
 
@@ -27,7 +28,6 @@
 - `packages/components/config-provider/index.tsx`
 - `packages/components/divider/index.tsx`
 - `packages/components/float-button/index.tsx`
-- `packages/components/message/index.tsx`
 - `packages/components/modal/index.tsx`
 - `packages/components/row/index.tsx`
 - `packages/components/space/index.tsx`
