@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import HomeView from './HomeView'
 
 export const metadata: Metadata = {
@@ -18,13 +19,12 @@ type Repo = {
 
 async function getRepos(): Promise<Repo[]> {
   try {
-    const res = await fetch('https://api.github.com/users/stack-wuh/repos', {
+    const res = await fetcher<Repo[]>('https://api.github.com/users/stack-wuh/repos', {
       headers: { 'Accept': 'application/vnd.github+json' },
       next: { revalidate: 3600 }
     })
-    if (!res.ok) return []
-    const data = (await res.json()) as Repo[]
-    return data
+    if (!res.ok || !res.data) return []
+    return res.data
       .filter(r => !r.fork)
       .sort((a, b) => b.stargazers_count - a.stargazers_count)
       .slice(0, 6)
@@ -51,13 +51,12 @@ type Issue = {
 
 async function getFeaturedIssues(): Promise<Issue[]> {
   try {
-    const res = await fetch('https://api.github.com/repos/stack-wuh/blog/issues?per_page=6&state=open&sort=update', {
+    const res = await fetcher<Issue[]>('https://api.github.com/repos/stack-wuh/blog/issues?per_page=6&state=open&sort=update', {
       headers: { 'Accept': 'application/vnd.github+json' },
       next: { revalidate: 1800 }
     })
-    if (!res.ok) return []
-    const data = (await res.json()) as Issue[]
-    return data
+    if (!res.ok || !res.data) return []
+    return res.data
   } catch {
     return []
   }

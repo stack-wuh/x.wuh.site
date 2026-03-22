@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import PostView from '../PostView'
 
 const FALLBACK_METADATA: Metadata = {
@@ -30,13 +31,12 @@ type AdjacentIssue = {
 
 async function getIssue(num: string): Promise<Issue | null> {
   try {
-    const res = await fetch(`https://api.github.com/repos/stack-wuh/blog/issues/${num}`, {
+    const res = await fetcher<Issue>(`https://api.github.com/repos/stack-wuh/blog/issues/${num}`, {
       headers: { 'Accept': 'application/vnd.github+json' },
       next: { revalidate: 1800 }
     })
-    if (!res.ok) return null
-    const data = (await res.json()) as Issue
-    return data
+    if (!res.ok || !res.data) return null
+    return res.data
   } catch {
     return null
   }
@@ -44,18 +44,18 @@ async function getIssue(num: string): Promise<Issue | null> {
 
 async function renderMarkdown(text: string): Promise<string> {
   try {
-    const res = await fetch('https://api.github.com/markdown', {
+    const res = await fetcher<string>('https://api.github.com/markdown', {
       method: 'POST',
       headers: {
         'Accept': 'text/html',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ text, mode: 'gfm' }),
+      parse: 'text',
       next: { revalidate: 1800 }
     })
-    if (!res.ok) return ''
-    const html = await res.text()
-    return html
+    if (!res.ok || res.data == null) return ''
+    return res.data
   } catch {
     return ''
   }
@@ -66,18 +66,19 @@ async function getAdjacentIssue(issueNumber: number, offset: -1 | 1): Promise<Ad
   if (adjacentNumber <= 0) return null
 
   try {
-    const res = await fetch(`https://api.github.com/repos/stack-wuh/blog/issues/${adjacentNumber}`, {
-      headers: { 'Accept': 'application/vnd.github+json' },
-      next: { revalidate: 1800 }
-    })
-    if (!res.ok) return null
-
-    const data = (await res.json()) as AdjacentIssue & { pull_request?: object }
-    if (data.pull_request) return null
+    const res = await fetcher<AdjacentIssue & { pull_request?: object }>(
+      `https://api.github.com/repos/stack-wuh/blog/issues/${adjacentNumber}`,
+      {
+        headers: { 'Accept': 'application/vnd.github+json' },
+        next: { revalidate: 1800 }
+      }
+    )
+    if (!res.ok || !res.data) return null
+    if (res.data.pull_request) return null
 
     return {
-      number: data.number,
-      title: data.title,
+      number: res.data.number,
+      title: res.data.title,
     }
   } catch {
     return null
