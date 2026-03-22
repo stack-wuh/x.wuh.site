@@ -1,6 +1,6 @@
 ---
 name: x-wuh-hooks
-description: Implement and refactor interaction logic in x.wuh.site using the local hooks library in packages/hooks. Use when tasks involve dialog open/close control, image preview index and loop state, token lookup from the theme context, or choosing the correct hook integration pattern with Dialog and ImagePreview components.
+description: Implement and refactor interaction logic in x.wuh.site using the local hooks library in packages/hooks. Use when tasks involve dialog open/close control, image preview index and loop state, token lookup from the theme context, fetch/request encapsulation (useFetch), or choosing the correct hook integration pattern with Dialog and ImagePreview components.
 ---
 
 # x.wuh.site Hooks

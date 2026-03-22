@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | useDialog | `packages/hooks/useDialog/index.ts` | Implemented |
 | useImagePreview | `packages/hooks/useImagePreview/index.ts` | Implemented |
+| useFetch | `packages/hooks/useFetch/index.ts` | Implemented |
 | useTokens | `packages/hooks/useTokens/index.ts` | Implemented |
 | useTheme (dedicated folder) | `packages/hooks/useTheme/index.ts` | Empty placeholder |
 
@@ -84,12 +85,36 @@ Details:
 - Throws if called outside `ThemeProvider`.
 - Exposes `useTheme(): Tokens` and `useTokens(tokenType, token)`.
 
+## useFetch
+
+```ts
+const state = useFetch<DataType>('/api/items', requestOptions, {
+  manual?: boolean,
+  deps?: [],
+})
+```
+
+Returns:
+
+- `data`
+- `error`
+- `loading`
+- `status`
+- `ok`
+- `run(override?)`
+- `reload()`
+- `cancel()`
+- `setData()`
+
+Server Components should use `fetcher` from `@wuh.site/hooks/useFetch/fetcher`.
+
 ## Import conventions
 
 In `packages/wuh.site.next`, prefer tsconfig aliases:
 
 - `@wuh.site/hooks/useDialog`
 - `@wuh.site/hooks/useImagePreview`
+- `@wuh.site/hooks/useFetch`
 - `@wuh.site/hooks/useTokens`
 
 Legacy direct path imports may still exist in docs (for example `@/packages/hooks/...`); keep consistency within edited file.
