@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Card from '@wuh.site/components/card'
 import Empty from '@wuh.site/components/empty'
 
@@ -463,4 +463,165 @@ export const StatusEmpty = styled(Empty)`
 
 export const CommentPlaceholder = styled(Empty)`
   margin-top: var(--space-md);
+`
+
+export const FloatingButtonGroup = styled.div`
+  --float-button-width: 50px;
+  --float-offset: 0px;
+  --float-bottom: var(--space-xl);
+  --float-divider: var(--normal-300);
+
+  position: fixed;
+  right: var(--float-offset);
+  bottom: var(--float-bottom);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  z-index: 20;
+  border: 1px solid var(--normal-300);
+  border-right: 0;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+  overflow: hidden;
+  background: var(--background-100);
+
+  & > * {
+    width: var(--float-button-width);
+  }
+
+  & > * + * {
+    border-top: 1px solid var(--float-divider);
+  }
+
+  @media (max-width: 640px) {
+    --float-offset: 0px;
+    --float-button-width: 50px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--normal-600);
+    border-right-color: transparent;
+    background: color-mix(in oklab, var(--background-200) 75%, var(--normal-900) 25%);
+    --float-divider: var(--normal-600);
+
+    & > * + * {
+      border-top-color: var(--float-divider);
+    }
+  }
+`
+
+const floatingButtonBase = css`
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+  min-width: 50px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+  will-change: transform;
+
+  &:hover {
+    color: var(--primary-color);
+    background: var(--background-200);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
+    transform: translateX(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: transparent;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+
+    &:hover {
+      background: color-mix(in oklab, var(--background-300) 70%, var(--normal-900) 30%);
+    }
+  }
+`
+
+export const FloatingButton = styled.button`
+  ${floatingButtonBase}
+  padding: 0;
+`
+
+export const FloatingProgress = styled.div`
+  ${floatingButtonBase}
+  min-width: 0;
+  padding: 0;
+  font-variant-numeric: tabular-nums;
+  cursor: inherit;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    color: var(--text-primary);
+    background: transparent;
+    transform: none;
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:hover {
+      color: var(--text-primary);
+      background: transparent;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+    }
+  }
+`
+
+export const ProgressValue = styled.span`
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+  transition: color 0.2s ease;
+`
+
+export const ProgressShade = styled.span<{ $percent: number }>`
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary-color) 35%, var(--background-100)) 0%,
+    color-mix(in srgb, var(--primary-color) 55%, var(--background-100)) ${(props) => props.$percent}%,
+    var(--background-100) ${(props) => props.$percent}%,
+    var(--background-100) 100%
+  );
+  transition: background 0.2s ease;
+
+  @media (prefers-color-scheme: dark) {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--primary-color) 28%, var(--background-200)) 0%,
+      color-mix(in srgb, var(--primary-color) 46%, var(--background-200)) ${(props) => props.$percent}%,
+      color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) ${(props) => props.$percent}%,
+      color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) 100%
+    );
+  }
 `
