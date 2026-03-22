@@ -27,7 +27,7 @@ export default function RootLayout({
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         previousTitle = document.title
-        document.title = 'wuh.site · 月上柳梢头'
+        document.title = 'wuh.site · 雾失楼台, 月迷津渡'
         return
       }
 
