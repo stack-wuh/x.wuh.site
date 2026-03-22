@@ -9,6 +9,7 @@
 | Card | `packages/components/card/index.tsx` | Material-like surface component with `elevation`/`variant` controls and compound slots: `Card.Header`, `Card.Content`, `Card.Actions`. |
 | Dialog | `packages/components/dialog/index.tsx` | Controlled modal with ESC/overlay close, body scroll lock, optional fullscreen, footer render function. Works well with `useDialog`. |
 | Empty | `packages/components/empty/index.tsx` | Token-driven empty-state display with default icon, `title/description` API, and `children` fallback for description. |
+| Skeleton | `packages/components/skeleton/index.tsx` | Lightweight skeleton loader with shimmer animation, variants (`text/rect/circle`), and motion-reduction support. |
 | Flex (+ presets) | `packages/components/flex/index.tsx` | Token-aware spacing parser and many preset wrappers (`Row`, `Column`, `Center`, `SpaceBetween`, etc.). |
 | Image | `packages/components/image/index.tsx` | Wrapper around `next/image` with skeleton/error fallback/ratio/caption/overlay and appearance modes. |
 | ImagePreview | `packages/components/image-preview/index.tsx` | Portal-based preview with keyboard, zoom, rotate, drag/swipe, thumbnail rail, fullscreen, download hooks. |
@@ -61,4 +62,5 @@ Use this setup pattern in app roots (already used in `packages/wuh.site.next/app
 - SharedLinkGroup API: `packages/components/shared-link-group/readme.md`
 - Alert API: `packages/components/alert/readme.md`
 - Tag API: `packages/components/tag/README.md`
+- Skeleton API: `packages/components/skeleton/readme.md`
 - Theme notes: `packages/components/themes/README.md`

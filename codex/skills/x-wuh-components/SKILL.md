@@ -1,6 +1,6 @@
 ---
 name: x-wuh-components
-description: Implement and refactor UI in x.wuh.site with the local base component library in packages/components. Use when tasks involve selecting or updating components, wiring styled-components theme providers and CSS variables, extending existing primitives (Alert, Button, Card, Dialog, Empty, Image, ImagePreview, LinkGroup, SharedLinkGroup, Tag, Flex), or deciding whether a placeholder component folder must be implemented first.
+description: Implement and refactor UI in x.wuh.site with the local base component library in packages/components. Use when tasks involve selecting or updating components, wiring styled-components theme providers and CSS variables, extending existing primitives (Alert, Button, Card, Dialog, Empty, Image, ImagePreview, LinkGroup, SharedLinkGroup, Tag, Flex, Skeleton), or deciding whether a placeholder component folder must be implemented first.
 ---
 
 # x.wuh.site Components

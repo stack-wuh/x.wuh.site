@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import BlogListView from './BlogListView'
 
 export const metadata: Metadata = {
-  title: '博客列表 · wuh.site',
+  title: 'wuh.site · 悟已往之不谏',
   description: '收录 GitHub Issues 中的全部博客文章'
 }
 
