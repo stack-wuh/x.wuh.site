@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
@@ -171,6 +171,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
   const [scrollPercent, setScrollPercent] = useState(0)
   const [floatSide, setFloatSide] = useState<'left' | 'right'>('right')
   const [floatTop, setFloatTop] = useState(0)
+  const [floatLeft, setFloatLeft] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const floatGroupRef = useRef<HTMLDivElement>(null)
   const dragStateRef = useRef({
@@ -178,9 +179,11 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
     startX: 0,
     startY: 0,
     offsetY: 0,
+    offsetX: 0,
     moved: false,
   })
   const clampTopRef = useRef<(value: number) => number>(() => 0)
+  const clampLeftRef = useRef<(value: number) => number>(() => 0)
   const suppressClickRef = useRef(false)
 
   useEffect(() => {
@@ -233,18 +236,28 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
       return Math.min(maxTop, Math.max(spaceLg, value))
     }
 
+    const clampLeft = (value: number) => {
+      const spaceLg = resolveSpaceLg()
+      const groupWidth = floatGroupRef.current?.offsetWidth ?? 0
+      const maxLeft = Math.max(spaceLg, window.innerWidth - groupWidth - spaceLg)
+      return Math.min(maxLeft, Math.max(spaceLg, value))
+    }
+
     clampTopRef.current = clampTop
+    clampLeftRef.current = clampLeft
 
     const updateInitialTop = () => {
       const spaceLg = resolveSpaceLg()
       const groupHeight = floatGroupRef.current?.offsetHeight ?? 0
       const maxTop = Math.max(spaceLg, window.innerHeight - groupHeight - spaceLg)
       setFloatTop(maxTop)
+      setFloatLeft(Math.max(spaceLg, window.innerWidth - (floatGroupRef.current?.offsetWidth ?? 0) - spaceLg))
     }
 
     updateInitialTop()
     const handleResize = () => {
       setFloatTop((current) => clampTop(current))
+      setFloatLeft((current) => clampLeft(current))
     }
 
     window.addEventListener('resize', handleResize)
@@ -253,7 +266,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
     }
   }, [])
 
-  const handleGroupPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handleGroupPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
     const group = floatGroupRef.current
     if (!group) return
@@ -264,15 +277,14 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
       startX: event.clientX,
       startY: event.clientY,
       offsetY: event.clientY - rect.top,
+      offsetX: event.clientX - rect.left,
       moved: false,
     }
     suppressClickRef.current = false
-    setIsDragging(true)
-    group.setPointerCapture(event.pointerId)
-    event.preventDefault()
+    setIsDragging(false)
   }
 
-  const handleGroupPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handleGroupPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!isDragging) return
     if (event.pointerId !== dragStateRef.current.pointerId) return
 
@@ -281,15 +293,25 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
     if (!dragStateRef.current.moved && Math.hypot(deltaX, deltaY) > 4) {
       dragStateRef.current.moved = true
       suppressClickRef.current = true
+      setIsDragging(true)
+      floatGroupRef.current?.setPointerCapture(event.pointerId)
     }
 
+    if (!dragStateRef.current.moved) return
+
     const nextTop = event.clientY - dragStateRef.current.offsetY
+    const nextLeft = event.clientX - dragStateRef.current.offsetX
     setFloatTop(clampTopRef.current(nextTop))
+    setFloatLeft(clampLeftRef.current(nextLeft))
   }
 
-  const handleGroupPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handleGroupPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerId !== dragStateRef.current.pointerId) return
-    event.currentTarget.releasePointerCapture(event.pointerId)
+    if (dragStateRef.current.moved) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      } catch {}
+    }
     setIsDragging(false)
     dragStateRef.current.pointerId = -1
 
@@ -302,9 +324,13 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
     }
   }
 
-  const handleGroupPointerCancel = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handleGroupPointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerId !== dragStateRef.current.pointerId) return
-    event.currentTarget.releasePointerCapture(event.pointerId)
+    if (dragStateRef.current.moved) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      } catch {}
+    }
     setIsDragging(false)
     dragStateRef.current.pointerId = -1
     suppressClickRef.current = false
@@ -377,6 +403,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
         ref={floatGroupRef}
         $side={floatSide}
         $top={floatTop}
+        $left={floatLeft}
         $dragging={isDragging}
         onPointerDown={handleGroupPointerDown}
         onPointerMove={handleGroupPointerMove}

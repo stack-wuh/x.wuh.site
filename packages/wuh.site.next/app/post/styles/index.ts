@@ -465,58 +465,58 @@ export const CommentPlaceholder = styled(Empty)`
   margin-top: var(--space-md);
 `
 
-export const FloatingButtonGroup = styled.div<{
-  $side: 'left' | 'right'
-  $top: number
-  $dragging: boolean
-}>`
-  --float-button-width: 56px;
-  --float-offset: 32px;
+export const FloatingButtonGroup = styled.div`
+  --float-button-width: 50px;
+  --float-offset: 0px;
+  --float-bottom: var(--space-xl);
+  --float-divider: var(--normal-300);
 
   position: fixed;
-  top: ${(props) => `${props.$top}px`};
-  ${(props) => (props.$side === 'right' ? 'right' : 'left')}: var(--float-offset);
+  right: var(--float-offset);
+  bottom: var(--float-bottom);
   display: flex;
   flex-direction: column;
   gap: 0;
   z-index: 20;
-  cursor: ${(props) => (props.$dragging ? 'grabbing' : 'grab')};
-  user-select: ${(props) => (props.$dragging ? 'none' : 'auto')};
-  touch-action: none;
+  border: 1px solid var(--normal-300);
+  border-right: 0;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+  overflow: hidden;
+  background: var(--background-100);
 
   & > * {
     width: var(--float-button-width);
-    border-radius: 0;
   }
 
   & > * + * {
-    margin-top: -1px;
-  }
-
-  & > *:first-child {
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
-  }
-
-  & > *:last-child {
-    border-bottom-left-radius: 14px;
-    border-bottom-right-radius: 14px;
+    border-top: 1px solid var(--float-divider);
   }
 
   @media (max-width: 640px) {
-    --float-offset: 16px;
-    --float-button-width: 52px;
+    --float-offset: 0px;
+    --float-button-width: 50px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--normal-600);
+    border-right-color: transparent;
+    background: color-mix(in oklab, var(--background-200) 75%, var(--normal-900) 25%);
+    --float-divider: var(--normal-600);
+
+    & > * + * {
+      border-top-color: var(--float-divider);
+    }
   }
 `
 
 const floatingButtonBase = css`
-  border: 1px solid var(--normal-300);
-  background: var(--background-100);
+  border: none;
+  background: transparent;
   color: var(--text-primary);
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-  border-radius: 14px;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 50px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -525,15 +525,18 @@ const floatingButtonBase = css`
   font-size: 13px;
   cursor: pointer;
   transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+  will-change: transform;
 
   &:hover {
-    border-color: var(--primary-color);
     color: var(--primary-color);
+    background: var(--background-200);
     box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
+    transform: translateX(-2px);
   }
 
   &:focus-visible {
@@ -552,9 +555,12 @@ const floatingButtonBase = css`
   }
 
   @media (prefers-color-scheme: dark) {
-    border-color: var(--normal-600);
-    background: color-mix(in oklab, var(--background-200) 75%, var(--normal-900) 25%);
+    background: transparent;
     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+
+    &:hover {
+      background: color-mix(in oklab, var(--background-300) 70%, var(--normal-900) 30%);
+    }
   }
 `
 
@@ -573,16 +579,16 @@ export const FloatingProgress = styled.div`
   overflow: hidden;
 
   &:hover {
-    border-color: var(--normal-300);
     color: var(--text-primary);
+    background: transparent;
     transform: none;
     box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
   }
 
   @media (prefers-color-scheme: dark) {
     &:hover {
-      border-color: var(--normal-600);
       color: var(--text-primary);
+      background: transparent;
       box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
     }
   }
