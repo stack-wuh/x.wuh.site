@@ -1,5 +1,6 @@
 'use client'
 import styled from 'styled-components'
+import Link from 'next/link'
 import Button from '@wuh.site/components/button'
 import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
@@ -235,7 +236,7 @@ const HeaderRow = styled.div`
   align-items: center;
 `
 
-const MoreLink = styled.a`
+const MoreLink = styled(Link)`
   font-size: var(--font-size-sm);
   color: var(--primary-color);
   text-decoration: none;
@@ -285,7 +286,7 @@ export default function HomeView({ repos, posts }: Props) {
         <Section>
           <HeaderRow>
             <h2>精选博客</h2>
-            <MoreLink href='https://github.com/stack-wuh/blog/issues' target='_blank' rel='noopener noreferrer'>更多</MoreLink>
+            <MoreLink href='/blog'>全部博客</MoreLink>
           </HeaderRow>
           <Grid>
             {posts.length === 0 && <Empty>暂时无法获取 Issues 数据</Empty>}
