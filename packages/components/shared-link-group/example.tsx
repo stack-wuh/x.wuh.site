@@ -1,3 +1,4 @@
+import message from '../message'
 import SharedLinkGroup from './index'
 
 // 示例 1: 基础使用
@@ -13,8 +14,8 @@ export const Example1 = () => {
       title: '复制链接',
       onClick: () => {
         navigator.clipboard.writeText(window.location.href)
-          .then(() => alert('链接已复制'))
-          .catch(() => alert('复制失败'))
+          .then(() => message.success('链接已复制'))
+          .catch(() => message.error('复制失败'))
       }
     }
   ]
@@ -66,9 +67,9 @@ export const ArticleShareExample = ({ title, url }: { title: string; url: string
       onClick: async () => {
         try {
           await navigator.clipboard.writeText(url)
-          alert('链接已复制到剪贴板')
+          message.success('链接已复制到剪贴板')
         } catch {
-          alert('复制失败，请手动复制')
+          message.error('复制失败，请手动复制')
         }
       }
     }

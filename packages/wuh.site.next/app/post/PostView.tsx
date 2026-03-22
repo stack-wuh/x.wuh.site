@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import message from '@wuh.site/components/message'
 import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
@@ -129,9 +130,9 @@ const createShareItems = (issue: Issue): ShareItem[] => [
     onClick: async () => {
       const success = await copyToClipboard(issue.html_url)
       if (success) {
-        alert('链接已复制到剪贴板')
+        message.success('链接已复制到剪贴板')
       } else {
-        alert('复制失败，请手动复制')
+        message.error('复制失败，请手动复制')
       }
     },
   },
@@ -449,7 +450,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
           title='点赞（开发中）'
           onClick={() => {
             if (suppressClickRef.current) return
-            alert('点赞功能正在开发中')
+            message.info('点赞功能正在开发中')
           }}
         >
           <svg viewBox='0 0 24 24' focusable='false' aria-hidden='true'>
