@@ -4,7 +4,7 @@
 - **目标与范围 / Goals**
   - 必须完成：
     1. 新增可复用骨架屏公共组件，用于页面切换 Loading 过渡。
-    2. 接入博客详情页 loading（`packages/wuh.site.next/app/post/[number]/loading.tsx`）。
+    2. 接入博客详情页与博客列表页 loading（`packages/wuh.site.next/app/post/[number]/loading.tsx`、`packages/wuh.site.next/app/blog/loading.tsx`）。
   - 可选增强：无
   - 不在范围：数据层优化、全站统一 loading 管理
 - **交互与设计 / UX**：GitHub 风格灰阶骨架（标题条 + 段落条 + 图文块）；轻微 shimmer 动效；遵循 `prefers-reduced-motion`
@@ -13,7 +13,7 @@
 - **状态与权限 / State & Auth**：无权限逻辑
 - **可观测性 / Observability**：无新增埋点
 - **开发步骤建议 / Execution Order**：实现 Skeleton 组件 → 接入 loading → 文档同步
-- **交付物 / Deliverables**：`packages/components/skeleton/index.tsx`、`packages/components/skeleton/readme.md`、`packages/wuh.site.next/app/post/[number]/loading.tsx`
+- **交付物 / Deliverables**：`packages/components/skeleton/index.tsx`、`packages/components/skeleton/readme.md`、`packages/wuh.site.next/app/post/[number]/loading.tsx`、`packages/wuh.site.next/app/blog/loading.tsx`
 - **校验标准 / Validation**：页面切换展示骨架；动效可见；`prefers-reduced-motion` 下无动画
 - **验证策略 / Verification Strategy**：子任务增量验证（访问博客详情页触发 loading）→ 合并回归（切换页面）→ 最终命令按项目现有脚本
 - **止损与升级 / Stop-Loss**：同一阻塞最多重试 2 次；阻塞时输出替代实现并等待确认
