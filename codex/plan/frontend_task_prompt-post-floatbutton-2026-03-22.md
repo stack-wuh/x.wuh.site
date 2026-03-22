@@ -1,0 +1,60 @@
+- **计划文档 / Plan Doc**：`codex/plan/frontend_task_prompt-post-floatbutton-2026-03-22.md`
+- **任务分级与预算 / Sizing & Budget**：`S` 级任务；预计 0.5 天内；子任务数 2；首轮读取不超过 15 个文件或 1500 行；超预算条件：需新增跨模块组件或引入新依赖。
+- **任务背景 / Background**：博客详情页内容较长，需要在右下角提供常用操作与阅读进度提示。当前分支：`43-feat-博客详情页新增floatbutton用于快速返回首页`。需遵守 `CODEX_RULES.md` 输出顺序与“无新依赖”约束。
+- **目标与范围 / Goals**
+  - 必须完成：
+  - 在详情页右下角新增 FloatButton 组
+  - 支持返回首页
+  - 支持返回页头（平滑滚动）
+  - 支持点赞（先用占位提示）
+  - 展示当前滚动进度数字（不带百分号）
+  - 每个按钮宽度一致
+  - 按钮组为连续一体（无间隙）
+  - 支持鼠标拖放，仅能吸附在左侧或右侧
+  - 可选增强：
+  - 进度按钮背景随进度渐变
+  - 不在范围：
+  - 点赞真实业务逻辑/后端接口
+  - 评论系统
+- **交互与设计 / UX**：位置固定右下；移动端缩小边距；按钮需可访问性（aria-label）；进度展示为数字；按钮宽度一致且连续无间隙；按钮组可拖拽并在左/右侧吸附；hover/active 状态与主题变量一致；支持暗色模式。
+- **技术栈约束 / Tech Stack**：Next.js（app router）+ React + styled-components；禁止新增依赖；仅改 `packages/wuh.site.next` 范围内文件。
+- **数据与接口 / Data**：无外部 API；基于 `window`/`document` 计算滚动进度；点赞使用前端提示占位。
+- **状态与权限 / State & Auth**：仅本地组件状态；无需鉴权。
+- **可观测性 / Observability**：暂无埋点需求。
+- **开发步骤建议 / Execution Order**：
+  1. 在 `PostView` 中加入滚动进度状态与事件监听（含 resize）。
+  2. 在详情页样式中新增浮动按钮组与进度按钮样式。
+  3. 完成按钮交互与可访问性标注。
+- **交付物 / Deliverables**：
+  - `packages/wuh.site.next/app/post/PostView.tsx`
+  - `packages/wuh.site.next/app/post/styles/index.ts`
+- **校验标准 / Validation**：
+  - 正常：滚动页面时进度正确变化；点击返回首页/页头正常；点赞提示可见；拖拽后吸附在左/右侧。
+  - 异常：在短页面（可滚动高度不足）进度显示为 100。
+  - 边界：快速滚动/拖动滚动条不抖动；拖拽时不遮挡主要内容；移动端视口无遮挡。
+- **验证策略 / Verification Strategy**：
+  - 子任务增量验证命令：`pnpm --filter @wuh.site/next lint`（TBD 若项目未配置）
+  - 合并后模块回归命令：`pnpm --filter @wuh.site/next typecheck`（TBD）
+  - 最终全量验证命令：`pnpm lint && pnpm typecheck`（TBD）
+  - CI 验证要求：无（TBD）
+- **止损与升级 / Stop-Loss**：
+  - 同一阻塞最大重试次数（默认 2）
+  - 达到阈值后的升级动作：输出阻塞点与已尝试方案，等待用户决策
+  - 需要用户决策的问题：是否允许增加公用组件或抽离到 `packages/components`
+- **依赖与风险 / Dependencies & Risks**：
+  - 依赖浏览器 `window/document`，需确保仅在 client 端执行
+  - 滚动进度计算在极短页面可能出现除零，需要兜底
+  - 拖拽需要限制纵向边界，避免遮挡导航栏/底部内容
+- **基础库变更同步 / Skill Sync**：不涉及 `packages/components/**` 或 `packages/hooks/**`，无需同步
+- **提交信息规范 / Commit Message**：Conventional Commits，末尾追加 `#43`（issue-id 来自当前分支开头数字 `43-`）
+- **沟通约定 / Communication**：缺信息先列 Pending Input；默认不扩展范围；遵守 `CODEX_RULES.md` 输出顺序。
+- **执行提示 / Runbook**：先完成文档补全与确认，再进入编码；若需新增依赖或跨模块抽离需先征询确认。
+
+- **Pending Input**：
+  - 具体验证命令是否与项目一致（lint/typecheck/test）
+- **Assumptions**：
+  - 假设：浮动按钮仅在详情页显示，不影响其他页面
+  - 假设：点赞暂用前端提示替代真实接口
+  - 假设：采用窗口 scrollTop 计算进度即可，无需容器级滚动
+  - 假设：拖拽后不做持久化
+  - 假设：吸附左右侧需保证按钮组完整可见，顶部/底部安全距离为 `--space-lg`
