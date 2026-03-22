@@ -10,6 +10,7 @@
 | Dialog | `packages/components/dialog/index.tsx` | Controlled modal with ESC/overlay close, body scroll lock, optional fullscreen, footer render function. Works well with `useDialog`. |
 | Empty | `packages/components/empty/index.tsx` | Token-driven empty-state display with default icon, `title/description` API, and `children` fallback for description. |
 | Skeleton | `packages/components/skeleton/index.tsx` | Lightweight skeleton loader with shimmer animation, variants (`text/rect/circle`), and motion-reduction support. |
+| Result | `packages/components/result/index.tsx` | GitHub-style result component with status presets, links, and custom content slots. |
 | Flex (+ presets) | `packages/components/flex/index.tsx` | Token-aware spacing parser and many preset wrappers (`Row`, `Column`, `Center`, `SpaceBetween`, etc.). |
 | Image | `packages/components/image/index.tsx` | Wrapper around `next/image` with skeleton/error fallback/ratio/caption/overlay and appearance modes. |
 | ImagePreview | `packages/components/image-preview/index.tsx` | Portal-based preview with keyboard, zoom, rotate, drag/swipe, thumbnail rail, fullscreen, download hooks. |
@@ -32,8 +33,6 @@
 - `packages/components/space/index.tsx`
 - `packages/components/spin/index.tsx`
 - `packages/components/video-player/index.tsx`
-- `packages/components/result/404.tsx`
-- `packages/components/result/500.tsx`
 
 ## Theme integration baseline
 
@@ -63,4 +62,5 @@ Use this setup pattern in app roots (already used in `packages/wuh.site.next/app
 - Alert API: `packages/components/alert/readme.md`
 - Tag API: `packages/components/tag/README.md`
 - Skeleton API: `packages/components/skeleton/readme.md`
+- Result API: `packages/components/result/readme.md`
 - Theme notes: `packages/components/themes/README.md`
