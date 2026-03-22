@@ -253,7 +253,7 @@ export default function HomeView({ repos, posts }: Props) {
         <Hero>
           <Brand>
             <StyledLogo src='/logo.svg' alt='wuh.site.logo' width={180} height={108} priority />
-            <Title>stack-wuh的博客</Title>
+            <Title>stack-wuh的博客  <Subtitle style={{ display: 'inline' }}>雾失楼台, 月迷津渡</Subtitle></Title>
             <Subtitle>React / Vue / 工程化 / 可视化</Subtitle>
           </Brand>
           <Ctas>
