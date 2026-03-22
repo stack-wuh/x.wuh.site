@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import BlogListView from './BlogListView'
 
 export const metadata: Metadata = {
@@ -77,7 +78,7 @@ const toPageNumber = (value: string | string[] | undefined) => {
 
 async function getIssues(page: number): Promise<{ posts: Issue[]; pagination: PaginationState }> {
   try {
-    const res = await fetch(
+    const res = await fetcher<Issue[]>(
       `https://api.github.com/repos/stack-wuh/blog/issues?per_page=${PER_PAGE}&page=${page}&state=open&sort=created&direction=desc`,
       {
         headers: { 'Accept': 'application/vnd.github+json' },
@@ -85,19 +86,18 @@ async function getIssues(page: number): Promise<{ posts: Issue[]; pagination: Pa
       }
     )
 
-    if (!res.ok) {
+    if (!res.ok || !res.data) {
       return {
         posts: [],
         pagination: { currentPage: page, lastPage: page, hasPrev: page > 1, hasNext: false }
       }
     }
 
-    const data = (await res.json()) as Issue[]
-    const posts = data
+    const posts = res.data
       .filter(item => !item.pull_request)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-    const linkHeader = res.headers.get('link')
+    const linkHeader = res.headers?.get('link') ?? null
     const pagination = getPaginationState(page, linkHeader, posts.length === PER_PAGE)
 
     return { posts, pagination }
