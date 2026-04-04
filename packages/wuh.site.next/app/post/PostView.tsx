@@ -13,12 +13,9 @@ import {
   Container,
   FloatingButton,
   FloatingButtonGroup,
-  FloatingProgress,
   Header,
   MarkdownBody,
   MetaRow,
-  ProgressShade,
-  ProgressValue,
   RedundantInfoCard,
   ShareCardInner,
   ShareInfoCard,
@@ -411,10 +408,6 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
         onPointerUp={handleGroupPointerUp}
         onPointerCancel={handleGroupPointerCancel}
       >
-        <FloatingProgress aria-label={`当前阅读进度 ${progressLabel}`} role='status'>
-          <ProgressShade $percent={scrollPercent} aria-hidden='true' />
-          <ProgressValue>{progressLabel}</ProgressValue>
-        </FloatingProgress>
         <FloatingButton
           type='button'
           aria-label='返回首页'
@@ -432,7 +425,9 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
         <FloatingButton
           type='button'
           aria-label='返回页头'
-          title='返回页头'
+          title={`返回页头（当前进度 ${progressLabel}%）`}
+          $variant='progress'
+          $percent={scrollPercent}
           onClick={() => {
             if (suppressClickRef.current) return
             window.scrollTo({ top: 0, behavior: 'smooth' })

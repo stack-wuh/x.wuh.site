@@ -564,64 +564,65 @@ const floatingButtonBase = css`
   }
 `
 
-export const FloatingButton = styled.button`
-  ${floatingButtonBase}
-  padding: 0;
-`
-
-export const FloatingProgress = styled.div`
-  ${floatingButtonBase}
-  min-width: 0;
-  padding: 0;
-  font-variant-numeric: tabular-nums;
-  cursor: inherit;
-  position: relative;
-  overflow: hidden;
-
-  &:hover {
-    color: var(--text-primary);
-    background: transparent;
-    transform: none;
-    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &:hover {
-      color: var(--text-primary);
-      background: transparent;
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
-    }
-  }
-`
-
-export const ProgressValue = styled.span`
-  position: relative;
-  z-index: 1;
-  font-weight: 600;
-  transition: color 0.2s ease;
-`
-
-export const ProgressShade = styled.span<{ $percent: number }>`
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-  pointer-events: none;
-  background: linear-gradient(
+const createLightGradient = (percent: number) => css`
+  linear-gradient(
     90deg,
     color-mix(in srgb, var(--primary-color) 35%, var(--background-100)) 0%,
-    color-mix(in srgb, var(--primary-color) 55%, var(--background-100)) ${(props) => props.$percent}%,
-    var(--background-100) ${(props) => props.$percent}%,
+    color-mix(in srgb, var(--primary-color) 55%, var(--background-100)) ${percent}%,
+    var(--background-100) ${percent}%,
     var(--background-100) 100%
-  );
-  transition: background 0.2s ease;
+  )
+`
 
-  @media (prefers-color-scheme: dark) {
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--primary-color) 28%, var(--background-200)) 0%,
-      color-mix(in srgb, var(--primary-color) 46%, var(--background-200)) ${(props) => props.$percent}%,
-      color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) ${(props) => props.$percent}%,
-      color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) 100%
-    );
-  }
+const createDarkGradient = (percent: number) => css`
+  linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary-color) 28%, var(--background-200)) 0%,
+    color-mix(in srgb, var(--primary-color) 46%, var(--background-200)) ${percent}%,
+    color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) ${percent}%,
+    color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) 100%
+  )
+`
+
+export const FloatingButton = styled.button<{ $variant?: 'default' | 'progress'; $percent?: number }>`
+  ${floatingButtonBase}
+  padding: 0;
+
+  ${(props) =>
+    props.$variant === 'progress' &&
+    css`
+      position: relative;
+      overflow: hidden;
+      background: ${createLightGradient(props.$percent ?? 0)};
+
+      &:hover {
+        color: var(--text-primary);
+        background: ${createLightGradient(props.$percent ?? 0)};
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-100) 60%, transparent);
+      }
+
+      svg {
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background: ${createDarkGradient(props.$percent ?? 0)};
+
+        &:hover {
+          background: ${createDarkGradient(props.$percent ?? 0)};
+        }
+
+        &::after {
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--normal-900) 35%, transparent);
+        }
+      }
+    `}
 `
