@@ -3,8 +3,11 @@ import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
+import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
+import { AudioPlayerProvider } from '@wuh.site/components/audio-player'
+import { GlobalAudioPlayer } from './components/player/GlobalAudioPlayer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,7 +22,7 @@ const geistMono = Geist_Mono({
 export default function RootLayout({
   children
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   useEffect(() => {
     let previousTitle: string | null = null
@@ -44,14 +47,25 @@ export default function RootLayout({
     }
   }, [])
 
+  const resolveTrackSource = useCallback(async (trackId: number) => {
+    const response = await fetch(`/api/music/track?id=${trackId}`)
+    if (!response.ok) {
+      throw new Error('无法获取音频资源')
+    }
+    return response.json()
+  }, [])
+
   return (
     <ThemeProvider>
       <StyledComponentsRegistry>
         <html lang='en'>
           <CssVariableStyles />
           <body className={`${geistSans.variable} ${geistMono.variable}`}>
-            {children}
-            <Footer />
+            <AudioPlayerProvider trackResolver={resolveTrackSource}>
+              {children}
+              <Footer />
+              <GlobalAudioPlayer />
+            </AudioPlayerProvider>
           </body>
         </html>
       </StyledComponentsRegistry>

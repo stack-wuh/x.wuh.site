@@ -18,12 +18,12 @@
 | SharedLinkGroup | `packages/components/shared-link-group/index.tsx` | Share action group for article pages, supports link and callback actions. |
 | Tag | `packages/components/tag/index.tsx` | GitHub-like tag chip with hex color normalization and readable foreground auto-selection. |
 | Message | `packages/components/message/index.tsx` | Ant Design style global message with placements, auto-dismiss, close button, and status variants. |
+| AudioPlayer | `packages/components/audio-player/*` | Contains `AudioPlayerProvider`, `AudioMiniPlayer`, `AudioPlayerPanel`, and `useAudioPlayer` actions for queue/transport control. Requires calling `actions.loadQueue` with track list plus optional `trackResolver` for lazy NetEase streaming URLs. |
 | Themes | `packages/components/themes/*` | `themeProvider`, `cssVariableProvider`, `registry`, tokens and color generation utilities. |
 | Layout footer/main | `packages/components/layout/*` | Project-specific layout/footer helpers (used in Next app layout). |
 
 ## Placeholder or empty implementations (implement before use)
 
-- `packages/components/audio-player/index.tsx`
 - `packages/components/col/index.tsx`
 - `packages/components/config-provider/index.tsx`
 - `packages/components/divider/index.tsx`

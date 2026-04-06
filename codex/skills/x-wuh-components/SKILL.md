@@ -18,6 +18,7 @@ description: Implement and refactor UI in x.wuh.site with the local base compone
 - Use styled-components patterns already used in this repo (transient props with `$` prefix for style-only props).
 - Use theme CSS variables (`--primary-color`, `--space-*`, `--font-size-*`, `--normal-*`, `--background-*`) instead of hardcoded palette values when practical.
 - Keep SSR compatibility for portal/fullscreen/browser APIs by guarding `document`/`window` access.
+- Stateful媒体组件（`audio-player`）由 Provider + Mini Widget + Panel 组成；在 Next 布局里包裹 `AudioPlayerProvider` 并使用 `useAudioPlayer().actions.loadQueue` 注入歌单，可通过 `trackResolver` 懒加载网易云音频 URL。
 
 ## Extension strategy
 - Extend existing implemented components directly when the requested behavior belongs to that component's scope.
