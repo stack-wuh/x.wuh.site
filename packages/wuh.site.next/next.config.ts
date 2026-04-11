@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
     },
   },
   compress: false, // 禁用压缩以避免构建时的内存问题
-  devIndicators: false,
   distDir: './dist/wuh.site.next',
   generateEtags: false,
   typescript: {

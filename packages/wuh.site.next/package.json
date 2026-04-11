@@ -11,16 +11,16 @@
   },
   "dependencies": {
     "@wuh.site/components": "workspace:^",
-    "ahooks": "^3.7.1",
+    "ahooks": "3.7.1",
     "next": "15.1.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "devDependencies": {
-    "@ant-design/colors": "^7.2.0",
+    "@ant-design/colors": "7.2.1",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.0",
+    "@types/react-dom": "19.2.3",
     "baseline-browser-mapping": "^2.10.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
