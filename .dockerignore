@@ -1,0 +1,12 @@
+.git
+.codex
+node_modules
+**/node_modules
+packages/**/node_modules
+dist
+**/dist
+.next
+**/.next
+npm-debug.log*
+.env
+/codex
