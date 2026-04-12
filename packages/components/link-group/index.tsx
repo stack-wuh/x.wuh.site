@@ -7,9 +7,10 @@ type LinkType = 'wechat' | 'qq' | 'twitter' | 'email' | 'github' | 'douban' | 'c
 
 export type LinkItem = {
   type: LinkType
-  href: string
+  href?: string
   title?: string
   icon?: React.ReactNode
+  onClick?: () => void
 }
 
 export type LinkGroupSize = 'small' | 'medium' | 'large'
@@ -51,7 +52,7 @@ const SItem = styled.li`
   display: inline-flex;
 `
 
-const SLink = styled.a<{ $size: LinkGroupSize }>`
+const controlStyles = css<{ $size: LinkGroupSize }>`
   ${(p) => {
     const { h, fs } = getSizeVars(p.$size)
     return css`
@@ -74,6 +75,7 @@ const SLink = styled.a<{ $size: LinkGroupSize }>`
   transition: transform ${buttonTokens.transitionDuration} ease, box-shadow ${buttonTokens.transitionDuration} ease, border-color ${buttonTokens.transitionDuration} ease, background-color ${buttonTokens.transitionDuration} ease, color ${buttonTokens.transitionDuration} ease, border-radius ${buttonTokens.transitionDuration} ease;
   overflow: hidden;
   will-change: transform;
+  cursor: pointer;
 
   &:hover {
     transform: translateY(-2px) scale(1.06);
@@ -102,6 +104,14 @@ const SLink = styled.a<{ $size: LinkGroupSize }>`
   }
 `
 
+const SControl = styled.button<{ $size: LinkGroupSize }>`
+  ${controlStyles}
+`
+
+const SLink = styled(SControl).attrs({ as: 'a' })`
+  text-decoration: none;
+`
+
 const SIcon = styled.span`
   display: inline-flex;
   align-items: center;
@@ -113,7 +123,7 @@ const SIcon = styled.span`
     width: 1em;
     height: 1em;
   }
-  ${SLink}:hover & {
+  ${SControl}:hover &, ${SLink}:hover & {
     transform: translateY(-1px);
     animation: ${iconSpin} 420ms ease;
   }
@@ -206,12 +216,32 @@ const LinkGroup: React.FC<LinkGroupProps> = ({ items, size = 'medium', gap = 12 
     <SGroup $gap={gap} role="list">
       {items.map((item) => {
         const icon = item.icon ?? getPresetIcon(item.type)
+        const label = item.title ?? item.type
+
         return (
-          <SItem key={`${item.type}-${item.href}`} role="listitem">
-            <SLink href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.title ?? item.type} $size={size}>
-              <SIcon aria-hidden="true">{icon}</SIcon>
-              {item.title && <STitle>{item.title}</STitle>}
-            </SLink>
+          <SItem key={`${item.type}-${label}`} role="listitem">
+            {item.href ? (
+              <SLink
+                $size={size}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+              >
+                <SIcon aria-hidden="true">{icon}</SIcon>
+                {item.title && <STitle>{item.title}</STitle>}
+              </SLink>
+            ) : (
+              <SControl
+                $size={size}
+                type="button"
+                onClick={item.onClick}
+                aria-label={label}
+              >
+                <SIcon aria-hidden="true">{icon}</SIcon>
+                {item.title && <STitle>{item.title}</STitle>}
+              </SControl>
+            )}
           </SItem>
         )
       })}

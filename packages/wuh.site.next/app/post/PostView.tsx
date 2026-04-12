@@ -25,6 +25,7 @@ import {
 } from './styles'
 import { type AdjacentIssue, type Issue, type PostViewProps } from './PostView.types'
 import { usePostImagePreview } from './usePostImagePreview'
+import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
 const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'
@@ -95,45 +96,57 @@ const createAlertLabels = (issue: Issue): AlertLabel[] =>
     href: createLabelHref(label.name),
   }))
 
-const createShareItems = (issue: Issue): ShareItem[] => [
-  {
-    type: 'wechat',
-    href: '#',
-    title: '分享到微信',
-  },
-  {
-    type: 'qq',
-    href: '#',
-    title: '分享到QQ',
-  },
-  {
-    type: 'weibo',
-    href: '#',
-    title: '分享到微博',
-  },
-  {
-    type: 'twitter',
-    href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(issue.title)}&url=${encodeURIComponent(issue.html_url)}`,
-    title: '分享到Twitter',
-  },
-  {
-    type: 'email',
-    href: `mailto:?subject=${encodeURIComponent(issue.title)}&body=${encodeURIComponent(`查看这篇文章：${issue.html_url}`)}`,
-    title: '邮件分享',
-  },
-  {
-    type: 'link',
-    title: '复制链接',
-    onClick: async () => {
-      const success = await copyToClipboard(issue.html_url)
-      if (success) {
-        message.success('链接已复制到剪贴板')
-      } else {
-        message.error('复制失败，请手动复制')
-      }
+const createShareItems = (issue: Issue): ShareItem[] => {
+  const shareUrl = (issue.html_url?.trim() || BLOG_PROJECT_URL).trim()
+  const shareTitle = issue.title?.trim() || 'stack-wuh/blog 文章'
+  const shareIntro = `我在 stack-wuh/blog 看到《${shareTitle}》，推荐给你看看`
+  const encodedUrl = encodeURIComponent(shareUrl)
+  const encodedTitle = encodeURIComponent(shareTitle)
+  const encodedIntro = encodeURIComponent(shareIntro)
+  const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}&desc=${encodedIntro}&summary=&site=stack-wuh`
+  const weiboShareUrl = `https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedIntro}`
+  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedIntro}&url=${encodedUrl}`
+
+  return [
+    {
+      type: 'wechat',
+      title: '分享到微信',
+      onClick: () => openWechatShareWindow(shareUrl, shareTitle),
     },
-  },
-]
+    {
+      type: 'qq',
+      title: '分享到QQ',
+      onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
+    },
+    {
+      type: 'weibo',
+      title: '分享到微博',
+      onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
+    },
+    {
+      type: 'twitter',
+      title: '分享到Twitter',
+      onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
+    },
+    {
+      type: 'email',
+      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${shareUrl}`)}`,
+      title: '邮件分享',
+    },
+    {
+      type: 'link',
+      title: '复制链接',
+      onClick: async () => {
+        const success = await copyToClipboard(shareUrl)
+        if (success) {
+          message.success('链接已复制到剪贴板')
+        } else {
+          message.error('复制失败，请手动复制')
+        }
+      },
+    },
+  ]
+}
 
 const renderToolbarIcon = (direction: 'prev' | 'next') => (
   <span className='toolbar-icon' aria-hidden='true'>
