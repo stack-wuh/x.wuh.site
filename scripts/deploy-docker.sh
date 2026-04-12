@@ -4,18 +4,17 @@ set -euo pipefail
 PROJECT_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
 
-IMAGE_BASE=${IMAGE_BASE:-wuh.site}
+IMAGE_BASE=${IMAGE_BASE:-wuh_site}
 DATE_TAG=$(date -u +%F)
 GIT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo local)
-IMAGE_TAG=${IMAGE_TAG:-${IMAGE_BASE}.${DATE_TAG}:${GIT_SHA}}
-CONTAINER_NAME=${CONTAINER_NAME:-wuh-site}
+IMAGE_TAG=${IMAGE_TAG:-${IMAGE_BASE}:${GIT_SHA}}
+CONTAINER_NAME=${CONTAINER_NAME:-wuh_site}
 PORT_MAPPING=${PORT_MAPPING:-3000:3000}
 DEFAULT_ENV_FILE=${DEFAULT_ENV_FILE:-./packages/wuh.site.next/.env}
 
 usage() {
   cat <<'USAGE'
 Usage: $(basename "$0") <command> [options]
-
 Commands:
   build               Build the Docker image and tag it with $IMAGE_TAG.
   push                Push the Docker image to the remote registry.
@@ -27,10 +26,23 @@ Commands:
 USAGE
 }
 
-ensure_env_file() {
+ensure_local_image() {
+  if ! docker image inspect "$IMAGE_TAG" >/dev/null 2>&1; then
+    echo "Error: Local image '$IMAGE_TAG' not found. Please run './$(basename "$0") build' first." >&2
+    exit 1
+  fi
+}
+
+maybe_env_args() {
   local env_file=$1
-  if [[ -n "$env_file" && ! -f "$env_file" ]]; then
-    echo "Warning: env-file '$env_file' does not exist" >&2
+  if [[ -z "$env_file" ]]; then
+    return
+  fi
+
+  if [[ -f "$env_file" ]]; then
+    printf '%s\0' --env-file "$env_file"
+  else
+    echo "ℹ️  Env file '$env_file' not found. Skipping." >&2
   fi
 }
 
@@ -41,24 +53,18 @@ build_image() {
 
 push_image() {
   echo "📤 Pushing $IMAGE_TAG"
-  # 检查本地镜像是否存在
-  if ! docker image inspect "$IMAGE_TAG" >/dev/null 2>&1; then
-    echo "Error: Image $IMAGE_TAG not found locally. Please run 'build' first." >&2
-    exit 1
-  fi
+  ensure_local_image
   docker push "$IMAGE_TAG"
   echo "✅ Push completed"
 }
 
-run_container() {
-  local env_file=${1:-$DEFAULT_ENV_FILE}
-  ensure_env_file "$env_file"
-  local env_args=()
-  if [[ -n "$env_file" && -f "$env_file" ]]; then
-    env_args=(--env-file "$env_file")
-  fi
-  echo "🐳 Running $IMAGE_TAG"
-  docker run -d --rm --name "$CONTAINER_NAME" -p "$PORT_MAPPING" "${env_args[@]}" "$IMAGE_TAG"
+run_container_common() {
+  # local env_file=${1:-$DEFAULT_ENV_FILE}
+  # mapfile -d '' env_args < <(maybe_env_args "$env_file"; printf '\0')
+
+  ensure_local_image
+  echo "🐳 Running local image: $IMAGE_TAG"
+  docker run -d --rm --name "$CONTAINER_NAME" -p "$PORT_MAPPING" "$IMAGE_TAG"
 }
 
 stop_container() {
@@ -67,7 +73,8 @@ stop_container() {
 }
 
 shell() {
-  echo "🧪 Opening shell inside $IMAGE_TAG"
+  ensure_local_image
+  printf "🧪 Opening shell inside %s\n" "$IMAGE_TAG"
   docker run --rm -it --entrypoint /bin/sh "$IMAGE_TAG"
 }
 
@@ -95,12 +102,8 @@ case "$COMMAND" in
   push)
     push_image
     ;;
-  run)
-    if [[ $# -ge 1 ]]; then
-      run_container "$1"
-    else
-      run_container
-    fi
+  run|run-local)
+    run_container_common "${1:-}"
     ;;
   stop)
     stop_container
