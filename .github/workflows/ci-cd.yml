@@ -1,0 +1,34 @@
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /github/x.wuh.site
+
+            # 更新 main 最新代码
+            git fetch --all
+            git checkout main
+            git pull origin main
+
+            # 停掉旧容器（如果没起也不会报错）
+            ./scripts/docker.sh stop || true
+
+            # 先 build 成功
+            ./scripts/docker.sh build
+
+            # build 成功后再 run
+            ./scripts/docker.sh run
