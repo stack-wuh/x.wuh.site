@@ -7,7 +7,6 @@ on:
 
 jobs:
   deploy:
-    needs: build-and-test
     runs-on: ubuntu-latest
     steps:
       - name: SSH deploy
