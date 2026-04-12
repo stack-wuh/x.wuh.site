@@ -2,8 +2,7 @@ name: CI-CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -14,20 +13,15 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          # 如果服务器要求跳过 host key 检查可加： 
+          # port: 22
+          # timeout: 60s
           script: |
             cd /github/x.wuh.site
-
-            # 更新 main 最新代码
             git fetch --all
             git checkout main
             git pull origin main
-
-            # 停掉旧容器（如果没起也不会报错）
             ./scripts/docker.sh stop || true
-
-            # 先 build 成功
             ./scripts/docker.sh build
-
-            # build 成功后再 run
             ./scripts/docker.sh run
