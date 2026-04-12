@@ -321,7 +321,7 @@ export default function HomeView({ repos, posts }: Props) {
                 { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
                 { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
                 { type: 'twitter', href: 'https://x.com/wuh131420', title: 'Twitter' },
-                { type: 'email', href: 'mailto:shadow_u@foxmail.com', title: '邮箱' },
+                { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
                 { type: 'github', href: 'https://github.com/stack-wuh', title: 'GitHub' },
                 { type: 'douban', href: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN', title: '豆瓣' },
                 { type: 'custom', href: 'https://music.163.com/#/user/home?id=398326271', title: '网易云', icon: <IconMusic /> },
