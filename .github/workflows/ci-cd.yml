@@ -19,9 +19,10 @@ jobs:
           # timeout: 60s
           script: |
             cd /github/x.wuh.site
-            git fetch --all
+            git fetch origin main
             git checkout main
-            git pull origin main
+            git reset --hard origin/main   # 强制回到远程 main
+            git clean -fd                  # 可选，清理新文件
             ./scripts/deploy-docker.sh stop || true
             ./scripts/deploy-docker.sh build
             ./scripts/deploy-docker.sh run
