@@ -1,10 +1,19 @@
 'use client'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import Button from '@wuh.site/components/button'
+import Dialog from '@wuh.site/components/dialog'
 import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
 import Image from '@wuh.site/components/image'
+import ContactCard, { type ContactCardProps } from './components/ContactCard'
+
+const IconMusic = () => (
+  <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
+    <path d='M12 3v12.15a3 3 0 1 0 1 2.83V7.83l6-1.5V3l-7 1.75Z' />
+  </svg>
+)
 
 const TAG_DISPLAY_LIMIT = 3
 
@@ -246,7 +255,45 @@ const MoreLink = styled(Link)`
   }
 `
 
+type ContactDialogConfig = ContactCardProps & { dialogGradient?: string }
+
+const CONTACT_CONFIG: Record<'wechat' | 'qq', ContactDialogConfig> = {
+  wechat: {
+    badge: 'WeChat',
+    qrSrc: 'https://cdn.wuh.site/web/wechat.jpg',
+    name: 'stack-wuh',
+    handle: 'shadow_u',
+    title: '工程化 & 可视化',
+    tagline: 'React / Vue / 编程爱好者',
+    hints: ['扫描二维码添加微信', '备注"官网来访"更容易通过'],
+    cardGradient: 'linear-gradient(180deg, rgba(16, 185, 129, 0.2), rgba(4, 120, 87, 0.7))',
+    borderColor: 'rgba(16, 185, 129, 0.65)',
+    hintColor: '#bdf9eb',
+    dialogGradient: 'linear-gradient(180deg, rgba(16, 185, 129, 0.25), rgba(4, 120, 87, 0.95))',
+  },
+  qq: {
+    badge: 'QQ',
+    qrSrc: 'https://cdn.wuh.site/web/qq.jpg',
+    name: 'stack-wuh',
+    handle: 'shadow_u',
+    title: '实时沟通',
+    tagline: '工程化 / 可视化 / 效率工具',
+    hints: ['二维码即刻发起 QQ 语音/文字', '备注“官网来访”更容易通过'],
+    cardGradient: 'linear-gradient(180deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.85))',
+    borderColor: 'rgba(37, 99, 235, 0.65)',
+    hintColor: '#d4e5ff',
+    dialogGradient: 'linear-gradient(180deg, rgba(37, 99, 235, 0.25), rgba(59, 130, 246, 0.95))',
+  },
+}
+
+type ContactType = keyof typeof CONTACT_CONFIG
+
 export default function HomeView({ repos, posts }: Props) {
+  const [activeContact, setActiveContact] = useState<ContactType | null>(null)
+  const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
+  const closeContact = useCallback(() => setActiveContact(null), [])
+  const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
+
   return (
     <Root>
       <Main>
@@ -271,12 +318,13 @@ export default function HomeView({ repos, posts }: Props) {
             </Button>
             <LinkGroup
               items={[
-                { type: 'wechat', href: 'https://example.com/wechat', title: '微信' },
-                { type: 'qq', href: 'https://example.com/qq', title: 'QQ' },
-                { type: 'twitter', href: 'https://twitter.com/stack_wuh', title: 'Twitter' },
+                { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
+                { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
+                { type: 'twitter', href: 'https://x.com/wuh131420', title: 'Twitter' },
                 { type: 'email', href: 'mailto:shadow_u@foxmail.com', title: '邮箱' },
                 { type: 'github', href: 'https://github.com/stack-wuh', title: 'GitHub' },
-                { type: 'douban', href: 'https://www.douban.com/', title: '豆瓣' },
+                { type: 'douban', href: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN', title: '豆瓣' },
+                { type: 'custom', href: 'https://music.163.com/#/user/home?id=398326271', title: '网易云', icon: <IconMusic /> },
               ]}
               size='medium'
             />
@@ -333,6 +381,25 @@ export default function HomeView({ repos, posts }: Props) {
             ))}
           </Grid>
         </Section>
+        <Dialog
+          open={Boolean(activeContactConfig)}
+          onClose={closeContact}
+          title={activeContactConfig ? `${activeContactConfig.badge} 联系` : '联系'}
+          fullScreen={false}
+          width='min(760px, calc(100vw - 32px))'
+          style={{
+            background: '#030712',
+          }}
+        >
+          {activeContactConfig && (
+            <ContactCard
+              {...activeContactConfig}
+              cardGradient={activeContactConfig.cardGradient}
+              borderColor={activeContactConfig.borderColor}
+              hintColor={activeContactConfig.hintColor}
+            />
+          )}
+        </Dialog>
       </Main>
     </Root>
   )
