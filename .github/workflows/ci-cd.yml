@@ -22,6 +22,6 @@ jobs:
             git fetch --all
             git checkout main
             git pull origin main
-            ./scripts/docker.sh stop || true
-            ./scripts/docker.sh build
-            ./scripts/docker.sh run
+            ./scripts/deploy-docker stop || true
+            ./scripts/deploy-docker build
+            ./scripts/deploy-docker run
