@@ -39,6 +39,111 @@ const copyToClipboard = async (text: string): Promise<boolean> => {
   }
 }
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
+const openSharePopup = (url: string, name: string) => {
+  if (typeof window === 'undefined') return
+  const width = 640
+  const height = 520
+  const screenLeft = window.screenX ?? window.screenLeft ?? 0
+  const screenTop = window.screenY ?? window.screenTop ?? 0
+  const outerWidth = window.outerWidth ?? document.documentElement.clientWidth
+  const outerHeight = window.outerHeight ?? document.documentElement.clientHeight
+  const left = Math.round(screenLeft + Math.max(0, (outerWidth - width) / 2))
+  const top = Math.round(screenTop + Math.max(0, (outerHeight - height) / 2))
+  const features = [
+    `width=${width}`,
+    `height=${height}`,
+    `left=${left}`,
+    `top=${top}`,
+    'toolbar=0',
+    'location=0',
+    'menubar=0',
+    'status=0',
+    'scrollbars=1',
+    'resizable=1',
+  ].join(',')
+
+  const popup = window.open(url, name, features)
+  if (!popup) {
+    message.error('浏览器已阻止分享窗口，请允许弹窗后再试')
+    return
+  }
+
+  popup.focus()
+}
+
+const openWechatShareWindow = (url: string, title: string) => {
+  if (typeof window === 'undefined') return
+  const shareWindow = window.open('', 'share-wechat', 'width=360,height=420,toolbar=0,location=0,menubar=0,scrollbars=0,resizable=0')
+  if (!shareWindow) {
+    message.error('浏览器已阻止分享窗口，请允许弹窗后再试')
+    return
+  }
+
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(url)}`
+  const safeTitle = escapeHtml(title)
+  const html = `<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <title>微信扫码分享</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f8f8f8;
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .wrapper {
+      text-align: center;
+      padding: 24px;
+    }
+    .wrapper h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .wrapper p {
+      margin: 4px 0;
+      font-size: 13px;
+      color: #555;
+    }
+    .wrapper img {
+      width: 240px;
+      height: 240px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h2>微信扫一扫</h2>
+    <p>请在微信中使用“扫一扫”扫描下方二维码</p>
+    <img src="${qrSrc}" alt="微信扫码分享" />
+    <p>文章：${safeTitle}</p>
+    <p style="font-size:12px;color:#888;margin-top:12px;">关闭窗口以返回页面</p>
+  </div>
+</body>
+</html>`
+
+  shareWindow.document.open()
+  shareWindow.document.write(html)
+  shareWindow.document.close()
+  shareWindow.focus()
+}
+
 const createLabelHref = (labelName: string) => {
   const query = encodeURIComponent(`is:issue label:"${labelName}"`)
   return `${BLOG_PROJECT_URL}/issues?q=${query}`
@@ -95,45 +200,57 @@ const createAlertLabels = (issue: Issue): AlertLabel[] =>
     href: createLabelHref(label.name),
   }))
 
-const createShareItems = (issue: Issue): ShareItem[] => [
-  {
-    type: 'wechat',
-    href: '#',
-    title: '分享到微信',
-  },
-  {
-    type: 'qq',
-    href: '#',
-    title: '分享到QQ',
-  },
-  {
-    type: 'weibo',
-    href: '#',
-    title: '分享到微博',
-  },
-  {
-    type: 'twitter',
-    href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(issue.title)}&url=${encodeURIComponent(issue.html_url)}`,
-    title: '分享到Twitter',
-  },
-  {
-    type: 'email',
-    href: `mailto:?subject=${encodeURIComponent(issue.title)}&body=${encodeURIComponent(`查看这篇文章：${issue.html_url}`)}`,
-    title: '邮件分享',
-  },
-  {
-    type: 'link',
-    title: '复制链接',
-    onClick: async () => {
-      const success = await copyToClipboard(issue.html_url)
-      if (success) {
-        message.success('链接已复制到剪贴板')
-      } else {
-        message.error('复制失败，请手动复制')
-      }
+const createShareItems = (issue: Issue): ShareItem[] => {
+  const shareUrl = (issue.html_url?.trim() || BLOG_PROJECT_URL).trim()
+  const shareTitle = issue.title?.trim() || 'stack-wuh/blog 文章'
+  const shareIntro = `我在 stack-wuh/blog 看到《${shareTitle}》，推荐给你看看`
+  const encodedUrl = encodeURIComponent(shareUrl)
+  const encodedTitle = encodeURIComponent(shareTitle)
+  const encodedIntro = encodeURIComponent(shareIntro)
+  const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}&desc=${encodedIntro}&summary=&site=stack-wuh`
+  const weiboShareUrl = `https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedIntro}`
+  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedIntro}&url=${encodedUrl}`
+
+  return [
+    {
+      type: 'wechat',
+      title: '分享到微信',
+      onClick: () => openWechatShareWindow(shareUrl, shareTitle),
     },
-  },
-]
+    {
+      type: 'qq',
+      title: '分享到QQ',
+      onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
+    },
+    {
+      type: 'weibo',
+      title: '分享到微博',
+      onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
+    },
+    {
+      type: 'twitter',
+      title: '分享到Twitter',
+      onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
+    },
+    {
+      type: 'email',
+      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${shareUrl}`)}`,
+      title: '邮件分享',
+    },
+    {
+      type: 'link',
+      title: '复制链接',
+      onClick: async () => {
+        const success = await copyToClipboard(shareUrl)
+        if (success) {
+          message.success('链接已复制到剪贴板')
+        } else {
+          message.error('复制失败，请手动复制')
+        }
+      },
+    },
+  ]
+}
 
 const renderToolbarIcon = (direction: 'prev' | 'next') => (
   <span className='toolbar-icon' aria-hidden='true'>
