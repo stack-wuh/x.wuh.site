@@ -2,6 +2,11 @@ import { createGlobalStyle } from 'styled-components'
 import { TBaseColorLevel, Tokens } from './tokens'
 
 export const CssVariableStyles = createGlobalStyle`
+  :root {
+    --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  }
+
   html, body {
     max-width: 100vw;
     overflow-x: hidden;
@@ -9,7 +14,7 @@ export const CssVariableStyles = createGlobalStyle`
 
   body {
     color: var(--text-color);
-    background-color: var(--background-color);
+    background: var(--page-bg, var(--background-color));
   }
 
   a {
@@ -73,7 +78,7 @@ export const CssVariableStyles = createGlobalStyle`
         })
         .join(';')
     }}
-    }
+  }
 
   :root {
     --primary-color: ${(props) => {
@@ -98,7 +103,7 @@ export const CssVariableStyles = createGlobalStyle`
     }};
     --text-color: ${(props) => {
       const theme = props.theme as Tokens
-      return theme.normal.light['900']
+      return theme.background.light['100']
     }};
     --text-primary: ${(props) => {
       const theme = props.theme as Tokens
@@ -116,8 +121,18 @@ export const CssVariableStyles = createGlobalStyle`
       const theme = props.theme as Tokens
       return theme.background.light['900']
     }};
-    --transition-fast: 200ms;
+    --transition-fast: 180ms;
     --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
+    --elevation-card: 0 20px 40px rgba(0,0,0,0.08);
+    --elevation-card-hover: 0 30px 50px rgba(0,0,0,0.12);
+    --radius-card: var(--border-radius-2xl);
+    --accent-color: #E3B567;
+    --page-bg:
+      radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
+      radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 22%, transparent), transparent 52%),
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%),
+        var(--background-color));
 
     ${(props) => {
       const theme = props.theme as Tokens
@@ -201,7 +216,7 @@ export const CssVariableStyles = createGlobalStyle`
       }};
       --text-color: ${(props) => {
         const theme = props.theme as Tokens
-        return theme.normal.dark['600']
+        return theme.normal.dark['500']
       }};
       --text-primary: ${(props) => {
         const theme = props.theme as Tokens
@@ -219,8 +234,18 @@ export const CssVariableStyles = createGlobalStyle`
         const theme = props.theme as Tokens
         return theme.background.dark['900']
       }};
-      --transition-fast: 200ms;
+      --transition-fast: 180ms;
       --elevation-soft: 0 4px 14px rgba(0,0,0,.25);
+      --elevation-card: 0 18px 36px rgba(0,0,0,0.45);
+      --elevation-card-hover: 0 26px 46px rgba(0,0,0,0.6);
+      --radius-card: var(--border-radius-2xl);
+      --accent-color: #E3B567;
+      --page-bg:
+        radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
+        radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 18%, transparent), transparent 52%),
+        linear-gradient(180deg,
+          color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%),
+          var(--background-color));
 
       ${(props) => {
         const theme = props.theme as Tokens

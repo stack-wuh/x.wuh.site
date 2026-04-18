@@ -12,21 +12,27 @@ export type TagProps = {
 }
 
 const Chip = styled.span<{ $bg: string; $text: string }>`
-  font-size: var(--font-size-xs);
+  font-size: 13px;
   font-weight: 600;
-  padding: 2px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
-  background-color: ${({ $bg }) => $bg};
+  background:
+    linear-gradient(135deg,
+      color-mix(in oklab, ${({ $bg }) => $bg} 22%, var(--background-100) 78%),
+      var(--background-100));
   color: ${({ $text }) => $text};
-  border: 1px solid ${({ $bg }) => $bg};
+  border: 1px solid color-mix(in oklab, ${({ $bg }) => $bg} 38%, var(--normal-300) 62%);
   white-space: nowrap;
   transition: transform var(--transition-fast) ease, color var(--transition-fast) ease, background-color var(--transition-fast) ease, border-color var(--transition-fast) ease;
 
   &:hover {
-    transform: translateY(-1px) scale(1.05);
-    background-color: ${({ $text }) => $text};
-    color: ${({ $bg }) => $bg};
-    border-color: ${({ $text }) => $text};
+    transform: translateY(-1px);
+    color: var(--background-100);
+    background:
+      linear-gradient(135deg,
+        color-mix(in oklab, ${({ $bg }) => $bg} 68%, var(--primary-color) 32%),
+        color-mix(in oklab, ${({ $bg }) => $bg} 62%, var(--primary-700) 38%));
+    border-color: color-mix(in oklab, ${({ $bg }) => $bg} 65%, var(--primary-700) 35%);
   }
 `
 

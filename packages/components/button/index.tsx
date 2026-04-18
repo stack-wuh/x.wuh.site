@@ -84,6 +84,13 @@ const getVariantStyles = (
       border: none;
       box-shadow: ${$disabled ? 'none' : buttonTokens.elevation.default};
 
+      ${$color === 'primary' &&
+      !$disabled &&
+      css`
+        background-color: transparent;
+        background-image: linear-gradient(90deg, var(--primary-color), var(--primary-700));
+      `}
+
       &:hover:not(:disabled) {
         background-color: ${$disabled ? 'var(--normal-300)' : cHover};
         box-shadow: ${$disabled ? 'none' : buttonTokens.elevation.hover};
@@ -95,6 +102,15 @@ const getVariantStyles = (
         outline: none;
         box-shadow: ${buttonTokens.elevation.hover}, 0 0 0 2px var(--primary-300), 0 0 0 4px ${c};
       }
+
+      ${$color === 'primary' &&
+      !$disabled &&
+      css`
+        &:hover:not(:disabled) {
+          background-color: transparent;
+          background-image: linear-gradient(90deg, var(--primary-600), var(--primary-800));
+        }
+      `}
     `
   }
   if ($variant === 'outlined') {
@@ -104,7 +120,8 @@ const getVariantStyles = (
       border: 1px solid ${outlineColor};
 
       &:hover:not(:disabled) {
-        background-color: ${$disabled ? 'transparent' : `rgba(0, 0, 0, 0.04)`};
+        background-color: ${$disabled ? 'transparent' : `color-mix(in oklab, var(--background-100) 55%, transparent)`};
+        backdrop-filter: blur(10px);
       }
       &:focus-visible:not(:disabled) {
         outline: none;
