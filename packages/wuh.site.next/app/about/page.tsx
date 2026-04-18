@@ -1,7 +1,6 @@
 'use client'
 
 import styled from 'styled-components'
-import Button from '@wuh.site/components/button'
 import Card from '@wuh.site/components/card'
 import Tag from '@wuh.site/components/tag'
 
@@ -124,10 +123,6 @@ const AboutPage = () => {
           <HeroSub>
             以 GitHub 热力图为灵感，汇聚 GitHub / 语雀 / 微信公众号在同一个时间轴上的创作故事。
           </HeroSub>
-          <HeroActions>
-            <Button variant='filled'>查看简历</Button>
-            <Button variant='outlined'>联系我</Button>
-          </HeroActions>
         </HeroHeader>
         <MetricGrid>
           {metrics.map((metric) => (
@@ -323,14 +318,7 @@ const HeroTitle = styled.h1`
 
 const HeroSub = styled.p`
   color: var(--text-color);
-  max-width: 520px;
   line-height: 1.5;
-`
-
-const HeroActions = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
 `
 
 const MetricGrid = styled.div`
@@ -528,7 +516,7 @@ const LegendSwatch = styled.span`
 
 const LegendLabel = styled.span`
   font-size: var(--font-size-xs);
-  color: var(--text-color);
+  color: var(--text-secondary);
 `
 
 const LogGrid = styled.div`
