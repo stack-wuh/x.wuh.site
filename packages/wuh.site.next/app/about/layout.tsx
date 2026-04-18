@@ -1,13 +1,7 @@
-import React from 'react'
+import type { ReactNode } from 'react'
 
-const Layout: React.FC<{ children: React.ReactNode }> = (props) => {
-  return (<>
-    <div>Layout</div>
-
-    <div>
-      {props.children}
-    </div>
-  </>)
+const Layout = ({ children }: { children: ReactNode }) => {
+  return <>{children}</>
 }
 
 export default Layout
