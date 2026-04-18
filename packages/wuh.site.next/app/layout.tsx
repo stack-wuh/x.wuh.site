@@ -8,6 +8,7 @@ import Footer from '@wuh.site/components/layout/footer'
 import { AudioPlayerProvider } from '@wuh.site/components/audio-player'
 import { GlobalAudioPlayer } from './components/player/GlobalAudioPlayer'
 import SiteHeader from './components/SiteHeader'
+import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
 
 export default function RootLayout({
   children
@@ -51,12 +52,14 @@ export default function RootLayout({
         <html lang='en'>
           <CssVariableStyles />
           <body>
-            <AudioPlayerProvider trackResolver={resolveTrackSource}>
-              <SiteHeader />
-              {children}
-              <Footer />
-              <GlobalAudioPlayer />
-            </AudioPlayerProvider>
+            <ThemeModeProvider>
+              <AudioPlayerProvider trackResolver={resolveTrackSource}>
+                <SiteHeader />
+                {children}
+                <Footer />
+                <GlobalAudioPlayer />
+              </AudioPlayerProvider>
+            </ThemeModeProvider>
           </body>
         </html>
       </StyledComponentsRegistry>

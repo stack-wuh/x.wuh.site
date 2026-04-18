@@ -222,3 +222,31 @@
   1. 首页：Header + Hero + 精选模块 + 列表卡片（桌面/移动）
   2. 文章详情页：正文宽度 + 元信息 + 上一篇/下一篇 + 评论/空状态（桌面/移动）
   3. 键盘：tab 遍历重点按钮/链接/导航
+
+---
+
+## 后续优化计划（继续迭代 / Roadmap）
+
+> 基于当前效果继续优化：把主题做到“可切换（两套主题）+ 可维护（tokens/组件收敛）+ 可用（TOC 必做 + 状态页完善）”。
+
+### P0：两套主题切换（必做）
+1. 增加主题模式：`100 元主题` / `素雅主题`
+2. 提供切换入口（Header 内，桌面/移动一致），并持久化（localStorage）+ 跟随系统（可选策略，默认手动优先）
+3. tokens 落地方式：保持现有 CSS variables 体系，新增一套 `light-plain/dark-plain`（或同等组织方式），避免影响现有组件 API
+
+### P1：文章 TOC（必做）
+1. 解析文章标题结构（基于已渲染的 HTML 或 markdown heading），生成 TOC
+2. 桌面端：右侧固定/吸顶 TOC；移动端：折叠（抽屉/浮层/置底卡片）二选一（以“简洁不遮挡”为准）
+3. 可访问性：TOC 可键盘导航、当前章节高亮（scroll spy），并兼容 reduced-motion
+
+### P2：组件与样式收敛（强建议）
+1. 抽离页面重复卡片样式（首页/列表/详情）→ 优先复用 `@wuh.site/components/card`
+2. Loading/Empty/Error 统一主题样式：同步 `blog/loading` 与 `post/loading` 的容器宽度/卡片样式/文本层级
+3. Header/Footer 精修：active 状态、hover/focus 对比度与触达区域统一；Footer 字号/行高/间距再做一次一致性检查
+
+### P3：补齐 About 页（建议）
+1. 替换 About 的占位布局，按当前主题骨架落地（深背景 + 浮层卡片 + 正文排版）
+
+### 验证与回归（每个子任务都执行）
+- 命令：`pnpm --filter @wuh.site/next lint`
+- 手动回归：首页 `/`、博客 `/blog`、文章 `/post/:number`、关于 `/about`（桌面/移动断点 + `prefers-reduced-motion` + 键盘 focus）

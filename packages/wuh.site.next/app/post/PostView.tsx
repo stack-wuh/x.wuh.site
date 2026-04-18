@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import message from '@wuh.site/components/message'
 import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
@@ -11,9 +11,11 @@ import {
   ArticleCard,
   CommentPlaceholder,
   Container,
+  ContentGrid,
   FloatingButton,
   FloatingButtonGroup,
   Header,
+  MainColumn,
   MarkdownBody,
   MetaRow,
   RedundantInfoCard,
@@ -21,6 +23,12 @@ import {
   ShareInfoCard,
   StatusEmpty,
   Title,
+  TocAside,
+  TocCard,
+  TocItemLink,
+  TocList,
+  TocMobile,
+  TocTitle,
   Toolbar,
 } from './styles'
 import { type AdjacentIssue, type Issue, type PostViewProps } from './PostView.types'
@@ -177,6 +185,61 @@ const renderToolbarAction = (direction: 'prev' | 'next', targetIssue: AdjacentIs
   )
 }
 
+type TocItem = {
+  id: string
+  text: string
+  depth: 1 | 2 | 3
+}
+
+const slugify = (input: string) =>
+  input
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+const buildTocAndHtml = (html: string | null | undefined): { html: string; toc: TocItem[] } => {
+  const source = html ?? ''
+  if (!source) return { html: '', toc: [] }
+  if (typeof window === 'undefined' || typeof DOMParser === 'undefined') return { html: source, toc: [] }
+
+  try {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(source, 'text/html')
+    const headings = Array.from(doc.querySelectorAll('h1, h2, h3'))
+    const seen = new Map<string, number>()
+
+    const toc: TocItem[] = headings
+      .map((node) => {
+        const tag = node.tagName.toLowerCase()
+        const depth = (tag === 'h1' ? 1 : tag === 'h2' ? 2 : 3) as TocItem['depth']
+        const text = (node.textContent ?? '').trim()
+        if (!text) return null
+
+        const base = slugify(text) || 'section'
+        const count = seen.get(base) ?? 0
+        const id = count === 0 ? base : `${base}-${count + 1}`
+        seen.set(base, count + 1)
+
+        node.id = id
+        const anchor = doc.createElement('a')
+        anchor.className = 'anchor'
+        anchor.href = `#${id}`
+        anchor.setAttribute('aria-label', `跳转到：${text}`)
+        anchor.textContent = '#'
+        node.appendChild(anchor)
+
+        return { id, text, depth }
+      })
+      .filter(Boolean) as TocItem[]
+
+    return { html: doc.body.innerHTML, toc }
+  } catch {
+    return { html: source, toc: [] }
+  }
+}
+
 export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps) {
   const { containerRef, previewProps } = usePostImagePreview(issue?.body_html)
   const [scrollPercent, setScrollPercent] = useState(0)
@@ -184,6 +247,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
   const [floatTop, setFloatTop] = useState(0)
   const [floatLeft, setFloatLeft] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [activeHeading, setActiveHeading] = useState<string>('')
   const floatGroupRef = useRef<HTMLDivElement>(null)
   const dragStateRef = useRef({
     pointerId: -1,
@@ -348,6 +412,56 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
   }
 
   const progressLabel = `${scrollPercent}`
+  const tocResult = useMemo(() => buildTocAndHtml(issue?.body_html), [issue?.body_html])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!tocResult.toc.length) return
+
+    const headings = tocResult.toc
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean) as HTMLElement[]
+    if (!headings.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0))
+        const first = visible[0]?.target as HTMLElement | undefined
+        if (first?.id) setActiveHeading(first.id)
+      },
+      { rootMargin: '-80px 0px -70% 0px', threshold: [0.01, 0.1] }
+    )
+
+    headings.forEach((node) => observer.observe(node))
+    return () => observer.disconnect()
+  }, [tocResult.toc])
+
+  const renderToc = (onNavigate?: () => void) => (
+    <TocList>
+      {tocResult.toc.map((item) => (
+        <li key={item.id}>
+          <TocItemLink
+            href={`#${item.id}`}
+            $active={activeHeading ? activeHeading === item.id : false}
+            $depth={item.depth}
+            onClick={(e) => {
+              e.preventDefault()
+              const target = document.getElementById(item.id)
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                window.history.replaceState(null, '', `#${item.id}`)
+              }
+              onNavigate?.()
+            }}
+          >
+            {item.text}
+          </TocItemLink>
+        </li>
+      ))}
+    </TocList>
+  )
 
   if (!issue) {
     return (
@@ -380,35 +494,58 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
         </MetaRow>
       </Header>
 
-      <ArticleCard>
-        <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: issue.body_html ?? '' }} />
-      </ArticleCard>
+      <ContentGrid>
+        <MainColumn>
+          {tocResult.toc.length > 0 && (
+            <TocMobile>
+              <summary>
+                目录
+                <span aria-hidden='true'>⌄</span>
+              </summary>
+              <div className='toc-body'>{renderToc()}</div>
+            </TocMobile>
+          )}
 
-      <ImagePreview {...previewProps} />
-      <RedundantInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
-        <Alert
-          framed={false}
-          showHeader={false}
-          updatedAt={updatedAt}
-          updatedBy={updatedBy}
-          updatedByLink={userHomePage}
-          sourceLink={sourceLink}
-          projectLink={projectLink}
-          labels={alertLabels}
-          license={COPYRIGHT_TEXT}
-        />
-      </RedundantInfoCard>
-      <ShareInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
-        <ShareCardInner>
-          <SharedLinkGroup items={shareItems} label='' />
-        </ShareCardInner>
-      </ShareInfoCard>
-      <CommentPlaceholder title='空空如也~' description='评论功能正在开发中，欢迎稍后回来留言交流。' />
+          <ArticleCard>
+            <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
+          </ArticleCard>
 
-      <Toolbar>
-        {renderToolbarAction('prev', prevIssue)}
-        {renderToolbarAction('next', nextIssue)}
-      </Toolbar>
+          <ImagePreview {...previewProps} />
+          <RedundantInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
+            <Alert
+              framed={false}
+              showHeader={false}
+              updatedAt={updatedAt}
+              updatedBy={updatedBy}
+              updatedByLink={userHomePage}
+              sourceLink={sourceLink}
+              projectLink={projectLink}
+              labels={alertLabels}
+              license={COPYRIGHT_TEXT}
+            />
+          </RedundantInfoCard>
+          <ShareInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
+            <ShareCardInner>
+              <SharedLinkGroup items={shareItems} label='' />
+            </ShareCardInner>
+          </ShareInfoCard>
+          <CommentPlaceholder title='空空如也~' description='评论功能正在开发中，欢迎稍后回来留言交流。' />
+
+          <Toolbar>
+            {renderToolbarAction('prev', prevIssue)}
+            {renderToolbarAction('next', nextIssue)}
+          </Toolbar>
+        </MainColumn>
+
+        {tocResult.toc.length > 0 && (
+          <TocAside aria-label='文章目录'>
+            <TocCard>
+              <TocTitle>目录</TocTitle>
+              {renderToc()}
+            </TocCard>
+          </TocAside>
+        )}
+      </ContentGrid>
 
       <FloatingButtonGroup
         ref={floatGroupRef}

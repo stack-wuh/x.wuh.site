@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useId, useState } from 'react'
 import styled from 'styled-components'
 import Image from '@wuh.site/components/image'
+import { useThemeMode } from './theme/ThemeModeProvider'
 
 const BREAKPOINT = '768px'
 
@@ -28,7 +29,7 @@ const HeaderInner = styled.div`
   padding: 14px clamp(16px, 4vw, 60px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: var(--space-sm);
 `
 
@@ -54,6 +55,13 @@ const Nav = styled.nav`
   @media (min-width: ${BREAKPOINT}) {
     display: flex;
   }
+`
+
+const Right = styled.div`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 `
 
 const NavLink = styled(Link)`
@@ -109,6 +117,53 @@ const MobileToggle = styled.button`
   }
 `
 
+const ThemeToggle = styled.button`
+  --toggle-h: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--toggle-h);
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 26%, rgba(0, 0, 0, 0.06));
+  background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100) 86%);
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease, background var(--transition-fast) ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--primary-color) 38%, rgba(0, 0, 0, 0.06));
+    background: color-mix(in oklab, var(--primary-color) 20%, var(--background-100) 80%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none;
+  }
+
+  @media (max-width: ${BREAKPOINT}) {
+    display: none;
+  }
+`
+
+const ThemeDot = styled.span`
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--primary-color);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 18%, transparent);
+`
+
 const MobilePanel = styled.div<{ $open: boolean }>`
   display: ${({ $open }) => ($open ? 'block' : 'none')};
   padding: 0 clamp(16px, 4vw, 60px) 14px;
@@ -150,6 +205,40 @@ const MobileItem = styled(Link)`
   }
 `
 
+const MobileActions = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`
+
+const MobileActionButton = styled.button`
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 26%, rgba(0,0,0,0.06));
+  cursor: pointer;
+  transition: background var(--transition-fast) ease, border-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+
+  &:hover {
+    background: color-mix(in oklab, var(--primary-color) 12%, var(--background-100) 88%);
+    border-color: color-mix(in oklab, var(--primary-color) 40%, rgba(0,0,0,0.06));
+    box-shadow: var(--elevation-soft);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
+    outline-offset: 3px;
+  }
+`
+
+const MobileThemeLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`
+
 const IconBars = () => (
   <svg viewBox='0 0 24 24' width='18' height='18' aria-hidden='true' focusable='false'>
     <path
@@ -162,6 +251,7 @@ const IconBars = () => (
 export default function SiteHeader() {
   const panelId = useId()
   const [open, setOpen] = useState(false)
+  const { mode, toggleMode } = useThemeMode()
 
   const close = useCallback(() => setOpen(false), [])
   const toggle = useCallback(() => setOpen((v) => !v), [])
@@ -182,23 +272,30 @@ export default function SiteHeader() {
           <Image src='/logo.svg' alt='wuh.site' width={42} height={26} inline showSkeleton={false} appearance='plain' />
         </Brand>
 
-        <Nav aria-label='主导航'>
-          <NavLink href='/blog'>博客</NavLink>
-          <NavLink href='/about'>关于</NavLink>
-          <NavLink href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer'>
-            知识库
-          </NavLink>
-        </Nav>
+        <Right>
+          <Nav aria-label='主导航'>
+            <NavLink href='/blog'>博客</NavLink>
+            <NavLink href='/about'>关于</NavLink>
+            <NavLink href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer'>
+              知识库
+            </NavLink>
+          </Nav>
 
-        <MobileToggle
-          type='button'
-          aria-label={open ? '关闭菜单' : '打开菜单'}
-          aria-expanded={open}
-          aria-controls={panelId}
-          onClick={toggle}
-        >
-          <IconBars />
-        </MobileToggle>
+          <ThemeToggle type='button' onClick={toggleMode} aria-label={`切换主题（当前：${mode === 'money' ? '酒红' : '素雅'}）`}>
+            <ThemeDot aria-hidden='true' />
+            <span>{mode === 'money' ? '酒红' : '素雅'}</span>
+          </ThemeToggle>
+
+          <MobileToggle
+            type='button'
+            aria-label={open ? '关闭菜单' : '打开菜单'}
+            aria-expanded={open}
+            aria-controls={panelId}
+            onClick={toggle}
+          >
+            <IconBars />
+          </MobileToggle>
+        </Right>
       </HeaderInner>
 
       <MobilePanel id={panelId} $open={open}>
@@ -215,6 +312,20 @@ export default function SiteHeader() {
           <MobileItem href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' onClick={close}>
             知识库
           </MobileItem>
+          <MobileActions>
+            <MobileActionButton
+              type='button'
+              onClick={() => {
+                toggleMode()
+                close()
+              }}
+            >
+              <MobileThemeLabel>
+                <ThemeDot aria-hidden='true' />
+                <span>主题：{mode === 'money' ? '酒红' : '素雅'}</span>
+              </MobileThemeLabel>
+            </MobileActionButton>
+          </MobileActions>
         </MobileNav>
       </MobilePanel>
     </HeaderRoot>
