@@ -2,22 +2,13 @@
 import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
-import { Geist, Geist_Mono } from 'next/font/google'
 import { useCallback, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
 import { AudioPlayerProvider } from '@wuh.site/components/audio-player'
 import { GlobalAudioPlayer } from './components/player/GlobalAudioPlayer'
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
-})
+import SiteHeader from './components/SiteHeader'
+import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
 
 export default function RootLayout({
   children
@@ -60,12 +51,15 @@ export default function RootLayout({
       <StyledComponentsRegistry>
         <html lang='en'>
           <CssVariableStyles />
-          <body className={`${geistSans.variable} ${geistMono.variable}`}>
-            <AudioPlayerProvider trackResolver={resolveTrackSource}>
-              {children}
-              <Footer />
-              <GlobalAudioPlayer />
-            </AudioPlayerProvider>
+          <body>
+            <ThemeModeProvider>
+              <AudioPlayerProvider trackResolver={resolveTrackSource}>
+                <SiteHeader />
+                {children}
+                <Footer />
+                <GlobalAudioPlayer />
+              </AudioPlayerProvider>
+            </ThemeModeProvider>
           </body>
         </html>
       </StyledComponentsRegistry>

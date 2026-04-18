@@ -6,6 +6,12 @@ import Tag from '@wuh.site/components/tag'
 
 const TAG_DISPLAY_LIMIT = 3
 
+const BLOG_BREAKPOINTS = {
+  mobile: '640px',
+  tablet: '1024px',
+  desktop: '1280px'
+}
+
 type TagItem = {
   name: string
   color?: string | null
@@ -38,7 +44,8 @@ const Root = styled.div`
   align-items: flex-start;
   justify-content: center;
   font-family: var(--font-geist-sans);
-  background-color: var(--background-color);
+  background: transparent;
+  padding: clamp(24px, 3vw, 64px) clamp(16px, 4vw, 60px);
 
   @keyframes blogRowRise {
     from {
@@ -53,22 +60,13 @@ const Root = styled.div`
 `
 
 const Main = styled.main`
+  width: min(1200px, 100%);
   display: flex;
   min-height: 100vh;
-  width: 100%;
-  max-width: 920px;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-xl);
-  padding: 72px 56px;
-
-  @media (max-width: 900px) {
-    padding: 64px 32px;
-  }
-
-  @media (max-width: 640px) {
-    padding: 48px 20px;
-  }
+  padding: clamp(32px, 3vw, 72px) clamp(20px, 5vw, 56px);
 `
 
 const Header = styled.header`
@@ -87,17 +85,17 @@ const TitleGroup = styled.div`
 `
 
 const Title = styled.h1`
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-color);
 `
 
 const Subtitle = styled.p`
   font-size: var(--font-size-md);
   line-height: 1.7;
-  color: var(--text-secondary);
+  color: color-mix(in oklab, var(--text-color) 78%, transparent);
 `
 
 const HeaderActions = styled.div`
@@ -108,19 +106,27 @@ const HeaderActions = styled.div`
 
 const BackLink = styled(Link)`
   font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  color: color-mix(in oklab, var(--text-color) 76%, transparent);
   text-decoration: none;
 
   &:hover {
-    color: var(--primary-color);
+    color: var(--text-color);
   }
 `
 
 const List = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--space-md);
   width: 100%;
-  gap: 10px;
+
+  @media (min-width: ${BLOG_BREAKPOINTS.tablet}) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: ${BLOG_BREAKPOINTS.desktop}) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `
 
 const Card = styled(Link)`
@@ -130,10 +136,11 @@ const Card = styled(Link)`
   padding: 16px 20px;
   text-decoration: none;
   color: inherit;
-  border: 1px solid var(--normal-300);
-  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-card);
   background: var(--background-100);
-  transition: background 0.15s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: var(--elevation-soft);
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
   opacity: 0;
   animation: blogRowRise 0.35s ease forwards;
 
@@ -143,19 +150,18 @@ const Card = styled(Link)`
   }
 
   &:hover {
-    background: var(--background-200);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+    transform: translateY(-4px);
+    box-shadow: var(--elevation-card-hover);
+    border-color: color-mix(in oklab, var(--primary-color) 55%, rgba(0,0,0,0.06));
   }
 
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-800);
-    border-color: var(--normal-600);
+    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+  }
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.04);
-      box-shadow: 0 6px 20px rgba(0,0,0,.4);
-    }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none;
   }
 `
 
@@ -227,12 +233,11 @@ const CommentCount = styled.span`
 const Empty = styled.div`
   width: 100%;
   text-align: center;
-  color: var(--text-secondary);
+  color: color-mix(in oklab, var(--text-color) 76%, transparent);
   padding: var(--space-2xl) 0;
 
   @media (prefers-color-scheme: dark) {
-    color: var(--text-primary);
-    opacity: 0.7;
+    opacity: 0.8;
   }
 `
 

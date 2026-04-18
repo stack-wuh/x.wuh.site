@@ -3,10 +3,130 @@ import Card from '@wuh.site/components/card'
 import Empty from '@wuh.site/components/empty'
 
 export const Container = styled.div`
-  max-width: 860px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 64px 24px;
-  color: var(--text-primary);
+  padding: clamp(40px, 5vw, 72px) 24px;
+  color: var(--text-color);
+`
+
+export const ContentGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+
+  @media (min-width: 1280px) {
+    grid-template-columns: minmax(0, 820px) 260px;
+    gap: 24px;
+    justify-content: center;
+  }
+`
+
+export const MainColumn = styled.div`
+  min-width: 0;
+`
+
+export const TocAside = styled.aside`
+  display: none;
+
+  @media (min-width: 1280px) {
+    display: block;
+    position: sticky;
+    top: 88px;
+    align-self: start;
+  }
+`
+
+export const TocCard = styled.div`
+  border-radius: var(--radius-card);
+  border: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
+  background: color-mix(in oklab, var(--background-100) 78%, transparent);
+  box-shadow: var(--elevation-soft);
+  padding: 16px 16px 12px;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: color-mix(in oklab, var(--normal-700) 55%, transparent);
+  }
+`
+
+export const TocTitle = styled.div`
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--text-primary) 75%, transparent);
+  margin-bottom: 10px;
+`
+
+export const TocList = styled.ul`
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+`
+
+export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
+  display: block;
+  text-decoration: none;
+  color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'color-mix(in oklab, var(--text-primary) 84%, transparent)')};
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: ${({ $active }) => ($active ? 'color-mix(in oklab, var(--primary-color) 12%, transparent)' : 'transparent')};
+  margin-left: ${({ $depth }) => `${Math.min(2, Math.max(0, ($depth ?? 2) - 2)) * 10}px`};
+  transition: background var(--transition-fast) ease, border-color var(--transition-fast) ease, color var(--transition-fast) ease;
+
+  &:hover {
+    color: var(--text-primary);
+    background: color-mix(in oklab, var(--background-200) 80%, transparent);
+    border-color: color-mix(in oklab, var(--primary-color) 18%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
+    outline-offset: 2px;
+  }
+`
+
+export const TocMobile = styled.details`
+  margin: 0 0 var(--space-md);
+  border-radius: var(--radius-card);
+  border: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
+  background: color-mix(in oklab, var(--background-100) 78%, transparent);
+  box-shadow: var(--elevation-soft);
+  overflow: hidden;
+
+  @media (min-width: 1280px) {
+    display: none;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  &[open] summary {
+    border-bottom: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
+  }
+
+  .toc-body {
+    padding: 10px 10px 12px;
+  }
 `
 
 export const Header = styled.header`
@@ -26,7 +146,7 @@ export const MetaRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-  color: var(--text-muted);
+  color: color-mix(in oklab, var(--text-color) 76%, transparent);
   font-size: var(--font-size-sm);
   align-items: center;
 `
@@ -39,26 +159,37 @@ export const TagGroup = styled.div`
 
 export const ArticleCard = styled.section`
   background: var(--background-100);
-  border: 1px solid var(--normal-300);
-  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-card);
   padding: 32px;
-  box-shadow: var(--elevation-soft);
+  color: var(--text-primary);
+  box-shadow: var(--elevation-card);
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
 
   @media (max-width: 640px) {
     padding: 20px;
   }
 
+  &:hover {
+    border-color: color-mix(in oklab, var(--primary-color) 35%, rgba(0,0,0,0.06));
+    box-shadow: var(--elevation-card-hover);
+    transform: translateY(-2px);
+  }
+
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-800);
-    border-color: var(--normal-600);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none;
   }
 `
 
 export const RedundantInfoCard = styled(Card)`
   margin-top: var(--space-md);
   width: 100%;
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   border-color: color-mix(in oklab, var(--primary-color) 12%, var(--normal-300) 88%);
   background:
     radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--primary-color) 7%, transparent), transparent 52%),
@@ -335,14 +466,16 @@ export const Toolbar = styled.div`
     padding: 0;
     color: var(--text-secondary);
     text-decoration: none;
-    border-radius: 12px;
-    border: 1px solid var(--github-border);
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(0,0,0,0.06);
     background: var(--background-100);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--elevation-soft);
     transition:
       color var(--transition-fast) ease,
       background-color var(--transition-fast) ease,
-      border-color var(--transition-fast) ease;
+      border-color var(--transition-fast) ease,
+      transform var(--transition-fast) ease,
+      box-shadow var(--transition-fast) ease;
   }
 
   .toolbar-link.prev {
@@ -435,17 +568,46 @@ export const Toolbar = styled.div`
   }
 
   a.toolbar-link:hover {
-    background: var(--background-200);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: color-mix(in oklab, var(--background-100) 92%, var(--primary-color) 8%);
+    border-color: color-mix(in oklab, var(--primary-color) 55%, rgba(0,0,0,0.06));
+    color: var(--text-primary);
+    box-shadow: var(--elevation-card-hover);
+    transform: translateY(-2px);
   }
 
   a.toolbar-link:focus-visible {
-    background: var(--background-200);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: color-mix(in oklab, var(--background-100) 92%, var(--primary-color) 8%);
+    border-color: color-mix(in oklab, var(--primary-color) 55%, rgba(0,0,0,0.06));
+    color: var(--text-primary);
     outline: 2px solid color-mix(in srgb, var(--primary-color) 24%, transparent);
     outline-offset: 2px;
+  }
+
+  a.toolbar-link.prev:hover .toolbar-icon svg {
+    transform: translateX(-2px);
+  }
+  a.toolbar-link.next:hover .toolbar-icon svg {
+    transform: translateX(2px);
+  }
+
+  .toolbar-icon svg {
+    transition: transform var(--transition-fast) ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toolbar-link {
+      transition: none;
+      transform: none;
+    }
+
+    a.toolbar-link.prev:hover .toolbar-icon svg,
+    a.toolbar-link.next:hover .toolbar-icon svg {
+      transform: none;
+    }
+
+    .toolbar-icon svg {
+      transition: none;
+    }
   }
 
   @media (prefers-color-scheme: dark) {
@@ -453,6 +615,9 @@ export const Toolbar = styled.div`
     --toolbar-disabled-bg: color-mix(in oklab, var(--background-300) 82%, var(--normal-800) 18%);
     --toolbar-disabled-border: color-mix(in srgb, var(--normal-700) 80%, transparent);
     --toolbar-disabled-text: var(--text-primary);
+    .toolbar-link {
+      border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+    }
   }
 `
 
@@ -501,7 +666,7 @@ export const FloatingButtonGroup = styled.div`
   @media (prefers-color-scheme: dark) {
     border-color: var(--normal-600);
     border-right-color: transparent;
-    background: color-mix(in oklab, var(--background-200) 75%, var(--normal-900) 25%);
+    background: color-mix(in oklab, var(--background-200) 75%, var(--background-900) 25%);
     --float-divider: var(--normal-600);
 
     & > * + * {
@@ -559,7 +724,7 @@ const floatingButtonBase = css`
     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
 
     &:hover {
-      background: color-mix(in oklab, var(--background-300) 70%, var(--normal-900) 30%);
+      background: color-mix(in oklab, var(--background-300) 70%, var(--background-900) 30%);
     }
   }
 `
@@ -579,8 +744,8 @@ const createDarkGradient = (percent: number) => css`
     90deg,
     color-mix(in srgb, var(--primary-color) 28%, var(--background-200)) 0%,
     color-mix(in srgb, var(--primary-color) 46%, var(--background-200)) ${percent}%,
-    color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) ${percent}%,
-    color-mix(in srgb, var(--background-200) 80%, var(--normal-900)) 100%
+    color-mix(in srgb, var(--background-200) 80%, var(--background-900)) ${percent}%,
+    color-mix(in srgb, var(--background-200) 80%, var(--background-900)) 100%
   )
 `
 
@@ -621,7 +786,7 @@ export const FloatingButton = styled.button<{ $variant?: 'default' | 'progress';
         }
 
         &::after {
-          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--normal-900) 35%, transparent);
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-900) 35%, transparent);
         }
       }
     `}

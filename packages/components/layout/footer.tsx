@@ -18,7 +18,8 @@ const Footer = () => {
         padding: 'var(--space-xl) var(--space-2xl)',
         backgroundColor: 'var(--background-color)',
         color: 'var(--text-color)',
-        fontSize: 'var(--font-size-base)'
+        fontSize: 'var(--font-size-sm)',
+        lineHeight: 1.6,
       }}
     >
       <Row gap={'3xl'}>

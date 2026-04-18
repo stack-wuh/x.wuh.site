@@ -15,6 +15,12 @@ const IconMusic = () => (
   </svg>
 )
 
+const BREAKPOINTS = {
+  mobile: '640px',
+  tablet: '1024px',
+  desktop: '1280px'
+}
+
 const TAG_DISPLAY_LIMIT = 3
 
 type Repo = {
@@ -46,36 +52,59 @@ type Props = {
 }
 
 const Root = styled.div`
-  display: flex;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
   font-family: var(--font-geist-sans);
-  background-color: var(--background-color);
+  background: transparent;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: clamp(16px, 2.4vw, 48px) clamp(16px, 5vw, 48px);
 `
 
 const Main = styled.main`
+  width: min(1080px, 100%);
   display: flex;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 980px;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 80px 60px;
+  min-height: 100vh;
+  justify-content: flex-start;
+  gap: var(--space-lg);
+  padding: clamp(16px, 2.4vw, 40px) clamp(12px, 3vw, 40px);
 `
 
 const Hero = styled.section`
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-lg);
   width: 100%;
+`
+
+const HeroCard = styled.div`
+  border-radius: var(--radius-card);
+  border: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent);
+  background:
+    radial-gradient(circle at 92% 0%, color-mix(in oklab, var(--accent-color) 22%, transparent), transparent 55%),
+    radial-gradient(circle at 0% 12%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 52%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--background-100) 92%, white 8%),
+      var(--background-100)
+    );
+  box-shadow: var(--elevation-card);
+  padding: clamp(16px, 2.4vw, 32px);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  overflow: hidden;
+
+  @media (min-width: ${BREAKPOINTS.tablet}) {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+  }
 `
 
 const Brand = styled.div`
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 `
 
 const StyledLogo = styled(Image).attrs({
@@ -99,26 +128,39 @@ const StyledLogo = styled(Image).attrs({
 `
 
 const Title = styled.h1`
-  font-size: var(--font-size-3xl);
+  font-size: clamp(36px, 4vw, 48px);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.12;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 `
 
 const Subtitle = styled.p`
-  font-size: var(--font-size-md);
+  font-size: clamp(16px, 2vw, 18px);
   line-height: 1.75;
   color: var(--text-secondary);
 `
 
 const Ctas = styled.div`
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 520px;
-  gap: var(--space-md);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
   font-size: var(--font-size-sm);
+  width: 100%;
+  align-items: center;
+
+  & > * {
+    flex: 1 1 180px;
+  }
+
+  @media (min-width: ${BREAKPOINTS.tablet}) {
+    max-width: 580px;
+  }
+
+  @media (max-width: 420px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `
 
 const Section = styled.section`
@@ -126,13 +168,28 @@ const Section = styled.section`
   flex-direction: column;
   gap: var(--space-md);
   width: 100%;
-  margin-top: var(--space-2xl);
+  margin-top: var(--space-lg);
+`
+
+const SectionTitle = styled.h2`
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
 `
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--space-sm);
+
+  @media (min-width: 700px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: ${BREAKPOINTS.desktop}) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `
 
 const Card = styled.a`
@@ -140,25 +197,29 @@ const Card = styled.a`
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-md);
-  border: 1px solid var(--normal-300);
-  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-card);
   background: var(--background-100);
-  transition: all .2s ease;
+  box-shadow: var(--elevation-soft);
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
 
   &:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 14px rgba(0,0,0,.06);
-    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--primary-color) 55%, rgba(0,0,0,0.06));
+    box-shadow: var(--elevation-card-hover);
+    transform: translateY(-4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none;
   }
 
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-800);
-    border-color: var(--normal-600);
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+  }
 
-    &:hover {
-      box-shadow: 0 4px 20px rgba(0,0,0,.4);
-    }
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    padding: var(--space-sm);
   }
 `
 
@@ -182,14 +243,12 @@ const CardName = styled.span`
 const Lang = styled.span`
   font-size: 12px;
   color: var(--text-muted);
-  background: var(--background-200);
-  padding: 2px var(--space-sm);
+  background: color-mix(in oklab, var(--accent-color) 14%, var(--background-100));
+  padding: 4px 12px;
   border-radius: 64px;
 
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-700);
-    color: var(--text-primary);
-    opacity: 0.85;
+    background: color-mix(in oklab, var(--accent-color) 18%, var(--background-200));
   }
 `
 
@@ -230,12 +289,11 @@ const Meta = styled.div`
 const Empty = styled.div`
   grid-column: 1 / 4;
   text-align: center;
-  color: var(--text-secondary);
+  color: color-mix(in oklab, var(--text-color) 76%, transparent);
   padding: var(--space-xl) 0;
 
   @media (prefers-color-scheme: dark) {
-    color: var(--text-primary);
-    opacity: 0.7;
+    opacity: 0.8;
   }
 `
 
@@ -247,7 +305,7 @@ const HeaderRow = styled.div`
 
 const MoreLink = styled(Link)`
   font-size: var(--font-size-sm);
-  color: var(--primary-color);
+  color: color-mix(in oklab, var(--text-color) 88%, var(--accent-color) 12%);
   text-decoration: none;
   transition: color var(--transition-fast) ease;
   &:hover {
@@ -298,42 +356,45 @@ export default function HomeView({ repos, posts }: Props) {
     <Root>
       <Main>
         <Hero>
-          <Brand>
-            <StyledLogo src='/logo.svg' alt='wuh.site.logo' width={180} height={108} priority />
-            <Title>stack-wuh的博客  <Subtitle style={{ display: 'inline' }}>雾失楼台, 月迷津渡</Subtitle></Title>
-            <Subtitle>React / Vue / 工程化 / 可视化</Subtitle>
-          </Brand>
-          <Ctas>
-            <Button href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' variant='filled' color='primary'>
-              <Image
-                src='/vercel.svg'
-                alt='blog'
-                width={16}
-                height={16}
-                inline
-                showSkeleton={false}
-                appearance='plain'
+          <HeroCard>
+            <Brand>
+              <StyledLogo src='/logo.svg' alt='wuh.site.logo' width={180} height={108} priority />
+              <Title>
+                stack-wuh的博客 <Subtitle style={{ display: 'inline' }}>雾失楼台, 月迷津渡</Subtitle>
+              </Title>
+              <Subtitle>React / Vue / 工程化 / 可视化</Subtitle>
+            </Brand>
+            <Ctas>
+              <Button
+                href='https://stack-wuh.github.io/blog/'
+                target='_blank'
+                rel='noopener noreferrer'
+                variant='filled'
+                color='primary'
+                size='large'
+              >
+                <Image src='/vercel.svg' alt='blog' width={16} height={16} inline showSkeleton={false} appearance='plain' />
+                知识库
+              </Button>
+              <LinkGroup
+                items={[
+                  { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
+                  { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
+                  { type: 'twitter', href: 'https://x.com/wuh131420', title: 'Twitter' },
+                  { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
+                  { type: 'github', href: 'https://github.com/stack-wuh', title: 'GitHub' },
+                  { type: 'douban', href: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN', title: '豆瓣' },
+                  { type: 'custom', href: 'https://music.163.com/#/user/home?id=398326271', title: '网易云', icon: <IconMusic /> },
+                ]}
+                size='medium'
               />
-              知识库
-            </Button>
-            <LinkGroup
-              items={[
-                { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
-                { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
-                { type: 'twitter', href: 'https://x.com/wuh131420', title: 'Twitter' },
-                { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
-                { type: 'github', href: 'https://github.com/stack-wuh', title: 'GitHub' },
-                { type: 'douban', href: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN', title: '豆瓣' },
-                { type: 'custom', href: 'https://music.163.com/#/user/home?id=398326271', title: '网易云', icon: <IconMusic /> },
-              ]}
-              size='medium'
-            />
-          </Ctas>
+            </Ctas>
+          </HeroCard>
         </Hero>
 
         <Section>
           <HeaderRow>
-            <h2>精选博客</h2>
+            <SectionTitle>精选博客</SectionTitle>
             <MoreLink href='/blog'>全部博客</MoreLink>
           </HeaderRow>
           <Grid>
@@ -362,7 +423,7 @@ export default function HomeView({ repos, posts }: Props) {
 
         <Section>
           <HeaderRow>
-            <h2>精选项目</h2>
+            <SectionTitle>精选项目</SectionTitle>
           </HeaderRow>
           <Grid>
             {repos.length === 0 && <Empty>暂时无法获取 GitHub 数据</Empty>}
@@ -388,7 +449,7 @@ export default function HomeView({ repos, posts }: Props) {
           fullScreen={false}
           width='min(760px, calc(100vw - 32px))'
           style={{
-            background: '#030712',
+            background: 'var(--background-100)',
           }}
         >
           {activeContactConfig && (
