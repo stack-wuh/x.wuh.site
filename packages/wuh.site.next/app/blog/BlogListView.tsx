@@ -6,6 +6,12 @@ import Tag from '@wuh.site/components/tag'
 
 const TAG_DISPLAY_LIMIT = 3
 
+const BLOG_BREAKPOINTS = {
+  mobile: '640px',
+  tablet: '1024px',
+  desktop: '1280px'
+}
+
 type TagItem = {
   name: string
   color?: string | null
@@ -39,6 +45,7 @@ const Root = styled.div`
   justify-content: center;
   font-family: var(--font-geist-sans);
   background-color: var(--background-color);
+  padding: clamp(24px, 3vw, 64px) clamp(16px, 4vw, 60px);
 
   @keyframes blogRowRise {
     from {
@@ -53,22 +60,13 @@ const Root = styled.div`
 `
 
 const Main = styled.main`
+  width: min(1200px, 100%);
   display: flex;
   min-height: 100vh;
-  width: 100%;
-  max-width: 920px;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-xl);
-  padding: 72px 56px;
-
-  @media (max-width: 900px) {
-    padding: 64px 32px;
-  }
-
-  @media (max-width: 640px) {
-    padding: 48px 20px;
-  }
+  padding: clamp(32px, 3vw, 72px) clamp(20px, 5vw, 56px);
 `
 
 const Header = styled.header`
@@ -117,10 +115,18 @@ const BackLink = styled(Link)`
 `
 
 const List = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--space-md);
   width: 100%;
-  gap: 10px;
+
+  @media (min-width: ${BLOG_BREAKPOINTS.tablet}) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: ${BLOG_BREAKPOINTS.desktop}) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `
 
 const Card = styled(Link)`

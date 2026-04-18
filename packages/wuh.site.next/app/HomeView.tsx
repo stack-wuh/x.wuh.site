@@ -15,6 +15,12 @@ const IconMusic = () => (
   </svg>
 )
 
+const BREAKPOINTS = {
+  mobile: '640px',
+  tablet: '1024px',
+  desktop: '1280px'
+}
+
 const TAG_DISPLAY_LIMIT = 3
 
 type Repo = {
@@ -46,29 +52,28 @@ type Props = {
 }
 
 const Root = styled.div`
-  display: flex;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
   font-family: var(--font-geist-sans);
   background-color: var(--background-color);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: clamp(32px, 4vw, 80px) clamp(16px, 6vw, 60px);
 `
 
 const Main = styled.main`
+  width: min(1200px, 100%);
   display: flex;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 980px;
   flex-direction: column;
-  align-items: flex-start;
+  min-height: 100vh;
   justify-content: space-between;
-  padding: 80px 60px;
+  gap: var(--space-2xl);
+  padding: clamp(32px, 3vw, 72px) clamp(20px, 5vw, 64px);
 `
 
 const Hero = styled.section`
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: clamp(var(--space-lg), 2vw, var(--space-2xl));
   width: 100%;
 `
 
@@ -114,11 +119,24 @@ const Subtitle = styled.p`
 
 const Ctas = styled.div`
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 520px;
-  gap: var(--space-md);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
   font-size: var(--font-size-sm);
+  width: 100%;
+  align-items: center;
+
+  & > * {
+    flex: 1 1 180px;
+  }
+
+  @media (min-width: ${BREAKPOINTS.tablet}) {
+    max-width: 580px;
+  }
+
+  @media (max-width: 420px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `
 
 const Section = styled.section`
@@ -131,8 +149,16 @@ const Section = styled.section`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: var(--space-md);
+
+  @media (min-width: 700px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: ${BREAKPOINTS.desktop}) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `
 
 const Card = styled.a`
@@ -143,22 +169,25 @@ const Card = styled.a`
   border: 1px solid var(--normal-300);
   border-radius: 12px;
   background: var(--background-100);
-  transition: all .2s ease;
+  transition: all .25s ease;
 
   &:hover {
     border-color: var(--primary-color);
-    box-shadow: 0 4px 14px rgba(0,0,0,.06);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
     transform: translateY(-2px);
   }
 
   @media (prefers-color-scheme: dark) {
     background: var(--normal-800);
     border-color: var(--normal-600);
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
 
     &:hover {
-      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
     }
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    padding: var(--space-sm);
   }
 `
 

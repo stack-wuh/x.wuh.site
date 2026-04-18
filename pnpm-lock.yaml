@@ -97,6 +97,9 @@ importers:
       '@ant-design/colors':
         specifier: 7.2.1
         version: 7.2.1
+      '@next/eslint-plugin-next':
+        specifier: 15.1.0
+        version: 15.1.0
       '@types/node':
         specifier: ^20
         version: 20.19.39
