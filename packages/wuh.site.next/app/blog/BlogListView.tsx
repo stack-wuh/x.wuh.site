@@ -1,5 +1,6 @@
 'use client'
 
+import { useLayoutEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import Tag from '@wuh.site/components/tag'
@@ -181,15 +182,87 @@ const RowTop = styled.div`
 const TitleLine = styled.div`
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+  width: 100%;
+`
+
+const TitleTooltip = styled.div<{ $visible: boolean }>`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: min(360px, 80vw);
+  padding: var(--space-sm);
+  border-radius: var(--radius-card);
+  background: color-mix(in oklab, var(--background-color) 90%, transparent);
+  color: var(--text-color);
+  box-shadow: var(--elevation-card);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  pointer-events: none;
+  z-index: 10;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+  transform: translateY(${({ $visible }) => ($visible ? '0' : '4px')});
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+`
+
+const TitleTextContainer = styled.div`
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
 `
 
 const TitleText = styled.span`
+  display: block;
   font-weight: 600;
   font-size: var(--font-size-md);
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
+
+const TitleWithTooltip = ({ text }: { text: string }) => {
+  const textRef = useRef<HTMLSpanElement>(null)
+  const [overflow, setOverflow] = useState(false)
+  const [hovering, setHovering] = useState(false)
+
+  useLayoutEffect(() => {
+    const el = textRef.current
+    if (!el) return
+    const checkOverflow = () => {
+      setOverflow(el.scrollWidth - el.clientWidth > 1)
+    }
+    checkOverflow()
+    let observer: ResizeObserver | null = null
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(checkOverflow)
+      observer.observe(el)
+    }
+    window.addEventListener('resize', checkOverflow)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', checkOverflow)
+    }
+  }, [text])
+
+  return (
+    <TitleTextContainer
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
+      <TitleText ref={textRef} title={overflow ? text : undefined}>
+        {text}
+      </TitleText>
+      {overflow && (
+        <TitleTooltip role='tooltip' $visible={hovering}>
+          {text}
+        </TitleTooltip>
+      )}
+    </TitleTextContainer>
+  )
+}
 
 const IssueNumber = styled.span`
   font-size: var(--font-size-xs);
@@ -203,6 +276,10 @@ const CardTags = styled.div`
   flex: 1 1 auto;
   min-width: 160px;
   justify-content: flex-start;
+  align-items: center;
+  & > * {
+    flex: 0 0 auto;
+  }
 `
 
 const MetaLine = styled.div`
@@ -329,7 +406,7 @@ export default function BlogListView({ posts, pagination }: Props) {
               <AnimatedCard key={post.id} href={`/post/${post.number}`} $index={index}>
                 <RowTop>
                   <TitleLine>
-                    <TitleText>{post.title}</TitleText>
+                    <TitleWithTooltip text={post.title} />
                     <IssueNumber>#{post.number}</IssueNumber>
                   </TitleLine>
                   <CommentCount>💬 {post.comments}</CommentCount>
