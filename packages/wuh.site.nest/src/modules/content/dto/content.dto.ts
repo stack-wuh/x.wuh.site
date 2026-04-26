@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsArray, IsNumber, IsEnum } from 'class-validator';
+import type { CreateContentDto as ICreateContentDto, UpdateContentMetadataDto as IUpdateContentMetadataDto, QueryContentDto as IQueryContentDto } from '@wuh.site/shared-contracts';
 
-export class CreateContentDto {
+export class CreateContentDto implements ICreateContentDto {
   @IsNumber()
   externalId: number;
 
@@ -36,7 +37,7 @@ export class CreateContentDto {
   };
 }
 
-export class UpdateContentMetadataDto {
+export class UpdateContentMetadataDto implements IUpdateContentMetadataDto {
   @IsString()
   @IsOptional()
   slug?: string;
@@ -60,7 +61,7 @@ export class UpdateContentMetadataDto {
   extra?: Record<string, unknown>;
 }
 
-export class QueryContentDto {
+export class QueryContentDto implements IQueryContentDto {
   @IsArray()
   @IsOptional()
   labels?: string[];
