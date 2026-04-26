@@ -1,0 +1,4 @@
+interface:
+  display_name: "x.wuh.site Fullstack"
+  short_description: "Use frontend and backend patterns for x.wuh.site with NestJS + MongoDB."
+  default_prompt: "Use $x-wuh-fullstack to build or design fullstack features for x.wuh.site, including packages/wuh.site.next, packages/components, packages/hooks, and wuh.site.nest."
