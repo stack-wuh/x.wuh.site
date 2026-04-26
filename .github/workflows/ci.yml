@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=silent
 
+      - name: Type-check workspace
+        run: pnpm exec tsc --noEmit
+
       - name: Build workspace packages
         run: pnpm -w -r --parallel build
 
