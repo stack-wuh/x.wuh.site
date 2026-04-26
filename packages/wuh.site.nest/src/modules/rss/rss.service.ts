@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Feed } from 'feed';
 import { Content, ContentDocument } from '../content/schemas/content.schema';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RssService {
@@ -14,7 +13,6 @@ export class RssService {
 
   constructor(
     @InjectModel(Content.name) private contentModel: Model<ContentDocument>,
-    private configService: ConfigService,
   ) {}
 
   async generateFeed(): Promise<string> {
@@ -42,6 +40,7 @@ export class RssService {
         link: 'https://wuh.site',
         language: 'zh-cn',
         favicon: 'https://wuh.site/favicon.ico',
+        copyright: '© 2024 wuh.site',
       });
 
       for (const content of contents) {

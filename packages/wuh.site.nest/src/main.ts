@@ -36,7 +36,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const port = configService.get<number>('PORT') || 3000;
+  // Set global route prefix for v2 API
+  app.setGlobalPrefix('v2');
+
+  const port = configService.get<number>('PORT') || 3200;
   await app.listen(port);
   
   logger.info(`wuh.site.nest is running on http://localhost:${port}`);

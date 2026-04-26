@@ -39,7 +39,7 @@ CONTENT_REPO_NAME=blog
 COMMENT_ISSUE_NUMBER=123
 
 # 其他配置
-PORT=3000
+PORT=3200
 LOG_LEVEL=info
 ```
 
@@ -357,7 +357,7 @@ throw new InternalServerErrorException('Database error');
 ```bash
 # 查看最近的 Webhook 交付（GitHub 仓库 Settings → Webhooks）
 # 或使用 ngrok 本地测试：
-ngrok http 3000
+ngrok http 3200
 # 将 ngrok URL 配置到 GitHub Webhook
 ```
 

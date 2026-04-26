@@ -1,4 +1,4 @@
-import { Controller, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Patch, Body, Param } from '@nestjs/common';
 import { ContentService } from '../content/content.service';
 import { UpdateContentMetadataDto } from '../content/dto/content.dto';
 

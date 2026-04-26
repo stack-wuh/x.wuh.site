@@ -11,10 +11,11 @@ import { ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRATION') || '24h',
+          expiresIn: parseInt(configService.get<string>('JWT_EXPIRATION') || '86400'),
         },
       }),
     }),
   ],
 })
 export class AuthModule {}
+
