@@ -29,7 +29,7 @@ pnpm install
 pnpm start:dev
 ```
 
-服务器将在 `http://localhost:3000` 启动。
+服务器将在 `http://localhost:3200` 启动。
 
 ### 初次数据同步
 
@@ -103,7 +103,7 @@ src/
 
 | 变量名 | 说明 | 示例 |
 |-------|------|------|
-| PORT | 服务端口 | 3000 |
+| PORT | 服务端口 | 3200 |
 | MONGO_URI | MongoDB 连接字符串 | mongodb://localhost:27017/wuh_site |
 | GITHUB_PERSONAL_TOKEN | GitHub API Token | ghp_xxx |
 | GITHUB_WEBHOOK_SECRET | Webhook 签名密钥 | your_secret_key |

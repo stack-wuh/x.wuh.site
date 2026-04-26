@@ -2,7 +2,7 @@
   "name": "@wuh.site/nest",
   "version": "1.0.0",
   "description": "x.wuh.site backend - NestJS + MongoDB",
-  "author": "wuhong",
+  "author": "shadow <wuh131420@foxmail.com>",
   "license": "ISC",
   "scripts": {
     "prebuild": "rimraf dist",
@@ -44,6 +44,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@wuh.site/shared-contracts": "workspace:^",
     "@nestjs/cli": "^10.3.0",
     "@nestjs/schematics": "^10.0.3",
     "@nestjs/testing": "^10.3.0",

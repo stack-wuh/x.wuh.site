@@ -10,6 +10,7 @@ import { RssModule } from './modules/rss/rss.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { ApiV2Module } from './modules/api-v2/api-v2.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -41,6 +42,7 @@ import { AppService } from './app.service';
     UserModule,
     AuthModule,
     AdminModule,
+    ApiV2Module,
   ],
   controllers: [AppController],
   providers: [AppService],

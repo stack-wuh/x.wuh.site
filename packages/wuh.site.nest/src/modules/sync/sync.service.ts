@@ -1,10 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { Octokit } from '@octokit/rest';
-import { Content, ContentDocument } from '../content/schemas/content.schema';
-import { Comment, CommentDocument } from '../comment/schemas/comment.schema';
 import { ContentService } from '../content/content.service';
 import { CommentService } from '../comment/comment.service';
 
@@ -14,21 +10,17 @@ export class SyncService {
   private octokit: Octokit;
   private contentRepoOwner: string;
   private contentRepoName: string;
-  private commentIssueNumber: number;
 
   constructor(
     private configService: ConfigService,
     private contentService: ContentService,
     private commentService: CommentService,
-    @InjectModel(Content.name) private contentModel: Model<ContentDocument>,
-    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {
     this.octokit = new Octokit({
       auth: this.configService.get<string>('GITHUB_PERSONAL_TOKEN'),
     });
     this.contentRepoOwner = this.configService.get<string>('CONTENT_REPO_OWNER');
     this.contentRepoName = this.configService.get<string>('CONTENT_REPO_NAME');
-    this.commentIssueNumber = this.configService.get<number>('COMMENT_ISSUE_NUMBER');
   }
 
   async fullSync(): Promise<void> {
@@ -153,7 +145,8 @@ export class SyncService {
 
       const commentData = {
         externalId: comment.id,
-        issueNumber: issueNumber || comment.issue_url.split('/').pop(),
+        issueId: issueNumber ? Number(issueNumber) : Number(comment.issue_url.split('/').pop()),
+        issueNumber: issueNumber ? Number(issueNumber) : Number(comment.issue_url.split('/').pop()),
         repo: this.contentRepoName,
         body: comment.body,
         bodyHtml: comment.body_html,
