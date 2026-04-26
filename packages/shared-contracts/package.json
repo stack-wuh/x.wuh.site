@@ -1,0 +1,11 @@
+{
+  "name": "@wuh.site/shared-contracts",
+  "version": "1.0.0",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": ""
+  }
+}
