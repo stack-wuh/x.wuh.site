@@ -7,5 +7,6 @@
     "wuh.site@types"
   ],
   "author": "shadow <wuh131420@foxmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "types": "src/index.ts"
 }

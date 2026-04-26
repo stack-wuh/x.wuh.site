@@ -1,6 +1,7 @@
 import { IsString, IsEmail, IsOptional, MinLength } from 'class-validator';
+import type { CreateAnonymousCommentDto as ICreateAnonymousCommentDto, QueryCommentDto as IQueryCommentDto } from '@wuh.site/shared-contracts';
 
-export class CreateAnonymousCommentDto {
+export class CreateAnonymousCommentDto implements ICreateAnonymousCommentDto {
   @IsString()
   @MinLength(2)
   nickname: string;
@@ -14,7 +15,7 @@ export class CreateAnonymousCommentDto {
   content: string;
 }
 
-export class QueryCommentDto {
+export class QueryCommentDto implements IQueryCommentDto {
   @IsOptional()
   issueNumber?: number;
 

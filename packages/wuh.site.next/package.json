@@ -26,5 +26,6 @@
     "eslint-config-next": "15.1.0",
     "@next/eslint-plugin-next": "15.1.0",
     "typescript": "^5"
-  }
+  },
+  "types": "src/index.ts"
 }
