@@ -36,7 +36,7 @@ const normalizeTrack = (track: NetEaseTrack) => {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   const playlistId = request.nextUrl.searchParams.get('playlistId') ?? DEFAULT_PLAYLIST_ID
   try {
     const response = await requestNetEase('/playlist/detail', `?id=${playlistId}`, {

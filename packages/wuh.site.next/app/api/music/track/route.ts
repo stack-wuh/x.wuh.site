@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { requestNetEase } from '../client'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   const id = request.nextUrl.searchParams.get('id')
   const level = request.nextUrl.searchParams.get('level') ?? 'exhigh'
   if (!id) {

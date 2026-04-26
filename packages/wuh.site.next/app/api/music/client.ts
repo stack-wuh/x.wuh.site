@@ -3,7 +3,7 @@ const FALLBACK_ENDPOINTS = [
   'https://neteasecloudmusicapi-main-api.vercel.app'
 ].filter((base): base is string => Boolean(base))
 
-export const requestNetEase = async (path: string, params: string, init?: RequestInit) => {
+export const requestNetEase = async (path: string, params: string, init?: RequestInit): Promise<Response> => {
   const endpoints = FALLBACK_ENDPOINTS.length ? FALLBACK_ENDPOINTS : ['https://neteasecloudmusicapi-main-api.vercel.app']
   let lastError: unknown
 
