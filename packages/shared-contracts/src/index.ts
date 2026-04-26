@@ -14,6 +14,7 @@ export interface PaginatedResponse<T> {
   nextCursor?: string | null;
 }
 
+// User
 export interface UserDto {
   id: ID;
   name: string;
@@ -27,6 +28,7 @@ export interface CreateUserDto {
   password?: string; // only used on server-side create
 }
 
+// Post (legacy name) - keep for compatibility
 export interface PostDto {
   id: ID;
   authorId: ID;
@@ -41,6 +43,54 @@ export interface CreatePostDto {
   title: string;
   content: string;
   published?: boolean;
+}
+
+// Content (from backend content module)
+export interface CreateContentDto {
+  externalId: number;
+  repo: string;
+  number: number;
+  title: string;
+  labels?: string[];
+  body?: string;
+  bodyHtml?: string;
+  metadata?: {
+    slug?: string;
+    summary?: string;
+    cover?: string;
+    keywords?: string[];
+    rssExcluded?: boolean;
+    extra?: Record<string, unknown>;
+  };
+}
+
+export interface UpdateContentMetadataDto {
+  slug?: string;
+  summary?: string;
+  cover?: string;
+  keywords?: string[];
+  rssExcluded?: boolean;
+  extra?: Record<string, unknown>;
+}
+
+export interface QueryContentDto {
+  labels?: string[];
+  page?: number;
+  limit?: number;
+  state?: 'open' | 'closed';
+}
+
+// Comment
+export interface CreateAnonymousCommentDto {
+  nickname: string;
+  email?: string;
+  content: string;
+}
+
+export interface QueryCommentDto {
+  issueNumber?: number;
+  page?: number;
+  limit?: number;
 }
 
 // Example export for reuse
