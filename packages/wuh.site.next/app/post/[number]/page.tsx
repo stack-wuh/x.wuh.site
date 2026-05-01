@@ -21,10 +21,17 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   user: item.author ? {
     login: item.author.login,
     userName: item.author.login,
+    avatarUrl: item.author.avatarUrl || null,
   } : null,
   labels: item.labels.map((l) => ({ name: l })),
   body: item.body || '',
   body_html: item.bodyHtml || '',
+  metadata: item.metadata ? {
+    cover: item.metadata.cover || null,
+    summary: item.metadata.summary || null,
+    slug: item.metadata.slug || null,
+    keywords: item.metadata.keywords || null,
+  } : null,
 })
 
 async function getIssue(num: string): Promise<Issue | null> {

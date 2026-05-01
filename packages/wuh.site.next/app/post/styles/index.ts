@@ -15,7 +15,7 @@ export const ContentGrid = styled.div`
   gap: 0;
   align-items: start;
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1024px) {
     grid-template-columns: minmax(0, 820px) 260px;
     gap: 24px;
     justify-content: center;
@@ -29,7 +29,7 @@ export const MainColumn = styled.div`
 export const TocAside = styled.aside`
   display: none;
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1024px) {
     display: block;
     position: sticky;
     top: 88px;
@@ -100,7 +100,7 @@ export const TocMobile = styled.details`
   box-shadow: var(--elevation-soft);
   overflow: hidden;
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 
@@ -137,6 +137,7 @@ export const Header = styled.header`
 `
 
 export const Title = styled.h1`
+  font-family: var(--font-serif);
   font-size: var(--font-size-2xl);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -228,12 +229,12 @@ export const ShareCardInner = styled.div`
 `
 
 export const MarkdownBody = styled.article`
-  --github-border: rgba(208, 215, 222, 0.8);
-  --github-muted: #57606a;
-  --atom-inline-bg: rgba(106, 115, 125, 0.15);
-  --atom-inline-border: rgba(106, 115, 125, 0.4);
-  --atom-pre-bg: #fafbfc;
-  --atom-pre-border: rgba(208, 215, 222, 0.8);
+  --github-border: color-mix(in oklab, var(--normal-400) 55%, transparent);
+  --github-muted: var(--text-secondary);
+  --atom-inline-bg: color-mix(in oklab, var(--accent-color) 12%, transparent);
+  --atom-inline-border: color-mix(in oklab, var(--accent-color) 30%, transparent);
+  --atom-pre-bg: var(--background-200);
+  --atom-pre-border: color-mix(in oklab, var(--normal-400) 55%, transparent);
 
   font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
@@ -242,12 +243,12 @@ export const MarkdownBody = styled.article`
   word-break: break-word;
 
   @media (prefers-color-scheme: dark) {
-    --github-border: rgba(110, 118, 129, 0.4);
-    --github-muted: #8b949e;
-    --atom-inline-bg: rgba(87, 96, 106, 0.35);
-    --atom-inline-border: rgba(87, 96, 106, 0.6);
-    --atom-pre-bg: #1f2329;
-    --atom-pre-border: rgba(87, 96, 106, 0.7);
+    --github-border: color-mix(in oklab, var(--normal-600) 55%, transparent);
+    --github-muted: var(--text-secondary);
+    --atom-inline-bg: color-mix(in oklab, var(--accent-color) 18%, transparent);
+    --atom-inline-border: color-mix(in oklab, var(--accent-color) 35%, transparent);
+    --atom-pre-bg: color-mix(in oklab, var(--background-300) 60%, var(--background-900));
+    --atom-pre-border: color-mix(in oklab, var(--normal-600) 55%, transparent);
     color: var(--text-primary);
   }
 
@@ -259,6 +260,7 @@ export const MarkdownBody = styled.article`
   }
 
   h1, h2 {
+    font-family: var(--font-serif);
     padding-bottom: 0.3em;
     border-bottom: 1px solid var(--github-border);
   }
@@ -275,7 +277,7 @@ export const MarkdownBody = styled.article`
   }
 
   a {
-    color: var(--primary-color);
+    color: var(--accent-color);
     text-decoration: underline;
     text-decoration-thickness: 0.08em;
     text-underline-offset: 3px;
@@ -315,24 +317,24 @@ export const MarkdownBody = styled.article`
     font-size: 12px;
     border-radius: 8px;
     border: 1px solid var(--atom-pre-border);
-    background: rgba(32, 35, 42, 0.05);
-    color: var(--github-muted);
+    background: color-mix(in oklab, var(--accent-color) 8%, transparent);
+    color: var(--text-secondary);
     padding: 4px 10px;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
   .copy-btn:hover {
-    background: rgba(98, 114, 164, 0.15);
-    color: #528bff;
-    border-color: #528bff;
+    background: color-mix(in oklab, var(--accent-color) 20%, transparent);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
   }
 
   .anchor {
     margin-left: 6px;
     opacity: 0;
     text-decoration: none;
-    color: var(--github-muted);
+    color: var(--text-secondary);
     transition: opacity 0.2s ease;
   }
 
@@ -348,9 +350,9 @@ export const MarkdownBody = styled.article`
   blockquote {
     margin: 16px 0;
     padding: 0.25em 1em;
-    border-left: 4px solid var(--github-border);
-    color: var(--github-muted);
-    background: rgba(175, 184, 193, 0.12);
+    border-left: 4px solid color-mix(in oklab, var(--accent-color) 45%, transparent);
+    color: var(--text-secondary);
+    background: color-mix(in oklab, var(--accent-color) 6%, var(--background-200));
     border-radius: 6px;
   }
 
@@ -387,7 +389,7 @@ export const MarkdownBody = styled.article`
   }
 
   th {
-    background: rgba(175, 184, 193, 0.25);
+    background: color-mix(in oklab, var(--accent-color) 10%, var(--background-200));
     font-weight: 600;
   }
 
@@ -404,7 +406,7 @@ export const MarkdownBody = styled.article`
   }
 
   img[data-preview-index]:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--accent-color);
     outline-offset: 2px;
   }
 
@@ -419,8 +421,8 @@ export const MarkdownBody = styled.article`
     padding: 3px 6px;
     font-size: 12px;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    background: var(--github-inline-bg);
-    border: 1px solid var(--github-border);
+    background: var(--atom-inline-bg);
+    border: 1px solid var(--atom-inline-border);
     border-radius: 6px;
     box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
   }
@@ -429,7 +431,7 @@ export const MarkdownBody = styled.article`
     border: 1px solid var(--github-border);
     border-radius: 10px;
     padding: 12px 16px;
-    background: var(--github-code-bg);
+    background: var(--atom-pre-bg);
     margin: 16px 0;
   }
 
@@ -632,13 +634,11 @@ export const CommentPlaceholder = styled(Empty)`
 
 export const FloatingButtonGroup = styled.div`
   --float-button-width: 50px;
-  --float-offset: 0px;
-  --float-bottom: var(--space-xl);
   --float-divider: var(--normal-300);
 
   position: fixed;
-  right: var(--float-offset);
-  bottom: var(--float-bottom);
+  right: 0;
+  bottom: var(--space-xl);
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -659,7 +659,6 @@ export const FloatingButtonGroup = styled.div`
   }
 
   @media (max-width: 640px) {
-    --float-offset: 0px;
     --float-button-width: 50px;
   }
 
@@ -790,4 +789,85 @@ export const FloatingButton = styled.button<{ $variant?: 'default' | 'progress';
         }
       }
     `}
+`
+
+/* ====== PostHeader 子组件样式 ====== */
+
+export const CoverImage = styled.div`
+  width: 100%;
+  max-height: 360px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+`
+
+export const AuthorRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+`
+
+export const AuthorAvatar = styled.img`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in oklab, var(--accent-color) 30%, transparent);
+  flex-shrink: 0;
+`
+
+export const AuthorInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+`
+
+export const Summary = styled.blockquote`
+  margin: 0 0 var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  border-left: 3px solid var(--accent-color);
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  background: color-mix(in oklab, var(--accent-color) 6%, transparent);
+  border-radius: 0 8px 8px 0;
+`
+
+export const OrnamentDivider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 360px;
+  margin: var(--space-md) auto;
+  color: var(--text-muted);
+  opacity: 0.5;
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.35;
+  }
+
+  .divider-diamond {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
 `

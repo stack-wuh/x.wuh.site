@@ -16,7 +16,7 @@ const Grid = styled.div`
   gap: 0;
   align-items: start;
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1024px) {
     grid-template-columns: minmax(0, 820px) 260px;
     gap: 24px;
     justify-content: center;
@@ -30,7 +30,7 @@ const Main = styled.div`
 const TocSkeleton = styled.div`
   display: none;
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1024px) {
     display: block;
     position: sticky;
     top: 88px;
