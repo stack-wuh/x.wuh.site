@@ -6,6 +6,7 @@ import message from '@wuh.site/components/message'
 import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
+import { marked } from 'marked'
 
 import {
   ArticleCard,
@@ -241,7 +242,11 @@ const buildTocAndHtml = (html: string | null | undefined): { html: string; toc: 
 }
 
 export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps) {
-  const { containerRef, previewProps } = usePostImagePreview(issue?.body_html)
+  const renderedHtml = useMemo(
+    () => (issue?.body_html ? issue.body_html : issue?.body ? marked.parse(issue.body) as string : ''),
+    [issue?.body_html, issue?.body]
+  )
+  const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const [scrollPercent, setScrollPercent] = useState(0)
   const [floatSide, setFloatSide] = useState<'left' | 'right'>('right')
   const [floatTop, setFloatTop] = useState(0)
@@ -412,7 +417,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
   }
 
   const progressLabel = `${scrollPercent}`
-  const tocResult = useMemo(() => buildTocAndHtml(issue?.body_html), [issue?.body_html])
+  const tocResult = useMemo(() => buildTocAndHtml(renderedHtml), [renderedHtml])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
