@@ -23,7 +23,8 @@ import { AppService } from './app.service';
     }),
 
     // MongoDB
-    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/wuh_site'),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/wuh_site', {
+    }),
 
     // Throttler for rate limiting
     ThrottlerModule.forRoot([
