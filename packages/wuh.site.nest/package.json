@@ -27,6 +27,7 @@
     "@nestjs/mongoose": "^10.0.4",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.0",
+    "@nestjs/swagger": "^11.4.2",
     "@nestjs/throttler": "^5.1.2",
     "@octokit/rest": "^21.0.0",
     "@sentry/node": "^7.77.0",

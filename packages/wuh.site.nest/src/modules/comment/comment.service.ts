@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { CreateAnonymousCommentDto } from './dto/comment.dto';
+import { PaginatedResult, buildPaginatedResult } from '../../common/interfaces/paginated-response.interface';
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto';
 
@@ -32,7 +33,7 @@ export class CommentService {
     page: number = 1,
     limit: number = 20,
     query?: Record<string, any>,
-  ): Promise<{ data: CommentDocument[]; total: number; page: number }> {
+  ): Promise<PaginatedResult<CommentDocument>> {
     try {
       const skip = (page - 1) * limit;
       const [data, total] = await Promise.all([
@@ -44,7 +45,7 @@ export class CommentService {
           .exec(),
         this.commentModel.countDocuments(query || {}),
       ]);
-      return { data, total, page };
+      return buildPaginatedResult(data, total, page, limit);
     } catch (error) {
       this.logger.error(`Failed to find comments: ${error.message}`);
       throw error;

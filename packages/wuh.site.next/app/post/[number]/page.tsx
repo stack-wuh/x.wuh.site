@@ -1,63 +1,38 @@
 import type { Metadata } from 'next'
-import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
+import api from '../../lib/api'
+import type { ContentItem } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
+import type { Issue, AdjacentIssue } from '../PostView.types'
 
 const FALLBACK_METADATA: Metadata = {
   title: '博客详情 · wuh.site',
   description: '从 GitHub Issues 渲染的博客文章详情',
 }
 
-type Issue = {
-  id: number
-  number: number
-  title: string
-  html_url: string
-  repository_url?: string | null
-  comments: number
-  created_at: string
-  updated_at?: string
-  user?: {
-    login?: string | null
-    userName?: string | null
-  } | null
-  labels: { name: string; color?: string | null; url?: string }[]
-  body: string
-}
-
-type AdjacentIssue = {
-  number: number
-  title: string
-}
+const mapContentToIssue = (item: ContentItem): Issue => ({
+  id: item.externalId,
+  number: item.number,
+  title: item.title,
+  html_url: `https://github.com/${item.repo}/issues/${item.number}`,
+  repository_url: item.repo ? `https://api.github.com/repos/${item.repo}` : null,
+  comments: item.comments,
+  created_at: item.createdAtGitHub || '',
+  updated_at: item.updatedAtGitHub || item.createdAtGitHub || '',
+  user: item.author ? {
+    login: item.author.login,
+    userName: item.author.login,
+  } : null,
+  labels: item.labels.map((l) => ({ name: l })),
+  body: item.body || '',
+  body_html: item.bodyHtml || '',
+})
 
 async function getIssue(num: string): Promise<Issue | null> {
   try {
-    const res = await fetcher<Issue>(`https://api.github.com/repos/stack-wuh/blog/issues/${num}`, {
-      headers: { 'Accept': 'application/vnd.github+json' },
-      next: { revalidate: 1800 }
-    })
-    if (!res.ok || !res.data) return null
-    return res.data
+    const content = await api.content.getPost(num, { revalidate: 1800 })
+    return mapContentToIssue(content)
   } catch {
     return null
-  }
-}
-
-async function renderMarkdown(text: string): Promise<string> {
-  try {
-    const res = await fetcher<string>('https://api.github.com/markdown', {
-      method: 'POST',
-      headers: {
-        'Accept': 'text/html',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ text, mode: 'gfm' }),
-      parse: 'text',
-      next: { revalidate: 1800 }
-    })
-    if (!res.ok || res.data == null) return ''
-    return res.data
-  } catch {
-    return ''
   }
 }
 
@@ -66,19 +41,11 @@ async function getAdjacentIssue(issueNumber: number, offset: -1 | 1): Promise<Ad
   if (adjacentNumber <= 0) return null
 
   try {
-    const res = await fetcher<AdjacentIssue & { pull_request?: object }>(
-      `https://api.github.com/repos/stack-wuh/blog/issues/${adjacentNumber}`,
-      {
-        headers: { 'Accept': 'application/vnd.github+json' },
-        next: { revalidate: 1800 }
-      }
-    )
-    if (!res.ok || !res.data) return null
-    if (res.data.pull_request) return null
-
+    const content = await api.content.getPost(String(adjacentNumber), { revalidate: 1800 })
+    // Filter out pull requests (not in our content DB, but just in case)
     return {
-      number: res.data.number,
-      title: res.data.title,
+      number: content.number,
+      title: content.title,
     }
   } catch {
     return null
@@ -104,11 +71,10 @@ export default async function Page({ params }: { params: Promise<{ number: strin
   const issue = await getIssue(number)
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />
 
-  const [body_html, prevIssue, nextIssue] = await Promise.all([
-    renderMarkdown(issue.body || ''),
+  const [prevIssue, nextIssue] = await Promise.all([
     getAdjacentIssue(issue.number, -1),
     getAdjacentIssue(issue.number, 1)
   ])
 
-  return <PostView issue={{ ...issue, body_html }} prevIssue={prevIssue} nextIssue={nextIssue} />
+  return <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} />
 }

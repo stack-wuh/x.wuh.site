@@ -1,28 +1,36 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
 @Schema({ timestamps: true })
 export class Comment {
+  @ApiProperty({ description: 'GitHub comment id' })
   @Prop({ required: true, unique: true })
-  externalId: number; // GitHub comment id
+  externalId: number;
 
+  @ApiProperty({ description: 'Issue id (MongoDB ObjectId)' })
   @Prop({ required: true })
-  issueId: number; // issue id (MongoDB ObjectId)
+  issueId: number;
 
+  @ApiProperty({ description: 'Issue number' })
   @Prop({ required: true })
   issueNumber: number;
 
+  @ApiProperty({ description: 'Repository name' })
   @Prop({ required: true })
   repo: string;
 
+  @ApiProperty({ description: 'Comment body (markdown)' })
   @Prop({ required: true })
   body: string;
 
+  @ApiPropertyOptional({ description: 'Comment body (HTML)' })
   @Prop()
   bodyHtml?: string;
 
+  @ApiPropertyOptional({ description: 'GitHub user info' })
   @Prop({
     type: {
       login: String,
@@ -36,28 +44,35 @@ export class Comment {
     url: string;
   };
 
-  // Anonymous comment fields
+  @ApiPropertyOptional({ description: 'Anonymous comment nickname' })
   @Prop()
   nickname?: string;
 
+  @ApiPropertyOptional({ description: 'Anonymous comment email' })
   @Prop()
   email?: string;
 
+  @ApiPropertyOptional({ description: 'Random avatar URL' })
   @Prop()
-  avatarUrl?: string; // Random avatar for anonymous comments
+  avatarUrl?: string;
 
+  @ApiPropertyOptional({ description: 'UUID for tracking' })
   @Prop()
-  footprint?: string; // UUID for tracking
+  footprint?: string;
 
+  @ApiPropertyOptional({ description: 'Client IP address' })
   @Prop()
   clientIp?: string;
 
+  @ApiPropertyOptional({ description: 'User agent' })
   @Prop()
   userAgent?: string;
 
+  @ApiPropertyOptional({ description: 'GitHub created date' })
   @Prop()
   createdAtGitHub: Date;
 
+  @ApiPropertyOptional({ description: 'GitHub updated date' })
   @Prop()
   updatedAtGitHub: Date;
 }
