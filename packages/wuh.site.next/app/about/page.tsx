@@ -444,7 +444,7 @@ const ControlGroup = styled.div`
 const ChipButton = styled.button<{ $active?: boolean }>`
   border: 1px solid
     ${({ $active }) => ($active ? 'var(--primary-color)' : 'color-mix(in oklab, var(--normal-300) 45%, transparent)')};
-  background: ${({ $active }) => ($active ? 'var(--primary-50)' : 'transparent')};
+  background: ${({ $active }) => ($active ? 'var(--primary-100)' : 'transparent')};
   color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-primary)')};
   border-radius: 999px;
   padding: 6px 16px;

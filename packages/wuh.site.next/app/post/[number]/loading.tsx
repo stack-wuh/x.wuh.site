@@ -35,8 +35,8 @@ const TocSkeleton = styled.div`
     position: sticky;
     top: 88px;
     border-radius: var(--radius-card);
-    border: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
-    background: color-mix(in oklab, var(--background-100) 78%, transparent);
+    border: 1px solid var(--normal-300);
+    background: var(--background-100);
     box-shadow: var(--elevation-soft);
     padding: 16px;
   }
@@ -64,17 +64,13 @@ const TagRow = styled.div`
 
 const ArticleCard = styled.section`
   background: var(--background-100);
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid var(--normal-300);
   border-radius: var(--radius-card);
   padding: 32px;
   box-shadow: var(--elevation-card);
 
   @media (max-width: 640px) {
     padding: 20px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
   }
 `
 
@@ -109,9 +105,9 @@ export default function Loading() {
               <Skeleton variant='text' width={96} />
             </MetaRow>
             <TagRow>
-              <Skeleton variant='rect' height={22} width={72} radius={999} />
-              <Skeleton variant='rect' height={22} width={86} radius={999} />
-              <Skeleton variant='rect' height={22} width={64} radius={999} />
+              <Skeleton variant='rect' height={22} width={72} radius={4} />
+              <Skeleton variant='rect' height={22} width={86} radius={4} />
+              <Skeleton variant='rect' height={22} width={64} radius={4} />
             </TagRow>
           </Header>
 
@@ -129,8 +125,8 @@ export default function Loading() {
                 <Skeleton variant='text' height={14} width='70%' />
               </SkeletonRow>
               <InlineRow>
-                <Skeleton variant='rect' height={36} width={120} radius={10} />
-                <Skeleton variant='rect' height={36} width={140} radius={10} />
+                <Skeleton variant='rect' height={36} width={120} radius={8} />
+                <Skeleton variant='rect' height={36} width={140} radius={8} />
               </InlineRow>
               <SkeletonRow>
                 <Skeleton variant='text' height={14} width='94%' />

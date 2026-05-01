@@ -2,14 +2,14 @@ import { Tokens, cssVariablesTokens } from './tokens'
 import themeColors from './generator-color'
 export const DefaultTheme: Tokens = {
   colors: {
-    primary: '#C94A44', // 人民币 100 元主题主色
-    secondary: '#6c757d',
+    primary: '#C89060', // 文青纸张风主色（暖赭）
+    secondary: '#9B8D78',
     success: '#28a745',
     danger: '#dc3545',
     warning: '#ffc107',
     info: '#17a2b8',
-    text: '#1F1F1F',
-    background: '#7B5A5A'
+    text: '#2A2218',
+    background: '#F2EDE4'
   },
   primary: themeColors.primary,
   danger: themeColors.danger,
@@ -21,34 +21,34 @@ export const DefaultTheme: Tokens = {
     none: '0px',
     xs: '8px',
     sm: '16px',
-    base: '8px',
-    md: '24px',
-    lg: '32px',
-    xl: '40px',
-    '2xl': '64px',
-    '3xl': '80px'
+    base: '12px',
+    md: '28px',
+    lg: '36px',
+    xl: '48px',
+    '2xl': '72px',
+    '3xl': '96px'
   },
   fontSizes: {
     none: '0px',
     xs: '12px',
-    sm: '14px',
-    base: '16px',
-    md: '18px',
-    lg: '24px',
-    xl: '32px',
-    '2xl': '40px',
-    '3xl': '56px'
+    sm: '13px',
+    base: '15px',
+    md: '17px',
+    lg: '22px',
+    xl: '30px',
+    '2xl': '38px',
+    '3xl': '52px'
   },
   borderRadius: {
     none: '0px',
     xs: '2px',
     sm: '4px',
-    base: '12px',
-    md: '16px',
-    lg: '20px',
+    base: '8px',
+    md: '12px',
+    lg: '16px',
     xl: '20px',
-    '2xl': '20px',
-    '3xl': '24px'
+    '2xl': '24px',
+    '3xl': '28px'
   }
 }
 

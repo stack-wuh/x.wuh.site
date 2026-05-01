@@ -6,9 +6,9 @@
 export const buttonTokens = {
   /** 圆角 */
   borderRadius: {
-    small: '8px',
-    medium: '8px',
-    large: '12px',
+    small: '6px',
+    medium: '6px',
+    large: '8px',
   },
   /** 高度（含 padding） */
   height: {

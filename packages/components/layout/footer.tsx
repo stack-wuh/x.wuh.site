@@ -20,6 +20,7 @@ const Footer = () => {
         color: 'var(--text-color)',
         fontSize: 'var(--font-size-sm)',
         lineHeight: 1.6,
+        borderTop: '1px solid color-mix(in oklab, var(--text-muted) 18%, transparent)',
       }}
     >
       <Row gap={'3xl'}>

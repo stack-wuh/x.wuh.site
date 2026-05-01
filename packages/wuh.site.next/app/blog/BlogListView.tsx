@@ -1,17 +1,11 @@
 'use client'
 
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import Tag from '@wuh.site/components/tag'
 
 const TAG_DISPLAY_LIMIT = 3
-
-const BLOG_BREAKPOINTS = {
-  mobile: '640px',
-  tablet: '1024px',
-  desktop: '1280px'
-}
 
 type TagItem = {
   name: string
@@ -39,6 +33,8 @@ type Props = {
   pagination: PaginationState
 }
 
+/* ====== Styled Components ====== */
+
 const Root = styled.div`
   display: flex;
   min-height: 100vh;
@@ -47,27 +43,16 @@ const Root = styled.div`
   font-family: var(--font-geist-sans);
   background: transparent;
   padding: clamp(24px, 3vw, 64px) clamp(16px, 4vw, 60px);
-
-  @keyframes blogRowRise {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 `
 
 const Main = styled.main`
-  width: min(1200px, 100%);
+  width: min(720px, 100%);
   display: flex;
   min-height: 100vh;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-xl);
-  padding: clamp(32px, 3vw, 72px) clamp(20px, 5vw, 56px);
+  padding: clamp(24px, 3vw, 48px) clamp(20px, 5vw, 32px);
 `
 
 const Header = styled.header`
@@ -82,21 +67,22 @@ const Header = styled.header`
 const TitleGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 `
 
 const Title = styled.h1`
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--text-color);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-xl);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  color: var(--text-primary);
 `
 
 const Subtitle = styled.p`
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   line-height: 1.7;
-  color: color-mix(in oklab, var(--text-color) 78%, transparent);
+  color: var(--text-muted);
 `
 
 const HeaderActions = styled.div`
@@ -107,104 +93,97 @@ const HeaderActions = styled.div`
 
 const BackLink = styled(Link)`
   font-size: var(--font-size-sm);
-  color: color-mix(in oklab, var(--text-color) 76%, transparent);
+  color: var(--text-muted);
   text-decoration: none;
 
   &:hover {
-    color: var(--text-color);
+    color: var(--text-primary);
   }
 `
 
-const List = styled.div`
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: var(--space-md);
-  width: 100%;
-
-  @media (min-width: ${BLOG_BREAKPOINTS.tablet}) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (min-width: ${BLOG_BREAKPOINTS.desktop}) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-`
-
-const Card = styled(Link)`
+/* Timeline */
+const Timeline = styled.div`
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  padding: 16px 20px;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius-card);
-  background: var(--background-100);
-  box-shadow: var(--elevation-soft);
-  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
+  gap: var(--space-md);
+  width: 100%;
+`
+
+const YearGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   opacity: 0;
   animation: blogRowRise 0.35s ease forwards;
+
+  @keyframes blogRowRise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     opacity: 1;
   }
+`
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--elevation-card-hover);
-    border-color: color-mix(in oklab, var(--primary-color) 55%, rgba(0,0,0,0.06));
-  }
+const YearLabel = styled.div`
+  font-family: var(--font-serif);
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  padding: var(--space-xs) 0;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid color-mix(in oklab, var(--text-muted) 25%, transparent);
 
   @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
+    border-bottom-color: color-mix(in oklab, var(--text-muted) 20%, transparent);
   }
 `
 
-const AnimatedCard = styled(Card)<{ $index: number }>`
-  animation-delay: ${props => `${props.$index * 0.04}s`};
-`
-
-const RowTop = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-md);
-  width: 100%;
-  flex-wrap: wrap;
-`
-
-const TitleLine = styled.div`
+const PostRow = styled(Link)`
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
-  gap: 8px;
-  width: 100%;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
+
+  &:hover {
+    background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
+    padding-left: 12px;
+    text-decoration: none;
+  }
+
+  @media (max-width: 520px) {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
 `
 
-const TitleTooltip = styled.div<{ $visible: boolean }>`
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  width: min(360px, 80vw);
-  padding: var(--space-sm);
-  border-radius: var(--radius-card);
-  background: color-mix(in oklab, var(--background-color) 90%, transparent);
-  color: var(--text-color);
-  box-shadow: var(--elevation-card);
-  font-size: var(--font-size-sm);
-  line-height: 1.4;
-  pointer-events: none;
-  z-index: 10;
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
-  transform: translateY(${({ $visible }) => ($visible ? '0' : '4px')});
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+const InkDot = styled.span`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  opacity: 0.6;
+  flex-shrink: 0;
+`
+
+const IssueNumber = styled.span`
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  opacity: 0.6;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: right;
 `
 
 const TitleTextContainer = styled.div`
@@ -215,12 +194,32 @@ const TitleTextContainer = styled.div`
 
 const TitleText = styled.span`
   display: block;
-  font-weight: 600;
-  font-size: var(--font-size-md);
+  font-weight: 500;
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`
+
+const TitleTooltip = styled.div<{ $visible: boolean }>`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: min(360px, 80vw);
+  padding: var(--space-sm);
+  border-radius: var(--border-radius-base);
+  background: var(--background-100);
+  color: var(--text-primary);
+  box-shadow: var(--elevation-card);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  pointer-events: none;
+  z-index: 10;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+  transform: translateY(${({ $visible }) => ($visible ? '0' : '4px')});
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
 `
 
 const TitleWithTooltip = ({ text }: { text: string }) => {
@@ -264,60 +263,47 @@ const TitleWithTooltip = ({ text }: { text: string }) => {
   )
 }
 
-const IssueNumber = styled.span`
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-`
-
-const CardTags = styled.div`
+const PostTags = styled.span`
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  flex: 1 1 auto;
-  min-width: 160px;
-  justify-content: flex-start;
-  align-items: center;
-  & > * {
-    flex: 0 0 auto;
+  gap: 4px;
+  flex-shrink: 0;
+
+  @media (max-width: 520px) {
+    margin-left: calc(6px + var(--space-sm));
+    width: 100%;
   }
 `
 
-const MetaLine = styled.div`
+const PostMeta = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+  flex-shrink: 0;
 
-  @media (prefers-color-scheme: dark) {
-    color: var(--text-secondary);
+  @media (max-width: 520px) {
+    margin-left: calc(6px + var(--space-sm));
   }
 `
 
-const Dot = styled.span`
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
+const MetaDot = styled.span`
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
   background: var(--text-muted);
-  opacity: 0.6;
-`
-
-const CommentCount = styled.span`
-  font-size: var(--font-size-xs);
-  color: var(--text-secondary);
+  opacity: 0.5;
 `
 
 const Empty = styled.div`
   width: 100%;
   text-align: center;
-  color: color-mix(in oklab, var(--text-color) 76%, transparent);
+  color: var(--text-muted);
   padding: var(--space-2xl) 0;
-
-  @media (prefers-color-scheme: dark) {
-    opacity: 0.8;
-  }
+  font-size: var(--font-size-sm);
 `
 
+/* Pagination */
 const Pagination = styled.nav`
   display: flex;
   align-items: center;
@@ -371,6 +357,8 @@ const PageMeta = styled.span`
   margin-left: var(--space-sm);
 `
 
+/* ====== Helpers ====== */
+
 const getPageHref = (page: number) => (page <= 1 ? '/blog' : `/blog?page=${page}`)
 
 const getPageNumbers = (currentPage: number, lastPage: number | null) => {
@@ -382,15 +370,32 @@ const getPageNumbers = (currentPage: number, lastPage: number | null) => {
   return Array.from({ length: end - start + 1 }, (_, idx) => start + idx)
 }
 
+const groupByYear = (posts: PostItem[]) => {
+  const map = new Map<number, PostItem[]>()
+  posts.forEach(post => {
+    const year = new Date(post.created_at).getFullYear()
+    const list = map.get(year)
+    if (list) {
+      list.push(post)
+    } else {
+      map.set(year, [post])
+    }
+  })
+  return Array.from(map.entries()).sort((a, b) => b[0] - a[0])
+}
+
+/* ====== Component ====== */
+
 export default function BlogListView({ posts, pagination }: Props) {
   const pageNumbers = getPageNumbers(pagination.currentPage, pagination.lastPage)
+  const yearGroups = useMemo(() => groupByYear(posts), [posts])
 
   return (
     <Root>
       <Main>
         <Header>
           <TitleGroup>
-            <Title>博客列表</Title>
+            <Title>全部博客</Title>
             <Subtitle>收录 GitHub Issues 中的全部博客文章</Subtitle>
           </TitleGroup>
           <HeaderActions>
@@ -401,31 +406,32 @@ export default function BlogListView({ posts, pagination }: Props) {
         {posts.length === 0 ? (
           <Empty>暂时没有可展示的博客内容</Empty>
         ) : (
-          <List>
-            {posts.map((post, index) => (
-              <AnimatedCard key={post.id} href={`/post/${post.number}`} $index={index}>
-                <RowTop>
-                  <TitleLine>
+          <Timeline>
+            {yearGroups.map(([year, yearPosts]) => (
+              <YearGroup key={year}>
+                <YearLabel>{year}</YearLabel>
+                {yearPosts.map(post => (
+                  <PostRow key={post.id} href={`/post/${post.number}`}>
+                    <InkDot />
                     <TitleWithTooltip text={post.title} />
                     <IssueNumber>#{post.number}</IssueNumber>
-                  </TitleLine>
-                  <CommentCount>💬 {post.comments}</CommentCount>
-                </RowTop>
-                {post.labels?.length > 0 && (
-                  <CardTags>
-                    {post.labels.slice(0, TAG_DISPLAY_LIMIT).map(label => (
-                      <Tag key={`${post.id}-${label.name}`} label={label.name} color={label.color} />
-                    ))}
-                  </CardTags>
-                )}
-                <MetaLine>
-                  <span>发布于 {new Date(post.created_at).toLocaleDateString()}</span>
-                  <Dot />
-                  <span>Issue</span>
-                </MetaLine>
-              </AnimatedCard>
+                    {post.labels?.length > 0 && (
+                      <PostTags>
+                        {post.labels.slice(0, TAG_DISPLAY_LIMIT).map(label => (
+                          <Tag key={`${post.id}-${label.name}`} label={label.name} color={label.color} />
+                        ))}
+                      </PostTags>
+                    )}
+                    <PostMeta>
+                      <span>{new Date(post.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                      <MetaDot />
+                      <span>{post.comments}</span>
+                    </PostMeta>
+                  </PostRow>
+                ))}
+              </YearGroup>
             ))}
-          </List>
+          </Timeline>
         )}
 
         <Pagination aria-label='Pagination'>

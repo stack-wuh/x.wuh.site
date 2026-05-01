@@ -1,8 +1,8 @@
 import { generate, red, redDark, orange, orangeDark, green, greenDark } from '@ant-design/colors'
 import { TBaseColorLevel } from './tokens'
 
-// Site Theme: "人民币 100 元"（暖红/金/棕灰）
-const PRIMARY_RED = '#C94A44'
+// Site Theme: "文青纸张风"（象牙白纸 / 深棕墨迹 / 陶土赭色）
+const PRIMARY_OCHRE = '#C89060'
 
 const toColorLevelsFromList = (...colors: [string, string, string, string, string, string, string, string, string]): TBaseColorLevel => {
   const keys: (keyof TBaseColorLevel)[] = [100, 200, 300, 400, 500, 600, 700, 800, 900]
@@ -20,63 +20,63 @@ const toColorLevelsFromGenerate = (colors: string[]): TBaseColorLevel => {
   }, {} as TBaseColorLevel)
 }
 
-// Primary：以主色为中心，显式约束 500/600 满足设计稿（primary / hover）
+// Primary：陶土赭色（暖赭），500 为主要色，600 为 hover/active
 const primaryLight = toColorLevelsFromList(
-  '#FCEDEC',
-  '#F8D8D6',
-  '#F2BEBB',
-  '#E2928D',
-  '#C94A44', // primary
-  '#A13531', // hover/active
-  '#8A2A26',
-  '#6B1F1E',
-  '#4D1515',
+  '#FBF4EE',
+  '#F5E4D6',
+  '#EBC9AE',
+  '#DBA87E',
+  '#C89060', // primary
+  '#A87348', // hover/active
+  '#8C5A35',
+  '#6B4325',
+  '#4A2C18',
 )
 
-// Dark 主色：提高亮度，避免深色背景下显得发闷
+// Dark 主色：提亮暖色，避免深色背景下发闷
 const primaryDark = toColorLevelsFromList(
-  '#3A1516',
-  '#4A1B1C',
-  '#5B2223',
-  '#7A2F2F',
-  '#E36A64',
-  '#F07A73',
-  '#F6A09B',
-  '#F9C5C1',
-  '#FCE6E4',
+  '#2A1C12',
+  '#3A2618',
+  '#4D321F',
+  '#6B452A',
+  '#C89060',
+  '#D4A478',
+  '#E0BC98',
+  '#ECD4B8',
+  '#F5EBE0',
 )
 
-// Normal：用于正文/边框等中性色（900 为最强调文本）
+// Normal：用于正文/边框等中性色（900 为最强文本——深棕墨迹）
 const normalLight = toColorLevelsFromList(
-  '#FFFDFD',
-  '#F6EFEF',
-  '#E8DEDE',
-  '#D2C3C3',
-  '#B9A7A7',
-  '#A19090',
-  '#8A7A7A',
-  '#5A4A4A',
-  '#1F1F1F',
+  '#FDFCFA',
+  '#F5F1EA',
+  '#E8E2D6',
+  '#D4CBB8',
+  '#B8AC98',
+  '#9B8D78',
+  '#6B5E4E',
+  '#4A3F32',
+  '#2A2218',
 )
 
-// Dark 文本色仍使用生成色阶（避免自定义不连续导致组件对比度异常）
-const darkTextColors = generate('#ffffff', { theme: 'dark' })
+// Dark 文本色使用 generate 保证对比度
+const darkTextColors = generate('#e8dcc8', { theme: 'dark' })
 const normalDark = toColorLevelsFromGenerate(darkTextColors)
 
-// Background：100 为卡片/容器底色，900 为页面深背景
+// Background：100 为卡片/容器象牙白，900 为页面暖纸底
 const backgroundLight = toColorLevelsFromList(
-  '#FFF3F0', // card/surface
-  '#FDE4E4', // tag bg hint
-  '#F9D1D0',
-  '#F2B9B6',
-  '#E7A09B',
-  '#D4847E',
-  '#B86E68',
-  '#9A5F5C',
-  '#7B5A5A', // page deep bg
+  '#FFFDF9', // card/surface ivory white
+  '#F8F3EC', // tag bg hint
+  '#F0E8DC',
+  '#E5D8C4',
+  '#D4C4AC',
+  '#BFA88C',
+  '#A68B6C',
+  '#8B7052',
+  '#F2EDE4', // page deep bg warm paper
 )
 
-const darkBackgroundColors = generate('#0a0404', { theme: 'dark' })
+const darkBackgroundColors = generate('#1a1512', { theme: 'dark' })
 const backgroundDark = toColorLevelsFromGenerate(darkBackgroundColors)
 
 const theme = {
