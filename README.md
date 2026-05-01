@@ -1,11 +1,12 @@
 # x.wuh.site
 
-基于 `Next.js 15 + React 19 + styled-components` 的个人站点 monorepo，包含站点应用、组件库、共享 hooks 与类型配置。内容主要来自 GitHub Issues（博客）与 GitHub Repos（项目）。
+基于 `Next.js 15 + React 19 + NestJS 10 + MongoDB` 的个人站点 monorepo，包含前端应用、后端 API、组件库、共享 hooks 与类型配置。内容通过 NestJS 后端聚合 GitHub Issues（博客）与 GitHub Repos（项目）。
 
 ## 亮点
 
-- **GitHub Issues 作为 CMS**：博客列表与详情直接读取 Issues，支持分页与详情渲染。
+- **GitHub Issues 作为 CMS**：通过 NestJS 后端聚合 Issues 与 Repos，前端调用统一 API。
 - **App Router + ISR**：页面数据采用 `fetch` + `revalidate`，兼顾性能与新鲜度。
+- **OpenAPI/Swagger**：后端挂载 `/v2/docs`，接口契约清晰可追溯。
 - **统一组件与主题**：`@wuh.site/components` 提供 UI 组件和主题变量体系。
 - **错误与加载体验**：提供 Result 组件与骨架屏，提升 404/500 与页面切换体验。
 
@@ -14,12 +15,14 @@
 ```text
 .
 ├── packages
-│   ├── wuh.site.next     # 主站应用 (Next.js)
+│   ├── wuh.site.next     # 前端 (Next.js 15 App Router)
+│   ├── wuh.site.nest     # 后端 (NestJS 10 + Mongoose 8)
 │   ├── components        # 组件库（@wuh.site/components）
 │   ├── hooks             # 共享 hooks
 │   ├── config            # 类型/配置包（@wuh.site/config）
+│   ├── shared-contracts  # 前后端共享 DTO 类型
 │   └── docs              # 文档预留
-├── codex                 # Codex 任务计划/技能文档
+├── openspec              # OpenSpec 规格与变更记录
 └── README.md
 ```
 
@@ -27,6 +30,8 @@
 
 - Next.js 15（App Router）
 - React 19
+- NestJS 10
+- MongoDB (Mongoose 8)
 - TypeScript 5
 - styled-components 6
 - pnpm workspace（lockfile v9）
@@ -49,28 +54,22 @@ pnpm dev:next
 ## 常用命令
 
 ```bash
-# 启动 Next 应用
-pnpm dev:next
+# 前端 (port 3000)
+pnpm dev:next        # 启动 Next.js 开发服务器
+pnpm build:next      # 构建 Next.js
+pnpm start:next      # 生产启动 Next.js
 
-# 构建 Next 应用
-pnpm build:next
+# 后端 (port 3200)
+pnpm dev:nest        # 启动 NestJS 开发服务器 (watch 模式)
+pnpm build:nest      # 构建 NestJS
+pnpm start:nest      # 生产启动 NestJS
+pnpm sync:init       # GitHub Issues 全量同步到 MongoDB
 
-# 生产环境启动
-pnpm start:next
-
-# Lint（仅 next 包）
-pnpm --filter @wuh.site/next run lint
-
-# 生成 changelog
-pnpm changelog
-
-# 语义化版本（major/minor/patch）
-pnpm version:major
-pnpm version:minor
-pnpm version:patch
+# 全局
+pnpm exec tsc --noEmit  # TypeScript 类型检查
 ```
 
-> 说明：根目录里 `dev:web`、`build:web`、`dev:astro` 等脚本属于历史遗留，不是当前推荐入口。
+> 根目录 `dev:web`、`build:web`、`dev:astro` 等脚本属于历史遗留，不推荐使用。
 
 ## 页面与路由
 
@@ -83,13 +82,11 @@ pnpm version:patch
 
 ## 数据来源与缓存
 
-- GitHub Repos：`https://api.github.com/users/stack-wuh/repos`
-- GitHub Issues：`https://api.github.com/repos/stack-wuh/blog/issues`
-- Markdown 渲染：`https://api.github.com/markdown`
+- 前端通过 Next.js rewrite 代理到 NestJS 后端（`/api/*` → `localhost:3200/v2/*`）
+- 后端聚合 GitHub API（Repos、Issues），5 分钟内存缓存 + stale fallback
+- 所有请求使用 `fetch` + `revalidate`，避免频繁请求
 
-所有请求使用 `fetch` 并设置 `revalidate`，避免频繁请求。
-
-> 注意：本地频繁刷新可能触发 GitHub 匿名请求频率限制，列表与详情可能返回空数据。
+> API 文档：启动后端后访问 `http://localhost:3200/v2/docs` 查看 Swagger UI。
 
 ## 组件库使用示例
 
@@ -108,10 +105,9 @@ export default function Demo() {
 
 更多组件可查看 `packages/components/*/readme.md`。
 
-## 提交规范
+## 团队协作
 
-- `commit-msg` hook 使用 `pnpm exec commitlint` 校验提交信息。
-- 支持的 commit type：`build`、`feat`、`chore`、`style`、`docs`、`ui`、`fix`、`refactor`、`ci`、`test`。
+详细的开发流程、OpenSpec 工作流、目录结构说明和提交规范见 **[CONTRIBUTING.md](./CONTRIBUTING.md)**。
 
 ## License
 
