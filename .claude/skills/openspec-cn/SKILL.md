@@ -1,17 +1,14 @@
 ---
 name: openspec-cn
 description: >
-  OpenSpec 中文工作流。触发词: 新需求/新增需求/开始新需求 → propose;
-  需求讨论/开发讨论/任务讨论 → explore; 架构设计/技术方案 → explore(design);
-  开始执行/开始前端任务/开始后端任务/开始设计任务 → apply;
-  代码审查/code review/审查代码/review → review;
-  归档/需求完成 → archive; 需求验收 → verify.
+  OpenSpec 中文工作流 (7 环节): 新需求→需求讨论→架构设计→开始执行(预估+并行Agent)→代码审查(含ESLint)→需求验收→归档。
+  触发词: 新需求/propose; 需求讨论/explore; 架构设计/design; 开始执行/apply; 代码审查/review; 需求验收/verify; 归档/archive。
   所有输出使用中文，关键字(tasks/proposal/specs/design)保留英文。
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
   author: openspec-cn
-  version: "1.0"
+  version: "2.0"
 ---
 
 # OpenSpec 中文工作流
@@ -122,43 +119,107 @@ metadata:
 
 ## apply — 开始执行
 
-按 tasks.md 逐任务实现代码。
+按 tasks.md 执行代码实现。执行前预估耗时，按依赖关系分组，独立任务并行 Agent 执行。
 
 **步骤:**
 
-1. **选择变更**
-   - 有名称直接用
-   - 否则从上下文推断，或 `openspec list --json` 让用户选
-   - 提示: "将执行变更: <name>"
+### 1. 选择变更
+- 有名称直接用
+- 否则从上下文推断，或 `openspec list --json` 让用户选
+- 提示: "将执行变更: <name>"
 
-2. **检查状态**
-   ```bash
-   openspec status --change "<name>" --json
-   ```
-   - blocked → 提示先创建制品
-   - all_done → 提示已完成，建议归档
-   - 否则继续
+### 2. 检查状态
+```bash
+openspec status --change "<name>" --json
+```
+- blocked → 提示先创建制品
+- all_done → 提示已完成，建议归档
+- 否则继续
 
-3. **获取执行指令**
-   ```bash
-   openspec instructions apply --change "<name>" --json
-   ```
-   读取所有 `contextFiles`。
+### 3. 获取执行指令
+```bash
+openspec instructions apply --change "<name>" --json
+```
+读取所有 `contextFiles`。
 
-4. **展示进度并逐任务实现**
-   ```
-   ## 执行中: <name>  进度: 2/6
+### 4. 预估耗时 + 依赖分析
 
-   正在做: 标准化分页响应格式
-   [...代码改动...]
-   ✓ 完成
-   ```
+分析 tasks.md 中的每个 task:
+- **预估耗时**: 根据文件数、复杂度估算（如: 新建 1 文件 ~5min，修改 1 文件 ~3min，配置修改 ~2min）
+- **依赖关系**: 标注 task 互相依赖关系，构建 DAG
+- **分组**: 同一层级、无互相依赖的 task 归入同一 Phase
 
-5. **标记 tasks.md:** `- [ ]` → `- [x]`
+输出预估表:
+```
+## 执行计划: <name>
 
-6. **暂停条件:** 任务不清晰 / 设计问题 / 错误阻塞 / 用户中断
+| Phase | Task | 预估 | 依赖 |
+|-------|------|------|------|
+| 1 | 创建 common 接口 | 5min | - |
+| 1 | 异常过滤器 | 5min | - |
+| 2 | 修复 DTO | 8min | common 接口 |
+| 2 | 标准化 service | 8min | common 接口 |
+| 3 | 注册全局过滤器 | 3min | Phase 2 |
+| 3 | 更新 controller | 5min | Phase 2 |
 
-7. **完成后:** 提示执行 "代码审查" 进行 review。
+总预估: 34min | Phase 1 可并行: 2 tasks → Agent A + Agent B
+
+确认执行计划？[是/调整]
+```
+
+### 5. 按 Phase 执行
+
+**同一 Phase 内无依赖的 tasks → 并行 Agent 执行**
+
+```bash
+# Phase 1: 并行启动
+Agent(description="Task: 创建 common 接口", prompt="实现 openspec/changes/<name>/tasks.md 中 task X: ...", run_in_background=true)
+Agent(description="Task: 异常过滤器", prompt="实现 openspec/changes/<name>/tasks.md 中 task Y: ...", run_in_background=true)
+```
+
+**有依赖的 tasks → 串行执行（主 Agent）**
+- 等并行 Agent 完成后，继续下一 Phase
+
+**超时处理:**
+- 如果某 Agent 超过预估 2x 时间未返回 → 标记 `⚠ 超时`，提示用户
+- 不阻塞: 其他独立 Agent 继续执行
+- 超时 task 由用户决定: 重试 / 跳过 / 手动处理
+
+### 6. 进度追踪
+
+执行过程中实时展示:
+```
+## 执行中: <name>
+Phase 1/3 | 总进度: 2/6
+
+✓ Agent-A: 创建 common 接口 (4min)
+⏳ Agent-B: 异常过滤器 (预估还剩 2min)
+```
+
+每个 task 完成后标记 tasks.md: `- [ ]` → `- [x]`，并补写实际耗时。
+
+### 7. 执行完成
+
+展示汇总:
+```
+## 执行完成: <name>
+
+| Task | 预估 | 实际 | 状态 |
+|------|------|------|------|
+| 创建 common 接口 | 5min | 4min | ✓ |
+| 异常过滤器 | 5min | 7min | ✓ |
+| 修复 DTO | 8min | 6min | ✓ |
+| ... | | | |
+
+总预估: 34min | 总实际: 32min | 并行节省: ~10min
+
+6/6 任务完成 ✓  建议执行 "代码审查"。
+```
+
+### 8. 暂停条件
+- 任务不清晰 / 设计问题 / 错误阻塞
+- 多个 task 超时需要用户决策
+- 用户中断
 
 ---
 
@@ -176,6 +237,16 @@ apply 完成后的质量门禁，对照制品审查代码。
 - 实现是否匹配 `design.md` 的技术方案
 - 接口路径、请求/响应格式是否与设计一致
 - 模块划分是否符合设计的目录结构
+
+### ESLint / 代码风格
+- 运行 ESLint 检查所有改动文件
+  ```bash
+  pnpm exec eslint <changed-files> --format stylish 2>&1
+  ```
+- 将 ESLint 输出分类为 error / warning
+- **error**: 必须修复，直接加入审查报告阻塞项
+- **warning**: 生成 checklist 交给用户决定是否修复
+- 不在 review 中自动 fix，由用户决策
 
 ### 代码质量
 - 是否有重复代码、过长函数（>50行）、过深嵌套（>3层）
@@ -203,17 +274,23 @@ apply 完成后的质量门禁，对照制品审查代码。
 
 1. 读取变更的所有制品: `proposal.md`, `design.md`, `tasks.md`, `specs/`
 2. 获取变更涉及的文件: `git diff --name-only` 或从 tasks.md 提取
-3. 逐一读取改动文件，对照以上 5 个维度审查
-4. 输出审查报告
+3. 运行 ESLint 检查改动文件
+4. 逐一读取改动文件，对照以上 6 个维度审查
+5. 输出审查报告，ESLint warning 以 checklist 形式呈现
 
 **输出审查报告:**
 
 ```
 ## 代码审查: <name>
 
-### 设计一致性 ✓/⚠
+### 设计一致性 ✓
 - 接口路径匹配 design.md ✓
 - 响应格式一致 ✓
+
+### ESLint
+- ✗ error (2): src/app.service.ts:15 — no-unused-vars
+                src/content.dto.ts:8 — missing-return-type
+- ⚠ warning (5): 见下方 checklist
 
 ### 代码质量
 - ⚠ content.service.ts:42 — findAll 方法 60 行，建议拆分
@@ -224,16 +301,27 @@ apply 完成后的质量门禁，对照制品审查代码。
 - 无敏感信息泄露 ✓
 
 ### 性能
-- ⚠ repos.service.ts:30 — 缺少索引，建议加 createdAtGitHub 索引
+- ⚠ repos.service.ts:30 — 缺少索引
 
 ### 变更范围 ✓
-- 改动文件均在 proposal 范围内
 
-### 审查结论: ⚠ 2 项建议
-1. content.service.ts findAll 方法过长，拆分查询逻辑
-2. repos 集合添加 createdAtGitHub 索引
+### 审查结论: ✗ 阻塞
+阻塞项 (必须修复):
+1. [ ] ESLint error: src/app.service.ts:15 no-unused-vars
+2. [ ] ESLint error: src/content.dto.ts:8 missing-return-type
 
-修复后执行 "需求验收"。
+建议项 (用户决定):
+3. [ ] content.service.ts findAll 拆分查询逻辑
+4. [ ] repos 集合添加 createdAtGitHub 索引
+
+### ESLint Warning Checklist (用户决定)
+5. [ ] src/main.ts:12 — prefer-const
+6. [ ] src/repos.service.ts:25 — @typescript-eslint/no-explicit-any
+7. [ ] src/content.controller.ts:30 — max-lines-per-function
+8. [ ] src/comment.dto.ts:18 — @typescript-eslint/no-unused-vars
+9. [ ] src/admin.controller.ts:10 — no-console
+
+修复阻塞项后重新审查，warning 项由你决定是否处理。
 ```
 
 **审查结果分级:**
