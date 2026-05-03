@@ -29,6 +29,10 @@ import { AppService } from './app.service';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URI') || 'mongodb://localhost:27017/wuh_site',
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000,
+        maxPoolSize: 10,
+        minPoolSize: 2,
       }),
     }),
 

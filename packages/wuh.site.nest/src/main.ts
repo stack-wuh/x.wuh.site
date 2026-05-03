@@ -10,18 +10,18 @@ import { pino } from 'pino';
 const logger = pino();
 
 async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
   // Initialize Sentry
-  const sentryDsn = process.env.SENTRY_DSN;
-  if (sentryDsn) {
+  const sentryDsn = configService.get<string>('SENTRY_DSN');
+  if (sentryDsn && !sentryDsn.includes('your_sentry_dsn_here')) {
     Sentry.init({
       dsn: sentryDsn,
       environment: process.env.NODE_ENV || 'development',
       tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
     });
   }
-
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
 
   // Global pipes
   app.useGlobalPipes(
@@ -45,21 +45,25 @@ async function bootstrap() {
   app.setGlobalPrefix('v2');
 
   // Swagger / OpenAPI
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('wuh.site API')
-    .setDescription('wuh.site 博客后端 API 文档')
-    .setVersion('2.0')
-    .addServer('http://localhost:3200', 'Local development')
-    .addServer('https://wuh.site', 'Production')
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('v2/docs', app, document);
+  if (process.env.NODE_ENV !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('wuh.site API')
+      .setDescription('wuh.site 博客后端 API 文档')
+      .setVersion('2.0')
+      .addServer('http://localhost:3200', 'Local development')
+      .addServer('https://wuh.site', 'Production')
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('v2/docs', app, document);
+  }
 
   const port = configService.get<number>('PORT') || 3200;
   await app.listen(port);
 
   logger.info(`wuh.site.nest is running on http://localhost:${port}`);
-  logger.info(`Swagger docs: http://localhost:${port}/v2/docs`);
+  if (process.env.NODE_ENV !== 'production') {
+    logger.info(`Swagger docs: http://localhost:${port}/v2/docs`);
+  }
 }
 
 bootstrap().catch((err) => {
