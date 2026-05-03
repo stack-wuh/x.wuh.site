@@ -103,7 +103,29 @@ src/modules/
 
 ## 当前任务焦点
 
-分支 `68-build-调整包的构建模式` 正在进行 nest 项目的构建和环境变量配置调整。改进内容：
+分支 `68-build-调整包的构建模式` 已完成以下工作：
+
+### 构建与环境变量
 - nest 所有启动命令接入 dotenv 加载 `.env`
 - `sync:init` 脚本改用完整 AppModule 启动
-- 依赖调整（新增 `cross-env`、`dotenv-cli`）
+- 依赖调整：新增 `cross-env`、`dotenv-cli`，`@nestjs/cli` 升级至 ^10.4.9
+
+### 后端修复
+- MongooseModule 改用 ConfigService 异步工厂，修复 MongoDB 连接时序导致 content 接口 500
+- GitHub sync 仅同步 open 状态的 issues
+- 增强 health 检查 + OpenAPI 标准化 + repos 接口
+
+### 前端 UI 重设计（文青纸张风）
+- 首页文青纸张风 UI 重新设计
+- 博客详情页文青纸张风重设计，拆分 PostView 组件
+- MarkdownBody 排版细化（字体、间距、表格、引用块、代码块等）
+- 图片预览支持，Frame 图片容器组件
+
+### 修复
+- 前端 marked 解析 markdown，修复博客详情页 bodyHtml 空白
+- 修复 `--text-color` CSS 变量引用错误的 theme 字段（`background.light[100]` → `normal.light[900]`）
+
+### 工作流
+- 接入 OpenSpec 规格驱动开发工作流（5 环节中文版）
+- 新增代码审查（review）环节 + ESLint
+- apply 环节新增耗时预估 + 并行 Agent
