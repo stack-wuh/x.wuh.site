@@ -137,6 +137,7 @@ export const Header = styled.header`
 `
 
 export const Title = styled.h1`
+  color: var(--text-primary);
   font-family: var(--font-serif);
   font-size: var(--font-size-2xl);
   font-weight: 700;
@@ -164,8 +165,10 @@ export const ArticleCard = styled.section`
   border-radius: var(--radius-card);
   padding: 32px;
   color: var(--text-primary);
-  box-shadow: var(--elevation-card);
-  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
+  box-shadow:
+    var(--elevation-card),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+  transition: box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
 
   @media (max-width: 640px) {
     padding: 20px;
@@ -173,17 +176,26 @@ export const ArticleCard = styled.section`
 
   &:hover {
     border-color: color-mix(in oklab, var(--primary-color) 35%, rgba(0,0,0,0.06));
-    box-shadow: var(--elevation-card-hover);
-    transform: translateY(-2px);
+    box-shadow:
+      var(--elevation-card-hover),
+      inset 0 1px 0 rgba(255,255,255,0.5);
   }
 
   @media (prefers-color-scheme: dark) {
     border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+    box-shadow:
+      var(--elevation-card),
+      inset 0 1px 0 rgba(255,255,255,0.03);
+
+    &:hover {
+      box-shadow:
+        var(--elevation-card-hover),
+        inset 0 1px 0 rgba(255,255,255,0.03);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-    transform: none;
   }
 `
 
@@ -229,78 +241,83 @@ export const ShareCardInner = styled.div`
 `
 
 export const MarkdownBody = styled.article`
-  --github-border: color-mix(in oklab, var(--normal-400) 55%, transparent);
+  --github-border: color-mix(in oklab, var(--accent-color) 18%, var(--normal-300));
   --github-muted: var(--text-secondary);
-  --atom-inline-bg: color-mix(in oklab, var(--accent-color) 12%, transparent);
-  --atom-inline-border: color-mix(in oklab, var(--accent-color) 30%, transparent);
-  --atom-pre-bg: var(--background-200);
-  --atom-pre-border: color-mix(in oklab, var(--normal-400) 55%, transparent);
+  --atom-inline-bg: color-mix(in oklab, var(--accent-color) 8%, transparent);
+  --atom-inline-border: color-mix(in oklab, var(--accent-color) 22%, transparent);
+  --atom-pre-bg: #1e1e1e;
+  --atom-pre-border: rgba(0, 0, 0, 0.08);
 
-  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 16px;
-  line-height: 1.75;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 1.88;
   color: var(--text-primary);
   word-break: break-word;
 
   @media (prefers-color-scheme: dark) {
     --github-border: color-mix(in oklab, var(--normal-600) 55%, transparent);
     --github-muted: var(--text-secondary);
-    --atom-inline-bg: color-mix(in oklab, var(--accent-color) 18%, transparent);
-    --atom-inline-border: color-mix(in oklab, var(--accent-color) 35%, transparent);
-    --atom-pre-bg: color-mix(in oklab, var(--background-300) 60%, var(--background-900));
-    --atom-pre-border: color-mix(in oklab, var(--normal-600) 55%, transparent);
-    color: var(--text-primary);
+    --atom-inline-bg: color-mix(in oklab, var(--accent-color) 14%, transparent);
+    --atom-inline-border: color-mix(in oklab, var(--accent-color) 28%, transparent);
+    --atom-pre-bg: #1a1a1a;
+    --atom-pre-border: rgba(255, 255, 255, 0.06);
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 1.4;
-    margin: 32px 0 16px;
+    margin: 36px 0 18px;
     color: inherit;
   }
 
   h1, h2 {
     font-family: var(--font-serif);
-    padding-bottom: 0.3em;
+    padding-bottom: 0.35em;
     border-bottom: 1px solid var(--github-border);
   }
 
-  h1 { font-size: 2.1em; }
-  h2 { font-size: 1.7em; }
-  h3 { font-size: 1.4em; }
-  h4 { font-size: 1.2em; }
+  h1 { font-size: 1.95em; }
+  h2 { font-size: 1.6em; }
+  h3 { font-size: 1.35em; }
+  h4 { font-size: 1.15em; }
   h5 { font-size: 1.05em; }
-  h6 { font-size: 1em; color: var(--github-muted); }
+  h6 { font-size: 0.95em; color: var(--github-muted); }
 
   p {
-    margin: 16px 0;
+    margin: 20px 0;
   }
 
   a {
     color: var(--accent-color);
-    text-decoration: underline;
-    text-decoration-thickness: 0.08em;
-    text-underline-offset: 3px;
+    text-decoration: none;
+    border-bottom: 1px dashed color-mix(in oklab, var(--accent-color) 42%, transparent);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  a:hover {
+    border-bottom-style: solid;
+    border-bottom-color: var(--accent-color);
   }
 
   code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    font-size: 0.95em;
+    font-size: 0.9em;
     background: var(--atom-inline-bg);
-    padding: 0.15em 0.4em;
-    border-radius: 6px;
+    padding: 0.15em 0.45em;
+    border-radius: 5px;
     border: 1px solid var(--atom-inline-border);
   }
 
   pre {
     background: var(--atom-pre-bg);
     border: 1px solid var(--atom-pre-border);
-    border-radius: 12px;
-    padding: 18px 20px;
+    border-radius: 10px;
+    padding: 20px 22px;
     overflow: auto;
-    font-size: 0.95em;
+    font-size: 0.9em;
     position: relative;
     margin: 24px 0;
+    box-shadow: var(--elevation-soft);
   }
 
   pre code {
@@ -308,6 +325,7 @@ export const MarkdownBody = styled.article`
     padding: 0;
     border: none;
     display: block;
+    color: #d4d4d4;
   }
 
   .copy-btn {
@@ -316,24 +334,25 @@ export const MarkdownBody = styled.article`
     right: 12px;
     font-size: 12px;
     border-radius: 8px;
-    border: 1px solid var(--atom-pre-border);
-    background: color-mix(in oklab, var(--accent-color) 8%, transparent);
-    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.55);
     padding: 4px 10px;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
   .copy-btn:hover {
-    background: color-mix(in oklab, var(--accent-color) 20%, transparent);
-    color: var(--accent-color);
-    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.25);
   }
 
   .anchor {
     margin-left: 6px;
     opacity: 0;
     text-decoration: none;
+    border-bottom: none;
     color: var(--text-secondary);
     transition: opacity 0.2s ease;
   }
@@ -348,21 +367,26 @@ export const MarkdownBody = styled.article`
   }
 
   blockquote {
-    margin: 16px 0;
-    padding: 0.25em 1em;
-    border-left: 4px solid color-mix(in oklab, var(--accent-color) 45%, transparent);
+    margin: 24px 0;
+    padding: 16px 20px;
+    border-left: 4px solid var(--accent-color);
     color: var(--text-secondary);
-    background: color-mix(in oklab, var(--accent-color) 6%, var(--background-200));
-    border-radius: 6px;
+    background: color-mix(in oklab, var(--accent-color) 5%, var(--background-200));
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+  }
+
+  blockquote p {
+    margin: 8px 0;
   }
 
   ul,
   ol {
-    margin: 16px 0 16px 1.8em;
+    margin: 20px 0 20px 1.8em;
   }
 
   li + li {
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   .task-list-item {
@@ -379,6 +403,9 @@ export const MarkdownBody = styled.article`
     border-collapse: collapse;
     margin: 24px 0;
     font-size: 0.95em;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--github-border);
   }
 
   th,
@@ -389,16 +416,21 @@ export const MarkdownBody = styled.article`
   }
 
   th {
-    background: color-mix(in oklab, var(--accent-color) 10%, var(--background-200));
+    background: color-mix(in oklab, var(--accent-color) 8%, var(--background-200));
     font-weight: 600;
+  }
+
+  tr:nth-child(even) td {
+    background: color-mix(in oklab, var(--background-200) 45%, transparent);
   }
 
   img {
     max-width: 100%;
     height: auto;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     background: var(--background-100);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   }
 
   img[data-preview-index] {
@@ -413,7 +445,7 @@ export const MarkdownBody = styled.article`
   hr {
     border: none;
     border-bottom: 1px solid var(--github-border);
-    margin: 32px 0;
+    margin: 36px 0;
   }
 
   kbd {
@@ -431,7 +463,7 @@ export const MarkdownBody = styled.article`
     border: 1px solid var(--github-border);
     border-radius: 10px;
     padding: 12px 16px;
-    background: var(--atom-pre-bg);
+    background: color-mix(in oklab, var(--background-200) 55%, transparent);
     margin: 16px 0;
   }
 

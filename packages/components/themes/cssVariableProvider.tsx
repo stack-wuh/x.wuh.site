@@ -104,7 +104,7 @@ export const CssVariableStyles = createGlobalStyle`
     }};
     --text-color: ${(props) => {
       const theme = props.theme as Tokens
-      return theme.background.light['100']
+      return theme.normal.light['900']
     }};
     --text-primary: ${(props) => {
       const theme = props.theme as Tokens
