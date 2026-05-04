@@ -402,7 +402,7 @@ const Empty = styled.div`
 
 type ContactDialogConfig = ContactCardProps
 
-const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github', ContactDialogConfig> = {
+const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github' | 'douban' | 'netease', ContactDialogConfig> = {
   wechat: {
     badge: 'WeChat',
     qrSrc: 'https://cdn.wuh.site/web/wechat.jpg',
@@ -440,6 +440,26 @@ const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github', ContactDial
     title: 'GitHub',
     tagline: '开源是一种信仰',
     hints: ['你是什么样的人，就会看到什么样的代码'],
+  },
+  douban: {
+    badge: '豆瓣',
+    linkUrl: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN',
+    linkLabel: '前往豆瓣主页',
+    name: 'wuh.site',
+    handle: 'wuh-site',
+    title: '豆瓣',
+    tagline: '书影音标记，精神自留地',
+    hints: ['标记过的书影音，构成了一个人的轮廓'],
+  },
+  netease: {
+    badge: '网易云',
+    linkUrl: 'https://music.163.com/#/user/home?id=398326271',
+    linkLabel: '前往网易云主页',
+    name: 'stack-wuh',
+    handle: 'wuh131420',
+    title: '网易云音乐',
+    tagline: '算法推荐不了一颗有趣的灵魂',
+    hints: ['用耳朵投票，每一首都算数'],
   },
 }
 
@@ -504,8 +524,8 @@ export default function HomeView({ repos, posts }: Props) {
               { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
               { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
               { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
-              { type: 'douban', href: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN', title: '豆瓣' },
-              { type: 'custom', href: 'https://music.163.com/#/user/home?id=398326271', title: '网易云', icon: <IconMusic /> },
+              { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
+              { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
             ]}
             size='medium'
           />
