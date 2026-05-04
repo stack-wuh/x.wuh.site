@@ -17,6 +17,8 @@ services:
     build:
       context: .
       target: runner-nest
+    ports:
+      - "3200:3200"
     env_file:
       - .env
     restart: unless-stopped
