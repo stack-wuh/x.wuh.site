@@ -36,7 +36,7 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:3000/_next/healthz || exit 1
+  CMD curl -f http://localhost:3000/ || exit 1
 CMD ["pnpm", "run", "start:next"]
 
 # Stage 6: runner-nest
