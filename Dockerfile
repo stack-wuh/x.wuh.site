@@ -15,18 +15,16 @@ COPY packages/config/package.json packages/config/
 COPY packages/shared-contracts/package.json packages/shared-contracts/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
   pnpm install --no-frozen-lockfile
-COPY packages ./
+COPY packages/ ./packages/
 
 # Stage 3: builder-next (incremental build with .next/cache)
 FROM deps AS builder-next
-RUN ls -la /app/packages/wuh.site.next/ && echo "---" && ls /app/packages/wuh.site.next/app/ | head -5
 RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
-  cd /app/packages/wuh.site.next && pnpm run build
+  pnpm run build:next
 
 # Stage 4: builder-nest
 FROM deps AS builder-nest
-WORKDIR /app/packages/wuh.site.nest
-RUN npx nest build
+RUN pnpm run build:nest
 
 # Stage 5: runner-next
 FROM base AS runner-next
