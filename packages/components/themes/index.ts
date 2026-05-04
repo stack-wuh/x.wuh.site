@@ -8,8 +8,8 @@ export const DefaultTheme: Tokens = {
     danger: '#dc3545',
     warning: '#ffc107',
     info: '#17a2b8',
-    text: '#1F1F1F',
-    background: '#7B5A5A'
+    text: '#2A1E16',
+    background: '#F5F0EC'
   },
   primary: themeColors.primary,
   danger: themeColors.danger,

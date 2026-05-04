@@ -104,7 +104,7 @@ export const CssVariableStyles = createGlobalStyle`
     }};
     --text-color: ${(props) => {
       const theme = props.theme as Tokens
-      return theme.background.light['100']
+      return theme.normal.light['900']
     }};
     --text-primary: ${(props) => {
       const theme = props.theme as Tokens
@@ -129,11 +129,9 @@ export const CssVariableStyles = createGlobalStyle`
     --radius-card: var(--border-radius-2xl);
     --accent-color: #E3B567;
     --page-bg:
-      radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
-      radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 22%, transparent), transparent 52%),
       linear-gradient(180deg,
-        color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%),
-        var(--background-color));
+        var(--background-color) 0%,
+        color-mix(in oklab, var(--background-color) 95%, var(--primary-color) 5%) 100%);
 
     ${(props) => {
       const theme = props.theme as Tokens

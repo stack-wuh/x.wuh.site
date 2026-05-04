@@ -45,30 +45,30 @@ const primaryDark = toColorLevelsFromList(
 )
 
 const normalLight = toColorLevelsFromList(
-  '#FFFDFD',
-  '#F6EFEF',
-  '#E8DEDE',
-  '#D2C3C3',
-  '#B9A7A7',
-  '#A19090',
-  '#8A7A7A',
-  '#5A4A4A',
-  '#1F1F1F',
+  '#FFFDFB',
+  '#F8F3EE',
+  '#EBE2D8',
+  '#D4C8B8',
+  '#B9A998',
+  '#A08878',
+  '#8A6E5C',
+  '#5A4438',
+  '#2A1E16',
 )
 
 const darkTextColors = generate('#ffffff', { theme: 'dark' })
 const normalDark = toColorLevelsFromGenerate(darkTextColors)
 
 const backgroundLight = toColorLevelsFromList(
-  '#FFF3F0',
-  '#FDE4E4',
-  '#F9D1D0',
-  '#F2B9B6',
-  '#E7A09B',
-  '#D4847E',
-  '#B86E68',
-  '#9A5F5C',
-  '#7B5A5A',
+  '#FFFBF8',
+  '#FDF3EC',
+  '#FAE5D8',
+  '#F5D0BC',
+  '#EBB89E',
+  '#DE9A7C',
+  '#C88062',
+  '#A86A50',
+  '#F5F0EC',
 )
 
 const darkBackgroundColors = generate('#0a0404', { theme: 'dark' })
