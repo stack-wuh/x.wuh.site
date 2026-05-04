@@ -5,6 +5,7 @@ export const CssVariableStyles = createGlobalStyle`
   :root {
     --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
     --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-serif: Georgia, 'Songti SC', 'Noto Serif SC', 'STSong', serif;
   }
 
   html, body {
@@ -103,7 +104,7 @@ export const CssVariableStyles = createGlobalStyle`
     }};
     --text-color: ${(props) => {
       const theme = props.theme as Tokens
-      return theme.background.light['100']
+      return theme.normal.light['900']
     }};
     --text-primary: ${(props) => {
       const theme = props.theme as Tokens
@@ -121,18 +122,14 @@ export const CssVariableStyles = createGlobalStyle`
       const theme = props.theme as Tokens
       return theme.background.light['900']
     }};
-    --transition-fast: 180ms;
-    --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
-    --elevation-card: 0 20px 40px rgba(0,0,0,0.08);
-    --elevation-card-hover: 0 30px 50px rgba(0,0,0,0.12);
+    --transition-fast: 200ms;
+    --elevation-soft: 0 2px 8px rgba(0,0,0,.04);
+    --elevation-card: 0 4px 16px rgba(0,0,0,.06);
+    --elevation-card-hover: 0 8px 24px rgba(0,0,0,.09);
     --radius-card: var(--border-radius-2xl);
-    --accent-color: #E3B567;
+    --accent-color: #C89060;
     --page-bg:
-      radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
-      radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 22%, transparent), transparent 52%),
-      linear-gradient(180deg,
-        color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%),
-        var(--background-color));
+      linear-gradient(180deg, #F2EDE4 0%, #EDE6DA 100%);
 
     ${(props) => {
       const theme = props.theme as Tokens
@@ -190,51 +187,50 @@ export const CssVariableStyles = createGlobalStyle`
   }
 
   :root[data-theme='plain'] {
-    --primary-color: #a13531;
-    --secondary-color: #8d6e63;
-    --text-primary: #2a211d;
-    --text-secondary: #6b544b;
-    --text-muted: #8d6e63;
-    --text-color: #2a211d;
+    --primary-color: #A87348;
+    --secondary-color: #9B8D78;
+    --text-primary: #2A2218;
+    --text-secondary: #6B5E4E;
+    --text-muted: #9B8D78;
+    --text-color: #2A2218;
 
-    --primary-100: #faeae9;
-    --primary-200: #f3d5d2;
-    --primary-300: #e6b2ae;
-    --primary-400: #c35b57;
-    --primary-500: #a13531;
-    --primary-600: #7f2523;
-    --primary-700: #641c1b;
-    --primary-800: #4c1515;
-    --primary-900: #331010;
+    --primary-100: #FBF4EE;
+    --primary-200: #F5E4D6;
+    --primary-300: #EBC9AE;
+    --primary-400: #DBA87E;
+    --primary-500: #C89060;
+    --primary-600: #A87348;
+    --primary-700: #8C5A35;
+    --primary-800: #6B4325;
+    --primary-900: #4A2C18;
 
-    --normal-100: #ffffff;
-    --normal-200: #f3efe9;
-    --normal-300: #e1d6cc;
-    --normal-400: #c9b9ac;
-    --normal-500: #ae9a8c;
-    --normal-600: #8d6e63;
-    --normal-700: #6b544b;
-    --normal-800: #4b3a33;
-    --normal-900: #2a211d;
+    --normal-100: #FDFCFA;
+    --normal-200: #F5F1EA;
+    --normal-300: #E8E2D6;
+    --normal-400: #D4CBB8;
+    --normal-500: #B8AC98;
+    --normal-600: #9B8D78;
+    --normal-700: #6B5E4E;
+    --normal-800: #4A3F32;
+    --normal-900: #2A2218;
 
-    --background-color: #f5efe6;
-    --background-100: #fffbf6;
-    --background-200: #f4eee7;
-    --background-300: #ece3da;
-    --background-400: #e2d5c8;
-    --background-500: #d4c2b0;
-    --background-600: #c2aa93;
-    --background-700: #a88c72;
-    --background-800: #7e6554;
-    --background-900: #4a3a33;
+    --background-color: #F2EDE4;
+    --background-100: #FFFDF9;
+    --background-200: #F8F3EC;
+    --background-300: #F0E8DC;
+    --background-400: #E5D8C4;
+    --background-500: #D4C4AC;
+    --background-600: #BFA88C;
+    --background-700: #A68B6C;
+    --background-800: #8B7052;
+    --background-900: #F2EDE4;
 
-    --accent-color: #e3b567;
-    --elevation-soft: 0 4px 14px rgba(0,0,0,.05);
-    --elevation-card: 0 16px 32px rgba(0,0,0,0.08);
-    --elevation-card-hover: 0 22px 40px rgba(0,0,0,0.12);
+    --accent-color: #C89060;
+    --elevation-soft: 0 2px 8px rgba(0,0,0,.04);
+    --elevation-card: 0 4px 16px rgba(0,0,0,.06);
+    --elevation-card-hover: 0 8px 24px rgba(0,0,0,.09);
     --page-bg:
-      radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--accent-color) 16%, transparent), transparent 55%),
-      linear-gradient(180deg, #f7f1ea, #f3e7d8);
+      linear-gradient(180deg, #F2EDE4 0%, #EDE6DA 100%);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -282,18 +278,14 @@ export const CssVariableStyles = createGlobalStyle`
         const theme = props.theme as Tokens
         return theme.background.dark['900']
       }};
-      --transition-fast: 180ms;
-      --elevation-soft: 0 4px 14px rgba(0,0,0,.25);
-      --elevation-card: 0 18px 36px rgba(0,0,0,0.45);
-      --elevation-card-hover: 0 26px 46px rgba(0,0,0,0.6);
+      --transition-fast: 200ms;
+      --elevation-soft: 0 2px 8px rgba(0,0,0,.18);
+      --elevation-card: 0 4px 16px rgba(0,0,0,.32);
+      --elevation-card-hover: 0 8px 24px rgba(0,0,0,.45);
       --radius-card: var(--border-radius-2xl);
-      --accent-color: #E3B567;
+      --accent-color: #D4A478;
       --page-bg:
-        radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
-        radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 18%, transparent), transparent 52%),
-        linear-gradient(180deg,
-          color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%),
-          var(--background-color));
+        linear-gradient(180deg, #1a1512 0%, #14100e 100%);
 
       ${(props) => {
         const theme = props.theme as Tokens
@@ -351,28 +343,26 @@ export const CssVariableStyles = createGlobalStyle`
     }
 
     :root[data-theme='plain'] {
-      --primary-color: #f07a73;
-      --secondary-color: #c2aa93;
-      --text-primary: #f8f1ea;
-      --text-secondary: rgba(248, 241, 234, 0.82);
-      --text-muted: rgba(248, 241, 234, 0.68);
-      --text-color: #f8f1ea;
+      --primary-color: #D4A478;
+      --secondary-color: #BFA88C;
+      --text-primary: #F5F1EA;
+      --text-secondary: rgba(245, 241, 234, 0.78);
+      --text-muted: rgba(245, 241, 234, 0.62);
+      --text-color: #F5F1EA;
 
-      --background-color: #14100f;
-      --background-100: #1c1614;
-      --background-200: #221a18;
-      --background-300: #2a201d;
+      --background-color: #14100e;
+      --background-100: #1c1814;
+      --background-200: #221c18;
+      --background-300: #2a221c;
       --background-900: #0b0908;
 
-      --normal-300: rgba(255, 255, 255, 0.16);
-      --normal-600: rgba(255, 255, 255, 0.32);
-      --elevation-soft: 0 4px 14px rgba(0,0,0,.28);
-      --elevation-card: 0 18px 36px rgba(0,0,0,0.48);
-      --elevation-card-hover: 0 26px 46px rgba(0,0,0,0.62);
+      --normal-300: rgba(255, 255, 255, 0.12);
+      --normal-600: rgba(255, 255, 255, 0.28);
+      --elevation-soft: 0 2px 8px rgba(0,0,0,.22);
+      --elevation-card: 0 4px 16px rgba(0,0,0,.36);
+      --elevation-card-hover: 0 8px 24px rgba(0,0,0,.5);
       --page-bg:
-        radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
-        radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 16%, transparent), transparent 52%),
-        linear-gradient(180deg, #0b0908, #14100f);
+        linear-gradient(180deg, #14100e, #0b0908);
     }
   }
 `

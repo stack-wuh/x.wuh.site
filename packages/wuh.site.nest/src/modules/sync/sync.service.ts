@@ -43,7 +43,7 @@ export class SyncService {
         const { data: issues } = await this.octokit.issues.listForRepo({
           owner: this.contentRepoOwner,
           repo: this.contentRepoName,
-          state: 'all',
+          state: 'open',
           per_page: 100,
           page,
         });

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useId, useState } from 'react'
 import styled from 'styled-components'
 import Image from '@wuh.site/components/image'
+import { IconBars } from '@wuh.site/components/icons'
 import { useThemeMode } from './theme/ThemeModeProvider'
 
 const BREAKPOINT = '768px'
@@ -238,15 +239,6 @@ const MobileThemeLabel = styled.span`
   justify-content: center;
   gap: 8px;
 `
-
-const IconBars = () => (
-  <svg viewBox='0 0 24 24' width='18' height='18' aria-hidden='true' focusable='false'>
-    <path
-      fill='currentColor'
-      d='M4 7.5c0-.55.45-1 1-1h14a1 1 0 1 1 0 2H5c-.55 0-1-.45-1-1Zm0 5c0-.55.45-1 1-1h14a1 1 0 1 1 0 2H5c-.55 0-1-.45-1-1Zm1 4c-.55 0-1 .45-1 1s.45 1 1 1h14a1 1 0 1 0 0-2H5Z'
-    />
-  </svg>
-)
 
 export default function SiteHeader() {
   const panelId = useId()

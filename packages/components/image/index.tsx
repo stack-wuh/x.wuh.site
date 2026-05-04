@@ -15,6 +15,7 @@ import {
   type ImageStatus,
   type ImageVariant,
 } from './styles'
+import { IconFallbackImage } from '../icons'
 
 type NativeImageProps = React.ComponentPropsWithoutRef<typeof NextImage>
 
@@ -60,23 +61,9 @@ export interface ImageProps extends Omit<NativeImageProps, 'className' | 'style'
 }
 
 
-const FallbackIcon = () => (
-  <svg width='48' height='48' viewBox='0 0 48 48' role='presentation' aria-hidden='true'>
-    <path
-      fill='none'
-      stroke='currentColor'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      strokeWidth='2'
-      d='M10 8h28a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Zm0 0l12.5 18L28 20l10 12'
-    />
-    <circle cx='18' cy='16' r='3' fill='currentColor' />
-  </svg>
-)
-
 const DefaultFallback = () => (
   <Fallback role='alert' aria-live='polite'>
-    <FallbackIcon />
+    <IconFallbackImage />
     <span>图片加载失败</span>
   </Fallback>
 )

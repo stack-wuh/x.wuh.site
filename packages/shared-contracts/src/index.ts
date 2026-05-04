@@ -93,5 +93,60 @@ export interface QueryCommentDto {
   limit?: number;
 }
 
+// Paginated result
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: PaginationMeta;
+}
+
+// Content item (frontend-facing, returned by API)
+export interface ContentItem {
+  externalId: number;
+  repo: string;
+  number: number;
+  title: string;
+  labels: string[];
+  state: 'open' | 'closed';
+  body: string;
+  bodyHtml?: string;
+  metadata?: {
+    slug?: string;
+    summary?: string;
+    cover?: string;
+    keywords?: string[];
+    rssExcluded?: boolean;
+    extra?: Record<string, unknown>;
+  };
+  author: {
+    login: string;
+    avatarUrl: string;
+    url: string;
+  };
+  comments: number;
+  createdAtGitHub: string;
+  updatedAtGitHub: string;
+  publishedAt?: string;
+}
+
+// Repo
+export interface RepoDto {
+  name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  language: string | null;
+  homepage: string | null;
+  fork: boolean;
+}
+
 // Example export for reuse
 export type ExampleDto = { id: ID; name: string };

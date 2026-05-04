@@ -8,9 +8,11 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import * as crypto from 'crypto';
 import { SyncService } from '../sync/sync.service';
 
+@ApiTags('Webhook')
 @Controller('webhook')
 export class WebhookController {
   private logger = new Logger(WebhookController.name);
@@ -24,6 +26,9 @@ export class WebhookController {
   }
 
   @Post('github')
+  @ApiOperation({ summary: 'Handle GitHub webhook events' })
+  @ApiResponse({ status: 200, description: 'Webhook processed' })
+  @ApiResponse({ status: 400, description: 'Invalid signature' })
   async handleGitHubWebhook(@Req() request: Request, @Body() payload: any) {
     // Verify GitHub signature
     const signature = request.headers['x-hub-signature-256'] as string;

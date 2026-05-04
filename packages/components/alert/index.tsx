@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import SharedLinkGroup, { type ShareItem } from '../shared-link-group'
 import Tag from '../tag'
+import { IconClock, IconLink, IconFolder, IconShield, IconTag } from '../icons'
 import {
   AlertContainer,
   CloseButton,
@@ -68,40 +69,6 @@ const formatDateTimeToSecond = (value?: DateInput | null) => {
   if (Number.isNaN(date.getTime())) return null
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
 }
-
-const ClockIcon = () => (
-  <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
-    <circle cx='12' cy='12' r='8' />
-    <path d='M12 8v5l3 2' />
-  </svg>
-)
-
-const LinkIcon = () => (
-  <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
-    <path d='M10 13a5 5 0 0 0 7.1 0l2.1-2.1a5 5 0 1 0-7.1-7.1L10.7 5' />
-    <path d='M14 11a5 5 0 0 0-7.1 0L4.8 13.1a5 5 0 1 0 7.1 7.1L13.3 19' />
-  </svg>
-)
-
-const FolderIcon = () => (
-  <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
-    <path d='M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z' />
-  </svg>
-)
-
-const ShieldIcon = () => (
-  <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
-    <path d='M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3z' />
-    <path d='M9.5 12.5l1.8 1.8 3.7-3.7' />
-  </svg>
-)
-
-const TagIcon = () => (
-  <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
-    <path d='M20 13l-7 7-9-9V4h7l9 9z' />
-    <circle cx='7.5' cy='7.5' r='1.5' />
-  </svg>
-)
 
 const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, ref) {
   const {
@@ -173,7 +140,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
           <MetaItem>
             <MetaLabel>
               <MetaLabelIcon>
-                <ClockIcon />
+                <IconClock />
               </MetaLabelIcon>
               更新时间:
             </MetaLabel>
@@ -206,7 +173,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
           <MetaItem>
             <MetaLabel>
               <MetaLabelIcon>
-                <LinkIcon />
+                <IconLink />
               </MetaLabelIcon>
               原文链接:
             </MetaLabel>
@@ -220,7 +187,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
           <MetaItem>
             <MetaLabel>
               <MetaLabelIcon>
-                <FolderIcon />
+                <IconFolder />
               </MetaLabelIcon>
               所属项目:
             </MetaLabel>
@@ -234,7 +201,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
           <MetaItem>
             <MetaLabel>
               <MetaLabelIcon>
-                <ShieldIcon />
+                <IconShield />
               </MetaLabelIcon>
               开源许可:
             </MetaLabel>
@@ -246,7 +213,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
           <MetaItem>
             <MetaLabel>
               <MetaLabelIcon>
-                <TagIcon />
+                <IconTag />
               </MetaLabelIcon>
               所属标签:
             </MetaLabel>

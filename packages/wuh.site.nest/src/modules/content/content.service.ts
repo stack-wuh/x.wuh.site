@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Content, ContentDocument } from './schemas/content.schema';
 import { CreateContentDto, UpdateContentMetadataDto } from './dto/content.dto';
+import { PaginatedResult, buildPaginatedResult } from '../../common/interfaces/paginated-response.interface';
 
 @Injectable()
 export class ContentService {
@@ -26,7 +27,7 @@ export class ContentService {
     page: number = 1,
     limit: number = 20,
     query?: Record<string, any>,
-  ): Promise<{ data: ContentDocument[]; total: number; page: number }> {
+  ): Promise<PaginatedResult<ContentDocument>> {
     try {
       const skip = (page - 1) * limit;
       const [data, total] = await Promise.all([
@@ -38,7 +39,7 @@ export class ContentService {
           .exec(),
         this.contentModel.countDocuments(query || {}),
       ]);
-      return { data, total, page };
+      return buildPaginatedResult(data, total, page, limit);
     } catch (error) {
       this.logger.error(`Failed to find contents: ${error.message}`);
       throw error;

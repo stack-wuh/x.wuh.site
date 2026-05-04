@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
-import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
+import api from './lib/api'
+import type { ContentItem, RepoDto } from '@wuh.site/shared-contracts'
 import HomeView from './HomeView'
 
 export const metadata: Metadata = {
@@ -19,27 +20,14 @@ type Repo = {
 
 async function getRepos(): Promise<Repo[]> {
   try {
-    const res = await fetcher<Repo[]>('https://api.github.com/users/stack-wuh/repos', {
-      headers: { 'Accept': 'application/vnd.github+json' },
-      next: { revalidate: 3600 }
-    })
-    if (!res.ok || !res.data) return []
-    return res.data
-      .filter(r => !r.fork)
-      .sort((a, b) => b.stargazers_count - a.stargazers_count)
-      .slice(0, 6)
+    const data = await api.repos.getAll({ revalidate: 3600 })
+    return data.repos.slice(0, 6)
   } catch {
     return []
   }
 }
 
-export default async function Home() {
-  const repos = await getRepos()
-  const posts = await getFeaturedIssues()
-  return <HomeView repos={repos} posts={posts} />
-}
-
-type Issue = {
+type PostItem = {
   id: number
   number: number
   title: string
@@ -49,15 +37,27 @@ type Issue = {
   labels: { name: string; color?: string | null }[]
 }
 
-async function getFeaturedIssues(): Promise<Issue[]> {
+const mapContentToPost = (item: ContentItem): PostItem => ({
+  id: item.externalId,
+  number: item.number,
+  title: item.title,
+  html_url: `https://github.com/${item.repo}/issues/${item.number}`,
+  comments: item.comments,
+  created_at: item.createdAtGitHub || '',
+  labels: item.labels.map((l) => ({ name: l })),
+})
+
+async function getFeaturedIssues(): Promise<PostItem[]> {
   try {
-    const res = await fetcher<Issue[]>('https://api.github.com/repos/stack-wuh/blog/issues?per_page=6&state=open&sort=update', {
-      headers: { 'Accept': 'application/vnd.github+json' },
-      next: { revalidate: 1800 }
-    })
-    if (!res.ok || !res.data) return []
-    return res.data
+    const result = await api.content.getPosts({ limit: 6, state: 'open' }, { revalidate: 1800 })
+    return result.data.map(mapContentToPost)
   } catch {
     return []
   }
+}
+
+export default async function Home() {
+  const repos = await getRepos()
+  const posts = await getFeaturedIssues()
+  return <HomeView repos={repos} posts={posts} />
 }

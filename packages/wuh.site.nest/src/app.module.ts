@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ContentModule } from './modules/content/content.module';
@@ -11,6 +11,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { ApiV2Module } from './modules/api-v2/api-v2.module';
+import { ReposModule } from './modules/repos/repos.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -23,7 +24,17 @@ import { AppService } from './app.service';
     }),
 
     // MongoDB
-    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/wuh_site'),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI') || 'mongodb://localhost:27017/wuh_site',
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000,
+        maxPoolSize: 10,
+        minPoolSize: 2,
+      }),
+    }),
 
     // Throttler for rate limiting
     ThrottlerModule.forRoot([
@@ -43,6 +54,7 @@ import { AppService } from './app.service';
     AuthModule,
     AdminModule,
     ApiV2Module,
+    ReposModule,
   ],
   controllers: [AppController],
   providers: [AppService],

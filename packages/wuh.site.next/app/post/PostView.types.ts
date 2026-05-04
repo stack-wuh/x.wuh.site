@@ -7,6 +7,14 @@ export type IssueLabel = {
 export type IssueUser = {
   login?: string | null
   userName?: string | null
+  avatarUrl?: string | null
+}
+
+export type IssueMetadata = {
+  cover?: string | null
+  summary?: string | null
+  slug?: string | null
+  keywords?: string[] | null
 }
 
 export type Issue = {
@@ -22,6 +30,7 @@ export type Issue = {
   labels: IssueLabel[]
   body?: string
   body_html?: string
+  metadata?: IssueMetadata | null
 }
 
 export type AdjacentIssue = Pick<Issue, 'number' | 'title'>

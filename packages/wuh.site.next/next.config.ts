@@ -14,6 +14,15 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // API rewrite to NestJS backend
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEST_API_URL || 'http://localhost:3200/v2'}/:path*`,
+      },
+    ];
+  },
   // 优化包导入
   experimental: {
     optimizePackageImports: ['@wuh.site/components', 'styled-components', '@ant-design/colors'],

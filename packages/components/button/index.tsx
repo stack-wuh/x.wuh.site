@@ -181,22 +181,20 @@ const StyledButton = styled.button<IStyledButtonTransientProps>`
     opacity: 0.7;
   }
 
-  /* Material 风格 Ripple 容器 */
+  /* Ink-wash 墨迹扩散 */
   &::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.08) 0%, transparent 70%);
     opacity: 0;
-    transform: scale(0);
     pointer-events: none;
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition: opacity 300ms ease;
   }
   &:active:not(:disabled)::after {
     opacity: 1;
-    transform: scale(2);
-    transition: opacity 0s, transform 0s;
+    transition: opacity 0s;
   }
 
   & .button-icon {
@@ -249,16 +247,14 @@ const StyledLink = styled.a<IStyledButtonTransientProps>`
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.08) 0%, transparent 70%);
     opacity: 0;
-    transform: scale(0);
     pointer-events: none;
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition: opacity 300ms ease;
   }
   &:active::after {
     opacity: 1;
-    transform: scale(2);
-    transition: opacity 0s, transform 0s;
+    transition: opacity 0s;
   }
 
   & .button-icon {

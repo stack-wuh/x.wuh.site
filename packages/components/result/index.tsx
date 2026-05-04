@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import styled from 'styled-components'
+import { IconCompass, IconWarning } from '../icons'
 
 export type ResultStatus = '404' | '500' | 'info' | 'error'
 
@@ -155,31 +156,16 @@ const ExtraRow = styled.div`
   gap: var(--space-sm);
 `
 
-const CompassIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <circle cx='12' cy='12' r='9' />
-    <path d='M15.5 8.5l-2.7 6.1-6.3 2.9 2.9-6.4 6.1-2.6z' />
-  </svg>
-)
-
-const AlertTriangleIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <path d='M12 3l9 16H3l9-16z' />
-    <path d='M12 9v4' />
-    <path d='M12 17h.01' />
-  </svg>
-)
-
 const DEFAULT_CONTENT: Record<'404' | '500', { title: string; description: string; icon: React.ReactNode }> = {
   '404': {
     title: '页面不存在',
     description: '我们找不到你要访问的页面。你可以前往其他平台继续阅读。',
-    icon: <CompassIcon />
+    icon: <IconCompass />
   },
   '500': {
     title: '服务异常',
     description: '页面暂时无法加载，请稍后重试或查看其他平台的内容。',
-    icon: <AlertTriangleIcon />
+    icon: <IconWarning />
   }
 }
 
@@ -189,7 +175,7 @@ const resolveContent = (status?: ResultStatus) => {
   return {
     title: status === 'error' ? '发生错误' : '提示',
     description: '页面暂时不可用，请稍后再试。',
-    icon: <AlertTriangleIcon />
+    icon: <IconWarning />
   }
 }
 
