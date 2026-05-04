@@ -9,7 +9,8 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY packages packages
-RUN pnpm install --no-frozen-lockfile
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --no-frozen-lockfile
 
 # Stage 3: builder-next
 FROM deps AS builder-next
