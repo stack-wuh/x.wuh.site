@@ -27,6 +27,18 @@ import {
   Toolbar,
   Viewport,
 } from './styles'
+import {
+  IconClose,
+  IconArrowLeft,
+  IconArrowRight,
+  IconZoomIn,
+  IconZoomOut,
+  IconRotate,
+  IconDownload,
+  IconFullscreen,
+  IconExitFullscreen,
+  IconReset,
+} from '../icons'
 
 export type ImagePreviewItem = {
   id?: string | number
@@ -141,23 +153,6 @@ const usePrevious = <T,>(value: T) => {
   }, [value])
   return ref.current
 }
-
-const SvgIcon = ({ d }: { d: string }) => (
-  <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
-    <path d={d} />
-  </svg>
-)
-
-const ArrowLeftIcon = () => <SvgIcon d='M15 6l-6 6 6 6' />
-const ArrowRightIcon = () => <SvgIcon d='M9 6l6 6-6 6' />
-const CloseIcon = () => <SvgIcon d='M6 6l12 12M6 18l12-12' />
-const ZoomInIcon = () => <SvgIcon d='M11 11V7m0 4h4m-4 0H7m4 0v4m2.5-6.5l5.5 5.5' />
-const ZoomOutIcon = () => <SvgIcon d='M15 11H7m11 8l-5.5-5.5' />
-const RotateIcon = () => <SvgIcon d='M4 7v6h6M20 17V11h-6M4 7a8 8 0 0 1 14-3' />
-const DownloadIcon = () => <SvgIcon d='M12 5v12m0 0-4-4m4 4 4-4M5 19h14' />
-const FullscreenIcon = () => <SvgIcon d='M9 3H5v4m10-4h4v4M9 21H5v-4m10 4h4v-4' />
-const ExitFullscreenIcon = () => <SvgIcon d='M9 9L5 5m0 0h4M5 5v4m10 6 4 4m0 0v-4m0 4h-4' />
-const ResetIcon = () => <SvgIcon d='M3 12a9 9 0 1 1 3 6.708M3 12h4m0 0v-4' />
 
 export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>((props, forwardedRef) => {
   const {
@@ -557,40 +552,40 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   const toolbarContent = renderToolbar ? renderToolbar(toolbarProps) : (
     <Toolbar>
       <IconButton type='button' aria-label='关闭预览' onClick={handleClose}>
-        <CloseIcon />
+        <IconClose />
       </IconButton>
       <IconButton type='button' aria-label='上一张' onClick={goPrevious}>
-        <ArrowLeftIcon />
+        <IconArrowLeft />
       </IconButton>
       <IconButton type='button' aria-label='下一张' onClick={goNext}>
-        <ArrowRightIcon />
+        <IconArrowRight />
       </IconButton>
       {allowZoom && (
         <>
           <IconButton type='button' aria-label='放大' onClick={zoomIn} disabled={!canZoomIn}>
-            <ZoomInIcon />
+            <IconZoomIn />
           </IconButton>
           <IconButton type='button' aria-label='缩小' onClick={zoomOut} disabled={!canZoomOut}>
-            <ZoomOutIcon />
+            <IconZoomOut />
           </IconButton>
           <IconButton type='button' aria-label='重置缩放' onClick={resetZoom}>
-            <ResetIcon />
+            <IconReset />
           </IconButton>
         </>
       )}
       {allowRotate && (
         <IconButton type='button' aria-label='旋转图片' onClick={rotate}>
-          <RotateIcon />
+          <IconRotate />
         </IconButton>
       )}
       {allowDownload && (
         <IconButton type='button' aria-label='下载图片' onClick={performDownload}>
-          <DownloadIcon />
+          <IconDownload />
         </IconButton>
       )}
       {allowFullscreen && (
         <IconButton type='button' aria-label={isNativeFullscreen ? '退出全屏' : '进入全屏'} onClick={toggleFullscreen}>
-          {isNativeFullscreen ? <ExitFullscreenIcon /> : <FullscreenIcon />}
+          {isNativeFullscreen ? <IconExitFullscreen /> : <IconFullscreen />}
         </IconButton>
       )}
     </Toolbar>

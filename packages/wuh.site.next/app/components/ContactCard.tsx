@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
+import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord } from '@wuh.site/components/icons'
 
 export type ContactCardProps = {
   badge: string
@@ -192,41 +193,12 @@ const HintDot = styled.span`
 
 /* ====== Icons ====== */
 
-const renderLinkIcon = (badge: string) => {
-  switch (badge) {
-    case 'GitHub':
-      return (
-        <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-          <path d='M12 .8A11.2 11.2 0 0 0 .8 12c0 5 3.3 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.6-1.4-1.5-1.8-1.5-1.8-1.2-.8.1-.8.1-.8 1.3.1 2 .7 2 .7 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.8-1.7-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.7.1-3.4 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C18.9 6.1 20 6.4 20 6.4c.6 1.7.2 3.1.1 3.4.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.5-5.3 5.8.5.4.9 1.3.9 2.6v3.8c0 .3.2.7.8.6A11.2 11.2 0 0 0 23.2 12 11.2 11.2 0 0 0 12 .8z' />
-        </svg>
-      )
-    case 'Twitter':
-      return (
-        <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-          <path d='M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.2 1.8-2.2-.8.5-1.7.8-2.6 1-1.6-1.7-4.4-1.4-5.7.6-1 1.4-.8 3.3.4 4.4-2.8-.1-5.4-1.5-7.1-3.7-.9 1.6-.4 3.8 1.2 4.9-.6 0-1.2-.2-1.7-.5 0 1.7 1.2 3.3 3 3.6-.5.1-1 .2-1.6.1.5 1.5 2 2.6 3.7 2.6-1.7 1.3-3.8 2-5.9 2-.4 0-.8 0-1.2-.1 2.2 1.4 4.8 2.1 7.4 2.1 7.9 0 12.3-6.7 12-12.5.8-.6 1.5-1.3 2-2.1z' />
-        </svg>
-      )
-    case '豆瓣':
-      return (
-        <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-          <path d='M5 6h14v2H5V6zm1.5 4h11v7h-11v-7zm2 2v3h7v-3h-7zM4 19h16v2H4v-2z' />
-        </svg>
-      )
-    case '网易云':
-      return (
-        <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-          <path d='M12 3v12.15a3 3 0 1 0 1 2.83V7.83l6-1.5V3l-7 1.75Z' />
-        </svg>
-      )
-    case 'Discord':
-      return (
-        <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-          <path d='M20.3 4.7A19.6 19.6 0 0 0 15.2 3c-.3.5-.5 1-.7 1.5-1.8-.3-3.7-.3-5.5 0-.2-.5-.4-1-.7-1.5-1.8.3-3.5 1-5.1 1.9C.5 9.5-.6 14.2.2 18.8c2.1 1.6 4.1 2.5 6.1 3.1.5-.7.9-1.4 1.3-2.2-.7-.3-1.4-.6-2-1 .1-.1.3-.1.4-.2 3.3 1.6 6.9 1.6 10.1 0 .1.1.3.1.4.2-.6.4-1.3.7-2 1 .4.8.8 1.5 1.3 2.2 2-.6 4.1-1.5 6.2-3.1.9-5.4-1.6-10-4.6-14.1zM8 13.8c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8zm8 0c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8z' />
-        </svg>
-      )
-    default:
-      return null
-  }
+const linkIconMap: Record<string, React.ReactNode> = {
+  GitHub: <IconGithub />,
+  Twitter: <IconTwitter />,
+  '豆瓣': <IconDouban />,
+  '网易云': <IconMusic />,
+  Discord: <IconDiscord />,
 }
 
 /* ====== Component ====== */
@@ -275,7 +247,7 @@ const ContactCard = ({
             {hasQR && <QRImage src={qrSrc} alt={`${name} 的 ${badge} 二维码`} />}
             {hasLink && (
               <LinkButton as='span'>
-                <LinkIcon>{renderLinkIcon(badge)}</LinkIcon>
+                <LinkIcon>{linkIconMap[badge]}</LinkIcon>
                 {linkLabel}
               </LinkButton>
             )}

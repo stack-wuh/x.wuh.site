@@ -20,6 +20,7 @@ import type {
   MessagePlacementInput,
   MessageType,
 } from './types'
+import { IconInfo, IconSuccess, IconWarning, IconError, IconClose } from '../icons'
 
 export type { MessageConfig, MessageKey, MessageOptions, MessagePlacement, MessageType } from './types'
 
@@ -262,51 +263,13 @@ const ensureHolder = () => {
   return holder
 }
 
-const InfoIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <circle cx='12' cy='12' r='9' />
-    <path d='M12 10v7' />
-    <path d='M12 7h.01' />
-  </svg>
-)
-
-const SuccessIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <circle cx='12' cy='12' r='9' />
-    <path d='M8.5 12.5l2.5 2.5 4.5-5' />
-  </svg>
-)
-
-const WarningIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <path d='M12 3l9 16H3l9-16z' />
-    <path d='M12 9v4' />
-    <path d='M12 17h.01' />
-  </svg>
-)
-
-const ErrorIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <circle cx='12' cy='12' r='9' />
-    <path d='M15 9l-6 6' />
-    <path d='M9 9l6 6' />
-  </svg>
-)
-
-const CloseIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <path d='M18 6L6 18' />
-    <path d='M6 6l12 12' />
-  </svg>
-)
-
 const renderIcon = (type: MessageType, icon?: React.ReactNode) => {
   if (icon) return icon
   if (type === 'loading') return <MessageSpinner />
-  if (type === 'success') return <SuccessIcon />
-  if (type === 'warning') return <WarningIcon />
-  if (type === 'error') return <ErrorIcon />
-  return <InfoIcon />
+  if (type === 'success') return <IconSuccess />
+  if (type === 'warning') return <IconWarning />
+  if (type === 'error') return <IconError />
+  return <IconInfo />
 }
 
 const MessagePortal = () => {
@@ -346,7 +309,7 @@ const MessagePortal = () => {
                       manager.close(item.id)
                     }}
                   >
-                    <CloseIcon />
+                    <IconClose />
                   </MessageCloseButton>
                 )}
               </MessageItem>

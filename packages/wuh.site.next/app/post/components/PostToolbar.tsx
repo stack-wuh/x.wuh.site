@@ -2,17 +2,10 @@
 
 import Link from 'next/link'
 import type { AdjacentIssue } from '../PostView.types'
+import { IconChevronLeft, IconChevronRight } from '@wuh.site/components/icons'
 import { Toolbar } from '../styles'
 
 const EMPTY_TEXT = '空空如也'
-
-const ToolbarIcon = ({ direction }: { direction: 'prev' | 'next' }) => (
-  <span className='toolbar-icon' aria-hidden='true'>
-    <svg viewBox='0 0 16 16' focusable='false'>
-      {direction === 'prev' ? <path d='M10.5 3.5L5.5 8l5 4.5' /> : <path d='M5.5 3.5L10.5 8l-5 4.5' />}
-    </svg>
-  </span>
-)
 
 const ToolbarLink = ({
   direction,
@@ -27,7 +20,7 @@ const ToolbarLink = ({
   if (!targetIssue) {
     return (
       <span className={className} aria-disabled='true'>
-        <ToolbarIcon direction={direction} />
+        {direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />}
         <span className='toolbar-label'>{label}</span>
       </span>
     )
@@ -35,7 +28,7 @@ const ToolbarLink = ({
 
   return (
     <Link className={className} href={`/post/${targetIssue.number}`} title={targetIssue.title}>
-      <ToolbarIcon direction={direction} />
+      {direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />}
       <span className='toolbar-label'>{label}</span>
     </Link>
   )

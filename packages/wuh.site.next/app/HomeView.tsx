@@ -8,18 +8,7 @@ import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
 import Image from '@wuh.site/components/image'
 import ContactCard, { type ContactCardProps } from './components/ContactCard'
-
-const IconMusic = () => (
-  <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-    <path d='M12 3v12.15a3 3 0 1 0 1 2.83V7.83l6-1.5V3l-7 1.75Z' />
-  </svg>
-)
-
-const IconDiscord = () => (
-  <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
-    <path d='M20.3 4.7A19.6 19.6 0 0 0 15.2 3c-.3.5-.5 1-.7 1.5-1.8-.3-3.7-.3-5.5 0-.2-.5-.4-1-.7-1.5-1.8.3-3.5 1-5.1 1.9C.5 9.5-.6 14.2.2 18.8c2.1 1.6 4.1 2.5 6.1 3.1.5-.7.9-1.4 1.3-2.2-.7-.3-1.4-.6-2-1 .1-.1.3-.1.4-.2 3.3 1.6 6.9 1.6 10.1 0 .1.1.3.1.4.2-.6.4-1.3.7-2 1 .4.8.8 1.5 1.3 2.2 2-.6 4.1-1.5 6.2-3.1.9-5.4-1.6-10-4.6-14.1zM8 13.8c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8zm8 0c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8z' />
-  </svg>
-)
+import { IconMusic, IconDiscord, DiamondDivider } from '@wuh.site/components/icons'
 
 const TAG_DISPLAY_LIMIT = 3
 
@@ -185,19 +174,11 @@ const DividerLine = styled.span`
   opacity: 0.35;
 `
 
-const DividerDiamond = styled.svg`
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
-`
-
 /** 装饰分隔线 SVG */
 const OrnamentDivider = () => (
   <DividerRow aria-hidden='true'>
     <DividerLine />
-    <DividerDiamond viewBox='0 0 12 12' aria-hidden='true'>
-      <polygon points='6,0 12,6 6,12 0,6' fill='currentColor' opacity='0.35' />
-    </DividerDiamond>
+    <DiamondDivider />
     <DividerLine />
   </DividerRow>
 )

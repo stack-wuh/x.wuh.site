@@ -2,6 +2,7 @@
 import * as React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../button'
+import { IconWechat, IconQQ, IconTwitter, IconEmail, IconGithub, IconDouban } from '../icons'
 
 type LinkType = 'wechat' | 'qq' | 'twitter' | 'email' | 'github' | 'douban' | 'custom'
 
@@ -155,42 +156,6 @@ const STitle = styled.span`
     border-color: var(--normal-600);
   }
 `
-
-const IconWechat = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M5.5 9.5a6.5 6.5 0 1 1 12.8 1.6 5 5 0 1 1-8.7 4.1l-3.1 1.2.9-3.3A6.5 6.5 0 0 1 5.5 9.5zm3.2-.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm6.6 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z" />
-  </svg>
-)
-
-const IconQQ = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2c3.3 0 6 2.7 6 6 0 1.4-.5 2.7-1.4 3.7.6 1.1 1.4 2.9 1.4 4.3 0 .6-.4 1-1 1-.9 0-2.4-.9-3.5-1.9-.7.3-1.4.4-2.5.4s-1.8-.1-2.5-.4c-1.1 1-2.6 1.9-3.5 1.9-.6 0-1-.4-1-1 0-1.4.8-3.2 1.4-4.3A6 6 0 0 1 6 8c0-3.3 2.7-6 6-6z" />
-  </svg>
-)
-
-const IconTwitter = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.2 1.8-2.2-.8.5-1.7.8-2.6 1-1.6-1.7-4.4-1.4-5.7.6-1 1.4-.8 3.3.4 4.4-2.8-.1-5.4-1.5-7.1-3.7-.9 1.6-.4 3.8 1.2 4.9-.6 0-1.2-.2-1.7-.5 0 1.7 1.2 3.3 3 3.6-.5.1-1 .2-1.6.1.5 1.5 2 2.6 3.7 2.6-1.7 1.3-3.8 2-5.9 2-.4 0-.8 0-1.2-.1 2.2 1.4 4.8 2.1 7.4 2.1 7.9 0 12.3-6.7 12-12.5.8-.6 1.5-1.3 2-2.1z" />
-  </svg>
-)
-
-const IconEmail = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M3 6c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V6zm2 0 7 5 7-5H5zm14 12V9l-7 5-7-5v9h14z" />
-  </svg>
-)
-
-const IconGithub = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 .8A11.2 11.2 0 0 0 .8 12c0 5 3.3 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.6-1.4-1.5-1.8-1.5-1.8-1.2-.8.1-.8.1-.8 1.3.1 2 .7 2 .7 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.8-1.7-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.7.1-3.4 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C18.9 6.1 20 6.4 20 6.4c.6 1.7.2 3.1.1 3.4.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.5-5.3 5.8.5.4.9 1.3.9 2.6v3.8c0 .3.2.7.8.6A11.2 11.2 0 0 0 23.2 12 11.2 11.2 0 0 0 12 .8z" />
-  </svg>
-)
-
-const IconDouban = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M5 6h14v2H5V6zm1.5 4h11v7h-11v-7zm2 2v3h7v-3h-7zM4 19h16v2H4v-2z" />
-  </svg>
-)
 
 const getPresetIcon = (type: LinkType) => {
   switch (type) {

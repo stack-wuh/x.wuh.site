@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import styled from 'styled-components'
+import { IconEmpty } from '../icons'
 
 const EmptyRoot = styled.section`
   display: flex;
@@ -60,15 +61,6 @@ const EmptyDescription = styled.p`
   color: var(--text-secondary);
 `
 
-const DefaultEmptyIcon = () => (
-  <svg viewBox='0 0 24 24' aria-hidden='true'>
-    <path d='M4 11h16' />
-    <path d='M6.5 11l1.3-5h8.4l1.3 5' />
-    <path d='M9 15h6' />
-    <path d='M6 11v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6' />
-  </svg>
-)
-
 export interface EmptyProps extends React.HTMLAttributes<HTMLElement> {
   title?: React.ReactNode
   description?: React.ReactNode
@@ -90,7 +82,7 @@ const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, re
 
   return (
     <EmptyRoot ref={ref} role={role} aria-live={ariaLive} {...rest}>
-      <EmptyIcon aria-hidden='true'>{icon ?? <DefaultEmptyIcon />}</EmptyIcon>
+      <EmptyIcon aria-hidden='true'>{icon ?? <IconEmpty />}</EmptyIcon>
       {title ? <EmptyTitle>{title}</EmptyTitle> : null}
       {resolvedDescription ? <EmptyDescription>{resolvedDescription}</EmptyDescription> : null}
     </EmptyRoot>

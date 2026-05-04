@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import Tag from '@wuh.site/components/tag'
+import { DiamondDivider } from '@wuh.site/components/icons'
 import type { Issue } from '../PostView.types'
 import {
   CoverImage,
@@ -87,9 +88,7 @@ export default function PostHeader({ issue }: Props) {
       {/* 装饰分隔线 */}
       <OrnamentDivider aria-hidden='true'>
         <span className='divider-line' />
-        <svg className='divider-diamond' viewBox='0 0 12 12' aria-hidden='true'>
-          <polygon points='6,0 12,6 6,12 0,6' fill='currentColor' opacity='0.35' />
-        </svg>
+        <DiamondDivider />
         <span className='divider-line' />
       </OrnamentDivider>
     </>

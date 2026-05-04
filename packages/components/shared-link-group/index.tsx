@@ -2,6 +2,7 @@
 import * as React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../button'
+import { IconWechat, IconQQ, IconWeibo, IconTwitter, IconEmail, IconLink, IconCopy } from '../icons'
 
 type ShareType = 'wechat' | 'qq' | 'weibo' | 'twitter' | 'email' | 'link' | 'copy' | 'custom'
 
@@ -188,50 +189,6 @@ const SLink = styled.a`
   text-decoration: none;
   color: inherit;
 `
-
-const IconWechat = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M5.5 9.5a6.5 6.5 0 1 1 12.8 1.6 5 5 0 1 1-8.7 4.1l-3.1 1.2.9-3.3A6.5 6.5 0 0 1 5.5 9.5zm3.2-.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm6.6 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z" />
-  </svg>
-)
-
-const IconQQ = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2c3.3 0 6 2.7 6 6 0 1.4-.5 2.7-1.4 3.7.6 1.1 1.4 2.9 1.4 4.3 0 .6-.4 1-1 1-.9 0-2.4-.9-3.5-1.9-.7.3-1.4.4-2.5.4s-1.8-.1-2.5-.4c-1.1 1-2.6 1.9-3.5 1.9-.6 0-1-.4-1-1 0-1.4.8-3.2 1.4-4.3A6 6 0 0 1 6 8c0-3.3 2.7-6 6-6z" />
-  </svg>
-)
-
-const IconWeibo = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm1-12c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z" />
-  </svg>
-)
-
-const IconTwitter = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.2 1.8-2.2-.8.5-1.7.8-2.6 1-1.6-1.7-4.4-1.4-5.7.6-1 1.4-.8 3.3.4 4.4-2.8-.1-5.4-1.5-7.1-3.7-.9 1.6-.4 3.8 1.2 4.9-.6 0-1.2-.2-1.7-.5 0 1.7 1.2 3.3 3 3.6-.5.1-1 .2-1.6.1.5 1.5 2 2.6 3.7 2.6-1.7 1.3-3.8 2-5.9 2-.4 0-.8 0-1.2-.1 2.2 1.4 4.8 2.1 7.4 2.1 7.9 0 12.3-6.7 12-12.5.8-.6 1.5-1.3 2-2.1z" />
-  </svg>
-)
-
-const IconEmail = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M3 6c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V6zm2 0 7 5 7-5H5zm14 12V9l-7 5-7-5v9h14z" />
-  </svg>
-)
-
-const IconLink = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
-const IconCopy = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" strokeWidth="2" fill="none"/>
-    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
 
 const getPresetIcon = (type: ShareType) => {
   switch (type) {
