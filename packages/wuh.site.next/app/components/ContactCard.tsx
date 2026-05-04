@@ -6,192 +6,203 @@ import styled from 'styled-components'
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
 
 export type ContactCardProps = {
-  badge?: string
-  qrSrc: string
+  badge: string
   name: string
   handle: string
   title: string
   tagline: string
   hints?: string[]
-  cardGradient?: string
-  borderColor?: string
-  hintColor?: string
+  /** 二维码图片 URL（微信/QQ 模式） */
+  qrSrc?: string
+  /** 跳转链接（Twitter/GitHub 模式） */
+  linkUrl?: string
+  /** 跳转按钮文案 */
+  linkLabel?: string
 }
 
-const Card = styled.div<{ cardGradient?: string; borderColor?: string }>`
-  width: min(729px, 100%);
-  padding: var(--space-xl);
-  border-radius: 36px;
-  background: ${(p) => p.cardGradient ?? 'linear-gradient(180deg, rgba(124, 77, 255, 0.18), rgba(15, 23, 42, 0.95))'};
-  border: 1px solid ${(p) => p.borderColor ?? 'rgba(148, 163, 184, 0.45)'};
-  box-shadow: 0 28px 65px rgba(2, 6, 23, 0.6);
-  backdrop-filter: blur(32px);
+const Root = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 12px;
-    border-radius: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    pointer-events: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-`
-
-const Badge = styled.span`
-  align-self: flex-end;
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.15);
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  font-weight: 600;
 `
 
 const Body = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-lg);
-  align-items: center;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-xl);
+  align-items: start;
 
-  @media (max-width: 720px) {
+  @media (max-width: 560px) {
     grid-template-columns: 1fr;
+    justify-items: center;
+    gap: var(--space-md);
   }
 `
 
+/* 左侧操作区 */
+const ActionArea = styled.button`
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-card);
+  background: var(--background-200);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-card);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: color-mix(in oklab, var(--normal-700) 40%, transparent);
+  }
+`
+
+const QRImage = styled.img`
+  width: 184px;
+  height: 184px;
+  object-fit: cover;
+  border-radius: calc(var(--radius-card) - 4px);
+`
+
+const LinkButton = styled.a`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: none;
+  }
+`
+
+const LinkIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--primary-color);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+`
+
+/* 右侧信息区 */
 const Info = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 0;
+  gap: var(--space-sm);
+  padding-top: 4px;
 `
 
-const InfoHeader = styled.div`
+const Header = styled.div`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
 `
 
-const NameBlock = styled.div`
-  min-width: 0;
+const Avatar = styled.img`
+  width: 48px;
+  height: auto;
+  border-radius: 4px;
+  flex-shrink: 0;
+
+  @media (prefers-color-scheme: dark) {
+    filter: invert(1);
+  }
 `
 
-const Name = styled.p`
-  margin: 0;
-  font-size: var(--font-size-2xl);
+const NameBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`
+
+const Name = styled.span`
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.3;
 `
 
 const Handle = styled.span`
   font-size: var(--font-size-sm);
-  color: #d1d5db;
-  letter-spacing: 0.14em;
-  display: block;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
 `
 
-const Title = styled.span`
+const Role = styled.span`
   font-size: var(--font-size-md);
   color: var(--text-secondary);
 `
 
 const Tagline = styled.p`
   margin: 0;
-  font-size: var(--font-size-sm);
-  color: #cbd5f5;
-  max-width: 280px;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-base);
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-style: italic;
 `
 
-const Avatar = styled.div`
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-  background: radial-gradient(circle at 10% 10%, #ffffff, #a855f7, #2563eb);
-  color: #fff;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  display: grid;
-  place-items: center;
-  font-size: 1.4rem;
-  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.35);
-`
-
-const QRTrigger = styled.button`
-  width: 240px;
-  height: 240px;
-  border-radius: 28px;
-  background: #ffffff;
+/* 底部提示 */
+const Hints = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 22px 40px rgba(15, 23, 42, 0.42);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: var(--space-md);
+  padding-top: var(--space-xs);
+  border-top: 1px solid color-mix(in oklab, var(--normal-300) 25%, transparent);
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 26px 48px rgba(15, 23, 42, 0.5);
+  @media (prefers-color-scheme: dark) {
+    border-top-color: color-mix(in oklab, var(--normal-700) 25%, transparent);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--primary-400);
-    outline-offset: 4px;
+  @media (max-width: 560px) {
+    flex-direction: column;
+    gap: 4px;
   }
 `
 
-const QRImage = styled.img`
-  width: 226px;
-  height: 226px;
-  object-fit: cover;
-  border-radius: 24px;
-`
-
-const HintGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`
-
-const Hint = styled.p<{ hintColor?: string }>`
-  margin: 0;
+const Hint = styled.span`
   font-size: var(--font-size-xs);
-  color: ${(p) => p.hintColor ?? '#dbeafe'};
-  text-align: left;
+  color: var(--text-muted);
   line-height: 1.4;
 `
 
+const HintDot = styled.span`
+  margin-right: 6px;
+  opacity: 0.4;
+`
+
+/* ====== Component ====== */
+
 const ContactCard = ({
-  badge = 'WeChat',
-  qrSrc,
+  badge,
   name,
   handle,
   title,
   tagline,
   hints = [],
-  cardGradient,
-  borderColor,
-  hintColor,
+  qrSrc,
+  linkUrl,
+  linkLabel,
 }: ContactCardProps) => {
-  const initials = name
-    .trim()
-    .split(/\s+/)
-    .map((word) => word[0] ?? '')
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-
   const previewItems = useMemo<ImagePreviewItem[]>(() => {
     if (!qrSrc) return []
     return [
@@ -205,55 +216,72 @@ const ContactCard = ({
   }, [qrSrc, name, badge, tagline])
 
   const [previewOpen, setPreviewOpen] = useState(false)
-  const [previewIndex, setPreviewIndex] = useState(0)
 
-  const handlePreviewOpen = () => {
-    if (previewItems.length === 0) return
-    setPreviewIndex(0)
-    setPreviewOpen(true)
-  }
-
-  const handlePreviewClose = () => setPreviewOpen(false)
-  const handleIndexChange = (nextIndex: number) => setPreviewIndex(nextIndex)
+  const hasQR = Boolean(qrSrc)
+  const hasLink = Boolean(linkUrl)
 
   return (
     <>
-      <Card cardGradient={cardGradient} borderColor={borderColor}>
-        <Badge>{badge}</Badge>
+      <Root>
         <Body>
+          <ActionArea
+            type='button'
+            as={hasLink ? 'a' : 'button'}
+            href={hasLink ? linkUrl : undefined}
+            target={hasLink ? '_blank' : undefined}
+            rel={hasLink ? 'noopener noreferrer' : undefined}
+            aria-label={hasLink ? `前往 ${badge}` : `查看 ${badge} 二维码`}
+            onClick={hasQR ? () => setPreviewOpen(true) : undefined}
+          >
+            {hasQR && <QRImage src={qrSrc} alt={`${name} 的 ${badge} 二维码`} />}
+            {hasLink && (
+              <LinkButton as='span'>
+                <LinkIcon>
+                  {badge === 'GitHub' ? (
+                    <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
+                      <path d='M12 .8A11.2 11.2 0 0 0 .8 12c0 5 3.3 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.6-1.4-1.5-1.8-1.5-1.8-1.2-.8.1-.8.1-.8 1.3.1 2 .7 2 .7 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.8-1.7-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.7.1-3.4 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C18.9 6.1 20 6.4 20 6.4c.6 1.7.2 3.1.1 3.4.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.5-5.3 5.8.5.4.9 1.3.9 2.6v3.8c0 .3.2.7.8.6A11.2 11.2 0 0 0 23.2 12 11.2 11.2 0 0 0 12 .8z' />
+                    </svg>
+                  ) : (
+                    <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
+                      <path d='M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.2 1.8-2.2-.8.5-1.7.8-2.6 1-1.6-1.7-4.4-1.4-5.7.6-1 1.4-.8 3.3.4 4.4-2.8-.1-5.4-1.5-7.1-3.7-.9 1.6-.4 3.8 1.2 4.9-.6 0-1.2-.2-1.7-.5 0 1.7 1.2 3.3 3 3.6-.5.1-1 .2-1.6.1.5 1.5 2 2.6 3.7 2.6-1.7 1.3-3.8 2-5.9 2-.4 0-.8 0-1.2-.1 2.2 1.4 4.8 2.1 7.4 2.1 7.9 0 12.3-6.7 12-12.5.8-.6 1.5-1.3 2-2.1z' />
+                    </svg>
+                  )}
+                </LinkIcon>
+                {linkLabel}
+              </LinkButton>
+            )}
+          </ActionArea>
           <Info>
-            <InfoHeader>
-              <Avatar aria-hidden='true'>{initials || 'W'}</Avatar>
+            <Header>
+              <Avatar src='/logo.svg' alt='wuh.site' />
               <NameBlock>
                 <Name>{name}</Name>
                 <Handle>{handle}</Handle>
               </NameBlock>
-            </InfoHeader>
-            <Title>{title}</Title>
+            </Header>
+            <Role>{title}</Role>
             <Tagline>{tagline}</Tagline>
           </Info>
-          <QRTrigger type='button' aria-label={`查看 ${name} 的 ${badge} 二维码`} onClick={handlePreviewOpen}>
-            {qrSrc && <QRImage src={qrSrc} alt={`${name} 的 ${badge} 二维码`} />}
-          </QRTrigger>
         </Body>
-        <HintGroup>
-          {(hints.length > 0 ? hints : [
-            `扫描二维码即可启动 1:1 交流`,
-            '备注「官网来访」将更快通过',
-          ]).map((hint, index) => (
-          <Hint key={index} hintColor={hintColor}>
-            {hint}
-          </Hint>
-          ))}
-        </HintGroup>
-      </Card>
-      {previewItems.length > 0 && (
+        {hints.length > 0 && (
+          <Hints>
+            {hints.map((hint, i) => (
+              <Hint key={i}>
+                <HintDot>·</HintDot>
+                {hint}
+              </Hint>
+            ))}
+          </Hints>
+        )}
+      </Root>
+      {hasQR && previewItems.length > 0 && (
         <ImagePreview
           items={previewItems}
           open={previewOpen}
-          currentIndex={previewIndex}
-          onClose={handlePreviewClose}
-          onIndexChange={handleIndexChange}
+          currentIndex={0}
+          onClose={() => setPreviewOpen(false)}
+          onOpenChange={(open) => setPreviewOpen(open)}
+          onIndexChange={() => {}}
           allowDownload={false}
         />
       )}

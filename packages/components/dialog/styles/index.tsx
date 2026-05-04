@@ -24,20 +24,25 @@ const dialogSurfaceBase = css<{ $fullScreen: boolean; $width: number | string; $
     return typeof $height === 'number' ? `${$height}px` : $height
   }};
   max-height: ${({ $fullScreen }) => ($fullScreen ? '100vh' : 'calc(100vh - 80px)')};
-  border-radius: ${({ $fullScreen }) => ($fullScreen ? '0' : '16px')};
+  border-radius: ${({ $fullScreen }) => ($fullScreen ? '0' : 'var(--radius-card)')};
   background-color: var(--background-100, #fff);
   color: var(--text-primary, #0f172a);
-  box-shadow: ${({ $fullScreen }) => ($fullScreen ? 'none' : '0 24px 80px rgba(15, 23, 42, 0.25)')};
-  border: 1px solid var(--normal-200, rgba(15, 23, 42, 0.08));
+  border: ${({ $fullScreen }) => ($fullScreen ? 'none' : '1px solid rgba(0, 0, 0, 0.06)')};
+  box-shadow: ${({ $fullScreen }) =>
+    $fullScreen
+      ? 'none'
+      : 'var(--elevation-card), 0 8px 40px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5)'};
   outline: none;
   pointer-events: auto;
   overflow: hidden;
-  backdrop-filter: ${({ $fullScreen }) => ($fullScreen ? 'none' : 'blur(0px)')};
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--normal-900, rgba(15, 23, 42, 0.95));
-    border-color: var(--normal-700, rgba(148, 163, 184, 0.4));
-    color: var(--text-primary, #f8fafc);
+    background-color: var(--background-100, #fff);
+    border-color: ${({ $fullScreen }) => ($fullScreen ? 'none' : 'color-mix(in oklab, var(--normal-700) 60%, transparent)')};
+    box-shadow: ${({ $fullScreen }) =>
+      $fullScreen
+        ? 'none'
+        : 'var(--elevation-card), 0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03)'};
   }
 
   ${({ $disableAnimation }) =>
@@ -72,18 +77,14 @@ export const DialogHeader = styled.header`
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md, 16px);
-  padding: var(--space-lg, 24px) var(--space-xl, 32px) var(--space-md, 16px);
-  border-bottom: 1px solid var(--normal-200, rgba(15, 23, 42, 0.08));
-
-  @media (prefers-color-scheme: dark) {
-    border-bottom-color: var(--normal-700, rgba(148, 163, 184, 0.3));
-  }
+  padding: var(--space-lg, 24px) var(--space-xl, 32px) 0;
 `
 
 export const DialogTitle = styled.h3`
   margin: 0;
+  font-family: var(--font-serif);
   font-size: var(--font-size-xl, 20px);
-  font-weight: 600;
+  font-weight: 700;
   color: inherit;
 `
 
@@ -127,11 +128,10 @@ export const DialogFooter = styled.footer`
   justify-content: flex-end;
   gap: var(--space-sm, 12px);
   padding: var(--space-md, 16px) var(--space-xl, 32px);
-  border-top: 1px solid var(--normal-200, rgba(15, 23, 42, 0.08));
+  border-top: 1px solid color-mix(in oklab, var(--normal-200) 40%, transparent);
   background: var(--background-100, #fff);
 
   @media (prefers-color-scheme: dark) {
-    border-top-color: var(--normal-700, rgba(148, 163, 184, 0.3));
-    background: var(--normal-900, #0f172a);
+    border-top-color: color-mix(in oklab, var(--normal-700) 30%, transparent);
   }
 `

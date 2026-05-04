@@ -402,18 +402,15 @@ const Empty = styled.div`
 
 type ContactDialogConfig = ContactCardProps
 
-const CONTACT_CONFIG: Record<'wechat' | 'qq', ContactDialogConfig> = {
+const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github', ContactDialogConfig> = {
   wechat: {
     badge: 'WeChat',
     qrSrc: 'https://cdn.wuh.site/web/wechat.jpg',
     name: 'stack-wuh',
     handle: 'shadow_u',
     title: '工程化 & 可视化',
-    tagline: 'React / Vue / 编程爱好者',
-    hints: ['扫描二维码添加微信', '备注"官网来访"更容易通过'],
-    cardGradient: 'linear-gradient(180deg, rgba(200, 144, 96, 0.18), rgba(74, 44, 24, 0.9))',
-    borderColor: 'rgba(200, 144, 96, 0.55)',
-    hintColor: '#F5EBE0',
+    tagline: '代码写诗，工具作画',
+    hints: ['扫码即可开启一场 1:1 对话', '备注「官网来访」我们会更快相遇'],
   },
   qq: {
     badge: 'QQ',
@@ -421,11 +418,28 @@ const CONTACT_CONFIG: Record<'wechat' | 'qq', ContactDialogConfig> = {
     name: 'stack-wuh',
     handle: 'shadow_u',
     title: '实时沟通',
-    tagline: '工程化 / 可视化 / 效率工具',
-    hints: ['二维码即刻发起 QQ 语音/文字', '备注"官网来访"更容易通过'],
-    cardGradient: 'linear-gradient(180deg, rgba(200, 144, 96, 0.18), rgba(74, 44, 24, 0.9))',
-    borderColor: 'rgba(200, 144, 96, 0.55)',
-    hintColor: '#F5EBE0',
+    tagline: '山海皆可平，何况是聊个天',
+    hints: ['扫码即刻语音或文字交流', '备注「官网来访」我们会更快相遇'],
+  },
+  twitter: {
+    badge: 'Twitter',
+    linkUrl: 'https://x.com/wuh131420',
+    linkLabel: '前往 Twitter 主页',
+    name: 'wuh131420',
+    handle: '@wuh131420',
+    title: 'Twitter',
+    tagline: '碎片灵感，即时分享',
+    hints: ['技术观察 & 灵感速写 & 碎碎念'],
+  },
+  github: {
+    badge: 'GitHub',
+    linkUrl: 'https://github.com/stack-wuh',
+    linkLabel: '前往 GitHub 主页',
+    name: 'stack-wuh',
+    handle: '@stack-wuh',
+    title: 'GitHub',
+    tagline: '开源是一种信仰',
+    hints: ['你是什么样的人，就会看到什么样的代码'],
   },
 }
 
@@ -487,9 +501,9 @@ export default function HomeView({ repos, posts }: Props) {
             items={[
               { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
               { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
-              { type: 'twitter', href: 'https://x.com/wuh131420', title: 'Twitter' },
+              { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
               { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
-              { type: 'github', href: 'https://github.com/stack-wuh', title: 'GitHub' },
+              { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
               { type: 'douban', href: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN', title: '豆瓣' },
               { type: 'custom', href: 'https://music.163.com/#/user/home?id=398326271', title: '网易云', icon: <IconMusic /> },
             ]}
@@ -570,18 +584,8 @@ export default function HomeView({ repos, posts }: Props) {
           title={activeContactConfig ? `${activeContactConfig.badge} 联系` : '联系'}
           fullScreen={false}
           width='min(760px, calc(100vw - 32px))'
-          style={{
-            background: 'var(--background-100)',
-          }}
         >
-          {activeContactConfig && (
-            <ContactCard
-              {...activeContactConfig}
-              cardGradient={activeContactConfig.cardGradient}
-              borderColor={activeContactConfig.borderColor}
-              hintColor={activeContactConfig.hintColor}
-            />
-          )}
+          {activeContactConfig && <ContactCard {...activeContactConfig} />}
         </Dialog>
       </Main>
     </Root>
