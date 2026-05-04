@@ -15,6 +15,12 @@ const IconMusic = () => (
   </svg>
 )
 
+const IconDiscord = () => (
+  <svg viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'>
+    <path d='M20.3 4.7A19.6 19.6 0 0 0 15.2 3c-.3.5-.5 1-.7 1.5-1.8-.3-3.7-.3-5.5 0-.2-.5-.4-1-.7-1.5-1.8.3-3.5 1-5.1 1.9C.5 9.5-.6 14.2.2 18.8c2.1 1.6 4.1 2.5 6.1 3.1.5-.7.9-1.4 1.3-2.2-.7-.3-1.4-.6-2-1 .1-.1.3-.1.4-.2 3.3 1.6 6.9 1.6 10.1 0 .1.1.3.1.4.2-.6.4-1.3.7-2 1 .4.8.8 1.5 1.3 2.2 2-.6 4.1-1.5 6.2-3.1.9-5.4-1.6-10-4.6-14.1zM8 13.8c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8zm8 0c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8z' />
+  </svg>
+)
+
 const TAG_DISPLAY_LIMIT = 3
 
 type Repo = {
@@ -402,7 +408,7 @@ const Empty = styled.div`
 
 type ContactDialogConfig = ContactCardProps
 
-const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github' | 'douban' | 'netease', ContactDialogConfig> = {
+const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github' | 'douban' | 'netease' | 'discord', ContactDialogConfig> = {
   wechat: {
     badge: 'WeChat',
     qrSrc: 'https://cdn.wuh.site/web/wechat.jpg',
@@ -460,6 +466,16 @@ const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github' | 'douban' |
     title: '网易云音乐',
     tagline: '算法推荐不了一颗有趣的灵魂',
     hints: ['用耳朵投票，每一首都算数'],
+  },
+  discord: {
+    badge: 'Discord',
+    linkUrl: 'https://discord.com/users/shadowoo1995',
+    linkLabel: '前往 Discord',
+    name: 'shadowoo1995',
+    handle: '@shadowoo1995',
+    title: 'Discord',
+    tagline: '语音频道见，比 issue 更快',
+    hints: ['技术闲聊 & 问题讨论 & 摸鱼胜地'],
   },
 }
 
@@ -526,6 +542,7 @@ export default function HomeView({ repos, posts }: Props) {
               { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
               { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
               { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
+              { type: 'custom', title: 'Discord', icon: <IconDiscord />, onClick: () => openContact('discord') },
             ]}
             size='medium'
           />
