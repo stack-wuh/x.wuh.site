@@ -2,7 +2,7 @@
 
 import { DiamondDivider } from '@wuh.site/components/icons'
 import type { Issue } from '../PostView.types'
-import { CoverImage, AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, MetaRow, TagGroup, Summary, OrnamentDivider } from '../styles'
+import { CoverImage, AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
 
 type Props = {
   issue: Issue

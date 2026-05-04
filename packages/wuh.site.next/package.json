@@ -8,6 +8,7 @@
     "build:debug": "NODE_OPTIONS=\"--max-old-space-size=2048 --trace-warnings\" next build --debug",
     "start": "next start",
     "lint": "oxlint app",
+    "fix": "oxlint app --fix",
     "lint:fix": "oxlint app --fix"
   },
   "dependencies": {
