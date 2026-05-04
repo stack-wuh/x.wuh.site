@@ -49,4 +49,4 @@ EXPOSE 3200
 ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3200/v2/health || exit 1
-CMD ["pnpm", "--filter", "@wuh.site/nest", "exec", "node", "dist/main"]
+CMD ["node", "packages/wuh.site.nest/dist/main"]
