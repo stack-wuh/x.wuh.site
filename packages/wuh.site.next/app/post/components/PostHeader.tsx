@@ -1,33 +1,18 @@
 'use client'
 
-import Link from 'next/link'
-import Tag from '@wuh.site/components/tag'
 import { DiamondDivider } from '@wuh.site/components/icons'
 import type { Issue } from '../PostView.types'
-import {
-  CoverImage,
-  AuthorRow,
-  AuthorAvatar,
-  AuthorInfo,
-  Header,
-  Title,
-  MetaRow,
-  TagGroup,
-  Summary,
-  OrnamentDivider,
-} from '../styles'
+import { CoverImage, AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, MetaRow, TagGroup, Summary, OrnamentDivider } from '../styles'
 
 type Props = {
   issue: Issue
 }
 
-const TAG_DISPLAY_LIMIT = 5
-
 export default function PostHeader({ issue }: Props) {
   const date = new Date(issue.created_at).toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric',
+    day: 'numeric'
   })
   const avatarUrl = issue.user?.avatarUrl
   const userName = issue.user?.userName?.trim() || issue.user?.login?.trim() || '匿名作者'
@@ -41,48 +26,24 @@ export default function PostHeader({ issue }: Props) {
         </CoverImage>
       )}
 
-      {/* 作者行 */}
-      {avatarUrl && (
-        <AuthorRow>
-          <AuthorAvatar src={avatarUrl} alt={userName} width={36} height={36} />
-          <AuthorInfo>
-            <strong>{userName}</strong>
-            <span>{date}</span>
-          </AuthorInfo>
-        </AuthorRow>
-      )}
-
       {/* 标题 + Meta */}
       <Header>
         <Title>{issue.title}</Title>
 
-        {!avatarUrl && (
-          <MetaRow>
-            <span>发布于 {date}</span>
-            <span>&middot;</span>
-            <span>{issue.comments} 条评论</span>
-          </MetaRow>
+        {/* 作者行 */}
+        {avatarUrl && (
+          <AuthorRow>
+            <AuthorAvatar src={avatarUrl} alt={userName} width={36} height={36} />
+            <AuthorInfo>
+              <strong>{userName}</strong>
+              <span>
+                发布于 {date}, {issue.comments}条评论
+              </span>
+            </AuthorInfo>
+          </AuthorRow>
         )}
 
-        {issue.metadata?.summary && (
-          <Summary>{issue.metadata.summary}</Summary>
-        )}
-
-        {/* 标签 */}
-        {issue.labels.length > 0 && (
-          <TagGroup>
-            {issue.labels.slice(0, TAG_DISPLAY_LIMIT).map((label) => (
-              <Link
-                key={label.name}
-                href={`https://github.com/stack-wuh/blog/issues?q=is:issue+label:"${encodeURIComponent(label.name)}"`}
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                <Tag label={label.name} color={label.color} />
-              </Link>
-            ))}
-          </TagGroup>
-        )}
+        {issue.metadata?.summary && <Summary>{issue.metadata.summary}</Summary>}
       </Header>
 
       {/* 装饰分隔线 */}
