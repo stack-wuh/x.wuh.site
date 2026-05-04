@@ -1,9 +1,7 @@
 # Stage 1: base
 FROM node:20-alpine AS base
-ENV PNPM_HOME="/home/node/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable \
-  && corepack prepare pnpm@9.15.0 --activate \
+RUN npm install -g pnpm@9.15.0 --registry=https://registry.npmmirror.com \
+  && pnpm config set registry https://registry.npmmirror.com \
   && apk add --no-cache curl
 WORKDIR /app
 
