@@ -10,3 +10,10 @@ dist
 npm-debug.log*
 .env
 /codex
+Dockerfile
+docker-compose.yml
+nginx.conf
+.dockerignore
+.gitignore
+.github
+openspec

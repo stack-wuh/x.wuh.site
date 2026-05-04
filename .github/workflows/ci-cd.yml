@@ -14,15 +14,12 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          # 如果服务器要求跳过 host key 检查可加： 
-          # port: 22
-          # timeout: 60s
           script: |
             cd /github/x.wuh.site
             git fetch origin main
             git checkout main
-            git reset --hard origin/main   # 强制回到远程 main
-            git clean -fd                  # 可选，清理新文件
+            git reset --hard origin/main
+            git clean -fd
             ./scripts/deploy-docker.sh stop || true
             ./scripts/deploy-docker.sh build
             ./scripts/deploy-docker.sh run
