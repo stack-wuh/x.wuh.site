@@ -19,9 +19,9 @@ COPY packages ./
 
 # Stage 3: builder-next (incremental build with .next/cache)
 FROM deps AS builder-next
-WORKDIR /app/packages/wuh.site.next
+RUN ls -la /app/packages/wuh.site.next/ && echo "---" && ls /app/packages/wuh.site.next/app/ | head -5
 RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
-  npx next build
+  cd /app/packages/wuh.site.next && pnpm run build
 
 # Stage 4: builder-nest
 FROM deps AS builder-nest
