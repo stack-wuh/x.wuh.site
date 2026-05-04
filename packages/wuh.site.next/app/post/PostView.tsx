@@ -14,6 +14,7 @@ import { useToc } from './hooks/useToc'
 import { useHeadingObserver } from './hooks/useHeadingObserver'
 import PostHeader from './components/PostHeader'
 import PostToolbar from './components/PostToolbar'
+import ReadingProgressBar from './components/ReadingProgressBar'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
@@ -209,6 +210,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
 
   return (
     <Container ref={containerRef}>
+      <ReadingProgressBar />
       <PostHeader issue={issue} />
 
       <ContentGrid>

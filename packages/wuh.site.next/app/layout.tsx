@@ -9,6 +9,7 @@ import { AudioPlayerProvider } from '@wuh.site/components/audio-player'
 import { GlobalAudioPlayer } from './components/player/GlobalAudioPlayer'
 import SiteHeader from './components/SiteHeader'
 import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
+import { ProgressProvider } from '@bprogress/next/app'
 
 export default function RootLayout({
   children
@@ -55,7 +56,15 @@ export default function RootLayout({
             <ThemeModeProvider>
               <AudioPlayerProvider trackResolver={resolveTrackSource}>
                 <SiteHeader />
-                {children}
+                <ProgressProvider
+                  color="var(--primary-color)"
+                  height="3px"
+                  shallowRouting
+                  delay={80}
+                  options={{ showSpinner: false }}
+                >
+                  {children}
+                </ProgressProvider>
                 <Footer />
                 <GlobalAudioPlayer />
               </AudioPlayerProvider>

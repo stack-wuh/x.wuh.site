@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@wuh.site/components": "workspace:^",
+    "@bprogress/next": "^3",
+    "@bprogress/react": "^1",
     "ahooks": "3.7.1",
     "marked": "^18.0.3",
     "next": "15.1.0",
