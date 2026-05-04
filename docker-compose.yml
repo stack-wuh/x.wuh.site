@@ -1,21 +1,12 @@
 services:
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - next
-    restart: unless-stopped
-
   next:
     build:
       context: .
       target: runner-next
     env_file:
       - .env
+    ports:
+      - "3000:3000"
     environment:
       - NEST_API_URL=http://nest:3200/v2
     depends_on:
