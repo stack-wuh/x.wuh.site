@@ -5,10 +5,11 @@ context: |
   仓库结构: monorepo (packages/wuh.site.next, packages/wuh.site.nest, packages/components, packages/hooks, packages/shared-contracts)
   后端端口: 3200, 前端端口: 3000
   CI/CD: GitHub Actions → Docker → SSH 部署
+  并行/后台执行: 允许, 但需明确标注并行执行的任务和依赖关系, 并确保文档中清晰说明每个任务的执行顺序和预期结果
 
 rules:
   proposal:
-    - 变更名称必须使用 YYYY-MM-DD-{task-name} 格式，如 2026-05-01-add-repos-endpoint
+    - 变更名称必须使用 {project-name}_{yyyy_MM_DD} 格式，如 测试任务_2024_06_01, {project-name} 可选用英文或中文, 但建议使用中文以提高可读性，可以从对话中的项目名称中提取，或者是需求详情中提炼
     - 明确说明变更的原因和范围
     - 标注影响的前端/后端包
     - 文档输出使用中文
