@@ -1,8 +1,8 @@
 import { generate, red, redDark, orange, orangeDark, green, greenDark } from '@ant-design/colors'
 import { TBaseColorLevel } from './tokens'
 
-// Site Theme: "文青纸张风"（象牙白纸 / 深棕墨迹 / 陶土赭色）
-const PRIMARY_OCHRE = '#C89060'
+// "酒红"：暖红/金/棕灰
+const PRIMARY_RED = '#C94A44'
 
 const toColorLevelsFromList = (...colors: [string, string, string, string, string, string, string, string, string]): TBaseColorLevel => {
   const keys: (keyof TBaseColorLevel)[] = [100, 200, 300, 400, 500, 600, 700, 800, 900]
@@ -20,63 +20,58 @@ const toColorLevelsFromGenerate = (colors: string[]): TBaseColorLevel => {
   }, {} as TBaseColorLevel)
 }
 
-// Primary：陶土赭色（暖赭），500 为主要色，600 为 hover/active
 const primaryLight = toColorLevelsFromList(
-  '#FBF4EE',
-  '#F5E4D6',
-  '#EBC9AE',
-  '#DBA87E',
-  '#C89060', // primary
-  '#A87348', // hover/active
-  '#8C5A35',
-  '#6B4325',
-  '#4A2C18',
+  '#FCEDEC',
+  '#F8D8D6',
+  '#F2BEBB',
+  '#E2928D',
+  '#C94A44', // primary
+  '#A13531', // hover/active
+  '#8A2A26',
+  '#6B1F1E',
+  '#4D1515',
 )
 
-// Dark 主色：提亮暖色，避免深色背景下发闷
 const primaryDark = toColorLevelsFromList(
-  '#2A1C12',
-  '#3A2618',
-  '#4D321F',
-  '#6B452A',
-  '#C89060',
-  '#D4A478',
-  '#E0BC98',
-  '#ECD4B8',
-  '#F5EBE0',
+  '#3A1516',
+  '#4A1B1C',
+  '#5B2223',
+  '#7A2F2F',
+  '#E36A64',
+  '#F07A73',
+  '#F6A09B',
+  '#F9C5C1',
+  '#FCE6E4',
 )
 
-// Normal：用于正文/边框等中性色（900 为最强文本——深棕墨迹）
 const normalLight = toColorLevelsFromList(
-  '#FDFCFA',
-  '#F5F1EA',
-  '#E8E2D6',
-  '#D4CBB8',
-  '#B8AC98',
-  '#9B8D78',
-  '#6B5E4E',
-  '#4A3F32',
-  '#2A2218',
+  '#FFFDFB',
+  '#F8F3EE',
+  '#EBE2D8',
+  '#D4C8B8',
+  '#B9A998',
+  '#A08878',
+  '#8A6E5C',
+  '#5A4438',
+  '#2A1E16',
 )
 
-// Dark 文本色使用 generate 保证对比度
-const darkTextColors = generate('#e8dcc8', { theme: 'dark' })
+const darkTextColors = generate('#ffffff', { theme: 'dark' })
 const normalDark = toColorLevelsFromGenerate(darkTextColors)
 
-// Background：100 为卡片/容器象牙白，900 为页面暖纸底
 const backgroundLight = toColorLevelsFromList(
-  '#FFFDF9', // card/surface ivory white
-  '#F8F3EC', // tag bg hint
-  '#F0E8DC',
-  '#E5D8C4',
-  '#D4C4AC',
-  '#BFA88C',
-  '#A68B6C',
-  '#8B7052',
-  '#F2EDE4', // page deep bg warm paper
+  '#FFFBF8',
+  '#FDF3EC',
+  '#FAE5D8',
+  '#F5D0BC',
+  '#EBB89E',
+  '#DE9A7C',
+  '#C88062',
+  '#A86A50',
+  '#F5F0EC',
 )
 
-const darkBackgroundColors = generate('#1a1512', { theme: 'dark' })
+const darkBackgroundColors = generate('#0a0404', { theme: 'dark' })
 const backgroundDark = toColorLevelsFromGenerate(darkBackgroundColors)
 
 const theme = {

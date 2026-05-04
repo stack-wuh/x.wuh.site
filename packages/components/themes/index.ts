@@ -2,14 +2,14 @@ import { Tokens, cssVariablesTokens } from './tokens'
 import themeColors from './generator-color'
 export const DefaultTheme: Tokens = {
   colors: {
-    primary: '#C89060', // 文青纸张风主色（暖赭）
-    secondary: '#9B8D78',
+    primary: '#C94A44', // 酒红
+    secondary: '#A19090',
     success: '#28a745',
     danger: '#dc3545',
     warning: '#ffc107',
     info: '#17a2b8',
-    text: '#2A2218',
-    background: '#F2EDE4'
+    text: '#2A1E16',
+    background: '#F5F0EC'
   },
   primary: themeColors.primary,
   danger: themeColors.danger,

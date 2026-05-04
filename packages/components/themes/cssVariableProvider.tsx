@@ -122,14 +122,16 @@ export const CssVariableStyles = createGlobalStyle`
       const theme = props.theme as Tokens
       return theme.background.light['900']
     }};
-    --transition-fast: 200ms;
-    --elevation-soft: 0 2px 8px rgba(0,0,0,.04);
-    --elevation-card: 0 4px 16px rgba(0,0,0,.06);
-    --elevation-card-hover: 0 8px 24px rgba(0,0,0,.09);
+    --transition-fast: 180ms;
+    --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
+    --elevation-card: 0 20px 40px rgba(0,0,0,0.08);
+    --elevation-card-hover: 0 30px 50px rgba(0,0,0,0.12);
     --radius-card: var(--border-radius-2xl);
-    --accent-color: #C89060;
+    --accent-color: #E3B567;
     --page-bg:
-      linear-gradient(180deg, #F2EDE4 0%, #EDE6DA 100%);
+      linear-gradient(180deg,
+        var(--background-color) 0%,
+        color-mix(in oklab, var(--background-color) 95%, var(--primary-color) 5%) 100%);
 
     ${(props) => {
       const theme = props.theme as Tokens
@@ -278,14 +280,18 @@ export const CssVariableStyles = createGlobalStyle`
         const theme = props.theme as Tokens
         return theme.background.dark['900']
       }};
-      --transition-fast: 200ms;
-      --elevation-soft: 0 2px 8px rgba(0,0,0,.18);
-      --elevation-card: 0 4px 16px rgba(0,0,0,.32);
-      --elevation-card-hover: 0 8px 24px rgba(0,0,0,.45);
+      --transition-fast: 180ms;
+      --elevation-soft: 0 4px 14px rgba(0,0,0,.25);
+      --elevation-card: 0 18px 36px rgba(0,0,0,0.45);
+      --elevation-card-hover: 0 26px 46px rgba(0,0,0,0.6);
       --radius-card: var(--border-radius-2xl);
-      --accent-color: #D4A478;
+      --accent-color: #E3B567;
       --page-bg:
-        linear-gradient(180deg, #1a1512 0%, #14100e 100%);
+        radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
+        radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 18%, transparent), transparent 52%),
+        linear-gradient(180deg,
+          color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%),
+          var(--background-color));
 
       ${(props) => {
         const theme = props.theme as Tokens

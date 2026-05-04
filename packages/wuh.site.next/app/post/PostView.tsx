@@ -7,7 +7,7 @@ import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/ale
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
 
-import type { AdjacentIssue, Issue, PostViewProps } from './PostView.types'
+import type { Issue, PostViewProps } from './PostView.types'
 import { usePostImagePreview } from './usePostImagePreview'
 import { useScrollProgress } from './hooks/useScrollProgress'
 import { useToc } from './hooks/useToc'

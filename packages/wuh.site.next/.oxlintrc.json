@@ -1,0 +1,30 @@
+{
+  "categories": {
+    "correctness": "warn"
+  },
+  "plugins": ["import", "typescript", "unicorn", "react"],
+  "env": {
+    "browser": true
+  },
+  "settings": {
+    "react": {
+      "version": "19.2.0"
+    }
+  },
+  "ignorePatterns": [
+    ".next/**",
+    "out/**",
+    "build/**",
+    "dist/**",
+    "dist.wuh.site/**",
+    "dist.wuh.site.next/**",
+    "wuh.site/**",
+    "next-env.d.ts",
+    "app/design/system-color/**"
+  ],
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "react/self-closing-comp": ["warn", { "html": false }]
+  }
+}

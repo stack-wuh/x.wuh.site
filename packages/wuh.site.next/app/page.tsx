@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import api from './lib/api'
-import type { ContentItem, RepoDto } from '@wuh.site/shared-contracts'
+import type { ContentItem } from '@wuh.site/shared-contracts'
 import HomeView from './HomeView'
 
 export const metadata: Metadata = {
