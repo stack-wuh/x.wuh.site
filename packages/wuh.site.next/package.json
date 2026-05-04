@@ -7,7 +7,8 @@
     "build": "NODE_OPTIONS=\"--max-old-space-size=2048\" next build",
     "build:debug": "NODE_OPTIONS=\"--max-old-space-size=2048 --trace-warnings\" next build --debug",
     "start": "next start",
-    "lint": "eslint --no-cache app --ext .ts,.tsx"
+    "lint": "oxlint app",
+    "lint:fix": "oxlint app --fix"
   },
   "dependencies": {
     "@wuh.site/components": "workspace:^",
@@ -23,9 +24,7 @@
     "@types/react": "19.2.0",
     "@types/react-dom": "19.2.3",
     "baseline-browser-mapping": "^2.10.0",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.0",
-    "@next/eslint-plugin-next": "15.1.0",
+    "oxlint": "^1",
     "typescript": "^5"
   },
   "types": "src/index.ts"
