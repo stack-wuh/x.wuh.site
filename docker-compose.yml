@@ -8,6 +8,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - PORT=3000
       - NEST_API_URL=http://nest:3200/v2
     depends_on:
       nest:
