@@ -12,8 +12,6 @@ COPY packages/wuh.site.next/package.json packages/wuh.site.next/
 COPY packages/wuh.site.nest/package.json packages/wuh.site.nest/
 COPY packages/components/package.json packages/components/
 COPY packages/config/package.json packages/config/
-COPY packages/docs/package.json packages/docs/
-COPY packages/hooks/package.json packages/hooks/
 COPY packages/shared-contracts/package.json packages/shared-contracts/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
   pnpm install --no-frozen-lockfile
