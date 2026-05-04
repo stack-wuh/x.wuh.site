@@ -5,15 +5,24 @@ RUN npm install -g pnpm@9.15.0 --registry=https://registry.npmmirror.com \
   && apk add --no-cache curl
 WORKDIR /app
 
-# Stage 2: deps
+# Stage 2: deps — package.json first, install, then source
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY packages packages
-RUN pnpm install --no-frozen-lockfile
+COPY packages/wuh.site.next/package.json packages/wuh.site.next/
+COPY packages/wuh.site.nest/package.json packages/wuh.site.nest/
+COPY packages/components/package.json packages/components/
+COPY packages/config/package.json packages/config/
+COPY packages/docs/package.json packages/docs/
+COPY packages/hooks/package.json packages/hooks/
+COPY packages/shared-contracts/package.json packages/shared-contracts/
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --no-frozen-lockfile
+COPY packages ./
 
-# Stage 3: builder-next
+# Stage 3: builder-next (incremental build with .next/cache)
 FROM deps AS builder-next
-RUN pnpm run build:next
+RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
+  pnpm run build:next
 
 # Stage 4: builder-nest
 FROM deps AS builder-nest
