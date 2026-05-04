@@ -10,7 +10,8 @@ services:
     environment:
       - NEST_API_URL=http://nest:3200/v2
     depends_on:
-      - nest
+      nest:
+        condition: service_healthy
     restart: unless-stopped
 
   nest:
