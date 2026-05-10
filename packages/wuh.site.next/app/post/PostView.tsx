@@ -1,7 +1,5 @@
 'use client'
 
-import { useMemo } from 'react'
-import { marked } from 'marked'
 import message from '@wuh.site/components/message'
 import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
@@ -158,10 +156,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
 }
 
 export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps) {
-  const renderedHtml = useMemo(
-    () => (issue?.body_html ? issue.body_html : issue?.body ? (marked.parse(issue.body) as string) : ''),
-    [issue?.body_html, issue?.body]
-  )
+  const renderedHtml = issue?.body_html || ''
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const scrollPercent = useScrollProgress()
   const tocResult = useToc(renderedHtml)
