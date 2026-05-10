@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import api from '../../lib/api'
+import { renderMarkdown } from '../../lib/markdown'
 import type { ContentItem } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue, AdjacentIssue } from '../PostView.types'
@@ -37,7 +38,11 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
 async function getIssue(num: string): Promise<Issue | null> {
   try {
     const content = await api.content.getPost(num, { revalidate: 1800 })
-    return mapContentToIssue(content)
+    const issue = mapContentToIssue(content)
+    if (issue.body) {
+      issue.body_html = await renderMarkdown(issue.body)
+    }
+    return issue
   } catch {
     return null
   }

@@ -102,130 +102,35 @@ export const usePostImagePreview = (bodyHtml?: string) => {
   )
 
   useEffect(() => {
-    const cssId = 'hljs-atom-style'
-    const darkHref = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css'
-    const lightHref = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css'
-    const media =
-      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-        ? window.matchMedia('(prefers-color-scheme: dark)')
-        : undefined
+    const root = containerRef.current
+    if (!root) return
 
-    const applyTheme = () => {
-      const prefersDark = media ? media.matches : false
-      const link = document.getElementById(cssId) as HTMLLinkElement | null
-      const href = prefersDark ? darkHref : lightHref
-      if (link) {
-        link.href = href
-      } else {
-        const newLink = document.createElement('link')
-        newLink.id = cssId
-        newLink.rel = 'stylesheet'
-        newLink.href = href
-        document.head.appendChild(newLink)
-      }
-    }
-
-    const enhanceDom = () => {
-      const root = containerRef.current
-      if (!root) return
-
-      const pres = root.querySelectorAll('article pre')
-      pres.forEach((pre) => {
-        if (pre.querySelector('.copy-btn')) return
-        const btn = document.createElement('button')
-        btn.className = 'copy-btn'
-        btn.textContent = '复制'
-        btn.setAttribute('type', 'button')
-        btn.onclick = async () => {
-          const code = pre.querySelector('code')?.textContent || ''
-          try {
-            await navigator.clipboard.writeText(code)
-            btn.textContent = '已复制'
-            setTimeout(() => {
-              btn.textContent = '复制'
-            }, 1500)
-          } catch {
-            btn.textContent = '失败'
-            setTimeout(() => {
-              btn.textContent = '复制'
-            }, 1500)
-          }
-        }
-        pre.appendChild(btn)
-      })
-
-      const headings = root.querySelectorAll('article h1, article h2, article h3, article h4, article h5, article h6')
-      headings.forEach((heading) => {
-        const text = heading.textContent?.trim() || ''
-        if (!text) return
-        const slug = text
-          .toLowerCase()
-          .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
-          .replace(/^-+|-+$/g, '')
-        if (!heading.id) heading.id = slug
-        if (!heading.querySelector('.anchor')) {
-          const anchor = document.createElement('a')
-          anchor.className = 'anchor'
-          anchor.href = `#${heading.id}`
-          anchor.textContent = '#'
-          heading.appendChild(anchor)
-        }
-      })
-
-      setPreviewItems(decorateAndCollectImages())
-    }
-
-    const runHighlight = () => {
-      const root = containerRef.current
-      if (!root) return
-      try {
-        // @ts-expect-error hljs is provided by CDN script
-        if (window.hljs && typeof window.hljs.highlightAll === 'function') {
-          // @ts-expect-error hljs is provided by CDN script
-          window.hljs.highlightAll()
-        } else {
-          const blocks = root.querySelectorAll('pre code')
-          blocks.forEach((block) => {
-            block.classList.add('hljs')
-          })
-        }
-      } finally {
-        enhanceDom()
-      }
-    }
-
-    applyTheme()
-    if (media) {
-      if (media.addEventListener) {
-        media.addEventListener('change', applyTheme)
-      } else if (media.addListener) {
-        media.addListener(applyTheme)
-      }
-    }
-
-    const scriptId = 'hljs-lib'
-    enhanceDom()
-
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script')
-      script.id = scriptId
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'
-      script.onload = runHighlight
-      script.onerror = enhanceDom
-      document.body.appendChild(script)
-    } else {
-      runHighlight()
-    }
-
-    return () => {
-      if (media) {
-        if (media.removeEventListener) {
-          media.removeEventListener('change', applyTheme)
-        } else if (media.removeListener) {
-          media.removeListener(applyTheme)
+    const pres = root.querySelectorAll('article pre')
+    pres.forEach((pre) => {
+      if (pre.querySelector('.copy-btn')) return
+      const btn = document.createElement('button')
+      btn.className = 'copy-btn'
+      btn.textContent = '复制'
+      btn.setAttribute('type', 'button')
+      btn.onclick = async () => {
+        const code = pre.querySelector('code')?.textContent || ''
+        try {
+          await navigator.clipboard.writeText(code)
+          btn.textContent = '已复制'
+          setTimeout(() => {
+            btn.textContent = '复制'
+          }, 1500)
+        } catch {
+          btn.textContent = '失败'
+          setTimeout(() => {
+            btn.textContent = '复制'
+          }, 1500)
         }
       }
-    }
+      pre.appendChild(btn)
+    })
+
+    setPreviewItems(decorateAndCollectImages())
   }, [bodyHtml, decorateAndCollectImages])
 
   useEffect(() => {
@@ -255,18 +160,6 @@ export const usePostImagePreview = (bodyHtml?: string) => {
       root.removeEventListener('keydown', handleKeydown, true)
     }
   }, [bodyHtml, openPreviewByTarget])
-
-  useEffect(() => {
-    try {
-      // @ts-expect-error hljs is provided by CDN script
-      if (window.hljs && typeof window.hljs.highlightAll === 'function') {
-        // @ts-expect-error hljs is provided by CDN script
-        window.hljs.highlightAll()
-      }
-    } catch {
-      // noop
-    }
-  }, [bodyHtml])
 
   const previewProps = useMemo<PreviewProps>(
     () => ({
