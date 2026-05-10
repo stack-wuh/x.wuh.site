@@ -13,45 +13,23 @@ export type UseFetchOptions<TData = unknown, TBody = unknown> = {
   onFinally?: (ctx: { url: string; options: RequestOptions<TBody>; result: FetchResult<TData> }) => void
 }
 
-export type UseFetchReturn<TData> = {
+export type UseFetchReturn<TData, TBody = unknown> = {
   data: TData | null
   error: FetchError | null
   loading: boolean
   status: number | null
   ok: boolean
-  run: (override?: { url?: string; options?: RequestOptions }) => Promise<FetchResult<TData>>
+  run: (override?: { url?: string; options?: RequestOptions<TBody> }) => Promise<FetchResult<TData>>
   reload: () => Promise<FetchResult<TData>>
   cancel: () => void
   setData: React.Dispatch<React.SetStateAction<TData | null>>
-}
-
-const createOptionsKey = (options?: RequestOptions) => {
-  if (!options) return ''
-  try {
-    const { onStart, onSuccess, onError, onFinally, fetch, signal, ...rest } = options
-    return JSON.stringify(rest)
-  } catch {
-    return ''
-  }
-}
-
-const mergeOptions = (base?: RequestOptions, override?: RequestOptions) => {
-  if (!base && !override) return undefined
-  if (!base) return override
-  if (!override) return base
-  return {
-    ...base,
-    ...override,
-    headers: { ...base.headers, ...override.headers },
-    query: { ...base.query, ...override.query },
-  }
 }
 
 export const useFetch = <TData = unknown, TBody = unknown>(
   url: string,
   options?: RequestOptions<TBody>,
   hooks?: UseFetchOptions<TData, TBody>
-): UseFetchReturn<TData> => {
+): UseFetchReturn<TData, TBody> => {
   const {
     manual = false,
     defaultData = null,
@@ -69,28 +47,36 @@ export const useFetch = <TData = unknown, TBody = unknown>(
   const [ok, setOk] = useState(false)
 
   const abortRef = useRef<AbortController | null>(null)
-  const optionsKey = useMemo(() => createOptionsKey(options), [options])
+
+  const optionsKey = useMemo(() => {
+    if (!options) return ''
+    const { signal, fetch: _fetch, ...rest } = options
+    return JSON.stringify(rest)
+  }, [options])
 
   const run = useCallback(
-    async (override?: { url?: string; options?: RequestOptions }) => {
+    async (override?: { url?: string; options?: RequestOptions<TBody> }) => {
       const targetUrl = override?.url ?? url
-      const mergedOptions = mergeOptions(options, override?.options) ?? {}
+      const mergedOptions: RequestOptions<TBody> = {
+        ...options,
+        ...override?.options,
+        headers: { ...options?.headers, ...override?.options?.headers },
+        query: { ...options?.query, ...override?.options?.query },
+      }
 
       abortRef.current?.abort()
       const controller = new AbortController()
       abortRef.current = controller
 
-      const finalOptions: RequestOptions = {
+      const finalOptions: RequestOptions<TBody> = {
         ...mergedOptions,
         signal: mergedOptions.signal ?? controller.signal,
-        onStart,
-        onSuccess,
-        onError,
-        onFinally,
       }
 
       setLoading(true)
       setError(null)
+
+      onStart?.({ url: targetUrl, options: finalOptions })
 
       const result = await fetcher<TData>(targetUrl, finalOptions)
 
@@ -102,9 +88,15 @@ export const useFetch = <TData = unknown, TBody = unknown>(
       setStatus(result.status)
       setOk(result.ok)
       setError(result.error)
+
       if (result.ok) {
         setData(result.data)
+        onSuccess?.({ url: targetUrl, options: finalOptions, data: result.data as TData })
+      } else {
+        onError?.({ url: targetUrl, options: finalOptions, error: result.error! })
       }
+
+      onFinally?.({ url: targetUrl, options: finalOptions, result })
 
       return result
     },
