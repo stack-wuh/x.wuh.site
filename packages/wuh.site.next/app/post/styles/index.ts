@@ -1,12 +1,43 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import Card from '@wuh.site/components/card'
 import Empty from '@wuh.site/components/empty'
+
+const scrollProgress = keyframes`
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+`
 
 export const Container = styled.div`
   max-width: 1100px;
   margin: 0 auto;
   padding: clamp(40px, 5vw, 72px) 24px;
   color: var(--text-color);
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 9999;
+    background: var(--primary-color);
+    transform-origin: left center;
+    pointer-events: none;
+
+    @supports (animation-timeline: scroll()) {
+      animation: ${scrollProgress} auto linear;
+      animation-timeline: scroll(root);
+    }
+
+    @supports not (animation-timeline: scroll()) {
+      transform: scaleX(0);
+    }
+  }
 `
 
 export const ContentGrid = styled.div`
@@ -850,67 +881,9 @@ const floatingButtonBase = css`
   }
 `
 
-const createLightGradient = (percent: number) => css`
-  linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--primary-color) 35%, var(--background-100)) 0%,
-    color-mix(in srgb, var(--primary-color) 55%, var(--background-100)) ${percent}%,
-    var(--background-100) ${percent}%,
-    var(--background-100) 100%
-  )
-`
-
-const createDarkGradient = (percent: number) => css`
-  linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--primary-color) 28%, var(--background-200)) 0%,
-    color-mix(in srgb, var(--primary-color) 46%, var(--background-200)) ${percent}%,
-    color-mix(in srgb, var(--background-200) 80%, var(--background-900)) ${percent}%,
-    color-mix(in srgb, var(--background-200) 80%, var(--background-900)) 100%
-  )
-`
-
-export const FloatingButton = styled.button<{ $variant?: 'default' | 'progress'; $percent?: number }>`
+export const FloatingButton = styled.button`
   ${floatingButtonBase}
   padding: 0;
-
-  ${(props) =>
-    props.$variant === 'progress' &&
-    css`
-      position: relative;
-      overflow: hidden;
-      background: ${createLightGradient(props.$percent ?? 0)};
-
-      &:hover {
-        color: var(--text-primary);
-        background: ${createLightGradient(props.$percent ?? 0)};
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-100) 60%, transparent);
-      }
-
-      svg {
-        position: relative;
-        z-index: 1;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background: ${createDarkGradient(props.$percent ?? 0)};
-
-        &:hover {
-          background: ${createDarkGradient(props.$percent ?? 0)};
-        }
-
-        &::after {
-          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--background-900) 35%, transparent);
-        }
-      }
-    `}
 `
 
 /* ====== PostHeader 子组件样式 ====== */
