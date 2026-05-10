@@ -4,13 +4,7 @@ import message from '@wuh.site/components/message'
 import { IconHome, IconScrollToTop, IconThumbUp } from '@wuh.site/components/icons'
 import { FloatingButtonGroup, FloatingButton } from '../styles'
 
-type Props = {
-  scrollPercent: number
-}
-
-export default function FloatingActions({ scrollPercent }: Props) {
-  const progressLabel = `${scrollPercent}`
-
+export default function FloatingActions() {
   return (
     <FloatingButtonGroup>
       <FloatingButton
@@ -26,9 +20,7 @@ export default function FloatingActions({ scrollPercent }: Props) {
       <FloatingButton
         type='button'
         aria-label='返回页头'
-        title={`返回页头（当前进度 ${progressLabel}%）`}
-        $variant='progress'
-        $percent={scrollPercent}
+        title='返回页头'
         onClick={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}

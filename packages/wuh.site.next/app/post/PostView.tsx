@@ -7,12 +7,10 @@ import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-lin
 
 import type { Issue, PostViewProps } from './PostView.types'
 import { usePostImagePreview } from './usePostImagePreview'
-import { useScrollProgress } from './hooks/useScrollProgress'
 import { useToc } from './hooks/useToc'
 import { useHeadingObserver } from './hooks/useHeadingObserver'
 import PostHeader from './components/PostHeader'
 import PostToolbar from './components/PostToolbar'
-import ReadingProgressBar from './components/ReadingProgressBar'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
@@ -158,7 +156,6 @@ const createShareItems = (issue: Issue): ShareItem[] => {
 export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps) {
   const renderedHtml = issue?.body_html || ''
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
-  const scrollPercent = useScrollProgress()
   const tocResult = useToc(renderedHtml)
   const activeHeading = useHeadingObserver(tocResult.toc)
 
@@ -205,7 +202,6 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
 
   return (
     <Container ref={containerRef}>
-      <ReadingProgressBar />
       <PostHeader issue={issue} />
 
       <ContentGrid>
@@ -261,7 +257,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
         )}
       </ContentGrid>
 
-      <FloatingActions scrollPercent={scrollPercent} />
+      <FloatingActions />
     </Container>
   )
 }
