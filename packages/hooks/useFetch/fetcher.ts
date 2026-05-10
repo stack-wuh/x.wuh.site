@@ -16,11 +16,6 @@ export type FetchResult<T> = {
   headers: Headers | null
 }
 
-type NextFetchConfig = {
-  revalidate?: number
-  tags?: string[]
-}
-
 export type RequestOptions<TBody = unknown> = {
   method?: string
   headers?: Record<string, string>
@@ -35,12 +30,8 @@ export type RequestOptions<TBody = unknown> = {
   mode?: RequestMode
   referrer?: string
   referrerPolicy?: ReferrerPolicy
-  next?: NextFetchConfig
+  ext?: Record<string, unknown>
   fetch?: typeof fetch
-  onStart?: (ctx: { url: string; options: RequestOptions<TBody> }) => void
-  onSuccess?: (ctx: { url: string; options: RequestOptions<TBody>; data: T }) => void
-  onError?: (ctx: { url: string; options: RequestOptions<TBody>; error: FetchError }) => void
-  onFinally?: (ctx: { url: string; options: RequestOptions<TBody>; result: FetchResult<T> }) => void
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
@@ -49,7 +40,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> => {
 
 const buildUrl = (input: string, query?: QueryRecord) => {
   if (!query) return input
-  const url = new URL(input, typeof window === 'undefined' ? 'http://localhost' : window.location.origin)
+  const url = new URL(input, 'http://localhost')
 
   Object.entries(query).forEach(([key, value]) => {
     if (value === null || value === undefined) return
@@ -116,12 +107,8 @@ export const fetcher = async <T>(url: string, options: RequestOptions = {}): Pro
     mode,
     referrer,
     referrerPolicy,
-    next,
+    ext,
     fetch: customFetch,
-    onStart,
-    onSuccess,
-    onError,
-    onFinally,
   } = options
 
   const mergedHeaders: Record<string, string> = { ...headers }
@@ -130,7 +117,7 @@ export const fetcher = async <T>(url: string, options: RequestOptions = {}): Pro
 
   const controller = !signal && timeout ? new AbortController() : null
   const finalSignal = signal ?? controller?.signal
-  let timer: NodeJS.Timeout | null = null
+  let timer: ReturnType<typeof setTimeout> | null = null
 
   if (controller && timeout) {
     timer = setTimeout(() => controller.abort(), timeout)
@@ -138,7 +125,7 @@ export const fetcher = async <T>(url: string, options: RequestOptions = {}): Pro
 
   const fetchImpl = customFetch ?? fetch
 
-  const requestInit: RequestInit & { next?: NextFetchConfig } = {
+  const requestInit = {
     method,
     headers: mergedHeaders,
     body: resolvedBody,
@@ -149,10 +136,8 @@ export const fetcher = async <T>(url: string, options: RequestOptions = {}): Pro
     mode,
     referrer,
     referrerPolicy,
-    next,
-  }
-
-  onStart?.({ url: finalUrl, options })
+    ...ext,
+  } as RequestInit
 
   try {
     const res = await fetchImpl(finalUrl, requestInit)
@@ -169,44 +154,35 @@ export const fetcher = async <T>(url: string, options: RequestOptions = {}): Pro
         code: isRecord(parsed) ? (parsed.code as string | number | undefined) : undefined,
         details: parsed ?? null,
       }
-      const result: FetchResult<T> = {
+      return {
         data: null,
         error,
         status: res.status,
         ok: false,
         headers: res.headers,
       }
-      onError?.({ url: finalUrl, options, error })
-      onFinally?.({ url: finalUrl, options, result })
-      return result
     }
 
-    const result: FetchResult<T> = {
+    return {
       data: parsed as T,
       error: null,
       status: res.status,
       ok: true,
       headers: res.headers,
     }
-    onSuccess?.({ url: finalUrl, options, data: result.data as T })
-    onFinally?.({ url: finalUrl, options, result })
-    return result
   } catch (err) {
     const error: FetchError = {
       message: err instanceof Error ? err.message : 'Network error',
       status: 0,
       details: err,
     }
-    const result: FetchResult<T> = {
+    return {
       data: null,
       error,
       status: 0,
       ok: false,
       headers: null,
     }
-    onError?.({ url: finalUrl, options, error })
-    onFinally?.({ url: finalUrl, options, result })
-    return result
   } finally {
     if (timer) clearTimeout(timer)
   }

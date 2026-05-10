@@ -14,7 +14,7 @@ type FetchOptions = {
 async function apiGet<T>(path: string, options?: FetchOptions): Promise<T> {
   const res = await fetcher<T>(`${API_BASE}${path}`, {
     headers: { 'Accept': 'application/json' },
-    next: options?.revalidate ? { revalidate: options.revalidate } : undefined,
+    ext: options?.revalidate ? { next: { revalidate: options.revalidate } } : undefined,
   });
   if (!res.ok || !res.data) {
     throw new Error(res.error?.message || `API request failed: ${path}`);
