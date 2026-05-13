@@ -15,6 +15,10 @@ import {
   IconButton,
   ImageStage,
   KeyboardLegend,
+  MobileNavArrow,
+  MoreMenuContainer,
+  MoreMenuItem,
+  MoreMenuOverlay,
   PreviewContainer,
   PreviewImage,
   PreviewSurface,
@@ -154,6 +158,26 @@ const usePrevious = <T,>(value: T) => {
   return ref.current
 }
 
+const useMediaQuery = (query: string) => {
+  const [matches, setMatches] = React.useState(false)
+  React.useEffect(() => {
+    const mql = window.matchMedia(query)
+    setMatches(mql.matches)
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [query])
+  return matches
+}
+
+const IconMore = () => (
+  <svg width='20' height='20' viewBox='0 0 20 20' fill='currentColor'>
+    <circle cx='10' cy='3' r='1.5' />
+    <circle cx='10' cy='10' r='1.5' />
+    <circle cx='10' cy='17' r='1.5' />
+  </svg>
+)
+
 export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>((props, forwardedRef) => {
   const {
     items,
@@ -221,26 +245,40 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   const [offset, setOffset] = React.useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = React.useState(false)
   const [isNativeFullscreen, setIsNativeFullscreen] = React.useState(false)
+  const [dismissOffset, setDismissOffset] = React.useState(0)
+  const [isDismissing, setIsDismissing] = React.useState(false)
+  const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
+  const [swipeOffsetX, setSwipeOffsetX] = React.useState(0)
+  const isMobile = useMediaQuery('(max-width: 767px)')
 
   const overlayRef = React.useRef<HTMLDivElement | null>(null)
   const stageRef = React.useRef<HTMLDivElement | null>(null)
   const previousOpen = usePrevious(open)
+  const doubleTapRef = React.useRef<{ time: number; x: number; y: number }>({ time: 0, x: 0, y: 0 })
   const pointerState = React.useRef<{
-    pointerId: number | null
-    originX: number
-    originY: number
+    pointers: Map<number, { clientX: number; clientY: number }>
+    initialDistance: number
+    initialZoomIndex: number
     startOffsetX: number
     startOffsetY: number
+    swipeStartX: number
+    swipeStartY: number
     isSwiping: boolean
+    isDismissing: boolean
     isPanning: boolean
+    isPinching: boolean
   }>({
-    pointerId: null,
-    originX: 0,
-    originY: 0,
+    pointers: new Map(),
+    initialDistance: 0,
+    initialZoomIndex: 0,
     startOffsetX: 0,
     startOffsetY: 0,
+    swipeStartX: 0,
+    swipeStartY: 0,
     isSwiping: false,
+    isDismissing: false,
     isPanning: false,
+    isPinching: false,
   })
 
   const total = items.length
@@ -253,9 +291,19 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   React.useEffect(() => {
     if (!open || !lockScroll || typeof document === 'undefined') return
     const original = document.body.style.overflow
+    const originalPosition = document.body.style.position
+    const originalTop = document.body.style.top
+    const scrollY = window.scrollY
     document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
     return () => {
       document.body.style.overflow = original
+      document.body.style.position = originalPosition
+      document.body.style.top = originalTop
+      document.body.style.width = ''
+      window.scrollTo(0, scrollY)
     }
   }, [open, lockScroll])
 
@@ -286,6 +334,10 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
       setZoomIndex(0)
       setRotation(0)
       setOffset({ x: 0, y: 0 })
+      setDismissOffset(0)
+      setIsDismissing(false)
+      setSwipeOffsetX(0)
+      setMoreMenuOpen(false)
     }
   }, [open])
 
@@ -301,6 +353,9 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
     setZoomIndex(0)
     setRotation(0)
     setOffset({ x: 0, y: 0 })
+    setDismissOffset(0)
+    setIsDismissing(false)
+    setSwipeOffsetX(0)
   }, [currentIndex])
 
   React.useEffect(() => {
@@ -408,6 +463,22 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
     document.body.removeChild(link)
   }, [allowDownload, currentItem, onDownload, currentIndex])
 
+  const handleMoreMenuClose = React.useCallback(() => setMoreMenuOpen(false), [])
+
+  const handleMoreMenuSelect = React.useCallback((action: () => void) => {
+    action()
+    setMoreMenuOpen(false)
+  }, [])
+
+  const handleDoubleClick: React.MouseEventHandler<HTMLDivElement> = () => {
+    if (!allowZoom) return
+    if (canZoomIn) {
+      zoomIn()
+    } else {
+      resetZoom()
+    }
+  }
+
   const handleOverlayClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (event.target === event.currentTarget && closeOnOverlay) {
       handleClose()
@@ -429,68 +500,151 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
     if (!stageRef.current) return
     stageRef.current.setPointerCapture(event.pointerId)
-    const shouldPan = zoom > 1
-    const shouldSwipe = allowGesture && zoom === 1 && event.pointerType !== 'mouse'
-    pointerState.current = {
-      pointerId: event.pointerId,
-      originX: event.clientX,
-      originY: event.clientY,
-      startOffsetX: offset.x,
-      startOffsetY: offset.y,
-      isSwiping: shouldSwipe,
-      isPanning: shouldPan,
+
+    const state = pointerState.current
+    state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY })
+
+    if (state.pointers.size === 2) {
+      const pts = Array.from(state.pointers.values())
+      state.initialDistance = Math.hypot(pts[1].clientX - pts[0].clientX, pts[1].clientY - pts[0].clientY)
+      state.initialZoomIndex = zoomIndex
+      state.isPinching = true
+      state.isSwiping = false
+      state.isDismissing = false
+      state.isPanning = false
+      setIsDragging(false)
+      return
     }
-    if (shouldPan) {
-      setIsDragging(true)
+
+    if (state.pointers.size === 1) {
+      if (zoom > 1) {
+        state.isPanning = true
+        state.startOffsetX = offset.x
+        state.startOffsetY = offset.y
+        state.swipeStartX = event.clientX
+        state.swipeStartY = event.clientY
+        setIsDragging(true)
+      } else if (allowGesture && event.pointerType !== 'mouse') {
+        state.isSwiping = true
+        state.swipeStartX = event.clientX
+        state.swipeStartY = event.clientY
+        state.startOffsetX = swipeOffsetX
+      }
     }
   }
 
   const handlePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
     const state = pointerState.current
-    if (!state || state.pointerId !== event.pointerId) return
-    const deltaX = event.clientX - state.originX
-    const deltaY = event.clientY - state.originY
+    if (!state.pointers.has(event.pointerId)) return
+
+    state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY })
+
+    if (state.isPinching && state.pointers.size === 2) {
+      const pts = Array.from(state.pointers.values())
+      const currentDistance = Math.hypot(pts[1].clientX - pts[0].clientX, pts[1].clientY - pts[0].clientY)
+      if (state.initialDistance > 0) {
+        const scale = currentDistance / state.initialDistance
+        const baseZoom = sanitizedZoomSteps[state.initialZoomIndex] ?? 1
+        const targetZoom = baseZoom * scale
+        const minZ = sanitizedZoomSteps[0]
+        const maxZ = sanitizedZoomSteps[sanitizedZoomSteps.length - 1]
+        const clamped = clamp(targetZoom, minZ, maxZ)
+        let nearestIdx = 0
+        let minDiff = Infinity
+        for (let i = 0; i < sanitizedZoomSteps.length; i++) {
+          const diff = Math.abs(sanitizedZoomSteps[i] - clamped)
+          if (diff < minDiff) {
+            minDiff = diff
+            nearestIdx = i
+          }
+        }
+        setZoomIndex(nearestIdx)
+      }
+      return
+    }
+
     if (state.isPanning) {
+      const deltaX = event.clientX - state.swipeStartX
+      const deltaY = event.clientY - state.swipeStartY
       setOffset({ x: state.startOffsetX + deltaX, y: state.startOffsetY + deltaY })
+      return
+    }
+
+    if (state.isSwiping) {
+      const deltaX = event.clientX - state.swipeStartX
+      const deltaY = event.clientY - state.swipeStartY
+      if (state.isDismissing) {
+        setDismissOffset(Math.max(0, deltaY))
+        setIsDismissing(true)
+      } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
+        state.isDismissing = true
+        setDismissOffset(Math.max(0, deltaY))
+        setIsDismissing(true)
+      } else {
+        setSwipeOffsetX(deltaX)
+      }
     }
   }
 
   const handlePointerUp: React.PointerEventHandler<HTMLDivElement> = (event) => {
     const state = pointerState.current
-    if (state.pointerId !== event.pointerId) return
-    if (state.isSwiping) {
-      const deltaX = event.clientX - state.originX
-      if (Math.abs(deltaX) > 45) {
+    state.pointers.delete(event.pointerId)
+
+    if (state.isPinching && state.pointers.size < 2) {
+      state.isPinching = false
+      return
+    }
+
+    if (state.isPanning) {
+      setIsDragging(false)
+      state.isPanning = false
+    }
+
+    if (state.isSwiping || state.isDismissing) {
+      const deltaX = event.clientX - state.swipeStartX
+      const deltaY = event.clientY - state.swipeStartY
+
+      if (state.isDismissing) {
+        if (deltaY > 80) {
+          handleClose()
+          return
+        }
+        setDismissOffset(0)
+        setIsDismissing(false)
+      } else if (Math.abs(deltaX) > 45) {
         if (deltaX > 0) {
           goPrevious()
         } else {
           goNext()
         }
       }
-    }
-    if (state.isPanning) {
-      setIsDragging(false)
-    }
-    pointerState.current = {
-      pointerId: null,
-      originX: 0,
-      originY: 0,
-      startOffsetX: 0,
-      startOffsetY: 0,
-      isSwiping: false,
-      isPanning: false,
-    }
-    if (stageRef.current) {
-      stageRef.current.releasePointerCapture(event.pointerId)
-    }
-  }
 
-  const handleDoubleClick: React.MouseEventHandler<HTMLDivElement> = () => {
-    if (!allowZoom) return
-    if (canZoomIn) {
-      zoomIn()
-    } else {
-      resetZoom()
+      setSwipeOffsetX(0)
+      state.isSwiping = false
+      state.isDismissing = false
+    }
+
+    if (event.pointerType === 'touch' && state.pointers.size === 0) {
+      const now = Date.now()
+      const dt = now - doubleTapRef.current.time
+      const dx = Math.abs(event.clientX - doubleTapRef.current.x)
+      const dy = Math.abs(event.clientY - doubleTapRef.current.y)
+      if (dt < 300 && dx < 30 && dy < 30) {
+        if (allowZoom) {
+          if (zoomIndex > 0) {
+            resetZoom()
+          } else {
+            zoomIn()
+          }
+        }
+        doubleTapRef.current = { time: 0, x: 0, y: 0 }
+      } else {
+        doubleTapRef.current = { time: now, x: event.clientX, y: event.clientY }
+      }
+    }
+
+    if (stageRef.current && state.pointers.size === 0) {
+      stageRef.current.releasePointerCapture(event.pointerId)
     }
   }
 
@@ -549,7 +703,24 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
     </ThumbnailRail>
   ) : null
 
-  const toolbarContent = renderToolbar ? renderToolbar(toolbarProps) : (
+  const toolbarContent = renderToolbar ? renderToolbar(toolbarProps) : isMobile ? (
+    <Toolbar>
+      <IconButton type='button' aria-label='关闭预览' onClick={handleClose}>
+        <IconClose />
+      </IconButton>
+      <IconButton type='button' aria-label='上一张' onClick={goPrevious}>
+        <IconArrowLeft />
+      </IconButton>
+      <IconButton type='button' aria-label='下一张' onClick={goNext}>
+        <IconArrowRight />
+      </IconButton>
+      {(allowZoom || allowRotate || allowDownload || allowFullscreen) && (
+        <IconButton type='button' aria-label='更多操作' onClick={() => setMoreMenuOpen(true)}>
+          <IconMore />
+        </IconButton>
+      )}
+    </Toolbar>
+  ) : (
     <Toolbar>
       <IconButton type='button' aria-label='关闭预览' onClick={handleClose}>
         <IconClose />
@@ -598,7 +769,20 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   const subtitleText = metaAuthor ?? '按 ←/→ 切换 · ESC 关闭'
 
   const surface = (
-    <Backdrop ref={overlayRef} $open={open} $disableMotion={disableAnimation} onClick={handleOverlayClick} className={className} style={style} {...rest}>
+    <Backdrop
+      ref={overlayRef}
+      $open={open}
+      $disableMotion={disableAnimation}
+      onClick={handleOverlayClick}
+      className={className}
+      style={{
+        ...style,
+        touchAction: 'none',
+        overscrollBehavior: 'contain',
+        opacity: isDismissing ? Math.max(0, 1 - dismissOffset / 300) : undefined,
+      }}
+      {...rest}
+    >
       <PreviewContainer>
         <PreviewSurface $disableMotion={disableAnimation}>
           <Header>
@@ -612,29 +796,43 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
             <Viewport>
               {hint && <Hint>{hint}</Hint>}
               {hasItems ? (
-                <ImageStage
-                  ref={stageRef}
-                  onPointerDown={handlePointerDown}
-                  onPointerMove={handlePointerMove}
-                  onPointerUp={handlePointerUp}
-                  onPointerCancel={handlePointerUp}
-                  onWheel={handleWheel}
-                  onDoubleClick={handleDoubleClick}
-                  $dragging={isDragging}
-                  $canPan={zoom > 1}
-                >
-                  <PreviewImage
-                    src={currentItem?.src}
-                    alt={currentItem?.alt ?? currentItem?.title ?? '图片预览'}
-                    draggable={false}
-                    $zoom={zoom}
-                    $translateX={offset.x}
-                    $translateY={offset.y}
-                    $rotation={rotation}
+                <>
+                  <ImageStage
+                    ref={stageRef}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerCancel={handlePointerUp}
+                    onWheel={handleWheel}
+                    onDoubleClick={handleDoubleClick}
                     $dragging={isDragging}
-                    style={{ maxWidth: currentItem?.width ?? undefined, maxHeight: currentItem?.height ?? undefined }}
-                  />
-                </ImageStage>
+                    $canPan={zoom > 1}
+                  >
+                    <PreviewImage
+                      src={currentItem?.src}
+                      alt={currentItem?.alt ?? currentItem?.title ?? '图片预览'}
+                      draggable={false}
+                      $zoom={zoom}
+                      $translateX={offset.x}
+                      $translateY={offset.y}
+                      $rotation={rotation}
+                      $dragging={isDragging}
+                      $swipeX={swipeOffsetX}
+                      $dismissY={dismissOffset}
+                      style={isMobile ? undefined : { maxWidth: currentItem?.width ?? undefined, maxHeight: currentItem?.height ?? undefined }}
+                    />
+                  </ImageStage>
+                  {isMobile && hasItems && total > 1 && (
+                    <>
+                      <MobileNavArrow $side='left' onClick={goPrevious} aria-label='上一张'>
+                        <IconArrowLeft />
+                      </MobileNavArrow>
+                      <MobileNavArrow $side='right' onClick={goNext} aria-label='下一张'>
+                        <IconArrowRight />
+                      </MobileNavArrow>
+                    </>
+                  )}
+                </>
               ) : (
                 <EmptyState>
                   <p>暂无可预览图片</p>
@@ -648,16 +846,59 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
               {hasItems && <Counter>{`${currentIndex + 1} / ${total}`}</Counter>}
             </Caption>
             {thumbnails}
-            {allowKeyboard && <KeyboardLegend>←/→ 导航 · 空格下一张 · ESC 关闭</KeyboardLegend>}
+            {allowKeyboard && !isMobile && <KeyboardLegend>←/→ 导航 · 空格下一张 · ESC 关闭</KeyboardLegend>}
           </Footer>
         </PreviewSurface>
       </PreviewContainer>
     </Backdrop>
   )
 
+  const moreMenu = isMobile && moreMenuOpen ? (
+    <MoreMenuOverlay onClick={handleMoreMenuClose}>
+      <MoreMenuContainer onClick={(e) => e.stopPropagation()}>
+        {allowZoom && (
+          <>
+            <MoreMenuItem onClick={() => handleMoreMenuSelect(zoomIn)}>
+              <IconZoomIn /> 放大
+            </MoreMenuItem>
+            <MoreMenuItem onClick={() => handleMoreMenuSelect(zoomOut)}>
+              <IconZoomOut /> 缩小
+            </MoreMenuItem>
+            <MoreMenuItem onClick={() => handleMoreMenuSelect(resetZoom)}>
+              <IconReset /> 重置缩放
+            </MoreMenuItem>
+          </>
+        )}
+        {allowRotate && (
+          <MoreMenuItem onClick={() => handleMoreMenuSelect(rotate)}>
+            <IconRotate /> 旋转
+          </MoreMenuItem>
+        )}
+        {allowDownload && (
+          <MoreMenuItem onClick={() => handleMoreMenuSelect(performDownload)}>
+            <IconDownload /> 下载
+          </MoreMenuItem>
+        )}
+        {allowFullscreen && (
+          <MoreMenuItem onClick={() => handleMoreMenuSelect(toggleFullscreen)}>
+            {isNativeFullscreen ? <IconExitFullscreen /> : <IconFullscreen />}
+            {isNativeFullscreen ? '退出全屏' : '全屏'}
+          </MoreMenuItem>
+        )}
+      </MoreMenuContainer>
+    </MoreMenuOverlay>
+  ) : null
+
+  const portalContent = (
+    <>
+      {surface}
+      {moreMenu}
+    </>
+  )
+
   if (!mounted) return null
 
-  return createPortal(surface, document.body)
+  return createPortal(portalContent, document.body)
 })
 
 ImagePreview.displayName = 'ImagePreview'
