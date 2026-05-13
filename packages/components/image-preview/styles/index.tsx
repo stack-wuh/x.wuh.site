@@ -41,6 +41,10 @@ export const Backdrop = styled.div<{ $open: boolean; $disableMotion: boolean }>`
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
+
+  @media (max-width: 767px) {
+    padding: 0;
+  }
 `
 
 export const PreviewContainer = styled.div`
@@ -68,6 +72,10 @@ export const PreviewSurface = styled.div<{ $disableMotion: boolean }>`
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
+
+  @media (max-width: 767px) {
+    border-radius: 0;
+  }
 `
 
 export const Header = styled.header`
@@ -77,6 +85,11 @@ export const Header = styled.header`
   padding: 12px clamp(16px, 2vw, 32px);
   gap: 12px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+
+  @media (max-width: 767px) {
+    padding: max(env(safe-area-inset-top, 0px), 8px) 12px 8px;
+    gap: 8px;
+  }
 `
 
 export const Title = styled.div`
@@ -99,6 +112,10 @@ export const Subtitle = styled.span`
   font-size: 0.85rem;
   color: rgba(226, 232, 240, 0.65);
   letter-spacing: 0.02em;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 export const Toolbar = styled.div`
@@ -128,6 +145,12 @@ export const IconButton = styled.button<{ $active?: boolean }>`
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+  }
+
+  @media (max-width: 767px) {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
   }
 `
 
@@ -181,11 +204,13 @@ export const PreviewImage = styled.img<{
   $translateY: number
   $rotation: number
   $dragging: boolean
+  $swipeX: number
+  $dismissY: number
 }>`
   max-width: min(92vw, 1300px);
   max-height: 78vh;
   object-fit: contain;
-  transform: ${(p) => `translate3d(${p.$translateX}px, ${p.$translateY}px, 0) scale(${p.$zoom}) rotate(${p.$rotation}deg)`};
+  transform: ${(p) => `translate3d(${p.$translateX + p.$swipeX}px, ${p.$translateY + p.$dismissY}px, 0) scale(${p.$zoom}) rotate(${p.$rotation}deg)`};
   transition: ${(p) => (p.$dragging ? 'none' : 'transform 0.26s ease')};
   filter: drop-shadow(0 25px 40px rgba(2, 6, 23, 0.55));
   will-change: transform;
@@ -193,6 +218,11 @@ export const PreviewImage = styled.img<{
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+
+  @media (max-width: 767px) {
+    max-width: 100%;
+    max-height: 100%;
   }
 `
 
@@ -202,6 +232,11 @@ export const Footer = styled.footer`
   gap: 12px;
   padding: 12px clamp(16px, 2vw, 32px) 16px;
   border-top: 1px solid rgba(148, 163, 184, 0.2);
+
+  @media (max-width: 767px) {
+    padding: 8px 12px max(env(safe-area-inset-bottom, 0px), 8px);
+    gap: 8px;
+  }
 `
 
 export const Caption = styled.div`
@@ -304,4 +339,74 @@ export const KeyboardLegend = styled.div`
   color: rgba(148, 163, 184, 0.8);
   letter-spacing: 0.05em;
   animation: ${fadeUp} 0.28s ease both;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+`
+
+export const MobileNavArrow = styled.button<{ $side: 'left' | 'right' }>`
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    ${(p) => (p.$side === 'left' ? 'left: 8px;' : 'right: 8px;')}
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background: rgba(15, 23, 42, 0.7);
+    color: rgba(248, 250, 252, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+`
+
+export const MoreMenuOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(2, 6, 23, 0.6);
+  backdrop-filter: blur(4px);
+  animation: ${fadeUp} 0.2s ease both;
+`
+
+export const MoreMenuContainer = styled.div`
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1501;
+  padding: 0 16px max(env(safe-area-inset-bottom, 16px), 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: ${fadeUp} 0.25s ease both;
+`
+
+export const MoreMenuItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.95);
+  color: rgba(248, 250, 252, 0.92);
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: rgba(51, 65, 85, 0.95);
+  }
 `
