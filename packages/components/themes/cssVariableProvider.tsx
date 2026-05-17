@@ -79,6 +79,10 @@ export const CssVariableStyles = createGlobalStyle`
         })
         .join(';')
     }}
+
+    /** LineHeight */
+    --line-height-body: 1.8;
+    --line-height-heading: 1.35;
   }
 
   :root {
@@ -116,7 +120,7 @@ export const CssVariableStyles = createGlobalStyle`
     }};
     --text-muted: ${(props) => {
       const theme = props.theme as Tokens
-      return theme.normal.light['600']
+      return theme.normal.light['700']
     }};
     --background-color: ${(props) => {
       const theme = props.theme as Tokens
@@ -189,6 +193,15 @@ export const CssVariableStyles = createGlobalStyle`
   }
 
   :root[data-theme='plain'] {
+    /* 排版 Token — 素雅: 字稍小、呼吸感更强 */
+    --font-size-sm: 15px;
+    --font-size-md: 17px;
+    --font-size-lg: 19px;
+    --font-size-xl: 22px;
+    --font-size-2xl: 27px;
+    --line-height-body: 2.0;
+    --line-height-heading: 1.4;
+
     --primary-color: #A87348;
     --secondary-color: #9B8D78;
     --text-primary: #2A2218;
@@ -270,11 +283,11 @@ export const CssVariableStyles = createGlobalStyle`
       }};
       --text-secondary: ${(props) => {
         const theme = props.theme as Tokens
-        return theme.normal.dark['700']
+        return theme.normal.dark['600']
       }};
       --text-muted: ${(props) => {
         const theme = props.theme as Tokens
-        return theme.normal.dark['800']
+        return theme.normal.dark['700']
       }};
       --background-color: ${(props) => {
         const theme = props.theme as Tokens
@@ -352,18 +365,41 @@ export const CssVariableStyles = createGlobalStyle`
       --primary-color: #D4A478;
       --secondary-color: #BFA88C;
       --text-primary: #F5F1EA;
-      --text-secondary: rgba(245, 241, 234, 0.78);
-      --text-muted: rgba(245, 241, 234, 0.62);
+      --text-secondary: rgba(245, 241, 234, 0.82);
+      --text-muted: rgba(245, 241, 234, 0.68);
       --text-color: #F5F1EA;
+
+      --primary-100: #2a1a0c;
+      --primary-200: #3a2412;
+      --primary-300: #4e2e18;
+      --primary-400: #6a3e20;
+      --primary-500: #D4A478;
+      --primary-600: #deb896;
+      --primary-700: #e8ccb4;
+      --primary-800: #f2e0d2;
+      --primary-900: #faf0ea;
 
       --background-color: #14100e;
       --background-100: #1c1814;
       --background-200: #221c18;
       --background-300: #2a221c;
+      --background-400: #322820;
+      --background-500: #3a2e24;
+      --background-600: #44362a;
+      --background-700: #504032;
+      --background-800: #5c4a3a;
       --background-900: #0b0908;
 
-      --normal-300: rgba(255, 255, 255, 0.12);
-      --normal-600: rgba(255, 255, 255, 0.28);
+      --normal-100: #201a14;
+      --normal-200: #28221a;
+      --normal-300: rgba(255, 255, 255, 0.10);
+      --normal-400: rgba(255, 255, 255, 0.14);
+      --normal-500: rgba(255, 255, 255, 0.20);
+      --normal-600: rgba(255, 255, 255, 0.30);
+      --normal-700: rgba(255, 255, 255, 0.42);
+      --normal-800: rgba(255, 255, 255, 0.58);
+      --normal-900: rgba(255, 255, 255, 0.72);
+
       --elevation-soft: 0 2px 8px rgba(0,0,0,.22);
       --elevation-card: 0 4px 16px rgba(0,0,0,.36);
       --elevation-card-hover: 0 8px 24px rgba(0,0,0,.5);
