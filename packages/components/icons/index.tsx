@@ -1,23 +1,21 @@
+// UI icons — from icofont (available)
+export { IconClose, IconDownload, IconCopy, IconThumbUp, IconScrollToTop, IconArrowRight } from './icofont'
+
 // UI icons — from lucide-react
 export {
-  X as IconClose,
   ArrowLeft as IconArrowLeft,
-  ArrowRight as IconArrowRight,
   Home as IconHome,
-  ArrowUpToLine as IconScrollToTop,
-  ThumbsUp as IconThumbUp,
   Menu as IconBars,
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
   Link as IconLink,
-  Copy as IconCopy,
   ZoomIn as IconZoomIn,
   ZoomOut as IconZoomOut,
   RotateCw as IconRotate,
-  Download as IconDownload,
   Maximize as IconFullscreen,
   Minimize as IconExitFullscreen,
   Undo as IconReset,
+  EllipsisVertical as IconMore,
 } from 'lucide-react'
 
 // Status icons — from lucide-react
@@ -35,8 +33,8 @@ export {
   Tag as IconTag,
 } from 'lucide-react'
 
-// Brand icons — custom outline SVGs (lucide has no brand icons since v1)
-export { IconWechat, IconQQ, IconTwitter, IconGithub, IconDouban, IconDiscord, IconWeibo, IconEmail, IconMusic } from './brand'
+// Brand icons — from icofont
+export { IconWechat, IconQQ, IconDouban, IconWeibo, IconMusic, IconEmail, IconGithub, IconTwitter, IconDiscord } from './icofont'
 
 // Ornament
 export { DiamondDivider } from './ornament'

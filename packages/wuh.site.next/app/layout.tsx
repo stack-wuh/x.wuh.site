@@ -51,6 +51,9 @@ export default function RootLayout({
     <ThemeProvider>
       <StyledComponentsRegistry>
         <html lang='en'>
+          <head>
+            <link rel='stylesheet' href='https://at.alicdn.com/t/c/font_2595178_pzpibdf5z2s.css' />
+          </head>
           <CssVariableStyles />
           <body>
             <ThemeModeProvider>

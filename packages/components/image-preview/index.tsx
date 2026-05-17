@@ -42,6 +42,7 @@ import {
   IconFullscreen,
   IconExitFullscreen,
   IconReset,
+  IconMore,
 } from '../icons'
 
 export type ImagePreviewItem = {
@@ -169,14 +170,6 @@ const useMediaQuery = (query: string) => {
   }, [query])
   return matches
 }
-
-const IconMore = () => (
-  <svg width='20' height='20' viewBox='0 0 20 20' fill='currentColor'>
-    <circle cx='10' cy='3' r='1.5' />
-    <circle cx='10' cy='10' r='1.5' />
-    <circle cx='10' cy='17' r='1.5' />
-  </svg>
-)
 
 export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>((props, forwardedRef) => {
   const {
