@@ -21,15 +21,12 @@ USAGE
 
 case "${1:-help}" in
   build)
-    echo "🧹 Cleaning buildx cache"
-    docker buildx prune --force 2>/dev/null || true
     echo "🔧 Building all services"
     docker compose build
     ;;
   clean)
-    echo "🧹 Pruning Docker build cache"
-    docker buildx prune --force 2>/dev/null || true
-    docker builder prune --force 2>/dev/null || true
+    echo "🧹 Pruning stale Docker buildx cache (keep last 24h)"
+    docker buildx prune --filter "until=24h" --force 2>/dev/null || true
     echo "✅ Build cache cleaned"
     ;;
   run)
