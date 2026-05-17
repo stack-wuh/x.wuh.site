@@ -1,55 +1,109 @@
 import * as React from 'react'
 
-export const IconWechat = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M5.5 9.5a6.5 6.5 0 1 1 12.8 1.6 5 5 0 1 1-8.7 4.1l-3.1 1.2.9-3.3A6.5 6.5 0 0 1 5.5 9.5zm3.2-.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm6.6 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z" />
-  </svg>
-)
+interface IconProps {
+  size?: number
+  color?: string
+  strokeWidth?: number
+  className?: string
+}
 
-export const IconQQ = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2c3.3 0 6 2.7 6 6 0 1.4-.5 2.7-1.4 3.7.6 1.1 1.4 2.9 1.4 4.3 0 .6-.4 1-1 1-.9 0-2.4-.9-3.5-1.9-.7.3-1.4.4-2.5.4s-1.8-.1-2.5-.4c-1.1 1-2.6 1.9-3.5 1.9-.6 0-1-.4-1-1 0-1.4.8-3.2 1.4-4.3A6 6 0 0 1 6 8c0-3.3 2.7-6 6-6z" />
-  </svg>
-)
+function withDefaults(p: IconProps) {
+  return { size: p.size ?? 24, color: p.color ?? 'currentColor', sw: p.strokeWidth ?? 2 }
+}
 
-export const IconTwitter = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.2 1.8-2.2-.8.5-1.7.8-2.6 1-1.6-1.7-4.4-1.4-5.7.6-1 1.4-.8 3.3.4 4.4-2.8-.1-5.4-1.5-7.1-3.7-.9 1.6-.4 3.8 1.2 4.9-.6 0-1.2-.2-1.7-.5 0 1.7 1.2 3.3 3 3.6-.5.1-1 .2-1.6.1.5 1.5 2 2.6 3.7 2.6-1.7 1.3-3.8 2-5.9 2-.4 0-.8 0-1.2-.1 2.2 1.4 4.8 2.1 7.4 2.1 7.9 0 12.3-6.7 12-12.5.8-.6 1.5-1.3 2-2.1z" />
-  </svg>
-)
+export const IconWechat = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M9 13a5.5 5.5 0 0 0 10.8 1.4 3.5 3.5 0 0 1-2.6 3.9l-2.2.8.7-2.6' />
+      <path d='M16.5 8.5A5.5 5.5 0 0 0 6.5 13' />
+      <circle cx='10' cy='11' r='1' fill={color} stroke='none' />
+      <circle cx='14' cy='11' r='1' fill={color} stroke='none' />
+    </svg>
+  )
+}
 
-export const IconGithub = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 .8A11.2 11.2 0 0 0 .8 12c0 5 3.3 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.6-1.4-1.5-1.8-1.5-1.8-1.2-.8.1-.8.1-.8 1.3.1 2 .7 2 .7 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.8-1.7-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.7.1-3.4 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C18.9 6.1 20 6.4 20 6.4c.6 1.7.2 3.1.1 3.4.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.5-5.3 5.8.5.4.9 1.3.9 2.6v3.8c0 .3.2.7.8.6A11.2 11.2 0 0 0 23.2 12 11.2 11.2 0 0 0 12 .8z" />
-  </svg>
-)
+export const IconQQ = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M12 3c-2 0-4 2-4 4 0 1 .3 1.8.8 2.5-.4.8-.8 2-.8 3 0 .4.3.7.7.7.6 0 1.5-.6 2.3-1.3.5.1 1 .2 1.7.2s1.2-.1 1.7-.2c.8.7 1.7 1.3 2.3 1.3.4 0 .7-.3.7-.7 0-1-.4-2.2-.8-3 .5-.7.8-1.5.8-2.5 0-2-2-4-4-4z' />
+      <circle cx='10' cy='7' r='1' fill={color} stroke='none' />
+      <circle cx='14' cy='7' r='1' fill={color} stroke='none' />
+    </svg>
+  )
+}
 
-export const IconDouban = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M5 6h14v2H5V6zm1.5 4h11v7h-11v-7zm2 2v3h7v-3h-7zM4 19h16v2H4v-2z" />
-  </svg>
-)
+export const IconTwitter = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M4 4l11.7 11.7M20 4l-11.7 11.7M8.3 8.3l-4.3 11.7M15.7 15.7L20 4' />
+    </svg>
+  )
+}
 
-export const IconEmail = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M3 6c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V6zm2 0 7 5 7-5H5zm14 12V9l-7 5-7-5v9h14z" />
-  </svg>
-)
+export const IconGithub = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M15 21v-1.5a3.5 3.5 0 0 0-2.5-3.4M9 21v-1.5a3.5 3.5 0 0 1 2.5-3.4' />
+      <path d='M9 14.6A3.5 3.5 0 0 1 6 12.7 3.5 3.5 0 0 1 6.6 9.5a3.8 3.8 0 0 1 .1-3.2s1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2a3.8 3.8 0 0 1 .1 3.2A3.5 3.5 0 0 1 19 12.7a3.5 3.5 0 0 1-3 1.9' />
+      <circle cx='12' cy='12' r='10' />
+    </svg>
+  )
+}
 
-export const IconDiscord = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20.3 4.7A19.6 19.6 0 0 0 15.2 3c-.3.5-.5 1-.7 1.5-1.8-.3-3.7-.3-5.5 0-.2-.5-.4-1-.7-1.5-1.8.3-3.5 1-5.1 1.9C.5 9.5-.6 14.2.2 18.8c2.1 1.6 4.1 2.5 6.1 3.1.5-.7.9-1.4 1.3-2.2-.7-.3-1.4-.6-2-1 .1-.1.3-.1.4-.2 3.3 1.6 6.9 1.6 10.1 0 .1.1.3.1.4.2-.6.4-1.3.7-2 1 .4.8.8 1.5 1.3 2.2 2-.6 4.1-1.5 6.2-3.1.9-5.4-1.6-10-4.6-14.1zM8 13.8c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8zm8 0c-1.4 0-2.6-1.3-2.6-2.8s1.2-2.8 2.6-2.8 2.7 1.3 2.6 2.8c.1 1.6-1.1 2.8-2.6 2.8z" />
-  </svg>
-)
+export const IconDouban = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M5 6h14v2H5zM6.5 10h11v7h-11z' />
+      <path d='M8.5 12v3h7v-3M4 19h16v2H4z' />
+    </svg>
+  )
+}
 
-export const IconWeibo = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm1-12c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z" />
-  </svg>
-)
+export const IconDiscord = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M8 7C6.5 7.3 5 8 3.5 9c.8 4.5-1.3 9.5.2 12 1.8 0 3.5-2.5 5.3-2.5s3.5 2.5 5.3 2.5c1.5-2.5-.6-7.5.2-12C13 8 11.5 7.3 10 7' />
+      <circle cx='9' cy='12' r='1.5' fill={color} stroke='none' />
+      <circle cx='15' cy='12' r='1.5' fill={color} stroke='none' />
+    </svg>
+  )
+}
 
-export const IconMusic = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 3v12.15a3 3 0 1 0 1 2.83V7.83l6-1.5V3l-7 1.75Z" />
-  </svg>
-)
+export const IconWeibo = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <circle cx='12' cy='12' r='10' />
+      <circle cx='12' cy='11' r='4' />
+      <circle cx='12' cy='11' r='1.5' fill={color} stroke='none' />
+      <path d='M8 19c-1.5.5-2.5 1-2 2s2 1 4 1 3.5-.5 2.5-1.5' />
+    </svg>
+  )
+}
+
+export const IconEmail = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <rect x='2' y='4' width='20' height='16' rx='2' />
+      <path d='M2 6l10 7 10-7' />
+    </svg>
+  )
+}
+
+export const IconMusic = (props: IconProps) => {
+  const { size, color, sw } = withDefaults(props)
+  return (
+    <svg width={size} height={size} viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth={sw} strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'>
+      <path d='M9 18V5l12-2v12' />
+      <circle cx='6' cy='18' r='3' />
+      <circle cx='18' cy='15' r='3' />
+    </svg>
+  )
+}
