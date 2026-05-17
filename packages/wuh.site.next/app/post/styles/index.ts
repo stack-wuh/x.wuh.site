@@ -312,7 +312,7 @@ export const MarkdownBody = styled.article`
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    line-height: 1.4;
+    line-height: var(--line-height-heading);
     margin: 36px 0 18px;
     color: inherit;
   }
@@ -323,15 +323,17 @@ export const MarkdownBody = styled.article`
     border-bottom: 1px solid var(--github-border);
   }
 
-  h1 { font-size: 1.95em; }
-  h2 { font-size: 1.6em; }
-  h3 { font-size: 1.35em; }
-  h4 { font-size: 1.15em; }
-  h5 { font-size: 1.05em; }
-  h6 { font-size: 0.95em; color: var(--github-muted); }
+  h1 { font-size: var(--font-size-2xl); }
+  h2 { font-size: var(--font-size-xl); }
+  h3 { font-size: var(--font-size-lg); }
+  h4 { font-size: var(--font-size-md); }
+  h5 { font-size: var(--font-size-base); }
+  h6 { font-size: var(--font-size-sm); color: var(--github-muted); }
 
   p {
     margin: 20px 0;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-body);
   }
 
   a {
