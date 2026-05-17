@@ -20,7 +20,9 @@ const ToolbarLink = ({
   if (!targetIssue) {
     return (
       <span className={className} aria-disabled='true'>
-        {direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />}
+        <span className='toolbar-icon'>
+          {direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />}
+        </span>
         <span className='toolbar-label'>{label}</span>
       </span>
     )
@@ -28,7 +30,9 @@ const ToolbarLink = ({
 
   return (
     <Link className={className} href={`/post/${targetIssue.number}`} title={targetIssue.title}>
-      {direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />}
+      <span className='toolbar-icon'>
+        {direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />}
+      </span>
       <span className='toolbar-label'>{label}</span>
     </Link>
   )

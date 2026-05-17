@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "lucide-react": "^1.16.0",
     "react": "19.2.5"
   },
   "devDependencies": {
