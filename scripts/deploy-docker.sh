@@ -12,6 +12,7 @@ Commands:
   run      Start all services (docker compose up -d)
   stop     Stop and remove all services
   push     Push images to registry (docker compose push)
+  clean    Prune Docker buildx cache (frees disk space)
   logs     Tail logs from all services
   shell    Launch an interactive shell inside a service
   help     Show this message
@@ -22,6 +23,11 @@ case "${1:-help}" in
   build)
     echo "🔧 Building all services"
     docker compose build
+    ;;
+  clean)
+    echo "🧹 Pruning stale Docker buildx cache (keep last 24h)"
+    docker buildx prune --filter "until=24h" --force 2>/dev/null || true
+    echo "✅ Build cache cleaned"
     ;;
   run)
     echo "🐳 Starting all services"
