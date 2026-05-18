@@ -35,7 +35,7 @@ COPY packages/components/package.json packages/components/
 COPY packages/config/package.json packages/config/
 COPY packages/shared-contracts/package.json packages/shared-contracts/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-  HUSKY=0 pnpm install --prod --no-frozen-lockfile
+  pnpm install --prod --no-frozen-lockfile --ignore-scripts
 
 # Stage 6: runner-next
 FROM base AS runner-next
