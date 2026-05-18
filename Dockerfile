@@ -5,7 +5,7 @@ RUN npm install -g pnpm@9.15.0 --registry=https://registry.npmmirror.com \
   && apk add --no-cache curl
 WORKDIR /app
 
-# Stage 2: deps — package.json first, install, then source
+# Stage 2: deps — full install for building
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY packages/wuh.site.next/package.json packages/wuh.site.next/
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
   pnpm install --no-frozen-lockfile
 COPY packages/ ./packages/
 
-# Stage 3: builder-next (incremental build with .next/cache)
+# Stage 3: builder-next
 FROM deps AS builder-next
 RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
   pnpm run build:next
@@ -26,9 +26,20 @@ RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
 FROM deps AS builder-nest
 RUN pnpm run build:nest
 
-# Stage 5: runner-next
+# Stage 5: prod-deps — production-only node_modules (much smaller)
+FROM base AS prod-deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY packages/wuh.site.next/package.json packages/wuh.site.next/
+COPY packages/wuh.site.nest/package.json packages/wuh.site.nest/
+COPY packages/components/package.json packages/components/
+COPY packages/config/package.json packages/config/
+COPY packages/shared-contracts/package.json packages/shared-contracts/
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --prod --no-frozen-lockfile
+
+# Stage 6: runner-next
 FROM base AS runner-next
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY --from=builder-next /app/packages/wuh.site.next/dist ./packages/wuh.site.next/dist
 COPY package.json pnpm-workspace.yaml ./
@@ -39,9 +50,9 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 CMD ["pnpm", "run", "start:next"]
 
-# Stage 6: runner-nest
+# Stage 7: runner-nest
 FROM base AS runner-nest
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY --from=builder-nest /app/packages/wuh.site.nest/dist ./packages/wuh.site.nest/dist
 COPY package.json pnpm-workspace.yaml ./
