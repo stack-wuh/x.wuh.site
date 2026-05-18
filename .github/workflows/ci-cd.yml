@@ -20,6 +20,4 @@ jobs:
             git checkout main
             git reset --hard origin/main
             git clean -fd
-            ./scripts/deploy-docker.sh stop || true
-            ./scripts/deploy-docker.sh build
-            ./scripts/deploy-docker.sh run
+            ./scripts/deploy-docker.sh restart
