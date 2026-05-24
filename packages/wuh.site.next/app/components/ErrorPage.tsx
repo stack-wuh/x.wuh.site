@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 
 type ErrorPageProps = {
   code: '404' | '500'

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useId, useState } from 'react'
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import Image from '@wuh.site/components/image'
 import { IconBars } from '@wuh.site/components/icons'
 import { useThemeMode } from './theme/ThemeModeProvider'

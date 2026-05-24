@@ -66,6 +66,52 @@ export class ContentService {
     return this.contentModel.findOne({ number }).exec();
   }
 
+  async findAdjacentPosts(
+    currentPost: ContentDocument,
+    baseQuery: Record<string, any> = {},
+  ): Promise<{ prev: { number: number; title: string } | null; next: { number: number; title: string } | null }> {
+    const query = { ...baseQuery };
+
+    const [prev, next] = await Promise.all([
+      this.contentModel
+        .findOne({
+          ...query,
+          $or: [
+            { createdAtGitHub: { $gt: currentPost.createdAtGitHub } },
+            {
+              createdAtGitHub: currentPost.createdAtGitHub,
+              number: { $gt: currentPost.number },
+            },
+          ],
+        })
+        .sort({ createdAtGitHub: 1, number: 1 })
+        .select('number title')
+        .lean()
+        .exec(),
+
+      this.contentModel
+        .findOne({
+          ...query,
+          $or: [
+            { createdAtGitHub: { $lt: currentPost.createdAtGitHub } },
+            {
+              createdAtGitHub: currentPost.createdAtGitHub,
+              number: { $lt: currentPost.number },
+            },
+          ],
+        })
+        .sort({ createdAtGitHub: -1, number: -1 })
+        .select('number title')
+        .lean()
+        .exec(),
+    ]);
+
+    return {
+      prev: prev ? { number: prev.number, title: prev.title } : null,
+      next: next ? { number: next.number, title: next.title } : null,
+    };
+  }
+
   async updateMetadata(
     externalId: number,
     metadata: UpdateContentMetadataDto,

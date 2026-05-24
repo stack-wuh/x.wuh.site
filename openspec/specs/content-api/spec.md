@@ -35,6 +35,15 @@
 ### Requirement: findAll returns PaginatedResult
 `content.service.ts` 和 `comment.service.ts` 的 `findAll()` 方法从 `{ data, total, page }` 改为返回 `PaginatedResult<T>`。
 
+### Requirement: Post detail includes prev/next adjacent posts
+文章详情接口返回 prev/next 相邻文章，与博客列表页排序一致。
+
+- **GIVEN** 一篇已存在的文章
+- **WHEN** 客户端请求 `GET /content/posts/:slugOrNumber`
+- **THEN** 响应包含 `prev` 字段（`{ number, title }` 或 `null`），表示按 `createdAtGitHub` 降序 + `state: 'open'` 过滤后，紧邻当前文章的上一条（更新的文章）
+- **AND** 响应包含 `next` 字段（`{ number, title }` 或 `null`），表示同排序规则下紧邻当前文章的下一条（更旧的文章）
+- **AND** `prev`/`next` 的排序规则与 `GET /content/posts?state=open` 一致
+
 ## REMOVED
 
 ### Requirement: GitHub Link header pagination

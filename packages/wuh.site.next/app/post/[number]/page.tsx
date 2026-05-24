@@ -35,38 +35,30 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   } : null,
 })
 
-async function getIssue(num: string): Promise<Issue | null> {
+async function getIssue(num: string): Promise<{
+  issue: Issue | null;
+  prev: AdjacentIssue | null;
+  next: AdjacentIssue | null;
+}> {
   try {
-    const content = await api.content.getPost(num, { revalidate: 1800 })
-    const issue = mapContentToIssue(content)
+    const content = await api.content.getPost(num, { revalidate: 1800 });
+    const issue = mapContentToIssue(content);
     if (issue.body) {
-      issue.body_html = await renderMarkdown(issue.body)
+      issue.body_html = await renderMarkdown(issue.body);
     }
-    return issue
-  } catch {
-    return null
-  }
-}
-
-async function getAdjacentIssue(issueNumber: number, offset: -1 | 1): Promise<AdjacentIssue | null> {
-  const adjacentNumber = issueNumber + offset
-  if (adjacentNumber <= 0) return null
-
-  try {
-    const content = await api.content.getPost(String(adjacentNumber), { revalidate: 1800 })
-    // Filter out pull requests (not in our content DB, but just in case)
     return {
-      number: content.number,
-      title: content.title,
-    }
+      issue,
+      prev: content.prev ? { number: content.prev.number, title: content.prev.title } : null,
+      next: content.next ? { number: content.next.number, title: content.next.title } : null,
+    };
   } catch {
-    return null
+    return { issue: null, prev: null, next: null };
   }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
   const { number } = await params
-  const issue = await getIssue(number)
+  const { issue } = await getIssue(number)
 
   if (!issue) {
     return FALLBACK_METADATA
@@ -79,14 +71,9 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
 }
 
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
-  const { number } = await params
-  const issue = await getIssue(number)
-  if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />
+  const { number } = await params;
+  const { issue, prev: prevIssue, next: nextIssue } = await getIssue(number);
+  if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
-  const [prevIssue, nextIssue] = await Promise.all([
-    getAdjacentIssue(issue.number, -1),
-    getAdjacentIssue(issue.number, 1)
-  ])
-
-  return <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} />
+  return <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} />;
 }

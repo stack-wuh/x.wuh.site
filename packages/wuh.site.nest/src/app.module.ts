@@ -19,7 +19,7 @@ import { AppService } from './app.service';
   imports: [
     // Config
     ConfigModule.forRoot({
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: ['../../.env.local', '../../.env'],
       isGlobal: true,
     }),
 
@@ -28,12 +28,12 @@ import { AppService } from './app.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI') || 'mongodb://localhost:27017/wuh_site',
+        uri: configService.get<string>('MONGO_URI') || process.env.MONGO_URI,
         serverSelectionTimeoutMS: 5000,
         connectTimeoutMS: 5000,
         maxPoolSize: 10,
         minPoolSize: 2,
-      }),
+      })
     }),
 
     // Throttler for rate limiting

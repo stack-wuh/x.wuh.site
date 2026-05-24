@@ -25,7 +25,7 @@ const nextConfig: NextConfig = {
   },
   // 优化包导入
   experimental: {
-    optimizePackageImports: ['@wuh.site/components', 'styled-components', '@ant-design/colors'],
+    optimizePackageImports: ['styled-components', '@ant-design/colors'],
     // 限制 worker 数量以避免 SIGSEGV
     workerThreads: false,
     cpus: 1,

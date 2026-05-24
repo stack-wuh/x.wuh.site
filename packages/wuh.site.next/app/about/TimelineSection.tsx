@@ -1,6 +1,6 @@
 'use client'
 
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import { Section, SectionHeading, SectionTitle, SectionSubtitle } from './styles'
 import { timelineLogs } from './data'
 

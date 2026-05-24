@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 import Button from '@wuh.site/components/button'
 import Dialog from '@wuh.site/components/dialog'

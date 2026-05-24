@@ -1,6 +1,6 @@
 'use client'
 
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import { Section, SectionHeading, SectionTitle, SectionSubtitle } from './styles'
 import { heatmap, filters, timelineFilters, legendLabels, heatColors, formatMonthDay } from './data'
 

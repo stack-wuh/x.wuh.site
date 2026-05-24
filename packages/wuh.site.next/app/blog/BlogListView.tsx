@@ -1,7 +1,7 @@
 'use client'
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 import Tag from '@wuh.site/components/tag'
 

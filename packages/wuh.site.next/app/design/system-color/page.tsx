@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import { generate, red, redDark, orange, orangeDark, green, greenDark } from '@ant-design/colors'
 
 const H2 = styled.h2`

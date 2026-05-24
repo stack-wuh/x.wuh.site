@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 import Card from '@wuh.site/components/card'
 
 /* ====== Page Root ====== */
