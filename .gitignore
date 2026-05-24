@@ -5,3 +5,5 @@
 .env
 .env.local
 *.tsbuildinfo
+.claude
+.pnpm-store
