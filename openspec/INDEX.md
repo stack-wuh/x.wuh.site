@@ -3,6 +3,11 @@
 > 新需求开始前，先查阅此索引了解当前系统规范，避免设计与已有规范冲突。
 > 每个领域列出核心需求和关键词，匹配后可深入阅读对应 spec.md。
 
+## components — 组件包
+- **关键词:** 组件库, exports map, 导入路径, pnpm workspace
+- **需求:** 组件包使用 exports map 导出
+- **路径:** `openspec/specs/components/spec.md`
+
 ## content-api — 内容 API
 - **关键词:** 内容API, 分页, REST, 博客, 项目, 404, 查询参数, 相邻文章
 - **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts
@@ -67,6 +72,11 @@
 - **关键词:** 代码拆分, 重构, About页面, 组件化
 - **需求:** (见 spec.md)
 - **路径:** `openspec/specs/code-split/spec.md`
+
+## next — 前端构建
+- **关键词:** Next.js, 导入路径, tsconfig paths, CDN
+- **需求:** 导入路径统一无 /index 后缀, shared-contracts 路径映射
+- **路径:** `openspec/specs/next/spec.md`
 
 ## openspec-workflow — 工作流规范
 - **关键词:** OpenSpec, 工作流, propose, discuss, apply, review, archive
