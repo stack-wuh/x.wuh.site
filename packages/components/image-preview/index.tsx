@@ -367,18 +367,13 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   const subtitleText = metaAuthor ?? '按 ←/→ 切换 · ESC 关闭'
 
   return createPortal(
-    <AnimatePresence>
+    <>
       <Backdrop
         ref={overlayRef}
-        as={motion.div}
         $open={open}
         $disableMotion={disableAnimation}
         onClick={handleOverlayClick}
         className={className}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
         style={{
           ...style,
           touchAction: 'none',
@@ -388,14 +383,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
         {...rest}
       >
         <PreviewContainer>
-          <PreviewSurface
-            as={motion.div}
-            $disableMotion={disableAnimation}
-            initial={{ opacity: 0, scale: 0.985 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.985 }}
-            transition={{ duration: 0.3 }}
-          >
+          <PreviewSurface $disableMotion={disableAnimation}>
             <Header>
               <Title>
                 <TitleLabel>{currentItem?.title ?? '图片预览'}</TitleLabel>
@@ -437,29 +425,27 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
                           src={currentItem?.src}
                           alt={currentItem?.alt ?? currentItem?.title ?? '图片预览'}
                           draggable={false}
-                          variants={{
-                            enter: (dir: number) => ({ opacity: 1, x: 0 }),
-                            exit: (dir: number) => ({ opacity: 0, x: dir * 40 }),
-                          }}
                           initial={{ opacity: 0, x: swipeDirection.current * 40 }}
-                          animate="enter"
-                          exit="exit"
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                            scale: zoom,
+                            rotate: rotation,
+                          }}
+                          exit={{ opacity: 0, x: swipeDirection.current * 40 }}
                           transition={
                             isDragging
                               ? { duration: 0 }
-                              : { type: 'spring', stiffness: 350, damping: 35 }
+                              : { type: 'spring', stiffness: 300, damping: 30 }
                           }
                           style={{
-                            maxWidth: 'min(92vw, 1300px)',
-                            maxHeight: '78vh',
+                            maxWidth: (!isMobile && currentItem?.width) ? currentItem.width : 'min(92vw, 1300px)',
+                            maxHeight: (!isMobile && currentItem?.height) ? currentItem.height : '78vh',
                             objectFit: 'contain',
                             display: 'block',
-                            scale: zoom,
-                            rotate: rotation,
                             x: offset.x + swipeOffsetX,
                             y: offset.y + dismissOffset,
                             filter: 'drop-shadow(0 25px 40px rgba(2, 6, 23, 0.55))',
-                            ...(isMobile ? {} : { maxWidth: currentItem?.width ?? undefined, maxHeight: currentItem?.height ?? undefined }),
                           }}
                         />
                       </AnimatePresence>
@@ -517,7 +503,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
           />
         )}
       </Backdrop>
-    </AnimatePresence>,
+    </>,
     document.body
   )
 })
