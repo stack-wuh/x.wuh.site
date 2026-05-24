@@ -13,6 +13,11 @@
 - **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts
 - **路径:** `openspec/specs/content-api/spec.md`
 
+## seo — SEO 优化
+- **关键词:** SEO, Open Graph, Twitter Card, JSON-LD, canonical, 结构化数据
+- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL
+- **路径:** `openspec/specs/seo/spec.md`
+
 ## repos-api — 仓库 API
 - **关键词:** GitHub API, 仓库, 缓存, Octokit
 - **需求:** Get GitHub repositories, 5-minute memory cache, Stale cache fallback
