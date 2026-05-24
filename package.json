@@ -31,14 +31,8 @@
   "author": "shadow <wuh201314@foxmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@wuh.site/components": "workspace:^",
-    "classnames": "^2.5.1",
     "conventional-changelog-cli": "^5.0.0",
-    "next": "15.0.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "standard-version": "^9.5.0",
-    "styled-components": "^6.1.19"
+    "standard-version": "^9.5.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
