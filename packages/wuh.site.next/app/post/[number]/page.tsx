@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import api from '../../lib/api'
 import { renderMarkdown } from '../../lib/markdown'
@@ -35,11 +36,7 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   } : null,
 })
 
-async function getIssue(num: string): Promise<{
-  issue: Issue | null;
-  prev: AdjacentIssue | null;
-  next: AdjacentIssue | null;
-}> {
+const getIssue = cache(async (num: string) => {
   try {
     const content = await api.content.getPost(num, { revalidate: 1800 });
     const issue = mapContentToIssue(content);
@@ -54,7 +51,7 @@ async function getIssue(num: string): Promise<{
   } catch {
     return { issue: null, prev: null, next: null };
   }
-}
+})
 
 export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
   const { number } = await params
