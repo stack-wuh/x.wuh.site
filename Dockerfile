@@ -43,7 +43,9 @@ FROM base AS runner-next
 # Minimal node_modules（仅 next 的生产依赖，不含 nest 系的依赖）
 COPY --from=deploy-next /tmp/deploy-next/node_modules ./node_modules
 # Only copy workspace packages that next depends on
-COPY --from=deps /app/packages/wuh.site.next/package.json ./packages/wuh.site.next/package.json
+COPY --from=deps /app/packages/wuh.site.next/package.json ./packages/wuh.site.next/
+COPY --from=deps /app/packages/wuh.site.next/next.config.ts ./packages/wuh.site.next/
+COPY --from=deps /app/packages/wuh.site.next/tsconfig.json ./packages/wuh.site.next/
 COPY --from=deps /app/packages/components ./packages/components
 COPY --from=deps /app/packages/shared-contracts ./packages/shared-contracts
 # Build output
@@ -52,7 +54,7 @@ COPY package.json pnpm-workspace.yaml ./
 EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
-HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
   CMD curl -f http://localhost:3000/ || exit 1
 CMD ["pnpm", "run", "start:next"]
 
@@ -65,6 +67,6 @@ COPY --from=builder-nest /app/packages/wuh.site.nest/dist ./dist
 COPY package.json ./
 EXPOSE 3200
 ENV NODE_ENV=production
-HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
   CMD curl -f http://localhost:3200/v2/health || exit 1
 CMD ["node", "dist/main"]
