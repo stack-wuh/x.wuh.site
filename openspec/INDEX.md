@@ -78,6 +78,11 @@
 - **需求:** 导入路径统一无 /index 后缀, shared-contracts 路径映射
 - **路径:** `openspec/specs/next/spec.md`
 
+## post — 博客详情
+- **关键词:** 博客详情, 导航, PostToolbar, 流动阅读线, 文章位置
+- **需求:** PostToolbar 流动阅读线样式
+- **路径:** `openspec/specs/post/spec.md`
+
 ## openspec-workflow — 工作流规范
 - **关键词:** OpenSpec, 工作流, propose, discuss, apply, review, archive
 - **需求:** propose, discuss, apply, review, archive, 单一Skill入口

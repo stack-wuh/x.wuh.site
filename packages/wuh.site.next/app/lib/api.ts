@@ -24,6 +24,13 @@ async function apiGet<T>(path: string, options?: FetchOptions): Promise<T> {
 
 type AdjacentPost = { number: number; title: string } | null;
 
+type PostDetail = ContentItem & {
+  prev: AdjacentPost;
+  next: AdjacentPost;
+  total: number;
+  position: number;
+};
+
 // Content API
 export const content = {
   getPosts(params?: {
@@ -41,8 +48,8 @@ export const content = {
     return apiGet<PaginatedResult<ContentItem>>(`/content/posts${qs ? `?${qs}` : ''}`, options);
   },
 
-  getPost(slugOrNumber: string | number, options?: FetchOptions): Promise<ContentItem & { prev: AdjacentPost; next: AdjacentPost }> {
-    return apiGet<ContentItem & { prev: AdjacentPost; next: AdjacentPost }>(`/content/posts/${slugOrNumber}`, options);
+  getPost(slugOrNumber: string | number, options?: FetchOptions): Promise<PostDetail> {
+    return apiGet<PostDetail>(`/content/posts/${slugOrNumber}`, options);
   },
 
   getProjects(params?: { page?: number; limit?: number }, options?: FetchOptions): Promise<PaginatedResult<ContentItem>> {

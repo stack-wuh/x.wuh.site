@@ -39,7 +39,7 @@ export class ContentController {
       throw new NotFoundException(`Post not found: ${slugOrNumber}`);
     }
 
-    const { prev, next } = await this.contentService.findAdjacentPosts(result, {
+    const { prev, next, total, position } = await this.contentService.findAdjacentPosts(result, {
       state: 'open',
     });
 
@@ -47,6 +47,8 @@ export class ContentController {
       ...result.toJSON(),
       prev,
       next,
+      total,
+      position,
     };
   }
 

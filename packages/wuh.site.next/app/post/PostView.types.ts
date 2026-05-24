@@ -39,4 +39,6 @@ export type PostViewProps = {
   issue: Issue | null
   prevIssue: AdjacentIssue | null
   nextIssue: AdjacentIssue | null
+  total?: number
+  position?: number
 }
