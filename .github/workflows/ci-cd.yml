@@ -15,9 +15,16 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
+            set -e
             cd /github/x.wuh.site
             git fetch origin main
             git checkout main
             git reset --hard origin/main
             git clean -fd
-            ./scripts/deploy-docker.sh restart
+            ./scripts/deploy-docker.sh restart 2>&1 | tee /tmp/deploy.log
+            exit_code=${PIPESTATUS[0]}
+            if [ $exit_code -ne 0 ]; then
+              echo "::error::构建失败，最后 80 行日志："
+              tail -80 /tmp/deploy.log
+              exit $exit_code
+            fi
