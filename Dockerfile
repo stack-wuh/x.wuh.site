@@ -46,6 +46,8 @@ COPY --from=deploy-next /tmp/deploy-next/node_modules ./node_modules
 COPY --from=deps /app/packages/wuh.site.next/package.json ./packages/wuh.site.next/
 COPY --from=deps /app/packages/wuh.site.next/next.config.ts ./packages/wuh.site.next/
 COPY --from=deps /app/packages/wuh.site.next/tsconfig.json ./packages/wuh.site.next/
+COPY --from=deps /app/packages/wuh.site.next/public ./packages/wuh.site.next/public
+COPY --from=deps /app/packages/wuh.site.next/app ./packages/wuh.site.next/app
 COPY --from=deps /app/packages/components ./packages/components
 COPY --from=deps /app/packages/shared-contracts ./packages/shared-contracts
 # Build output
