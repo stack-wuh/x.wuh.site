@@ -31,14 +31,23 @@ export class ContentController {
 
   @Get('posts/:slugOrNumber')
   @ApiOperation({ summary: 'Get a single post by slug or issue number' })
-  @ApiResponse({ status: 200, description: 'Post details' })
+  @ApiResponse({ status: 200, description: 'Post details with prev/next adjacent posts' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   async getPostDetail(@Param('slugOrNumber') slugOrNumber: string) {
     const result = await this.contentService.findBySlugOrNumber(slugOrNumber);
     if (!result) {
       throw new NotFoundException(`Post not found: ${slugOrNumber}`);
     }
-    return result;
+
+    const { prev, next } = await this.contentService.findAdjacentPosts(result, {
+      state: 'open',
+    });
+
+    return {
+      ...result.toJSON(),
+      prev,
+      next,
+    };
   }
 
   @Get('projects')
