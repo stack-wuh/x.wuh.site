@@ -40,9 +40,11 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
 FROM base AS runner-next
 # Minimal node_modules（仅 next 的生产依赖，不含 nest 系的依赖）
 COPY --from=deploy-next /tmp/deploy-next/node_modules ./node_modules
-# Workspace packages 源码
-COPY --from=deps /app/packages ./packages
-# 编译产物
+# Only copy workspace packages that next depends on
+COPY --from=deps /app/packages/wuh.site.next/package.json ./packages/wuh.site.next/package.json
+COPY --from=deps /app/packages/components ./packages/components
+COPY --from=deps /app/packages/shared-contracts ./packages/shared-contracts
+# Build output
 COPY --from=builder-next /app/packages/wuh.site.next/dist ./packages/wuh.site.next/dist
 COPY package.json pnpm-workspace.yaml ./
 EXPOSE 3000
