@@ -2,7 +2,9 @@
   "name": "@wuh.site/components",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": {
+    "./*": "./*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +20,5 @@
   "devDependencies": {
     "@ant-design/colors": "7.2.1",
     "@types/react": "19.2.4"
-  },
-  "types": "src/index.ts"
+  }
 }

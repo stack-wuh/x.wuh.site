@@ -1,6 +1,6 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { Row, Column, SpaceBetween } from '@wuh.site/components/flex/index'
+import { Row, Column, SpaceBetween } from '@wuh.site/components/flex'
 import Image from '@wuh.site/components/image'
 
 const footerConf = {
