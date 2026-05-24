@@ -43,6 +43,7 @@ import {
   IconExitFullscreen,
   IconReset,
   IconMore,
+  IconRotateRight
 } from '../icons'
 
 export type ImagePreviewItem = {
@@ -94,6 +95,7 @@ export interface ImagePreviewProps extends React.HTMLAttributes<HTMLDivElement> 
   currentIndex?: number
   initialIndex?: number
   onIndexChange?: (index: number, item: ImagePreviewItem) => void
+  onDownload?: (index: number, item: ImagePreviewItem) => void,
   showThumbnails?: boolean
   enableLoop?: boolean
   allowZoom?: boolean
@@ -739,7 +741,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
       )}
       {allowRotate && (
         <IconButton type='button' aria-label='旋转图片' onClick={rotate}>
-          <IconRotate />
+          <IconRotateRight />
         </IconButton>
       )}
       {allowDownload && (
