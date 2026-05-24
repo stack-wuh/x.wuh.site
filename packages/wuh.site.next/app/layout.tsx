@@ -52,7 +52,7 @@ export default function RootLayout({
       <StyledComponentsRegistry>
         <html lang='en'>
           <head>
-            <link rel='stylesheet' href='https://at.alicdn.com/t/c/font_2595178_yxlvt61lad.css' />
+            <link rel='stylesheet' href='//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css' />
           </head>
           <CssVariableStyles />
           <body>
