@@ -1,21 +1,39 @@
 // UI icons — from icofont (available)
-export { IconClose, IconDownload, IconCopy, IconThumbUp, IconScrollToTop, IconArrowRight } from './icofont'
+export {
+  IconZoomIn,
+  IconZoomOut,
+  IconWechat,
+  IconQQ,
+  IconDouban,
+  IconWeibo,
+  IconMusic,
+  IconEmail,
+  IconGithub,
+  IconTwitter,
+  IconDiscord,
+  IconClose,
+  IconDownload,
+  IconCopy,
+  IconThumbUp,
+  IconScrollToTop,
+  IconArrowLeft,
+  IconArrowRight,
+  IconRotateLeft,
+  IconRotateRight,
+  IconFullscreen,
+  IconExitFullscreen,
+  IconReset,
+  IconLink
+} from './icofont'
 
 // UI icons — from lucide-react
 export {
-  ArrowLeft as IconArrowLeft,
   Home as IconHome,
   Menu as IconBars,
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
-  Link as IconLink,
-  ZoomIn as IconZoomIn,
-  ZoomOut as IconZoomOut,
   RotateCw as IconRotate,
-  Maximize as IconFullscreen,
-  Minimize as IconExitFullscreen,
-  Undo as IconReset,
-  EllipsisVertical as IconMore,
+  EllipsisVertical as IconMore
 } from 'lucide-react'
 
 // Status icons — from lucide-react
@@ -30,11 +48,8 @@ export {
   Clock as IconClock,
   Folder as IconFolder,
   ShieldCheck as IconShield,
-  Tag as IconTag,
+  Tag as IconTag
 } from 'lucide-react'
-
-// Brand icons — from icofont
-export { IconWechat, IconQQ, IconDouban, IconWeibo, IconMusic, IconEmail, IconGithub, IconTwitter, IconDiscord } from './icofont'
 
 // Ornament
 export { DiamondDivider } from './ornament'
