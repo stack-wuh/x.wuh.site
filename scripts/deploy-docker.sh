@@ -41,7 +41,7 @@ prune_all_cache() {
 case "${1:-help}" in
   build)
     echo "🔧 Building all services"
-    docker compose build
+    docker compose build --progress=plain
     prune_old_images
     ;;
 
@@ -58,7 +58,7 @@ case "${1:-help}" in
   restart)
     echo "🔄 Full deploy cycle"
     docker compose down 2>/dev/null || true
-    docker compose build
+    docker compose build --progress=plain
     prune_old_images
     docker compose up -d
     ;;
