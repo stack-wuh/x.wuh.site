@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // standalone 输出：构建时自动分析运行时依赖，只保留必要文件到 .next/standalone/
+  output: 'standalone',
   // 启用 styled-components 支持，但禁用一些可能导致问题的优化
   compiler: {
     styledComponents: {

@@ -26,31 +26,39 @@ RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
 FROM deps AS builder-nest
 RUN pnpm run build:nest
 
-# Stage 5: deps-pruned — strip devDependencies from full deps (keeps workspace packages)
-FROM deps AS deps-pruned
-RUN pnpm prune --prod --ignore-scripts
+# Stage 5: deploy-next — extract minimal production deps for next only
+FROM deps AS deploy-next
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm --filter @wuh.site/next deploy --prod /tmp/deploy-next
 
-# Stage 6: runner-next
+# Stage 6: deploy-nest — extract minimal production deps for nest only
+FROM deps AS deploy-nest
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm --filter @wuh.site/nest deploy --prod /tmp/deploy-nest
+
+# Stage 7: runner-next
 FROM base AS runner-next
-COPY --from=deps-pruned /app/node_modules ./node_modules
-COPY --from=deps /app/packages ./packages
-COPY --from=builder-next /app/packages/wuh.site.next/dist ./packages/wuh.site.next/dist
-COPY package.json pnpm-workspace.yaml ./
+# Next.js standalone output — 构建时已自动分析运行时依赖，只保留必要文件
+COPY --from=builder-next /app/packages/wuh.site.next/dist/wuh.site.next/standalone ./
+# Static client assets（standalone server 期望在 .next/static/）
+COPY --from=builder-next /app/packages/wuh.site.next/dist/wuh.site.next/static ./.next/static
+COPY --from=builder-next /app/packages/wuh.site.next/public ./public
 EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
-CMD ["pnpm", "run", "start:next"]
+CMD ["node", "server.js"]
 
-# Stage 7: runner-nest
+# Stage 8: runner-nest
 FROM base AS runner-nest
-COPY --from=deps-pruned /app/node_modules ./node_modules
-COPY --from=deps /app/packages ./packages
-COPY --from=builder-nest /app/packages/wuh.site.nest/dist ./packages/wuh.site.nest/dist
-COPY package.json pnpm-workspace.yaml ./
+# Minimal node_modules（仅 nest 的生产依赖，不含 next 系的依赖）
+COPY --from=deploy-nest /tmp/deploy-nest/node_modules ./node_modules
+# NestJS 编译产物
+COPY --from=builder-nest /app/packages/wuh.site.nest/dist ./dist
+COPY package.json ./
 EXPOSE 3200
 ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3200/v2/health || exit 1
-CMD ["node", "packages/wuh.site.nest/dist/main"]
+CMD ["node", "dist/main"]
