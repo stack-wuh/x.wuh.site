@@ -13,7 +13,7 @@ COPY packages/wuh.site.nest/package.json packages/wuh.site.nest/
 COPY packages/components/package.json packages/components/
 COPY packages/config/package.json packages/config/
 COPY packages/shared-contracts/package.json packages/shared-contracts/
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
   pnpm install --no-frozen-lockfile
 COPY packages/ ./packages/
 
@@ -28,27 +28,28 @@ RUN pnpm run build:nest
 
 # Stage 5: deploy-next — extract minimal production deps for next only
 FROM deps AS deploy-next
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
   pnpm --filter @wuh.site/next deploy --prod /tmp/deploy-next
 
 # Stage 6: deploy-nest — extract minimal production deps for nest only
 FROM deps AS deploy-nest
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
   pnpm --filter @wuh.site/nest deploy --prod /tmp/deploy-nest
 
 # Stage 7: runner-next
 FROM base AS runner-next
 # Next.js standalone output — 构建时已自动分析运行时依赖，只保留必要文件
+# monorepo 中 standalone 保持 packages/<name>/ 目录结构，server.js 在包目录下
 COPY --from=builder-next /app/packages/wuh.site.next/dist/wuh.site.next/standalone ./
-# Static client assets（standalone server 期望在 .next/static/）
-COPY --from=builder-next /app/packages/wuh.site.next/dist/wuh.site.next/static ./.next/static
-COPY --from=builder-next /app/packages/wuh.site.next/public ./public
+# Static client assets（相对 server.js 所在目录）
+COPY --from=builder-next /app/packages/wuh.site.next/dist/wuh.site.next/static ./packages/wuh.site.next/.next/static
+COPY --from=builder-next /app/packages/wuh.site.next/public ./packages/wuh.site.next/public
 EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
-CMD ["node", "server.js"]
+CMD ["node", "packages/wuh.site.next/server.js"]
 
 # Stage 8: runner-nest
 FROM base AS runner-nest
