@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "classnames": "^2.5.1",
+    "framer-motion": "^11",
     "lucide-react": "^1.16.0",
     "react": "19.2.5",
     "styled-components": "^6.1.19"

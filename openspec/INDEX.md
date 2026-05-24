@@ -4,8 +4,8 @@
 > 每个领域列出核心需求和关键词，匹配后可深入阅读对应 spec.md。
 
 ## components — 组件包
-- **关键词:** 组件库, exports map, 导入路径, pnpm workspace
-- **需求:** 组件包使用 exports map 导出
+- **关键词:** 组件库, exports map, 导入路径, pnpm workspace, 图片预览, 动画, framer-motion
+- **需求:** 组件包使用 exports map 导出, 图片切换有过渡动画, 缩放和旋转有弹性动画, ImagePreview 组件代码按职责拆分
 - **路径:** `openspec/specs/components/spec.md`
 
 ## content-api — 内容 API

@@ -17,13 +17,16 @@ export {
   IconThumbUp,
   IconScrollToTop,
   IconArrowLeft,
+  IconArrowUp,
+  IconArrowBottom,
   IconArrowRight,
   IconRotateLeft,
   IconRotateRight,
   IconFullscreen,
   IconExitFullscreen,
   IconReset,
-  IconLink
+  IconLink,
+  IconLike
 } from './icofont'
 
 // UI icons — from lucide-react

@@ -1,7 +1,7 @@
 'use client'
 
 import message from '@wuh.site/components/message'
-import { IconHome, IconScrollToTop, IconThumbUp } from '@wuh.site/components/icons'
+import { IconHome, IconArrowUp, IconLike } from '@wuh.site/components/icons'
 import { FloatingButtonGroup, FloatingButton } from '../styles'
 
 export default function FloatingActions() {
@@ -25,7 +25,7 @@ export default function FloatingActions() {
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}
       >
-        <IconScrollToTop />
+        <IconArrowUp />
       </FloatingButton>
       <FloatingButton
         type='button'
@@ -35,7 +35,7 @@ export default function FloatingActions() {
           message.info('点赞功能正在开发中')
         }}
       >
-        <IconThumbUp />
+        <IconLike />
       </FloatingButton>
     </FloatingButtonGroup>
   )
