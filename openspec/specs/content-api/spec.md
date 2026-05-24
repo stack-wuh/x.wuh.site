@@ -43,6 +43,7 @@
 - **THEN** 响应包含 `prev` 字段（`{ number, title }` 或 `null`），表示按 `createdAtGitHub` 降序 + `state: 'open'` 过滤后，紧邻当前文章的上一条（更新的文章）
 - **AND** 响应包含 `next` 字段（`{ number, title }` 或 `null`），表示同排序规则下紧邻当前文章的下一条（更旧的文章）
 - **AND** `prev`/`next` 的排序规则与 `GET /content/posts?state=open` 一致
+- **AND** 响应包含 `total`（符合条件的文章总数）和 `position`（当前文章在排序中的位置）
 
 ## REMOVED
 

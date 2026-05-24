@@ -47,9 +47,11 @@ const getIssue = cache(async (num: string) => {
       issue,
       prev: content.prev ? { number: content.prev.number, title: content.prev.title } : null,
       next: content.next ? { number: content.next.number, title: content.next.title } : null,
+      total: content.total,
+      position: content.position,
     };
   } catch {
-    return { issue: null, prev: null, next: null };
+    return { issue: null, prev: null, next: null, total: 0, position: 0 };
   }
 })
 
@@ -69,8 +71,8 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
 
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
   const { number } = await params;
-  const { issue, prev: prevIssue, next: nextIssue } = await getIssue(number);
+  const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number);
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
-  return <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} />;
+  return <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} />;
 }

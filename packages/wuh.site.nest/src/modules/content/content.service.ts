@@ -69,10 +69,15 @@ export class ContentService {
   async findAdjacentPosts(
     currentPost: ContentDocument,
     baseQuery: Record<string, any> = {},
-  ): Promise<{ prev: { number: number; title: string } | null; next: { number: number; title: string } | null }> {
+  ): Promise<{
+    prev: { number: number; title: string } | null;
+    next: { number: number; title: string } | null;
+    total: number;
+    position: number;
+  }> {
     const query = { ...baseQuery };
 
-    const [prev, next] = await Promise.all([
+    const [prev, next, total, newerCount] = await Promise.all([
       this.contentModel
         .findOne({
           ...query,
@@ -104,11 +109,20 @@ export class ContentService {
         .select('number title')
         .lean()
         .exec(),
+
+      this.contentModel.countDocuments(query),
+
+      this.contentModel.countDocuments({
+        ...query,
+        createdAtGitHub: { $gt: currentPost.createdAtGitHub },
+      }),
     ]);
 
     return {
       prev: prev ? { number: prev.number, title: prev.title } : null,
       next: next ? { number: next.number, title: next.title } : null,
+      total,
+      position: newerCount + 1,
     };
   }
 

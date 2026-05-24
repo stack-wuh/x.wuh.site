@@ -153,7 +153,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
   ]
 }
 
-export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps) {
+export default function PostView({ issue, prevIssue, nextIssue, total, position }: PostViewProps) {
   const renderedHtml = issue?.body_html || ''
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
@@ -188,7 +188,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
     return (
       <Container>
         <StatusEmpty title='未找到文章' description='请检查链接是否正确，或稍后再试。' />
-        <PostToolbar prevIssue={null} nextIssue={null} />
+        <PostToolbar prevIssue={null} nextIssue={null} currentNumber={issue?.number} total={total} position={position} />
       </Container>
     )
   }
@@ -244,7 +244,7 @@ export default function PostView({ issue, prevIssue, nextIssue }: PostViewProps)
 
           <CommentPlaceholder title='空空如也~' description='评论功能正在开发中，欢迎稍后回来留言交流。' />
 
-          <PostToolbar prevIssue={prevIssue} nextIssue={nextIssue} />
+          <PostToolbar prevIssue={prevIssue} nextIssue={nextIssue} currentNumber={issue.number} total={total} position={position} />
         </MainColumn>
 
         {tocResult.toc.length > 0 && (
