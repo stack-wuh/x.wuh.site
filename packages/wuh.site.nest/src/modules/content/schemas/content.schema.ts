@@ -96,3 +96,4 @@ ContentSchema.index({ number: 1 });
 ContentSchema.index({ 'metadata.slug': 1 });
 ContentSchema.index({ 'labels': 1 });
 ContentSchema.index({ state: 1 });
+ContentSchema.index({ createdAtGitHub: -1 });
