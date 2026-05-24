@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css, keyframes } from '@wuh.site/components/styled'
 import Card from '@wuh.site/components/card'
 import Empty from '@wuh.site/components/empty'
 

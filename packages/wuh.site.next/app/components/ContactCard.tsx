@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled from '@wuh.site/components/styled'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
 import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord } from '@wuh.site/components/icons'

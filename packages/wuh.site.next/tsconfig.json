@@ -26,6 +26,12 @@
       "@wuh.site/components/*": [
         "../components/*"
       ],
+      "@wuh.site/shared-contracts": [
+        "../shared-contracts/src/index.ts"
+      ],
+      "@wuh.site/shared-contracts/*": [
+        "../shared-contracts/src/*"
+      ],
       "@wuh.site/config/*": [
         "../config/*"
       ],
