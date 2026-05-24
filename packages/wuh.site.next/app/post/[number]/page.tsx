@@ -5,10 +5,22 @@ import { renderMarkdown } from '../../lib/markdown'
 import type { ContentItem } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue, AdjacentIssue } from '../PostView.types'
+import JsonLd from '../../components/JsonLd'
+
+const SITE_URL = 'https://wuh.site'
+
+function buildDescription(issue: Issue): string {
+  if (issue.metadata?.summary) return issue.metadata.summary
+  if (issue.body) {
+    const plain = issue.body.replace(/[#*`\[\]()>!|-]/g, '').replace(/\s+/g, ' ').trim()
+    return plain.length > 160 ? plain.slice(0, 157) + '...' : plain
+  }
+  return '阅读这篇博客文章'
+}
 
 const FALLBACK_METADATA: Metadata = {
   title: '博客详情 · wuh.site',
-  description: '从 GitHub Issues 渲染的博客文章详情',
+  description: '阅读这篇博客文章',
 }
 
 const mapContentToIssue = (item: ContentItem): Issue => ({
@@ -63,9 +75,30 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
     return FALLBACK_METADATA
   }
 
+  const description = buildDescription(issue)
+  const url = `${SITE_URL}/post/${issue.number}`
+  const cover = issue.metadata?.cover
+
   return {
-    title: `wuh.site · ${issue.title} · 朝朝如念`,
-    description: FALLBACK_METADATA.description,
+    title: `${issue.title} · wuh.site`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: issue.title,
+      description,
+      url,
+      siteName: 'wuh.site',
+      type: 'article',
+      publishedTime: issue.created_at,
+      modifiedTime: issue.updated_at,
+      images: cover ? [{ url: cover, alt: issue.title }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: issue.title,
+      description,
+      images: cover ? [cover] : [],
+    },
   }
 }
 
@@ -74,5 +107,26 @@ export default async function Page({ params }: { params: Promise<{ number: strin
   const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number);
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
-  return <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} />;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: issue.title,
+    description: buildDescription(issue),
+    image: issue.metadata?.cover || undefined,
+    datePublished: issue.created_at,
+    dateModified: issue.updated_at,
+    url: `${SITE_URL}/post/${issue.number}`,
+    author: {
+      '@type': 'Person',
+      name: 'shadow',
+      url: 'https://github.com/stack-wuh',
+    },
+  }
+
+  return (
+    <>
+      <JsonLd data={jsonLd as unknown as Record<string, unknown>} />
+      <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} />
+    </>
+  );
 }

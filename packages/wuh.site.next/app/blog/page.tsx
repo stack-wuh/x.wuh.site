@@ -3,9 +3,24 @@ import api from '../lib/api'
 import type { ContentItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
 
+const SITE_URL = 'https://wuh.site'
+
 export const metadata: Metadata = {
-  title: 'wuh.site · 悟已往之不谏',
-  description: '收录 GitHub Issues 中的全部博客文章'
+  title: '博客 · wuh.site',
+  description: '收录 GitHub Issues 中的全部博客文章',
+  alternates: { canonical: `${SITE_URL}/blog` },
+  openGraph: {
+    title: 'wuh.site 博客',
+    description: '收录 GitHub Issues 中的全部博客文章',
+    url: `${SITE_URL}/blog`,
+    siteName: 'wuh.site',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'wuh.site 博客',
+    description: '收录 GitHub Issues 中的全部博客文章',
+  },
 }
 
 const PER_PAGE = 10

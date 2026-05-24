@@ -3,9 +3,24 @@ import api from './lib/api'
 import type { ContentItem } from '@wuh.site/shared-contracts'
 import HomeView from './HomeView'
 
+const SITE_URL = 'https://wuh.site'
+
 export const metadata: Metadata = {
   title: 'wuh.site · 朝朝如念',
-  description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具'
+  description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: 'wuh.site · 朝朝如念',
+    description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+    url: SITE_URL,
+    siteName: 'wuh.site',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'wuh.site · 朝朝如念',
+    description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+  },
 }
 
 type Repo = {
