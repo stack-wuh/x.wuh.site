@@ -4,9 +4,6 @@ RUN npm install -g pnpm@9.15.0 --registry=https://registry.npmmirror.com \
   && pnpm config set registry https://registry.npmmirror.com \
   && apk add --no-cache curl
 WORKDIR /app
-# Limit Node.js heap in CI
-ARG NODE_OPTIONS="--max-old-space-size=384"
-ENV NODE_OPTIONS=$NODE_OPTIONS
 
 # Stage 2: deps — full install for building
 FROM base AS deps
@@ -31,11 +28,13 @@ RUN pnpm run build:nest
 
 # Stage 5: deploy-next — extract minimal production deps for next only
 FROM deps AS deploy-next
+ENV NODE_OPTIONS="--max-old-space-size=384"
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
   pnpm --filter @wuh.site/next deploy --prod /tmp/deploy-next
 
 # Stage 6: deploy-nest — extract minimal production deps for nest only
 FROM deps AS deploy-nest
+ENV NODE_OPTIONS="--max-old-space-size=384"
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
   pnpm --filter @wuh.site/nest deploy --prod /tmp/deploy-nest
 
