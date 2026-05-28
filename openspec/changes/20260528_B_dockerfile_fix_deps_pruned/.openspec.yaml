@@ -1,0 +1,5 @@
+project: x.wuh.site
+change: dockerfile-fix-deps-pruned
+date: 2026-05-28
+type: B
+status: applied
