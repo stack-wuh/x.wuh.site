@@ -6,4 +6,4 @@
 .env.local
 *.tsbuildinfo
 .claude
-.pnpm-store
+.pnpm-store.superpowers/
