@@ -49,8 +49,8 @@
 - **路径:** `openspec/specs/blog-scroll-flicker-fix/spec.md`
 
 ## contact-dialog — 联系弹窗
-- **关键词:** 联系, QQ, 微信, 弹窗, 纸张风
-- **需求:** (见 spec.md)
+- **关键词:** 联系, 弹窗, 遮罩层, 移动端底部弹出, 动画, 纸张风
+- **需求:** Dialog遮罩层, Dialog圆角和间距, Dialog移动端底部弹出, Dialog动画(弹性缓动+退出), 纸张风视觉
 - **路径:** `openspec/specs/contact-dialog/spec.md`
 
 ## icon-system — 图标系统
