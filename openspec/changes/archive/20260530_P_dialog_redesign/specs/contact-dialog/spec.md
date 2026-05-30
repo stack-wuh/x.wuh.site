@@ -1,4 +1,4 @@
-# Spec: 联系弹窗
+# Spec: 弹窗样式重设计
 
 ## MODIFIED
 
@@ -12,7 +12,7 @@
 - **GIVEN** Dialog 在桌面端打开
 - **WHEN** 弹窗渲染
 - **THEN** 四角 border-radius 为 16px
-- **AND** Header padding 为 12px 22px，底部带分割线
+- **AND** Header padding 为 16px 22px 0
 - **AND** Body padding 为 12px 22px 18px
 - **AND** 默认宽度 max 480px
 
@@ -22,7 +22,6 @@
 - **THEN** 从底部滑入，顶部圆角 16px，底部直角
 - **AND** 顶部显示拖拽指示条
 - **AND** 高度 max-height 80vh，内容溢出时内部滚动
-- **AND** body scroll lock 使用 position:fixed 防止 iOS 穿透滚动
 
 ### Requirement: Dialog 动画
 - **GIVEN** Dialog 打开或关闭
@@ -33,9 +32,7 @@
 - **AND** 关闭时播放反向退出动画后卸载 DOM
 - **AND** 尊重 prefers-reduced-motion
 
-### Requirement: 纸张风视觉
-- **GIVEN** 用户打开联系弹窗
-- **WHEN** 弹窗渲染
-- **THEN** ContactCard 使用 paper-style (background-100 + elevation + inset)
-- **AND** 暗色模式正常
-- **AND** 功能无回归（二维码预览、关闭弹窗）
+## REMOVED
+
+### Requirement: Dialog border-radius: var(--radius-card)
+- 原规范要求使用 `var(--radius-card)` (24px)，新设计改为固定 16px。

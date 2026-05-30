@@ -9,6 +9,7 @@ import {
   CloseButton,
   DialogBody,
   DialogFooter,
+  DragHandle,
 } from './styles'
 
 type FooterRenderer = (helpers: { close: () => void }) => React.ReactNode
@@ -22,32 +23,30 @@ type DialogControlBridge = {
 }
 
 export interface DialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'>, DialogControlBridge {
-  /** 是否展示 */
   open: boolean
-  /** 关闭回调 */
   onClose?: () => void
-  /** 标题 */
   title?: React.ReactNode
-  /** 页脚：可以传自定义节点或函数（可拿到 close） */
   footer?: React.ReactNode | FooterRenderer
-  /** 点击空白是否关闭，默认是 */
   closeOnOverlay?: boolean
-  /** 是否允许 esc 关闭，默认是 */
   closeOnEsc?: boolean
-  /** 打开时是否锁定 body 滚动，默认是 */
   lockScroll?: boolean
-  /** 全屏显示 */
   fullScreen?: boolean
-  /** 对话框宽度 */
+  placement?: 'center' | 'bottom'
   width?: number | string
-  /** 对话框高度（非全屏可选） */
   height?: number | string
-  /** 自定义 z-index */
   zIndex?: number
-  /** 是否隐藏右上角关闭按钮 */
   hideCloseButton?: boolean
-  /** 遵循 reduced-motion 时禁用动画 */
   disableAnimation?: boolean
+}
+
+function resolvePlacement(
+  placement: DialogProps['placement'],
+): 'center' | 'bottom' {
+  if (placement) return placement
+  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches) {
+    return 'bottom'
+  }
+  return 'center'
 }
 
 const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(props, ref) {
@@ -61,7 +60,8 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     closeOnEsc = true,
     lockScroll = true,
     fullScreen = false,
-    width = 'min(640px, calc(100vw - 32px))',
+    placement,
+    width = 'min(480px, calc(100vw - 32px))',
     height,
     zIndex = 1200,
     hideCloseButton = false,
@@ -74,13 +74,20 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     setOpen: setOpenProp,
     bind: _bind,
     ...rest
-  } = props;
-  void _openDialog;
-  void _toggleDialog;
-  void _bind;
+  } = props
+  void _openDialog
+  void _toggleDialog
+  void _bind
+
   const titleId = React.useId()
   const descriptionId = React.useId()
   const internalRef = React.useRef<HTMLDivElement>(null)
+  const [closing, setClosing] = React.useState(false)
+
+  const derivedPlacement = React.useMemo(
+    () => resolvePlacement(placement),
+    [placement, open],
+  )
 
   const setRefs = React.useCallback(
     (node: HTMLDivElement | null) => {
@@ -91,10 +98,27 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
         ;(ref as React.MutableRefObject<HTMLDivElement | null>).current = node
       }
     },
-    [ref]
+    [ref],
   )
 
   const handleClose = React.useCallback(() => {
+    if (disableAnimation) {
+      onClose?.()
+      if (!onClose) {
+        if (typeof closeDialogProp === 'function') {
+          closeDialogProp()
+        } else if (typeof setOpenProp === 'function') {
+          setOpenProp(false)
+        }
+      }
+      return
+    }
+    setClosing(true)
+  }, [disableAnimation, onClose, closeDialogProp, setOpenProp])
+
+  const handleAnimationEnd = React.useCallback(() => {
+    if (!closing) return
+    setClosing(false)
     onClose?.()
     if (!onClose) {
       if (typeof closeDialogProp === 'function') {
@@ -103,7 +127,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
         setOpenProp(false)
       }
     }
-  }, [onClose, closeDialogProp, setOpenProp])
+  }, [closing, onClose, closeDialogProp, setOpenProp])
 
   React.useEffect(() => {
     if (!open || !closeOnEsc) return
@@ -125,10 +149,23 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
 
   React.useEffect(() => {
     if (!open || !lockScroll || typeof document === 'undefined') return
+    const scrollY = window.scrollY
     const originalOverflow = document.body.style.overflow
+    const originalPosition = document.body.style.position
+    const originalTop = document.body.style.top
+    const originalWidth = document.body.style.width
+
     document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+
     return () => {
       document.body.style.overflow = originalOverflow
+      document.body.style.position = originalPosition
+      document.body.style.top = originalTop
+      document.body.style.width = originalWidth
+      window.scrollTo(0, scrollY)
     }
   }, [open, lockScroll])
 
@@ -138,14 +175,22 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     }
   }, [open])
 
-  if (!open) return null
+  // Reset closing state when dialog re-opens
+  React.useEffect(() => {
+    if (open) setClosing(false)
+  }, [open])
 
-  const resolvedFooter = typeof footer === 'function' ? (footer as FooterRenderer)({ close: handleClose }) : footer
+  if (!open && !closing) return null
+
+  const resolvedFooter =
+    typeof footer === 'function' ? (footer as FooterRenderer)({ close: handleClose }) : footer
 
   return (
     <Barrier
       $zIndex={zIndex}
       $fullScreen={fullScreen}
+      $closing={closing}
+      $placement={derivedPlacement}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && closeOnOverlay) {
           handleClose()
@@ -160,13 +205,17 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
         aria-describedby={descriptionId}
         tabIndex={-1}
         $fullScreen={fullScreen}
+        $placement={derivedPlacement}
         $width={width}
         $height={height}
         $disableAnimation={disableAnimation}
+        $closing={closing}
         className={className}
         style={style}
+        onAnimationEnd={handleAnimationEnd}
         {...rest}
       >
+        {derivedPlacement === 'bottom' && !fullScreen && <DragHandle />}
         {title && (
           <DialogHeader>
             <DialogTitle id={titleId}>{title}</DialogTitle>
@@ -177,9 +226,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
             )}
           </DialogHeader>
         )}
-        <DialogBody id={descriptionId}>
-          {children}
-        </DialogBody>
+        <DialogBody id={descriptionId}>{children}</DialogBody>
         {resolvedFooter && <DialogFooter>{resolvedFooter}</DialogFooter>}
       </DialogSurface>
     </Barrier>
