@@ -10,6 +10,8 @@ import { GlobalAudioPlayer } from './components/player/GlobalAudioPlayer'
 import SiteHeader from './components/SiteHeader'
 import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
 import { ProgressProvider } from '@bprogress/next/app'
+import { GoogleAnalytics } from '@wuh.site/components/analytics/GoogleAnalytics'
+import { WebVitals } from '@wuh.site/components/analytics/WebVitals'
 
 export default function RootLayout({
   children
@@ -56,6 +58,8 @@ export default function RootLayout({
           </head>
           <CssVariableStyles />
           <body>
+            <GoogleAnalytics gaId="G-X4ZVBQXW9E" />
+            <WebVitals gaId="G-X4ZVBQXW9E" />
             <ThemeModeProvider>
               <AudioPlayerProvider trackResolver={resolveTrackSource}>
                 <SiteHeader />

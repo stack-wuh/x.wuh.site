@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@next/third-parties": "^16.2.7",
     "classnames": "^2.5.1",
     "framer-motion": "^11",
     "lucide-react": "^1.16.0",
