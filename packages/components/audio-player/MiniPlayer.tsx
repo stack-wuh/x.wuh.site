@@ -248,14 +248,10 @@ export const AudioMiniPlayer = () => {
     state,
     actions: { togglePlay, playNext, playPrevious, togglePanel }
   } = useAudioPlayer()
-  const [collapsed, setCollapsed] = useState(false)
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem(COLLAPSE_STORAGE_KEY)
-    if (saved === 'true') {
-      setCollapsed(true)
-    }
-  }, [])
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem(COLLAPSE_STORAGE_KEY) === 'true'
+  })
 
   useEffect(() => {
     window.localStorage.setItem(COLLAPSE_STORAGE_KEY, String(collapsed))

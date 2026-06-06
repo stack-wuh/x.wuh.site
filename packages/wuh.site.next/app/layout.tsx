@@ -5,8 +5,13 @@ import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvid
 import { useCallback, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
+import dynamic from 'next/dynamic'
 import { AudioPlayerProvider } from '@wuh.site/components/audio-player'
-import { GlobalAudioPlayer } from './components/player/GlobalAudioPlayer'
+
+const DynamicGlobalAudioPlayer = dynamic(
+  () => import('./components/player/GlobalAudioPlayer').then((m) => m.GlobalAudioPlayer),
+  { ssr: false }
+)
 import SiteHeader from './components/SiteHeader'
 import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
 import { ProgressProvider } from '@bprogress/next/app'
@@ -73,7 +78,7 @@ export default function RootLayout({
                   {children}
                 </ProgressProvider>
                 <Footer />
-                <GlobalAudioPlayer />
+                <DynamicGlobalAudioPlayer />
               </AudioPlayerProvider>
             </ThemeModeProvider>
           </body>
