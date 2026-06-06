@@ -2,7 +2,8 @@
 import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useRef } from 'react'
+import { useEventListener, useExternal } from 'ahooks'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
 import dynamic from 'next/dynamic'
@@ -43,42 +44,22 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode
 }>) {
-  useEffect(() => {
-    let previousTitle: string | null = null
+  const previousTitle = useRef<string | null>(null)
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        previousTitle = document.title
-        document.title = 'wuh.site · 雾失楼台, 月迷津渡'
-        return
-      }
-
-      if (document.visibilityState === 'visible' && previousTitle) {
-        document.title = previousTitle
-        previousTitle = null
-      }
+  useEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      previousTitle.current = document.title
+      document.title = 'wuh.site · 雾失楼台, 月迷津渡'
+      return
     }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    if (document.visibilityState === 'visible' && previousTitle.current) {
+      document.title = previousTitle.current
+      previousTitle.current = null
+    }
+  })
 
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [])
-
-  useEffect(() => {
-    const loadIconfont = () => {
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = '//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css'
-      document.head.appendChild(link)
-    }
-    if (document.readyState === 'complete') {
-      loadIconfont()
-    } else {
-      window.addEventListener('load', loadIconfont, { once: true })
-    }
-  }, [])
+  useExternal('//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css', { type: 'css' })
 
   const resolveTrackSource = useCallback(async (trackId: number) => {
     const response = await fetch(`/api/music/track?id=${trackId}`)
