@@ -3,9 +3,9 @@ import { TBaseColorLevel, Tokens } from './tokens'
 
 export const CssVariableStyles = createGlobalStyle`
   :root {
-    --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    --font-serif: Georgia, 'Songti SC', 'Noto Serif SC', 'STSong', serif;
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-serif: 'Noto Serif SC', Georgia, 'Songti SC', 'STSong', serif;
   }
 
   html, body {

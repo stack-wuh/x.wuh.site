@@ -15,7 +15,7 @@ const MiniPlayerDock = styled.div<{ $collapsed: boolean }>`
   display: flex;
   align-items: stretch;
   z-index: 2500;
-  font-family: var(--font-geist-sans, 'Geist', system-ui);
+  font-family: var(--font-sans);
 
   @media (max-width: 640px) {
     left: ${(p) => (p.$collapsed ? '0px' : '12px')};

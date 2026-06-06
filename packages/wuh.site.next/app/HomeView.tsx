@@ -43,7 +43,7 @@ type Props = {
 /* ====== Styled Components ====== */
 
 const Root = styled.div`
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-sans);
   background: transparent;
   min-height: 100vh;
   display: flex;

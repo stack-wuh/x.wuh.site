@@ -17,6 +17,19 @@ import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
 import { ProgressProvider } from '@bprogress/next/app'
 import { GoogleAnalytics } from '@wuh.site/components/analytics/GoogleAnalytics'
 import { WebVitals } from '@wuh.site/components/analytics/WebVitals'
+import { Inter, JetBrains_Mono } from 'next/font/google'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export default function RootLayout({
   children
@@ -62,7 +75,7 @@ export default function RootLayout({
             <link rel='stylesheet' href='//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css' />
           </head>
           <CssVariableStyles />
-          <body>
+          <body className={`${inter.variable} ${jetbrainsMono.variable}`}>
             <GoogleAnalytics gaId="G-X4ZVBQXW9E" />
             <WebVitals gaId="G-X4ZVBQXW9E" />
             <ThemeModeProvider>
@@ -81,6 +94,18 @@ export default function RootLayout({
                 <DynamicGlobalAudioPlayer />
               </AudioPlayerProvider>
             </ThemeModeProvider>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.addEventListener('load', function() {
+                    var link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap';
+                    document.head.appendChild(link);
+                  });
+                `,
+              }}
+            />
           </body>
         </html>
       </StyledComponentsRegistry>

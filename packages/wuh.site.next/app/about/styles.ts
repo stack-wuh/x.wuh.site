@@ -10,7 +10,7 @@ export const PageRoot = styled.main`
   display: flex;
   flex-direction: column;
   gap: clamp(16px, 2vw, 28px);
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-sans);
   color: var(--text-color);
 `
 
