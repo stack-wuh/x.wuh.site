@@ -2,7 +2,8 @@
 import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useRef } from 'react'
+import { useEventListener, useExternal } from 'ahooks'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
 import dynamic from 'next/dynamic'
@@ -17,7 +18,7 @@ import { ThemeModeProvider } from './components/theme/ThemeModeProvider'
 import { ProgressProvider } from '@bprogress/next/app'
 import { GoogleAnalytics } from '@wuh.site/components/analytics/GoogleAnalytics'
 import { WebVitals } from '@wuh.site/components/analytics/WebVitals'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono, Noto_Serif_SC } from 'next/font/google'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,33 +32,34 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 })
 
+const notoSerifSC = Noto_Serif_SC({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+})
+
 export default function RootLayout({
   children
 }: Readonly<{
   children: ReactNode
 }>) {
-  useEffect(() => {
-    let previousTitle: string | null = null
+  const previousTitle = useRef<string | null>(null)
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        previousTitle = document.title
-        document.title = 'wuh.site · 雾失楼台, 月迷津渡'
-        return
-      }
-
-      if (document.visibilityState === 'visible' && previousTitle) {
-        document.title = previousTitle
-        previousTitle = null
-      }
+  useEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      previousTitle.current = document.title
+      document.title = 'wuh.site · 雾失楼台, 月迷津渡'
+      return
     }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    if (document.visibilityState === 'visible' && previousTitle.current) {
+      document.title = previousTitle.current
+      previousTitle.current = null
     }
-  }, [])
+  })
+
+  useExternal('//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css', { type: 'css' })
 
   const resolveTrackSource = useCallback(async (trackId: number) => {
     const response = await fetch(`/api/music/track?id=${trackId}`)
@@ -71,11 +73,9 @@ export default function RootLayout({
     <ThemeProvider>
       <StyledComponentsRegistry>
         <html lang='en'>
-          <head>
-            <link rel='stylesheet' href='//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css' />
-          </head>
+          <head />
           <CssVariableStyles />
-          <body className={`${inter.variable} ${jetbrainsMono.variable}`}>
+          <body className={`${inter.variable} ${jetbrainsMono.variable} ${notoSerifSC.variable}`}>
             <GoogleAnalytics gaId="G-X4ZVBQXW9E" />
             <WebVitals gaId="G-X4ZVBQXW9E" />
             <ThemeModeProvider>
@@ -94,18 +94,6 @@ export default function RootLayout({
                 <DynamicGlobalAudioPlayer />
               </AudioPlayerProvider>
             </ThemeModeProvider>
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.addEventListener('load', function() {
-                    var link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap';
-                    document.head.appendChild(link);
-                  });
-                `,
-              }}
-            />
           </body>
         </html>
       </StyledComponentsRegistry>
