@@ -63,8 +63,8 @@ export default function RootLayout({
           </head>
           <CssVariableStyles />
           <body>
-            {/* <GoogleAnalytics gaId="G-X4ZVBQXW9E" /> */}
-            {/* <WebVitals gaId="G-X4ZVBQXW9E" /> */}
+            <GoogleAnalytics gaId="G-X4ZVBQXW9E" />
+            <WebVitals gaId="G-X4ZVBQXW9E" />
             <ThemeModeProvider>
               <AudioPlayerProvider trackResolver={resolveTrackSource}>
                 <SiteHeader />
@@ -78,7 +78,7 @@ export default function RootLayout({
                   {children}
                 </ProgressProvider>
                 <Footer />
-                {/* <DynamicGlobalAudioPlayer /> */}
+                <DynamicGlobalAudioPlayer />
               </AudioPlayerProvider>
             </ThemeModeProvider>
           </body>
