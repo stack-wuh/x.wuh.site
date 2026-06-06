@@ -5,7 +5,7 @@ export const CssVariableStyles = createGlobalStyle`
   :root {
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    --font-serif: 'Noto Serif SC', Georgia, 'Songti SC', 'STSong', serif;
+    --font-serif: Georgia, 'Songti SC', 'STSong', serif;
   }
 
   html, body {
@@ -30,15 +30,6 @@ export const CssVariableStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-
-  /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
-  @font-face {
-    font-family: 'iconfont';  /* Project id 2595178 */
-    src:
-        url('//at.alicdn.com/t/font_2595178_wa25xow6jmp.woff2?t=1623580472696') format('woff2'),
-        url('//at.alicdn.com/t/font_2595178_wa25xow6jmp.woff?t=1623580472696') format('woff'),
-        url('//at.alicdn.com/t/font_2595178_wa25xow6jmp.ttf?t=1623580472696') format('truetype');
   }
 
   .iconfont {

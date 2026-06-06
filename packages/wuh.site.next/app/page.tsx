@@ -72,7 +72,6 @@ async function getFeaturedIssues(): Promise<PostItem[]> {
 }
 
 export default async function Home() {
-  const repos = await getRepos()
-  const posts = await getFeaturedIssues()
+  const [repos, posts] = await Promise.all([getRepos(), getFeaturedIssues()])
   return <HomeView repos={repos} posts={posts} />
 }

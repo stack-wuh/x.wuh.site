@@ -261,7 +261,7 @@ export default function SiteHeader() {
     <HeaderRoot>
       <HeaderInner>
         <Brand aria-label='站点标识'>
-          <Image src='/logo.svg' alt='wuh.site' width={42} height={26} inline showSkeleton={false} appearance='plain' />
+          <Image src='/logo.svg' alt='wuh.site' width={42} height={26} priority inline showSkeleton={false} appearance='plain' />
         </Brand>
 
         <Right>
