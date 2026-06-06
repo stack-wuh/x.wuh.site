@@ -43,6 +43,22 @@ const Root = styled.div`
   font-family: var(--font-geist-sans);
   background: transparent;
   padding: clamp(24px, 3vw, 64px) clamp(16px, 4vw, 60px);
+  animation: contentEnter 0.25s ease-out;
+
+  @keyframes contentEnter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `
 
 const Main = styled.main`

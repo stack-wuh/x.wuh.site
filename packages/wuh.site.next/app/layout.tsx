@@ -6,7 +6,7 @@ import { useCallback, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
 import dynamic from 'next/dynamic'
-import { AudioPlayerProvider } from '@wuh.site/components/audio-player'
+import { AudioPlayerProvider } from '@wuh.site/components/audio-player/provider'
 
 const DynamicGlobalAudioPlayer = dynamic(
   () => import('./components/player/GlobalAudioPlayer').then((m) => m.GlobalAudioPlayer),
@@ -63,8 +63,8 @@ export default function RootLayout({
           </head>
           <CssVariableStyles />
           <body>
-            <GoogleAnalytics gaId="G-X4ZVBQXW9E" />
-            <WebVitals gaId="G-X4ZVBQXW9E" />
+            {/* <GoogleAnalytics gaId="G-X4ZVBQXW9E" /> */}
+            {/* <WebVitals gaId="G-X4ZVBQXW9E" /> */}
             <ThemeModeProvider>
               <AudioPlayerProvider trackResolver={resolveTrackSource}>
                 <SiteHeader />
@@ -78,7 +78,7 @@ export default function RootLayout({
                   {children}
                 </ProgressProvider>
                 <Footer />
-                <DynamicGlobalAudioPlayer />
+                {/* <DynamicGlobalAudioPlayer /> */}
               </AudioPlayerProvider>
             </ThemeModeProvider>
           </body>
