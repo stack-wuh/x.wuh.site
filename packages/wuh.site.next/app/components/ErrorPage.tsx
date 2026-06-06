@@ -18,7 +18,7 @@ const Root = styled.div`
   align-items: center;
   justify-content: center;
   padding: 64px 24px;
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-sans);
 `
 
 const StatusCode = styled.p`

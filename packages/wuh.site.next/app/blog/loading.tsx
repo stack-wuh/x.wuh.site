@@ -8,7 +8,7 @@ const Root = styled.div`
   min-height: 100vh;
   align-items: flex-start;
   justify-content: center;
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-sans);
   background: transparent;
   padding: clamp(24px, 3vw, 64px) clamp(16px, 4vw, 60px);
 `

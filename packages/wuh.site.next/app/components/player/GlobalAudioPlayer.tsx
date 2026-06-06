@@ -45,10 +45,11 @@ export const GlobalAudioPlayer = () => {
       }
     }
 
-    bootstrap()
+    const idleId = requestIdleCallback(() => bootstrap(), { timeout: 2000 })
     return () => {
       cancelled = true
       controller.abort()
+      cancelIdleCallback(idleId)
     }
   }, [queue.length, loadQueue, playlistId])
 

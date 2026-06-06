@@ -31,17 +31,14 @@ const SkeletonRoot = styled.div<{
   width: ${(p) => p.$width};
   height: ${(p) => p.$height};
   border-radius: ${(p) => p.$radius};
-  background: linear-gradient(90deg, var(--background-200) 0%, var(--normal-300) 50%, var(--background-200) 100%);
+  background: linear-gradient(90deg, var(--primary-100) 0%, var(--primary-300) 50%, var(--primary-100) 100%);
   background-size: 400% 100%;
   animation: ${(p) => (p.$shimmer ? css`${shimmer} 1.6s ease-in-out infinite` : 'none')};
+  animation-delay: 0.15s;
   opacity: 0.85;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background: linear-gradient(90deg, var(--background-300) 0%, var(--normal-600) 50%, var(--background-300) 100%);
   }
 `
 

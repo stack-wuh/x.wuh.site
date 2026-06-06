@@ -46,7 +46,7 @@ const Panel = styled.div<{ $visible: boolean; $cover?: string }>`
   color: #fff;
   z-index: 2500;
   pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
-  font-family: var(--font-geist-sans, 'Geist', system-ui);
+  font-family: var(--font-sans);
   animation: ${(p) => (p.$visible ? css`${slideUp} 0.35s ease` : 'none')};
 `
 

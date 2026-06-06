@@ -9,11 +9,9 @@ type Props = {
 }
 
 export default function PostHeader({ issue }: Props) {
-  const date = new Date(issue.created_at).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  const d = new Date(issue.created_at)
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const date = `${d.getFullYear()} ${months[d.getMonth()]} ${d.getDate()}`
   const avatarUrl = issue.user?.avatarUrl
   const userName = issue.user?.userName?.trim() || issue.user?.login?.trim() || '匿名作者'
 
