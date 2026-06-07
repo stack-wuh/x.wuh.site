@@ -90,9 +90,9 @@ const NavLink = styled.a<{ $disabled: boolean }>`
   }
 `
 
-const SvgIcon = styled.svg`
-  width: 18px;
-  height: 18px;
+const SvgIcon = styled.svg<{ $size: number }>`
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.6;
@@ -102,7 +102,7 @@ const SvgIcon = styled.svg`
 
 function WIcon() {
   return (
-    <SvgIcon viewBox="0 0 24 18" width={20} height={20}>
+    <SvgIcon $size={20} viewBox="0 0 24 18">
       <path d="M2 2 L6 16 L12 8 L18 16 L22 2" />
     </SvgIcon>
   )
@@ -110,7 +110,7 @@ function WIcon() {
 
 function UIcon() {
   return (
-    <SvgIcon viewBox="0 0 18 18" width={14} height={14}>
+    <SvgIcon $size={14} viewBox="0 0 18 18">
       <path d="M3 4 C3 12 4 14 9 14 C14 14 15 12 15 4" />
     </SvgIcon>
   )
@@ -118,7 +118,7 @@ function UIcon() {
 
 function HIcon() {
   return (
-    <SvgIcon viewBox="0 0 18 18" width={20} height={20}>
+    <SvgIcon $size={20} viewBox="0 0 18 18">
       <path d="M3 2 L3 16" />
       <path d="M15 2 L15 16" />
       <path d="M3 9 L15 9" />
@@ -128,7 +128,7 @@ function HIcon() {
 
 function ArrowLeftIcon() {
   return (
-    <SvgIcon viewBox="0 0 18 18" width={16} height={16}>
+    <SvgIcon $size={16} viewBox="0 0 18 18">
       <path d="M11 4 L5 9 L11 14" />
     </SvgIcon>
   )
@@ -136,7 +136,7 @@ function ArrowLeftIcon() {
 
 function ArrowRightIcon() {
   return (
-    <SvgIcon viewBox="0 0 18 18" width={16} height={16}>
+    <SvgIcon $size={16} viewBox="0 0 18 18">
       <path d="M7 4 L13 9 L7 14" />
     </SvgIcon>
   )
