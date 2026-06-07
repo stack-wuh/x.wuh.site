@@ -2,7 +2,14 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "lib": ["dom", "dom.iterable", "ES2021"]
+    "lib": ["dom", "dom.iterable", "ES2021"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "isolatedModules": false,
+    "useUnknownInCatchVariables": false
   },
   "include": [
     "packages/*/src/**/*.ts",
