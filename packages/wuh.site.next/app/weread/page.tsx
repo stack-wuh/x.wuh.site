@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import type { WereadBook } from '@wuh.site/shared-contracts'
-import api from '../lib/api'
+import { wereadService } from '@wuh.site/shared-contracts/endpoints'
 import WereadView from './WereadView'
 
 const SITE_URL = 'https://wuh.site'
@@ -26,17 +26,21 @@ const toPageNumber = (value: string | string[] | undefined) => {
 }
 
 async function getBooks(page: number): Promise<{ books: WereadBook[]; total: number; currentPage: number; totalPages: number }> {
-  try {
-    const result = await api.weread.getBooks({ page, limit: PER_PAGE }, { revalidate: 3600 })
-    const data = result as any
-    return {
-      books: data.data || [],
-      total: data.pagination?.total || 0,
-      currentPage: data.pagination?.page || page,
-      totalPages: data.pagination?.totalPages || 1,
-    }
-  } catch {
+  const { data, error } = await wereadService.getBooks.server({
+    query: { page: String(page), limit: String(PER_PAGE) },
+    revalidate: 3600,
+  })
+
+  if (error || !data) {
     return { books: [], total: 0, currentPage: page, totalPages: 1 }
+  }
+
+  const result = data as any
+  return {
+    books: (result.data || []) as WereadBook[],
+    total: result.pagination?.total || 0,
+    currentPage: result.pagination?.page || page,
+    totalPages: result.pagination?.totalPages || 1,
   }
 }
 
