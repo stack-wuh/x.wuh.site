@@ -12,11 +12,6 @@ import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
 
-type TagItem = {
-  name: string
-  color?: string | null
-}
-
 type Props = {
   repos: RepoDto[]
   posts: PostListItem[]
