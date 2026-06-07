@@ -38,7 +38,30 @@ type Props = {
     created_at: string
     labels: TagItem[]
   }[]
+  yearlySummaries: {
+    id: number
+    number: number
+    title: string
+    created_at: string
+  }[]
 }
+
+type BookItem = {
+  title: string
+  author: string
+  cover: string
+  progress: string
+}
+
+const WECHAT_BOOKS: BookItem[] = [
+  { title: '代码整洁之道', author: 'Robert C. Martin', cover: '', progress: '阅读中 60%' },
+  { title: '深入理解计算机系统', author: 'Randal E. Bryant', cover: '', progress: '阅读中 30%' },
+]
+
+const TECH_STACK = [
+  'React', 'TypeScript', 'Next.js', 'NestJS', 'Node.js',
+  'MongoDB', 'PostgreSQL', 'Docker', 'GitHub Actions',
+]
 
 /* ====== Styled Components ====== */
 
@@ -385,6 +408,66 @@ const Empty = styled.div`
   font-size: var(--font-size-sm);
 `
 
+/* Books */
+const BooksList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+`
+
+const BookRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 8px;
+  border-radius: 6px;
+`
+
+const BookCover = styled.div<{ $src?: string }>`
+  width: 32px;
+  height: 42px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'var(--background-300)')};
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+`
+
+const BookInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`
+
+const BookTitle = styled.div`
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--text-primary);
+`
+
+const BookMeta = styled.div`
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+`
+
+/* Tech Stack */
+const TechList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  padding-bottom: var(--space-md);
+`
+
+const TechTag = styled.span`
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  color: var(--primary-color);
+  background: color-mix(in oklab, var(--primary-color) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--primary-color) 18%, transparent);
+`
+
 /* ====== Contact Config ====== */
 
 type ContactDialogConfig = ContactCardProps
@@ -481,13 +564,14 @@ const groupByYear = (posts: Props['posts']) => {
 
 /* ====== Component ====== */
 
-export default function HomeView({ repos, posts }: Props) {
+export default function HomeView({ repos, posts, yearlySummaries }: Props) {
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
   const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
   const closeContact = useCallback(() => setActiveContact(null), [])
   const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
 
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
+  const summaryYearGroups = useMemo(() => groupByYear(yearlySummaries), [yearlySummaries])
 
   return (
     <Root>
@@ -570,11 +654,63 @@ export default function HomeView({ repos, posts }: Props) {
 
         <OrnamentDivider />
 
-        {/* 开源项目 */}
+        {/* 年度总结 */}
+        {yearlySummaries.length > 0 && (
+          <Section>
+            <SectionHeader>
+              <SectionTitle>年度总结</SectionTitle>
+            </SectionHeader>
+            <Timeline>
+              {summaryYearGroups.map(([year, items]) => (
+                <YearGroup key={year}>
+                  <YearLabel>{year}</YearLabel>
+                  {items.map(item => (
+                    <PostRow key={item.id} href={`/post/${item.number}`}>
+                      <InkDot />
+                      <PostTitle>{item.title}</PostTitle>
+                      <PostMeta>
+                        <span>{new Date(item.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                      </PostMeta>
+                    </PostRow>
+                  ))}
+                </YearGroup>
+              ))}
+            </Timeline>
+          </Section>
+        )}
+
+        <OrnamentDivider />
+
+        {/* 微信读书 */}
         <Section>
           <SectionHeader>
-            <SectionTitle>开源项目</SectionTitle>
+            <SectionTitle>微信读书</SectionTitle>
           </SectionHeader>
+          <BooksList>
+            {WECHAT_BOOKS.map((book) => (
+              <BookRow key={book.title}>
+                <BookCover $src={book.cover || undefined} />
+                <BookInfo>
+                  <BookTitle>{book.title}</BookTitle>
+                  <BookMeta>{book.author} · {book.progress}</BookMeta>
+                </BookInfo>
+              </BookRow>
+            ))}
+          </BooksList>
+        </Section>
+
+        <OrnamentDivider />
+
+        {/* 技术栈 + 开源项目 */}
+        <Section>
+          <SectionHeader>
+            <SectionTitle>技术 &amp; 项目</SectionTitle>
+          </SectionHeader>
+          <TechList>
+            {TECH_STACK.map((tech) => (
+              <TechTag key={tech}>{tech}</TechTag>
+            ))}
+          </TechList>
           {repos.length === 0 ? (
             <Empty>暂时无法获取 GitHub 数据</Empty>
           ) : (

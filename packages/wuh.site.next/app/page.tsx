@@ -52,6 +52,8 @@ type PostItem = {
   labels: { name: string; color?: string | null }[]
 }
 
+type YearlySummary = PostItem
+
 const mapContentToPost = (item: ContentItem): PostItem => ({
   id: item.externalId,
   number: item.number,
@@ -71,7 +73,23 @@ async function getFeaturedIssues(): Promise<PostItem[]> {
   }
 }
 
+async function getYearlySummaries(): Promise<YearlySummary[]> {
+  try {
+    const result = await api.content.getPosts({ limit: 50, state: 'open' }, { revalidate: 1800 })
+    return result.data
+      .map(mapContentToPost)
+      .filter((post) => post.title.includes('年度总结'))
+      .slice(0, 3)
+  } catch {
+    return []
+  }
+}
+
 export default async function Home() {
-  const [repos, posts] = await Promise.all([getRepos(), getFeaturedIssues()])
-  return <HomeView repos={repos} posts={posts} />
+  const [repos, posts, yearlySummaries] = await Promise.all([
+    getRepos(),
+    getFeaturedIssues(),
+    getYearlySummaries(),
+  ])
+  return <HomeView repos={repos} posts={posts} yearlySummaries={yearlySummaries} />
 }
