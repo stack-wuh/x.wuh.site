@@ -103,9 +103,11 @@ const NavLink = styled.a<{ $disabled: boolean }>`
 
 const NavLabelPrev = styled.span`
   position: absolute;
-  left: calc(100% + 2px);
+  left: calc(100% + 6px);
   white-space: nowrap;
   opacity: 0;
+  background: var(--background-100);
+  padding: 0 4px;
   transition: opacity 0.15s ease;
   pointer-events: none;
 
@@ -116,9 +118,11 @@ const NavLabelPrev = styled.span`
 
 const NavLabelNext = styled.span`
   position: absolute;
-  right: calc(100% + 2px);
+  right: calc(100% + 6px);
   white-space: nowrap;
   opacity: 0;
+  background: var(--background-100);
+  padding: 0 4px;
   transition: opacity 0.15s ease;
   pointer-events: none;
 
