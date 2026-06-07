@@ -75,6 +75,7 @@ export class WereadService {
       .find()
       .sort({ readUpdateTime: -1 })
       .limit(limit || 0)
-      .lean();
+      .lean()
+      .exec() as any;
   }
 }
