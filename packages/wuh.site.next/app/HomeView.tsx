@@ -686,7 +686,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
               {repos.map(repo => (
                 <ProjectLink
                   key={repo.html_url}
-                  href={repo.homepage || repo.html_url}
+                  href={repo.html_url}
                   target='_blank'
                   rel='noopener noreferrer'
                 >
