@@ -3,16 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { WereadBook, WereadBookDocument } from './schemas/weread.schema';
-import { buildPaginatedResult, PaginatedResult } from '../../common/interfaces/paginated-response.interface';
-
-type WeReadBook = {
-  bookId: string;
-  title: string;
-  author: string;
-  cover: string;
-  readUpdateTime: number;
-  finishReading: number;
-};
+import type { PaginatedResult, WereadBook as WeReadBook } from '@wuh.site/shared-contracts';
+import { buildPaginatedResult } from '../../common/utils/paginated-result';
 
 @Injectable()
 export class WereadService {

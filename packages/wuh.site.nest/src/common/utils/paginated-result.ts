@@ -1,16 +1,4 @@
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: PaginationMeta;
-}
+import type { PaginatedResult } from '@wuh.site/shared-contracts';
 
 export function buildPaginatedResult<T>(
   data: T[],
