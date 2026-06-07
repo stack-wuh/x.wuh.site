@@ -4,6 +4,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 import Tag from '@wuh.site/components/tag'
+import Pagination from '@wuh.site/components/pagination'
 
 const TAG_DISPLAY_LIMIT = 3
 
@@ -21,16 +22,9 @@ type PostItem = {
   labels: TagItem[]
 }
 
-type PaginationState = {
-  currentPage: number
-  lastPage: number | null
-  hasPrev: boolean
-  hasNext: boolean
-}
-
 type Props = {
   posts: PostItem[]
-  pagination: PaginationState
+  pagination: { currentPage: number; lastPage: number }
 }
 
 /* ====== Styled Components ====== */
@@ -319,73 +313,6 @@ const Empty = styled.div`
   font-size: var(--font-size-sm);
 `
 
-/* Pagination */
-const Pagination = styled.nav`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  gap: 6px;
-  margin-top: var(--space-lg);
-  flex-wrap: wrap;
-`
-
-const PaginationLink = styled(Link)<{ $active?: boolean }>`
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--normal-300);
-  font-size: var(--font-size-xs);
-  text-decoration: none;
-  color: ${props => (props.$active ? 'var(--text-primary)' : 'var(--text-secondary)')};
-  background: ${props => (props.$active ? 'var(--background-200)' : 'transparent')};
-
-  &:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--normal-600);
-    color: ${props => (props.$active ? 'var(--text-primary)' : 'var(--text-secondary)')};
-    background: ${props => (props.$active ? 'rgba(255,255,255,0.06)' : 'transparent')};
-  }
-`
-
-const PaginationText = styled.span<{ $active?: boolean; $disabled?: boolean }>`
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--normal-300);
-  font-size: var(--font-size-xs);
-  color: ${props => (props.$active ? 'var(--text-primary)' : 'var(--text-muted)')};
-  background: ${props => (props.$active ? 'var(--background-200)' : 'transparent')};
-  opacity: ${props => (props.$disabled ? 0.5 : 1)};
-
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--normal-600);
-    color: ${props => (props.$active ? 'var(--text-primary)' : 'var(--text-secondary)')};
-    background: ${props => (props.$active ? 'rgba(255,255,255,0.06)' : 'transparent')};
-  }
-`
-
-const PageMeta = styled.span`
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-  margin-left: var(--space-sm);
-`
-
-/* ====== Helpers ====== */
-
-const getPageHref = (page: number) => (page <= 1 ? '/blog' : `/blog?page=${page}`)
-
-const getPageNumbers = (currentPage: number, lastPage: number | null) => {
-  if (!lastPage) return [currentPage]
-  const maxButtons = 5
-  const half = Math.floor(maxButtons / 2)
-  const start = Math.max(1, Math.min(currentPage - half, lastPage - maxButtons + 1))
-  const end = Math.min(lastPage, start + maxButtons - 1)
-  return Array.from({ length: end - start + 1 }, (_, idx) => start + idx)
-}
-
 const groupByYear = (posts: PostItem[]) => {
   const map = new Map<number, PostItem[]>()
   posts.forEach(post => {
@@ -403,7 +330,6 @@ const groupByYear = (posts: PostItem[]) => {
 /* ====== Component ====== */
 
 export default function BlogListView({ posts, pagination }: Props) {
-  const pageNumbers = getPageNumbers(pagination.currentPage, pagination.lastPage)
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
 
   return (
@@ -450,36 +376,11 @@ export default function BlogListView({ posts, pagination }: Props) {
           </Timeline>
         )}
 
-        <Pagination aria-label='Pagination'>
-          {pagination.hasPrev ? (
-            <PaginationLink href={getPageHref(pagination.currentPage - 1)}>上一页</PaginationLink>
-          ) : (
-            <PaginationText $disabled>上一页</PaginationText>
-          )}
-
-          {pageNumbers.map(page =>
-            page === pagination.currentPage ? (
-              <PaginationText key={page} $active aria-current='page'>
-                {page}
-              </PaginationText>
-            ) : (
-              <PaginationLink key={page} href={getPageHref(page)}>
-                {page}
-              </PaginationLink>
-            )
-          )}
-
-          {pagination.hasNext ? (
-            <PaginationLink href={getPageHref(pagination.currentPage + 1)}>下一页</PaginationLink>
-          ) : (
-            <PaginationText $disabled>下一页</PaginationText>
-          )}
-
-          <PageMeta>
-            第 {pagination.currentPage} 页
-            {pagination.lastPage ? ` / 共 ${pagination.lastPage} 页` : ''}
-          </PageMeta>
-        </Pagination>
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.lastPage}
+          getPageUrl={(page) => (page <= 1 ? '/blog' : `/blog?page=${page}`)}
+        />
       </Main>
     </Root>
   )

@@ -27,7 +27,7 @@ const PER_PAGE = 10
 
 type PaginationState = {
   currentPage: number
-  lastPage: number | null
+  lastPage: number
   hasPrev: boolean
   hasNext: boolean
 }
