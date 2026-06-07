@@ -48,15 +48,23 @@ const Nav = styled.nav`
   align-items: center;
   justify-content: center;
   width: 100%;
-  gap: 10px;
+  gap: 14px;
   margin-top: var(--space-lg);
   flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
 `
 
 const LetterGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
 `
 
 const LetterLink = styled.a<{ $active: boolean }>`
@@ -98,6 +106,11 @@ const SvgIcon = styled.svg<{ $size: number }>`
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
+
+  @media (max-width: 480px) {
+    width: ${({ $size }) => Math.round($size * 0.85)}px;
+    height: ${({ $size }) => Math.round($size * 0.85)}px;
+  }
 `
 
 function WIcon() {
@@ -142,8 +155,17 @@ function ArrowRightIcon() {
   )
 }
 
+const PageNum = styled.span`
+  font-size: 18px;
+  line-height: 1;
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
+`
+
 function PageNumber({ page }: { page: number }) {
-  return <span style={{ fontSize: 18, lineHeight: 1 }}>{page}</span>
+  return <PageNum>{page}</PageNum>
 }
 
 const iconMap: Record<string, () => React.ReactElement> = {
