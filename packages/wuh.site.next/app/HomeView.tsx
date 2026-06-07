@@ -54,11 +54,6 @@ type Props = {
   }[]
 }
 
-const TECH_STACK = [
-  'React', 'TypeScript', 'Next.js', 'NestJS', 'Node.js',
-  'MongoDB', 'PostgreSQL', 'Docker', 'GitHub Actions',
-]
-
 /* ====== Styled Components ====== */
 
 const Root = styled.div`
@@ -446,24 +441,6 @@ const BookMeta = styled.div`
   margin-top: 2px;
 `
 
-/* Tech Stack */
-const TechList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  width: 100%;
-  padding-bottom: var(--space-md);
-`
-
-const TechTag = styled.span`
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: var(--font-size-xs);
-  color: var(--primary-color);
-  background: color-mix(in oklab, var(--primary-color) 10%, transparent);
-  border: 1px solid color-mix(in oklab, var(--primary-color) 18%, transparent);
-`
-
 /* ====== Contact Config ====== */
 
 type ContactDialogConfig = ContactCardProps
@@ -567,8 +544,6 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
   const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
 
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
-  const summaryYearGroups = useMemo(() => groupByYear(yearlySummaries), [yearlySummaries])
-
   return (
     <Root>
       <Main>
@@ -658,22 +633,17 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           {yearlySummaries.length === 0 ? (
             <Empty>暂无年度总结</Empty>
           ) : (
-            <Timeline>
-              {summaryYearGroups.map(([year, items]) => (
-                <YearGroup key={year}>
-                  <YearLabel>{year}</YearLabel>
-                  {items.map(item => (
-                    <PostRow key={item.id} href={`/post/${item.number}`}>
-                      <InkDot />
-                      <PostTitle>{item.title}</PostTitle>
-                      <PostMeta>
-                        <span>{new Date(item.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
-                      </PostMeta>
-                    </PostRow>
-                  ))}
-                </YearGroup>
+            <ProjectList>
+              {yearlySummaries.map(item => (
+                <PostRow key={item.id} href={`/post/${item.number}`}>
+                  <InkDot />
+                  <PostTitle>{item.title}</PostTitle>
+                  <PostMeta>
+                    <span>{new Date(item.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                  </PostMeta>
+                </PostRow>
               ))}
-            </Timeline>
+            </ProjectList>
           )}
         </Section>
 
@@ -704,16 +674,11 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
 
         <OrnamentDivider />
 
-        {/* 技术栈 + 开源项目 */}
+        {/* 精选项目 */}
         <Section>
           <SectionHeader>
-            <SectionTitle>技术 &amp; 项目</SectionTitle>
+            <SectionTitle>精选项目</SectionTitle>
           </SectionHeader>
-          <TechList>
-            {TECH_STACK.map((tech) => (
-              <TechTag key={tech}>{tech}</TechTag>
-            ))}
-          </TechList>
           {repos.length === 0 ? (
             <Empty>暂时无法获取 GitHub 数据</Empty>
           ) : (
