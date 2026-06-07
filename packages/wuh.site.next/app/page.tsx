@@ -54,6 +54,15 @@ type PostItem = {
 
 type YearlySummary = PostItem
 
+type WereadBook = {
+  bookId: string
+  title: string
+  author: string
+  cover: string
+  readUpdateTime: number
+  finishReading: number
+}
+
 const mapContentToPost = (item: ContentItem): PostItem => ({
   id: item.externalId,
   number: item.number,
@@ -85,11 +94,21 @@ async function getYearlySummaries(): Promise<YearlySummary[]> {
   }
 }
 
+async function getWereadBooks(): Promise<WereadBook[]> {
+  try {
+    const data = await api.weread.getBooks(5, { revalidate: 3600 })
+    return (data as any).books || []
+  } catch {
+    return []
+  }
+}
+
 export default async function Home() {
-  const [repos, posts, yearlySummaries] = await Promise.all([
+  const [repos, posts, yearlySummaries, wereadBooks] = await Promise.all([
     getRepos(),
     getFeaturedIssues(),
     getYearlySummaries(),
+    getWereadBooks(),
   ])
-  return <HomeView repos={repos} posts={posts} yearlySummaries={yearlySummaries} />
+  return <HomeView repos={repos} posts={posts} yearlySummaries={yearlySummaries} wereadBooks={wereadBooks} />
 }

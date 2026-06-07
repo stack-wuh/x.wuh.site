@@ -44,19 +44,15 @@ type Props = {
     title: string
     created_at: string
   }[]
+  wereadBooks: {
+    bookId: string
+    title: string
+    author: string
+    cover: string
+    readUpdateTime: number
+    finishReading: number
+  }[]
 }
-
-type BookItem = {
-  title: string
-  author: string
-  cover: string
-  progress: string
-}
-
-const WECHAT_BOOKS: BookItem[] = [
-  { title: '代码整洁之道', author: 'Robert C. Martin', cover: '', progress: '阅读中 60%' },
-  { title: '深入理解计算机系统', author: 'Randal E. Bryant', cover: '', progress: '阅读中 30%' },
-]
 
 const TECH_STACK = [
   'React', 'TypeScript', 'Next.js', 'NestJS', 'Node.js',
@@ -564,7 +560,7 @@ const groupByYear = (posts: Props['posts']) => {
 
 /* ====== Component ====== */
 
-export default function HomeView({ repos, posts, yearlySummaries }: Props) {
+export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }: Props) {
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
   const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
   const closeContact = useCallback(() => setActiveContact(null), [])
@@ -652,15 +648,16 @@ export default function HomeView({ repos, posts, yearlySummaries }: Props) {
           )}
         </Section>
 
-        <OrnamentDivider />
-
         {/* 年度总结 */}
         {yearlySummaries.length > 0 && (
-          <Section>
-            <SectionHeader>
-              <SectionTitle>年度总结</SectionTitle>
-            </SectionHeader>
-            <Timeline>
+          <>
+            <OrnamentDivider />
+
+            <Section>
+              <SectionHeader>
+                <SectionTitle>年度总结</SectionTitle>
+              </SectionHeader>
+              <Timeline>
               {summaryYearGroups.map(([year, items]) => (
                 <YearGroup key={year}>
                   <YearLabel>{year}</YearLabel>
@@ -677,27 +674,31 @@ export default function HomeView({ repos, posts, yearlySummaries }: Props) {
               ))}
             </Timeline>
           </Section>
+          </>
         )}
 
         <OrnamentDivider />
 
         {/* 微信读书 */}
-        <Section>
-          <SectionHeader>
-            <SectionTitle>微信读书</SectionTitle>
-          </SectionHeader>
-          <BooksList>
-            {WECHAT_BOOKS.map((book) => (
-              <BookRow key={book.title}>
-                <BookCover $src={book.cover || undefined} />
-                <BookInfo>
-                  <BookTitle>{book.title}</BookTitle>
-                  <BookMeta>{book.author} · {book.progress}</BookMeta>
-                </BookInfo>
-              </BookRow>
-            ))}
-          </BooksList>
-        </Section>
+        {wereadBooks.length > 0 && (
+          <Section>
+            <SectionHeader>
+              <SectionTitle>微信读书</SectionTitle>
+              <MoreLink href='/weread'>全部&nbsp;&rarr;</MoreLink>
+            </SectionHeader>
+            <BooksList>
+              {wereadBooks.map((book) => (
+                <BookRow key={book.bookId}>
+                  <BookCover $src={book.cover || undefined} />
+                  <BookInfo>
+                    <BookTitle>{book.title}</BookTitle>
+                    <BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</BookMeta>
+                  </BookInfo>
+                </BookRow>
+              ))}
+            </BooksList>
+          </Section>
+        )}
 
         <OrnamentDivider />
 

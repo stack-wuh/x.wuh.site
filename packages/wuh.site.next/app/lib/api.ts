@@ -79,10 +79,19 @@ export const comments = {
   },
 };
 
+// Weread API
+export const weread = {
+  getBooks(limit?: number, options?: FetchOptions) {
+    const query = limit ? `?limit=${limit}` : '';
+    return apiGet(`/weread/books${query}`, options);
+  },
+};
+
 const api = {
   content,
   repos,
   comments,
+  weread,
 };
 
 export default api;
