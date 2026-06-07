@@ -56,12 +56,12 @@ const Nav = styled.nav`
 const LetterGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 18px;
-  letter-spacing: 4px;
+  gap: 6px;
 `
 
 const LetterLink = styled.a<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
   color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-muted)')};
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
@@ -74,7 +74,6 @@ const LetterLink = styled.a<{ $active: boolean }>`
 
 const Ellipsis = styled.span`
   color: var(--text-muted);
-  letter-spacing: 0;
   font-size: var(--font-size-sm);
 `
 
@@ -90,6 +89,52 @@ const NavLink = styled.a<{ $disabled: boolean }>`
     color: ${({ $disabled }) => ($disabled ? 'var(--text-muted)' : 'var(--primary-color)')};
   }
 `
+
+const SvgIcon = styled.svg`
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+`
+
+function WIcon() {
+  return (
+    <SvgIcon viewBox="0 0 24 18">
+      <path d="M2 2 L6 16 L12 8 L18 16 L22 2" />
+    </SvgIcon>
+  )
+}
+
+function UIcon() {
+  return (
+    <SvgIcon viewBox="0 0 18 18">
+      <path d="M3 4 C3 12 4 14 9 14 C14 14 15 12 15 4" />
+    </SvgIcon>
+  )
+}
+
+function HIcon() {
+  return (
+    <SvgIcon viewBox="0 0 18 18">
+      <path d="M3 2 L3 16" />
+      <path d="M15 2 L15 16" />
+      <path d="M3 9 L15 9" />
+    </SvgIcon>
+  )
+}
+
+function PageNumber({ page }: { page: number }) {
+  return <span style={{ fontSize: 18, lineHeight: 1 }}>{page}</span>
+}
+
+const iconMap: Record<string, () => React.ReactElement> = {
+  w: WIcon,
+  u: UIcon,
+  h: HIcon,
+}
 
 export default function Pagination({ currentPage, totalPages, getPageUrl }: PaginationProps) {
   if (totalPages <= 1) return null
@@ -113,7 +158,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
           }
 
           const isActive = item.page === currentPage
-          const displayText = isActive && item.type === 'u' ? String(item.page) : item.label
+          const Icon = iconMap[item.type]
 
           return (
             <LetterLink
@@ -122,7 +167,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
               $active={isActive}
               aria-current={isActive ? 'page' : undefined}
             >
-              {displayText}
+              {isActive && item.type === 'u' ? <PageNumber page={item.page} /> : <Icon />}
             </LetterLink>
           )
         })}
