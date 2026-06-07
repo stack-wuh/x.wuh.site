@@ -8,6 +8,7 @@ const SITE_URL = 'https://wuh.site'
 export const metadata: Metadata = {
   title: 'wuh.site · 朝朝如念',
   description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+  robots: { index: true, follow: true },
   alternates: { canonical: SITE_URL },
   openGraph: {
     title: 'wuh.site · 朝朝如念',
