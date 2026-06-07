@@ -21,7 +21,7 @@ jobs:
             git checkout main
             git reset --hard origin/main
             git clean -fd
-            ./scripts/deploy-docker.sh restart 2>&1 | tee /tmp/deploy.log
+            ./scripts/deploy-docker.sh deploy 2>&1 | tee /tmp/deploy.log
             exit_code=${PIPESTATUS[0]}
             if [ $exit_code -ne 0 ]; then
               echo "::error::构建失败，最后 80 行日志："

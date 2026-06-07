@@ -11,7 +11,8 @@ Commands:
   build    Build all Docker images via docker compose
   run      Start all services (docker compose up -d)
   stop     Stop and remove all services
-  restart  Stop → build → clean → run (full deploy cycle)
+  deploy   Build → staging → health check → switch or rollback
+  restart  Shortcut for deploy
   push     Push images to registry (docker compose push)
   clean    Remove dangling images + old build cache (frees disk space)
   logs     Tail logs from all services
@@ -55,12 +56,48 @@ case "${1:-help}" in
     docker compose down
     ;;
 
+  deploy)
+    TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
+    # 1. 构建 + tag
+    echo "🔧 Building for deploy"
+    docker compose build --progress=plain
+    docker tag xwuhsite-next xwuhsite-next:$TIMESTAMP 2>/dev/null || true
+    docker tag xwuhsite-nest xwuhsite-nest:$TIMESTAMP 2>/dev/null || true
+
+    # 2. 启动 staging（临时端口）
+    echo "🐳 Starting staging containers"
+    PORT_NEXT=3001 PORT_NEST=3201 docker compose -p xwuhsite-staging up -d
+
+    # 3. 等 health check
+    echo "⏳ Waiting for health checks (max 120s)..."
+    for i in $(seq 1 24); do
+      if curl -sf http://localhost:3201/v2/health > /dev/null 2>&1 && \
+         curl -sf http://localhost:3001/ > /dev/null 2>&1; then
+        # 4a. 健康 → 切换
+        echo ""
+        echo "✅ Health check passed, switching traffic"
+        docker compose down
+        docker compose -p xwuhsite-staging down
+        docker compose up -d
+        prune_old_images
+        echo "✅ Deploy complete"
+        exit 0
+      fi
+      printf "."
+      sleep 5
+    done
+
+    # 4b. 超时 → 回滚
+    echo ""
+    echo "❌ Health check failed, rolling back"
+    docker compose -p xwuhsite-staging down
+    exit 1
+    ;;
+
   restart)
     echo "🔄 Full deploy cycle"
-    docker compose down 2>/dev/null || true
-    docker compose build --progress=plain
-    prune_old_images
-    docker compose up -d
+    exec "$0" deploy
     ;;
 
   push)

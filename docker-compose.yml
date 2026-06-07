@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - "${PORT_NEXT:-3000}:3000"
     environment:
       - PORT=3000
       - NEST_API_URL=http://nest:3200/v2
@@ -20,7 +20,7 @@ services:
       context: .
       target: runner-nest
     ports:
-      - "3200:3200"
+      - "${PORT_NEST:-3200}:3200"
     env_file:
       - .env
     restart: unless-stopped
