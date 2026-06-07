@@ -86,9 +86,9 @@ const Ellipsis = styled.span`
 `
 
 const NavLink = styled.a<{ $disabled: boolean }>`
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
   font-size: var(--font-size-sm);
   color: ${({ $disabled }) => ($disabled ? 'var(--text-muted)' : 'var(--text-secondary)')};
   text-decoration: none;
@@ -101,14 +101,29 @@ const NavLink = styled.a<{ $disabled: boolean }>`
   }
 `
 
-const NavLabel = styled.span`
-  max-width: 0;
-  overflow: hidden;
+const NavLabelPrev = styled.span`
+  position: absolute;
+  left: calc(100% + 2px);
   white-space: nowrap;
-  transition: max-width 0.2s ease;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
 
   ${NavLink}:hover & {
-    max-width: 60px;
+    opacity: 1;
+  }
+`
+
+const NavLabelNext = styled.span`
+  position: absolute;
+  right: calc(100% + 2px);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+
+  ${NavLink}:hover & {
+    opacity: 1;
   }
 `
 
@@ -202,7 +217,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
         href={hasPrev ? getPageUrl(currentPage - 1) : undefined}
         aria-label="上一页"
         aria-disabled={!hasPrev}
-      ><ArrowLeftIcon /><NavLabel>上一页</NavLabel></NavLink>
+      ><ArrowLeftIcon /><NavLabelPrev>上一页</NavLabelPrev></NavLink>
 
       <LetterGroup>
         {items.map((item) => {
@@ -231,7 +246,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
         href={hasNext ? getPageUrl(currentPage + 1) : undefined}
         aria-label="下一页"
         aria-disabled={!hasNext}
-      ><NavLabel>下一页</NavLabel><ArrowRightIcon /></NavLink>
+      ><NavLabelNext>下一页</NavLabelNext><ArrowRightIcon /></NavLink>
     </Nav>
   )
 }
