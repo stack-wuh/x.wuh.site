@@ -3,18 +3,10 @@
 import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 import Pagination from '@wuh.site/components/pagination'
-
-type Book = {
-  bookId: string
-  title: string
-  author: string
-  cover: string
-  readUpdateTime: number
-  finishReading: number
-}
+import type { WereadBook } from '@wuh.site/shared-contracts'
 
 type Props = {
-  books: Book[]
+  books: WereadBook[]
   total: number
   currentPage: number
   totalPages: number

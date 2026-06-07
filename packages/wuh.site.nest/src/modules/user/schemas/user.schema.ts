@@ -1,14 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { UserRole } from '@wuh.site/shared-contracts';
 
 export type UserDocument = HydratedDocument<User>;
 
-export enum UserRole {
-  ROOT = 'root',
-  WRITER = 'writer',
-  READER = 'reader',
-}
+export { UserRole };
 
 @Schema({ timestamps: true })
 export class User {

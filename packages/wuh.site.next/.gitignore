@@ -18,6 +18,7 @@
 /out/
 /node_modules
 /dist.wuh.site
+/wuh.site
 
 # production
 /build

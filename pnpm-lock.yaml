@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      ahooks:
+        specifier: 3.7.1
+        version: 3.7.1(react@19.2.5)
       conventional-changelog-cli:
         specifier: ^5.0.0
         version: 5.0.0(conventional-commits-filter@5.0.0)

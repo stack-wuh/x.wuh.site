@@ -1,447 +1,28 @@
 'use client'
+
 import { useCallback, useMemo, useState } from 'react'
-import styled from '@wuh.site/components/styled'
-import Link from 'next/link'
 import Button from '@wuh.site/components/button'
 import Dialog from '@wuh.site/components/dialog'
 import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
-import Image from '@wuh.site/components/image'
 import ContactCard, { type ContactCardProps } from './components/ContactCard'
 import { IconMusic, IconDiscord, DiamondDivider } from '@wuh.site/components/icons'
+import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
+import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
 
-type Repo = {
-  name: string
-  description: string | null
-  html_url: string
-  stargazers_count: number
-  language: string | null
-  homepage: string | null
-  fork: boolean
-}
-
-type TagItem = {
-  name: string
-  color?: string | null
-}
-
 type Props = {
-  repos: Repo[]
-  posts: {
-    id: number
-    number: number
-    title: string
-    html_url: string
-    comments: number
-    created_at: string
-    labels: TagItem[]
-  }[]
+  repos: RepoDto[]
+  posts: PostListItem[]
   yearlySummaries: {
     id: number
     number: number
     title: string
     created_at: string
   }[]
-  wereadBooks: {
-    bookId: string
-    title: string
-    author: string
-    cover: string
-    readUpdateTime: number
-    finishReading: number
-  }[]
+  wereadBooks: WereadBook[]
 }
-
-/* ====== Styled Components ====== */
-
-const Root = styled.div`
-  font-family: var(--font-sans);
-  background: transparent;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: clamp(16px, 2.4vw, 48px) clamp(16px, 5vw, 48px);
-`
-
-const Main = styled.main`
-  width: min(720px, 100%);
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  align-items: center;
-  gap: var(--space-lg);
-  padding: clamp(24px, 3vw, 48px) clamp(12px, 3vw, 40px);
-`
-
-/* Hero */
-const Hero = styled.header`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-xl) 0 var(--space-md);
-`
-
-const StyledLogo = styled(Image).attrs({
-  showSkeleton: false,
-  inline: true,
-  appearance: 'plain',
-  imageClassName: 'logo-img'
-})`
-  width: fit-content;
-
-  .logo-img {
-    display: block;
-    transition: filter 0.2s ease;
-    width: 64px;
-    height: auto;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .logo-img {
-      filter: invert();
-    }
-  }
-`
-
-const SiteTitle = styled.p`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-lg);
-  font-weight: 500;
-  color: var(--text-primary);
-  letter-spacing: 0.04em;
-  margin-top: var(--space-xs);
-`
-
-const SiteTagline = styled.p`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  letter-spacing: 0.06em;
-`
-
-/* Motto/格言区 */
-const Motto = styled.blockquote`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-lg);
-  font-weight: 500;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  text-align: center;
-  padding: var(--space-md) 0;
-  border-left: none;
-  position: relative;
-  margin: 0 auto;
-
-  @media (max-width: 520px) {
-    max-width: 320px;
-  }
-
-  &::after {
-    content: '';
-    display: block;
-    width: 28px;
-    height: 2px;
-    margin: var(--space-md) auto 0;
-    background: var(--accent-color);
-    opacity: 0.5;
-  }
-`
-
-/* CTA 区域 */
-const Ctas = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-sm);
-  width: 100%;
-  margin-top: var(--space-xs);
-`
-
-const SocialRow = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: var(--space-xs);
-`
-
-/* 装饰分隔线 */
-const DividerRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  max-width: 360px;
-  margin: var(--space-md) auto;
-  color: var(--text-muted);
-  opacity: 0.5;
-`
-
-const DividerLine = styled.span`
-  flex: 1;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.35;
-`
-
-/** 装饰分隔线 SVG */
-const OrnamentDivider = () => (
-  <DividerRow aria-hidden='true'>
-    <DividerLine />
-    <DiamondDivider />
-    <DividerLine />
-  </DividerRow>
-)
-
-/* Section */
-const Section = styled.section`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: var(--space-md);
-`
-
-const SectionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  width: 100%;
-`
-
-const SectionTitle = styled.h2`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-xl);
-  font-weight: 500;
-  color: var(--text-primary);
-  letter-spacing: 0.03em;
-`
-
-const MoreLink = styled(Link)`
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color var(--transition-fast) ease;
-  font-family: var(--font-serif);
-
-  &:hover {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-`
-
-/* Blog Timeline */
-const Timeline = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  width: 100%;
-`
-
-const YearGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-`
-
-const YearLabel = styled.div`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  padding: var(--space-xs) 0;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid color-mix(in oklab, var(--text-muted) 25%, transparent);
-
-  @media (prefers-color-scheme: dark) {
-    border-bottom-color: color-mix(in oklab, var(--text-muted) 20%, transparent);
-  }
-`
-
-const PostRow = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-xs) 8px;
-  border-radius: 6px;
-  text-decoration: none;
-  color: inherit;
-  transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
-
-  &:hover {
-    background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
-    padding-left: 12px;
-    text-decoration: none;
-  }
-
-  @media (max-width: 520px) {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-`
-
-const InkDot = styled.span`
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-color);
-  opacity: 0.6;
-  flex-shrink: 0;
-`
-
-const PostTitle = styled.span`
-  flex: 1;
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  color: var(--text-primary);
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
-
-const PostMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-  flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: calc(6px + var(--space-sm));
-  }
-`
-
-const MetaDot = styled.span`
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  opacity: 0.5;
-`
-
-const PostTags = styled.span`
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: calc(6px + var(--space-sm));
-    width: 100%;
-  }
-`
-
-/* Projects section (compact text link list) */
-const ProjectList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-`
-
-const ProjectLink = styled.a`
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-  padding: var(--space-xs) 8px;
-  border-radius: 6px;
-  text-decoration: none;
-  color: inherit;
-  transition: background-color var(--transition-fast) ease;
-
-  &:hover {
-    background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
-    text-decoration: none;
-  }
-
-  @media (max-width: 520px) {
-    flex-wrap: wrap;
-  }
-`
-
-const ProjectName = styled.span`
-  font-weight: 500;
-  font-size: var(--font-size-base);
-  color: var(--text-primary);
-  min-width: fit-content;
-`
-
-const ProjectDesc = styled.span`
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  @media (max-width: 520px) {
-    white-space: normal;
-  }
-`
-
-const ProjectMeta = styled.span`
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-  margin-left: auto;
-  flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: 0;
-  }
-`
-
-const Empty = styled.div`
-  text-align: center;
-  color: var(--text-muted);
-  padding: var(--space-xl) 0;
-  font-size: var(--font-size-sm);
-`
-
-/* Books */
-const BooksList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-`
-
-const BookRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-xs) 8px;
-  border-radius: 6px;
-`
-
-const BookCover = styled.div<{ $src?: string }>`
-  width: 32px;
-  height: 42px;
-  border-radius: 4px;
-  flex-shrink: 0;
-  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'var(--background-300)')};
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-`
-
-const BookInfo = styled.div`
-  flex: 1;
-  min-width: 0;
-`
-
-const BookTitle = styled.div`
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  color: var(--text-primary);
-`
-
-const BookMeta = styled.div`
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-  margin-top: 2px;
-`
-
-/* ====== Contact Config ====== */
 
 type ContactDialogConfig = ContactCardProps
 
@@ -518,8 +99,6 @@ const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github' | 'douban' |
 
 type ContactType = keyof typeof CONTACT_CONFIG
 
-/* ====== Helpers ====== */
-
 const groupByYear = (posts: Props['posts']) => {
   const map = new Map<number, Props['posts']>()
   posts.forEach(post => {
@@ -531,12 +110,23 @@ const groupByYear = (posts: Props['posts']) => {
       map.set(year, [post])
     }
   })
-  const sorted = Array.from(map.entries()).sort((a, b) => b[0] - a[0])
-  return sorted
+  return Array.from(map.entries()).sort((a, b) => b[0] - a[0])
 }
 
-/* ====== Component ====== */
+/** 装饰分隔线 */
+function OrnamentDivider() {
+  return (
+    <S.DividerRow aria-hidden='true'>
+      <S.DividerLine />
+      <DiamondDivider />
+      <S.DividerLine />
+    </S.DividerRow>
+  )
+}
 
+/**
+ * 首页视图，展示 Hero、格言、社交链接、精选博客、年度总结、微信读书、精选项目等板块。
+ */
 export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }: Props) {
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
   const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
@@ -545,30 +135,23 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
 
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
   return (
-    <Root>
-      <Main>
-        {/* Hero */}
-        <Hero>
-          <StyledLogo src='/logo.svg' alt='wuh.site.logo' width={64} height={38.4} priority />
-          <SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</SiteTitle>
-          <SiteTagline>雾失楼台，月迷津渡</SiteTagline>
-        </Hero>
+    <S.Root>
+      <S.Main>
+        <S.Hero>
+          <S.StyledLogo src='/logo.svg' alt='wuh.site.logo' width={64} height={38.4} priority />
+          <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</S.SiteTitle>
+          <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
+        </S.Hero>
 
-        {/* 格言区 */}
-        <Motto>
+        <S.Motto>
           写作是抵抗遗忘的方式，代码是构建世界的语言。
-        </Motto>
+        </S.Motto>
 
-        {/* CTA & 社交 */}
-        <Ctas>
-          <Button href='/blog' variant='outlined' color='primary' size='small'>
-            查看博客
-          </Button>
-          <Button href='/about' variant='outlined' color='secondary' size='small'>
-            关于我
-          </Button>
-        </Ctas>
-        <SocialRow>
+        <S.Ctas>
+          <Button href='/blog' variant='outlined' color='primary' size='small'>查看博客</Button>
+          <Button href='/about' variant='outlined' color='secondary' size='small'>关于我</Button>
+        </S.Ctas>
+        <S.SocialRow>
           <LinkGroup
             items={[
               { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
@@ -582,124 +165,119 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
             ]}
             size='medium'
           />
-        </SocialRow>
+        </S.SocialRow>
 
         <OrnamentDivider />
 
-        {/* 精选博客 */}
-        <Section>
-          <SectionHeader>
-            <SectionTitle>精选博客</SectionTitle>
-            <MoreLink href='/blog'>全部博客&nbsp;&rarr;</MoreLink>
-          </SectionHeader>
+        <S.Section>
+          <S.SectionHeader>
+            <S.SectionTitle>精选博客</S.SectionTitle>
+            <S.MoreLink href='/blog'>全部博客&nbsp;&rarr;</S.MoreLink>
+          </S.SectionHeader>
           {posts.length === 0 ? (
-            <Empty>暂时无法获取 Issues 数据</Empty>
+            <S.EmptyHint>暂时无法获取 Issues 数据</S.EmptyHint>
           ) : (
-            <Timeline>
+            <S.Timeline>
               {yearGroups.map(([year, yearPosts]) => (
-                <YearGroup key={year}>
-                  <YearLabel>{year}</YearLabel>
+                <S.YearGroup key={year}>
+                  <S.YearLabel>{year}</S.YearLabel>
                   {yearPosts.map(post => (
-                    <PostRow key={post.id} href={`/post/${post.number}`}>
-                      <InkDot />
-                      <PostTitle>{post.title}</PostTitle>
+                    <S.PostRow key={post.id} href={`/post/${post.number}`}>
+                      <S.InkDot />
+                      <S.PostTitle>{post.title}</S.PostTitle>
                       {post.labels?.length > 0 && (
-                        <PostTags>
+                        <S.PostTags>
                           {post.labels.slice(0, TAG_DISPLAY_LIMIT).map(label => (
                             <Tag key={`${post.id}-${label.name}`} label={label.name} color={label.color} />
                           ))}
-                        </PostTags>
+                        </S.PostTags>
                       )}
-                      <PostMeta>
+                      <S.PostMeta>
                         <span>{new Date(post.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
-                        <MetaDot />
+                        <S.MetaDot />
                         <span>{post.comments}</span>
-                      </PostMeta>
-                    </PostRow>
+                      </S.PostMeta>
+                    </S.PostRow>
                   ))}
-                </YearGroup>
+                </S.YearGroup>
               ))}
-            </Timeline>
+            </S.Timeline>
           )}
-        </Section>
+        </S.Section>
 
-        {/* 年度总结 */}
         <OrnamentDivider />
 
-        <Section>
-          <SectionHeader>
-            <SectionTitle>年度总结</SectionTitle>
-          </SectionHeader>
+        <S.Section>
+          <S.SectionHeader>
+            <S.SectionTitle>年度总结</S.SectionTitle>
+          </S.SectionHeader>
           {yearlySummaries.length === 0 ? (
-            <Empty>暂无年度总结</Empty>
+            <S.EmptyHint>暂无年度总结</S.EmptyHint>
           ) : (
-            <ProjectList>
+            <S.ProjectList>
               {yearlySummaries.map(item => (
-                <PostRow key={item.id} href={`/post/${item.number}`}>
-                  <InkDot />
-                  <PostTitle>{item.title}</PostTitle>
-                  <PostMeta>
+                <S.PostRow key={item.id} href={`/post/${item.number}`}>
+                  <S.InkDot />
+                  <S.PostTitle>{item.title}</S.PostTitle>
+                  <S.PostMeta>
                     <span>{new Date(item.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
-                  </PostMeta>
-                </PostRow>
+                  </S.PostMeta>
+                </S.PostRow>
               ))}
-            </ProjectList>
+            </S.ProjectList>
           )}
-        </Section>
+        </S.Section>
 
         <OrnamentDivider />
 
-        {/* 微信读书 */}
-        <Section>
-          <SectionHeader>
-            <SectionTitle>微信读书</SectionTitle>
-            {wereadBooks.length > 0 && <MoreLink href='/weread'>全部&nbsp;&rarr;</MoreLink>}
-          </SectionHeader>
+        <S.Section>
+          <S.SectionHeader>
+            <S.SectionTitle>微信读书</S.SectionTitle>
+            {wereadBooks.length > 0 && <S.MoreLink href='/weread'>全部&nbsp;&rarr;</S.MoreLink>}
+          </S.SectionHeader>
           {wereadBooks.length === 0 ? (
-            <Empty>暂无书架数据</Empty>
+            <S.EmptyHint>暂无书架数据</S.EmptyHint>
           ) : (
-            <BooksList>
+            <S.BooksList>
               {wereadBooks.map((book) => (
-                <BookRow key={book.bookId}>
-                  <BookCover $src={book.cover || undefined} />
-                  <BookInfo>
-                    <BookTitle>{book.title}</BookTitle>
-                    <BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</BookMeta>
-                  </BookInfo>
-                </BookRow>
+                <S.BookRow key={book.bookId}>
+                  <S.BookCover $src={book.cover || undefined} />
+                  <S.BookInfo>
+                    <S.BookTitle>{book.title}</S.BookTitle>
+                    <S.BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</S.BookMeta>
+                  </S.BookInfo>
+                </S.BookRow>
               ))}
-            </BooksList>
+            </S.BooksList>
           )}
-        </Section>
+        </S.Section>
 
         <OrnamentDivider />
 
-        {/* 精选项目 */}
-        <Section>
-          <SectionHeader>
-            <SectionTitle>精选项目</SectionTitle>
-          </SectionHeader>
+        <S.Section>
+          <S.SectionHeader>
+            <S.SectionTitle>精选项目</S.SectionTitle>
+          </S.SectionHeader>
           {repos.length === 0 ? (
-            <Empty>暂时无法获取 GitHub 数据</Empty>
+            <S.EmptyHint>暂时无法获取 GitHub 数据</S.EmptyHint>
           ) : (
-            <ProjectList>
+            <S.ProjectList>
               {repos.map(repo => (
-                <ProjectLink
+                <S.ProjectLink
                   key={repo.html_url}
                   href={repo.html_url}
                   target='_blank'
                   rel='noopener noreferrer'
                 >
-                  <ProjectName>{repo.name}</ProjectName>
-                  {repo.description && <ProjectDesc>{repo.description}</ProjectDesc>}
-                  <ProjectMeta>{repo.language ?? ''}{repo.stargazers_count > 0 ? ` \u00b7 \u2606 ${repo.stargazers_count}` : ''}</ProjectMeta>
-                </ProjectLink>
+                  <S.ProjectName>{repo.name}</S.ProjectName>
+                  {repo.description && <S.ProjectDesc>{repo.description}</S.ProjectDesc>}
+                  <S.ProjectMeta>{repo.language ?? ''}{repo.stargazers_count > 0 ? ` \u00b7 \u2606 ${repo.stargazers_count}` : ''}</S.ProjectMeta>
+                </S.ProjectLink>
               ))}
-            </ProjectList>
+            </S.ProjectList>
           )}
-        </Section>
+        </S.Section>
 
-        {/* Contact Dialog */}
         <Dialog
           open={Boolean(activeContactConfig)}
           onClose={closeContact}
@@ -709,7 +287,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
         >
           {activeContactConfig && <ContactCard {...activeContactConfig} />}
         </Dialog>
-      </Main>
-    </Root>
+      </S.Main>
+    </S.Root>
   )
 }

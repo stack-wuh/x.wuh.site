@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import api from '../lib/api'
-import type { ContentItem } from '@wuh.site/shared-contracts'
+import { contentService } from '@wuh.site/shared-contracts/endpoints'
+import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
 
 const SITE_URL = 'https://wuh.site'
@@ -33,19 +33,11 @@ type PaginationState = {
   hasNext: boolean
 }
 
-type PostItem = {
-  id: number
-  number: number
-  title: string
-  comments: number
-  created_at: string
-  labels: { name: string; color?: string | null }[]
-}
-
-const mapContentToPost = (item: ContentItem): PostItem => ({
+const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
   number: item.number,
   title: item.title,
+  html_url: `https://github.com/${item.repo}/issues/${item.number}`,
   comments: item.comments,
   created_at: item.createdAtGitHub || '',
   labels: item.labels.map((l) => ({ name: l })),
@@ -57,29 +49,29 @@ const toPageNumber = (value: string | string[] | undefined) => {
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
-async function getIssues(page: number): Promise<{ posts: PostItem[]; pagination: PaginationState }> {
-  try {
-    const result = await api.content.getPosts(
-      { page, limit: PER_PAGE, state: 'open' },
-      { revalidate: 600 }
-    )
+async function getIssues(page: number) {
+  const { data, error } = await contentService.getPosts.server({
+    query: { page: String(page), limit: String(PER_PAGE), state: 'open' },
+    revalidate: 600,
+  })
 
-    const { data, pagination } = result
-
+  if (error || !data) {
     return {
-      posts: data.map(mapContentToPost),
-      pagination: {
-        currentPage: pagination.page,
-        lastPage: pagination.totalPages,
-        hasPrev: pagination.hasPreviousPage,
-        hasNext: pagination.hasNextPage,
-      },
-    }
-  } catch {
-    return {
-      posts: [],
+      posts: [] as PostListItem[],
       pagination: { currentPage: page, lastPage: page, hasPrev: page > 1, hasNext: false }
     }
+  }
+
+  const result = data as any
+  const { pagination } = result
+  return {
+    posts: result.data.map(mapContentToPost) as PostListItem[],
+    pagination: {
+      currentPage: pagination.page,
+      lastPage: pagination.totalPages,
+      hasPrev: pagination.hasPreviousPage,
+      hasNext: pagination.hasNextPage,
+    },
   }
 }
 

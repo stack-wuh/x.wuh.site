@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { CreateAnonymousCommentDto } from './dto/comment.dto';
-import { PaginatedResult, buildPaginatedResult } from '../../common/interfaces/paginated-response.interface';
+import type { PaginatedResult } from '@wuh.site/shared-contracts';
+import { buildPaginatedResult } from '../../common/utils/paginated-result';
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto';
 

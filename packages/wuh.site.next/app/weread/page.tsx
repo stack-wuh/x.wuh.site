@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import api from '../lib/api'
+import type { WereadBook } from '@wuh.site/shared-contracts'
+import { wereadService } from '@wuh.site/shared-contracts/endpoints'
 import WereadView from './WereadView'
 
 const SITE_URL = 'https://wuh.site'
@@ -18,40 +19,28 @@ export const metadata: Metadata = {
   },
 }
 
-type Book = {
-  bookId: string
-  title: string
-  author: string
-  cover: string
-  readUpdateTime: number
-  finishReading: number
-}
-
-type PageData = {
-  books: Book[]
-  total: number
-  currentPage: number
-  totalPages: number
-}
-
 const toPageNumber = (value: string | string[] | undefined) => {
   const raw = Array.isArray(value) ? value[0] : value
   const page = Number.parseInt(raw || '1', 10)
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
-async function getBooks(page: number): Promise<PageData> {
-  try {
-    const result = await api.weread.getBooks({ page, limit: PER_PAGE }, { revalidate: 3600 })
-    const data = result as any
-    return {
-      books: data.data || [],
-      total: data.pagination?.total || 0,
-      currentPage: data.pagination?.page || page,
-      totalPages: data.pagination?.totalPages || 1,
-    }
-  } catch {
+async function getBooks(page: number): Promise<{ books: WereadBook[]; total: number; currentPage: number; totalPages: number }> {
+  const { data, error } = await wereadService.getBooks.server({
+    query: { page: String(page), limit: String(PER_PAGE) },
+    revalidate: 3600,
+  })
+
+  if (error || !data) {
     return { books: [], total: 0, currentPage: page, totalPages: 1 }
+  }
+
+  const result = data as any
+  return {
+    books: (result.data || []) as WereadBook[],
+    total: result.pagination?.total || 0,
+    currentPage: result.pagination?.page || page,
+    totalPages: result.pagination?.totalPages || 1,
   }
 }
 

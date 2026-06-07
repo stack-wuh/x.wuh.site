@@ -148,5 +148,86 @@ export interface RepoDto {
   fork: boolean;
 }
 
+// API v2
+export interface ApiEndpoint {
+  path: string;
+  method: string;
+  description: string;
+  parameters?: ApiParameter[];
+  responses?: ApiResponse[];
+  tags?: string[];
+}
+
+export interface ApiParameter {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+  location: 'query' | 'path' | 'body' | 'header';
+  schema?: any;
+}
+
+export interface ApiResponse {
+  status: number;
+  description: string;
+  schema?: any;
+}
+
+export interface ApiVersion {
+  version: string;
+  baseUrl: string;
+  endpoints: ApiEndpoint[];
+  metadata: {
+    title: string;
+    description: string;
+    contact: {
+      name: string;
+      email: string;
+    };
+    license: {
+      name: string;
+      url: string;
+    };
+  };
+}
+
+// User
+export enum UserRole {
+  ROOT = 'root',
+  WRITER = 'writer',
+  READER = 'reader',
+}
+
+// Weread
+export interface WereadBook {
+  bookId: string
+  title: string
+  author: string
+  cover: string
+  readUpdateTime: number
+  finishReading: number
+}
+
+// Post list item (frontend view model derived from ContentItem)
+export interface PostListItem {
+  id: number
+  number: number
+  title: string
+  html_url: string
+  comments: number
+  created_at: string
+  labels: { name: string; color?: string | null }[]
+}
+
+// Post detail with adjacent navigation
+export type AdjacentPost = { number: number; title: string } | null
+
+export type PostDetail = ContentItem & {
+  prev: AdjacentPost
+  next: AdjacentPost
+  total: number
+  position: number
+}
+
 // Example export for reuse
 export type ExampleDto = { id: ID; name: string };

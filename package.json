@@ -31,6 +31,7 @@
   "author": "shadow <wuh201314@foxmail.com>",
   "license": "ISC",
   "dependencies": {
+    "ahooks": "3.7.1",
     "conventional-changelog-cli": "^5.0.0",
     "standard-version": "^9.5.0"
   },
