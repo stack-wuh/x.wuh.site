@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import api from '../lib/api'
+import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
 
@@ -49,29 +49,29 @@ const toPageNumber = (value: string | string[] | undefined) => {
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
-async function getIssues(page: number): Promise<{ posts: PostListItem[]; pagination: PaginationState }> {
-  try {
-    const result = await api.content.getPosts(
-      { page, limit: PER_PAGE, state: 'open' },
-      { revalidate: 600 }
-    )
+async function getIssues(page: number) {
+  const { data, error } = await contentService.getPosts.server({
+    query: { page: String(page), limit: String(PER_PAGE), state: 'open' },
+    revalidate: 600,
+  })
 
-    const { data, pagination } = result
-
+  if (error || !data) {
     return {
-      posts: data.map(mapContentToPost),
-      pagination: {
-        currentPage: pagination.page,
-        lastPage: pagination.totalPages,
-        hasPrev: pagination.hasPreviousPage,
-        hasNext: pagination.hasNextPage,
-      },
-    }
-  } catch {
-    return {
-      posts: [],
+      posts: [] as PostListItem[],
       pagination: { currentPage: page, lastPage: page, hasPrev: page > 1, hasNext: false }
     }
+  }
+
+  const result = data as any
+  const { pagination } = result
+  return {
+    posts: result.data.map(mapContentToPost) as PostListItem[],
+    pagination: {
+      currentPage: pagination.page,
+      lastPage: pagination.totalPages,
+      hasPrev: pagination.hasPreviousPage,
+      hasNext: pagination.hasNextPage,
+    },
   }
 }
 
