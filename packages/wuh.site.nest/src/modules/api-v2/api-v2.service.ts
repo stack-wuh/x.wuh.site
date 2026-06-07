@@ -373,28 +373,33 @@ export class ApiV2Service {
       {
         path: '/v2/weread/books',
         method: 'GET',
-        description: '获取微信读书书架书籍列表',
+        description: '获取微信读书书架书籍列表（分页）',
         tags: ['weread'],
         parameters: [
+          {
+            name: 'page',
+            type: 'number',
+            required: false,
+            description: '页码，默认 1',
+            location: 'query',
+          },
           {
             name: 'limit',
             type: 'number',
             required: false,
-            description: '返回数量限制',
+            description: '每页数量，默认 10',
             location: 'query',
           },
         ],
         responses: [
           {
             status: 200,
-            description: '书籍列表',
+            description: '分页书籍列表',
             schema: {
               type: 'object',
               properties: {
-                books: {
-                  type: 'array',
-                  items: { $ref: '#/components/schemas/WereadBook' },
-                },
+                data: { type: 'array', items: { $ref: '#/components/schemas/WereadBook' } },
+                pagination: { $ref: '#/components/schemas/PaginationMeta' },
               },
             },
           },

@@ -2,6 +2,7 @@
 
 import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
+import Pagination from '@wuh.site/components/pagination'
 
 type Book = {
   bookId: string
@@ -14,6 +15,9 @@ type Book = {
 
 type Props = {
   books: Book[]
+  total: number
+  currentPage: number
+  totalPages: number
 }
 
 const Root = styled.div`
@@ -118,7 +122,7 @@ const Empty = styled.div`
   font-size: var(--font-size-sm);
 `
 
-export default function WereadView({ books }: Props) {
+export default function WereadView({ books, total, currentPage, totalPages }: Props) {
   const reading = books.filter((b) => !b.finishReading)
   const finished = books.filter((b) => b.finishReading)
 
@@ -128,7 +132,7 @@ export default function WereadView({ books }: Props) {
         <Header>
           <BackLink href='/'>← 返回首页</BackLink>
           <Title>微信读书</Title>
-          <Subtitle>共 {books.length} 本书，{reading.length} 本在读 · {finished.length} 本已读完</Subtitle>
+          <Subtitle>共 {total} 本书，本页 {reading.length} 本在读 · {finished.length} 本已读完</Subtitle>
         </Header>
 
         {books.length === 0 ? (
@@ -149,6 +153,12 @@ export default function WereadView({ books }: Props) {
             ))}
           </BookList>
         )}
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          getPageUrl={(page) => (page <= 1 ? '/weread' : `/weread?page=${page}`)}
+        />
       </Main>
     </Root>
   )

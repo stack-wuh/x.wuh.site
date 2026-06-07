@@ -15,11 +15,16 @@ export class WereadController {
   }
 
   @Get('books')
-  @ApiOperation({ summary: 'Get books from database' })
+  @ApiOperation({ summary: 'Get paginated books from database' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'List of books' })
-  async getBooks(@Query('limit') limit?: string) {
-    const books = await this.wereadService.getBooks(limit ? parseInt(limit, 10) : undefined);
-    return { books };
+  @ApiResponse({ status: 200, description: 'Paginated list of books' })
+  async getBooks(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const p = page ? parseInt(page, 10) : 1;
+    const l = limit ? parseInt(limit, 10) : 10;
+    return this.wereadService.getBooks(p, l);
   }
 }
