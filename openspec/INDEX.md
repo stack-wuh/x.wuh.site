@@ -78,6 +78,11 @@
 - **需求:** (见 spec.md)
 - **路径:** `openspec/specs/code-split/spec.md`
 
+## code-style — 代码风格约定
+- **关键词:** 代码风格, CODE_STYLE, 文件长度, JSDoc, 样式拆分, styled-components
+- **需求:** 单文件不超过300行, 导出函数必须加JSDoc, 样式统一为styles/index.ts, 通过import * as S命名空间导入
+- **路径:** `openspec/specs/code-style/spec.md`
+
 ## next — 前端构建
 - **关键词:** Next.js, 导入路径, tsconfig paths, CDN
 - **需求:** 导入路径统一无 /index 后缀, shared-contracts 路径映射

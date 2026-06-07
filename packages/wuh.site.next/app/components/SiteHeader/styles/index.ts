@@ -1,15 +1,9 @@
-'use client'
-
-import Link from 'next/link'
-import { useCallback, useEffect, useId, useState } from 'react'
 import styled from '@wuh.site/components/styled'
-import Image from '@wuh.site/components/image'
-import { IconBars } from '@wuh.site/components/icons'
-import { useThemeMode } from './theme/ThemeModeProvider'
+import Link from 'next/link'
 
 const BREAKPOINT = '768px'
 
-const HeaderRoot = styled.header`
+export const HeaderRoot = styled.header`
   position: sticky;
   top: 0;
   z-index: 50;
@@ -24,7 +18,7 @@ const HeaderRoot = styled.header`
   backdrop-filter: blur(10px);
 `
 
-const HeaderInner = styled.div`
+export const HeaderInner = styled.div`
   width: min(1200px, 100%);
   margin: 0 auto;
   padding: 14px clamp(16px, 4vw, 60px);
@@ -34,7 +28,7 @@ const HeaderInner = styled.div`
   gap: var(--space-sm);
 `
 
-const Brand = styled.div`
+export const Brand = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 0;
@@ -48,24 +42,22 @@ const Brand = styled.div`
   }
 `
 
-const Nav = styled.nav`
+export const Nav = styled.nav`
   display: none;
   align-items: center;
   gap: 12px;
 
-  @media (min-width: ${BREAKPOINT}) {
-    display: flex;
-  }
+  @media (min-width: ${BREAKPOINT}) { display: flex; }
 `
 
-const Right = styled.div`
+export const Right = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 12px;
 `
 
-const NavLink = styled(Link)`
+export const NavLink = styled(Link)`
   text-decoration: none;
   color: color-mix(in oklab, var(--text-color) 78%, transparent);
   font-size: var(--font-size-sm);
@@ -85,7 +77,7 @@ const NavLink = styled(Link)`
   }
 `
 
-const MobileToggle = styled.button`
+export const MobileToggle = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -98,9 +90,7 @@ const MobileToggle = styled.button`
   cursor: pointer;
   transition: transform var(--transition-fast) ease, background var(--transition-fast) ease, border-color var(--transition-fast) ease;
 
-  @media (min-width: ${BREAKPOINT}) {
-    display: none;
-  }
+  @media (min-width: ${BREAKPOINT}) { display: none; }
 
   &:hover {
     transform: translateY(-1px);
@@ -112,13 +102,10 @@ const MobileToggle = styled.button`
     outline-offset: 3px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
-  }
+  @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
 `
 
-const ThemeToggle = styled.button`
+export const ThemeToggle = styled.button`
   --toggle-h: 32px;
   display: inline-flex;
   align-items: center;
@@ -147,17 +134,11 @@ const ThemeToggle = styled.button`
     outline-offset: 3px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
-  }
-
-  @media (max-width: ${BREAKPOINT}) {
-    display: none;
-  }
+  @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
+  @media (max-width: ${BREAKPOINT}) { display: none; }
 `
 
-const ThemeDot = styled.span`
+export const ThemeDot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 999px;
@@ -165,16 +146,14 @@ const ThemeDot = styled.span`
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 18%, transparent);
 `
 
-const MobilePanel = styled.div<{ $open: boolean }>`
+export const MobilePanel = styled.div<{ $open: boolean }>`
   display: ${({ $open }) => ($open ? 'block' : 'none')};
   padding: 0 clamp(16px, 4vw, 60px) 14px;
 
-  @media (min-width: ${BREAKPOINT}) {
-    display: none;
-  }
+  @media (min-width: ${BREAKPOINT}) { display: none; }
 `
 
-const MobileNav = styled.nav`
+export const MobileNav = styled.nav`
   width: min(1200px, 100%);
   margin: 0 auto;
   padding: 12px;
@@ -186,7 +165,7 @@ const MobileNav = styled.nav`
   gap: 10px;
 `
 
-const MobileItem = styled(Link)`
+export const MobileItem = styled(Link)`
   padding: 12px 14px;
   border-radius: 14px;
   text-decoration: none;
@@ -206,13 +185,13 @@ const MobileItem = styled(Link)`
   }
 `
 
-const MobileActions = styled.div`
+export const MobileActions = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
 `
 
-const MobileActionButton = styled.button`
+export const MobileActionButton = styled.button`
   padding: 12px 14px;
   border-radius: 14px;
   color: var(--text-primary);
@@ -233,93 +212,9 @@ const MobileActionButton = styled.button`
   }
 `
 
-const MobileThemeLabel = styled.span`
+export const MobileThemeLabel = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 `
-
-export default function SiteHeader() {
-  const panelId = useId()
-  const [open, setOpen] = useState(false)
-  const { mode, toggleMode } = useThemeMode()
-
-  const close = useCallback(() => setOpen(false), [])
-  const toggle = useCallback(() => setOpen((v) => !v), [])
-
-  useEffect(() => {
-    if (!open) return
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [open, close])
-
-  return (
-    <HeaderRoot>
-      <HeaderInner>
-        <Brand aria-label='站点标识'>
-          <Image src='/logo.svg' alt='wuh.site' width={42} height={26} priority inline showSkeleton={false} appearance='plain' />
-        </Brand>
-
-        <Right>
-          <Nav aria-label='主导航'>
-            <NavLink href='/blog'>博客</NavLink>
-            <NavLink href='/about'>关于</NavLink>
-            <NavLink href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer'>
-              知识库
-            </NavLink>
-          </Nav>
-
-          <ThemeToggle type='button' onClick={toggleMode} aria-label={`切换主题（当前：${mode === 'money' ? '酒红' : '素雅'}）`}>
-            <ThemeDot aria-hidden='true' />
-            <span>{mode === 'money' ? '酒红' : '素雅'}</span>
-          </ThemeToggle>
-
-          <MobileToggle
-            type='button'
-            aria-label={open ? '关闭菜单' : '打开菜单'}
-            aria-expanded={open}
-            aria-controls={panelId}
-            onClick={toggle}
-          >
-            <IconBars />
-          </MobileToggle>
-        </Right>
-      </HeaderInner>
-
-      <MobilePanel id={panelId} $open={open}>
-        <MobileNav aria-label='移动端导航'>
-          <MobileItem href='/' onClick={close}>
-            首页
-          </MobileItem>
-          <MobileItem href='/blog' onClick={close}>
-            博客
-          </MobileItem>
-          <MobileItem href='/about' onClick={close}>
-            关于
-          </MobileItem>
-          <MobileItem href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' onClick={close}>
-            知识库
-          </MobileItem>
-          <MobileActions>
-            <MobileActionButton
-              type='button'
-              onClick={() => {
-                toggleMode()
-                close()
-              }}
-            >
-              <MobileThemeLabel>
-                <ThemeDot aria-hidden='true' />
-                <span>主题：{mode === 'money' ? '酒红' : '素雅'}</span>
-              </MobileThemeLabel>
-            </MobileActionButton>
-          </MobileActions>
-        </MobileNav>
-      </MobilePanel>
-    </HeaderRoot>
-  )
-}
