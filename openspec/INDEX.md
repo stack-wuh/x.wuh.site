@@ -19,8 +19,8 @@
 - **路径:** `openspec/specs/seo/spec.md`
 
 ## repos-api — 仓库 API
-- **关键词:** GitHub API, 仓库, 缓存, Octokit
-- **需求:** Get GitHub repositories, 5-minute memory cache, Stale cache fallback
+- **关键词:** GitHub API, 仓库, 置顶, GraphQL, Octokit, 缓存
+- **需求:** Get GitHub pinned repositories, 5-minute memory cache, Stale cache fallback
 - **路径:** `openspec/specs/repos-api/spec.md`
 
 ## api-standardization — API 标准化

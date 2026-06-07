@@ -2,14 +2,13 @@
 
 ## ADDED
 
-### Requirement: Get GitHub repositories
-`GET /v2/repos` 返回 GitHub 用户的所有公开仓库，过滤 fork，按 star 排序。
+### Requirement: Get GitHub pinned repositories
+`GET /v2/repos` 通过 GitHub GraphQL API 获取用户置顶仓库 (pinnedItems)。
 
 - **GIVEN** 客户端请求 `/v2/repos`
-- **WHEN** 服务端调用 GitHub API
+- **WHEN** 服务端调用 GitHub GraphQL API 查询 `user.pinnedItems(first: 6, types: REPOSITORY)`
 - **THEN** 返回 `{ repos: [{ name, description, html_url, stargazers_count, language, homepage, fork }] }`
-- **AND** fork 仓库被过滤
-- **AND** 结果按 `stargazers_count` 降序排列
+- **AND** 按用户在 GitHub 上的置顶顺序排列
 
 ### Requirement: 5-minute memory cache
 repos 数据在内存中缓存 5 分钟。

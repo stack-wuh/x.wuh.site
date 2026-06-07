@@ -12,7 +12,7 @@ export class ReposController {
   @ApiOperation({ summary: 'Get GitHub repositories' })
   @ApiResponse({
     status: 200,
-    description: 'List of repositories (forks filtered, sorted by stars)',
+    description: 'List of pinned repositories from GitHub',
     type: ReposResponseDto,
   })
   async getRepos(): Promise<ReposResponseDto> {
