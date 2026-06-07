@@ -36,7 +36,7 @@
     "@types/react-dom": "19.2.3",
     "baseline-browser-mapping": "^2.10.0",
     "oxlint": "^1",
-    "typescript": "^5"
+    "typescript": "~5.7.2"
   },
   "types": "src/index.ts"
 }

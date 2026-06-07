@@ -1,67 +1,20 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "ES2021"],
     "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "noEmit": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
     "paths": {
-      "@wuh.site/components/*": [
-        "../components/*"
-      ],
-      "@wuh.site/shared-contracts": [
-        "../shared-contracts/src/index.ts"
-      ],
-      "@wuh.site/shared-contracts/*": [
-        "../shared-contracts/src/*"
-      ],
-      "@wuh.site/config/*": [
-        "../config/*"
-      ],
-      "@wuh.site/hooks/*": [
-        "../hooks/*"
-      ],
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@wuh.site/components/*": ["../components/*"],
+      "@wuh.site/shared-contracts": ["../shared-contracts/src/index.ts"],
+      "@wuh.site/shared-contracts/*": ["../shared-contracts/src/*"],
+      "@wuh.site/config/*": ["../config/*"],
+      "@wuh.site/hooks/*": ["../hooks/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    "wuh.site/types/**/*.ts",
-    "wuh.site/dev/types/**/*.ts",
-    "dist.wuh.site/types/**/*.ts",
-    "dist.wuh.site/dev/types/**/*.ts",
-    "dist.wuh.site.next/types/**/*.ts",
-    "dist.wuh.site.next/dev/types/**/*.ts",
-    "./dist/wuh.site.next/types/**/*.ts",
-    "./dist/wuh.site.next/dev/types/**/*.ts",
-    "dist/wuh.site.next/types/**/*.ts",
-    "dist/wuh.site.next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "app/**/*", "components/**/*", "types/**/*"],
+  "exclude": ["node_modules", ".next", "dist"]
 }

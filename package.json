@@ -5,6 +5,8 @@
   "description": "博客项目相关的系列仓库, 全套使用Nextjs搭建",
   "main": "index.js",
   "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "tsc --noEmit",
     "dev:next": "pnpm --filter @wuh.site/next run dev",
     "build:next": "pnpm --filter @wuh.site/next run build",
     "start:next": "pnpm --filter @wuh.site/next run start",
@@ -44,7 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "husky": "^9.1.7",
-    "typescript": "^5"
+    "typescript": "~5.7.2"
   },
   "husky": {
     "hooks": {
