@@ -86,6 +86,9 @@ const Ellipsis = styled.span`
 `
 
 const NavLink = styled.a<{ $disabled: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: var(--font-size-sm);
   color: ${({ $disabled }) => ($disabled ? 'var(--text-muted)' : 'var(--text-secondary)')};
   text-decoration: none;
@@ -95,6 +98,17 @@ const NavLink = styled.a<{ $disabled: boolean }>`
 
   &:hover {
     color: ${({ $disabled }) => ($disabled ? 'var(--text-muted)' : 'var(--primary-color)')};
+  }
+`
+
+const NavLabel = styled.span`
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.2s ease;
+
+  ${NavLink}:hover & {
+    max-width: 60px;
   }
 `
 
@@ -188,7 +202,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
         href={hasPrev ? getPageUrl(currentPage - 1) : undefined}
         aria-label="上一页"
         aria-disabled={!hasPrev}
-      ><ArrowLeftIcon /></NavLink>
+      ><ArrowLeftIcon /><NavLabel>上一页</NavLabel></NavLink>
 
       <LetterGroup>
         {items.map((item) => {
@@ -217,7 +231,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
         href={hasNext ? getPageUrl(currentPage + 1) : undefined}
         aria-label="下一页"
         aria-disabled={!hasNext}
-      ><ArrowRightIcon /></NavLink>
+      ><ArrowRightIcon /><NavLabel>下一页</NavLabel></NavLink>
     </Nav>
   )
 }
