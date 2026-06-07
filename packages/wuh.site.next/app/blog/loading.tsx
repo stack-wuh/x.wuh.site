@@ -54,19 +54,13 @@ const Row = styled.div`
   }
 `
 
-const Pagination = styled.div`
+const PaginationSkeleton = styled.div`
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 10px;
   margin-top: var(--space-lg);
   width: 100%;
-`
-
-const PageItem = styled.div`
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--normal-300);
-  background: var(--background-100);
 `
 
 const renderGroups = (count: number) => Array.from({ length: count }, (_, i) => i)
@@ -96,12 +90,11 @@ export default function Loading() {
           ))}
         </Timeline>
 
-        <Pagination aria-hidden='true'>
-          <PageItem><Skeleton variant='text' width={40} height={12} /></PageItem>
-          <PageItem><Skeleton variant='text' width={18} height={12} /></PageItem>
-          <PageItem><Skeleton variant='text' width={18} height={12} /></PageItem>
-          <PageItem><Skeleton variant='text' width={40} height={12} /></PageItem>
-        </Pagination>
+        <PaginationSkeleton aria-hidden='true'>
+          <Skeleton variant='text' width={56} height={14} />
+          <Skeleton variant='text' width={80} height={18} />
+          <Skeleton variant='text' width={56} height={14} />
+        </PaginationSkeleton>
       </Main>
     </Root>
   )

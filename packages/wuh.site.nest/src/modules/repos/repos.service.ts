@@ -3,6 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { Octokit } from '@octokit/rest';
 import { RepoDto } from './dto/repos.dto';
 
+interface PinnedRepoNode {
+  name: string;
+  description: string | null;
+  url: string;
+  stargazerCount: number;
+  primaryLanguage: { name: string } | null;
+  homepageUrl: string | null;
+}
+
 @Injectable()
 export class ReposService {
   private logger = new Logger(ReposService.name);
@@ -23,24 +32,39 @@ export class ReposService {
     }
 
     try {
-      const { data } = await this.octokit.rest.repos.listForUser({
-        username: this.configService.get<string>('CONTENT_REPO_OWNER') || 'stack-wuh',
-        sort: 'updated',
-        per_page: 100,
-      });
+      const login = this.configService.get<string>('CONTENT_REPO_OWNER') || 'stack-wuh';
 
-      const repos: RepoDto[] = data
-        .filter((repo) => !repo.fork)
-        .sort((a, b) => (b.stargazers_count ?? 0) - (a.stargazers_count ?? 0))
-        .map((repo) => ({
-          name: repo.name,
-          description: repo.description ?? null,
-          html_url: repo.html_url,
-          stargazers_count: repo.stargazers_count ?? 0,
-          language: repo.language ?? null,
-          homepage: repo.homepage ?? null,
-          fork: repo.fork,
-        }));
+      const result = await this.octokit.graphql<{
+        user: { pinnedItems: { nodes: PinnedRepoNode[] } };
+      }>(
+        `query($login: String!) {
+          user(login: $login) {
+            pinnedItems(first: 6, types: REPOSITORY) {
+              nodes {
+                ... on Repository {
+                  name
+                  description
+                  url
+                  stargazerCount
+                  primaryLanguage { name }
+                  homepageUrl
+                }
+              }
+            }
+          }
+        }`,
+        { login },
+      );
+
+      const repos: RepoDto[] = result.user.pinnedItems.nodes.map((repo) => ({
+        name: repo.name,
+        description: repo.description ?? null,
+        html_url: repo.url,
+        stargazers_count: repo.stargazerCount,
+        language: repo.primaryLanguage?.name ?? null,
+        homepage: repo.homepageUrl ?? null,
+        fork: false,
+      }));
 
       // Update cache
       this.cache = { data: repos, timestamp: Date.now() };

@@ -19,8 +19,8 @@
 - **路径:** `openspec/specs/seo/spec.md`
 
 ## repos-api — 仓库 API
-- **关键词:** GitHub API, 仓库, 缓存, Octokit
-- **需求:** Get GitHub repositories, 5-minute memory cache, Stale cache fallback
+- **关键词:** GitHub API, 仓库, 置顶, GraphQL, Octokit, 缓存
+- **需求:** Get GitHub pinned repositories, 5-minute memory cache, Stale cache fallback
 - **路径:** `openspec/specs/repos-api/spec.md`
 
 ## api-standardization — API 标准化
@@ -82,6 +82,11 @@
 - **关键词:** Next.js, 导入路径, tsconfig paths, CDN
 - **需求:** 导入路径统一无 /index 后缀, shared-contracts 路径映射
 - **路径:** `openspec/specs/next/spec.md`
+
+## pagination — 分页器
+- **关键词:** 分页器, 分页, W-u-H, 字母式, 组件库
+- **需求:** W-u-H字母式分页, 窗口裁剪, 导航按钮, 空状态不渲染, 组件导出, 替换内联分页
+- **路径:** `openspec/specs/pagination/spec.md`
 
 ## post — 博客详情
 - **关键词:** 博客详情, 导航, PostToolbar, 流动阅读线, 文章位置

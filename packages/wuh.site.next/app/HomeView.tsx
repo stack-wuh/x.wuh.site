@@ -38,6 +38,20 @@ type Props = {
     created_at: string
     labels: TagItem[]
   }[]
+  yearlySummaries: {
+    id: number
+    number: number
+    title: string
+    created_at: string
+  }[]
+  wereadBooks: {
+    bookId: string
+    title: string
+    author: string
+    cover: string
+    readUpdateTime: number
+    finishReading: number
+  }[]
 }
 
 /* ====== Styled Components ====== */
@@ -385,6 +399,48 @@ const Empty = styled.div`
   font-size: var(--font-size-sm);
 `
 
+/* Books */
+const BooksList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+`
+
+const BookRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 8px;
+  border-radius: 6px;
+`
+
+const BookCover = styled.div<{ $src?: string }>`
+  width: 32px;
+  height: 42px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'var(--background-300)')};
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+`
+
+const BookInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`
+
+const BookTitle = styled.div`
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--text-primary);
+`
+
+const BookMeta = styled.div`
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+`
+
 /* ====== Contact Config ====== */
 
 type ContactDialogConfig = ContactCardProps
@@ -481,14 +537,13 @@ const groupByYear = (posts: Props['posts']) => {
 
 /* ====== Component ====== */
 
-export default function HomeView({ repos, posts }: Props) {
+export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }: Props) {
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
   const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
   const closeContact = useCallback(() => setActiveContact(null), [])
   const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
 
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
-
   return (
     <Root>
       <Main>
@@ -568,12 +623,61 @@ export default function HomeView({ repos, posts }: Props) {
           )}
         </Section>
 
+        {/* 年度总结 */}
         <OrnamentDivider />
 
-        {/* 开源项目 */}
         <Section>
           <SectionHeader>
-            <SectionTitle>开源项目</SectionTitle>
+            <SectionTitle>年度总结</SectionTitle>
+          </SectionHeader>
+          {yearlySummaries.length === 0 ? (
+            <Empty>暂无年度总结</Empty>
+          ) : (
+            <ProjectList>
+              {yearlySummaries.map(item => (
+                <PostRow key={item.id} href={`/post/${item.number}`}>
+                  <InkDot />
+                  <PostTitle>{item.title}</PostTitle>
+                  <PostMeta>
+                    <span>{new Date(item.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                  </PostMeta>
+                </PostRow>
+              ))}
+            </ProjectList>
+          )}
+        </Section>
+
+        <OrnamentDivider />
+
+        {/* 微信读书 */}
+        <Section>
+          <SectionHeader>
+            <SectionTitle>微信读书</SectionTitle>
+            {wereadBooks.length > 0 && <MoreLink href='/weread'>全部&nbsp;&rarr;</MoreLink>}
+          </SectionHeader>
+          {wereadBooks.length === 0 ? (
+            <Empty>暂无书架数据</Empty>
+          ) : (
+            <BooksList>
+              {wereadBooks.map((book) => (
+                <BookRow key={book.bookId}>
+                  <BookCover $src={book.cover || undefined} />
+                  <BookInfo>
+                    <BookTitle>{book.title}</BookTitle>
+                    <BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</BookMeta>
+                  </BookInfo>
+                </BookRow>
+              ))}
+            </BooksList>
+          )}
+        </Section>
+
+        <OrnamentDivider />
+
+        {/* 精选项目 */}
+        <Section>
+          <SectionHeader>
+            <SectionTitle>精选项目</SectionTitle>
           </SectionHeader>
           {repos.length === 0 ? (
             <Empty>暂时无法获取 GitHub 数据</Empty>
