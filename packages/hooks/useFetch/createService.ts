@@ -90,13 +90,13 @@ function createUseHook<TResponse, TQuery = Record<string, unknown>, TBody = unkn
           body,
         }) as Promise<TResponse>,
       {
-        onError: (e) => onError?.(e as FetchError),
+        onError: (e) => onError?.(e as unknown as FetchError),
       }
     )
 
     return {
       data: result.data ?? null,
-      error: (result.error as FetchError) ?? null,
+      error: (result.error as unknown as FetchError) ?? null,
       loading: result.loading,
       run: result.run,
       refresh: result.refresh,
