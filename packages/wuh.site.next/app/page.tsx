@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import api from './lib/api'
+import { contentService, reposService, wereadService } from '@wuh.site/shared-contracts/endpoints'
 import type { ContentItem, RepoDto, PostListItem, WereadBook } from '@wuh.site/shared-contracts'
 import HomeView from './HomeView'
 
@@ -25,15 +25,10 @@ export const metadata: Metadata = {
 }
 
 async function getRepos(): Promise<RepoDto[]> {
-  try {
-    const data = await api.repos.getAll({ revalidate: 3600 })
-    return data.repos.slice(0, 6)
-  } catch {
-    return []
-  }
+  const { data } = await reposService.getAll.server({ revalidate: 3600 })
+  if (!data) return []
+  return (data as any).repos.slice(0, 6) as RepoDto[]
 }
-
-type YearlySummary = PostListItem
 
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
@@ -46,33 +41,33 @@ const mapContentToPost = (item: ContentItem): PostListItem => ({
 })
 
 async function getFeaturedIssues(): Promise<PostListItem[]> {
-  try {
-    const result = await api.content.getPosts({ limit: 6, state: 'open' }, { revalidate: 1800 })
-    return result.data.map(mapContentToPost)
-  } catch {
-    return []
-  }
+  const { data } = await contentService.getPosts.server({
+    query: { limit: '6', state: 'open' },
+    revalidate: 1800,
+  })
+  if (!data) return []
+  return (data as any).data.map(mapContentToPost) as PostListItem[]
 }
 
-async function getYearlySummaries(): Promise<YearlySummary[]> {
-  try {
-    const result = await api.content.getPosts({ limit: 50, state: 'open' }, { revalidate: 1800 })
-    return result.data
-      .map(mapContentToPost)
-      .filter((post) => post.title.includes('年度总结'))
-      .slice(0, 3)
-  } catch {
-    return []
-  }
+async function getYearlySummaries(): Promise<PostListItem[]> {
+  const { data } = await contentService.getPosts.server({
+    query: { limit: '50', state: 'open' },
+    revalidate: 1800,
+  })
+  if (!data) return []
+  return (data as any).data
+    .map(mapContentToPost)
+    .filter((post: PostListItem) => post.title.includes('年度总结'))
+    .slice(0, 3) as PostListItem[]
 }
 
 async function getWereadBooks(): Promise<WereadBook[]> {
-  try {
-    const data = await api.weread.getBooks({ page: 5, limit: 10 }, { revalidate: 3600 })
-    return (data as any).books || []
-  } catch {
-    return []
-  }
+  const { data } = await wereadService.getBooks.server({
+    query: { page: '5', limit: '10' },
+    revalidate: 3600,
+  })
+  if (!data) return []
+  return ((data as any).data || []) as WereadBook[]
 }
 
 export default async function Home() {
