@@ -3,8 +3,8 @@
 import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
-import { useCallback, useRef } from 'react'
-import { useEventListener, useExternal } from 'ahooks'
+import { useRef } from 'react'
+import { useEventListener, useExternal, useRequest } from 'ahooks'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
 import dynamic from 'next/dynamic'
@@ -39,13 +39,14 @@ export default function AppProviders({ children }: { children: ReactNode }) {
 
   useExternal('//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css', { type: 'css' })
 
-  const resolveTrackSource = useCallback(async (trackId: number) => {
-    const response = await fetch(`/api/music/track?id=${trackId}`)
-    if (!response.ok) {
-      throw new Error('无法获取音频资源')
-    }
-    return response.json()
-  }, [])
+  const { runAsync: resolveTrackSource } = useRequest(
+    async (trackId: number) => {
+      const response = await fetch(`/api/music/track?id=${trackId}`)
+      if (!response.ok) throw new Error('无法获取音频资源')
+      return response.json()
+    },
+    { manual: true }
+  )
 
   return (
     <ThemeProvider>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useRequest } from 'ahooks'
 import {
   AudioMiniPlayer,
   AudioPlayerPanel,
@@ -17,21 +18,15 @@ export const GlobalAudioPlayer = () => {
   } = useAudioPlayer()
   const playlistId = FALLBACK_PLAYLIST_ID
 
-  useEffect(() => {
-    if (queue.length > 0) return
-    let cancelled = false
-    const controller = new AbortController()
-
-    const bootstrap = async () => {
-      try {
-        const res = await fetch(`/api/music/playlist?playlistId=${playlistId}`, {
-          signal: controller.signal
-        })
-        if (!res.ok) {
-          throw new Error('无法加载歌单')
-        }
-        const data = await res.json()
-        if (cancelled) return
+  const { run: fetchPlaylist } = useRequest(
+    async (id: string) => {
+      const res = await fetch(`/api/music/playlist?playlistId=${id}`)
+      if (!res.ok) throw new Error('无法加载歌单')
+      return res.json()
+    },
+    {
+      manual: true,
+      onSuccess: (data) => {
         if (Array.isArray(data?.tracks) && data.tracks.length) {
           const normalized: Track[] = data.tracks.map((track: Track) => ({
             ...track,
@@ -39,19 +34,21 @@ export const GlobalAudioPlayer = () => {
           }))
           loadQueue(normalized)
         }
-      } catch (error) {
-        if (cancelled || (error as Error).name === 'AbortError') return
+      },
+      onError: (error) => {
+        if ((error as Error).name === 'AbortError') return
         console.error('[player] 歌单初始化失败', error)
-      }
+      },
     }
+  )
 
-    const idleId = requestIdleCallback(() => bootstrap(), { timeout: 2000 })
+  useEffect(() => {
+    if (queue.length > 0) return
+    const idleId = requestIdleCallback(() => fetchPlaylist(playlistId), { timeout: 2000 })
     return () => {
-      cancelled = true
-      controller.abort()
       cancelIdleCallback(idleId)
     }
-  }, [queue.length, loadQueue, playlistId])
+  }, [queue.length, fetchPlaylist, playlistId])
 
   return (
     <>
