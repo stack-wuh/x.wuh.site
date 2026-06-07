@@ -1,4 +1,4 @@
-import { fetcher, type RequestOptions, type FetchResult, type FetchError } from './fetcher'
+import { fetcher, type QueryRecord, type RequestOptions, type FetchResult, type FetchError } from './fetcher'
 import { useRequest } from 'ahooks'
 
 const API_BASE = process.env.NEST_API_URL || 'http://localhost:3200/v2'
@@ -42,7 +42,7 @@ async function serverCall<TResponse, TQuery = Record<string, unknown>, TBody = u
   const fetcherOptions: RequestOptions<TBody> = {
     method: endpoint.method,
     headers: { 'Accept': 'application/json', ...headers },
-    query: query as Record<string, unknown>,
+    query: query as QueryRecord,
     body,
   }
 
@@ -86,7 +86,7 @@ function createUseHook<TResponse, TQuery = Record<string, unknown>, TBody = unkn
         fetcher<TResponse>(url, {
           method: endpoint.method,
           headers: { 'Accept': 'application/json', ...headers },
-          query: query as Record<string, unknown>,
+          query: query as QueryRecord,
           body,
         }) as Promise<TResponse>,
       {
