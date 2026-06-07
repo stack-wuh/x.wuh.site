@@ -649,15 +649,16 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
         </Section>
 
         {/* 年度总结 */}
-        {yearlySummaries.length > 0 && (
-          <>
-            <OrnamentDivider />
+        <OrnamentDivider />
 
-            <Section>
-              <SectionHeader>
-                <SectionTitle>年度总结</SectionTitle>
-              </SectionHeader>
-              <Timeline>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>年度总结</SectionTitle>
+          </SectionHeader>
+          {yearlySummaries.length === 0 ? (
+            <Empty>暂无年度总结</Empty>
+          ) : (
+            <Timeline>
               {summaryYearGroups.map(([year, items]) => (
                 <YearGroup key={year}>
                   <YearLabel>{year}</YearLabel>
@@ -673,19 +674,20 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
                 </YearGroup>
               ))}
             </Timeline>
-          </Section>
-          </>
-        )}
+          )}
+        </Section>
 
         <OrnamentDivider />
 
         {/* 微信读书 */}
-        {wereadBooks.length > 0 && (
-          <Section>
-            <SectionHeader>
-              <SectionTitle>微信读书</SectionTitle>
-              <MoreLink href='/weread'>全部&nbsp;&rarr;</MoreLink>
-            </SectionHeader>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>微信读书</SectionTitle>
+            {wereadBooks.length > 0 && <MoreLink href='/weread'>全部&nbsp;&rarr;</MoreLink>}
+          </SectionHeader>
+          {wereadBooks.length === 0 ? (
+            <Empty>暂无书架数据</Empty>
+          ) : (
             <BooksList>
               {wereadBooks.map((book) => (
                 <BookRow key={book.bookId}>
@@ -697,8 +699,8 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
                 </BookRow>
               ))}
             </BooksList>
-          </Section>
-        )}
+          )}
+        </Section>
 
         <OrnamentDivider />
 
