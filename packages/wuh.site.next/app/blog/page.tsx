@@ -37,6 +37,7 @@ const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
   number: item.number,
   title: item.title,
+  html_url: `https://github.com/${item.repo}/issues/${item.number}`,
   comments: item.comments,
   created_at: item.createdAtGitHub || '',
   labels: item.labels.map((l) => ({ name: l })),
