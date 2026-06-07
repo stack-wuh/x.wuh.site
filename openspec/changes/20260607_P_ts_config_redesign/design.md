@@ -1,23 +1,10 @@
-# TypeScript 配置体系重新设计
-
-## 目标
-
-解决 monorepo 中 `tsc`/`nest build` 间歇性 segfault、编译扫描范围失控、TypeScript 版本混杂的问题。
-
-## 方案概述
-
-方案 A — 分层 tsconfig + 分离构建/检查：
-
-- `pnpm build` = 纯转译（SWC / Next.js），不跑 tsc，快
-- `pnpm typecheck` = 全量 `tsc --noEmit`，CI 跑，本地可选
-- 开发时依赖编辑器 LSP 实时报错
-- TypeScript 锁定 `~5.7.2`，避开 5.9.3 segfault
+# 设计文档
 
 ## tsconfig 架构
 
 ```
 tsconfig.base.json          # 共享 compilerOptions
-├── tsconfig.json           # root，pnpm typecheck 用，noEmit
+├── tsconfig.json           # root，pnpm typecheck 入口，noEmit
 ├── packages/shared-contracts/
 │   └── tsconfig.json       # extends base，emitDeclarationOnly
 ├── packages/wuh.site.nest/
@@ -26,7 +13,7 @@ tsconfig.base.json          # 共享 compilerOptions
     └── tsconfig.json       # extends base，noEmit + jsx
 ```
 
-### tsconfig.base.json（新建）
+## tsconfig.base.json（新建）
 
 ```json
 {
@@ -51,7 +38,7 @@ tsconfig.base.json          # 共享 compilerOptions
 }
 ```
 
-### tsconfig.json（root，typecheck 入口）
+## tsconfig.json（root，typecheck 入口）
 
 ```json
 {
@@ -67,7 +54,9 @@ tsconfig.base.json          # 共享 compilerOptions
 }
 ```
 
-### packages/shared-contracts/tsconfig.json
+不再使用全局通配 `**/*.ts`，只扫描 packages 的 src 目录。
+
+## packages/shared-contracts/tsconfig.json
 
 ```json
 {
@@ -82,9 +71,9 @@ tsconfig.base.json          # 共享 compilerOptions
 }
 ```
 
-删除 `tsconfig.build.json`，统一为一个 tsconfig。
+删除 `tsconfig.build.json`，统一为一个 tsconfig。`emitDeclarationOnly` 不会与继承选项冲突（base 中未设 noEmit）。
 
-### packages/wuh.site.nest/tsconfig.json
+## packages/wuh.site.nest/tsconfig.json
 
 ```json
 {
@@ -110,7 +99,12 @@ tsconfig.base.json          # 共享 compilerOptions
 }
 ```
 
-### packages/wuh.site.next/tsconfig.json
+关键变更：
+- 新增 `include`/`exclude`，不扫描 dist 和 node_modules
+- `baseUrl` 从 `./` → `./src`，`@/` 路径映射更精确
+- `noEmit: true`，swc 负责转译
+
+## packages/wuh.site.next/tsconfig.json
 
 ```json
 {
@@ -134,6 +128,10 @@ tsconfig.base.json          # 共享 compilerOptions
 }
 ```
 
+关键变更：
+- `include` 从 17 行臃肿列表精简为 4 项精确路径
+- paths 中已有的包引用保持不变
+
 ## 构建体系
 
 ### root package.json scripts
@@ -145,20 +143,23 @@ tsconfig.base.json          # 共享 compilerOptions
 }
 ```
 
-### nest 变更
+### nest-cli.json
 
-- `nest-cli.json`: `typeCheck` 从 `true` 改为 `false`（SWC 转译保留）
-- `package.json`: `typescript` 从 `^5.3.3` 改为 `~5.7.2`
+```json
+{
+  "compilerOptions": {
+    "builder": "swc",
+    "typeCheck": false
+  }
+}
+```
+
+SWC 转译保留，类型检查关闭（由 `pnpm typecheck` 负责）。
 
 ### TypeScript 版本
 
-所有包统一锁定 `~5.7.2`，避开 5.9.3 的间歇性 segfault。shared-contracts 无需直接声明 typescript 依赖，通过 workspace 共享。
+所有包统一 `~5.7.2`，避开 5.9.3 segfault。shared-contracts 通过 workspace 共享，无需直接声明。
 
-## 迁移步骤
+## 构建顺序
 
-1. 降级 TypeScript → `pnpm install`
-2. 创建 `tsconfig.base.json`
-3. 重写各 tsconfig（root + 3 个包）
-4. 修改 nest `nest-cli.json`
-5. 更新 root `package.json` scripts
-6. 验证：`pnpm typecheck` + `pnpm build`
+`pnpm -r build` 按 workspace 依赖关系排序，shared-contracts → nest。但 root `typecheck` 引用的是源文件 `packages/*/src/**/*.ts`，直接通过 paths 解析，不需要先 build。
