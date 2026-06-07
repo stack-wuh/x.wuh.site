@@ -324,6 +324,88 @@ export class ApiV2Service {
         ],
       },
 
+      // Repos API
+      {
+        path: '/v2/repos',
+        method: 'GET',
+        description: '获取 GitHub 仓库列表',
+        tags: ['repos'],
+        responses: [
+          {
+            status: 200,
+            description: '仓库列表',
+            schema: {
+              type: 'object',
+              properties: {
+                repos: {
+                  type: 'array',
+                  items: { $ref: '#/components/schemas/Repo' },
+                },
+              },
+            },
+          },
+        ],
+      },
+
+      // Weread APIs
+      {
+        path: '/v2/weread/sync',
+        method: 'POST',
+        description: '从微信读书 API 同步书籍到数据库',
+        tags: ['weread'],
+        responses: [
+          {
+            status: 200,
+            description: '同步成功',
+            schema: {
+              type: 'object',
+              properties: {
+                synced: { type: 'number', description: '同步数量' },
+              },
+            },
+          },
+          {
+            status: 500,
+            description: '未配置 WEREAD_API_KEY 或 API 调用失败',
+          },
+        ],
+      },
+      {
+        path: '/v2/weread/books',
+        method: 'GET',
+        description: '获取微信读书书架书籍列表（分页）',
+        tags: ['weread'],
+        parameters: [
+          {
+            name: 'page',
+            type: 'number',
+            required: false,
+            description: '页码，默认 1',
+            location: 'query',
+          },
+          {
+            name: 'limit',
+            type: 'number',
+            required: false,
+            description: '每页数量，默认 10',
+            location: 'query',
+          },
+        ],
+        responses: [
+          {
+            status: 200,
+            description: '分页书籍列表',
+            schema: {
+              type: 'object',
+              properties: {
+                data: { type: 'array', items: { $ref: '#/components/schemas/WereadBook' } },
+                pagination: { $ref: '#/components/schemas/PaginationMeta' },
+              },
+            },
+          },
+        ],
+      },
+
       // Admin APIs
       {
         path: '/v2/admin/content/{id}/metadata',

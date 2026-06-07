@@ -98,6 +98,8 @@ src/modules/
 ├── user/         # 用户角色管理 (root/writer/reader)
 ├── auth/         # GitHub OAuth + JWT
 ├── admin/        # 管理接口
+├── repos/        # GitHub 仓库数据
+├── weread/       # 微信读书书架同步与展示
 └── api-v2/       # 新版统一 API
 ```
 

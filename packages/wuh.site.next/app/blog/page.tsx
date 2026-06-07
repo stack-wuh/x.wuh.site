@@ -8,6 +8,7 @@ const SITE_URL = 'https://wuh.site'
 export const metadata: Metadata = {
   title: '博客 · wuh.site',
   description: '收录 GitHub Issues 中的全部博客文章',
+  robots: { index: true, follow: true },
   alternates: { canonical: `${SITE_URL}/blog` },
   openGraph: {
     title: 'wuh.site 博客',

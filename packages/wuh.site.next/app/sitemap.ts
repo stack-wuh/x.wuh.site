@@ -22,7 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
 
     return [...staticRoutes, ...postRoutes]
-  } catch {
+  } catch (err) {
+    console.error('[sitemap] Failed to fetch posts from API:', err)
     return staticRoutes
   }
 }

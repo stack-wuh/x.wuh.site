@@ -81,9 +81,12 @@ export const comments = {
 
 // Weread API
 export const weread = {
-  getBooks(limit?: number, options?: FetchOptions) {
-    const query = limit ? `?limit=${limit}` : '';
-    return apiGet(`/weread/books${query}`, options);
+  getBooks(params?: { page?: number; limit?: number }, options?: FetchOptions) {
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    const qs = query.toString();
+    return apiGet(`/weread/books${qs ? `?${qs}` : ''}`, options);
   },
 };
 

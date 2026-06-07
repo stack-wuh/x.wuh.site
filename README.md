@@ -77,6 +77,7 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 - `/blog`：博客列表（Issues 分页、按创建时间倒序）
 - `/post/[number]`：博客详情（Issues 单篇 + GitHub Markdown 渲染）
 - `/about`：关于页
+- `/weread`：微信读书书架（同步展示在读/读完）
 - `/design/system-color`：色彩系统展示页
 - `not-found`/`error`：全局 404/500 处理
 

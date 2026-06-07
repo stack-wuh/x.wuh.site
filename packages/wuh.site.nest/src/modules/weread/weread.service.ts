@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { WereadBook, WereadBookDocument } from './schemas/weread.schema';
+import { buildPaginatedResult, PaginatedResult } from '../../common/interfaces/paginated-response.interface';
 
 type WeReadBook = {
   bookId: string;
@@ -70,12 +71,17 @@ export class WereadService {
     return { synced };
   }
 
-  async getBooks(limit?: number): Promise<WereadBookDocument[]> {
-    return this.wereadBookModel
-      .find()
-      .sort({ readUpdateTime: -1 })
-      .limit(limit || 0)
-      .lean()
-      .exec() as any;
+  async getBooks(page: number, limit: number): Promise<PaginatedResult<WereadBookDocument>> {
+    const [data, total] = await Promise.all([
+      this.wereadBookModel
+        .find()
+        .sort({ readUpdateTime: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean()
+        .exec() as any,
+      this.wereadBookModel.countDocuments().exec(),
+    ]);
+    return buildPaginatedResult(data as WereadBookDocument[], total, page, limit);
   }
 }
