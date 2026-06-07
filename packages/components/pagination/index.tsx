@@ -231,7 +231,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
         href={hasNext ? getPageUrl(currentPage + 1) : undefined}
         aria-label="下一页"
         aria-disabled={!hasNext}
-      ><ArrowRightIcon /><NavLabel>下一页</NavLabel></NavLink>
+      ><NavLabel>下一页</NavLabel><ArrowRightIcon /></NavLink>
     </Nav>
   )
 }
