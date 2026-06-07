@@ -3,6 +3,8 @@ import type {
   PaginatedResult,
   ContentItem,
   RepoDto,
+  AdjacentPost,
+  PostDetail,
 } from '@wuh.site/shared-contracts';
 
 const API_BASE = process.env.NEST_API_URL || 'http://localhost:3200/v2';
@@ -21,15 +23,6 @@ async function apiGet<T>(path: string, options?: FetchOptions): Promise<T> {
   }
   return res.data;
 }
-
-type AdjacentPost = { number: number; title: string } | null;
-
-type PostDetail = ContentItem & {
-  prev: AdjacentPost;
-  next: AdjacentPost;
-  total: number;
-  position: number;
-};
 
 // Content API
 export const content = {

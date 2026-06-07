@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { WereadBook } from '@wuh.site/shared-contracts'
 import api from '../lib/api'
 import WereadView from './WereadView'
 
@@ -18,29 +19,13 @@ export const metadata: Metadata = {
   },
 }
 
-type Book = {
-  bookId: string
-  title: string
-  author: string
-  cover: string
-  readUpdateTime: number
-  finishReading: number
-}
-
-type PageData = {
-  books: Book[]
-  total: number
-  currentPage: number
-  totalPages: number
-}
-
 const toPageNumber = (value: string | string[] | undefined) => {
   const raw = Array.isArray(value) ? value[0] : value
   const page = Number.parseInt(raw || '1', 10)
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
-async function getBooks(page: number): Promise<PageData> {
+async function getBooks(page: number): Promise<{ books: WereadBook[]; total: number; currentPage: number; totalPages: number }> {
   try {
     const result = await api.weread.getBooks({ page, limit: PER_PAGE }, { revalidate: 3600 })
     const data = result as any

@@ -148,5 +148,36 @@ export interface RepoDto {
   fork: boolean;
 }
 
+// Weread
+export interface WereadBook {
+  bookId: string
+  title: string
+  author: string
+  cover: string
+  readUpdateTime: number
+  finishReading: number
+}
+
+// Post list item (frontend view model derived from ContentItem)
+export interface PostListItem {
+  id: number
+  number: number
+  title: string
+  html_url: string
+  comments: number
+  created_at: string
+  labels: { name: string; color?: string | null }[]
+}
+
+// Post detail with adjacent navigation
+export type AdjacentPost = { number: number; title: string } | null
+
+export type PostDetail = ContentItem & {
+  prev: AdjacentPost
+  next: AdjacentPost
+  total: number
+  position: number
+}
+
 // Example export for reuse
 export type ExampleDto = { id: ID; name: string };

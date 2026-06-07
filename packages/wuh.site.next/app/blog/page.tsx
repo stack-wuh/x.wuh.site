@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import api from '../lib/api'
-import type { ContentItem } from '@wuh.site/shared-contracts'
+import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
 
 const SITE_URL = 'https://wuh.site'
@@ -33,16 +33,7 @@ type PaginationState = {
   hasNext: boolean
 }
 
-type PostItem = {
-  id: number
-  number: number
-  title: string
-  comments: number
-  created_at: string
-  labels: { name: string; color?: string | null }[]
-}
-
-const mapContentToPost = (item: ContentItem): PostItem => ({
+const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
   number: item.number,
   title: item.title,
@@ -57,7 +48,7 @@ const toPageNumber = (value: string | string[] | undefined) => {
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
-async function getIssues(page: number): Promise<{ posts: PostItem[]; pagination: PaginationState }> {
+async function getIssues(page: number): Promise<{ posts: PostListItem[]; pagination: PaginationState }> {
   try {
     const result = await api.content.getPosts(
       { page, limit: PER_PAGE, state: 'open' },

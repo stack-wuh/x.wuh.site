@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import Tag from '@wuh.site/components/tag'
 import Pagination from '@wuh.site/components/pagination'
 import TitleWithTooltip from './components/TitleWithTooltip'
+import type { PostListItem } from '@wuh.site/shared-contracts'
 import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
@@ -13,22 +14,13 @@ type TagItem = {
   color?: string | null
 }
 
-type PostItem = {
-  id: number
-  number: number
-  title: string
-  comments: number
-  created_at: string
-  labels: TagItem[]
-}
-
 type Props = {
-  posts: PostItem[]
+  posts: PostListItem[]
   pagination: { currentPage: number; lastPage: number }
 }
 
-const groupByYear = (posts: PostItem[]) => {
-  const map = new Map<number, PostItem[]>()
+const groupByYear = (posts: PostListItem[]) => {
+  const map = new Map<number, PostListItem[]>()
   posts.forEach(post => {
     const year = new Date(post.created_at).getFullYear()
     const list = map.get(year)

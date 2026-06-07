@@ -7,19 +7,10 @@ import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
 import ContactCard, { type ContactCardProps } from './components/ContactCard'
 import { IconMusic, IconDiscord, DiamondDivider } from '@wuh.site/components/icons'
+import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
 import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
-
-type Repo = {
-  name: string
-  description: string | null
-  html_url: string
-  stargazers_count: number
-  language: string | null
-  homepage: string | null
-  fork: boolean
-}
 
 type TagItem = {
   name: string
@@ -27,30 +18,15 @@ type TagItem = {
 }
 
 type Props = {
-  repos: Repo[]
-  posts: {
-    id: number
-    number: number
-    title: string
-    html_url: string
-    comments: number
-    created_at: string
-    labels: TagItem[]
-  }[]
+  repos: RepoDto[]
+  posts: PostListItem[]
   yearlySummaries: {
     id: number
     number: number
     title: string
     created_at: string
   }[]
-  wereadBooks: {
-    bookId: string
-    title: string
-    author: string
-    cover: string
-    readUpdateTime: number
-    finishReading: number
-  }[]
+  wereadBooks: WereadBook[]
 }
 
 type ContactDialogConfig = ContactCardProps
