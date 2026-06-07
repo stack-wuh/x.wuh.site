@@ -1,7 +1,8 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "lib": ["dom", "dom.iterable", "ES2021"]
   },
   "include": [
     "packages/*/src/**/*.ts",

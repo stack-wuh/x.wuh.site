@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "noEmit": false,
     "emitDeclarationOnly": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/endpoints.ts"]
 }
