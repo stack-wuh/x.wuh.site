@@ -1,8 +1,8 @@
 import { cache } from 'react'
 import type { Metadata } from 'next'
-import api from '../../lib/api'
+import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
-import type { ContentItem } from '@wuh.site/shared-contracts'
+import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue, AdjacentIssue } from '../PostView.types'
 import JsonLd from '../../components/JsonLd'
@@ -48,22 +48,35 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   } : null,
 })
 
-const getIssue = cache(async (num: string) => {
-  try {
-    const content = await api.content.getPost(num, { revalidate: 1800 });
-    const issue = mapContentToIssue(content);
-    if (issue.body) {
-      issue.body_html = await renderMarkdown(issue.body);
-    }
-    return {
-      issue,
-      prev: content.prev ? { number: content.prev.number, title: content.prev.title } : null,
-      next: content.next ? { number: content.next.number, title: content.next.title } : null,
-      total: content.total,
-      position: content.position,
-    };
-  } catch {
-    return { issue: null, prev: null, next: null, total: 0, position: 0 };
+type IssueData = {
+  issue: Issue | null
+  prev: AdjacentPost
+  next: AdjacentPost
+  total: number
+  position: number
+}
+
+const getIssue = cache(async (num: string): Promise<IssueData> => {
+  const { data, error } = await contentService.getPost.server({
+    params: { slug: num },
+    revalidate: 1800,
+  })
+
+  if (error || !data) {
+    return { issue: null, prev: null, next: null, total: 0, position: 0 }
+  }
+
+  const content = data as any
+  const issue = mapContentToIssue(content)
+  if (issue.body) {
+    issue.body_html = await renderMarkdown(issue.body)
+  }
+  return {
+    issue,
+    prev: content.prev ? { number: content.prev.number, title: content.prev.title } : null,
+    next: content.next ? { number: content.next.number, title: content.next.title } : null,
+    total: content.total,
+    position: content.position,
   }
 })
 

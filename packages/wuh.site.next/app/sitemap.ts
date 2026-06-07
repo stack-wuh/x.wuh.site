@@ -1,5 +1,5 @@
 import { type MetadataRoute } from 'next'
-import api from './lib/api'
+import { contentService } from '@wuh.site/shared-contracts/endpoints'
 
 const SITE_URL = 'https://wuh.site'
 
@@ -11,19 +11,22 @@ const staticRoutes: MetadataRoute.Sitemap = [
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  try {
-    const { data: posts } = await api.content.getPosts({ limit: 9999, state: 'open' })
+  const { data, error } = await contentService.getPosts.server({
+    query: { limit: '9999', state: 'open' },
+  })
 
-    const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-      url: `${SITE_URL}/post/${post.number}`,
-      lastModified: new Date(post.updatedAtGitHub || post.createdAtGitHub),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }))
-
-    return [...staticRoutes, ...postRoutes]
-  } catch (err) {
-    console.error('[sitemap] Failed to fetch posts from API:', err)
+  if (error || !data) {
+    console.error('[sitemap] Failed to fetch posts from API:', error)
     return staticRoutes
   }
+
+  const result = data as any
+  const postRoutes: MetadataRoute.Sitemap = (result.data || []).map((post: any) => ({
+    url: `${SITE_URL}/post/${post.number}`,
+    lastModified: new Date(post.updatedAtGitHub || post.createdAtGitHub),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticRoutes, ...postRoutes]
 }
