@@ -97,7 +97,7 @@ async function getYearlySummaries(): Promise<YearlySummary[]> {
 
 async function getWereadBooks(): Promise<WereadBook[]> {
   try {
-    const data = await api.weread.getBooks(5, { revalidate: 3600 })
+    const data = await api.weread.getBooks({ page: 5, limit: 10 }, { revalidate: 3600 })
     return (data as any).books || []
   } catch {
     return []
