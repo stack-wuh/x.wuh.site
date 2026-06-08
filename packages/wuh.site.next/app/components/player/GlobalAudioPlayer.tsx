@@ -11,6 +11,14 @@ import {
 
 const FALLBACK_PLAYLIST_ID = process.env.NEXT_PUBLIC_NETEASE_PLAYLIST_ID ?? '3778678'
 
+// requestIdleCallback 在 Safari 中不可用，用 setTimeout 降级
+const rIC = typeof requestIdleCallback !== 'undefined'
+  ? requestIdleCallback
+  : (cb: () => void, opts?: { timeout?: number }) => setTimeout(cb, opts?.timeout ?? 1)
+const cIC = typeof cancelIdleCallback !== 'undefined'
+  ? cancelIdleCallback
+  : (id: number) => clearTimeout(id)
+
 export const GlobalAudioPlayer = () => {
   const {
     queue,
@@ -44,9 +52,9 @@ export const GlobalAudioPlayer = () => {
 
   useEffect(() => {
     if (queue.length > 0) return
-    const idleId = requestIdleCallback(() => fetchPlaylist(playlistId), { timeout: 2000 })
+    const idleId = rIC(() => fetchPlaylist(playlistId), { timeout: 2000 })
     return () => {
-      cancelIdleCallback(idleId)
+      cIC(idleId)
     }
   }, [queue.length, fetchPlaylist, playlistId])
 

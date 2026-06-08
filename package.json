@@ -5,11 +5,14 @@
   "description": "博客项目相关的系列仓库, 全套使用Nextjs搭建",
   "main": "index.js",
   "scripts": {
-    "dev:next": "pnpm --filter @wuh.site/next run dev",
+    "build": "pnpm -r build",
+    "dev": "bash scripts/dev.sh",
+    "typecheck": "tsc --noEmit",
+    "dev:next": "bash scripts/dev-next.sh",
     "build:next": "pnpm --filter @wuh.site/next run build",
     "start:next": "pnpm --filter @wuh.site/next run start",
     "lint:next": "pnpm --filter @wuh.site/next run lint",
-    "dev:nest": "pnpm --filter @wuh.site/nest run start:dev",
+    "dev:nest": "bash scripts/dev-nest.sh",
     "build:nest": "pnpm --filter @wuh.site/nest run build",
     "start:nest": "pnpm --filter @wuh.site/nest run start:prod",
     "sync:init": "pnpm --filter @wuh.site/nest run sync:init",
@@ -44,7 +47,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "husky": "^9.1.7",
-    "typescript": "^5"
+    "typescript": "~5.7.2"
   },
   "husky": {
     "hooks": {
