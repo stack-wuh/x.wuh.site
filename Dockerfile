@@ -13,7 +13,7 @@ COPY packages/components/package.json packages/components/
 COPY packages/config/package.json packages/config/
 COPY packages/shared-contracts/package.json packages/shared-contracts/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
-  pnpm install
+  pnpm install --frozen-lockfile
 COPY packages/ ./packages/
 
 # Stage 3: builder-next
