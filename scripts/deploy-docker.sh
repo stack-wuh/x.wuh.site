@@ -39,6 +39,114 @@ prune_all_cache() {
   docker builder prune --all --force 2>/dev/null || true
 }
 
+# === Error diagnosis ============================================================
+
+# Scan build/deploy log for known error patterns and output fix commands
+diagnose_error() {
+  local log="${1:-/dev/stdin}"
+
+  if grep -q "Cannot connect to the Docker daemon" "$log" 2>/dev/null; then
+    echo "::error::Docker 服务未运行"
+    echo "::fix::sudo systemctl start docker"
+    return 0
+  fi
+
+  if grep -qE "(No space left on device|ENOSPC: no space left on device)" "$log" 2>/dev/null; then
+    echo "::error::磁盘空间不足"
+    echo "::fix::docker system prune -af --volumes && docker builder prune -af"
+    return 0
+  fi
+
+  if grep -qE "bind: address already in use" "$log" 2>/dev/null; then
+    echo "::error::端口被占用 (3000/3001/3200/3201)"
+    echo "::fix::fuser -k 3000/tcp 3001/tcp 3200/tcp 3201/tcp 2>/dev/null; ./scripts/deploy-docker.sh stop"
+    return 0
+  fi
+
+  if grep -qE "requested access to the resource is denied" "$log" 2>/dev/null; then
+    echo "::error::Docker 权限不足"
+    echo "::fix::sudo usermod -aG docker \$USER && echo '请退出重新登录使权限生效'"
+    return 0
+  fi
+
+  if grep -qE "(npm ERR!|pnpm ERR!)" "$log" 2>/dev/null; then
+    if grep -qE "(ETIMEDOUT|ENOTFOUND|ECONNREFUSED|network|EPROTO)" "$log" 2>/dev/null; then
+      echo "::error::依赖安装网络错误 (registry 不可达)"
+      echo "::fix::ping -c1 registry.npmmirror.com || echo '检查 DNS/网络'; cat .npmrc"
+      return 0
+    fi
+    echo "::error::依赖安装失败 (非网络原因，可能是 lockfile 或版本冲突)"
+    echo "::fix::git diff pnpm-lock.yaml; pnpm install --no-frozen-lockfile"
+    return 0
+  fi
+
+  if grep -qE "(Killed|exit code 137|out of memory)" "$log" 2>/dev/null; then
+    echo "::error::内存不足 (OOM)，构建进程被系统 kill"
+    echo "::fix::free -h && docker compose down && echo '释放内存后重试'"
+    return 0
+  fi
+
+  if grep -qE "inotify" "$log" 2>/dev/null; then
+    echo "::error::inotify 句柄耗尽"
+    echo "::fix::echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p"
+    return 0
+  fi
+
+  if grep -qE "TS[0-9]{4}:" "$log" 2>/dev/null; then
+    echo "::error::TypeScript 编译错误，详见上方日志"
+    echo "::fix::pnpm exec tsc --noEmit  # 本地复现并修复类型错误"
+    return 0
+  fi
+
+  echo "::error::未识别错误，请查看上方完整日志"
+  return 1
+}
+
+# Standalone system health check — diagnose common server issues
+cmd_diagnose() {
+  echo "🔍 Checking system health..."
+
+  echo ""
+  echo "── Docker ──"
+  if docker info >/dev/null 2>&1; then
+    echo "  ✅ Docker 运行正常"
+  else
+    echo "  ❌ Docker 不可用"
+    echo "  ::fix::sudo systemctl start docker"
+  fi
+
+  echo ""
+  echo "── Disk ──"
+  df -h / | tail -1 | while read fs size used avail pct mnt; do
+    if [ "${pct%%\%}" -gt 90 ]; then
+      echo "  ❌ 磁盘使用率 $pct"
+      echo "  ::fix::docker system prune -af --volumes"
+    else
+      echo "  ✅ 磁盘 $avail 可用 ($pct 使用)"
+    fi
+  done
+
+  echo ""
+  echo "── Memory ──"
+  free -h | grep Mem | while read _ total used free _; do
+    echo "  ℹ️  总量=$total 已用=$used 可用=$free"
+  done
+
+  echo ""
+  echo "── Ports ──"
+  for port in 3000 3001 3200 3201; do
+    if fuser "$port/tcp" 2>/dev/null; then
+      echo "  ⚠️  端口 $port 被占用"
+    else
+      echo "  ✅ 端口 $port 空闲"
+    fi
+  done
+
+  echo ""
+  echo "── Containers ──"
+  docker compose ps 2>/dev/null || echo "  ⚠️  无运行中容器"
+}
+
 case "${1:-help}" in
   build)
     echo "🔧 Building all services"
@@ -129,6 +237,10 @@ case "${1:-help}" in
     SERVICE=${2:-next}
     echo "🧪 Opening shell in $SERVICE"
     docker compose exec "$SERVICE" /bin/sh
+    ;;
+
+  diagnose)
+    cmd_diagnose
     ;;
 
   help|--help|-h)
