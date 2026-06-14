@@ -4,11 +4,15 @@ on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: ci-cd
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  build-next:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH deploy
+      - name: Build Next.js
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -21,10 +25,52 @@ jobs:
             git checkout main
             git reset --hard origin/main
             git clean -fd
-            ./scripts/deploy-docker.sh deploy 2>&1 | tee /tmp/deploy.log
-            exit_code=${PIPESTATUS[0]}
-            if [ $exit_code -ne 0 ]; then
-              echo "::error::构建失败，最后 80 行日志："
-              tail -80 /tmp/deploy.log
-              exit $exit_code
-            fi
+            ./scripts/deploy-docker.sh build-next
+
+  build-nest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build NestJS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+            cd /github/x.wuh.site
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
+            git clean -fd
+            ./scripts/deploy-docker.sh build-nest
+
+  staging-test:
+    needs: [build-next, build-nest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run staging test
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+            cd /github/x.wuh.site
+            ./scripts/deploy-docker.sh staging-test
+
+  switch-traffic:
+    needs: [staging-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Switch traffic
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+            cd /github/x.wuh.site
+            ./scripts/deploy-docker.sh switch-traffic
