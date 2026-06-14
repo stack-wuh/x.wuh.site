@@ -1,5 +1,6 @@
 # Stage 1: base
 FROM docker.m.daocloud.io/library/node:20-alpine AS base
+ENV CI=true
 RUN npm install -g pnpm@10.23.0 --registry=https://registry.npmmirror.com \
   && apk add --no-cache curl
 WORKDIR /app
