@@ -21,10 +21,7 @@ jobs:
           script: |
             set -e
             cd /github/x.wuh.site
-            git fetch origin main
-            git checkout main
-            git reset --hard origin/main
-            git clean -fd
+            flock /tmp/git-xwuhsite.lock -c "git fetch origin main && git checkout main && git reset --hard origin/main && git clean -fd"
             ./scripts/deploy-docker.sh build-next
 
   build-nest:
@@ -39,10 +36,7 @@ jobs:
           script: |
             set -e
             cd /github/x.wuh.site
-            git fetch origin main
-            git checkout main
-            git reset --hard origin/main
-            git clean -fd
+            flock /tmp/git-xwuhsite.lock -c "git fetch origin main && git checkout main && git reset --hard origin/main && git clean -fd"
             ./scripts/deploy-docker.sh build-nest
 
   staging-test:
