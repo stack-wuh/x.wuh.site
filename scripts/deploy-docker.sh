@@ -186,7 +186,13 @@ case "${1:-help}" in
 
   build-deps)
     echo "📦 Installing dependencies (cached layer)"
-    docker build --target deps -t xwuhsite-deps .
+    docker build --target deps . 2>&1 | tee /tmp/deploy-deps.log
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-deps.log
+      exit 1
+    fi
     ;;
 
   run)
