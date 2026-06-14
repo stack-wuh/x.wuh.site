@@ -1,20 +1,51 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "ES2021"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2021"
+    ],
     "jsx": "preserve",
     "noEmit": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@wuh.site/components/*": ["../components/*"],
-      "@wuh.site/shared-contracts": ["../shared-contracts/src/index.ts"],
-      "@wuh.site/shared-contracts/*": ["../shared-contracts/src/*"],
-      "@wuh.site/config/*": ["../config/*"],
-      "@wuh.site/hooks/*": ["../hooks/*"]
-    }
+      "@/*": [
+        "./*"
+      ],
+      "@wuh.site/components/*": [
+        "../components/*"
+      ],
+      "@wuh.site/shared-contracts": [
+        "../shared-contracts/src/index.ts"
+      ],
+      "@wuh.site/shared-contracts/*": [
+        "../shared-contracts/src/*"
+      ],
+      "@wuh.site/config/*": [
+        "../config/*"
+      ],
+      "@wuh.site/hooks/*": [
+        "../hooks/*"
+      ]
+    },
+    "allowJs": true
   },
-  "include": ["next-env.d.ts", "app/**/*", "components/**/*", "types/**/*"],
-  "exclude": ["node_modules", ".next", "dist"]
+  "include": [
+    "app/**/*",
+    "components/**/*",
+    "next-env.d.ts",
+    "types/**/*",
+    "./dist/wuh.site.next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist"
+  ]
 }
