@@ -17,6 +17,7 @@ Commands:
   deploy         Full deploy cycle: build -> staging -> switch
   restart        Shortcut for deploy
   diagnose       Check system health (docker, disk, memory, ports)
+  cancel         Force stop all running builds and staging
   run            Start all services (docker compose up -d)
   stop           Stop and remove all services
   push           Push images to registry (docker compose push)
@@ -153,6 +154,28 @@ cmd_diagnose() {
   docker compose ps 2>/dev/null || echo "  ⚠️  无运行中容器"
 }
 
+# Force cancel all running builds and deployments
+cmd_cancel() {
+  echo "🛑 Cancelling all running operations..."
+
+  echo "── Killing docker compose build processes ──"
+  pkill -f "docker compose build" 2>/dev/null && echo "  ✅ Killed build processes" || echo "  ℹ️  No build processes found"
+
+  echo "── Killing docker compose up processes ──"
+  pkill -f "docker compose.*up" 2>/dev/null && echo "  ✅ Killed up processes" || echo "  ℹ️  No up processes found"
+
+  echo "── Stopping staging containers ──"
+  docker compose -p xwuhsite-staging down 2>/dev/null || echo "  ℹ️  No staging containers"
+
+  echo "── Cleaning lock file ──"
+  rm -f /tmp/git-xwuhsite.lock 2>/dev/null && echo "  ✅ Removed git lock" || echo "  ℹ️  No lock file"
+
+  echo "── Cleaning temp logs ──"
+  rm -f /tmp/deploy-*.log 2>/dev/null && echo "  ✅ Removed temp logs" || echo "  ℹ️  No temp logs"
+
+  echo "✅ Cancel complete"
+}
+
 case "${1:-help}" in
   build)
     echo "🔧 Building all services"
@@ -286,6 +309,10 @@ case "${1:-help}" in
   staging-down)
     echo "🛑 Tearing down staging"
     docker compose -p xwuhsite-staging down 2>/dev/null || true
+    ;;
+
+  cancel)
+    cmd_cancel
     ;;
 
   switch-traffic)
