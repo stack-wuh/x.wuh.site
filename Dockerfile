@@ -28,7 +28,7 @@ RUN pnpm run build:nest
 
 # Stage 5: deps-pruned — strip devDependencies from full install (keeps workspace packages)
 FROM deps AS deps-pruned
-RUN pnpm prune --prod --ignore-scripts
+RUN pnpm prune --ignore-scripts
 
 # Stage 6: runner-next
 FROM base AS runner-next
