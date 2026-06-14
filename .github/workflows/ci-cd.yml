@@ -26,8 +26,23 @@ jobs:
             git reset --hard origin/main
             git clean -fd
 
-  build-next:
+  prepare-deps:
     needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+            cd /github/x.wuh.site
+            ./scripts/deploy-docker.sh build-deps
+
+  build-next:
+    needs: [prepare-deps]
     runs-on: ubuntu-latest
     steps:
       - name: Build Next.js
@@ -42,7 +57,7 @@ jobs:
             ./scripts/deploy-docker.sh build-next
 
   build-nest:
-    needs: [prepare]
+    needs: [prepare-deps]
     runs-on: ubuntu-latest
     steps:
       - name: Build NestJS

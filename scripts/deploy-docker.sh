@@ -9,6 +9,7 @@ usage() {
 Usage: $(basename "$0") <command>
 Commands:
   build          Build all Docker images via docker compose
+  build-deps     Install npm dependencies only (caches layer)
   build-next     Build Next.js image only (CI step)
   build-nest     Build NestJS image only (CI step)
   staging-test   Start staging + health check (CI step)
@@ -181,6 +182,11 @@ case "${1:-help}" in
     echo "🔧 Building all services"
     docker compose build --progress=plain
     prune_old_images
+    ;;
+
+  build-deps)
+    echo "📦 Installing dependencies (cached layer)"
+    docker build --target deps -t xwuhsite-deps .
     ;;
 
   run)
