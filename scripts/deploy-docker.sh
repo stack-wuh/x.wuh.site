@@ -106,6 +106,12 @@ diagnose_error() {
     return 0
   fi
 
+  if grep -qE "(is unhealthy|health check failed|unhealthy)" "$log" 2>/dev/null; then
+    echo "::error::容器健康检查失败，查看上方日志定位问题"
+    echo "::fix::docker compose logs --tail=100  # 查看容器日志"
+    return 0
+  fi
+
   echo "::error::未识别错误，请查看上方完整日志"
   return 1
 }
@@ -333,6 +339,9 @@ case "${1:-help}" in
     docker compose -p xwuhsite-staging down 2>/dev/null || true
     docker compose up -d 2>&1 | tee -a /tmp/deploy-switch.log
     if [ ${PIPESTATUS[0]} -ne 0 ]; then
+      echo ""
+      echo "❌ Container startup failed — recent logs:"
+      docker compose logs --tail=80
       echo ""
       echo "── 错误诊断 ──"
       diagnose_error /tmp/deploy-switch.log
