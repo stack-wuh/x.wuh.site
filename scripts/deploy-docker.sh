@@ -8,16 +8,22 @@ usage() {
   cat <<'USAGE'
 Usage: $(basename "$0") <command>
 Commands:
-  build    Build all Docker images via docker compose
-  run      Start all services (docker compose up -d)
-  stop     Stop and remove all services
-  deploy   Build → staging → health check → switch or rollback
-  restart  Shortcut for deploy
-  push     Push images to registry (docker compose push)
-  clean    Remove dangling images + old build cache (frees disk space)
-  logs     Tail logs from all services
-  shell    Launch an interactive shell inside a service
-  help     Show this message
+  build          Build all Docker images via docker compose
+  build-next     Build Next.js image only (CI step)
+  build-nest     Build NestJS image only (CI step)
+  staging-test   Start staging + health check (CI step)
+  staging-down   Tear down staging containers
+  switch-traffic Stop old containers, start new ones (CI step)
+  deploy         Full deploy cycle: build -> staging -> switch
+  restart        Shortcut for deploy
+  diagnose       Check system health (docker, disk, memory, ports)
+  run            Start all services (docker compose up -d)
+  stop           Stop and remove all services
+  push           Push images to registry (docker compose push)
+  clean          Remove dangling images + old build cache
+  logs           Tail logs from all services
+  shell          Launch an interactive shell inside a service
+  help           Show this message
 USAGE
 }
 
@@ -165,42 +171,14 @@ case "${1:-help}" in
     ;;
 
   deploy)
+    echo "🚀 Full deploy cycle"
     TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    echo "Timestamp: $TIMESTAMP"
 
-    # 1. 构建 + tag
-    echo "🔧 Building for deploy"
-    docker compose build --progress=plain
-    docker tag xwuhsite-next xwuhsite-next:$TIMESTAMP 2>/dev/null || true
-    docker tag xwuhsite-nest xwuhsite-nest:$TIMESTAMP 2>/dev/null || true
-
-    # 2. 启动 staging（临时端口）
-    echo "🐳 Starting staging containers"
-    PORT_NEXT=3001 PORT_NEST=3201 docker compose -p xwuhsite-staging up -d
-
-    # 3. 等 health check
-    echo "⏳ Waiting for health checks (max 120s)..."
-    for i in $(seq 1 24); do
-      if curl -sf http://localhost:3201/v2/health > /dev/null 2>&1 && \
-         curl -sf http://localhost:3001/ > /dev/null 2>&1; then
-        # 4a. 健康 → 切换
-        echo ""
-        echo "✅ Health check passed, switching traffic"
-        docker compose down
-        docker compose -p xwuhsite-staging down
-        docker compose up -d
-        prune_old_images
-        echo "✅ Deploy complete"
-        exit 0
-      fi
-      printf "."
-      sleep 5
-    done
-
-    # 4b. 超时 → 回滚
-    echo ""
-    echo "❌ Health check failed, rolling back"
-    docker compose -p xwuhsite-staging down
-    exit 1
+    "$0" build-next  || exit 1
+    "$0" build-nest  || exit 1
+    "$0" staging-test || exit 1
+    "$0" switch-traffic || exit 1
     ;;
 
   restart)
@@ -308,6 +286,21 @@ case "${1:-help}" in
   staging-down)
     echo "🛑 Tearing down staging"
     docker compose -p xwuhsite-staging down 2>/dev/null || true
+    ;;
+
+  switch-traffic)
+    echo "🔁 Switching traffic to new version"
+    docker compose down 2>&1 | tee /tmp/deploy-switch.log
+    docker compose -p xwuhsite-staging down 2>/dev/null || true
+    docker compose up -d 2>&1 | tee -a /tmp/deploy-switch.log
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-switch.log
+      exit 1
+    fi
+    prune_old_images
+    echo "✅ Deploy complete"
     ;;
 
   help|--help|-h)
