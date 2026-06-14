@@ -1,7 +1,6 @@
 # Stage 1: base
 FROM docker.m.daocloud.io/library/node:20-alpine AS base
-RUN npm install -g pnpm@9.15.0 --registry=https://registry.npmmirror.com \
-  && pnpm config set registry https://registry.npmmirror.com \
+RUN npm install -g pnpm@10.23.0 --registry=https://registry.npmmirror.com \
   && apk add --no-cache curl
 WORKDIR /app
 
@@ -14,7 +13,7 @@ COPY packages/components/package.json packages/components/
 COPY packages/config/package.json packages/config/
 COPY packages/shared-contracts/package.json packages/shared-contracts/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
-  pnpm install --no-frozen-lockfile
+  pnpm install
 COPY packages/ ./packages/
 
 # Stage 3: builder-next
