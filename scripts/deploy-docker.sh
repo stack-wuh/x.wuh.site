@@ -267,6 +267,49 @@ case "${1:-help}" in
     prune_old_images
     ;;
 
+  staging-test)
+    TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    echo "🐳 Starting staging (timestamp=$TIMESTAMP)"
+
+    PORT_NEXT=3001 PORT_NEST=3201 docker compose -p xwuhsite-staging up -d 2>&1 | tee /tmp/deploy-staging.log
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-staging.log
+      exit 1
+    fi
+
+    echo "⏳ Waiting for health checks (max 120s)..."
+    HEALTHY=false
+    for i in $(seq 1 24); do
+      if curl -sf http://localhost:3201/v2/health > /dev/null 2>&1 && \
+         curl -sf http://localhost:3001/ > /dev/null 2>&1; then
+        echo ""
+        echo "✅ Health check passed"
+        HEALTHY=true
+        break
+      fi
+      printf "."
+      sleep 5
+    done
+
+    if [ "$HEALTHY" = false ]; then
+      echo ""
+      echo "❌ Health check failed — staging logs:"
+      docker compose -p xwuhsite-staging logs --tail=80
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-staging.log
+      docker compose -p xwuhsite-staging down 2>/dev/null
+      exit 1
+    fi
+    ;;
+
+  staging-down)
+    echo "🛑 Tearing down staging"
+    docker compose -p xwuhsite-staging down 2>/dev/null || true
+    ;;
+
   help|--help|-h)
     usage
     ;;
