@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Stage 2: deps — full install for building
 FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.json tsconfig.base.json ./
 COPY packages/wuh.site.next/package.json packages/wuh.site.next/
 COPY packages/wuh.site.nest/package.json packages/wuh.site.nest/
 COPY packages/components/package.json packages/components/
