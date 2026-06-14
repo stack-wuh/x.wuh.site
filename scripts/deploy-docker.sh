@@ -243,6 +243,30 @@ case "${1:-help}" in
     cmd_diagnose
     ;;
 
+  build-next)
+    echo "🔧 Building xwuhsite-next"
+    docker compose build --progress=plain next 2>&1 | tee /tmp/deploy-build-next.log
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-build-next.log
+      exit 1
+    fi
+    prune_old_images
+    ;;
+
+  build-nest)
+    echo "🔧 Building xwuhsite-nest"
+    docker compose build --progress=plain nest 2>&1 | tee /tmp/deploy-build-nest.log
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-build-nest.log
+      exit 1
+    fi
+    prune_old_images
+    ;;
+
   help|--help|-h)
     usage
     ;;
