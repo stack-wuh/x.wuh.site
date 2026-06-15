@@ -175,11 +175,3 @@ export const MetaDot = styled.span`
   background: var(--text-muted);
   opacity: 0.5;
 `
-
-export const EmptyHint = styled.div`
-  width: 100%;
-  text-align: center;
-  color: var(--text-muted);
-  padding: var(--space-2xl) 0;
-  font-size: var(--font-size-sm);
-`

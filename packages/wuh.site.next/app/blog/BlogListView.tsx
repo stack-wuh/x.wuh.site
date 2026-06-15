@@ -3,6 +3,8 @@
 import { useMemo } from 'react'
 import Tag from '@wuh.site/components/tag'
 import Pagination from '@wuh.site/components/pagination'
+import Empty from '@wuh.site/components/empty'
+import { IconBookOpen } from '@wuh.site/components/icons'
 import TitleWithTooltip from './components/TitleWithTooltip'
 import type { PostListItem } from '@wuh.site/shared-contracts'
 import * as S from './styles'
@@ -48,7 +50,7 @@ export default function BlogListView({ posts, pagination }: Props) {
         </S.Header>
 
         {posts.length === 0 ? (
-          <S.EmptyHint>暂时没有可展示的博客内容</S.EmptyHint>
+          <Empty icon={<IconBookOpen />} title="暂无内容" description="暂时没有可展示的博客" actions={[{ label: '返回首页', href: '/' }]} />
         ) : (
           <S.Timeline>
             {yearGroups.map(([year, yearPosts]) => (
