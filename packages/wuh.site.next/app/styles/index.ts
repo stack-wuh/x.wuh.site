@@ -334,12 +334,14 @@ export const BookRow = styled.div`
   border-radius: 6px;
 `
 
-export const BookCover = styled.div<{ $src?: string }>`
+export const BookCover = styled(Image).attrs({
+  showSkeleton: true,
+  appearance: 'plain',
+})`
   width: 32px;
   height: 42px;
   border-radius: 4px;
   flex-shrink: 0;
-  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'var(--background-300)')};
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 `
 

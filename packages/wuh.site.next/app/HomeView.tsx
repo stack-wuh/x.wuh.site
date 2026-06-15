@@ -241,7 +241,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
             <S.BooksList>
               {wereadBooks.map((book) => (
                 <S.BookRow key={book.bookId}>
-                  <S.BookCover $src={book.cover || undefined} />
+                  <S.BookCover src={book.cover || ''} alt={book.title} width={32} height={42} />
                   <S.BookInfo>
                     <S.BookTitle>{book.title}</S.BookTitle>
                     <S.BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</S.BookMeta>
