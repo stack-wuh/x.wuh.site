@@ -1,12 +1,13 @@
 'use client'
 
 import styled from '@wuh.site/components/styled'
-import Link from 'next/link'
 import Pagination from '@wuh.site/components/pagination'
 import Image from '@wuh.site/components/image'
 import type { WereadBook } from '@wuh.site/shared-contracts'
 import Empty from '@wuh.site/components/empty'
 import { IconLibrary } from '@wuh.site/components/icons'
+import BackHomeLink from '@/app/components/BackHomeLink'
+import { Header, TitleGroup, Title, Subtitle, HeaderActions } from '@/app/components/PageHeader/styles'
 
 type Props = {
   books: WereadBook[]
@@ -31,36 +32,6 @@ const Main = styled.main`
   min-height: 100vh;
   gap: var(--space-lg);
   padding: clamp(24px, 3vw, 48px) clamp(12px, 3vw, 40px);
-`
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  width: 100%;
-`
-
-const Title = styled.h1`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-xl);
-  font-weight: 500;
-  color: var(--text-primary);
-  letter-spacing: 0.03em;
-`
-
-const Subtitle = styled.p`
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-`
-
-const BackLink = styled(Link)`
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  text-decoration: none;
-
-  &:hover {
-    color: var(--text-primary);
-  }
 `
 
 const BookList = styled.div`
@@ -120,9 +91,13 @@ export default function WereadView({ books, total, currentPage, totalPages }: Pr
     <Root>
       <Main>
         <Header>
-          <BackLink href='/'>← 返回首页</BackLink>
-          <Title>微信读书</Title>
-          <Subtitle>共 {total} 本书，本页 {reading.length} 本在读 · {finished.length} 本已读完</Subtitle>
+          <TitleGroup>
+            <Title>微信读书</Title>
+            <Subtitle>共 {total} 本书，本页 {reading.length} 本在读 · {finished.length} 本已读完</Subtitle>
+          </TitleGroup>
+          <HeaderActions>
+            <BackHomeLink href='/' />
+          </HeaderActions>
         </Header>
 
         {books.length === 0 ? (

@@ -77,7 +77,7 @@ function LazySection({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ width: '100%' }}>
       {visible ? children : <S.SectionSkeleton />}
     </div>
   )

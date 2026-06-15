@@ -356,6 +356,7 @@ export const BookMeta = styled.div`
 `
 
 export const SectionSkeleton = styled.div`
+  width: 100%;
   height: 200px;
   border-radius: var(--radius-md, 8px);
   background: linear-gradient(
