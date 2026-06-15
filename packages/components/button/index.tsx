@@ -137,7 +137,7 @@ const getVariantStyles = (
 
     &:hover:not(:disabled) {
       background-color: ${$disabled ? 'transparent' : `rgba(0, 0, 0, 0.04)`};
-      color: ${textColor};
+      color: ${textColorHover};
     }
     &:focus-visible:not(:disabled) {
       outline: 2px solid ${textColor};

@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.weread.qq.com',
       },
+      {
+        protocol: 'https',
+        hostname: '*.image.myqcloud.com',
+      },
     ],
   },
   // API rewrite to NestJS backend
