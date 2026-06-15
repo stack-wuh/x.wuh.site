@@ -361,3 +361,21 @@ export const BookMeta = styled.div`
   color: var(--text-muted);
   margin-top: 2px;
 `
+
+export const SectionSkeleton = styled.div`
+  height: 200px;
+  border-radius: var(--radius-md, 8px);
+  background: linear-gradient(
+    90deg,
+    var(--background-200, #f0f0f0) 25%,
+    var(--background-100, #e0e0e0) 50%,
+    var(--background-200, #f0f0f0) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+
+  @keyframes skeleton-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+`

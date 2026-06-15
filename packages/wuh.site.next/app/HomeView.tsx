@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Button from '@wuh.site/components/button'
 import dynamic from 'next/dynamic'
 import LinkGroup from '@wuh.site/components/link-group'
@@ -52,6 +52,33 @@ function OrnamentDivider() {
       <DiamondDivider />
       <S.DividerLine />
     </S.DividerRow>
+  )
+}
+
+function LazySection({ children }: { children: React.ReactNode }) {
+  const [visible, setVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '200px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref}>
+      {visible ? children : <S.SectionSkeleton />}
+    </div>
   )
 }
 
@@ -161,27 +188,29 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
 
         <OrnamentDivider />
 
-        <S.Section>
-          <S.SectionHeader>
-            <S.SectionTitle>微信读书</S.SectionTitle>
-            {wereadBooks.length > 0 && <S.MoreLink href='/weread'>全部&nbsp;&rarr;</S.MoreLink>}
-          </S.SectionHeader>
-          {wereadBooks.length === 0 ? (
-            <S.EmptyHint>暂无书架数据</S.EmptyHint>
-          ) : (
-            <S.BooksList>
-              {wereadBooks.map((book) => (
-                <S.BookRow key={book.bookId}>
-                  <S.BookCover src={book.cover || ''} alt={book.title} width={32} height={42} />
-                  <S.BookInfo>
-                    <S.BookTitle>{book.title}</S.BookTitle>
-                    <S.BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</S.BookMeta>
-                  </S.BookInfo>
-                </S.BookRow>
-              ))}
-            </S.BooksList>
-          )}
-        </S.Section>
+        <LazySection>
+          <S.Section>
+            <S.SectionHeader>
+              <S.SectionTitle>微信读书</S.SectionTitle>
+              {wereadBooks.length > 0 && <S.MoreLink href='/weread'>全部&nbsp;&rarr;</S.MoreLink>}
+            </S.SectionHeader>
+            {wereadBooks.length === 0 ? (
+              <S.EmptyHint>暂无书架数据</S.EmptyHint>
+            ) : (
+              <S.BooksList>
+                {wereadBooks.map((book) => (
+                  <S.BookRow key={book.bookId}>
+                    <S.BookCover src={book.cover || ''} alt={book.title} width={32} height={42} />
+                    <S.BookInfo>
+                      <S.BookTitle>{book.title}</S.BookTitle>
+                      <S.BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</S.BookMeta>
+                    </S.BookInfo>
+                  </S.BookRow>
+                ))}
+              </S.BooksList>
+            )}
+          </S.Section>
+        </LazySection>
 
         <OrnamentDivider />
 
