@@ -3,6 +3,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import { IconEmpty } from '../icons'
+import Button, { type ButtonColor, type ButtonVariant } from '../button'
 
 const EmptyRoot = styled.section`
   display: flex;
@@ -61,10 +62,27 @@ const EmptyDescription = styled.p`
   color: var(--text-secondary);
 `
 
+const EmptyActions = styled.div`
+  margin-top: var(--space-xs, 8px);
+  display: flex;
+  gap: var(--space-xs, 8px);
+  flex-wrap: wrap;
+  justify-content: center;
+`
+
+export interface ActionItem {
+  label: string
+  href?: string
+  onClick?: () => void
+  variant?: ButtonVariant
+  color?: ButtonColor
+}
+
 export interface EmptyProps extends React.HTMLAttributes<HTMLElement> {
   title?: React.ReactNode
   description?: React.ReactNode
   icon?: React.ReactNode
+  actions?: ActionItem[]
 }
 
 const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, ref) {
@@ -72,6 +90,7 @@ const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, re
     title = '空空如也',
     description,
     icon,
+    actions,
     children,
     role = 'status',
     'aria-live': ariaLive = 'polite',
@@ -85,6 +104,22 @@ const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, re
       <EmptyIcon aria-hidden='true'>{icon ?? <IconEmpty />}</EmptyIcon>
       {title ? <EmptyTitle>{title}</EmptyTitle> : null}
       {resolvedDescription ? <EmptyDescription>{resolvedDescription}</EmptyDescription> : null}
+      {actions && actions.length > 0 && (
+        <EmptyActions>
+          {actions.map((action, i) => (
+            <Button
+              key={i}
+              href={action.href}
+              onClick={action.onClick}
+              variant={action.variant ?? 'outlined'}
+              color={action.color ?? 'primary'}
+              size='small'
+            >
+              {action.label}
+            </Button>
+          ))}
+        </EmptyActions>
+      )}
     </EmptyRoot>
   )
 })

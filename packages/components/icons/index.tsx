@@ -51,7 +51,11 @@ export {
   Clock as IconClock,
   Folder as IconFolder,
   ShieldCheck as IconShield,
-  Tag as IconTag
+  Tag as IconTag,
+  BookOpen as IconBookOpen,
+  Calendar as IconCalendar,
+  Library as IconLibrary,
+  FolderGit2 as IconFolderGit2
 } from 'lucide-react'
 
 // Ornament
