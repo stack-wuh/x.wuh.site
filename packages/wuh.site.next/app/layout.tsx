@@ -1,17 +1,11 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono, Noto_Serif_SC } from 'next/font/google'
+import { Inter, Noto_Serif_SC } from 'next/font/google'
 import AppProviders from './components/AppProviders'
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
   display: 'swap',
 })
 
@@ -35,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <head />
-      <body className={`${inter.variable} ${jetbrainsMono.variable} ${notoSerifSC.variable}`}>
+      <body className={`${inter.variable} ${notoSerifSC.variable}`}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
