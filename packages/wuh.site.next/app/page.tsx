@@ -63,7 +63,7 @@ async function getYearlySummaries(): Promise<PostListItem[]> {
 
 async function getWereadBooks(): Promise<WereadBook[]> {
   const { data } = await wereadService.getBooks.server({
-    query: { page: '5', limit: '10' },
+    query: { page: '5', limit: '6' },
     revalidate: 3600,
   })
   if (!data) return []

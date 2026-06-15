@@ -148,19 +148,6 @@ export const SectionTitle = styled.h2`
   letter-spacing: 0.03em;
 `
 
-export const MoreLink = styled(Link)`
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color var(--transition-fast) ease;
-  font-family: var(--font-serif);
-
-  &:hover {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-`
-
 export const Timeline = styled.div`
   display: flex;
   flex-direction: column;

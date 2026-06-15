@@ -10,7 +10,7 @@ const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
 const ContactCard = dynamic(() => import('./components/ContactCard'), {
   loading: () => null,
 })
-import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2 } from '@wuh.site/components/icons'
+import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
 import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
 import * as S from './styles'
 import Empty from '@wuh.site/components/empty'
@@ -131,7 +131,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
         <S.Section>
           <S.SectionHeader>
             <S.SectionTitle>精选博客</S.SectionTitle>
-            <S.MoreLink href='/blog'>全部博客&nbsp;&rarr;</S.MoreLink>
+            <Button href='/blog' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>全部博客</Button>
           </S.SectionHeader>
           {posts.length === 0 ? (
             <Empty icon={<IconBookOpen />} title="暂无博客" description="获取 Issues 数据失败，请稍后重试" />
@@ -193,7 +193,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <S.Section>
             <S.SectionHeader>
               <S.SectionTitle>微信读书</S.SectionTitle>
-              {wereadBooks.length > 0 && <S.MoreLink href='/weread'>全部&nbsp;&rarr;</S.MoreLink>}
+              {wereadBooks.length > 0 && <Button href='/weread' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>我的书架</Button>}
             </S.SectionHeader>
             {wereadBooks.length === 0 ? (
               <Empty icon={<IconLibrary />} title="暂无书架" description="微信读书同步后这里会展示" actions={[{ label: '去看看书架', href: '/weread' }]} />
