@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Pagination from '@wuh.site/components/pagination'
 import Image from '@wuh.site/components/image'
 import type { WereadBook } from '@wuh.site/shared-contracts'
+import Empty from '@wuh.site/components/empty'
+import { IconLibrary } from '@wuh.site/components/icons'
 
 type Props = {
   books: WereadBook[]
@@ -110,13 +112,6 @@ const CountTag = styled.span`
   flex-shrink: 0;
 `
 
-const Empty = styled.div`
-  text-align: center;
-  color: var(--text-muted);
-  padding: var(--space-2xl) 0;
-  font-size: var(--font-size-sm);
-`
-
 export default function WereadView({ books, total, currentPage, totalPages }: Props) {
   const reading = books.filter((b) => !b.finishReading)
   const finished = books.filter((b) => b.finishReading)
@@ -131,7 +126,7 @@ export default function WereadView({ books, total, currentPage, totalPages }: Pr
         </Header>
 
         {books.length === 0 ? (
-          <Empty>书架暂无数据</Empty>
+          <Empty icon={<IconLibrary />} title="书架为空" description="暂无同步的书籍数据" />
         ) : (
           <BookList>
             {books.map((book) => (
