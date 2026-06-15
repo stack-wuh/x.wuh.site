@@ -330,11 +330,12 @@ export const BookRow = styled.div`
 export const BookCover = styled(Image).attrs({
   showSkeleton: true,
   appearance: 'plain',
+  variant: 'contain',
 })`
   width: 32px;
   min-width: 32px;
   max-width: 32px;
-  height: 42px;
+  height: 32px;
   border-radius: 4px;
   flex-shrink: 0;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);

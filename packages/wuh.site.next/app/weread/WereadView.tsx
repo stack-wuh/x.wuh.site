@@ -52,8 +52,11 @@ const BookRow = styled.div`
 const BookCover = styled(Image).attrs({
   showSkeleton: true,
   appearance: 'plain',
+  variant: 'contain',
 })`
   width: 40px;
+  min-width: 40px;
+  max-width: 40px;
   height: 54px;
   border-radius: 4px;
   flex-shrink: 0;
