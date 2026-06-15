@@ -312,13 +312,6 @@ export const ProjectMeta = styled.span`
   @media (max-width: 520px) { margin-left: 0; }
 `
 
-export const EmptyHint = styled.div`
-  text-align: center;
-  color: var(--text-muted);
-  padding: var(--space-xl) 0;
-  font-size: var(--font-size-sm);
-`
-
 export const BooksList = styled.div`
   display: flex;
   flex-direction: column;

@@ -10,9 +10,10 @@ const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
 const ContactCard = dynamic(() => import('./components/ContactCard'), {
   loading: () => null,
 })
-import { IconMusic, IconDiscord, DiamondDivider } from '@wuh.site/components/icons'
+import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2 } from '@wuh.site/components/icons'
 import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
 import * as S from './styles'
+import Empty from '@wuh.site/components/empty'
 
 const TAG_DISPLAY_LIMIT = 3
 
@@ -133,7 +134,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
             <S.MoreLink href='/blog'>全部博客&nbsp;&rarr;</S.MoreLink>
           </S.SectionHeader>
           {posts.length === 0 ? (
-            <S.EmptyHint>暂时无法获取 Issues 数据</S.EmptyHint>
+            <Empty icon={<IconBookOpen />} title="暂无博客" description="获取 Issues 数据失败，请稍后重试" />
           ) : (
             <S.Timeline>
               {yearGroups.map(([year, yearPosts]) => (
@@ -170,7 +171,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
             <S.SectionTitle>年度总结</S.SectionTitle>
           </S.SectionHeader>
           {yearlySummaries.length === 0 ? (
-            <S.EmptyHint>暂无年度总结</S.EmptyHint>
+            <Empty icon={<IconCalendar />} title="暂无年度总结" description="还没有年度回顾文章" />
           ) : (
             <S.ProjectList>
               {yearlySummaries.map(item => (
@@ -195,7 +196,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
               {wereadBooks.length > 0 && <S.MoreLink href='/weread'>全部&nbsp;&rarr;</S.MoreLink>}
             </S.SectionHeader>
             {wereadBooks.length === 0 ? (
-              <S.EmptyHint>暂无书架数据</S.EmptyHint>
+              <Empty icon={<IconLibrary />} title="暂无书架" description="微信读书同步后这里会展示" actions={[{ label: '去看看书架', href: '/weread' }]} />
             ) : (
               <S.BooksList>
                 {wereadBooks.map((book) => (
@@ -219,7 +220,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
             <S.SectionTitle>精选项目</S.SectionTitle>
           </S.SectionHeader>
           {repos.length === 0 ? (
-            <S.EmptyHint>暂时无法获取 GitHub 数据</S.EmptyHint>
+            <Empty icon={<IconFolderGit2 />} title="暂无项目" description="获取 GitHub 数据失败，请稍后重试" />
           ) : (
             <S.ProjectList>
               {repos.map(repo => (
