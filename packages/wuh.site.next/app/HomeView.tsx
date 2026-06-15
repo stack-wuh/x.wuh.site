@@ -2,10 +2,14 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import Button from '@wuh.site/components/button'
-import Dialog from '@wuh.site/components/dialog'
+import dynamic from 'next/dynamic'
 import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
-import ContactCard, { type ContactCardProps } from './components/ContactCard'
+
+const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
+const ContactCard = dynamic(() => import('./components/ContactCard'), {
+  loading: () => null,
+})
 import { IconMusic, IconDiscord, DiamondDivider } from '@wuh.site/components/icons'
 import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
 import * as S from './styles'
@@ -24,80 +28,7 @@ type Props = {
   wereadBooks: WereadBook[]
 }
 
-type ContactDialogConfig = ContactCardProps
-
-const CONTACT_CONFIG: Record<'wechat' | 'qq' | 'twitter' | 'github' | 'douban' | 'netease' | 'discord', ContactDialogConfig> = {
-  wechat: {
-    badge: 'WeChat',
-    qrSrc: 'https://cdn.wuh.site/web/wechat.jpg',
-    name: 'stack-wuh',
-    handle: 'shadow_u',
-    title: '工程化 & 可视化',
-    tagline: '代码写诗，工具作画',
-    hints: ['扫码即可开启一场 1:1 对话', '备注「官网来访」我们会更快相遇'],
-  },
-  qq: {
-    badge: 'QQ',
-    qrSrc: 'https://cdn.wuh.site/web/qq.jpg',
-    name: 'stack-wuh',
-    handle: 'shadow_u',
-    title: '实时沟通',
-    tagline: '山海皆可平，何况是聊个天',
-    hints: ['扫码即刻语音或文字交流', '备注「官网来访」我们会更快相遇'],
-  },
-  twitter: {
-    badge: 'Twitter',
-    linkUrl: 'https://x.com/wuh131420',
-    linkLabel: '前往 Twitter 主页',
-    name: 'wuh131420',
-    handle: '@wuh131420',
-    title: 'Twitter',
-    tagline: '碎片灵感，即时分享',
-    hints: ['技术观察 & 灵感速写 & 碎碎念'],
-  },
-  github: {
-    badge: 'GitHub',
-    linkUrl: 'https://github.com/stack-wuh',
-    linkLabel: '前往 GitHub 主页',
-    name: 'stack-wuh',
-    handle: '@stack-wuh',
-    title: 'GitHub',
-    tagline: '开源是一种信仰',
-    hints: ['你是什么样的人，就会看到什么样的代码'],
-  },
-  douban: {
-    badge: '豆瓣',
-    linkUrl: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN',
-    linkLabel: '前往豆瓣主页',
-    name: 'wuh.site',
-    handle: 'wuh-site',
-    title: '豆瓣',
-    tagline: '书影音标记，精神自留地',
-    hints: ['标记过的书影音，构成了一个人的轮廓'],
-  },
-  netease: {
-    badge: '网易云',
-    linkUrl: 'https://music.163.com/#/user/home?id=398326271',
-    linkLabel: '前往网易云主页',
-    name: 'stack-wuh',
-    handle: 'wuh131420',
-    title: '网易云音乐',
-    tagline: '算法推荐不了一颗有趣的灵魂',
-    hints: ['用耳朵投票，每一首都算数'],
-  },
-  discord: {
-    badge: 'Discord',
-    linkUrl: 'https://discord.com/users/shadowoo1995',
-    linkLabel: '前往 Discord',
-    name: 'shadowoo1995',
-    handle: '@shadowoo1995',
-    title: 'Discord',
-    tagline: '语音频道见，比 issue 更快',
-    hints: ['技术闲聊 & 问题讨论 & 摸鱼胜地'],
-  },
-}
-
-type ContactType = keyof typeof CONTACT_CONFIG
+import { CONTACT_CONFIG, type ContactType, type ContactDialogConfig } from './components/ContactConfig'
 
 const groupByYear = (posts: Props['posts']) => {
   const map = new Map<number, Props['posts']>()
