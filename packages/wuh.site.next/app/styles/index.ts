@@ -332,6 +332,8 @@ export const BookCover = styled(Image).attrs({
   appearance: 'plain',
 })`
   width: 32px;
+  min-width: 32px;
+  max-width: 32px;
   height: 42px;
   border-radius: 4px;
   flex-shrink: 0;

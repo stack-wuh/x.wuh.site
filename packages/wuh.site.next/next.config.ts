@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.weread.qq.com',
+      },
+    ],
+  },
   // API rewrite to NestJS backend
   async rewrites() {
     return [
