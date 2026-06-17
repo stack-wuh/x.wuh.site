@@ -39,7 +39,7 @@ export const Frame = styled.div<{
   position: relative;
   width: ${(p) => {
     if (p.$ratio) return '100%'
-    if (p.$hasExplicitSize) return undefined
+    if (p.$hasExplicitSize) return p.$inline ? 'max-content' : undefined
     if (p.$inline) return 'auto'
     return '100%'
   }};
