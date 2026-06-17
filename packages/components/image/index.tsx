@@ -176,7 +176,7 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const hasCaption = Boolean(caption)
 
   return (
-    <Figure className={className} style={wrapperStyle} $inline={inline} $hasCaption={hasCaption}>
+    <Figure className={className} style={wrapperStyle} $inline={inline} $hasCaption={hasCaption} $hasExplicitSize={hasExplicitSize}>
       <Frame $radius={resolvedRadius} $ratio={ratioValue} $hasExplicitSize={hasExplicitSize} $inline={inline} $appearance={appearance} aria-busy={isLoading}>
         {showSkeleton && !showFallback && (skeleton ?? <Skeleton aria-hidden $visible={isLoading} />)}
         {!showFallback && (

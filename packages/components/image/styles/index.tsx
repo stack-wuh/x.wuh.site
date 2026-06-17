@@ -17,12 +17,16 @@ const shimmer = keyframes`
   }
 `
 
-export const Figure = styled.figure<{ $inline: boolean; $hasCaption: boolean }>`
+export const Figure = styled.figure<{ $inline: boolean; $hasCaption: boolean; $hasExplicitSize: boolean }>`
   margin: 0;
   display: ${(p) => (p.$inline ? 'inline-flex' : 'flex')};
   flex-direction: column;
   gap: ${(p) => (p.$hasCaption ? '8px' : '0')};
-  width: ${(p) => (p.$inline ? 'auto' : '100%')};
+  width: ${(p) => {
+    if (p.$inline) return 'auto';
+    if (p.$hasExplicitSize) return undefined;
+    return '100%';
+  }};
 `
 
 export const Frame = styled.div<{
@@ -35,7 +39,7 @@ export const Frame = styled.div<{
   position: relative;
   width: ${(p) => {
     if (p.$ratio) return '100%'
-    if (p.$inline && p.$hasExplicitSize) return 'max-content'
+    if (p.$hasExplicitSize) return undefined
     if (p.$inline) return 'auto'
     return '100%'
   }};
