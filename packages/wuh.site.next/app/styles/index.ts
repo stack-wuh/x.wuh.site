@@ -320,8 +320,6 @@ export const BookCover = styled(Image).attrs({
   variant: 'contain',
 })`
   width: 36px;
-  min-width: 36px;
-  max-width: 36px;
   height: 54px;
   border-radius: 4px;
   flex-shrink: 0;
