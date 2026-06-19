@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
+import * as path from 'path';
 import { ContentModule } from './modules/content/content.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { SyncModule } from './modules/sync/sync.module';
@@ -20,7 +21,10 @@ import { AppService } from './app.service';
   imports: [
     // Config
     ConfigModule.forRoot({
-      envFilePath: ['../../.env.local', '../../.env'],
+      envFilePath: [
+        path.resolve(__dirname, '../../../.env.local'),
+        path.resolve(__dirname, '../../../.env'),
+      ],
       isGlobal: true,
     }),
 
