@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.weread.qq.com',
+        hostname: '*.weread.qq.com',
       },
       {
         protocol: 'https',

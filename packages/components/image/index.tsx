@@ -2,64 +2,54 @@
 
 import * as React from 'react'
 import NextImage from 'next/image'
-
 import {
-  Caption,
-  Figure,
-  Frame,
-  Fallback,
-  Overlay,
+  Wrapper,
+  ImgWrapper,
   Skeleton,
-  StyledNextImage,
+  Fallback,
+  type ImageVariant,
   type ImageAppearance,
   type ImageStatus,
-  type ImageVariant,
 } from './styles'
 import { IconFallbackImage } from '../icons'
 
 type NativeImageProps = React.ComponentPropsWithoutRef<typeof NextImage>
 
-type AspectRatio = number | `${number}:${number}`
-
 export type { ImageVariant, ImageAppearance }
 
-export interface ImageProps extends Omit<NativeImageProps, 'className' | 'style' | 'onLoadingComplete' | 'onError'> {
-  /** 自定义 wrapper class，便于通过 styled(Image) 二次封装 */
+type AspectRatio = number | `${number}:${number}`
+
+export interface ImageProps extends Omit<NativeImageProps, 'className' | 'style' | 'onLoad' | 'onError'> {
   className?: string
-  /** 直接作用于 wrapper(figure) 的内联样式 */
-  wrapperStyle?: React.CSSProperties
-  /** 传递给 Next.js Image 的 className */
-  imageClassName?: string
-  /** 传递给 Next.js Image 的 style */
-  imageStyle?: React.CSSProperties
-  /** object-fit 变体，默认 cover */
   variant?: ImageVariant
-  /** 宽高比，支持数字或 16:9 字符串，提供时自动使用 fill 布局 */
   ratio?: AspectRatio
-  /** 圆角，默认使用主题 lg token */
   borderRadius?: string | number
-  /** 是否在加载阶段展示骨架屏 */
   showSkeleton?: boolean
-  /** 自定义骨架内容 */
   skeleton?: React.ReactNode
-  /** 自定义错误兜底 */
   errorFallback?: React.ReactNode
-  /** 图片下方的说明文案 */
-  caption?: React.ReactNode
-  /** 在图片上方显示的 overlay，可用于版权/描述 */
-  overlay?: React.ReactNode
-  /** 关闭过渡动画 */
-  disableTransition?: boolean
-  /** 以内联模式渲染，适合按钮/文字内使用 */
   inline?: boolean
-  /** 外框样式：default 显示边框背景，plain 则透明无边框 */
   appearance?: ImageAppearance
-  /** 状态变化回调（loading/loaded/error） */
+  lazy?: boolean
+  rootMargin?: string
   onStatusChange?: (status: ImageStatus) => void
-  onLoadingComplete?: NativeImageProps['onLoadingComplete']
   onError?: NativeImageProps['onError']
 }
 
+function formatRadius(radius?: string | number): string {
+  if (typeof radius === 'number') return `${radius}px`
+  return radius ?? 'var(--border-radius-lg, 16px)'
+}
+
+function parseRatio(ratio?: AspectRatio): number | undefined {
+  if (!ratio) return undefined
+  if (typeof ratio === 'number') return ratio > 0 ? ratio : undefined
+  if (ratio.includes(':')) {
+    const [w, h] = ratio.split(':').map(Number)
+    return Number.isFinite(w) && Number.isFinite(h) && h !== 0 ? w / h : undefined
+  }
+  const numeric = Number(ratio)
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined
+}
 
 const DefaultFallback = () => (
   <Fallback role='alert' aria-live='polite'>
@@ -67,40 +57,6 @@ const DefaultFallback = () => (
     <span>图片加载失败</span>
   </Fallback>
 )
-
-const formatRadius = (radius?: string | number): string => {
-  if (typeof radius === 'number') {
-    return `${radius}px`
-  }
-  return radius ?? 'var(--border-radius-lg, 16px)'
-}
-
-const parseRatio = (ratio?: AspectRatio): number | undefined => {
-  if (!ratio) return undefined
-  if (typeof ratio === 'number') {
-    return ratio > 0 ? ratio : undefined
-  }
-  if (ratio.includes(':')) {
-    const [w, h] = ratio.split(':').map((n) => Number(n))
-    if (Number.isFinite(w) && Number.isFinite(h) && h !== 0) {
-      return w / h
-    }
-    return undefined
-  }
-  const numeric = Number(ratio)
-  return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined
-}
-
-const deriveSizes = (explicit?: NativeImageProps['sizes'], fill?: boolean, width?: NativeImageProps['width']): NativeImageProps['sizes'] | undefined => {
-  if (explicit) return explicit
-  if (fill) {
-    return '100vw'
-  }
-  if (typeof width === 'number' && width > 0) {
-    return `(max-width: ${width}px) 100vw, ${width}px`
-  }
-  return undefined
-}
 
 const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const {
@@ -110,25 +66,21 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     showSkeleton = true,
     skeleton,
     errorFallback,
-    caption,
-    overlay,
     className,
-    wrapperStyle,
-    imageClassName,
-    imageStyle,
-    disableTransition = false,
     inline = false,
     appearance = 'default',
+    lazy = true,
+    rootMargin = '200px',
     onStatusChange,
-    onLoadingComplete,
     onError,
-    loading,
-    sizes,
+    fill,
     width,
     height,
-    fill,
     priority,
     src,
+    sizes,
+    loading,
+    alt = '',
     ...restNativeProps
   } = props
 
@@ -138,21 +90,65 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const finalWidth = ratioValue ? undefined : width
   const finalHeight = ratioValue ? undefined : height
   const hasExplicitSize = typeof finalWidth !== 'undefined' && typeof finalHeight !== 'undefined'
-  const finalSizes = React.useMemo(() => deriveSizes(sizes, finalFill, finalWidth), [sizes, finalFill, finalWidth])
-  const finalLoading = loading ?? 'lazy'
-  const resolvedLoading = priority ? undefined : finalLoading
   const shouldStretch = Boolean(finalFill)
 
-  const initialStatus: ImageStatus = showSkeleton ? 'loading' : 'loaded'
-  const [status, setStatus] = React.useState<ImageStatus>(initialStatus)
+  const shouldLazy = lazy && !priority
 
+  const [inView, setInView] = React.useState(!shouldLazy)
+  const [status, setStatus] = React.useState<ImageStatus>('idle')
+  const [skipLazy, setSkipLazy] = React.useState(false)
+  const wrapperRef = React.useRef<HTMLDivElement>(null)
+
+  // prefers-reduced-motion → skip lazy loading
   React.useEffect(() => {
-    setStatus(showSkeleton ? 'loading' : 'loaded')
-  }, [src, showSkeleton])
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mq.matches) { setSkipLazy(true); setInView(true) }
+    const handler = (e: MediaQueryListEvent) => {
+      if (e.matches) { setSkipLazy(true); setInView(true) }
+    }
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  // IntersectionObserver lazy loading
+  React.useEffect(() => {
+    if (!shouldLazy || skipLazy || inView) return
+    const el = wrapperRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [shouldLazy, skipLazy, inView, rootMargin])
+
+  // src 变化时重置状态
+  React.useEffect(() => {
+    if (inView) {
+      setStatus(showSkeleton ? 'visible' : 'idle')
+    } else {
+      setStatus('idle')
+    }
+  }, [src])
+  React.useEffect(() => {
+    if (inView && status === 'idle') {
+      setStatus('visible')
+    }
+  }, [inView, status])
 
   React.useEffect(() => {
     onStatusChange?.(status)
   }, [status, onStatusChange])
+
+  const handleLoad = React.useCallback(() => {
+    setStatus('loaded')
+  }, [])
 
   const handleError = React.useCallback(
     (event: Parameters<NonNullable<ImageProps['onError']>>[0]) => {
@@ -162,49 +158,43 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     [onError]
   )
 
-  const handleLoadingComplete = React.useCallback(
-    (result: Parameters<NonNullable<ImageProps['onLoadingComplete']>>[0]) => {
-      setStatus('loaded')
-      onLoadingComplete?.(result)
-    },
-    [onLoadingComplete]
-  )
-
-  const showFallback = status === 'error'
-  const isLoading = status === 'loading'
-
-  const hasCaption = Boolean(caption)
+  const showSkel = showSkeleton && status !== 'loaded' && status !== 'error'
+  const showError = status === 'error'
 
   return (
-    <Figure className={className} style={wrapperStyle} $inline={inline} $hasCaption={hasCaption} $hasExplicitSize={hasExplicitSize}>
-      <Frame $radius={resolvedRadius} $ratio={ratioValue} $hasExplicitSize={hasExplicitSize} $inline={inline} $appearance={appearance} aria-busy={isLoading}>
-        {showSkeleton && !showFallback && (skeleton ?? <Skeleton aria-hidden $visible={isLoading} />)}
-        {!showFallback && (
-          <StyledNextImage
-            {...restNativeProps}
-            ref={ref}
-            src={src}
-            className={imageClassName}
-            style={imageStyle}
-            fill={finalFill}
-            width={finalWidth}
-            height={finalHeight}
-            sizes={finalSizes}
-            loading={resolvedLoading}
-            priority={priority}
-            $objectFit={variant}
-            $status={status}
-            $disableTransition={disableTransition}
-            $stretch={shouldStretch}
-            onError={handleError}
-            onLoadingComplete={handleLoadingComplete}
-          />
-        )}
-        {showFallback && (errorFallback ?? <DefaultFallback />)}
-        {overlay ? <Overlay>{overlay}</Overlay> : null}
-      </Frame>
-      {caption ? <Caption>{caption}</Caption> : null}
-    </Figure>
+    <Wrapper
+      ref={wrapperRef}
+      className={className}
+      $inline={inline}
+      $appearance={appearance}
+      $radius={resolvedRadius}
+      $hasExplicitSize={hasExplicitSize}
+      style={ratioValue ? { aspectRatio: String(ratioValue) } : undefined}
+    >
+      {showSkel && (skeleton ?? <Skeleton $visible={status === 'idle' || status === 'visible'} />)}
+
+      {inView && !showError && (
+        <ImgWrapper
+          {...restNativeProps}
+          ref={ref}
+          src={src}
+          alt={alt}
+          fill={finalFill}
+          width={finalWidth}
+          height={finalHeight}
+          sizes={sizes}
+          priority={priority}
+          loading={loading}
+          $objectFit={variant}
+          $status={status === 'loaded' ? 'loaded' : 'visible'}
+          $stretch={shouldStretch}
+          onLoad={handleLoad}
+          onError={handleError}
+        />
+      )}
+
+      {showError && (errorFallback ?? <DefaultFallback />)}
+    </Wrapper>
   )
 })
 
