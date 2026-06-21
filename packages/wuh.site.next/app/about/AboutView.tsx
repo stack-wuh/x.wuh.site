@@ -57,9 +57,9 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
     <PageRoot>
       {/* 1. Hero */}
       <Hero>
-        <HeroLabel>About</HeroLabel>
+        <HeroLabel>About · 吴尒红</HeroLabel>
         <HeroTitle>输出节奏总览</HeroTitle>
-        <HeroSub>记录思考，串联碎片，构建自己的知识系统</HeroSub>
+        <HeroSub>不要停止脚步, 每一天都要进步</HeroSub>
       </Hero>
 
       {/* 2. 关于我 */}
@@ -107,7 +107,7 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
 
             {/* Platforms */}
             <div>
-              <SectionLabel style={{ marginBottom: 10 }}>输出平台</SectionLabel>
+              <SectionLabel style={{ marginBottom: 16 }}>输出平台</SectionLabel>
               <PlatformList>
                 <PlatformCard>
                   <div>
@@ -136,7 +136,7 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
 
             {/* Contact */}
             <div>
-              <SectionLabel style={{ marginBottom: 10 }}>联系方式</SectionLabel>
+              <SectionLabel style={{ marginBottom: 16 }}>联系方式</SectionLabel>
               <LinkGroup
                 items={[
                   { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },

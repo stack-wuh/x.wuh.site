@@ -8,6 +8,7 @@
     ],
     "jsx": "preserve",
     "noEmit": true,
+    "declaration": false,
     "plugins": [
       {
         "name": "next"
