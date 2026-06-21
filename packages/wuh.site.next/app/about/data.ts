@@ -1,25 +1,3 @@
-const HEATMAP_WEEKS = 12
-const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-const startDate = new Date(Date.UTC(2026, 0, 5))
-
-export const buildHeatmap = () => {
-  return WEEK_DAYS.map((weekday, weekdayIndex) => ({
-    weekday,
-    cells: Array.from({ length: HEATMAP_WEEKS }, (_, weekIndex) => {
-      const date = new Date(startDate)
-      date.setUTCDate(startDate.getUTCDate() + weekIndex * 7 + weekdayIndex)
-      const level = (weekdayIndex + weekIndex) % 4
-      return {
-        date: date.toISOString().slice(0, 10),
-        count: level ? level + 1 : 0,
-        level,
-      }
-    }),
-  }))
-}
-
-export const heatmap = buildHeatmap()
-export const filters = ['全部平台', 'GitHub', '语雀', '微信公众号']
 export const timelineFilters = ['最近 90 天', '最近 180 天', '今年']
 
 export const blogTags = ['Javascript', 'React', 'Git', 'Node', 'Nginx', 'Vue']
@@ -54,14 +32,6 @@ export const timelineLogs = [
       { platform: '公众号', title: '运营日志：创作节奏记录', link: '#' },
     ],
   },
-]
-
-export const legendLabels = ['0 条', '1 条', '2 条', '3+ 条']
-export const heatColors = [
-  'var(--background-200)',
-  'color-mix(in oklab, var(--success-color) 70%, var(--background-100) 30%)',
-  'var(--success-400)',
-  'var(--success-600)',
 ]
 
 export const formatMonthDay = (isoDate: string) => {

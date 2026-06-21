@@ -31,6 +31,8 @@
 
 ## 前端数据映射
 
+### 个人
+
 | UI 区块 | 数据来源 | Fallback |
 |---------|---------|----------|
 | 头像 | `profile.avatar_url` | 字母 "W" 渐变圆形 |
@@ -38,10 +40,24 @@
 | 角色 | `profile.location` | "ShenZhen GuangDong China" |
 | Bio | `personalBio` 常量 | — |
 | Tags | `blogTags` 常量 | — |
-| GitHub 平台卡 | `profile.public_repos` + `profile.followers` | 静态文案 |
-| 语雀平台卡 | 静态文案 | — |
-| 公众号平台卡 | 静态文案 | — |
-| 联系方式 | Email + GitHub URL + `profile.blog` | https://wuh.site |
+
+### 平台
+
+| 平台 | 数据来源 |
+|------|---------|
+| GitHub | `profile.public_repos` repos · `profile.followers` followers |
+| 语雀 | 静态文案 |
+| 微信公众号 | 静态文案 |
+
+### 联系方式
+
+使用 `LinkGroup`（size='small'）+ `Dialog` + `ContactCard`，与首页共享 `ContactConfig`：
+
+微信、QQ、Twitter、邮箱、GitHub、豆瓣、网易云、Discord — 8 个社交入口。点击微信/QQ 弹出二维码，点击 Twitter/GitHub/豆瓣/网易云/Discord 跳转链接，邮箱直接 mailto。
+
+### 热力图
+
+`useRequest` 从 `/v2/github/contributions?username=stack-wuh` 获取，传入 `@wuh.site/components/heatmap`。
 
 ## Tags
 
@@ -57,13 +73,18 @@ Javascript(6)  React(6)  Git(5)  Node(4)  Nginx(3)  Vue(3)
 
 > 全栈工程师，2018 年开始用 GitHub Issues 记录技术实践与个人思考。内容覆盖前端（React/Vue）、Node 服务端、运维部署（Docker/Nginx）及工程化。信奉实践驱动写作，写过的每一篇都是踩过的坑或拆过的轮子。现居深圳，业余时间喜欢读历史与推理小说。
 
-## 页面拆分
+## 页面结构
 
 ```
 app/about/
-├── page.tsx        # Server Component (数据获取, ISR 1h)
-├── AboutView.tsx   # Client Component (接收 props 渲染)
-├── data.ts         # 工具函数 + 常量
-├── styles.ts       # 不变
+├── page.tsx        # Server Component (ISR 1h, fetch profile + repos)
+├── AboutView.tsx   # Client Component (LinkGroup, Dialog, useRequest heatmap)
+├── data.ts         # blogTags, personalBio, timelineLogs, formatMonthDay
+├── styles.ts       # Hero padding 32px 0 24px, LinkGroup small icons
 └── layout.tsx      # 不变
 ```
+
+## 样式调整
+
+- Hero: `padding: 32px 0 24px`（底部留白改善副标题与内容的间距）
+- 删除了 `ContactRow`、`ContactItem` 样式组件（LinkGroup 替代）

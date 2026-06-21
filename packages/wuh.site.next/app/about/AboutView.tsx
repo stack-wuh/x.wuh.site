@@ -1,5 +1,17 @@
 'use client'
 
+import { useCallback, useState } from 'react'
+import { useRequest } from 'ahooks'
+import dynamic from 'next/dynamic'
+import LinkGroup from '@wuh.site/components/link-group'
+import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
+import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
+
+const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
+const ContactCard = dynamic(() => import('../components/ContactCard'), {
+  loading: () => null,
+})
+
 import type { GitHubProfileDto, RepoDto } from '@wuh.site/shared-contracts'
 import {
   PageRoot,
@@ -9,16 +21,13 @@ import {
   ProfileRow, Avatar, AvatarLetter, ProfileInfo, ProfileName, ProfileRole,
   Bio, TagRow, Tag,
   PlatformList, PlatformCard, PlatformName, PlatformDesc,
-  ContactRow, ContactItem,
-  HeatmapGrid, HeatmapRow, DayLabel, Cells, Cell,
-  FilterGroup, ChipButton,
-  Legend, LegendItem, Swatch, LegendLabel,
   TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
 } from './styles'
 import {
-  blogTags, personalBio, heatmap, filters, timelineFilters,
-  timelineLogs, heatColors, legendLabels, formatMonthDay,
+  blogTags, personalBio, timelineFilters,
+  timelineLogs, formatMonthDay,
 } from './data'
+import { CONTACT_CONFIG, type ContactType } from '../components/ContactConfig'
 
 interface AboutViewProps {
   profile: GitHubProfileDto | null
@@ -29,6 +38,20 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
   const name = profile?.name || 'Shadow Wu'
   const avatarUrl = profile?.avatar_url ?? null
   const location = profile?.location || 'ShenZhen GuangDong China'
+
+  const { data: heatmapData, loading: heatmapLoading } = useRequest<HeatmapData>(
+    async () => {
+      const res = await fetch('/v2/github/contributions?username=stack-wuh')
+      if (!res.ok) throw new Error('Failed to fetch')
+      return res.json()
+    },
+    { cacheKey: 'github-contributions' }
+  )
+
+  const [activeContact, setActiveContact] = useState<ContactType | null>(null)
+  const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
+  const closeContact = useCallback(() => setActiveContact(null), [])
+  const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
 
   return (
     <PageRoot>
@@ -114,11 +137,19 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
             {/* Contact */}
             <div>
               <SectionLabel style={{ marginBottom: 10 }}>联系方式</SectionLabel>
-              <ContactRow>
-                <ContactItem href='mailto:hello@wuh.site'>Email</ContactItem>
-                <ContactItem href='https://github.com/stack-wuh' target='_blank' rel='noreferrer'>GitHub</ContactItem>
-                <ContactItem href={profile?.blog ? `https://${profile.blog}` : 'https://wuh.site'} target='_blank' rel='noreferrer'>Blog</ContactItem>
-              </ContactRow>
+              <LinkGroup
+                items={[
+                  { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
+                  { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
+                  { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
+                  { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
+                  { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
+                  { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
+                  { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
+                  { type: 'custom', title: 'Discord', icon: <IconDiscord />, onClick: () => openContact('discord') },
+                ]}
+                size='small'
+              />
             </div>
           </AboutContent>
         </AboutTimeline>
@@ -128,36 +159,8 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
       <section>
         <SectionHeader>
           <SectionLabel>产出热力图</SectionLabel>
-          <FilterGroup>
-            {filters.map((f, i) => (
-              <ChipButton key={f} $active={i === 0}>{f}</ChipButton>
-            ))}
-          </FilterGroup>
         </SectionHeader>
-        <HeatmapGrid>
-          {heatmap.map((row) => (
-            <HeatmapRow key={row.weekday}>
-              <DayLabel>{row.weekday}</DayLabel>
-              <Cells>
-                {row.cells.map((cell) => (
-                  <Cell
-                    key={cell.date}
-                    $level={cell.level}
-                    title={`${formatMonthDay(cell.date)} · ${cell.count} 条`}
-                  />
-                ))}
-              </Cells>
-            </HeatmapRow>
-          ))}
-        </HeatmapGrid>
-        <Legend>
-          {legendLabels.map((label, i) => (
-            <LegendItem key={label}>
-              <Swatch style={{ background: heatColors[i] }} />
-              <LegendLabel>{label}</LegendLabel>
-            </LegendItem>
-          ))}
-        </Legend>
+        <Heatmap data={heatmapData} loading={heatmapLoading} />
       </section>
 
       {/* 4. Timeline */}
@@ -179,6 +182,16 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
           ))}
         </TimelineList>
       </section>
+
+      <Dialog
+        open={Boolean(activeContactConfig)}
+        onClose={closeContact}
+        title={activeContactConfig ? `${activeContactConfig.badge} 联系` : '联系'}
+        fullScreen={false}
+        width='min(760px, calc(100vw - 32px))'
+      >
+        {activeContactConfig && <ContactCard {...activeContactConfig} />}
+      </Dialog>
     </PageRoot>
   )
 }

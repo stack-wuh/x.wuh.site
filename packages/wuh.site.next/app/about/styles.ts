@@ -20,7 +20,7 @@ export const Hero = styled.header`
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  padding: 32px 0 0;
+  padding: 32px 0 24px;
 `
 
 export const HeroLabel = styled.span`
@@ -211,29 +211,6 @@ export const PlatformDesc = styled.span`
   color: var(--text-muted);
 `
 
-/* Contact row */
-
-export const ContactRow = styled.div`
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-`
-
-export const ContactItem = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-
-  &:hover {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-`
-
 /* Metric row */
 
 export const MetricRow = styled.div`
@@ -271,101 +248,6 @@ export const MetricSep = styled.span`
 
 export const MetricLabel = styled.span`
   font-size: 11px;
-  color: var(--text-muted);
-`
-
-/* ====== Heatmap ====== */
-
-export const HeatmapGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-`
-
-export const HeatmapRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`
-
-export const DayLabel = styled.span`
-  min-width: 28px;
-  font-size: 10px;
-  color: var(--text-muted);
-  text-align: right;
-`
-
-export const Cells = styled.div`
-  display: flex;
-  gap: 3px;
-`
-
-export const Cell = styled.span<{ $level: number }>`
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  background: ${({ $level }) =>
-    ['var(--background-200)', 'color-mix(in oklab, var(--success-color) 60%, var(--background-100) 40%)', 'var(--success-400)', 'var(--success-600)'][$level]};
-`
-
-export const FilterGroup = styled.div`
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-`
-
-export const ChipButton = styled.button<{ $active?: boolean }>`
-  border: 1px solid
-    ${({ $active }) =>
-      $active ? 'var(--primary-color)' : 'color-mix(in oklab, var(--normal-300) 45%, transparent)'};
-  background: ${({ $active }) => ($active ? 'var(--primary-100)' : 'transparent')};
-  color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-secondary)')};
-  border-radius: 999px;
-  padding: 4px 14px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
-
-  &:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    ${({ $active }) =>
-      $active &&
-      `
-      background: color-mix(in oklab, var(--primary-color) 18%, transparent);
-      border-color: color-mix(in oklab, var(--primary-color) 55%, transparent);
-    `}
-  }
-`
-
-export const Legend = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 8px;
-`
-
-export const LegendItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-`
-
-export const Swatch = styled.span`
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  border: 1px solid color-mix(in oklab, var(--normal-400) 40%, transparent);
-`
-
-export const LegendLabel = styled.span`
-  font-size: 10px;
   color: var(--text-muted);
 `
 
