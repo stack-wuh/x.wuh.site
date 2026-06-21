@@ -60,3 +60,6 @@ export {
 
 // Ornament
 export { DiamondDivider } from './ornament'
+
+// Iconfont loader
+export { IconfontStyle } from './iconfont-context'
