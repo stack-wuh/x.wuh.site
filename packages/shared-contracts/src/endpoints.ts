@@ -16,7 +16,8 @@ export const contentService = defineService({
 })
 
 export const reposService = defineService({
-  getAll: { url: '/repos', method: 'GET' },
+  getAll:     { url: '/repos',         method: 'GET' },
+  getProfile: { url: '/repos/profile', method: 'GET' },
 })
 
 export const commentsService = defineService({

@@ -22,13 +22,10 @@ export const heatmap = buildHeatmap()
 export const filters = ['全部平台', 'GitHub', '语雀', '微信公众号']
 export const timelineFilters = ['最近 90 天', '最近 180 天', '今年']
 
-export const metrics = [
-  { label: '最近 30 天产出', value: '32 条' },
-  { label: '活跃平台', value: '3 / 3' },
-  { label: '平均响应', value: '6 小时' },
-]
+export const blogTags = ['Javascript', 'React', 'Git', 'Node', 'Nginx', 'Vue']
 
-export const expertiseTags = ['架构研究', '内容系统', '工具链', '社区运营', 'DevRel']
+export const personalBio =
+  '全栈工程师，2018 年开始用 GitHub Issues 记录技术实践与个人思考。内容覆盖前端（React/Vue）、Node 服务端、运维部署（Docker/Nginx）及工程化。信奉实践驱动写作，写过的每一篇都是踩过的坑或拆过的轮子。现居深圳，业余时间喜欢读历史与推理小说。'
 
 export const timelineLogs = [
   {
@@ -56,27 +53,6 @@ export const timelineLogs = [
       { platform: '公众号', title: '系列：工具即生活｜Vol.3', link: '#' },
       { platform: '公众号', title: '运营日志：创作节奏记录', link: '#' },
     ],
-  },
-]
-
-export const platformStories = [
-  {
-    name: 'GitHub',
-    description: '开源项目 & 代码笔记，30+ 仓库持续维护',
-    lastUpdated: '2026-04-10',
-    linkLabel: '前往仓库',
-  },
-  {
-    name: '语雀',
-    description: '长篇技术文章，文档更新 >100 条 / 年',
-    lastUpdated: '2026-04-15',
-    linkLabel: '查看文档',
-  },
-  {
-    name: '微信公众号',
-    description: '碎片思考 & 周报，侧重经验总结与工具推荐',
-    lastUpdated: '2026-04-14',
-    linkLabel: '跳转公众号',
   },
 ]
 

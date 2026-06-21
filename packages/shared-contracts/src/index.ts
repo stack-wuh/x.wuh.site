@@ -148,6 +148,20 @@ export interface RepoDto {
   fork: boolean;
 }
 
+// GitHub Profile
+export interface GitHubProfileDto {
+  login: string
+  name: string
+  avatar_url: string
+  bio: string | null
+  blog: string | null
+  location: string | null
+  public_repos: number
+  followers: number
+  following: number
+  created_at: string
+}
+
 // API v2
 export interface ApiEndpoint {
   path: string;
