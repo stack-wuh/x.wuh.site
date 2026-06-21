@@ -22,4 +22,4 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             set -e
-            curl -f -X POST http://localhost:3200/weread/sync
+            curl -f -X POST http://localhost:3200/v2/weread/sync
