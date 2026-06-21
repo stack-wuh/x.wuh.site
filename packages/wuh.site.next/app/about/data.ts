@@ -23,9 +23,9 @@ export const filters = ['全部平台', 'GitHub', '语雀', '微信公众号']
 export const timelineFilters = ['最近 90 天', '最近 180 天', '今年']
 
 export const metrics = [
-  { label: '最近 30 天产出', value: '32 条', detail: '包含日志、文档、工具 & 运营总结' },
-  { label: '活跃平台', value: '3 / 3', detail: 'GitHub × 语雀 × 微信公众号' },
-  { label: '平均响应', value: '6 小时', detail: '合作邀约与读者反馈' },
+  { label: '最近 30 天产出', value: '32 条' },
+  { label: '活跃平台', value: '3 / 3' },
+  { label: '平均响应', value: '6 小时' },
 ]
 
 export const expertiseTags = ['架构研究', '内容系统', '工具链', '社区运营', 'DevRel']
@@ -62,19 +62,19 @@ export const timelineLogs = [
 export const platformStories = [
   {
     name: 'GitHub',
-    description: 'Issue / Repo / Release 统一为创作日志，30+ 开源项目持续维护。',
+    description: '开源项目 & 代码笔记，30+ 仓库持续维护',
     lastUpdated: '2026-04-10',
     linkLabel: '前往仓库',
   },
   {
     name: '语雀',
-    description: '沉浸式笔记与课程章节，文档更新率 >100 条 / 年。',
+    description: '长篇技术文章，文档更新 >100 条 / 年',
     lastUpdated: '2026-04-15',
     linkLabel: '查看文档',
   },
   {
     name: '微信公众号',
-    description: '深度干货与创作日记，侧重经验总结与工具推荐。',
+    description: '碎片思考 & 周报，侧重经验总结与工具推荐',
     lastUpdated: '2026-04-14',
     linkLabel: '跳转公众号',
   },

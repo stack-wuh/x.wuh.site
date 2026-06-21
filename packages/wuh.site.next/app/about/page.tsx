@@ -1,87 +1,163 @@
 'use client'
 
-import Tag from '@wuh.site/components/tag'
-import { metrics, expertiseTags } from './data'
-import * as S from './styles'
-import OrnamentDivider from './OrnamentDivider'
-import HeatmapSection from './HeatmapSection'
-import TimelineSection from './TimelineSection'
-import PlatformSection from './PlatformSection'
+import {
+  PageRoot,
+  Hero, HeroLabel, HeroTitle, HeroSub,
+  SectionHeader, SectionLabel,
+  AboutTimeline, TimelineTrack, TimelineDot, AboutContent,
+  ProfileRow, Avatar, AvatarLetter, ProfileInfo, ProfileName, ProfileRole,
+  Bio, TagRow, Tag,
+  PlatformList, PlatformCard, PlatformName, PlatformDesc,
+  ContactRow, ContactItem,
+  MetricRow, MetricItem, MetricValue, MetricSep, MetricLabel,
+  HeatmapGrid, HeatmapRow, DayLabel, Cells, Cell,
+  FilterGroup, ChipButton,
+  Legend, LegendItem, Swatch, LegendLabel,
+  TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
+} from './styles'
+import {
+  metrics, expertiseTags, heatmap, filters, timelineFilters,
+  timelineLogs, platformStories, heatColors, legendLabels, formatMonthDay,
+} from './data'
 
 const AboutPage = () => {
   return (
-    <S.PageRoot>
-      {/* Hero — 去卡片化 */}
-      <S.Hero>
-        <S.HeroEyebrow>About · 输出节奏总览</S.HeroEyebrow>
-        <S.HeroTitle>数据驱动的作者日记</S.HeroTitle>
-        <S.HeroSub>
-          以 GitHub 热力图为灵感，汇聚 GitHub / 语雀 / 微信公众号在同一个时间轴上的创作故事。
-        </S.HeroSub>
-        <S.MetricRow>
-          {metrics.map((metric) => (
-            <S.MetricItem key={metric.label}>
-              <S.MetricValue>{metric.value}</S.MetricValue>
-              <S.MetricSep />
-              <S.MetricLabel>{metric.label}</S.MetricLabel>
-            </S.MetricItem>
-          ))}
-        </S.MetricRow>
-      </S.Hero>
+    <PageRoot>
+      {/* 1. Hero */}
+      <Hero>
+        <HeroLabel>About</HeroLabel>
+        <HeroTitle>输出节奏总览</HeroTitle>
+        <HeroSub>记录思考，串联碎片，构建自己的知识系统</HeroSub>
+      </Hero>
 
-      <OrnamentDivider />
+      {/* 2. 关于我 — 合并：个人 + 平台 + 联系 + 指标 */}
+      <section>
+        <SectionHeader>
+          <SectionLabel>关于我</SectionLabel>
+        </SectionHeader>
+        <AboutTimeline>
+          <TimelineTrack>
+            <TimelineDot $top={0} />
+            <TimelineDot $top={80} />
+            <TimelineDot $top={160} />
+          </TimelineTrack>
+          <AboutContent>
+            {/* Profile */}
+            <div>
+              <ProfileRow>
+                <Avatar>
+                  <AvatarLetter>W</AvatarLetter>
+                </Avatar>
+                <ProfileInfo>
+                  <ProfileName>Shadow Wu</ProfileName>
+                  <ProfileRole>全栈开发 & 技术写作</ProfileRole>
+                </ProfileInfo>
+              </ProfileRow>
+              <Bio style={{ marginTop: 12 }}>
+                关注架构设计、内容系统与开发者体验。喜欢用工具链解决问题，用文字沉淀思考。
+              </Bio>
+              <TagRow style={{ marginTop: 10 }}>
+                {expertiseTags.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+              </TagRow>
+            </div>
 
-      {/* About */}
-      <S.Section>
-        <S.SectionHeading>
-          <S.SectionTitle>About</S.SectionTitle>
-          <S.SectionSubtitle>
-            以技术驱动与内容输出为核心，涵盖架构方案、开源协作与创作日记。
-          </S.SectionSubtitle>
-        </S.SectionHeading>
-        <S.AboutRow>
-          <S.AboutAvatar>
-            <S.AvatarLabel>W</S.AvatarLabel>
-          </S.AboutAvatar>
-          <S.AboutCopy>
-            <p>
-              兼顾工程与写作，擅长将工具链、系统思维与社区视角融合，帮助团队/社区搭建可持续的输出机制。
-              现在的创作节奏保持 4~6 天发布一次，长期保持多平台联动。
-            </p>
-            <S.TagGroup>
-              {expertiseTags.map((tag) => (
-                <Tag key={tag} label={tag} />
+            {/* Platforms */}
+            <div>
+              <SectionLabel style={{ marginBottom: 10 }}>输出平台</SectionLabel>
+              <PlatformList>
+                {platformStories.map((p) => (
+                  <PlatformCard key={p.name}>
+                    <div>
+                      <PlatformName>{p.name}</PlatformName>
+                      <PlatformDesc style={{ marginLeft: 8 }}>{p.description}</PlatformDesc>
+                    </div>
+                  </PlatformCard>
+                ))}
+              </PlatformList>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <SectionLabel style={{ marginBottom: 10 }}>联系方式</SectionLabel>
+              <ContactRow>
+                <ContactItem href='mailto:hello@wuh.site'>Email</ContactItem>
+                <ContactItem href='https://github.com/stack-wuh' target='_blank' rel='noreferrer'>GitHub</ContactItem>
+                <ContactItem href='https://www.yuque.com/' target='_blank' rel='noreferrer'>语雀</ContactItem>
+              </ContactRow>
+            </div>
+
+            {/* Metrics */}
+            <MetricRow>
+              {metrics.map((m) => (
+                <MetricItem key={m.label}>
+                  <MetricValue>{m.value}</MetricValue>
+                  <MetricSep />
+                  <MetricLabel>{m.label}</MetricLabel>
+                </MetricItem>
               ))}
-            </S.TagGroup>
-          </S.AboutCopy>
-        </S.AboutRow>
-      </S.Section>
+            </MetricRow>
+          </AboutContent>
+        </AboutTimeline>
+      </section>
 
-      <HeatmapSection />
+      {/* 3. Heatmap */}
+      <section>
+        <SectionHeader>
+          <SectionLabel>产出热力图</SectionLabel>
+          <FilterGroup>
+            {filters.map((f, i) => (
+              <ChipButton key={f} $active={i === 0}>{f}</ChipButton>
+            ))}
+          </FilterGroup>
+        </SectionHeader>
+        <HeatmapGrid>
+          {heatmap.map((row) => (
+            <HeatmapRow key={row.weekday}>
+              <DayLabel>{row.weekday}</DayLabel>
+              <Cells>
+                {row.cells.map((cell) => (
+                  <Cell
+                    key={cell.date}
+                    $level={cell.level}
+                    title={`${formatMonthDay(cell.date)} · ${cell.count} 条`}
+                  />
+                ))}
+              </Cells>
+            </HeatmapRow>
+          ))}
+        </HeatmapGrid>
+        <Legend>
+          {legendLabels.map((label, i) => (
+            <LegendItem key={label}>
+              <Swatch style={{ background: heatColors[i] }} />
+              <LegendLabel>{label}</LegendLabel>
+            </LegendItem>
+          ))}
+        </Legend>
+      </section>
 
-      <TimelineSection />
-
-      <PlatformSection />
-
-      {/* 联系与社交 — 唯一纸张风卡片 */}
-      <S.Section>
-        <S.SectionHeading>
-          <S.SectionTitle>联系与社交</S.SectionTitle>
-          <S.SectionSubtitle>保持联络，欢迎找我聊合作/分享。</S.SectionSubtitle>
-        </S.SectionHeading>
-        <S.ContactCard variant='elevated' padding='md' fullWidth>
-          <S.ContactTitle>stack-wuh</S.ContactTitle>
-          <S.ContactSubtitle>创作人 · 系统设计师</S.ContactSubtitle>
-          <S.ContactLinks>
-            <S.ContactLink href='mailto:hello@wuh.site'>Email</S.ContactLink>
-            <S.ContactLink href='https://github.com/stack-wuh' target='_blank' rel='noreferrer'>GitHub</S.ContactLink>
-            <S.ContactLink href='https://www.yuque.com/' target='_blank' rel='noreferrer'>语雀</S.ContactLink>
-          </S.ContactLinks>
-        </S.ContactCard>
-      </S.Section>
-
-      <OrnamentDivider />
-    </S.PageRoot>
+      {/* 4. Timeline */}
+      <section>
+        <SectionHeader>
+          <SectionLabel>最近日志</SectionLabel>
+          <TimelineSelect defaultValue={timelineFilters[0]}>
+            {timelineFilters.map((f) => (
+              <option key={f} value={f}>{f}</option>
+            ))}
+          </TimelineSelect>
+        </SectionHeader>
+        <TimelineList>
+          {timelineLogs.map((log) => (
+            <TimelineRow key={log.date}>
+              <TimelineDate>{formatMonthDay(log.date)}</TimelineDate>
+              <TimelineTitle>{log.summary}</TimelineTitle>
+            </TimelineRow>
+          ))}
+        </TimelineList>
+      </section>
+    </PageRoot>
   )
 }
 

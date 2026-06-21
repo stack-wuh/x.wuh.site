@@ -1,15 +1,14 @@
-import styled from '@wuh.site/components/styled'
-import Card from '@wuh.site/components/card'
+import { styled } from '@wuh.site/components/styled'
 
 /* ====== Page Root ====== */
 
 export const PageRoot = styled.main`
-  width: min(960px, 100%);
+  width: min(640px, 100%);
   margin: 0 auto;
-  padding: clamp(16px, 3vw, 36px) clamp(12px, 4vw, 32px) 56px;
+  padding: clamp(32px, 4vw, 48px) clamp(16px, 4vw, 24px) 64px;
   display: flex;
   flex-direction: column;
-  gap: clamp(16px, 2vw, 28px);
+  gap: 40px;
   font-family: var(--font-sans);
   color: var(--text-color);
 `
@@ -20,36 +19,233 @@ export const Hero = styled.header`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-md);
-  padding: clamp(24px, 4vw, 56px) 0 clamp(16px, 2vw, 32px);
+  gap: 8px;
+  padding: 32px 0 0;
 `
 
-export const HeroEyebrow = styled.span`
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.3em;
+export const HeroLabel = styled.span`
+  font-size: 12px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--accent-color);
 `
 
 export const HeroTitle = styled.h1`
   font-family: var(--font-serif);
-  font-size: clamp(36px, 4vw, 48px);
+  font-size: clamp(24px, 3vw, 28px);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.35;
   color: var(--text-primary);
 `
 
 export const HeroSub = styled.p`
-  color: var(--text-color);
-  line-height: 1.5;
-  max-width: 560px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 480px;
 `
+
+/* ====== Section Header ====== */
+
+export const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+`
+
+export const SectionLabel = styled.span`
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent-color);
+`
+
+/* ====== AboutMe Block ====== */
+
+export const AboutTimeline = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+export const TimelineTrack = styled.div`
+  width: 2px;
+  background: linear-gradient(to bottom, var(--primary-300), transparent);
+  flex-shrink: 0;
+  position: relative;
+  margin-top: 4px;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+`
+
+export const TimelineDot = styled.div<{ $top: number }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-300);
+  position: absolute;
+  left: -3px;
+  top: ${({ $top }) => $top}px;
+`
+
+export const AboutContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-left: 4px;
+`
+
+/* Profile sub-section */
+
+export const ProfileRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+`
+
+export const Avatar = styled.div`
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    color-mix(in oklab, var(--background-100) 70%, var(--accent-color)),
+    var(--primary-500)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--elevation-soft);
+`
+
+export const AvatarLetter = styled.span`
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+`
+
+export const ProfileInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`
+
+export const ProfileName = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+`
+
+export const ProfileRole = styled.span`
+  font-size: 12px;
+  color: var(--text-muted);
+`
+
+export const Bio = styled.p`
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  margin: 0;
+`
+
+export const TagRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`
+
+export const Tag = styled.span`
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--primary-color);
+  background: color-mix(in oklab, var(--primary-100) 60%, transparent);
+  border-radius: 12px;
+`
+
+/* Platform cards */
+
+export const PlatformList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const PlatformCard = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-100);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--background-200);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--background-200);
+    border-color: rgba(255, 255, 255, 0.04);
+    &:hover {
+      background: var(--background-300);
+    }
+  }
+`
+
+export const PlatformName = styled.span`
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+`
+
+export const PlatformDesc = styled.span`
+  font-size: 11px;
+  color: var(--text-muted);
+`
+
+/* Contact row */
+
+export const ContactRow = styled.div`
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+`
+
+export const ContactItem = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+`
+
+/* Metric row */
 
 export const MetricRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-top: var(--space-xs);
+  gap: 16px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+
+  @media (prefers-color-scheme: dark) {
+    border-top-color: rgba(255, 255, 255, 0.06);
+  }
 `
 
 export const MetricItem = styled.div`
@@ -59,14 +255,14 @@ export const MetricItem = styled.div`
 `
 
 export const MetricValue = styled.span`
-  font-size: var(--font-size-lg);
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
 `
 
 export const MetricSep = styled.span`
-  width: 3px;
-  height: 3px;
+  width: 2px;
+  height: 2px;
   border-radius: 50%;
   background: var(--text-muted);
   opacity: 0.4;
@@ -74,158 +270,155 @@ export const MetricSep = styled.span`
 `
 
 export const MetricLabel = styled.span`
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   color: var(--text-muted);
 `
 
-/* ====== Section（公共） ====== */
+/* ====== Heatmap ====== */
 
-export const Section = styled.section`
+export const HeatmapGrid = styled.div`
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 `
 
-export const SectionHeading = styled.div`
+export const HeatmapRow = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+`
+
+export const DayLabel = styled.span`
+  min-width: 28px;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: right;
+`
+
+export const Cells = styled.div`
+  display: flex;
+  gap: 3px;
+`
+
+export const Cell = styled.span<{ $level: number }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: ${({ $level }) =>
+    ['var(--background-200)', 'color-mix(in oklab, var(--success-color) 60%, var(--background-100) 40%)', 'var(--success-400)', 'var(--success-600)'][$level]};
+`
+
+export const FilterGroup = styled.div`
+  display: flex;
   gap: 6px;
-`
-
-export const SectionTitle = styled.h2`
-  font-family: var(--font-serif);
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-`
-
-export const SectionSubtitle = styled.p`
-  color: var(--text-color);
-  font-size: var(--font-size-sm);
-  max-width: 520px;
-`
-
-/* ====== About 区块 ====== */
-
-export const AboutRow = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-md);
-  align-items: center;
-
-  @media (max-width: 720px) {
-    grid-template-columns: 1fr;
-  }
-`
-
-export const AboutAvatar = styled.div`
-  width: 120px;
-  height: 120px;
-  border-radius: var(--radius-card);
-  background: radial-gradient(
-    circle at 20% 20%,
-    color-mix(in oklab, var(--background-100) 80%, var(--accent-color)),
-    var(--primary-500)
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--elevation-card);
-`
-
-export const AvatarLabel = styled.span`
-  font-size: 40px;
-  font-weight: 700;
-  color: var(--text-primary);
-`
-
-export const AboutCopy = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  color: var(--text-color);
-  & > p {
-    margin: 0;
-  }
-`
-
-export const TagGroup = styled.div`
-  display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
 `
 
-/* ====== 装饰分隔线 ====== */
+export const ChipButton = styled.button<{ $active?: boolean }>`
+  border: 1px solid
+    ${({ $active }) =>
+      $active ? 'var(--primary-color)' : 'color-mix(in oklab, var(--normal-300) 45%, transparent)'};
+  background: ${({ $active }) => ($active ? 'var(--primary-100)' : 'transparent')};
+  color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-secondary)')};
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 
-export const DividerRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  max-width: 360px;
-  margin: 0 auto;
-  color: var(--text-muted);
-  opacity: 0.5;
-`
-
-export const DividerLine = styled.span`
-  flex: 1;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.35;
-`
-
-export const DividerDiamond = styled.svg`
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
-`
-
-/* ====== 联系与社交 — 唯一纸张风卡片 ====== */
-
-export const ContactCard = styled(Card)`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  align-items: flex-start;
-  border-radius: var(--radius-card);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: var(--elevation-card), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
 
   @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
-    box-shadow: var(--elevation-card), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    ${({ $active }) =>
+      $active &&
+      `
+      background: color-mix(in oklab, var(--primary-color) 18%, transparent);
+      border-color: color-mix(in oklab, var(--primary-color) 55%, transparent);
+    `}
   }
 `
 
-export const ContactTitle = styled.h3`
-  font-size: 32px;
-  margin: 0;
+export const Legend = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+`
+
+export const LegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`
+
+export const Swatch = styled.span`
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid color-mix(in oklab, var(--normal-400) 40%, transparent);
+`
+
+export const LegendLabel = styled.span`
+  font-size: 10px;
+  color: var(--text-muted);
+`
+
+/* ====== Timeline ====== */
+
+export const TimelineList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`
+
+export const TimelineRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 8px;
+  border-radius: 6px;
+  transition: background var(--transition-fast), padding-left var(--transition-fast);
+
+  &:hover {
+    background: color-mix(in oklab, var(--accent-color) 6%, transparent);
+    padding-left: 12px;
+  }
+`
+
+export const TimelineDate = styled.span`
+  width: 48px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: right;
+`
+
+export const TimelineTitle = styled.span`
+  font-size: 13px;
   color: var(--text-primary);
 `
 
-export const ContactSubtitle = styled.p`
-  margin: 0;
-  color: var(--text-color);
-`
-
-export const ContactLinks = styled.div`
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-`
-
-export const ContactLink = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
+export const TimelineSelect = styled.select`
+  border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
+  background: transparent;
+  color: var(--text-secondary);
   border-radius: 999px;
-  border: 1px solid rgba(59, 130, 246, 0.4);
-  color: var(--primary-color);
-  font-weight: 600;
-  transition: background var(--transition-fast);
-  &:hover {
-    background: color-mix(in oklab, var(--primary-color) 15%, var(--background-100) 85%);
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
   }
 `
+
+/* 响应式规则已内联到各组件 (TimelineTrack 等) */
