@@ -74,7 +74,13 @@ const THEME_LABELS: Record<Theme, string> = {
 
 const COLOR_NAMES = ['primary', 'normal', 'background', 'success', 'danger', 'warning'] as const
 
+const SEMANTIC_VARS = [
+  '--primary-color', '--secondary-color', '--success-color', '--danger-color', '--warning-color',
+  '--text-primary', '--text-secondary', '--text-muted', '--background-color', '--accent-color',
+] as const
+
 function readPalette(name: string): string[] {
+  if (typeof window === 'undefined') return []
   const result: string[] = []
   for (let l = 100; l <= 900; l += 100) {
     const value = getComputedStyle(document.documentElement)
@@ -86,6 +92,7 @@ function readPalette(name: string): string[] {
 }
 
 function readVar(name: string): string {
+  if (typeof window === 'undefined') return ''
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 }
 
@@ -131,6 +138,7 @@ export default function DesignTokenPage() {
   }, [previewTheme, theme])
 
   const [currentColors, setCurrentColors] = React.useState<Record<string, string[]>>({})
+  const [semanticVals, setSemanticVals] = React.useState<Record<string, string>>({})
 
   React.useEffect(() => {
     const colors: Record<string, string[]> = {}
@@ -138,6 +146,12 @@ export default function DesignTokenPage() {
       colors[name] = readPalette(name)
     }
     setCurrentColors(colors)
+
+    const svals: Record<string, string> = {}
+    for (const v of SEMANTIC_VARS) {
+      svals[v] = readVar(v)
+    }
+    setSemanticVals(svals)
   }, [activeTheme])
 
   return (
@@ -164,14 +178,11 @@ export default function DesignTokenPage() {
 
       <H2>语义变量</H2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px 16px' }}>
-        {([
-          '--primary-color', '--secondary-color', '--success-color', '--danger-color', '--warning-color',
-          '--text-primary', '--text-secondary', '--text-muted', '--background-color', '--accent-color',
-        ]).map((v) => {
-          const val = readVar(v)
+        {SEMANTIC_VARS.map((v) => {
+          const val = semanticVals[v] ?? ''
           return (
             <div key={v} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: val, border: '1px solid var(--normal-300)', flexShrink: 0 }} />
+              <div style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: val || 'transparent', border: '1px solid var(--normal-300)', flexShrink: 0 }} />
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>{v}</span>
             </div>
           )
