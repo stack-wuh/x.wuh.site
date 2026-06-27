@@ -142,7 +142,7 @@ const AboutView = ({ profile, repos }: AboutViewProps) => {
                   { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
                   { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
                   { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
-                  { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱' },
+                  { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱', hideOnMobile: true },
                   { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
                   { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
                   { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
