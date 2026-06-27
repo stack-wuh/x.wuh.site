@@ -7,6 +7,9 @@ import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
+const TypewriterMotto = dynamic(() => import('./components/TypewriterMotto'), {
+  loading: () => <S.MottoSkeleton />,
+})
 const ContactCard = dynamic(() => import('./components/ContactCard'), {
   loading: () => null,
 })
@@ -29,7 +32,7 @@ type Props = {
   wereadBooks: WereadBook[]
 }
 
-import { CONTACT_CONFIG, type ContactType, type ContactDialogConfig } from './components/ContactConfig'
+import { CONTACT_CONFIG, type ContactType } from './components/ContactConfig'
 
 const groupByYear = (posts: Props['posts']) => {
   const map = new Map<number, Props['posts']>()
@@ -102,9 +105,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
         </S.Hero>
 
-        <S.Motto>
-          写作是抵抗遗忘的方式，代码是构建世界的语言。
-        </S.Motto>
+        <TypewriterMotto />
 
         <S.Ctas>
           <Button href='/blog' variant='outlined' color='primary' size='small'>查看博客</Button>

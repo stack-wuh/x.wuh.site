@@ -24,14 +24,26 @@
 - **AND** 排版: `--font-serif`, `--font-size-{scale}`, `--space-{scale}`
 - **AND** 视觉: `--elevation-{soft|card|card-hover}`, `--radius-card`, `--page-bg`
 
+## ADDED: TypewriterMotto 打字动画
+
+### Requirement: 首页标语打字动画
+- **GIVEN** 用户访问首页
+- **WHEN** Motto 区域渲染
+- **THEN** 标语以打字机效果逐字显示，尾部有闪烁光标
+- **AND** 每个字符出现时溅出 2-3 个粒子光点
+- **AND** 光标附近有 glow 模糊光晕
+- **AND** 第一句打完停顿 3.5s 后逐字回删，切换第二句继续打字
+- **AND** 两句循环："写作是抵抗遗忘的方式，代码是构建世界的语言。" / "不要停步不前，每一天都要做出改变。"
+
 ## MODIFIED: 首页组件
 
-### Requirement: HomeView 重设计
+### Requirement: HomeView Motto 区域
 - **GIVEN** 用户访问首页 `/`
 - **WHEN** 页面渲染
-- **THEN** 展示: 小 Hero (头像+引言) → 格言区 → CTA 按钮组 → 社交链接 → 博客时间线 → 项目列表 → 页脚
+- **THEN** 展示: 小 Hero (头像+引言) → TypewriterMotto 动画标语 → CTA 按钮组 → 社交链接 → 博客时间线 → 项目列表 → 页脚
 - **AND** 装饰分隔线 (OrnamentDivider) 划分各 section
 - **AND** 博客列表以单列时间线展示代替卡片网格
+- **AND** Motto 使用 TypewriterMotto 动态组件代替静态 blockquote
 
 ## MODIFIED: 博客详情页
 

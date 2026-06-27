@@ -34,7 +34,7 @@ interface AboutViewProps {
   repos: RepoDto[]
 }
 
-const AboutView = ({ profile, repos }: AboutViewProps) => {
+const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
   const name = profile?.name || 'Shadow Wu'
   const avatarUrl = profile?.avatar_url ?? null
   const location = profile?.location || 'ShenZhen GuangDong China'

@@ -43,7 +43,7 @@ type Props = {
   position?: number
 }
 
-export default function PostToolbar({ prevIssue, nextIssue, currentNumber, total, position }: Props) {
+export default function PostToolbar({ prevIssue, nextIssue, total, position, currentNumber: _ }: Props) {
   const hasBoth = prevIssue && nextIssue
   const showPosition = position != null && total != null && total > 0
 

@@ -4,7 +4,7 @@ import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
 import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
-import type { Issue, AdjacentIssue } from '../PostView.types'
+import type { Issue } from '../PostView.types'
 import JsonLd from '../../components/JsonLd'
 
 const SITE_URL = 'https://wuh.site'
@@ -12,7 +12,7 @@ const SITE_URL = 'https://wuh.site'
 function buildDescription(issue: Issue): string {
   if (issue.metadata?.summary) return issue.metadata.summary
   if (issue.body) {
-    const plain = issue.body.replace(/[#*`\[\]()>!|-]/g, '').replace(/\s+/g, ' ').trim()
+    const plain = issue.body.replace(/[#*`[\]()>!|-]/g, '').replace(/\s+/g, ' ').trim()
     return plain.length > 160 ? plain.slice(0, 157) + '...' : plain
   }
   return '阅读这篇博客文章'
