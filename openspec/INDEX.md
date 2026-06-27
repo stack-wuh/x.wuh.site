@@ -29,8 +29,8 @@
 - **路径:** `openspec/specs/api-standardization/spec.md`
 
 ## design-system — 设计系统
-- **关键词:** UI设计, 主题, CSS变量, 酒红, 素雅, 暗黑模式跟随系统, 打字动画
-- **需求:** 双维度主题模型, 三层CSS变量架构, CSS变量命名规范, 首页标语打字动画, HomeView Motto区域, PostView组件拆分, marked前端解析, MarkdownBody排版细化
+- **关键词:** UI设计, 主题, CSS变量, 酒红, 素雅, 暗黑模式跟随系统, 闪动修复, 过渡动画, 打字动画
+- **需求:** 双维度主题模型, 三层CSS变量架构, CSS变量命名规范, 首屏主题无闪动, 首屏禁用过渡动画, 全局主题色过渡动画, 首页标语打字动画, HomeView Motto区域, PostView组件拆分, marked前端解析, MarkdownBody排版细化
 - **路径:** `openspec/specs/design-system/spec.md`
 
 ## blog-detail — 博客详情页
