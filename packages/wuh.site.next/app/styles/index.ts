@@ -67,29 +67,8 @@ export const SiteTagline = styled.p`
   letter-spacing: 0.06em;
 `
 
-export const Motto = styled.blockquote`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-lg);
-  font-weight: 500;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  text-align: center;
-  padding: var(--space-md) 0;
-  border-left: none;
-  position: relative;
-  margin: 0 auto;
-
-  @media (max-width: 520px) { max-width: 320px; }
-
-  &::after {
-    content: '';
-    display: block;
-    width: 28px;
-    height: 2px;
-    margin: var(--space-md) auto 0;
-    background: var(--accent-color);
-    opacity: 0.5;
-  }
+export const MottoSkeleton = styled.div`
+  min-height: calc(var(--font-size-lg) * 1.8 + var(--space-md) * 2);
 `
 
 export const Ctas = styled.div`
