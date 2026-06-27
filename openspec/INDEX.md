@@ -13,6 +13,11 @@
 - **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts
 - **路径:** `openspec/specs/content-api/spec.md`
 
+## rss — RSS 订阅
+- **关键词:** RSS, feed, 订阅, XML, 自动发现
+- **需求:** RSS feed URL 格式, RSS 仅输出已发布内容, 前端 RSS 自动发现
+- **路径:** `openspec/specs/rss/spec.md`
+
 ## seo — SEO 优化
 - **关键词:** SEO, Open Graph, Twitter Card, JSON-LD, canonical, 结构化数据, URL slug
 - **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容
