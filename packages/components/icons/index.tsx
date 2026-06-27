@@ -58,6 +58,9 @@ export {
   FolderGit2 as IconFolderGit2
 } from 'lucide-react'
 
+// Brand
+export { IconLogo } from './logo'
+
 // Ornament
 export { DiamondDivider } from './ornament'
 
