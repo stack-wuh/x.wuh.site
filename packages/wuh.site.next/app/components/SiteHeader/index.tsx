@@ -1,9 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useId, useState } from 'react'
-import Image from '@wuh.site/components/image'
 import { IconBars } from '@wuh.site/components/icons'
 import { useThemeMode, type Theme } from '../theme/ThemeModeProvider'
+import * as S from './styles'
 
 const THEME_LABELS: Record<Theme, string> = {
   'wine-light': '酒红明亮',
@@ -11,7 +11,6 @@ const THEME_LABELS: Record<Theme, string> = {
   'plain-light': '素雅明亮',
   'plain-dark': '素雅暗黑',
 }
-import * as S from './styles'
 
 /**
  * 站点顶部导航栏，支持桌面端和移动端布局，具有主题切换功能。
@@ -38,7 +37,12 @@ export default function SiteHeader() {
     <S.HeaderRoot>
       <S.HeaderInner>
         <S.Brand aria-label='站点标识'>
-          <Image src='/logo.svg' alt='wuh.site' width={42} height={26} priority inline showSkeleton={false} appearance='plain' />
+          <svg viewBox="0 0 120 60" width={42} height={26} xmlns="http://www.w3.org/2000/svg" fill="none" role="img" style={{ display: 'block' }}>
+            <title>wuh.site</title>
+            <path d="M14 16 L24 44 L34 16 L44 44 L54 16" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="66" y="18" width="34" height="8" rx="4" fill="var(--primary-color)" />
+            <rect x="66" y="34" width="20" height="8" rx="4" fill="currentColor" opacity=".55" />
+          </svg>
         </S.Brand>
 
         <S.Right>

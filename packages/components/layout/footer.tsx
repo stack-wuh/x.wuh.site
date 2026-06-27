@@ -1,7 +1,6 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import { Row, Column, SpaceBetween } from '@wuh.site/components/flex'
-import Image from '@wuh.site/components/image'
 
 const footerConf = {
   slogan: '驿寄梅花, 鱼传尺素',
@@ -49,15 +48,12 @@ const Footer = () => {
       <SpaceBetween className="footer-inner" gap={20}>
         <Row className="footer-row" gap={'3xl'}>
           <Column className="footer-col">
-            <Image
-              src={'/logo.svg'}
-              alt={'logo'}
-              width={100}
-              height={60}
-              showSkeleton={false}
-              inline
-              appearance="plain"
-            />
+            <svg viewBox="0 0 120 60" width={100} height={60} xmlns="http://www.w3.org/2000/svg" fill="none" role="img" style={{ display: 'block' }}>
+              <title>wuh.site</title>
+              <path d="M14 16 L24 44 L34 16 L44 44 L54 16" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+              <rect x="66" y="18" width="34" height="8" rx="4" fill="var(--primary-color)" />
+              <rect x="66" y="34" width="20" height="8" rx="4" fill="currentColor" opacity=".55" />
+            </svg>
           </Column>
           <Column className="footer-col">
             <div>{footerConf.slogan}</div>
