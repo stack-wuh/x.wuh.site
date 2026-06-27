@@ -9,7 +9,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10.23.0'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: TypeScript type check
+        run: pnpm run typecheck
+
+      - name: Frontend lint (oxlint)
+        run: pnpm run lint:next
+
   prepare:
+    needs: [quality-gate]
     runs-on: ubuntu-latest
     steps:
       - name: Pull latest code
