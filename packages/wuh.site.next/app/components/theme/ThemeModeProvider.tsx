@@ -1,59 +1,72 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import type { ThemeFamily, ColorScheme } from '@wuh.site/components/themes/tokens'
 
-export type ThemeMode = 'money' | 'plain'
+export type Theme = `${ThemeFamily}-${ColorScheme}`
 
-type ThemeModeContextValue = {
-  mode: ThemeMode
-  setMode: (mode: ThemeMode) => void
-  toggleMode: () => void
+type ThemeContextValue = {
+  theme: Theme
+  toggle: () => void
 }
 
-const STORAGE_KEY = 'wuh.site.themeMode'
+const STORAGE_KEY = 'wuh.site.theme'
 
-const ThemeModeContext = createContext<ThemeModeContextValue | null>(null)
+const ThemeContext = createContext<ThemeContextValue | null>(null)
 
-const normalizeMode = (value: unknown): ThemeMode | null => {
-  if (value === 'money' || value === 'plain') return value
-  return null
+const THEME_CYCLE: Theme[] = ['wine-light', 'wine-dark', 'plain-light', 'plain-dark']
+
+function isValidTheme(value: unknown): value is Theme {
+  return THEME_CYCLE.includes(value as Theme)
+}
+
+function parseTheme(raw: unknown): Theme {
+  return isValidTheme(raw) ? raw : 'wine-light'
+}
+
+function applyTheme(theme: Theme) {
+  if (typeof document === 'undefined') return
+  const [family, scheme] = theme.split('-') as [ThemeFamily, ColorScheme]
+  document.documentElement.dataset.themeFamily = family
+  document.documentElement.dataset.colorScheme = scheme
 }
 
 export function ThemeModeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>('money')
+  const [theme, setThemeState] = useState<Theme>('wine-light')
 
   useEffect(() => {
+    let stored: Theme | null = null
     try {
-      const stored = normalizeMode(window.localStorage.getItem(STORAGE_KEY))
-      if (stored) {
-        setModeState(stored)
-      }
+      stored = parseTheme(window.localStorage.getItem(STORAGE_KEY))
     } catch {}
+    const resolved = stored ?? 'wine-light'
+    setThemeState(resolved)
+    applyTheme(resolved)
   }, [])
 
   useEffect(() => {
-    if (typeof document === 'undefined') return
-    document.documentElement.dataset.theme = mode
+    applyTheme(theme)
     try {
-      window.localStorage.setItem(STORAGE_KEY, mode)
+      window.localStorage.setItem(STORAGE_KEY, theme)
     } catch {}
-  }, [mode])
+  }, [theme])
 
-  const setMode = useCallback((next: ThemeMode) => setModeState(next), [])
-  const toggleMode = useCallback(() => {
-    setModeState((current) => (current === 'money' ? 'plain' : 'money'))
+  const toggle = useCallback(() => {
+    setThemeState((current) => {
+      const idx = THEME_CYCLE.indexOf(current)
+      return THEME_CYCLE[(idx + 1) % THEME_CYCLE.length]
+    })
   }, [])
 
-  const value = useMemo<ThemeModeContextValue>(() => ({ mode, setMode, toggleMode }), [mode, setMode, toggleMode])
+  const value = useMemo<ThemeContextValue>(() => ({ theme, toggle }), [theme, toggle])
 
-  return <ThemeModeContext.Provider value={value}>{children}</ThemeModeContext.Provider>
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
-export function useThemeMode(): ThemeModeContextValue {
-  const ctx = useContext(ThemeModeContext)
+export function useThemeMode(): ThemeContextValue {
+  const ctx = useContext(ThemeContext)
   if (!ctx) {
     throw new Error('useThemeMode must be used within ThemeModeProvider')
   }
   return ctx
 }
-

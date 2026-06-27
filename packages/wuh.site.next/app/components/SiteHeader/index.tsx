@@ -3,7 +3,14 @@
 import { useCallback, useEffect, useId, useState } from 'react'
 import Image from '@wuh.site/components/image'
 import { IconBars } from '@wuh.site/components/icons'
-import { useThemeMode } from '../theme/ThemeModeProvider'
+import { useThemeMode, type Theme } from '../theme/ThemeModeProvider'
+
+const THEME_LABELS: Record<Theme, string> = {
+  'wine-light': '酒红明亮',
+  'wine-dark': '酒红暗黑',
+  'plain-light': '素雅明亮',
+  'plain-dark': '素雅暗黑',
+}
 import * as S from './styles'
 
 /**
@@ -13,7 +20,7 @@ import * as S from './styles'
 export default function SiteHeader() {
   const panelId = useId()
   const [open, setOpen] = useState(false)
-  const { mode, toggleMode } = useThemeMode()
+  const { theme, toggle: toggleTheme } = useThemeMode()
 
   const close = useCallback(() => setOpen(false), [])
   const toggle = useCallback(() => setOpen((v) => !v), [])
@@ -43,9 +50,9 @@ export default function SiteHeader() {
             </S.NavLink>
           </S.Nav>
 
-          <S.ThemeToggle type='button' onClick={toggleMode} aria-label={`切换主题（当前：${mode === 'money' ? '酒红' : '素雅'}）`}>
+          <S.ThemeToggle type='button' onClick={toggleTheme} aria-label={`切换主题（当前：${THEME_LABELS[theme]}）`}>
             <S.ThemeDot aria-hidden='true' />
-            <span>{mode === 'money' ? '酒红' : '素雅'}</span>
+            <span>{THEME_LABELS[theme]}</span>
           </S.ThemeToggle>
 
           <S.MobileToggle
@@ -72,13 +79,13 @@ export default function SiteHeader() {
             <S.MobileActionButton
               type='button'
               onClick={() => {
-                toggleMode()
+                toggleTheme()
                 close()
               }}
             >
               <S.MobileThemeLabel>
                 <S.ThemeDot aria-hidden='true' />
-                <span>主题：{mode === 'money' ? '酒红' : '素雅'}</span>
+                <span>主题：{THEME_LABELS[theme]}</span>
               </S.MobileThemeLabel>
             </S.MobileActionButton>
           </S.MobileActions>

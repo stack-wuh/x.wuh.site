@@ -1,21 +1,20 @@
 'use client'
 import * as React from 'react'
 import styled from '@wuh.site/components/styled'
-import { generate, red, redDark, orange, orangeDark, green, greenDark } from '@ant-design/colors'
+import { useThemeMode, type Theme } from '@/app/components/theme/ThemeModeProvider'
 
 const H2 = styled.h2`
-  margin-top: 24px;
+  margin-top: 32px;
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
 `
 
-const H3 = styled.h3`
-  margin-top: 12px;
-  margin-left: 12px;
-`
-
-const ColorWrapper = styled.div`
+const SwatchRow = styled.div`
   display: flex;
   flex-wrap: nowrap;
   align-items: flex-end;
+  gap: 0;
+  margin: 8px 0 16px;
 
   & > div {
     width: 80px;
@@ -23,75 +22,177 @@ const ColorWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
-    transition: all .35s ease;
-    transform-origin: revert;
-
+    font-family: var(--font-mono);
+    transition: all 0.3s ease;
+    cursor: pointer;
 
     &:hover {
-      height: 90px;
-      margin-top: -10px;
-      transition: all .35s ease;
-      cursor: pointer;
-      transform-origin: revert;
+      height: 92px;
+      margin-top: -12px;
     }
   }
 `
 
+const ToggleBar = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0 32px;
+`
 
-const renderColorPanel = (colors: string[]) => {
-  return <ColorWrapper>
-    {
-      colors.map((color, index) => {
-        return <div key={color} style={{ backgroundColor: color, color: colors[9 - index]}}>{color}</div>
-      })
+const ThemeChip = styled.button<{ $active: boolean }>`
+  padding: 6px 16px;
+  border: 1px solid ${(p) => (p.$active ? 'var(--primary-color)' : 'var(--normal-300)')};
+  background: ${(p) => (p.$active ? 'color-mix(in srgb, var(--primary-color) 12%, transparent)' : 'var(--background-100)')};
+  color: ${(p) => (p.$active ? 'var(--primary-color)' : 'var(--text-secondary)')};
+  border-radius: var(--border-radius-base);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-color);
+  }
+`
+
+const Label = styled.span`
+  display: inline-block;
+  width: 140px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+`
+
+const THEME_OPTIONS: Theme[] = ['wine-light', 'wine-dark', 'plain-light', 'plain-dark']
+const THEME_LABELS: Record<Theme, string> = {
+  'wine-light': '酒红明亮',
+  'wine-dark': '酒红暗黑',
+  'plain-light': '素雅明亮',
+  'plain-dark': '素雅暗黑',
+}
+
+const COLOR_NAMES = ['primary', 'normal', 'background', 'success', 'danger', 'warning'] as const
+
+function readPalette(name: string): string[] {
+  const result: string[] = []
+  for (let l = 100; l <= 900; l += 100) {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(`--${name}-${l}`)
+      .trim()
+    result.push(value || '#N/A')
+  }
+  return result
+}
+
+function readVar(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+}
+
+function Swatch({ colors }: { colors: string[] }) {
+  return (
+    <SwatchRow>
+      {colors.map((color, i) => (
+        <div
+          key={i}
+          style={{
+            backgroundColor: color,
+            color: i < 4 ? '#fff' : '#111',
+          }}
+          title={`${(i + 1) * 100}: ${color}`}
+        >
+          {color}
+        </div>
+      ))}
+    </SwatchRow>
+  )
+}
+
+export default function DesignTokenPage() {
+  const { theme } = useThemeMode()
+  const [previewTheme, setPreviewTheme] = React.useState<Theme | null>(null)
+  const [, forceRender] = React.useState(0)
+
+  const activeTheme = previewTheme ?? theme
+
+  // Apply preview to DOM, restore on cleanup
+  React.useEffect(() => {
+    if (!previewTheme) return
+    const [family, scheme] = previewTheme.split('-') as ['wine' | 'plain', 'light' | 'dark']
+    document.documentElement.dataset.themeFamily = family
+    document.documentElement.dataset.colorScheme = scheme
+    forceRender((n) => n + 1) // re-read CSS vars
+    return () => {
+      const [f, s] = theme.split('-') as ['wine' | 'plain', 'light' | 'dark']
+      document.documentElement.dataset.themeFamily = f
+      document.documentElement.dataset.colorScheme = s
+      forceRender((n) => n + 1)
     }
-  </ColorWrapper>
+  }, [previewTheme, theme])
+
+  const [currentColors, setCurrentColors] = React.useState<Record<string, string[]>>({})
+
+  React.useEffect(() => {
+    const colors: Record<string, string[]> = {}
+    for (const name of COLOR_NAMES) {
+      colors[name] = readPalette(name)
+    }
+    setCurrentColors(colors)
+  }, [activeTheme])
+
+  return (
+    <div style={{ padding: '48px', maxWidth: '960px', margin: '0 auto' }}>
+      <h1 style={{ fontSize: 'var(--font-size-2xl)', color: 'var(--text-primary)' }}>
+        Design Token 调试面板
+      </h1>
+
+      <ToggleBar>
+        <ThemeChip $active={!previewTheme} onClick={() => setPreviewTheme(null)}>
+          跟随页面
+        </ThemeChip>
+        {THEME_OPTIONS.map((t) => (
+          <ThemeChip key={t} $active={activeTheme === t} onClick={() => setPreviewTheme(t)}>
+            {THEME_LABELS[t]}
+          </ThemeChip>
+        ))}
+      </ToggleBar>
+
+      <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--font-size-sm)', marginBottom: 24 }}>
+        生效主题: <strong>{THEME_LABELS[activeTheme]}</strong>
+        &nbsp;| &lt;html data-theme-family=&quot;{activeTheme.split('-')[0]}&quot; data-color-scheme=&quot;{activeTheme.split('-')[1]}&quot;&gt;
+      </p>
+
+      <H2>语义变量</H2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px 16px' }}>
+        {([
+          '--primary-color', '--secondary-color', '--success-color', '--danger-color', '--warning-color',
+          '--text-primary', '--text-secondary', '--text-muted', '--background-color', '--accent-color',
+        ]).map((v) => {
+          const val = readVar(v)
+          return (
+            <div key={v} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: val, border: '1px solid var(--normal-300)', flexShrink: 0 }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>{v}</span>
+            </div>
+          )
+        })}
+      </div>
+
+      {COLOR_NAMES.map((name) => (
+        <React.Fragment key={name}>
+          <H2>{name.charAt(0).toUpperCase() + name.slice(1)}</H2>
+          {currentColors[name] ? (
+            <Swatch colors={currentColors[name]} />
+          ) : (
+            <p style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>加载中...</p>
+          )}
+          <div style={{ display: 'flex', gap: 12, marginTop: 4, marginBottom: 16 }}>
+            {[100, 200, 300, 400, 500, 600, 700, 800, 900].map((l) => (
+              <Label key={l}>--{name}-{l}</Label>
+            ))}
+          </div>
+        </React.Fragment>
+      ))}
+    </div>
+  )
 }
-
-const CHINA_RED = '#E60000' // 中国红
-
-const PageColors: React.FC = () => {
-  const defaultThemeColors = generate(CHINA_RED, { theme: 'default', backgroundColor: '#fafafa' })
-  const darkThemeColors = generate(CHINA_RED, { theme: 'dark', backgroundColor: '#1a0a0a' })
-
-  const defaultTextColors = generate('#434343', { theme: 'default' })
-  const darkTextColors = generate('#e8e8e8', { theme: 'dark' })
-
-  return (<div style={{ height: '100%', padding: '48px 48px' }}>
-    <h1>博客的色彩系统（中国红）</h1>
-
-    <H2>系统主色彩 · 中国红(#E60000) <div style={{ width: '20px', height: '20px', display:'inline-block', background: CHINA_RED }}></div></H2>
-    <H3>Light</H3>
-    {renderColorPanel(defaultThemeColors)}
-    <H3>Dark</H3>
-    {renderColorPanel(darkThemeColors)}
-
-    <H2>危险色Danger</H2>
-    <H3>Light</H3>
-    {renderColorPanel(red)}
-    <H3>Dark</H3>
-    {renderColorPanel(redDark)}
-
-    <H2>警告色Warning</H2>
-    <H3>Light</H3>
-    {renderColorPanel(orange)}
-    <H3>Dark</H3>
-    {renderColorPanel(orangeDark)}
-
-    <H2>成功色Success</H2>
-    <H3>Light</H3>
-    {renderColorPanel(green)}
-    <H3>Dark</H3>
-    {renderColorPanel(greenDark)}
-
-    <H2>中性色彩</H2>
-    <H3>Light</H3>
-    {renderColorPanel(defaultTextColors)}
-    <H3>Dark</H3>
-    {renderColorPanel(darkTextColors)}
-  </div>)
-}
-
-export default PageColors

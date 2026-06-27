@@ -1,22 +1,21 @@
 # Design System
 
-## MODIFIED: 文青纸张风设计令牌
+## MODIFIED: 主题系统 v2 架构
 
-### Requirement: 暖纸色系色板
-- **GIVEN** 设计令牌生成器 `generator-color.ts`
-- **WHEN** 应用构建
-- **THEN** primary 使用暖赭色系 (#C89060 + 9 级色阶)
-- **AND** normal 使用深棕墨迹色系 (#2A2218 文本 / #9B8D78 辅助)
-- **AND** background 使用象牙纸底色系 (#FFFDF9 卡片 / #F2EDE4 页面)
-- **AND** 每个色系包含 light 和 dark 两套
+### Requirement: 双维度主题模型
+- **GIVEN** 主题系统支持 `ThemeFamily` 和 `ColorScheme` 两个正交维度
+- **WHEN** 用户切换主题
+- **THEN** `data-theme-family` 取值为 `wine` (酒红) 或 `plain` (素雅)
+- **AND** `data-color-scheme` 取值为 `light` (明亮) 或 `dark` (暗黑)
+- **AND** Theme = `'wine-light' | 'wine-dark' | 'plain-light' | 'plain-dark'`
+- **AND** 存储于 localStorage key `wuh.site.theme`
 
-### Requirement: 4 分支 CSS 变量
+### Requirement: 三层 CSS 变量架构
 - **GIVEN** `cssVariableProvider.tsx` 全局样式
 - **WHEN** 浏览器加载页面
-- **THEN** `:root` 注入基础 (money 模式) light 变量
-- **AND** `:root[data-theme='plain']` 注入文青纸风格 light 覆盖
-- **AND** `@media (prefers-color-scheme: dark) :root` 注入 dark 变量
-- **AND** `@media (prefers-color-scheme: dark) :root[data-theme='plain']` 注入 plain dark 覆盖
+- **THEN** Layer 1: `:root` 注入所有 raw 调色板（`--_wl-primary-500` 等）
+- **AND** Layer 2: 4 个 selector 路由映射到公开 CSS 变量（`:root`, `[data-theme-family="plain"]`, `[data-color-scheme="dark"]`, `[data-theme-family="plain"][data-color-scheme="dark"]`）
+- **AND** Layer 3: 非颜色 tokens (spaces/fontSizes/borderRadius) 通过 theme props 注入
 
 ### Requirement: CSS 变量命名规范
 - **GIVEN** 组件使用 CSS 变量
