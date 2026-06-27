@@ -49,15 +49,15 @@ export class RssService {
           title: content.title,
           id: `${content.number}`,
           link: `https://wuh.site/post/${content.number}`,
-          description: content.metadata?.summary || content.body?.substring(0, 200),
-          content: content.bodyHtml || content.body,
-          author: [
+          description: content.metadata?.summary || content.body?.substring(0, 200) || '',
+          content: content.bodyHtml || content.body || '',
+          author: content.author ? [
             {
-              name: content.author.login,
-              link: content.author.url,
+              name: content.author.login || 'shadow',
+              link: content.author.url || 'https://github.com/stack-wuh',
             },
-          ],
-          date: new Date(content.createdAtGitHub),
+          ] : [{ name: 'shadow', link: 'https://github.com/stack-wuh' }],
+          date: content.createdAtGitHub ? new Date(content.createdAtGitHub) : new Date(),
           image: content.metadata?.cover,
         });
       }
