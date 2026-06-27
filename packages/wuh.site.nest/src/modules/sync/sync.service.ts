@@ -73,6 +73,8 @@ export class SyncService {
         issue_number: issueNumber,
       });
 
+      const extractedMeta = extractMetadata(issue.body || '')
+
       const contentData = {
         externalId: issue.id,
         repo: this.contentRepoName,
@@ -90,6 +92,7 @@ export class SyncService {
         comments: issue.comments,
         createdAtGitHub: new Date(issue.created_at),
         updatedAtGitHub: new Date(issue.updated_at),
+        ...(extractedMeta && { metadata: extractedMeta }),
       };
 
       await this.contentService.upsert(contentData);
@@ -188,5 +191,17 @@ export class SyncService {
       this.logger.error(`Failed to post comment to GitHub: ${error.message}`);
       throw error;
     }
+  }
+}
+
+const METADATA_RE = /<!--\s*wuh-site-metadata:\s*(\{[\s\S]*?\})\s*-->/;
+
+function extractMetadata(body: string): Record<string, unknown> | null {
+  try {
+    const match = body.match(METADATA_RE);
+    if (!match) return null;
+    return JSON.parse(match[1]);
+  } catch {
+    return null;
   }
 }
