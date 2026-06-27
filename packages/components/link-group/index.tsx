@@ -12,6 +12,7 @@ export type LinkItem = {
   title?: string
   icon?: React.ReactNode
   onClick?: () => void
+  hideOnMobile?: boolean
 }
 
 export type LinkGroupSize = 'small' | 'medium' | 'large'
@@ -49,8 +50,14 @@ const getSizeVars = (size: LinkGroupSize) => {
   return { h, fs }
 }
 
-const SItem = styled.li`
+const SItem = styled.li<{ $hideOnMobile?: boolean }>`
   display: inline-flex;
+
+  ${(p) => p.$hideOnMobile && css`
+    @media (max-width: 520px) {
+      display: none;
+    }
+  `}
 `
 
 const controlStyles = css<{ $size: LinkGroupSize }>`
@@ -184,7 +191,7 @@ const LinkGroup: React.FC<LinkGroupProps> = ({ items, size = 'medium', gap = 12 
         const label = item.title ?? item.type
 
         return (
-          <SItem key={`${item.type}-${label}`} role="listitem">
+          <SItem key={`${item.type}-${label}`} role="listitem" $hideOnMobile={item.hideOnMobile}>
             {item.href ? (
               <SLink
                 $size={size}
