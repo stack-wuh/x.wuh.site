@@ -52,6 +52,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     }
     onSystemSchemeChange(mql)
     mql.addEventListener('change', onSystemSchemeChange)
+    document.documentElement.removeAttribute('data-no-transition')
     return () => mql.removeEventListener('change', onSystemSchemeChange)
   }, [])
 

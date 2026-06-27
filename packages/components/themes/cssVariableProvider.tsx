@@ -216,4 +216,14 @@ export const CssVariableStyles = createGlobalStyle`
       color-scheme: dark;
     }
   }
+
+  html[data-no-transition] *,
+  html[data-no-transition] *::before,
+  html[data-no-transition] *::after {
+    transition: none !important;
+  }
+
+  *, *::before, *::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
 `

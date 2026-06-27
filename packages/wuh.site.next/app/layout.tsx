@@ -28,7 +28,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <head />
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function() {
+  var scheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.dataset.colorScheme = scheme;
+  try {
+    var stored = window.localStorage.getItem('wuh.site.theme');
+    if (stored === 'wine' || stored === 'plain') {
+      document.documentElement.dataset.themeFamily = stored;
+    }
+  } catch (_) {}
+  document.documentElement.dataset.noTransition = 'true';
+})();
+          `.trim(),
+          }}
+        />
+      </head>
       <body className={`${inter.variable} ${notoSerifSC.variable}`}>
         <AppProviders>{children}</AppProviders>
       </body>
