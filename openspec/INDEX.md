@@ -29,8 +29,8 @@
 - **路径:** `openspec/specs/api-standardization/spec.md`
 
 ## design-system — 设计系统
-- **关键词:** UI设计, 纸张风, 主题, CSS变量, 酒红, 素雅, 排版, 骨架屏, 过渡动画
-- **需求:** 暖纸色系色板, 4分支CSS变量, CSS变量命名规范, HomeView重设计, PostView组件拆分, MarkdownBody排版, Skeleton组件CSS变量跟随主题, 页面内容fade-in过渡, shimmer动画延迟避免闪烁
+- **关键词:** UI设计, 主题, CSS变量, 酒红, 素雅, 暗黑模式跟随系统
+- **需求:** 双维度主题模型, 三层CSS变量架构, CSS变量命名规范, HomeView重设计, PostView组件拆分, marked前端解析, MarkdownBody排版细化
 - **路径:** `openspec/specs/design-system/spec.md`
 
 ## blog-detail — 博客详情页
