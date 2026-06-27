@@ -92,10 +92,10 @@ const warningDark = toColorLevelsFromGenerate(orangeDark)
 // ======== Unified palette export (new API) ========
 
 export const palettes = {
-  _wl: { primary: wineLightPrimary, normal: wineLightNormal, background: wineLightBackground },
-  _wd: { primary: wineDarkPrimary, normal: wineDarkNormal, background: wineDarkBackground },
-  _pl: { primary: plainLightPrimary, normal: plainLightNormal, background: plainLightBackground },
-  _pd: { primary: plainDarkPrimary, normal: plainDarkNormal, background: plainDarkBackground },
+  wl: { primary: wineLightPrimary, normal: wineLightNormal, background: wineLightBackground },
+  wd: { primary: wineDarkPrimary, normal: wineDarkNormal, background: wineDarkBackground },
+  pl: { primary: plainLightPrimary, normal: plainLightNormal, background: plainLightBackground },
+  pd: { primary: plainDarkPrimary, normal: plainDarkNormal, background: plainDarkBackground },
   success: { light: successLight, dark: successDark },
   danger: { light: dangerLight, dark: dangerDark },
   warning: { light: warningLight, dark: warningDark },
@@ -103,12 +103,12 @@ export const palettes = {
 
 // ======== Backward-compatible exports ========
 
-export const primary = { light: palettes._wl.primary, dark: palettes._wd.primary }
+export const primary = { light: palettes.wl.primary, dark: palettes.wd.primary }
 export const danger = { light: palettes.danger.light, dark: palettes.danger.dark }
 export const success = { light: palettes.success.light, dark: palettes.success.dark }
 export const warning = { light: palettes.warning.light, dark: palettes.warning.dark }
-export const normal = { light: palettes._wl.normal, dark: palettes._wd.normal }
-export const background = { light: palettes._wl.background, dark: palettes._wd.background }
+export const normal = { light: palettes.wl.normal, dark: palettes.wd.normal }
+export const background = { light: palettes.wl.background, dark: palettes.wd.background }
 
 const themeForBackCompat = { primary, normal, success, danger, warning, background }
 export default themeForBackCompat
