@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { ThemeFamily, ColorScheme } from '@wuh.site/components/themes/tokens'
 
-export type Theme = `${ThemeFamily}-${ColorScheme}`
+export type Theme = ThemeFamily
 
 type ThemeContextValue = {
   theme: Theme
@@ -14,38 +14,49 @@ const STORAGE_KEY = 'wuh.site.theme'
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
-const THEME_CYCLE: Theme[] = ['wine-light', 'wine-dark', 'plain-light', 'plain-dark']
+const THEME_CYCLE: Theme[] = ['wine', 'plain']
 
 function isValidTheme(value: unknown): value is Theme {
-  return THEME_CYCLE.includes(value as Theme)
+  return value === 'wine' || value === 'plain'
 }
 
 function parseTheme(raw: unknown): Theme {
-  return isValidTheme(raw) ? raw : 'wine-light'
+  return isValidTheme(raw) ? raw : 'wine'
 }
 
-function applyTheme(theme: Theme) {
+function applyColorScheme(scheme: ColorScheme) {
   if (typeof document === 'undefined') return
-  const [family, scheme] = theme.split('-') as [ThemeFamily, ColorScheme]
-  document.documentElement.dataset.themeFamily = family
   document.documentElement.dataset.colorScheme = scheme
 }
 
+function applyThemeFamily(family: ThemeFamily) {
+  if (typeof document === 'undefined') return
+  document.documentElement.dataset.themeFamily = family
+}
+
 export function ThemeModeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('wine-light')
+  const [theme, setThemeState] = useState<Theme>('wine')
 
   useEffect(() => {
     let stored: Theme | null = null
     try {
       stored = parseTheme(window.localStorage.getItem(STORAGE_KEY))
     } catch {}
-    const resolved = stored ?? 'wine-light'
+    const resolved = stored ?? 'wine'
     setThemeState(resolved)
-    applyTheme(resolved)
+    applyThemeFamily(resolved)
+
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const onSystemSchemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      applyColorScheme(e.matches ? 'dark' : 'light')
+    }
+    onSystemSchemeChange(mql)
+    mql.addEventListener('change', onSystemSchemeChange)
+    return () => mql.removeEventListener('change', onSystemSchemeChange)
   }, [])
 
   useEffect(() => {
-    applyTheme(theme)
+    applyThemeFamily(theme)
     try {
       window.localStorage.setItem(STORAGE_KEY, theme)
     } catch {}
