@@ -13,6 +13,12 @@ rules:
     - 明确说明变更的原因和范围
     - 标注影响的前端/后端包
     - 文档输出使用中文
+  branch:
+    - 功能分支命名: {issue-number}-{type}-{short-description}
+    - type 取值: feat / fix / refactor / docs / chore, 对应 conventional commits 类型
+    - short-description 使用中文, 2-5 字, 连字符分隔 (如 移动端隐藏邮箱图标)
+    - issue-number 来自 GitHub Issue, propose 阶段生成 .openspec.yaml 时必须写入 issue 字段
+    - 示例: 153-fix-移动端隐藏邮箱图标, 142-feat-代码拆分优化
   specs:
     - 使用 ## ADDED / ## MODIFIED / ## REMOVED / ## RENAMED 标记需求变更
     - 每个 Requirement 用 GIVEN/WHEN/THEN 格式描述场景
