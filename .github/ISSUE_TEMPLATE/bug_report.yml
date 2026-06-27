@@ -1,0 +1,79 @@
+name: Bug 报告
+description: 报告问题或缺陷，将自动创建 OpenSpec 变更目录
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: input
+    id: project_name
+    attributes:
+      label: 项目名称
+      description: 简短的项目标识，用于 OpenSpec 目录命名
+      placeholder: 例如：fix-theme-toggle
+    validations:
+      required: true
+
+  - type: input
+    id: short_description
+    attributes:
+      label: 简短描述
+      description: 一句话描述问题
+      placeholder: 例如：暗色模式切换不生效
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: 当前行为
+      description: 描述目前实际发生了什么
+      placeholder: 点击主题切换按钮后，页面颜色没有变化
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: 期望行为
+      description: 描述正确的行为应该是什么
+      placeholder: 点击主题切换按钮后，页面应在亮色/暗色之间切换
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: 复现步骤
+      description: 列出复现该问题的具体步骤
+      placeholder: |
+        1. 打开页面
+        2. 点击主题切换按钮
+        3. 观察页面颜色
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected_packages
+    attributes:
+      label: 受影响包
+      description: 选择此问题涉及的包（可多选）
+      options:
+        - label: wuh.site.next（前端）
+        - label: wuh.site.nest（后端）
+        - label: components（组件库）
+        - label: hooks
+        - label: config
+        - label: shared-contracts
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境信息（可选）
+      description: 浏览器、操作系统、Node.js 版本等
+      placeholder: |
+        - OS: macOS 15
+        - Browser: Chrome 130
+        - Node.js: 22
+    validations:
+      required: false

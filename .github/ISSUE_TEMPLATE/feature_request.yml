@@ -1,0 +1,67 @@
+name: 功能请求
+description: 提议新功能或改进，将自动创建 OpenSpec 变更目录
+title: "[功能请求] "
+labels: [enhancement]
+body:
+  - type: input
+    id: project_name
+    attributes:
+      label: 项目名称
+      description: 简短的项目标识，用于 OpenSpec 目录命名（如 `homepage-redesign`）
+      placeholder: 例如：homepage-redesign
+    validations:
+      required: true
+
+  - type: input
+    id: short_description
+    attributes:
+      label: 简短描述
+      description: 不超过 10 个字，用于 change 字段
+      placeholder: 例如：首页重设计
+    validations:
+      required: true
+
+  - type: textarea
+    id: detailed_description
+    attributes:
+      label: 详细描述
+      description: 描述功能目标、背景和期望效果
+      placeholder: |
+        作为（用户角色），我希望（功能），以便（价值）。
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected_packages
+    attributes:
+      label: 受影响包
+      description: 选择此变更涉及的包（可多选）
+      options:
+        - label: wuh.site.next（前端）
+        - label: wuh.site.nest（后端）
+        - label: components（组件库）
+        - label: hooks
+        - label: config
+        - label: shared-contracts
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: 验收标准
+      description: 使用 GIVEN/WHEN/THEN 格式描述
+      placeholder: |
+        GIVEN 用户在首页
+        WHEN 页面加载完成
+        THEN 显示新设计的布局
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: 补充说明（可选）
+      description: 设计参考、技术约束、替代方案等
+    validations:
+      required: false

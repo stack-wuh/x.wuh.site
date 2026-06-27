@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 功能请求
+    url: https://github.com/stack-wuh/x.wuh.site/issues/new?template=feature_request.yml
+    about: 提议新功能或改进
+  - name: Bug 报告
+    url: https://github.com/stack-wuh/x.wuh.site/issues/new?template=bug_report.yml
+    about: 报告问题或缺陷
