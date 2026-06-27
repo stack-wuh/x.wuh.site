@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Param,
   Body,
   Req,
   BadRequestException,
@@ -63,5 +64,14 @@ export class WebhookController {
       .update(payload)
       .digest('hex');
     return signature === `sha256=${hash}`;
+  }
+
+  @Post('sync/:issueNumber')
+  @ApiOperation({ summary: 'Direct sync a single issue (no webhook required)' })
+  async syncIssueDirectly(@Param('issueNumber') issueNumber: string) {
+    const num = parseInt(issueNumber, 10)
+    await this.syncService.syncIssue(num)
+    this.logger.log(`Direct sync completed for issue #${num}`)
+    return { success: true, issueNumber: num }
   }
 }
