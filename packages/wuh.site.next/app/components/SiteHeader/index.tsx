@@ -6,10 +6,8 @@ import { useThemeMode, type Theme } from '../theme/ThemeModeProvider'
 import * as S from './styles'
 
 const THEME_LABELS: Record<Theme, string> = {
-  'wine-light': '酒红明亮',
-  'wine-dark': '酒红暗黑',
-  'plain-light': '素雅明亮',
-  'plain-dark': '素雅暗黑',
+  wine: '酒红',
+  plain: '素雅',
 }
 
 /**

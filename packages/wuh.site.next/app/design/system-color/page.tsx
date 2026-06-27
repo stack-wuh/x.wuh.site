@@ -64,12 +64,10 @@ const Label = styled.span`
   color: var(--text-muted);
 `
 
-const THEME_OPTIONS: Theme[] = ['wine-light', 'wine-dark', 'plain-light', 'plain-dark']
+const THEME_OPTIONS: Theme[] = ['wine', 'plain']
 const THEME_LABELS: Record<Theme, string> = {
-  'wine-light': '酒红明亮',
-  'wine-dark': '酒红暗黑',
-  'plain-light': '素雅明亮',
-  'plain-dark': '素雅暗黑',
+  wine: '酒红',
+  plain: '素雅',
 }
 
 const COLOR_NAMES = ['primary', 'normal', 'background', 'success', 'danger', 'warning'] as const
@@ -122,17 +120,13 @@ export default function DesignTokenPage() {
 
   const activeTheme = previewTheme ?? theme
 
-  // Apply preview to DOM, restore on cleanup
+  // Apply preview family to DOM, restore on cleanup
   React.useEffect(() => {
     if (!previewTheme) return
-    const [family, scheme] = previewTheme.split('-') as ['wine' | 'plain', 'light' | 'dark']
-    document.documentElement.dataset.themeFamily = family
-    document.documentElement.dataset.colorScheme = scheme
-    forceRender((n) => n + 1) // re-read CSS vars
+    document.documentElement.dataset.themeFamily = previewTheme
+    forceRender((n) => n + 1)
     return () => {
-      const [f, s] = theme.split('-') as ['wine' | 'plain', 'light' | 'dark']
-      document.documentElement.dataset.themeFamily = f
-      document.documentElement.dataset.colorScheme = s
+      document.documentElement.dataset.themeFamily = theme
       forceRender((n) => n + 1)
     }
   }, [previewTheme, theme])
@@ -173,7 +167,7 @@ export default function DesignTokenPage() {
 
       <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--font-size-sm)', marginBottom: 24 }}>
         生效主题: <strong>{THEME_LABELS[activeTheme]}</strong>
-        &nbsp;| &lt;html data-theme-family=&quot;{activeTheme.split('-')[0]}&quot; data-color-scheme=&quot;{activeTheme.split('-')[1]}&quot;&gt;
+        &nbsp;| &lt;html data-theme-family=&quot;{activeTheme}&quot; data-color-scheme=&quot;跟随系统&quot;&gt;
       </p>
 
       <H2>语义变量</H2>
