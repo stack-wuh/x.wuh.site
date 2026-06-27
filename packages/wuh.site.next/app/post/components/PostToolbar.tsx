@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import type { AdjacentIssue } from '../PostView.types'
 import { IconChevronLeft, IconChevronRight, IconBars } from '@wuh.site/components/icons'
+import { buildPostUrl } from '../../lib/slug'
 import { Toolbar } from '../styles'
 
 const EMPTY_TEXT = '空空如也'
@@ -28,7 +29,7 @@ const ToolbarLink = ({
   }
 
   return (
-    <Link className={className} href={`/post/${targetIssue.number}`} title={targetIssue.title}>
+    <Link className={className} href={buildPostUrl(targetIssue.number, targetIssue.title)} title={targetIssue.title}>
       <span className='toolbar-icon'>{icon}</span>
       <span className='toolbar-label'>{label}</span>
     </Link>
