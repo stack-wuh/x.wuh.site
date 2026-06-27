@@ -15,6 +15,7 @@ const ContactCard = dynamic(() => import('./components/ContactCard'), {
 })
 import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
 import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
+import { buildPostUrl } from './lib/slug'
 import * as S from './styles'
 import Empty from '@wuh.site/components/empty'
 
@@ -142,7 +143,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
                 <S.YearGroup key={year}>
                   <S.YearLabel>{year}</S.YearLabel>
                   {yearPosts.map(post => (
-                    <S.PostRow key={post.id} href={`/post/${post.number}`}>
+                    <S.PostRow key={post.id} href={buildPostUrl(post.number, post.title)}>
                       <S.InkDot />
                       <S.PostTitle>{post.title}</S.PostTitle>
                       {post.labels?.length > 0 && (
@@ -176,7 +177,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           ) : (
             <S.ProjectList>
               {yearlySummaries.map(item => (
-                <S.PostRow key={item.id} href={`/post/${item.number}`}>
+                <S.PostRow key={item.id} href={buildPostUrl(item.number, item.title)}>
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
                   <S.PostMeta>

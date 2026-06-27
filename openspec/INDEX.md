@@ -14,8 +14,8 @@
 - **路径:** `openspec/specs/content-api/spec.md`
 
 ## seo — SEO 优化
-- **关键词:** SEO, Open Graph, Twitter Card, JSON-LD, canonical, 结构化数据
-- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL
+- **关键词:** SEO, Open Graph, Twitter Card, JSON-LD, canonical, 结构化数据, URL slug
+- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容
 - **路径:** `openspec/specs/seo/spec.md`
 
 ## repos-api — 仓库 API

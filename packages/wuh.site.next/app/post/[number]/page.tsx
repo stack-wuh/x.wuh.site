@@ -2,6 +2,7 @@ import { cache } from 'react'
 import type { Metadata } from 'next'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
+import { buildPostUrl } from '../../lib/slug'
 import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue } from '../PostView.types'
@@ -81,7 +82,8 @@ const getIssue = cache(async (num: string): Promise<IssueData> => {
 })
 
 export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
-  const { number } = await params
+  const { number: raw } = await params
+  const number = raw.split('-')[0]
   const { issue } = await getIssue(number)
 
   if (!issue) {
@@ -89,7 +91,7 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
   }
 
   const description = buildDescription(issue)
-  const url = `${SITE_URL}/post/${issue.number}`
+  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
   const cover = issue.metadata?.cover
 
   return {
@@ -116,7 +118,8 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
 }
 
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
-  const { number } = await params;
+  const { number: raw } = await params;
+  const number = raw.split('-')[0];
   const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number);
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
@@ -128,7 +131,7 @@ export default async function Page({ params }: { params: Promise<{ number: strin
     image: issue.metadata?.cover || undefined,
     datePublished: issue.created_at,
     dateModified: issue.updated_at,
-    url: `${SITE_URL}/post/${issue.number}`,
+    url: `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`,
     author: {
       '@type': 'Person',
       name: 'shadow',

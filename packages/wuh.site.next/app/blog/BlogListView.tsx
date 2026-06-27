@@ -8,6 +8,7 @@ import { IconBookOpen } from '@wuh.site/components/icons'
 import TitleWithTooltip from './components/TitleWithTooltip'
 import BackHomeLink from '@/app/components/BackHomeLink'
 import type { PostListItem } from '@wuh.site/shared-contracts'
+import { buildPostUrl } from '../lib/slug'
 import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
@@ -58,7 +59,7 @@ export default function BlogListView({ posts, pagination }: Props) {
               <S.YearGroup key={year}>
                 <S.YearLabel>{year}</S.YearLabel>
                 {yearPosts.map(post => (
-                  <S.PostRow key={post.id} href={`/post/${post.number}`}>
+                  <S.PostRow key={post.id} href={buildPostUrl(post.number, post.title)}>
                     <S.InkDot />
                     <TitleWithTooltip text={post.title} />
                     <S.IssueNumber>#{post.number}</S.IssueNumber>
