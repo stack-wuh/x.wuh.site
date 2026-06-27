@@ -1,4 +1,0 @@
-interface:
-  display_name: "x.wuh.site Components"
-  short_description: "Use local base components and theme tokens correctly."
-  default_prompt: "Use $x-wuh-components to build or refactor UI with packages/components in this repository."
