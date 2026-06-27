@@ -60,6 +60,7 @@ const Footer = () => {
           <Column className="footer-col">
             <div>{footerConf.title}</div>
             <div>{footerConf.marked}</div>
+            <div><a href="https://wuh.site/api/rss.xml" target="_blank" rel="noopener noreferrer">RSS 订阅</a></div>
           </Column>
           <Column className="footer-col">
             <div>{footerConf.MIIT}</div>

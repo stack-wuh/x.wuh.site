@@ -24,6 +24,7 @@ export class RssService {
     try {
       const contents = await this.contentModel
         .find({
+          state: 'open',
           $or: [
             { 'metadata.rssExcluded': false },
             { 'metadata.rssExcluded': { $exists: false } },
@@ -47,7 +48,7 @@ export class RssService {
         feed.addItem({
           title: content.title,
           id: `${content.number}`,
-          link: `https://wuh.site/posts/${content.metadata?.slug || content.number}`,
+          link: `https://wuh.site/post/${content.number}`,
           description: content.metadata?.summary || content.body?.substring(0, 200),
           content: content.bodyHtml || content.body,
           author: [
