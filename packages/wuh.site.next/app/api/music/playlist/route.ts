@@ -55,8 +55,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       coverUrl: playlist?.coverImgUrl,
       tracks
     })
-  } catch (error) {
-    console.error('[music] playlist error', error)
+  } catch {
     return NextResponse.json({ error: '获取歌单失败' }, { status: 500 })
   }
 }

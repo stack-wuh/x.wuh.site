@@ -27,8 +27,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       duration: typeof data?.time === 'number' ? data.time / 1000 : undefined,
       lyrics: lyricJson?.lrc?.lyric ?? lyricJson?.klyric?.lyric
     })
-  } catch (error) {
-    console.error('[music] track error', error)
+  } catch {
     return NextResponse.json({ error: '获取歌曲信息失败' }, { status: 500 })
   }
 }

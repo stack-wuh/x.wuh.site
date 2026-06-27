@@ -45,7 +45,6 @@ export const GlobalAudioPlayer = () => {
       },
       onError: (error) => {
         if ((error as Error).name === 'AbortError') return
-        console.error('[player] 歌单初始化失败', error)
       },
     }
   )

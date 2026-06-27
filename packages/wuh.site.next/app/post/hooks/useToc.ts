@@ -16,7 +16,7 @@ export function useToc(html: string | null | undefined): { html: string; toc: To
   const [toc, setToc] = useState<TocItem[]>([])
 
   useEffect(() => {
-    if (!source || toc.length > 0) return
+    if (!source) return
     try {
       const parser = new DOMParser()
       const doc = parser.parseFromString(source, 'text/html')

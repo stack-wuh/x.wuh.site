@@ -32,7 +32,7 @@ type Props = {
   wereadBooks: WereadBook[]
 }
 
-import { CONTACT_CONFIG, type ContactType, type ContactDialogConfig } from './components/ContactConfig'
+import { CONTACT_CONFIG, type ContactType } from './components/ContactConfig'
 
 const groupByYear = (posts: Props['posts']) => {
   const map = new Map<number, Props['posts']>()

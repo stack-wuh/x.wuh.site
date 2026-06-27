@@ -26,13 +26,6 @@ export const metadata: Metadata = {
 
 const PER_PAGE = 10
 
-type PaginationState = {
-  currentPage: number
-  lastPage: number
-  hasPrev: boolean
-  hasNext: boolean
-}
-
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
   number: item.number,
