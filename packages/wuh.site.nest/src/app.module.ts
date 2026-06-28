@@ -14,6 +14,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { ApiV2Module } from './modules/api-v2/api-v2.module';
 import { ReposModule } from './modules/repos/repos.module';
 import { WereadModule } from './modules/weread/weread.module';
+import { FootprintModule } from './modules/footprint/footprint.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -61,6 +62,7 @@ import { AppService } from './app.service';
     ApiV2Module,
     ReposModule,
     WereadModule,
+    FootprintModule,
   ],
   controllers: [AppController],
   providers: [AppService],

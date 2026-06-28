@@ -245,3 +245,6 @@ export type PostDetail = ContentItem & {
 
 // Example export for reuse
 export type ExampleDto = { id: ID; name: string };
+
+// Footprint
+export type { FootprintDto } from './footprint.dto';

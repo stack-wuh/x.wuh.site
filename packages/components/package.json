@@ -14,6 +14,7 @@
   "dependencies": {
     "@next/third-parties": "^16.2.7",
     "classnames": "^2.5.1",
+    "maplibre-gl": "^4.7.0",
     "framer-motion": "^11",
     "lucide-react": "^1.16.0",
     "react": "19.2.5",
