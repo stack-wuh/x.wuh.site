@@ -31,7 +31,7 @@ export class RssService {
           ],
         })
         .sort({ createdAtGitHub: -1 })
-        .limit(50)
+        .limit(20)
         .exec();
 
       const feed = new Feed({
