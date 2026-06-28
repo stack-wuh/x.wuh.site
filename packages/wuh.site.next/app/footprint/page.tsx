@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { BilibiliPlayer } from '@wuh.site/components/footprint-map/bilibili'
-import api from '@/app/lib/api'
 import type { FootprintData } from '@wuh.site/components/footprint-map'
 
 const FootprintMap = dynamic(
@@ -29,9 +28,10 @@ export default function FootprintPage() {
   const imagePreview = useImagePreview()
 
   useEffect(() => {
-    api.footprints.getAll()
-      .then((res) => {
-        const data = res.data || []
+    fetch('/api/footprints')
+      .then((res) => res.json())
+      .then((json) => {
+        const data = json.data || []
         setFootprints(data)
         if (data.length > 0) setSelected(data[0])
       })
