@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRequest } from 'ahooks'
 import dynamic from 'next/dynamic'
 import LinkGroup from '@wuh.site/components/link-group'
@@ -11,8 +11,10 @@ const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
 const ContactCard = dynamic(() => import('../components/ContactCard'), {
   loading: () => null,
 })
+const FootprintMap = dynamic(() => import('@wuh.site/components/footprint-map'), { ssr: false })
 
-import type { GitHubProfileDto, RepoDto } from '@wuh.site/shared-contracts'
+import type { GitHubProfileDto, RepoDto, FootprintDto } from '@wuh.site/shared-contracts'
+import type { FootprintData } from '@wuh.site/components/footprint-map'
 import {
   PageRoot,
   Hero, HeroLabel, HeroTitle, HeroSub,
@@ -46,6 +48,15 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
       return res.json()
     },
     { cacheKey: 'github-contributions' }
+  )
+
+  const { data: footprints } = useRequest<FootprintData[]>(
+    async () => {
+      const res = await fetch('/api/footprints')
+      if (!res.ok) return []
+      const json = await res.json()
+      return json.data || []
+    }
   )
 
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
@@ -181,6 +192,15 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
             </TimelineRow>
           ))}
         </TimelineList>
+      </section>
+
+      <section style={{ marginBottom: 'var(--space-2xl)' }}>
+        <SectionHeader>
+          <SectionLabel>足迹</SectionLabel>
+        </SectionHeader>
+        <div style={{ height: '380px', borderRadius: 'var(--radius-card, 12px)', overflow: 'hidden' }}>
+          <FootprintMap footprints={footprints || []} variant="compact" />
+        </div>
       </section>
 
       <Dialog
