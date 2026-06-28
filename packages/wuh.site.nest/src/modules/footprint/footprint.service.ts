@@ -11,7 +11,7 @@ export class FootprintService {
     @InjectModel(Footprint.name) private footprintModel: Model<FootprintDocument>,
   ) {}
 
-  async findAll(): Promise<FootprintDocument[]> {
+  async findAll() {
     return this.footprintModel
       .find()
       .sort({ date: -1 })
@@ -19,7 +19,7 @@ export class FootprintService {
       .exec();
   }
 
-  async findById(id: string): Promise<FootprintDocument | null> {
+  async findById(id: string) {
     return this.footprintModel.findById(id).lean().exec();
   }
 
@@ -28,17 +28,14 @@ export class FootprintService {
     return footprint.save();
   }
 
-  async update(
-    id: string,
-    data: Partial<Footprint>,
-  ): Promise<FootprintDocument | null> {
+  async update(id: string, data: Partial<Footprint>) {
     return this.footprintModel
       .findByIdAndUpdate(id, { $set: data }, { new: true })
       .lean()
       .exec();
   }
 
-  async delete(id: string): Promise<FootprintDocument | null> {
+  async delete(id: string) {
     return this.footprintModel.findByIdAndDelete(id).lean().exec();
   }
 }
