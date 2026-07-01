@@ -14,7 +14,7 @@ import PostToolbar from './components/PostToolbar'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
-import { buildPostUrl } from '../../lib/slug'
+import { buildPostUrl } from '@/app/lib/slug'
 import {
   ArticleCard,
   CommentPlaceholder,
