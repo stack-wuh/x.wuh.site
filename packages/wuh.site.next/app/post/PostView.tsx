@@ -14,6 +14,7 @@ import PostToolbar from './components/PostToolbar'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
+import { buildPostUrl } from '../../lib/slug'
 import {
   ArticleCard,
   CommentPlaceholder,
@@ -102,13 +103,13 @@ const createAlertLabels = (issue: Issue): AlertLabel[] =>
   }))
 
 const createShareItems = (issue: Issue): ShareItem[] => {
-  const shareUrl = (issue.html_url?.trim() || BLOG_PROJECT_URL).trim()
-  const shareTitle = issue.title?.trim() || 'stack-wuh/blog 文章'
-  const shareIntro = `我在 stack-wuh/blog 看到《${shareTitle}》，推荐给你看看`
-  const encodedUrl = encodeURIComponent(shareUrl)
+  const siteUrl = `https://wuh.site${buildPostUrl(issue.number, issue.title)}`
+  const shareTitle = issue.title?.trim() || 'wuh.site 文章'
+  const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
+  const encodedUrl = encodeURIComponent(siteUrl)
   const encodedTitle = encodeURIComponent(shareTitle)
   const encodedIntro = encodeURIComponent(shareIntro)
-  const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}&desc=${encodedIntro}&summary=&site=stack-wuh`
+  const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}&desc=${encodedIntro}&summary=&site=wuh.site`
   const weiboShareUrl = `https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedIntro}`
   const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedIntro}&url=${encodedUrl}`
 
@@ -116,7 +117,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
     {
       type: 'wechat',
       title: '分享到微信',
-      onClick: () => openWechatShareWindow(shareUrl, shareTitle),
+      onClick: () => openWechatShareWindow(siteUrl, shareTitle),
     },
     {
       type: 'qq',
@@ -135,14 +136,14 @@ const createShareItems = (issue: Issue): ShareItem[] => {
     },
     {
       type: 'email',
-      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${shareUrl}`)}`,
+      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${siteUrl}`)}`,
       title: '邮件分享',
     },
     {
       type: 'link',
       title: '复制链接',
       onClick: async () => {
-        const success = await copyToClipboard(shareUrl)
+        const success = await copyToClipboard(siteUrl)
         if (success) {
           message.success('链接已复制到剪贴板')
         } else {
