@@ -91,13 +91,13 @@ export const MessageItem = styled.div<{ $type: MessageType; $leaving: boolean }>
   gap: 10px;
   padding: 10px 14px;
   border-radius: 10px;
-  background: var(--background-100);
-  border: 1px solid var(--normal-300);
-  color: var(--text-primary);
+  background: var(--background-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+  color: var(--text-color);
   font-size: 14px;
   line-height: 1.5;
   max-width: min(560px, calc(100vw - 32px));
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
   animation: ${(props) => (props.$leaving ? fadeOut : fadeIn)} 0.22s ease;
 
   @media (prefers-reduced-motion: reduce) {
@@ -105,8 +105,7 @@ export const MessageItem = styled.div<{ $type: MessageType; $leaving: boolean }>
   }
 
   @media (prefers-color-scheme: dark) {
-    background: color-mix(in oklab, var(--background-200) 70%, var(--normal-900) 30%);
-    border-color: var(--normal-600);
+    border-color: color-mix(in srgb, var(--text-color) 18%, transparent);
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
   }
 `
@@ -189,8 +188,8 @@ export const MessageCloseButton = styled.button`
   }
 
   &:hover {
-    color: var(--text-primary);
-    background: color-mix(in srgb, var(--normal-200) 70%, transparent);
+    color: var(--text-color);
+    background: color-mix(in srgb, var(--text-color) 8%, transparent);
   }
 
   &:focus-visible {
@@ -199,11 +198,9 @@ export const MessageCloseButton = styled.button`
   }
 
   @media (prefers-color-scheme: dark) {
-    color: var(--normal-400);
-
     &:hover {
-      color: var(--text-primary);
-      background: color-mix(in srgb, var(--normal-700) 70%, transparent);
+      color: var(--text-color);
+      background: color-mix(in srgb, var(--text-color) 16%, transparent);
     }
   }
 `
