@@ -9,7 +9,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0 }: {
   issueNumber: number
   initialLikeCount?: number
 }) {
-  const [liked, setLiked] = useState(false)
+  const [liked, setLiked] = useState(initialLikeCount > 0)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [loading, setLoading] = useState(false)
 
