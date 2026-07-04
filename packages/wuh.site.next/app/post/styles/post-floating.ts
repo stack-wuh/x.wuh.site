@@ -91,7 +91,7 @@ export const LikeButton = styled(FloatingButton)`
   border-radius: 999px;
   background: var(--background-200) !important;
   border-color: var(--accent-color) !important;
-  color: #e11d48;
+  color: var(--accent-color);
   transition:
     transform 200ms ease,
     box-shadow 200ms ease,
@@ -111,10 +111,10 @@ export const LikeButton = styled(FloatingButton)`
 
   &:hover {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+    background: var(--accent-color) !important;
     border-color: transparent !important;
     color: #fff;
-    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.35);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--accent-color) 35%, transparent);
   }
 
   &:active {
@@ -128,10 +128,10 @@ export const LikeButton = styled(FloatingButton)`
   @media (prefers-color-scheme: dark) {
     background: var(--normal-700) !important;
     border-color: var(--accent-color) !important;
-    color: #f43f5e;
+    color: var(--accent-color);
 
     &:hover {
-      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+      background: var(--accent-color) !important;
       border-color: transparent !important;
       color: #fff;
     }
