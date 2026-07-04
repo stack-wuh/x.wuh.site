@@ -7,24 +7,28 @@ export type CommentDocument = HydratedDocument<Comment>;
 @Schema({ timestamps: true })
 export class Comment {
   @ApiProperty({ description: 'GitHub comment id' })
-  @Prop({ required: true, unique: true })
-  externalId: number;
+  @Prop({ unique: true, sparse: true })
+  externalId?: number;
 
   @ApiProperty({ description: 'Issue id (MongoDB ObjectId)' })
-  @Prop({ required: true })
-  issueId: number;
+  @Prop()
+  issueId?: number;
 
   @ApiProperty({ description: 'Issue number' })
-  @Prop({ required: true })
-  issueNumber: number;
+  @Prop()
+  issueNumber?: number;
 
   @ApiProperty({ description: 'Repository name' })
-  @Prop({ required: true })
-  repo: string;
+  @Prop()
+  repo?: string;
 
-  @ApiProperty({ description: 'Comment body (markdown)' })
-  @Prop({ required: true })
-  body: string;
+  @ApiPropertyOptional({ description: 'Comment body (markdown)' })
+  @Prop()
+  body?: string;
+
+  @ApiPropertyOptional({ description: 'Comment content (alias for body)' })
+  @Prop()
+  content?: string;
 
   @ApiPropertyOptional({ description: 'Comment body (HTML)' })
   @Prop()
