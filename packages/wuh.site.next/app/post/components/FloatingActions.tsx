@@ -1,8 +1,8 @@
 'use client'
 
 import message from '@wuh.site/components/message'
-import { IconHome, IconArrowUp, IconLike } from '@wuh.site/components/icons'
-import { FloatingButtonGroup, FloatingButton } from '../styles'
+import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
+import { FloatingButtonGroup, FloatingButton, LikeButton } from '../styles'
 
 export default function FloatingActions() {
   return (
@@ -10,33 +10,34 @@ export default function FloatingActions() {
       <FloatingButton
         type='button'
         aria-label='返回首页'
+        title='返回首页'
         onClick={() => {
           window.location.href = '/'
         }}
       >
         <IconHome />
-        <span>返回首页</span>
       </FloatingButton>
       <FloatingButton
         type='button'
-        aria-label='返回页头'
+        aria-label='回到顶部'
+        title='回到顶部'
         onClick={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}
       >
         <IconArrowUp />
-        <span>回到顶部</span>
       </FloatingButton>
-      <FloatingButton
+      <LikeButton
         type='button'
-        aria-label='点赞（开发中）'
+        aria-label='点赞'
+        title='点赞'
         onClick={() => {
           message.info('点赞功能正在开发中')
         }}
       >
-        <IconLike />
+        <IconThumbUp />
         <span>点赞</span>
-      </FloatingButton>
+      </LikeButton>
     </FloatingButtonGroup>
   )
 }
