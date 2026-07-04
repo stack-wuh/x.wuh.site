@@ -68,6 +68,14 @@ export class Comment {
   @Prop()
   userAgent?: string;
 
+  @ApiPropertyOptional({ description: 'Comment status', enum: ['pending', 'approved', 'rejected'] })
+  @Prop({ enum: ['pending', 'approved', 'rejected'], default: 'pending' })
+  status: 'pending' | 'approved' | 'rejected';
+
+  @ApiPropertyOptional({ description: 'Page identifier (e.g. about-guestbook)' })
+  @Prop()
+  page?: string;
+
   @ApiPropertyOptional({ description: 'GitHub created date' })
   @Prop()
   createdAtGitHub: Date;

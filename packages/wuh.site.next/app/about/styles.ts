@@ -305,3 +305,165 @@ export const TimelineSelect = styled.select`
 `
 
 /* 响应式规则已内联到各组件 (TimelineTrack 等) */
+
+/* ====== Guestbook ====== */
+
+export const GuestbookSection = styled.section`
+  margin-bottom: var(--space-2xl);
+`
+
+export const GuestbookForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+`
+
+export const GuestbookInput = styled.input`
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--normal-300);
+  background: var(--background-100);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+
+  &:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-color: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-700);
+    border-color: var(--normal-500);
+  }
+`
+
+export const GuestbookTextarea = styled.textarea`
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--normal-300);
+  background: var(--background-100);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  resize: vertical;
+  min-height: 80px;
+
+  &:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-color: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-700);
+    border-color: var(--normal-500);
+  }
+`
+
+export const GuestbookSubmit = styled.button`
+  align-self: flex-end;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 200ms ease, transform 200ms ease;
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`
+
+function hashToColor(seed: string): string {
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) {
+    hash = seed.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const h = Math.abs(hash) % 360
+  return `hsl(${h}, 55%, 65%)`
+}
+
+export { hashToColor }
+
+export const GuestbookList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`
+
+export const GuestbookCard = styled.div`
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--normal-300);
+  background: var(--background-100);
+  transition: border-color var(--transition-fast);
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--primary-color) 30%, var(--normal-300));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: color-mix(in oklab, var(--normal-700) 50%, transparent);
+    border-color: var(--normal-600);
+  }
+`
+
+export const GuestbookAvatar = styled.div<{ $name: string }>`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: ${(p) => hashToColor(p.$name)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+`
+
+export const GuestbookBody = styled.div`
+  flex: 1;
+  min-width: 0;
+`
+
+export const GuestbookMeta = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+`
+
+export const GuestbookNickname = styled.span`
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+`
+
+export const GuestbookDate = styled.span`
+  font-size: 12px;
+  color: var(--text-muted);
+`
+
+export const GuestbookContent = styled.p`
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+  word-break: break-word;
+`

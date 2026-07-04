@@ -40,7 +40,7 @@ export class CommentService {
       const [data, total] = await Promise.all([
         this.commentModel
           .find(query || {})
-          .sort({ createdAtGitHub: -1 })
+          .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit)
           .exec(),
@@ -80,6 +80,19 @@ export class CommentService {
 
   async countByIssueNumber(issueNumber: number): Promise<number> {
     return this.commentModel.countDocuments({ issueNumber }).exec();
+  }
+
+  async updateStatus(
+    id: string,
+    status: 'pending' | 'approved' | 'rejected',
+  ): Promise<CommentDocument | null> {
+    return this.commentModel
+      .findByIdAndUpdate(id, { status }, { new: true })
+      .exec();
+  }
+
+  async delete(id: string): Promise<CommentDocument | null> {
+    return this.commentModel.findByIdAndDelete(id).exec();
   }
 
   private generateAvatarUrl(seed: string): string {
