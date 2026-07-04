@@ -1,80 +1,46 @@
-import styled, { css } from '@wuh.site/components/styled'
+import styled from '@wuh.site/components/styled'
 
 export const FloatingButtonGroup = styled.div`
-  --float-button-width: 50px;
-  --float-divider: var(--normal-300);
-
-  position: fixed;
-  right: 0;
-  bottom: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  z-index: 20;
-  border: 1px solid var(--normal-300);
-  border-right: 0;
-  border-top-left-radius: 14px;
-  border-bottom-left-radius: 14px;
-  overflow: hidden;
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
   background: var(--background-100);
-
-  & > * {
-    width: var(--float-button-width);
-  }
-
-  & > * + * {
-    border-top: 1px solid var(--float-divider);
-  }
+  border: 1px solid color-mix(in oklab, var(--primary-color) 12%, var(--normal-300) 88%);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: center;
+  align-items: center;
 
   @media (max-width: 640px) {
-    --float-button-width: 50px;
+    flex-direction: column;
+    gap: var(--space-xs);
   }
 
   @media (prefers-color-scheme: dark) {
-    border-color: var(--normal-600);
-    border-right-color: transparent;
-    background: color-mix(in oklab, var(--background-200) 75%, var(--background-900) 25%);
-    --float-divider: var(--normal-600);
-
-    & > * + * {
-      border-top-color: var(--float-divider);
-    }
+    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
   }
 `
 
-const floatingButtonBase = css`
-  border: none;
-  background: transparent;
-  color: var(--text-primary);
-  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-  min-width: 50px;
-  min-height: 40px;
+export const FloatingButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0 12px;
-  font-size: 13px;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  min-height: 40px;
+  background: var(--background-200);
+  border: 1px solid var(--normal-300);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
   cursor: pointer;
   transition:
-    border-color 0.22s ease,
-    background-color 0.22s ease,
-    color 0.22s ease,
-    box-shadow 0.22s ease,
-    transform 0.22s ease;
-  will-change: transform;
-
-  &:hover {
-    color: var(--primary-color);
-    background: var(--background-200);
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
-    transform: translateX(-2px);
-  }
-
-  &:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
-    outline-offset: 2px;
-  }
+    background-color var(--transition-fast) ease,
+    border-color var(--transition-fast) ease,
+    color var(--transition-fast) ease,
+    transform var(--transition-fast) ease;
 
   svg {
     width: 16px;
@@ -86,17 +52,38 @@ const floatingButtonBase = css`
     stroke-linejoin: round;
   }
 
+  &:hover {
+    background: var(--background-300);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+    justify-content: center;
+  }
+
   @media (prefers-color-scheme: dark) {
-    background: transparent;
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+    background: var(--normal-700);
+    border-color: var(--normal-500);
 
     &:hover {
-      background: color-mix(in oklab, var(--background-300) 70%, var(--background-900) 30%);
+      background: var(--normal-600);
+      border-color: var(--primary-color);
     }
   }
-`
 
-export const FloatingButton = styled.button`
-  ${floatingButtonBase}
-  padding: 0;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `
