@@ -16,6 +16,7 @@ const ContactCard = dynamic(() => import('./components/ContactCard'), {
 import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
 import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
 import { buildPostUrl } from './lib/slug'
+import { formatShortDate } from './lib/date'
 import * as S from './styles'
 import Empty from '@wuh.site/components/empty'
 
@@ -154,9 +155,9 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
                         </S.PostTags>
                       )}
                       <S.PostMeta>
-                        <span>{new Date(post.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                        <span>{formatShortDate(post.created_at)}</span>
                         <S.MetaDot />
-                        <span>{post.comments}</span>
+                        <span>{post.views} 浏览</span>
                       </S.PostMeta>
                     </S.PostRow>
                   ))}
