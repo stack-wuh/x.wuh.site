@@ -17,7 +17,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0 }: {
     if (liked || loading) return
     setLoading(true)
     try {
-      const res = await fetch(`/v2/content/posts/${issueNumber}/like`, { method: 'POST' })
+      const res = await fetch(`/api/content/posts/${issueNumber}/like`, { method: 'POST' })
       const data = await res.json()
       if (data.liked) {
         setLiked(true)
