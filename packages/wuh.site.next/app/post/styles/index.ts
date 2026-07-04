@@ -3,4 +3,4 @@ export { TocAside, TocCard, TocTitle, TocList, TocItemLink, TocMobile } from './
 export { ArticleCard, RedundantInfoCard, ShareInfoCard, ShareCardInner, MarkdownBody, StatusEmpty, CommentPlaceholder } from './post-article'
 export { Toolbar } from './post-toolbar'
 export { Header, Title, MetaRow, TagGroup, CoverImage, AuthorRow, AuthorAvatar, AuthorInfo, Summary, OrnamentDivider } from './post-header'
-export { FloatingButtonGroup, FloatingButton } from './post-floating'
+export { FloatingButtonGroup, FloatingButton, LikeButton } from './post-floating'
