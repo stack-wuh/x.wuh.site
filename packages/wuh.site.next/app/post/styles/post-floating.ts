@@ -1,4 +1,5 @@
 import styled, { keyframes } from '@wuh.site/components/styled'
+import { buttonTokens } from '@wuh.site/components/button/tokens'
 
 const pulse = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.08); }
@@ -28,24 +29,14 @@ export const FloatingButton = styled.button`
   background: var(--background-200);
   border: 1px solid var(--normal-300);
   cursor: pointer;
-  transition:
-    transform 200ms ease,
-    box-shadow 200ms ease,
-    background-color 200ms ease,
-    border-color 200ms ease,
-    color 200ms ease;
+  transition: transform ${buttonTokens.transitionDuration} ease, box-shadow ${buttonTokens.transitionDuration} ease, background-color ${buttonTokens.transitionDuration} ease, border-color ${buttonTokens.transitionDuration} ease, color ${buttonTokens.transitionDuration} ease;
   overflow: hidden;
   will-change: transform;
   outline: none;
 
   svg {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    width: 1em;
+    height: 1em;
   }
 
   &:hover {
@@ -92,34 +83,12 @@ export const LikeButton = styled(FloatingButton)`
   background: var(--background-200) !important;
   border-color: var(--primary-color) !important;
   color: var(--primary-color);
-  transition:
-    transform 200ms ease,
-    box-shadow 200ms ease,
-    background-color 200ms ease,
-    border-color 200ms ease,
-    color 200ms ease;
-
-  svg {
-    width: 16px;
-    height: 16px;
-    stroke: none;
-    fill: currentColor;
-  }
 
   &:hover {
-    transform: translateY(-1px);
     background: var(--primary-color) !important;
     border-color: transparent !important;
     color: #fff;
     box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color) 35%, transparent);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  &:focus-visible {
-    box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -131,10 +100,6 @@ export const LikeButton = styled(FloatingButton)`
       background: var(--primary-color) !important;
       border-color: transparent !important;
       color: #fff;
-    }
-
-    &:focus-visible {
-      box-shadow: 0 0 0 2px var(--background-dark-500), 0 0 0 4px var(--primary-400);
     }
   }
 `
