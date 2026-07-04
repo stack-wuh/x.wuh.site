@@ -1,7 +1,20 @@
-import { Controller, Get, Param, Query, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, Query, NotFoundException, Post, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { ContentService } from './content.service';
 import { QueryContentDto } from './dto/content.dto';
+import { Request } from 'express';
+
+const likeIpMap = new Map<string, Set<number>>();
+
+function hasLiked(ip: string, number: number): boolean {
+  const set = likeIpMap.get(ip);
+  return set ? set.has(number) : false;
+}
+
+function markLiked(ip: string, number: number): void {
+  if (!likeIpMap.has(ip)) likeIpMap.set(ip, new Set());
+  likeIpMap.get(ip)!.add(number);
+}
 
 @ApiTags('Content')
 @Controller('content')
@@ -55,9 +68,22 @@ export class ContentController {
     };
   }
 
+  @Post('posts/:number/like')
+  @ApiOperation({ summary: 'Like a post' })
+  @ApiResponse({ status: 200, description: 'Like recorded' })
+  @ApiResponse({ status: 400, description: 'Already liked' })
+  async likePost(@Param('number') number: string, @Req() req: Request) {
+    const num = parseInt(number, 10);
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    if (hasLiked(ip, num)) {
+      return { liked: false, likeCount: 0, message: 'Already liked' };
+    }
+    markLiked(ip, num);
+    await this.contentService.incrementLikeCount(num);
+    return { liked: true, message: 'Liked' };
+  }
+
   @Get('projects')
-  @ApiOperation({ summary: 'Get paginated projects' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'Paginated list of projects' })
   async getProjects(@Query() query: QueryContentDto) {
