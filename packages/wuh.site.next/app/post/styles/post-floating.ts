@@ -7,6 +7,11 @@ const pulse = keyframes`
   100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
 `
 
+const heartBeat = keyframes`
+  0%, 100% { background-color: var(--primary-color); border-color: transparent; color: #fff; }
+  50% { background-color: var(--background-200); border-color: var(--primary-color); color: var(--primary-color); }
+`
+
 export const FloatingButtonGroup = styled.div`
   display: flex;
   align-items: center;
@@ -80,26 +85,26 @@ export const LikeButton = styled(FloatingButton)`
   padding: 0 24px;
   gap: 8px;
   border-radius: 999px;
-  background: var(--background-200) !important;
-  border-color: var(--primary-color) !important;
-  color: var(--primary-color);
+  background: var(--primary-color) !important;
+  border-color: transparent !important;
+  color: #fff;
 
   &:hover {
-    background: var(--primary-color) !important;
-    border-color: transparent !important;
-    color: #fff;
+    animation: ${heartBeat} 2s ease-in-out infinite;
     box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color) 35%, transparent);
   }
 
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-700) !important;
-    border-color: var(--primary-color) !important;
-    color: var(--primary-color);
+    background: var(--primary-color) !important;
+    border-color: transparent !important;
+    color: #fff;
 
     &:hover {
-      background: var(--primary-color) !important;
-      border-color: transparent !important;
-      color: #fff;
+      animation: ${heartBeat} 2s ease-in-out infinite;
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `
