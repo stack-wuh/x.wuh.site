@@ -12,6 +12,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
 import { CreateAnonymousCommentDto, QueryCommentDto } from './dto/comment.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 const GUESTBOOK_ISSUE_NUMBER = 999999;
 
@@ -55,9 +56,13 @@ export class CommentController {
 
     const commentData: any = {
       ...createCommentDto,
+      body: createCommentDto.content,
       clientIp: req.ip || req.socket.remoteAddress,
       userAgent: req.headers['user-agent'],
+      externalId: uuidv4(),
+      issueId: GUESTBOOK_ISSUE_NUMBER,
       issueNumber: GUESTBOOK_ISSUE_NUMBER,
+      repo: 'guestbook',
     };
     return this.commentService.create(commentData);
   }
