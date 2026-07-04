@@ -13,7 +13,7 @@ const ContactCard = dynamic(() => import('../components/ContactCard'), {
 })
 const FootprintMap = dynamic(() => import('@wuh.site/components/footprint-map'), { ssr: false })
 
-import type { GitHubProfileDto, RepoDto, FootprintDto } from '@wuh.site/shared-contracts'
+import type { GitHubProfileDto, RepoDto } from '@wuh.site/shared-contracts'
 import type { FootprintData } from '@wuh.site/components/footprint-map'
 import {
   PageRoot,
@@ -24,12 +24,22 @@ import {
   Bio, TagRow, Tag,
   PlatformList, PlatformCard, PlatformName, PlatformDesc,
   TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
+  GuestbookSection, GuestbookForm, GuestbookInput, GuestbookTextarea, GuestbookSubmit,
+  GuestbookList, GuestbookCard, GuestbookAvatar, GuestbookBody,
+  GuestbookMeta, GuestbookNickname, GuestbookDate, GuestbookContent,
 } from './styles'
 import {
   blogTags, personalBio, timelineFilters,
   timelineLogs, formatMonthDay,
 } from './data'
 import { CONTACT_CONFIG, type ContactType } from '../components/ContactConfig'
+
+interface GuestbookComment {
+  _id: string
+  nickname: string
+  content: string
+  createdAt: string
+}
 
 interface AboutViewProps {
   profile: GitHubProfileDto | null
@@ -40,6 +50,43 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
   const name = profile?.name || 'Shadow Wu'
   const avatarUrl = profile?.avatar_url ?? null
   const location = profile?.location || 'ShenZhen GuangDong China'
+
+  const [comments, setComments] = useState<GuestbookComment[]>([])
+  const [nickname, setNickname] = useState('')
+  const [content, setContent] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const res = await fetch('/api/comments?status=approved&limit=50')
+      const json = await res.json()
+      if (json.data) setComments(json.data)
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    fetchComments()
+  }, [fetchComments])
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!nickname.trim() || !content.trim() || submitting) return
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nickname: nickname.trim(), content: content.trim(), page: 'about-guestbook' }),
+      })
+      if (res.ok) {
+        setNickname('')
+        setContent('')
+        fetchComments()
+      }
+    } catch {} finally {
+      setSubmitting(false)
+    }
+  }, [nickname, content, submitting, fetchComments])
 
   const { data: heatmapData, loading: heatmapLoading } = useRequest<HeatmapData>(
     async () => {
@@ -202,6 +249,51 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
           <FootprintMap footprints={footprints || []} variant="compact" />
         </div>
       </section>
+
+      <GuestbookSection>
+        <SectionHeader>
+          <SectionLabel>留言板</SectionLabel>
+        </SectionHeader>
+        <GuestbookForm onSubmit={handleSubmit}>
+          <GuestbookInput
+            ref={nicknameRef}
+            placeholder='你的昵称'
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            maxLength={20}
+          />
+          <GuestbookTextarea
+            placeholder='说点什么...'
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            maxLength={500}
+          />
+          <GuestbookSubmit type='submit' disabled={submitting}>
+            {submitting ? '提交中...' : '留言'}
+          </GuestbookSubmit>
+        </GuestbookForm>
+        <GuestbookList>
+          {comments.map((c) => (
+            <GuestbookCard key={c._id}>
+              <GuestbookAvatar $name={c.nickname}>
+                {c.nickname.charAt(0).toUpperCase()}
+              </GuestbookAvatar>
+              <GuestbookBody>
+                <GuestbookMeta>
+                  <GuestbookNickname>{c.nickname}</GuestbookNickname>
+                  <GuestbookDate>
+                    {new Date(c.createdAt).toLocaleDateString('zh-CN', {
+                      year: 'numeric', month: '2-digit', day: '2-digit',
+                      hour: '2-digit', minute: '2-digit',
+                    })}
+                  </GuestbookDate>
+                </GuestbookMeta>
+                <GuestbookContent>{c.content}</GuestbookContent>
+              </GuestbookBody>
+            </GuestbookCard>
+          ))}
+        </GuestbookList>
+      </GuestbookSection>
 
       <Dialog
         open={Boolean(activeContactConfig)}

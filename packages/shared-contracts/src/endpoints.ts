@@ -23,6 +23,7 @@ export const reposService = defineService({
 
 export const commentsService = defineService({
   getByIssue: { url: '/comments', method: 'GET' },
+  create:     { url: '/comments', method: 'POST' },
 })
 
 export const wereadService = defineService({
