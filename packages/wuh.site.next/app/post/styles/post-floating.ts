@@ -7,6 +7,11 @@ const pulse = keyframes`
   100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
 `
 
+const heartBeat = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+`
+
 export const FloatingButtonGroup = styled.div`
   display: flex;
   align-items: center;
@@ -91,6 +96,10 @@ export const LikeButton = styled(FloatingButton)`
     box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color) 35%, transparent);
   }
 
+  &:hover svg {
+    animation: ${heartBeat} 2s ease-in-out infinite;
+  }
+
   @media (prefers-color-scheme: dark) {
     background: var(--normal-700) !important;
     border-color: var(--primary-color) !important;
@@ -100,6 +109,12 @@ export const LikeButton = styled(FloatingButton)`
       background: var(--primary-color) !important;
       border-color: transparent !important;
       color: #fff;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover svg {
+      animation: none;
     }
   }
 `
