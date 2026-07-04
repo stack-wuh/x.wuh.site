@@ -1,24 +1,19 @@
-import styled from '@wuh.site/components/styled'
+import styled, { keyframes } from '@wuh.site/components/styled'
+
+const pulse = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.08); }
+  50% { box-shadow: 0 0 0 8px rgba(0,0,0,0.04); }
+  100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+`
 
 export const FloatingButtonGroup = styled.div`
-  margin-top: var(--space-sm);
-  padding: var(--space-md);
-  background: var(--background-100);
-  border: 1px solid color-mix(in oklab, var(--primary-color) 12%, var(--normal-300) 88%);
-  border-radius: var(--radius-card);
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  justify-content: center;
   align-items: center;
+  gap: 12px;
 
   @media (max-width: 640px) {
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+    flex-wrap: wrap;
+    gap: 10px;
   }
 `
 
@@ -26,21 +21,22 @@ export const FloatingButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-md);
-  min-height: 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  color: var(--text-primary);
   background: var(--background-200);
   border: 1px solid var(--normal-300);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
   cursor: pointer;
   transition:
-    background-color var(--transition-fast) ease,
-    border-color var(--transition-fast) ease,
-    color var(--transition-fast) ease,
-    transform var(--transition-fast) ease;
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+  overflow: hidden;
+  will-change: transform;
+  outline: none;
 
   svg {
     width: 16px;
@@ -53,10 +49,69 @@ export const FloatingButton = styled.button`
   }
 
   &:hover {
+    transform: translateY(-2px) scale(1.08);
     background: var(--background-300);
     border-color: var(--primary-color);
-    color: var(--primary-color);
+    animation: ${pulse} 1s ease;
+  }
+
+  &:active {
+    transform: translateY(0) scale(1.02);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--normal-700);
+    border-color: var(--normal-500);
+    color: var(--text-primary);
+
+    &:hover {
+      background: var(--normal-600);
+      border-color: var(--primary-color);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--background-dark-500), 0 0 0 4px var(--primary-400);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+  }
+`
+
+export const LikeButton = styled(FloatingButton)`
+  width: auto;
+  padding: 0 24px;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--background-200) !important;
+  border-color: var(--accent-color) !important;
+  color: var(--accent-color);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: none;
+    fill: currentColor;
+  }
+
+  &:hover {
     transform: translateY(-1px);
+    background: var(--accent-color) !important;
+    border-color: transparent !important;
+    color: #fff;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--accent-color) 35%, transparent);
   }
 
   &:active {
@@ -64,26 +119,22 @@ export const FloatingButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
-    outline-offset: 2px;
-  }
-
-  @media (max-width: 640px) {
-    width: 100%;
-    justify-content: center;
+    box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
   }
 
   @media (prefers-color-scheme: dark) {
-    background: var(--normal-700);
-    border-color: var(--normal-500);
+    background: var(--normal-700) !important;
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color);
 
     &:hover {
-      background: var(--normal-600);
-      border-color: var(--primary-color);
+      background: var(--accent-color) !important;
+      border-color: transparent !important;
+      color: #fff;
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--background-dark-500), 0 0 0 4px var(--primary-400);
+    }
   }
 `

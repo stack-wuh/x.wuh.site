@@ -62,11 +62,17 @@ export const ShareInfoCard = styled(RedundantInfoCard)`
 `
 
 export const ShareCardInner = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+
   > div {
     margin-top: 0 !important;
     padding: 0 !important;
     border-top: none !important;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--space-xs);
   }
 
@@ -74,6 +80,11 @@ export const ShareCardInner = styled.div`
     background: transparent !important;
     border-color: var(--normal-300) !important;
     border-radius: 4px !important;
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: center;
   }
 
   @media (prefers-color-scheme: dark) {
