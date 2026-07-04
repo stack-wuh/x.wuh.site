@@ -31,6 +31,7 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   html_url: `https://github.com/stack-wuh/blog/issues/${item.number}`,
   repository_url: 'https://api.github.com/repos/stack-wuh/blog',
   comments: item.comments,
+  viewCount: item.viewCount ?? 0,
   created_at: item.createdAtGitHub || '',
   updated_at: item.updatedAtGitHub || item.createdAtGitHub || '',
   user: item.author ? {

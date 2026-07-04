@@ -159,6 +159,12 @@ export class ContentService {
       .exec();
   }
 
+  async incrementViewCount(number: number): Promise<void> {
+    await this.contentModel
+      .updateOne({ number }, { $inc: { viewCount: 1 } })
+      .exec();
+  }
+
   async findRssExcluded(
     excluded: boolean = false,
   ): Promise<ContentDocument[]> {

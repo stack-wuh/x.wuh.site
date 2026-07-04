@@ -77,6 +77,10 @@ export class Content {
   @Prop({ default: 0 })
   comments: number;
 
+  @ApiProperty({ description: 'View count' })
+  @Prop({ default: 0 })
+  viewCount: number;
+
   @ApiPropertyOptional({ description: 'GitHub created date' })
   @Prop()
   createdAtGitHub: Date;
