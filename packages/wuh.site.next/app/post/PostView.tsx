@@ -240,7 +240,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <ShareInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
             <ShareCardInner>
               <SharedLinkGroup items={shareItems} label='' />
-              <FloatingActions />
+              <FloatingActions issueNumber={issue.number} initialLikeCount={issue.likeCount ?? 0} />
             </ShareCardInner>
           </ShareInfoCard>
 

@@ -165,6 +165,12 @@ export class ContentService {
       .exec();
   }
 
+  async incrementLikeCount(number: number): Promise<void> {
+    await this.contentModel
+      .updateOne({ number }, { $inc: { likeCount: 1 } })
+      .exec();
+  }
+
   async findRssExcluded(
     excluded: boolean = false,
   ): Promise<ContentDocument[]> {
