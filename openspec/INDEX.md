@@ -38,6 +38,11 @@
 - **需求:** 双维度主题模型, 三层CSS变量架构, CSS变量命名规范, 首屏主题无闪动, 首屏禁用过渡动画, 全局主题色过渡动画, 首页标语打字动画, HomeView Motto区域, PostView组件拆分, marked前端解析, MarkdownBody排版细化
 - **路径:** `openspec/specs/design-system/spec.md`
 
+## blog-display — 博客展示
+- **关键词:** 日期格式, 浏览量, viewCount, MM-dd, 相对时间
+- **需求:** 首页/列表页时间格式, 详情页时间格式
+- **路径:** `openspec/specs/blog-display/spec.md`
+
 ## blog-detail — 博客详情页
 - **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块
 - **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性
