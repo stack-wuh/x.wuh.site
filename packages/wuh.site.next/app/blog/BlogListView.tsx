@@ -9,6 +9,7 @@ import TitleWithTooltip from './components/TitleWithTooltip'
 import BackHomeLink from '@/app/components/BackHomeLink'
 import type { PostListItem } from '@wuh.site/shared-contracts'
 import { buildPostUrl } from '../lib/slug'
+import { formatShortDate } from '../lib/date'
 import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
@@ -71,9 +72,9 @@ export default function BlogListView({ posts, pagination }: Props) {
                       </S.PostTags>
                     )}
                     <S.PostMeta>
-                      <span>{new Date(post.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                      <span>{formatShortDate(post.created_at)}</span>
                       <S.MetaDot />
-                      <span>{post.comments}</span>
+                      <span>{post.views} 浏览</span>
                     </S.PostMeta>
                   </S.PostRow>
                 ))}

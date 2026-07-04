@@ -228,7 +228,7 @@ export interface PostListItem {
   number: number
   title: string
   html_url: string
-  comments: number
+  views: number
   created_at: string
   labels: { name: string; color?: string | null }[]
 }
