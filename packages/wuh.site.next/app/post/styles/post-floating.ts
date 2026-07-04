@@ -67,6 +67,7 @@ export const FloatingButton = styled.button`
     &:hover {
       background: var(--normal-600);
       border-color: var(--primary-color);
+      color: var(--primary-color);
     }
 
     &:focus-visible {
