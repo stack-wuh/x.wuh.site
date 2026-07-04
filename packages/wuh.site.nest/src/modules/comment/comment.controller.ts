@@ -53,11 +53,12 @@ export class CommentController {
       throw new BadRequestException('nickname and content are required');
     }
 
-    return this.commentService.create({
+    const commentData: any = {
       ...createCommentDto,
       clientIp: req.ip || req.socket.remoteAddress,
       userAgent: req.headers['user-agent'],
       issueNumber: GUESTBOOK_ISSUE_NUMBER,
-    });
+    };
+    return this.commentService.create(commentData);
   }
 }
