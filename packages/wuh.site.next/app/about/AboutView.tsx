@@ -256,7 +256,6 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
         </SectionHeader>
         <GuestbookForm onSubmit={handleSubmit}>
           <GuestbookInput
-            ref={nicknameRef}
             placeholder='你的昵称'
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
