@@ -39,6 +39,9 @@ export class ContentController {
       throw new NotFoundException(`Post not found: ${slugOrNumber}`);
     }
 
+    // fire-and-forget: view count increment doesn't block response
+    this.contentService.incrementViewCount(result.number);
+
     const { prev, next, total, position } = await this.contentService.findAdjacentPosts(result, {
       state: 'open',
     });

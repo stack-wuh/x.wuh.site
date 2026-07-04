@@ -132,6 +132,7 @@ export interface ContentItem {
     url: string;
   };
   comments: number;
+  viewCount?: number;
   createdAtGitHub: string;
   updatedAtGitHub: string;
   publishedAt?: string;

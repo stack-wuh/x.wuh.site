@@ -35,7 +35,7 @@ const mapContentToPost = (item: ContentItem): PostListItem => ({
   number: item.number,
   title: item.title,
   html_url: `https://github.com/${item.repo}/issues/${item.number}`,
-  comments: item.comments,
+  views: (item as any).viewCount ?? item.comments,
   created_at: item.createdAtGitHub || '',
   labels: item.labels.map((l) => ({ name: l })),
 })

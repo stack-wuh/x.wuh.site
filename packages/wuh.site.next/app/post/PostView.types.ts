@@ -24,6 +24,7 @@ export type Issue = {
   html_url: string
   repository_url?: string | null
   comments: number
+  viewCount?: number
   created_at: string
   updated_at?: string
   user?: IssueUser | null

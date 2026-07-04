@@ -2,7 +2,7 @@
 
 import { DiamondDivider } from '@wuh.site/components/icons'
 import type { Issue } from '../PostView.types'
-import { formatRelativeTime } from '@/app/lib/date'
+import { formatFullDate } from '@/app/lib/date'
 import { CoverImage, AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 }
 
 export default function PostHeader({ issue }: Props) {
-  const date = formatRelativeTime(issue.created_at)
+  const date = formatFullDate(issue.created_at)
   const avatarUrl = issue.user?.avatarUrl
   const userName = issue.user?.userName?.trim() || issue.user?.login?.trim() || '匿名作者'
 
@@ -33,7 +33,7 @@ export default function PostHeader({ issue }: Props) {
             <AuthorAvatar src={avatarUrl} alt={userName} width={36} height={36} />
             <AuthorInfo>
               <strong>{userName}</strong>
-              <span>{date} · {issue.comments} 浏览</span>
+              <span>{date} · {issue.viewCount ?? 0} 次阅读</span>
             </AuthorInfo>
           </AuthorRow>
         )}
