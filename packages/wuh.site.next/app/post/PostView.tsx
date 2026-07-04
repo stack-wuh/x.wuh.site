@@ -237,6 +237,8 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
             />
           </RedundantInfoCard>
 
+          <FloatingActions />
+
           <ShareInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
             <ShareCardInner>
               <SharedLinkGroup items={shareItems} label='' />
@@ -257,8 +259,6 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           </TocAside>
         )}
       </ContentGrid>
-
-      <FloatingActions />
     </Container>
   )
 }
