@@ -102,11 +102,8 @@ export const LikeButton = styled(FloatingButton)`
   svg {
     width: 16px;
     height: 16px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    stroke: none;
+    fill: currentColor;
   }
 
   &:hover {
