@@ -29,9 +29,9 @@ const fadeIn = keyframes`
 `
 
 const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 25%, transparent); }
-  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary-color) 12%, transparent); }
-  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 25%, transparent); }
+  0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.08); }
+  50% { box-shadow: 0 0 0 8px rgba(0,0,0,0.04); }
+  100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
 `
 
 const iconBounce = keyframes`
