@@ -10,6 +10,7 @@ import { usePostImagePreview } from './usePostImagePreview'
 import { useToc } from './hooks/useToc'
 import { useHeadingObserver } from './hooks/useHeadingObserver'
 import PostHeader from './components/PostHeader'
+import PostCover from './components/PostCover'
 import PostToolbar from './components/PostToolbar'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
@@ -207,6 +208,8 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
       <ContentGrid>
         <MainColumn>
+          <PostCover src={issue.metadata?.cover} alt={issue.title} />
+
           {tocResult.toc.length > 0 && (
             <TocMobile>
               <summary>

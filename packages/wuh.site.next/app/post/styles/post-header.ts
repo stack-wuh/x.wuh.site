@@ -32,10 +32,12 @@ export const TagGroup = styled.div`
 
 export const CoverImage = styled.div`
   width: 100%;
+  aspect-ratio: 16 / 9;
   max-height: 360px;
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: var(--space-lg);
+  background: color-mix(in oklab, var(--background-200) 88%, var(--accent-color) 12%);
 
   img {
     width: 100%;
