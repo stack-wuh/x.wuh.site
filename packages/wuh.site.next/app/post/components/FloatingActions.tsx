@@ -1,20 +1,29 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
 import { FloatingButtonGroup, FloatingButton, LikeButton } from '../styles'
 
-export default function FloatingActions({ issueNumber, initialLikeCount = 0 }: {
+export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false }: {
   issueNumber: number
   initialLikeCount?: number
+  initialLiked?: boolean
 }) {
-  const [liked, setLiked] = useState(initialLikeCount > 0)
+  const [liked, setLiked] = useState(initialLiked)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    setLiked(initialLiked)
+  }, [initialLiked])
+
+  useEffect(() => {
+    setLikeCount(initialLikeCount)
+  }, [initialLikeCount])
+
   const handleLike = useCallback(async () => {
-    if (liked || loading) return
+    if (loading) return
     setLoading(true)
     try {
       const res = await fetch(`/api/content/posts/${issueNumber}/like`, { method: 'POST' })
@@ -23,14 +32,15 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0 }: {
         setLiked(true)
         setLikeCount((c) => c + 1)
       } else {
-        message.info('你已经点过赞了')
+        setLiked(false)
+        setLikeCount((c) => Math.max(0, c - 1))
       }
     } catch {
       message.error('点赞失败，请稍后再试')
     } finally {
       setLoading(false)
     }
-  }, [issueNumber, liked, loading])
+  }, [issueNumber, loading])
 
   return (
     <FloatingButtonGroup>
@@ -56,14 +66,14 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0 }: {
       </FloatingButton>
       <LikeButton
         type='button'
-        aria-label='点赞'
-        title='点赞'
+        aria-label={liked ? '取消点赞' : '点赞'}
+        title={liked ? '取消点赞' : '点赞'}
         onClick={handleLike}
         disabled={loading}
-        style={liked ? { opacity: 0.7, cursor: 'default' } : undefined}
+        style={liked ? { opacity: 0.8 } : undefined}
       >
         <IconThumbUp />
-        <span>{likeCount > 0 ? `赞 ${likeCount}` : '点赞'}</span>
+        <span>{liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}</span>
       </LikeButton>
     </FloatingButtonGroup>
   )

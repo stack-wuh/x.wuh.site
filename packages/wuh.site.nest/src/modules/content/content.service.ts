@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Content, ContentDocument } from './schemas/content.schema';
+import { Like, LikeDocument } from './schemas/like.schema';
 import { CreateContentDto, UpdateContentMetadataDto } from './dto/content.dto';
 import type { PaginatedResult } from '@wuh.site/shared-contracts';
 import { buildPaginatedResult } from '../../common/utils/paginated-result';
@@ -12,6 +13,7 @@ export class ContentService {
 
   constructor(
     @InjectModel(Content.name) private contentModel: Model<ContentDocument>,
+    @InjectModel(Like.name) private likeModel: Model<LikeDocument>,
   ) {}
 
   async create(createContentDto: CreateContentDto): Promise<ContentDocument> {
@@ -165,10 +167,41 @@ export class ContentService {
       .exec();
   }
 
-  async incrementLikeCount(number: number): Promise<void> {
-    await this.contentModel
-      .updateOne({ number }, { $inc: { likeCount: 1 } })
+  async hasLiked(number: number, anonId: string): Promise<boolean> {
+    const like = await this.likeModel
+      .findOne({ postNumber: number, anonId })
+      .select('_id')
+      .lean()
       .exec();
+    return !!like;
+  }
+
+  async incrementLikeCount(number: number, anonId: string): Promise<void> {
+    const result = await this.likeModel
+      .updateOne(
+        { postNumber: number, anonId },
+        { $setOnInsert: { postNumber: number, anonId } },
+        { upsert: true },
+      )
+      .exec();
+
+    if (result.upsertedCount > 0) {
+      await this.contentModel
+        .updateOne({ number }, { $inc: { likeCount: 1 } })
+        .exec();
+    }
+  }
+
+  async decrementLikeCount(number: number, anonId: string): Promise<void> {
+    const result = await this.likeModel
+      .deleteOne({ postNumber: number, anonId })
+      .exec();
+
+    if (result.deletedCount > 0) {
+      await this.contentModel
+        .updateOne({ number, likeCount: { $gt: 0 } }, { $inc: { likeCount: -1 } })
+        .exec();
+    }
   }
 
   async findRssExcluded(

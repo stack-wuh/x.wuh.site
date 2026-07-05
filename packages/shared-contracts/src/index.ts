@@ -133,6 +133,8 @@ export interface ContentItem {
   };
   comments: number;
   viewCount?: number;
+  likeCount?: number;
+  liked?: boolean;
   createdAtGitHub: string;
   updatedAtGitHub: string;
   publishedAt?: string;
