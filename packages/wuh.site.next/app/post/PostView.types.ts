@@ -26,6 +26,7 @@ export type Issue = {
   comments: number
   viewCount?: number
   likeCount?: number
+  liked?: boolean
   created_at: string
   updated_at?: string
   user?: IssueUser | null

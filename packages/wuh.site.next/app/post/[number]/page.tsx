@@ -1,5 +1,6 @@
 import { cache } from 'react'
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
 import { buildPostUrl } from '../../lib/slug'
@@ -9,11 +10,18 @@ import type { Issue } from '../PostView.types'
 import JsonLd from '../../components/JsonLd'
 
 const SITE_URL = 'https://wuh.site'
+const ANON_COOKIE_NAME = 'anonId'
+
+async function getAnonCookieHeader() {
+  const anonId = (await cookies()).get(ANON_COOKIE_NAME)?.value
+  if (!anonId) return undefined
+  return `${ANON_COOKIE_NAME}=${encodeURIComponent(anonId)}`
+}
 
 function buildDescription(issue: Issue): string {
   if (issue.metadata?.summary) return issue.metadata.summary
   if (issue.body) {
-    const plain = issue.body.replace(/[#*`[\]()>!|-]/g, '').replace(/\s+/g, ' ').trim()
+    const plain = issue.body.replace(/[#*`[\]()>{}!|-]/g, '').replace(/\s+/g, ' ').trim()
     return plain.length > 160 ? plain.slice(0, 157) + '...' : plain
   }
   return '阅读这篇博客文章'
@@ -33,6 +41,7 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   comments: item.comments,
   viewCount: item.viewCount ?? 0,
   likeCount: item.likeCount ?? 0,
+  liked: item.liked ?? false,
   created_at: item.createdAtGitHub || '',
   updated_at: item.updatedAtGitHub || item.createdAtGitHub || '',
   user: item.author ? {
@@ -59,10 +68,11 @@ type IssueData = {
   position: number
 }
 
-const getIssue = cache(async (num: string): Promise<IssueData> => {
+const getIssue = cache(async (num: string, cookie?: string): Promise<IssueData> => {
   const { data, error } = await contentService.getPost.server({
     params: { slug: num },
-    revalidate: 1800,
+    revalidate: 0,
+    headers: cookie ? { Cookie: cookie } : undefined,
   })
 
   if (error || !data) {
@@ -86,7 +96,8 @@ const getIssue = cache(async (num: string): Promise<IssueData> => {
 export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
   const { number: raw } = await params
   const number = raw.split('-')[0]
-  const { issue } = await getIssue(number)
+  const cookie = await getAnonCookieHeader()
+  const { issue } = await getIssue(number, cookie)
 
   if (!issue) {
     return FALLBACK_METADATA
@@ -122,7 +133,8 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
   const { number: raw } = await params;
   const number = raw.split('-')[0];
-  const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number);
+  const cookie = await getAnonCookieHeader()
+  const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number, cookie);
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
   const jsonLd = {

@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+const nestApiUrl =
+  process.env.NEST_API_URL ||
+  (process.env.NODE_ENV === 'production' ? 'http://nest:3200/v2' : 'http://localhost:3200/v2');
+
 const nextConfig: NextConfig = {
   distDir: './dist/wuh.site.next',
   typescript: {
@@ -22,7 +26,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEST_API_URL || 'http://localhost:3200/v2'}/:path*`,
+        destination: `${nestApiUrl}/:path*`,
       },
     ];
   },
