@@ -29,6 +29,10 @@ export class WereadBook {
   @ApiPropertyOptional({ description: '是否读完 (0: 在读, 1: 已读完)' })
   @Prop({ default: 0 })
   finishReading: number;
+
+  @ApiPropertyOptional({ description: '微信读书书架顺序位置' })
+  @Prop({ default: 0 })
+  shelfIndex: number;
 }
 
 export const WereadBookSchema = SchemaFactory.createForClass(WereadBook);

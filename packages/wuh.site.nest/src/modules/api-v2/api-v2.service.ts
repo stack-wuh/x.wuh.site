@@ -390,6 +390,13 @@ export class ApiV2Service {
             description: '每页数量，默认 10',
             location: 'query',
           },
+          {
+            name: 'finishReading',
+            type: 'number',
+            required: false,
+            description: '阅读状态过滤，0 表示在读，1 表示已读完',
+            location: 'query',
+          },
         ],
         responses: [
           {
