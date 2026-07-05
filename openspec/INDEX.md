@@ -68,6 +68,11 @@
 - **需求:** Dialog遮罩层, Dialog圆角和间距, Dialog移动端底部弹出, Dialog动画(弹性缓动+退出), 纸张风视觉
 - **路径:** `openspec/specs/contact-dialog/spec.md`
 
+## homepage-data — 首页数据获取
+- **关键词:** 首页, 数据获取, Server Component, 构建后, force-dynamic, 空数据
+- **需求:** Homepage fetches data at runtime after production build, Homepage logs server data fetch failures
+- **路径:** `openspec/specs/homepage-data/spec.md`
+
 ## icon-system — 图标系统
 - **关键词:** 图标, lucide-react, Outline风格, SVG, 组件库
 - **需求:** 统一Outline图标风格, 统一图标接口, 移除混用fill/stroke旧图标, Brand图标风格对齐
@@ -89,8 +94,8 @@
 - **路径:** `openspec/specs/redesign-error-pages/spec.md`
 
 ## build-config — 构建配置
-- **关键词:** 构建, 环境变量, dotenv, MongoDB, health check, sync
-- **需求:** dotenv环境变量加载, sync:init使用完整NestJS启动, MongooseModule异步工厂, health检查, sync仅同步open issues
+- **关键词:** 构建, 环境变量, dotenv, MongoDB, health check, sync, Docker, NEST_API_URL
+- **需求:** dotenv环境变量加载, sync:init使用完整NestJS启动, MongooseModule异步工厂, health检查, sync仅同步open issues, Production server API fallback uses Docker service name
 - **路径:** `openspec/specs/build-config/spec.md`
 
 ## code-split — 代码拆分

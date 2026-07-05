@@ -31,3 +31,8 @@
 - **WHEN** 执行增量/全量同步
 - **THEN** 仅拉取 `state: 'open'` 的 issues
 - **AND** 已关闭的 issues 不同步
+
+### Requirement: Production server API fallback uses Docker service name
+- **GIVEN** Next.js 服务运行在生产环境且未显式配置 `NEST_API_URL`
+- **WHEN** Server Component 或 Route Handler 通过共享 service 请求 Nest API
+- **THEN** 默认 API base 应为 `http://nest:3200/v2`
