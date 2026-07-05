@@ -30,6 +30,21 @@
 - **WHEN** 参数经 `@Transform` 处理
 - **THEN** `labels` 被解析为 `["javascript", "typescript"]`
 
+### Requirement: Post detail derives cover from first content image
+文章详情接口在缺少手动封面时，从正文 HTML 第一张图片推导封面。
+
+- **GIVEN** 一篇文章的 `metadata.cover` 为空，且 `bodyHtml` 中包含至少一个 `<img src="...">`
+- **WHEN** 客户端请求 `GET /content/posts/:slugOrNumber`
+- **THEN** 响应中的 `metadata.cover` 应为 `bodyHtml` 中第一张图片的 `src`
+- **AND** 服务端不应将该推导值写回数据库
+
+### Requirement: Post detail falls back to markdown first image
+文章详情接口在 HTML 无图片时，从 Markdown 正文第一张图片兜底推导封面。
+
+- **GIVEN** 一篇文章的 `metadata.cover` 为空，`bodyHtml` 不包含图片，且 `body` 中包含 Markdown 图片语法
+- **WHEN** 客户端请求 `GET /content/posts/:slugOrNumber`
+- **THEN** 响应中的 `metadata.cover` 应为 Markdown 正文第一张图片的 URL
+
 ## MODIFIED
 
 ### Requirement: findAll returns PaginatedResult
@@ -44,6 +59,7 @@
 - **AND** 响应包含 `next` 字段（`{ number, title }` 或 `null`），表示同排序规则下紧邻当前文章的下一条（更旧的文章）
 - **AND** `prev`/`next` 的排序规则与 `GET /content/posts?state=open` 一致
 - **AND** 响应包含 `total`（符合条件的文章总数）和 `position`（当前文章在排序中的位置）
+- **AND** 响应的 `metadata.cover` 优先保留原始手动配置值；仅当原始值为空时，才从正文首图推导
 
 ## REMOVED
 
