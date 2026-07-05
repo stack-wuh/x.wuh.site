@@ -71,7 +71,7 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
       <Hero>
         <HeroLabel>About · 吴尒红</HeroLabel>
         <HeroTitle>输出节奏总览</HeroTitle>
-        <HeroSub>不要停止脚步, 每一天都要进步</HeroSub>
+        <HeroSub>不断创新, 无限进步</HeroSub>
       </Hero>
 
       {/* 2. 关于我 */}
@@ -195,7 +195,7 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
         </TimelineList>
       </section>
 
-      <section style={{ marginBottom: 'var(--space-2xl)' }}>
+      <section>
         <SectionHeader>
           <SectionLabel>足迹</SectionLabel>
         </SectionHeader>
@@ -204,7 +204,12 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
         </div>
       </section>
 
-      <GuestbookBarrageDialog />
+      <section>
+        <SectionHeader>
+          <SectionLabel>留言板</SectionLabel>
+        </SectionHeader>
+        <GuestbookBarrageDialog />
+      </section>
 
       <Dialog
         open={Boolean(activeContactConfig)}

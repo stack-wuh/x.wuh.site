@@ -1,6 +1,6 @@
 # 留言板群聊弹窗
 
-## Requirements
+## MODIFIED: About 页面留言入口
 
 ### Requirement: About 页面留言板入口
 
@@ -10,6 +10,8 @@
 - **THEN** 系统应展示一个与 About 页面视觉一致的留言入口
 - **AND** 入口应使用聊天语义的头像、标题、预览文案和进入提示
 - **AND** 用户点击入口后应打开居中的留言弹窗
+
+## MODIFIED: 留言弹窗主体验
 
 ### Requirement: 群聊式留言弹窗
 
@@ -21,14 +23,7 @@
 - **AND** 用户新发送的留言应以右侧气泡展示
 - **AND** 消息头像应使用昵称的第一个字符
 
-### Requirement: 输入框字数限制
-
-#### Scenario: 用户输入留言内容
-- **GIVEN** 用户正在弹窗底部输入留言
-- **WHEN** 输入内容长度达到 100 个字符
-- **THEN** 输入框应停止继续增长
-- **AND** 系统应保证不会提交超过 100 个字符的内容
-- **AND** 页面应清晰展示字数状态
+## MODIFIED: 留言提交时机
 
 ### Requirement: 点击发送即提交
 
@@ -40,6 +35,8 @@
 - **AND** 发送中、已发送、发送失败状态应在消息气泡内可见
 - **AND** 失败状态应展示可读错误信息
 
+## MODIFIED: 用户昵称记忆
+
 ### Requirement: 缓存留言昵称
 
 #### Scenario: 用户再次打开留言板
@@ -47,6 +44,8 @@
 - **WHEN** 用户再次打开留言弹窗
 - **THEN** 系统应从本地缓存恢复昵称
 - **AND** 用户仍可修改昵称
+
+## MODIFIED: 留言 API 代理与错误日志
 
 ### Requirement: Next 留言代理
 
@@ -57,6 +56,8 @@
 - **AND** Next 服务端应输出 `[guestbook]` 前缀的错误日志
 - **AND** 前端应在消息气泡中展示该错误信息
 
+## MODIFIED: 留言后端数据契约
+
 ### Requirement: 匿名留言字段对齐
 
 #### Scenario: Nest 接收匿名留言
@@ -65,6 +66,8 @@
 - **THEN** `page` 字段不应被白名单校验拒绝
 - **AND** 匿名留言生成的 UUID externalId 应能保存到 MongoDB
 - **AND** GitHub 同步的数字 externalId 查询应保持兼容
+
+## MODIFIED: Next 构建输出隔离
 
 ### Requirement: dev 与 build 输出目录隔离
 

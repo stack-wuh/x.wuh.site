@@ -85,6 +85,7 @@ export interface CreateAnonymousCommentDto {
   nickname: string;
   email?: string;
   content: string;
+  page?: string;
 }
 
 export interface QueryCommentDto {
