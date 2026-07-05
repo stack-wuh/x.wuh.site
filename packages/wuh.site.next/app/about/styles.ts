@@ -109,6 +109,17 @@ export const ProfileRow = styled.div`
   gap: 16px;
 `
 
+export const ProfileAvatarLink = styled.a`
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 0.82;
+  }
+`
+
 export const Avatar = styled.div`
   width: 56px;
   height: 56px;
@@ -141,6 +152,15 @@ export const ProfileName = styled.span`
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
+`
+
+export const ProfileNameLink = styled.a`
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--accent-color);
+  }
 `
 
 export const ProfileRole = styled.span`

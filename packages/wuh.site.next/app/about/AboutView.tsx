@@ -20,7 +20,7 @@ import {
   Hero, HeroLabel, HeroTitle, HeroSub,
   SectionHeader, SectionLabel,
   AboutTimeline, TimelineTrack, TimelineDot, AboutContent,
-  ProfileRow, Avatar, AvatarLetter, ProfileInfo, ProfileName, ProfileRole,
+  ProfileRow, ProfileAvatarLink, Avatar, AvatarLetter, ProfileInfo, ProfileName, ProfileNameLink, ProfileRole,
   Bio, TagRow, Tag,
   PlatformList, PlatformCard, PlatformName, PlatformDesc,
   TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
@@ -38,9 +38,12 @@ interface AboutViewProps {
 }
 
 const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
-  const name = profile?.name || 'Shadow Wu'
+  const githubLogin = profile?.login || 'stack-wuh'
+  const githubUrl = `https://github.com/${githubLogin}`
+  const name = githubLogin
   const avatarUrl = profile?.avatar_url ?? null
   const location = profile?.location || 'ShenZhen GuangDong China'
+  const profileMeta = profile?.name ? `${profile.name} · ${location}` : location
 
   const { data: heatmapData, loading: heatmapLoading } = useRequest<HeatmapData>(
     async () => {
@@ -90,21 +93,39 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
             <div>
               <ProfileRow>
                 {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt={name}
-                    width={56}
-                    height={56}
-                    style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-                  />
+                  <ProfileAvatarLink
+                    href={githubUrl}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label={`${name} GitHub profile`}
+                  >
+                    <img
+                      src={avatarUrl}
+                      alt={name}
+                      width={56}
+                      height={56}
+                      style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                    />
+                  </ProfileAvatarLink>
                 ) : (
-                  <Avatar>
-                    <AvatarLetter>W</AvatarLetter>
-                  </Avatar>
+                  <ProfileAvatarLink
+                    href={githubUrl}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label={`${name} GitHub profile`}
+                  >
+                    <Avatar>
+                      <AvatarLetter>W</AvatarLetter>
+                    </Avatar>
+                  </ProfileAvatarLink>
                 )}
                 <ProfileInfo>
-                  <ProfileName>{name}</ProfileName>
-                  <ProfileRole>{location}</ProfileRole>
+                  <ProfileName>
+                    <ProfileNameLink href={githubUrl} target='_blank' rel='noopener noreferrer'>
+                      {name}
+                    </ProfileNameLink>
+                  </ProfileName>
+                  <ProfileRole>{profileMeta}</ProfileRole>
                 </ProfileInfo>
               </ProfileRow>
               <Bio style={{ marginTop: 12 }}>
