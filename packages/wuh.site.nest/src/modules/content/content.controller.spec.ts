@@ -1,6 +1,25 @@
 import { ContentController } from './content.controller';
 
 describe('ContentController likePost', () => {
+  it('filters posts by requiring all requested labels', async () => {
+    const contentService = {
+      findAll: jest.fn().mockResolvedValue({ data: [], pagination: {} }),
+    };
+    const controller = new ContentController(contentService as any);
+
+    await controller.getPosts({
+      page: 1,
+      limit: 10,
+      state: 'open',
+      labels: ['javascript', 'react'],
+    } as any);
+
+    expect(contentService.findAll).toHaveBeenCalledWith(1, 10, {
+      labels: { $all: ['javascript', 'react'] },
+      state: 'open',
+    });
+  });
+
   it('returns open label summaries from the content service', async () => {
     const contentService = {
       getLabelSummaries: jest.fn().mockResolvedValue([

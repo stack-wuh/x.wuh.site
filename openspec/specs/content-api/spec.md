@@ -30,6 +30,14 @@
 - **WHEN** 参数经 `@Transform` 处理
 - **THEN** `labels` 被解析为 `["javascript", "typescript"]`
 
+### Requirement: Multiple labels query uses AND semantics
+多个 `labels` 查询条件使用 AND 语义过滤内容。
+
+- **GIVEN** 内容列表接口收到多个 `labels` 查询条件
+- **WHEN** 服务端构造数据库查询条件
+- **THEN** 查询条件使用数组全部匹配语义
+- **AND** 返回结果中的每篇文章都同时包含全部指定 labels
+
 ### Requirement: Post detail derives cover from first content image
 文章详情接口在缺少手动封面时，从正文 HTML 第一张图片推导封面。
 

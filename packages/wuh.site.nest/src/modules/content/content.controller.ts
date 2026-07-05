@@ -74,7 +74,7 @@ export class ContentController {
     const dbQuery: Record<string, any> = {};
 
     if (labels && labels.length > 0) {
-      dbQuery.labels = { $in: labels };
+      dbQuery.labels = { $all: labels };
     }
     if (state) {
       dbQuery.state = state;

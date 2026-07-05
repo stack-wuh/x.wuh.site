@@ -10,6 +10,7 @@ import BackHomeLink from '@/app/components/BackHomeLink'
 import type { ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
 import { buildPostUrl } from '../lib/slug'
 import { formatShortDate } from '../lib/date'
+import { buildBlogUrl, formatFilterOptionLabel, getFilterSummaryLabel, toggleLabel } from './blog-filter-utils'
 import * as S from './styles'
 
 const TAG_DISPLAY_LIMIT = 3
@@ -17,7 +18,7 @@ const TAG_DISPLAY_LIMIT = 3
 type Props = {
   posts: PostListItem[]
   pagination: { currentPage: number; lastPage: number; total?: number }
-  activeLabel?: string
+  activeLabels: string[]
   availableLabels: ContentLabelSummary[]
 }
 
@@ -35,21 +36,13 @@ const groupByYear = (posts: PostListItem[]) => {
   return Array.from(map.entries()).sort((a, b) => b[0] - a[0])
 }
 
-const buildBlogUrl = (page: number, label?: string) => {
-  const params = new URLSearchParams()
-  if (label) params.set('labels', label)
-  if (page > 1) params.set('page', String(page))
-  const query = params.toString()
-  return query ? `/blog?${query}` : '/blog'
-}
-
 /**
  * 博客列表视图，按年份分组展示博客文章，支持分页。
  */
-export default function BlogListView({ posts, pagination, activeLabel, availableLabels }: Props) {
+export default function BlogListView({ posts, pagination, activeLabels, availableLabels }: Props) {
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
-  const resultTotal = pagination.total ?? posts.length
   const hasLabels = availableLabels.length > 0
+  const filteredTotal = pagination.total ?? posts.length
 
   return (
     <S.Root>
@@ -67,17 +60,16 @@ export default function BlogListView({ posts, pagination, activeLabel, available
         <S.FilterBar aria-label="博客分类过滤">
           <S.FilterToolbar>
             <S.FilterMenu>
-              <S.FilterSummary>Labels</S.FilterSummary>
+              <S.FilterSummary>{getFilterSummaryLabel(availableLabels, activeLabels, filteredTotal)}</S.FilterSummary>
               <S.FilterMenuList>
                 {hasLabels ? (
                   availableLabels.map(label => (
                     <S.FilterOption
                       key={label.name}
-                      href={buildBlogUrl(1, label.name)}
-                      $active={label.name === activeLabel}
+                      href={buildBlogUrl(1, toggleLabel(activeLabels, label.name))}
+                      $active={activeLabels.includes(label.name)}
                     >
-                      <span>{label.name}</span>
-                      <S.FilterCount>{label.count}</S.FilterCount>
+                      <span>{formatFilterOptionLabel(label)}</span>
                     </S.FilterOption>
                   ))
                 ) : (
@@ -85,15 +77,16 @@ export default function BlogListView({ posts, pagination, activeLabel, available
                 )}
               </S.FilterMenuList>
             </S.FilterMenu>
-            <S.FilterSummaryText>
-              {activeLabel ? `${resultTotal} open posts filtered by` : `${resultTotal} open posts`}
-            </S.FilterSummaryText>
-            {activeLabel && (
-              <S.FilterToken href="/blog" aria-label={`清除 ${activeLabel} 分类筛选`}>
-                {activeLabel}
+            {activeLabels.map((label) => (
+              <S.FilterToken
+                key={label}
+                href={buildBlogUrl(1, activeLabels.filter((item) => item !== label))}
+                aria-label={`清除 ${label} 分类筛选`}
+              >
+                {label}
                 <span aria-hidden="true">×</span>
               </S.FilterToken>
-            )}
+            ))}
           </S.FilterToolbar>
         </S.FilterBar>
 
@@ -131,7 +124,7 @@ export default function BlogListView({ posts, pagination, activeLabel, available
         <Pagination
           currentPage={pagination.currentPage}
           totalPages={pagination.lastPage}
-          getPageUrl={(page) => buildBlogUrl(page, activeLabel)}
+          getPageUrl={(page) => buildBlogUrl(page, activeLabels)}
         />
       </S.Main>
     </S.Root>

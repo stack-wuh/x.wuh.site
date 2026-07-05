@@ -45,9 +45,9 @@ export const FilterBar = styled.section`
   position: relative;
   z-index: 20;
   width: 100%;
-  border: 1px solid color-mix(in oklab, var(--text-muted) 28%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent-color) 32%, var(--background-100, #fff));
   border-radius: 8px;
-  background: var(--background-100, #fff);
+  background: color-mix(in oklab, var(--accent-color) 8%, var(--background-100, #fff));
   overflow: visible;
 `
 
@@ -60,16 +60,16 @@ export const FilterToolbar = styled.div`
   min-height: 46px;
   padding: 10px 12px;
   border-radius: 8px;
-  background: color-mix(in oklab, var(--text-muted) 8%, var(--background-100, #fff));
+  background: color-mix(in oklab, var(--accent-color) 10%, var(--background-100, #fff));
 `
 
 export const FilterMenu = styled.details`
   position: relative;
 
   &[open] > summary {
-    border-color: color-mix(in oklab, var(--accent-color) 55%, transparent);
+    border-color: color-mix(in oklab, var(--accent-color) 64%, var(--background-100, #fff));
     color: var(--primary-color);
-    background: color-mix(in oklab, var(--accent-color) 8%, var(--background-100, #fff));
+    background: color-mix(in oklab, var(--accent-color) 18%, var(--background-100, #fff));
   }
 `
 
@@ -79,9 +79,9 @@ export const FilterSummary = styled.summary`
   gap: 6px;
   min-height: 30px;
   padding: 0 10px;
-  border: 1px solid color-mix(in oklab, var(--text-muted) 30%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent-color) 34%, var(--background-100, #fff));
   border-radius: 6px;
-  background: var(--background-100, #fff);
+  background: color-mix(in oklab, var(--accent-color) 6%, var(--background-100, #fff));
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
   cursor: pointer;
@@ -100,9 +100,9 @@ export const FilterSummary = styled.summary`
   }
 
   &:hover {
-    border-color: color-mix(in oklab, var(--accent-color) 45%, transparent);
+    border-color: color-mix(in oklab, var(--accent-color) 58%, var(--background-100, #fff));
     color: var(--primary-color);
-    background: color-mix(in oklab, var(--accent-color) 6%, var(--background-100, #fff));
+    background: color-mix(in oklab, var(--accent-color) 14%, var(--background-100, #fff));
   }
 `
 
@@ -116,9 +116,9 @@ export const FilterMenuList = styled.div`
   max-height: 320px;
   flex-direction: column;
   overflow-y: auto;
-  border: 1px solid color-mix(in oklab, var(--text-muted) 26%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent-color) 32%, var(--background-100, #fff));
   border-radius: 8px;
-  background: var(--background-100, #fff);
+  background: color-mix(in oklab, var(--accent-color) 6%, var(--background-100, #fff));
   box-shadow: 0 16px 40px color-mix(in oklab, #000 16%, transparent);
   padding: 6px;
 `
@@ -132,30 +132,20 @@ export const FilterOption = styled(Link)<{ $active: boolean }>`
   padding: 0 10px;
   border-radius: 6px;
   color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-secondary)')};
-  background: ${({ $active }) => ($active ? 'color-mix(in oklab, var(--accent-color) 10%, var(--background-100, #fff))' : 'var(--background-100, #fff)')};
+  background: ${({ $active }) => ($active ? 'color-mix(in oklab, var(--accent-color) 20%, var(--background-100, #fff))' : 'transparent')};
   font-size: var(--font-size-sm);
   text-decoration: none;
   transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
 
   &:hover {
     color: var(--primary-color);
-    background: color-mix(in oklab, var(--accent-color) 8%, var(--background-100, #fff));
+    background: color-mix(in oklab, var(--accent-color) 16%, var(--background-100, #fff));
     text-decoration: none;
   }
 `
 
-export const FilterCount = styled.span`
-  color: var(--text-muted);
-  font-size: var(--font-size-xs);
-`
-
 export const FilterEmpty = styled.span`
   padding: 8px 10px;
-  color: var(--text-muted);
-  font-size: var(--font-size-sm);
-`
-
-export const FilterSummaryText = styled.span`
   color: var(--text-muted);
   font-size: var(--font-size-sm);
 `
@@ -166,17 +156,17 @@ export const FilterToken = styled(Link)`
   gap: 6px;
   min-height: 26px;
   padding: 0 8px;
-  border: 1px solid color-mix(in oklab, var(--accent-color) 42%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent-color) 46%, var(--background-100, #fff));
   border-radius: 6px;
   color: var(--primary-color);
-  background: color-mix(in oklab, var(--accent-color) 12%, transparent);
+  background: color-mix(in oklab, var(--accent-color) 18%, var(--background-100, #fff));
   font-size: var(--font-size-xs);
   text-decoration: none;
   transition: border-color var(--transition-fast) ease, background-color var(--transition-fast) ease;
 
   &:hover {
-    border-color: color-mix(in oklab, var(--accent-color) 70%, transparent);
-    background: color-mix(in oklab, var(--accent-color) 18%, transparent);
+    border-color: color-mix(in oklab, var(--accent-color) 70%, var(--background-100, #fff));
+    background: color-mix(in oklab, var(--accent-color) 26%, var(--background-100, #fff));
     text-decoration: none;
   }
 `

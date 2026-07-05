@@ -9,8 +9,8 @@
 - **路径:** `openspec/specs/components/spec.md`
 
 ## content-api — 内容 API
-- **关键词:** 内容API, 分页, REST, 博客, 项目, 404, 查询参数, 相邻文章, 封面图, metadata.cover
-- **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts, Post detail derives cover from first content image, Post detail falls back to markdown first image
+- **关键词:** 内容API, 分页, REST, 博客, 项目, 404, 查询参数, labels, AND查询, 相邻文章, 封面图, metadata.cover
+- **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, Multiple labels query uses AND semantics, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts, Post detail derives cover from first content image, Post detail falls back to markdown first image
 - **路径:** `openspec/specs/content-api/spec.md`
 
 ## rss — RSS 订阅
@@ -54,8 +54,8 @@
 - **路径:** `openspec/specs/blog-code-highlighting/spec.md`
 
 ## blog-category-filter — 博客分类查询
-- **关键词:** 博客列表, 分类查询, labels, 分页, GitHub Issues
-- **需求:** 博客列表支持分类查询, 分类筛选状态可分享, 分类入口展示完整 open 标签汇总, 分类筛选与分页联动, 切换分类重置分页, GitHub Issues 风格过滤条, 博客列表分页 URL
+- **关键词:** 博客列表, 分类查询, labels, 多标签, AND查询, 分页, GitHub Issues, 主题色
+- **需求:** 博客列表支持分类查询, 多标签 AND 分类查询, 分类筛选状态可分享, 多标签筛选状态可分享, 分类入口展示完整 open 标签汇总, 分类数量文案, 分类筛选与分页联动, 多标签分类筛选与分页联动, 切换分类重置分页, 多个筛选 token 可单独移除, GitHub Issues 风格过滤条, 博客列表分页 URL
 - **路径:** `openspec/specs/blog-category-filter/spec.md`
 
 ## blog-scroll-flicker-fix — 滚动闪屏修复
