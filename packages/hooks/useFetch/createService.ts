@@ -1,7 +1,6 @@
 import { fetcher, type QueryRecord, type RequestOptions, type FetchResult, type FetchError } from './fetcher'
 import { useRequest } from 'ahooks'
-
-const API_BASE = process.env.NEST_API_URL || 'http://localhost:3200/v2'
+import { API_BASE } from './apiBase'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 

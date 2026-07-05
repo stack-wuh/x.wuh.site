@@ -5,6 +5,13 @@ import HomeView from './HomeView'
 
 const SITE_URL = 'https://wuh.site'
 
+export const dynamic = 'force-dynamic'
+
+function logHomeFetchError(moduleName: string, error: unknown) {
+  const message = error instanceof Error ? error.message : JSON.stringify(error)
+  process.stderr.write(`[home] Failed to fetch ${moduleName}: ${message}\n`)
+}
+
 export const metadata: Metadata = {
   title: 'wuh.site · 朝朝如念',
   description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
@@ -25,7 +32,8 @@ export const metadata: Metadata = {
 }
 
 async function getRepos(): Promise<RepoDto[]> {
-  const { data } = await reposService.getAll.server({ revalidate: 3600 })
+  const { data, error } = await reposService.getAll.server({ revalidate: 3600 })
+  if (error) logHomeFetchError('repos', error)
   if (!data) return []
   return (data as any).repos.slice(0, 6) as RepoDto[]
 }
@@ -41,19 +49,21 @@ const mapContentToPost = (item: ContentItem): PostListItem => ({
 })
 
 async function getFeaturedIssues(): Promise<PostListItem[]> {
-  const { data } = await contentService.getPosts.server({
+  const { data, error } = await contentService.getPosts.server({
     query: { limit: '6', state: 'open' },
     revalidate: 1800,
   })
+  if (error) logHomeFetchError('featured posts', error)
   if (!data) return []
   return (data as any).data.map(mapContentToPost) as PostListItem[]
 }
 
 async function getYearlySummaries(): Promise<PostListItem[]> {
-  const { data } = await contentService.getPosts.server({
+  const { data, error } = await contentService.getPosts.server({
     query: { limit: '50', state: 'open' },
     revalidate: 1800,
   })
+  if (error) logHomeFetchError('yearly summaries', error)
   if (!data) return []
   return (data as any).data
     .map(mapContentToPost)
@@ -62,10 +72,11 @@ async function getYearlySummaries(): Promise<PostListItem[]> {
 }
 
 async function getWereadBooks(): Promise<WereadBook[]> {
-  const { data } = await wereadService.getBooks.server({
+  const { data, error } = await wereadService.getBooks.server({
     query: { page: '5', limit: '6' },
     revalidate: 3600,
   })
+  if (error) logHomeFetchError('weread books', error)
   if (!data) return []
   return ((data as any).data || []) as WereadBook[]
 }
