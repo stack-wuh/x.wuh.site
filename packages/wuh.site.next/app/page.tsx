@@ -73,7 +73,7 @@ async function getYearlySummaries(): Promise<PostListItem[]> {
 
 async function getWereadBooks(): Promise<WereadBook[]> {
   const { data, error } = await wereadService.getBooks.server({
-    query: { page: '5', limit: '6' },
+    query: { page: '1', limit: '6', finishReading: '0' },
     revalidate: 3600,
   })
   if (error) logHomeFetchError('weread books', error)
