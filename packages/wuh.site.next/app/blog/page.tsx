@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import type { ContentItem, ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
+import { toLabelParams } from './blog-filter-utils'
 
 const SITE_URL = 'https://wuh.site'
 
@@ -47,15 +48,9 @@ const toPageNumber = (value: string | string[] | undefined) => {
   return Number.isNaN(page) || page < 1 ? 1 : page
 }
 
-const toLabelParam = (value: string | string[] | undefined) => {
-  const raw = Array.isArray(value) ? value[0] : value
-  const label = raw?.trim()
-  return label ? label : undefined
-}
-
-async function getIssues(page: number, label?: string) {
+async function getIssues(page: number, labels: string[]) {
   const { data, error } = await contentService.getPosts.server({
-    query: { page: String(page), limit: String(PER_PAGE), state: 'open', labels: label },
+    query: { page: String(page), limit: String(PER_PAGE), state: 'open', labels },
     revalidate: 600,
   })
 
@@ -96,9 +91,9 @@ export default async function Page({
 }) {
   const resolvedSearchParams = await searchParams
   const currentPage = toPageNumber(resolvedSearchParams?.page)
-  const activeLabel = toLabelParam(resolvedSearchParams?.labels)
+  const activeLabels = toLabelParams(resolvedSearchParams?.labels)
   const [{ posts, pagination }, availableLabels] = await Promise.all([
-    getIssues(currentPage, activeLabel),
+    getIssues(currentPage, activeLabels),
     getLabels(),
   ])
 
@@ -106,7 +101,7 @@ export default async function Page({
     <BlogListView
       posts={posts}
       pagination={pagination}
-      activeLabel={activeLabel}
+      activeLabels={activeLabels}
       availableLabels={availableLabels}
     />
   )
