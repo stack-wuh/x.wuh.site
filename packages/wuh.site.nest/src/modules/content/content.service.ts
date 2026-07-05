@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Content, ContentDocument } from './schemas/content.schema';
 import { Like, LikeDocument } from './schemas/like.schema';
 import { CreateContentDto, UpdateContentMetadataDto } from './dto/content.dto';
-import type { PaginatedResult } from '@wuh.site/shared-contracts';
+import type { ContentLabelSummary, PaginatedResult } from '@wuh.site/shared-contracts';
 import { buildPaginatedResult } from '../../common/utils/paginated-result';
 
 @Injectable()
@@ -47,6 +47,25 @@ export class ContentService {
       this.logger.error(`Failed to find contents: ${error.message}`);
       throw error;
     }
+  }
+
+  async getLabelSummaries(query: { state?: 'open' | 'closed' } = {}): Promise<ContentLabelSummary[]> {
+    const match: Record<string, any> = {};
+    if (query.state) {
+      match.state = query.state;
+    }
+
+    const pipeline = [
+      { $match: match },
+      { $unwind: '$labels' },
+      { $match: { labels: { $type: 'string', $ne: '' } } },
+      { $group: { _id: '$labels', count: { $sum: 1 } } },
+      { $project: { _id: 0, name: '$_id', count: 1 } },
+      { $sort: { count: -1, name: 1 } },
+    ];
+    const summaries = await (this.contentModel as any).aggregate(pipeline).exec();
+
+    return summaries as ContentLabelSummary[];
   }
 
   async findByExternalId(externalId: number): Promise<ContentDocument | null> {

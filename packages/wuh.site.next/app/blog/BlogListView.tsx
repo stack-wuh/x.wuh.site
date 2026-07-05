@@ -7,7 +7,7 @@ import Empty from '@wuh.site/components/empty'
 import { IconBookOpen } from '@wuh.site/components/icons'
 import TitleWithTooltip from './components/TitleWithTooltip'
 import BackHomeLink from '@/app/components/BackHomeLink'
-import type { PostListItem } from '@wuh.site/shared-contracts'
+import type { ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
 import { buildPostUrl } from '../lib/slug'
 import { formatShortDate } from '../lib/date'
 import * as S from './styles'
@@ -16,7 +16,9 @@ const TAG_DISPLAY_LIMIT = 3
 
 type Props = {
   posts: PostListItem[]
-  pagination: { currentPage: number; lastPage: number }
+  pagination: { currentPage: number; lastPage: number; total?: number }
+  activeLabel?: string
+  availableLabels: ContentLabelSummary[]
 }
 
 const groupByYear = (posts: PostListItem[]) => {
@@ -33,11 +35,21 @@ const groupByYear = (posts: PostListItem[]) => {
   return Array.from(map.entries()).sort((a, b) => b[0] - a[0])
 }
 
+const buildBlogUrl = (page: number, label?: string) => {
+  const params = new URLSearchParams()
+  if (label) params.set('labels', label)
+  if (page > 1) params.set('page', String(page))
+  const query = params.toString()
+  return query ? `/blog?${query}` : '/blog'
+}
+
 /**
  * 博客列表视图，按年份分组展示博客文章，支持分页。
  */
-export default function BlogListView({ posts, pagination }: Props) {
+export default function BlogListView({ posts, pagination, activeLabel, availableLabels }: Props) {
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
+  const resultTotal = pagination.total ?? posts.length
+  const hasLabels = availableLabels.length > 0
 
   return (
     <S.Root>
@@ -51,6 +63,39 @@ export default function BlogListView({ posts, pagination }: Props) {
             <BackHomeLink href='/' />
           </S.HeaderActions>
         </S.Header>
+
+        <S.FilterBar aria-label="博客分类过滤">
+          <S.FilterToolbar>
+            <S.FilterMenu>
+              <S.FilterSummary>Labels</S.FilterSummary>
+              <S.FilterMenuList>
+                {hasLabels ? (
+                  availableLabels.map(label => (
+                    <S.FilterOption
+                      key={label.name}
+                      href={buildBlogUrl(1, label.name)}
+                      $active={label.name === activeLabel}
+                    >
+                      <span>{label.name}</span>
+                      <S.FilterCount>{label.count}</S.FilterCount>
+                    </S.FilterOption>
+                  ))
+                ) : (
+                  <S.FilterEmpty>暂无分类</S.FilterEmpty>
+                )}
+              </S.FilterMenuList>
+            </S.FilterMenu>
+            <S.FilterSummaryText>
+              {activeLabel ? `${resultTotal} open posts filtered by` : `${resultTotal} open posts`}
+            </S.FilterSummaryText>
+            {activeLabel && (
+              <S.FilterToken href="/blog" aria-label={`清除 ${activeLabel} 分类筛选`}>
+                {activeLabel}
+                <span aria-hidden="true">×</span>
+              </S.FilterToken>
+            )}
+          </S.FilterToolbar>
+        </S.FilterBar>
 
         {posts.length === 0 ? (
           <Empty icon={<IconBookOpen />} title="暂无内容" description="暂时没有可展示的博客" actions={[{ label: '返回首页', href: '/' }]} />
@@ -86,7 +131,7 @@ export default function BlogListView({ posts, pagination }: Props) {
         <Pagination
           currentPage={pagination.currentPage}
           totalPages={pagination.lastPage}
-          getPageUrl={(page) => (page <= 1 ? '/blog' : `/blog?page=${page}`)}
+          getPageUrl={(page) => buildBlogUrl(page, activeLabel)}
         />
       </S.Main>
     </S.Root>
