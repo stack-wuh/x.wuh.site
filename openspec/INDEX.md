@@ -18,6 +18,11 @@
 - **需求:** RSS feed URL 格式, RSS 仅输出已发布内容, 前端 RSS 自动发现
 - **路径:** `openspec/specs/rss/spec.md`
 
+## weread-shelf-order — 微信读书书架顺序
+- **关键词:** 微信读书, 书架顺序, 在读, finishReading, shelfIndex
+- **需求:** 微信读书页面保持书架顺序, 首页展示在读前 6 本, 同步持久化书架位置, 微信读书分页查询
+- **路径:** `openspec/specs/weread-shelf-order/spec.md`
+
 ## seo — SEO 优化
 - **关键词:** SEO, Open Graph, Twitter Card, JSON-LD, canonical, 结构化数据, URL slug
 - **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容

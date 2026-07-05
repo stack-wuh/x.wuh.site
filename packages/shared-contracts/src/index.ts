@@ -229,6 +229,7 @@ export interface WereadBook {
   cover: string
   readUpdateTime: number
   finishReading: number
+  shelfIndex: number
 }
 
 // Post list item (frontend view model derived from ContentItem)

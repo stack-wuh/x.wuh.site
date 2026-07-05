@@ -31,7 +31,7 @@ export class WereadService {
       },
       body: JSON.stringify({
         api_name: '/shelf/sync',
-        skill_version: '1.0.3',
+        skill_version: '1.0.4',
       }),
     });
 
@@ -40,13 +40,14 @@ export class WereadService {
       throw new Error(`WeRead API error: ${data.errmsg || 'unknown'}`);
     }
 
-    const books: WeReadBook[] = (data.books || []).map((b: any) => ({
+    const books: WeReadBook[] = (data.books || []).map((b: any, shelfIndex: number) => ({
       bookId: b.bookId,
       title: b.title,
       author: b.author || '',
       cover: b.cover || '',
       readUpdateTime: b.readUpdateTime || 0,
       finishReading: b.finishReading || 0,
+      shelfIndex,
     }));
 
     let synced = 0;
@@ -63,16 +64,21 @@ export class WereadService {
     return { synced };
   }
 
-  async getBooks(page: number, limit: number): Promise<PaginatedResult<WereadBookDocument>> {
+  async getBooks(
+    page: number,
+    limit: number,
+    finishReading?: 0 | 1,
+  ): Promise<PaginatedResult<WereadBookDocument>> {
+    const filter = finishReading === undefined ? {} : { finishReading };
     const [data, total] = await Promise.all([
       this.wereadBookModel
-        .find()
-        .sort({ readUpdateTime: -1 })
+        .find(filter)
+        .sort({ shelfIndex: 1, readUpdateTime: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .lean()
         .exec() as any,
-      this.wereadBookModel.countDocuments().exec(),
+      this.wereadBookModel.countDocuments(filter).exec(),
     ]);
     return buildPaginatedResult(data as WereadBookDocument[], total, page, limit);
   }
