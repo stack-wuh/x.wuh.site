@@ -8,6 +8,7 @@ services:
     ports:
       - "${PORT_NEXT:-3000}:3000"
     environment:
+      - NODE_ENV=production
       - PORT=3000
       - NEST_API_URL=http://nest:3200/v2
     depends_on:
@@ -23,4 +24,6 @@ services:
       - "${PORT_NEST:-3200}:3200"
     env_file:
       - .env
+    environment:
+      - NODE_ENV=production
     restart: unless-stopped
