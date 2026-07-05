@@ -9,8 +9,8 @@
 - **路径:** `openspec/specs/components/spec.md`
 
 ## content-api — 内容 API
-- **关键词:** 内容API, 分页, REST, 博客, 项目, 404, 查询参数, 相邻文章
-- **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts
+- **关键词:** 内容API, 分页, REST, 博客, 项目, 404, 查询参数, 相邻文章, 封面图, metadata.cover
+- **需求:** Paginated response format, Post not found returns 404, Query parameter type coercion, Labels comma-separated, findAll returns PaginatedResult, Post detail includes prev/next adjacent posts, Post detail derives cover from first content image, Post detail falls back to markdown first image
 - **路径:** `openspec/specs/content-api/spec.md`
 
 ## rss — RSS 订阅
@@ -44,8 +44,8 @@
 - **路径:** `openspec/specs/blog-display/spec.md`
 
 ## blog-detail — 博客详情页
-- **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块
-- **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性
+- **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块, 封面图, 正文首图
+- **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性, Detail page shows cover below header metadata, Detail page hides unavailable cover image, Detail page hides failed cover image
 - **路径:** `openspec/specs/blog-detail/spec.md`
 
 ## blog-code-highlighting — 代码高亮

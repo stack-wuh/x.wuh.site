@@ -110,4 +110,41 @@ describe('ContentController likePost', () => {
     expect(contentService.hasLiked).toHaveBeenCalledWith(155, 'anon-123');
     expect(res.cookie).not.toHaveBeenCalled();
   });
+
+  it('derives post detail cover from the first html image when metadata cover is missing', async () => {
+    const contentService = {
+      findBySlugOrNumber: jest.fn().mockResolvedValue({
+        number: 155,
+        toJSON: () => ({
+          number: 155,
+          title: 'Post',
+          body: '![fallback](https://example.com/fallback.png)',
+          bodyHtml: '<p>intro</p><img alt="cover" src="https://example.com/cover.png" />',
+          metadata: { summary: 'Intro' },
+          labels: [],
+          state: 'open',
+          comments: 0,
+          viewCount: 0,
+          likeCount: 1,
+          createdAtGitHub: new Date(),
+          updatedAtGitHub: new Date(),
+        }),
+      }),
+      incrementViewCount: jest.fn().mockResolvedValue(undefined),
+      findAdjacentPosts: jest.fn().mockResolvedValue({ prev: null, next: null, total: 1, position: 1 }),
+      hasLiked: jest.fn().mockResolvedValue(false),
+    };
+    const controller = new ContentController(contentService as any);
+    const req = {
+      cookies: { anonId: 'anon-123' },
+      headers: {},
+    } as any;
+    const res = {
+      cookie: jest.fn(),
+    } as any;
+
+    const result = await controller.getPostDetail('155', req, res);
+
+    expect(result.metadata.cover).toBe('https://example.com/cover.png');
+  });
 });

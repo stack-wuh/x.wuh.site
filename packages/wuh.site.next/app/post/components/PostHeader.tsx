@@ -3,7 +3,7 @@
 import { DiamondDivider } from '@wuh.site/components/icons'
 import type { Issue } from '../PostView.types'
 import { formatFullDate } from '@/app/lib/date'
-import { CoverImage, AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
+import { AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
 
 type Props = {
   issue: Issue
@@ -16,13 +16,6 @@ export default function PostHeader({ issue }: Props) {
 
   return (
     <>
-      {/* 封面图 */}
-      {issue.metadata?.cover && (
-        <CoverImage>
-          <img src={issue.metadata.cover} alt={issue.title} loading='lazy' />
-        </CoverImage>
-      )}
-
       {/* 标题 + Meta */}
       <Header>
         <Title>{issue.title}</Title>
