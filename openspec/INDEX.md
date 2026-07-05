@@ -73,6 +73,11 @@
 - **需求:** Global exception filter, Swagger API documentation
 - **路径:** `openspec/specs/error-handling/spec.md`
 
+## guestbook-barrage — 留言弹幕弹窗
+- **关键词:** 留言, 弹幕, Dialog, 响应式, 输入限制
+- **需求:** 弹窗留言入口, 弹幕区域默认可见, 输入框字数限制, 桌面端左右并列展示, 移动端上下布局展示, 弹幕与列表视觉参考 B 站, 弹窗默认不展示列表
+- **路径:** `openspec/specs/guestbook-barrage/spec.md`
+
 ## redesign-error-pages — 错误页面重设计
 - **关键词:** 404, 500, 错误页面, editorial风格
 - **需求:** (见 spec.md)
