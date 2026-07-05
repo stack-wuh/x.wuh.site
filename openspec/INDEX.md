@@ -53,6 +53,11 @@
 - **需求:** (见 spec.md)
 - **路径:** `openspec/specs/blog-code-highlighting/spec.md`
 
+## blog-category-filter — 博客分类查询
+- **关键词:** 博客列表, 分类查询, labels, 分页, GitHub Issues
+- **需求:** 博客列表支持分类查询, 分类筛选状态可分享, 分类入口展示完整 open 标签汇总, 分类筛选与分页联动, 切换分类重置分页, GitHub Issues 风格过滤条, 博客列表分页 URL
+- **路径:** `openspec/specs/blog-category-filter/spec.md`
+
 ## blog-scroll-flicker-fix — 滚动闪屏修复
 - **关键词:** 滚动, 性能, CSS动画, scroll-driven, 阅读进度
 - **需求:** (见 spec.md)
