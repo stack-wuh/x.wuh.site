@@ -11,6 +11,7 @@ configureService({
 
 export const contentService = defineService({
   getPosts:    { url: '/content/posts',       method: 'GET' },
+  getLabels:   { url: '/content/labels',      method: 'GET' },
   getPost:     { url: '/content/posts/:slug', method: 'GET' },
   getProjects: { url: '/content/projects',    method: 'GET' },
   likePost:    { url: '/content/posts/:number/like', method: 'POST' },

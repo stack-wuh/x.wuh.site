@@ -63,6 +63,14 @@ export class ContentController {
     return this.contentService.findAll(page, limit, dbQuery);
   }
 
+  @Get('labels')
+  @ApiOperation({ summary: 'Get blog label summaries' })
+  @ApiQuery({ name: 'state', required: false, enum: ['open', 'closed'] })
+  @ApiResponse({ status: 200, description: 'Blog label summaries' })
+  async getLabels(@Query() query: Pick<QueryContentDto, 'state'>) {
+    return this.contentService.getLabelSummaries({ state: query.state });
+  }
+
   @Get('posts/:slugOrNumber')
   @ApiOperation({ summary: 'Get a single post by slug or issue number' })
   @ApiResponse({ status: 200, description: 'Post details with prev/next adjacent posts' })

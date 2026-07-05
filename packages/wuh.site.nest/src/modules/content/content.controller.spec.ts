@@ -1,6 +1,24 @@
 import { ContentController } from './content.controller';
 
 describe('ContentController likePost', () => {
+  it('returns open label summaries from the content service', async () => {
+    const contentService = {
+      getLabelSummaries: jest.fn().mockResolvedValue([
+        { name: 'frontend', count: 3 },
+        { name: 'nextjs', count: 2 },
+      ]),
+    };
+    const controller = new ContentController(contentService as any);
+
+    const result = await controller.getLabels({ state: 'open' } as any);
+
+    expect(result).toEqual([
+      { name: 'frontend', count: 3 },
+      { name: 'nextjs', count: 2 },
+    ]);
+    expect(contentService.getLabelSummaries).toHaveBeenCalledWith({ state: 'open' });
+  });
+
   it('toggles like state by anonymous cookie id', async () => {
     const contentService = {
       hasLiked: jest.fn().mockResolvedValue(false),

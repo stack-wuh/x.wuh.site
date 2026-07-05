@@ -80,6 +80,11 @@ export interface QueryContentDto {
   state?: 'open' | 'closed';
 }
 
+export interface ContentLabelSummary {
+  name: string;
+  count: number;
+}
+
 // Comment
 export interface CreateAnonymousCommentDto {
   nickname: string;
