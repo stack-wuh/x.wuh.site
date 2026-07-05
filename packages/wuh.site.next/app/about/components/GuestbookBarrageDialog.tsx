@@ -1,119 +1,202 @@
 'use client'
 
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import Dialog from '@wuh.site/components/dialog'
-import { IconArrowRight, IconBars, IconClose } from '@wuh.site/components/icons'
+import { IconArrowRight } from '@wuh.site/components/icons'
 import {
-  BarrageItem,
-  BarragePanel,
+  ChatAvatar,
+  ChatBubble,
+  ChatFeed,
+  ChatMessageMeta,
+  ChatRow,
+  ChatStatus,
   Composer,
   ComposerActions,
   ComposerMeta,
   ComposerTextArea,
-  ComposerToggle,
-  ComposerToggleLabel,
   GuestbookBody,
   GuestbookHeader,
-  GuestbookLayout,
-  GuestbookList,
-  GuestbookListItem,
-  GuestbookListMeta,
-  GuestbookListText,
-  GuestbookListTitle,
   GuestbookPanel,
   GuestbookStage,
   GuestbookSubtitle,
   GuestbookTitle,
   GuestbookTrigger,
+  GuestbookTriggerAvatar,
+  GuestbookTriggerAvatars,
+  GuestbookTriggerCopy,
+  GuestbookTriggerCta,
   GuestbookTriggerLabel,
+  GuestbookTriggerPreview,
+  GuestbookTriggerTitle,
   GuestbookWrapper,
   LayoutBadge,
 } from './guestbook-barrage.styles'
 import {
   clampGuestbookContent,
-  flushGuestbookDrafts,
-  queueGuestbookDraft,
-  resolveGuestbookLayout,
+  createGuestbookMessage,
 } from './guestbook-barrage.helpers.js'
 
 const MAX_LENGTH = 100
+const MIN_NICKNAME_LENGTH = 2
+const MIN_CONTENT_LENGTH = 5
+const NICKNAME_STORAGE_KEY = 'wuh.site.guestbook.nickname'
 
-type GuestbookDraft = {
+type GuestbookMessage = {
   id: string
   nickname: string
   content: string
   createdAt: string
-  status: 'pending'
+  status: 'sending' | 'sent' | 'failed'
+  error?: string
 }
 
-const mockBarrage = [
-  { id: 1, text: '这里会显示弹幕内容，像 B 站一样飘过屏幕。', lane: 0, tone: 'soft' },
-  { id: 2, text: '弹幕支持更轻快的浏览方式。', lane: 1, tone: 'accent' },
-  { id: 3, text: '列表默认隐藏，点击按钮才展开。', lane: 2, tone: 'soft' },
-  { id: 4, text: '桌面端左右并列，移动端上下布局。', lane: 3, tone: 'accent' },
-]
+type ChatMessage = {
+  id: string
+  nickname: string
+  content: string
+  time: string
+  mine?: boolean
+  status?: GuestbookMessage['status']
+  error?: string
+}
+
+const sampleMessages = [
+  { id: 'sample-1', nickname: '吴尒红', content: '来这里打个招呼，顺便看看最近在折腾什么。', time: '刚刚' },
+  { id: 'sample-1', nickname: '吴尒红', content: '欢迎留言，短句也很好。这里会像群聊一样一条条留住。', time: '2 分钟前' },
+  { id: 'sample-3', nickname: '远方的朋友', content: '这个聊天式留言板比弹幕更容易回看。', time: '5 分钟前' },
+] as const
+
+const getAvatarText = (nickname: string) => nickname.trim().charAt(0).toUpperCase() || '?'
+const formatDraftTime = (createdAt: string) =>
+  new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(createdAt))
 
 export default function GuestbookBarrageDialog() {
   const [open, setOpen] = useState(false)
-  const [showList, setShowList] = useState(false)
   const [content, setContent] = useState('')
   const [nickname, setNickname] = useState('')
-  const [draftQueue, setDraftQueue] = useState<GuestbookDraft[]>([])
+  const [localMessages, setLocalMessages] = useState<GuestbookMessage[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const feedRef = useRef<HTMLDivElement>(null)
 
   const clamped = useMemo(() => clampGuestbookContent(content), [content])
-  const canSubmit = nickname.trim().length > 0 && clamped.length > 0
-  const layout = resolveGuestbookLayout(false, showList)
+  const trimmedNickname = nickname.trim()
+  const trimmedContent = clamped.value.trim()
+  const failedCount = localMessages.filter((item) => item.status === 'failed').length
+  const canSubmit = trimmedNickname.length >= MIN_NICKNAME_LENGTH && trimmedContent.length >= MIN_CONTENT_LENGTH
+  const chatMessages = useMemo<ChatMessage[]>(() => {
+    const samples = sampleMessages.map((item) => ({ ...item, mine: item.nickname === 'Shadow' }))
+    const messages = localMessages.map((item) => ({
+      id: item.id,
+      content: item.content,
+      nickname: item.nickname,
+      time: formatDraftTime(item.createdAt),
+      mine: true,
+      status: item.status,
+      error: item.error,
+    }))
+
+    return [...samples, ...messages]
+  }, [localMessages])
+
+  useEffect(() => {
+    try {
+      const cachedNickname = window.localStorage.getItem(NICKNAME_STORAGE_KEY)
+      if (cachedNickname) setNickname(cachedNickname)
+    } catch {
+      // localStorage can be unavailable in hardened browsing modes.
+    }
+  }, [])
+
+  useEffect(() => {
+    feedRef.current?.scrollTo({ top: feedRef.current.scrollHeight, behavior: 'smooth' })
+  }, [chatMessages.length, open])
 
   const handleChange = (value: string) => {
     const next = clampGuestbookContent(value)
     setContent(next.value)
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleNicknameChange = (value: string) => {
+    const next = value.slice(0, 20)
+    setNickname(next)
+    const trimmed = next.trim()
+    if (trimmed) {
+      try {
+        window.localStorage.setItem(NICKNAME_STORAGE_KEY, trimmed)
+      } catch {
+        // Ignore storage failures; the current input still works.
+      }
+    }
+  }
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!canSubmit || submitting) return
 
-    const nextQueue = queueGuestbookDraft(draftQueue, {
+    const nextMessages = createGuestbookMessage(localMessages, {
       nickname,
       content,
-    }) as GuestbookDraft[]
+    }) as GuestbookMessage[]
+    const currentMessage = nextMessages[nextMessages.length - 1]
+    if (!currentMessage) return
 
-    setDraftQueue(nextQueue)
-    setNickname('')
+    setLocalMessages(nextMessages)
+    handleNicknameChange(nickname)
     setContent('')
-  }
+    setSubmitting(true)
 
-  const handleClose = async () => {
-    if (!submitting && draftQueue.length > 0) {
-      setSubmitting(true)
-      const remaining = await flushGuestbookDrafts(draftQueue, async (draft) => {
-        const res = await fetch('/api/comments', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nickname: draft.nickname, content: draft.content, page: 'about-guestbook' }),
-        })
-        if (!res.ok) throw new Error('Failed to submit draft')
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nickname: currentMessage.nickname,
+          content: currentMessage.content,
+          page: 'about-guestbook',
+        }),
       })
-      setDraftQueue(remaining as GuestbookDraft[])
+
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        const message =
+          (data && typeof data === 'object' && 'message' in data && String(data.message)) ||
+          `留言提交失败 (${res.status})`
+        throw new Error(message)
+      }
+      setLocalMessages((prev) =>
+        prev.map((item) => (item.id === currentMessage.id ? { ...item, status: 'sent', error: undefined } : item))
+      )
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '留言提交失败'
+      setLocalMessages((prev) =>
+        prev.map((item) => (item.id === currentMessage.id ? { ...item, status: 'failed', error: message } : item))
+      )
+    } finally {
       setSubmitting(false)
     }
-    setOpen(false)
   }
 
   return (
     <>
       <GuestbookTrigger type='button' onClick={() => setOpen(true)}>
-        <IconBars />
-        <GuestbookTriggerLabel>
-          <strong>留言板</strong>
-          <span>打开弹幕弹窗</span>
-        </GuestbookTriggerLabel>
+        <GuestbookTriggerAvatars aria-hidden='true'>
+          <GuestbookTriggerAvatar>W</GuestbookTriggerAvatar>
+          <GuestbookTriggerAvatar>你</GuestbookTriggerAvatar>
+        </GuestbookTriggerAvatars>
+        <GuestbookTriggerCopy>
+          <GuestbookTriggerLabel>Guestbook</GuestbookTriggerLabel>
+          <GuestbookTriggerTitle>给我留一句话</GuestbookTriggerTitle>
+          <GuestbookTriggerPreview>最近看到的想法、建议或者招呼，都可以放在这里。</GuestbookTriggerPreview>
+        </GuestbookTriggerCopy>
+        <GuestbookTriggerCta>
+          <span>进入</span>
+          <IconArrowRight />
+        </GuestbookTriggerCta>
       </GuestbookTrigger>
 
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         title='留言板'
         width='min(1120px, calc(100vw - 32px))'
         height='min(720px, calc(100vh - 80px))'
@@ -122,88 +205,67 @@ export default function GuestbookBarrageDialog() {
           <GuestbookHeader>
             <div>
               <GuestbookTitle>留言板</GuestbookTitle>
-              <GuestbookSubtitle>先本地出弹幕，关闭时再统一提交，避免频繁请求。</GuestbookSubtitle>
+              <GuestbookSubtitle>像群聊一样留下一句话，点击发送后会立即提交。</GuestbookSubtitle>
             </div>
-            <LayoutBadge>{showList ? '双栏展示' : '弹幕优先'}</LayoutBadge>
+            <LayoutBadge>{submitting ? '发送中' : failedCount ? `${failedCount} 条失败` : '群聊模式'}</LayoutBadge>
           </GuestbookHeader>
 
           <GuestbookBody>
-            <GuestbookLayout $layout={layout}>
-              <GuestbookPanel>
-                <GuestbookStage>
-                  <BarragePanel>
-                    {mockBarrage.map((item) => (
-                      <BarrageItem key={item.id} $lane={item.lane} $tone={item.tone}>
-                        {item.text}
-                      </BarrageItem>
-                    ))}
-                  </BarragePanel>
-                </GuestbookStage>
+            <GuestbookPanel>
+              <GuestbookStage>
+                <ChatFeed ref={feedRef}>
+                  {chatMessages.map((item) => (
+                    <ChatRow key={item.id} $mine={Boolean(item.mine)}>
+                      <ChatAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</ChatAvatar>
+                      <ChatBubble $mine={Boolean(item.mine)}>
+                        <ChatMessageMeta>
+                          <span>{item.nickname}</span>
+                          <time>{item.time}</time>
+                        </ChatMessageMeta>
+                        <p>{item.content}</p>
+                        {item.status === 'sending' && <ChatStatus>发送中...</ChatStatus>}
+                        {item.status === 'sent' && <ChatStatus>已发送</ChatStatus>}
+                        {item.status === 'failed' && (
+                          <ChatStatus $tone='error'>{item.error || '发送失败'}</ChatStatus>
+                        )}
+                      </ChatBubble>
+                    </ChatRow>
+                  ))}
+                </ChatFeed>
+              </GuestbookStage>
 
-                <Composer onSubmit={handleSubmit}>
-                  <input
-                    value={nickname}
-                    placeholder='你的昵称'
-                    maxLength={20}
-                    onChange={(event) => setNickname(event.target.value)}
-                  />
-                  <ComposerTextArea
-                    value={content}
-                    maxLength={MAX_LENGTH}
-                    rows={1}
-                    placeholder='发一条弹幕...'
-                    onChange={(event) => handleChange(event.target.value)}
-                  />
-                  <ComposerMeta $overLimit={clamped.remaining === 0 && clamped.length > 0}>
-                    <span>
-                      {clamped.length} / {MAX_LENGTH}
-                    </span>
-                    <span>{clamped.remaining} 字可输入</span>
-                  </ComposerMeta>
-                  <ComposerActions>
-                    <ComposerToggle
-                      type='button'
-                      aria-pressed={showList}
-                      onClick={() => setShowList((prev) => !prev)}
-                    >
-                      <IconBars />
-                      <ComposerToggleLabel>{showList ? '收起列表' : '展开列表'}</ComposerToggleLabel>
-                    </ComposerToggle>
-                    <button type='submit' disabled={!canSubmit || submitting}>
-                      <IconArrowRight />
-                      发送
-                    </button>
-                  </ComposerActions>
-                </Composer>
-              </GuestbookPanel>
-
-              {showList && (
-                <GuestbookList>
-                  <GuestbookListTitle>
-                    留言列表
-                    <button type='button' aria-label='关闭留言列表' onClick={() => setShowList(false)}>
-                      <IconClose />
-                    </button>
-                  </GuestbookListTitle>
-                  <GuestbookListItem>
-                    {draftQueue.map((item) => (
-                      <li key={item.id}>
-                        <GuestbookListMeta>
-                          <strong>{item.nickname}</strong>
-                          <span>待提交</span>
-                        </GuestbookListMeta>
-                        <GuestbookListText>{item.content}</GuestbookListText>
-                      </li>
-                    ))}
-                    {!draftQueue.length && (
-                      <li>
-                        <GuestbookListText>还没有待提交的留言，先发一条弹幕吧。</GuestbookListText>
-                      </li>
-                    )}
-                  </GuestbookListItem>
-                </GuestbookList>
-              )}
-            </GuestbookLayout>
+              <Composer onSubmit={handleSubmit}>
+                <input
+                  value={nickname}
+                  placeholder='你的昵称'
+                  maxLength={20}
+                  onChange={(event) => handleNicknameChange(event.target.value)}
+                />
+                <ComposerTextArea
+                  value={content}
+                  maxLength={MAX_LENGTH}
+                  rows={2}
+                  placeholder='在群里说点什么...'
+                  onChange={(event) => handleChange(event.target.value)}
+                />
+                <ComposerMeta $overLimit={clamped.remaining === 0 && clamped.length > 0}>
+                  <span>
+                    {trimmedNickname.length < MIN_NICKNAME_LENGTH
+                      ? '昵称至少 2 个字符'
+                      : trimmedContent.length < MIN_CONTENT_LENGTH
+                        ? '内容至少 5 个字符'
+                        : `当前昵称：${trimmedNickname}`}
+                  </span>
+                  <span>{clamped.length} / {MAX_LENGTH}</span>
+                </ComposerMeta>
+                <ComposerActions>
+                  <button type='submit' disabled={!canSubmit || submitting}>
+                    <IconArrowRight />
+                    发送
+                  </button>
+                </ComposerActions>
+              </Composer>
+            </GuestbookPanel>
           </GuestbookBody>
         </GuestbookWrapper>
       </Dialog>

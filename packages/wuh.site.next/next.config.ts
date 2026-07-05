@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
 
+const isProduction = process.env.NODE_ENV === 'production';
 const nestApiUrl =
   process.env.NEST_API_URL ||
-  (process.env.NODE_ENV === 'production' ? 'http://nest:3200/v2' : 'http://localhost:3200/v2');
+  (isProduction ? 'http://nest:3200/v2' : 'http://localhost:3200/v2');
 
 const nextConfig: NextConfig = {
-  distDir: './dist/wuh.site.next',
+  distDir: isProduction ? './dist/wuh.site.next' : './dist/wuh.site.next-dev',
   typescript: {
     ignoreBuildErrors: true,
   },
