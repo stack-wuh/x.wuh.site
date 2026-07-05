@@ -60,7 +60,7 @@ export class CommentService {
       .exec();
   }
 
-  async findByExternalId(externalId: number): Promise<CommentDocument | null> {
+  async findByExternalId(externalId: string | number): Promise<CommentDocument | null> {
     return this.commentModel.findOne({ externalId }).exec();
   }
 

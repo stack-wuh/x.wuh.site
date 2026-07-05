@@ -18,6 +18,11 @@ export class CreateAnonymousCommentDto implements ICreateAnonymousCommentDto {
   @IsString()
   @MinLength(5)
   content: string;
+
+  @ApiPropertyOptional({ description: 'Page identifier (e.g. about-guestbook)' })
+  @IsString()
+  @IsOptional()
+  page?: string;
 }
 
 export class QueryCommentDto implements IQueryCommentDto {

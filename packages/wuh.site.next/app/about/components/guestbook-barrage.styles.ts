@@ -1,46 +1,36 @@
-import styled, { keyframes } from '@wuh.site/components/styled'
-
-const floatLeft = keyframes`
-  from {
-    transform: translateX(18px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-`
+import styled from '@wuh.site/components/styled'
 
 export const GuestbookTrigger = styled.button`
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
-  margin-top: var(--space-md);
-  padding: 14px 18px;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 18%, var(--normal-300) 82%);
-  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 44%, transparent);
+  border-left: 3px solid var(--accent-color);
+  border-radius: 8px;
   background:
-    radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--primary-color) 8%, transparent), transparent 52%),
+    linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 7%, transparent), transparent 42%),
     var(--background-100);
   color: var(--text-primary);
+  text-align: left;
   cursor: pointer;
-  box-shadow: var(--elevation-soft);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
+    background 0.2s ease,
     border-color 0.2s ease;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     flex-shrink: 0;
   }
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 24px color-mix(in oklab, var(--primary-color) 12%, transparent);
-    border-color: color-mix(in oklab, var(--primary-color) 36%, var(--normal-300) 64%);
+    background:
+      linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 10%, transparent), transparent 48%),
+      var(--background-200);
+    border-color: color-mix(in oklab, var(--accent-color) 26%, var(--normal-300) 74%);
   }
 
   &:focus-visible {
@@ -49,24 +39,87 @@ export const GuestbookTrigger = styled.button`
   }
 
   @media (prefers-color-scheme: dark) {
-    background: color-mix(in oklab, var(--normal-700) 30%, var(--background-100));
+    background:
+      linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 10%, transparent), transparent 44%),
+      color-mix(in oklab, var(--normal-700) 22%, var(--background-100));
     border-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
+  }
+
+  @media (max-width: 520px) {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: flex-start;
   }
 `
 
-export const GuestbookTriggerLabel = styled.span`
+export const GuestbookTriggerAvatars = styled.span`
+  display: flex;
+  align-items: center;
+  min-width: 54px;
+`
+
+export const GuestbookTriggerAvatar = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--background-100);
+  background: color-mix(in oklab, var(--accent-color) 18%, var(--background-100));
+  color: var(--accent-color);
+  font-size: 12px;
+  font-weight: 700;
+
+  & + & {
+    margin-left: -10px;
+    background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
+    color: var(--primary-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--background-100);
+  }
+`
+
+export const GuestbookTriggerCopy = styled.span`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
+`
 
-  strong {
-    font-size: 0.98rem;
-  }
+export const GuestbookTriggerLabel = styled.span`
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent-color);
+`
 
-  span {
-    font-size: 0.84rem;
-    color: var(--text-secondary);
+export const GuestbookTriggerTitle = styled.strong`
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+`
+
+export const GuestbookTriggerPreview = styled.span`
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+`
+
+export const GuestbookTriggerCta = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+
+  @media (max-width: 520px) {
+    grid-column: 2;
+    margin-top: 2px;
   }
 `
 
@@ -92,13 +145,13 @@ export const GuestbookHeader = styled.header`
 
 export const GuestbookTitle = styled.h3`
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
 `
 
 export const GuestbookSubtitle = styled.p`
   margin: 6px 0 0;
   color: var(--text-secondary);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   line-height: 1.6;
 `
 
@@ -111,7 +164,7 @@ export const LayoutBadge = styled.span`
   border-radius: 999px;
   background: color-mix(in oklab, var(--primary-color) 10%, transparent);
   color: var(--primary-color);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 600;
   white-space: nowrap;
 `
@@ -122,23 +175,12 @@ export const GuestbookBody = styled.div`
   padding-top: 16px;
 `
 
-export const GuestbookLayout = styled.div<{ $layout: 'barrage' | 'split' | 'stack' }>`
-  display: grid;
-  grid-template-columns: ${({ $layout }) => ($layout === 'split' ? 'minmax(0, 2fr) minmax(280px, 1fr)' : '1fr')};
-  gap: 16px;
-  height: 100%;
-  min-height: 0;
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-`
-
 export const GuestbookPanel = styled.section`
   display: flex;
   flex-direction: column;
   min-height: 0;
-  gap: 14px;
+  height: 100%;
+  gap: 12px;
 `
 
 export const GuestbookStage = styled.div`
@@ -146,71 +188,147 @@ export const GuestbookStage = styled.div`
   flex: 1;
   min-height: 320px;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 14px;
   border: 1px solid color-mix(in oklab, var(--normal-300) 35%, transparent);
   background:
-    radial-gradient(circle at top left, color-mix(in oklab, var(--primary-color) 9%, transparent), transparent 38%),
-    linear-gradient(180deg, color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%), var(--background-100));
+    linear-gradient(90deg, color-mix(in oklab, var(--normal-300) 15%, transparent) 1px, transparent 1px),
+    linear-gradient(180deg, color-mix(in oklab, var(--background-200) 58%, transparent), var(--background-100));
+  background-size: 22px 22px, auto;
 
   @media (prefers-color-scheme: dark) {
     border-color: color-mix(in oklab, var(--normal-700) 50%, transparent);
     background:
-      radial-gradient(circle at top left, color-mix(in oklab, var(--primary-color) 12%, transparent), transparent 38%),
+      linear-gradient(90deg, color-mix(in oklab, var(--normal-700) 18%, transparent) 1px, transparent 1px),
       linear-gradient(180deg, color-mix(in oklab, var(--normal-700) 18%, var(--background-100)), var(--background-100));
+    background-size: 22px 22px, auto;
   }
 `
 
-export const BarragePanel = styled.div`
+export const ChatFeed = styled.div`
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
   padding: 18px;
+  scroll-behavior: smooth;
+
+  @media (max-width: 640px) {
+    padding: 14px 12px;
+  }
 `
 
-export const BarrageItem = styled.div<{ $lane: number; $tone: 'soft' | 'accent' }>`
-  position: absolute;
-  top: ${({ $lane }) => `${18 + $lane * 18}%`};
-  left: 0;
-  max-width: 88%;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: ${({ $tone }) =>
-    $tone === 'accent'
-      ? 'color-mix(in oklab, var(--primary-color) 14%, rgba(255,255,255,0.86))'
-      : 'color-mix(in oklab, var(--background-100) 88%, transparent)'};
+export const ChatRow = styled.div<{ $mine: boolean }>`
+  display: flex;
+  flex-direction: ${({ $mine }) => ($mine ? 'row-reverse' : 'row')};
+  align-items: flex-start;
+  gap: 9px;
+`
+
+export const ChatAvatar = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
+  color: var(--primary-color);
+  border: 1px solid color-mix(in oklab, var(--primary-color) 18%, transparent);
+  font-size: 0.82rem;
+  font-weight: 700;
+`
+
+export const ChatBubble = styled.div<{ $mine: boolean }>`
+  position: relative;
+  max-width: min(68%, 620px);
+  padding: 9px 11px 8px;
+  border-radius: ${({ $mine }) => ($mine ? '12px 2px 12px 12px' : '2px 12px 12px 12px')};
+  background: ${({ $mine }) =>
+    $mine
+      ? 'color-mix(in oklab, var(--primary-color) 14%, var(--background-100))'
+      : 'color-mix(in oklab, var(--background-100) 92%, transparent)'};
   color: var(--text-primary);
-  border: 1px solid color-mix(in oklab, var(--normal-300) 25%, transparent);
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.06);
-  animation: ${floatLeft} 260ms ease-out both;
+  border: 1px solid
+    ${({ $mine }) =>
+      $mine
+        ? 'color-mix(in oklab, var(--primary-color) 22%, transparent)'
+        : 'color-mix(in oklab, var(--normal-300) 34%, transparent)'};
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+
+  p {
+    margin: 5px 0 0;
+    font-size: 0.86rem;
+    line-height: 1.62;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 640px) {
+    max-width: calc(100% - 44px);
+  }
 
   @media (prefers-color-scheme: dark) {
-    background: ${({ $tone }) =>
-      $tone === 'accent'
+    background: ${({ $mine }) =>
+      $mine
         ? 'color-mix(in oklab, var(--primary-color) 18%, var(--background-100))'
         : 'color-mix(in oklab, var(--normal-700) 26%, var(--background-100))'};
-    border-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.22);
+    border-color: ${({ $mine }) =>
+      $mine
+        ? 'color-mix(in oklab, var(--primary-color) 30%, transparent)'
+        : 'color-mix(in oklab, var(--normal-700) 45%, transparent)'};
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.16);
   }
+`
+
+export const ChatMessageMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+
+  span {
+    max-width: 10em;
+    overflow: hidden;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  time {
+    white-space: nowrap;
+  }
+`
+
+export const ChatStatus = styled.span<{ $tone?: 'error' }>`
+  display: inline-flex;
+  margin-top: 6px;
+  color: ${({ $tone }) => ($tone === 'error' ? 'var(--primary-color)' : 'var(--text-secondary)')};
+  font-size: 0.7rem;
 `
 
 export const Composer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px 16px;
-  border-radius: 18px;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
   border: 1px solid color-mix(in oklab, var(--normal-300) 26%, transparent);
   background: color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%);
 
   input {
     width: 100%;
-    min-height: 44px;
+    min-height: 38px;
     border: 1px solid color-mix(in oklab, var(--normal-300) 40%, transparent);
-    border-radius: 14px;
-    padding: 12px 14px;
+    border-radius: 10px;
+    padding: 8px 11px;
     background: var(--background-100);
     color: var(--text-primary);
     font: inherit;
+    font-size: 0.82rem;
     line-height: 1.5;
     outline: none;
   }
@@ -232,14 +350,15 @@ export const Composer = styled.form`
 
 export const ComposerTextArea = styled.textarea`
   width: 100%;
-  min-height: 44px;
+  min-height: 38px;
   resize: none;
   border: 1px solid color-mix(in oklab, var(--normal-300) 40%, transparent);
-  border-radius: 14px;
-  padding: 12px 14px;
+  border-radius: 10px;
+  padding: 8px 11px;
   background: var(--background-100);
   color: var(--text-primary);
   font: inherit;
+  font-size: 0.82rem;
   line-height: 1.5;
   outline: none;
 
@@ -259,7 +378,7 @@ export const ComposerMeta = styled.div<{ $overLimit: boolean }>`
   justify-content: space-between;
   gap: 12px;
   color: ${({ $overLimit }) => ($overLimit ? 'var(--primary-color)' : 'var(--text-secondary)')};
-  font-size: 0.8rem;
+  font-size: 0.72rem;
 `
 
 export const ComposerActions = styled.div`
@@ -273,13 +392,14 @@ export const ComposerActions = styled.div`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 40px;
-    padding: 0 14px;
+    min-height: 36px;
+    padding: 0 12px;
     border-radius: 999px;
     border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
     background: var(--background-100);
     color: var(--text-primary);
     cursor: pointer;
+    font-size: 0.82rem;
   }
 
   button:disabled {
@@ -291,92 +411,4 @@ export const ComposerActions = styled.div`
     width: 16px;
     height: 16px;
   }
-`
-
-export const ComposerToggle = styled.button`
-  border-color: color-mix(in oklab, var(--primary-color) 18%, var(--normal-300) 82%) !important;
-  color: var(--primary-color) !important;
-`
-
-export const ComposerToggleLabel = styled.span`
-  font-weight: 600;
-`
-
-export const GuestbookList = styled.aside`
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  border-radius: 20px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 32%, transparent);
-  background: var(--background-100);
-  overflow: hidden;
-
-  @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
-  }
-`
-
-export const GuestbookListTitle = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid color-mix(in oklab, var(--normal-300) 26%, transparent);
-  font-weight: 700;
-
-  button {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    border: none;
-    background: color-mix(in oklab, var(--normal-300) 18%, transparent);
-    color: var(--text-primary);
-    cursor: pointer;
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-`
-
-export const GuestbookListItem = styled.ul`
-  list-style: none;
-  padding: 8px;
-  margin: 0;
-  overflow: auto;
-  min-height: 0;
-
-  li {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    border-radius: 16px;
-    background: color-mix(in oklab, var(--background-200) 66%, transparent);
-  }
-
-  li + li {
-    margin-top: 8px;
-  }
-`
-
-export const GuestbookListMeta = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-
-  strong {
-    color: var(--text-primary);
-  }
-`
-
-export const GuestbookListText = styled.p`
-  margin: 0;
-  color: var(--text-primary);
-  line-height: 1.65;
 `

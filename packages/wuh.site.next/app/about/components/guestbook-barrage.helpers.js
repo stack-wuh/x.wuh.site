@@ -9,35 +9,16 @@ export function clampGuestbookContent(input) {
   }
 }
 
-export function resolveGuestbookLayout(isMobile, showList) {
-  if (isMobile) return 'stack'
-  return showList ? 'split' : 'barrage'
-}
-
-export function queueGuestbookDraft(queue, draft) {
-  const nickname = String(draft?.nickname ?? '').trim()
-  const content = clampGuestbookContent(draft?.content ?? '').value.trim()
+export function createGuestbookMessage(queue, message) {
+  const nickname = String(message?.nickname ?? '').trim()
+  const content = clampGuestbookContent(message?.content ?? '').value.trim()
   if (!nickname || !content) return queue
 
   return queue.concat({
-    id: draft?.id ?? `${queue.length + 1}`,
+    id: message?.id ?? `${queue.length + 1}`,
     nickname,
     content,
-    createdAt: draft?.createdAt ?? new Date().toISOString(),
-    status: 'pending',
+    createdAt: message?.createdAt ?? new Date().toISOString(),
+    status: message?.status ?? 'sending',
   })
-}
-
-export async function flushGuestbookDrafts(queue, submitDraft) {
-  const remaining = []
-
-  for (const draft of queue) {
-    try {
-      await submitDraft(draft)
-    } catch {
-      remaining.push(draft)
-    }
-  }
-
-  return remaining
 }
