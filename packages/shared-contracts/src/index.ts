@@ -90,6 +90,7 @@ export interface CreateAnonymousCommentDto {
   nickname: string;
   email?: string;
   content: string;
+  footprint?: string;
   page?: string;
 }
 

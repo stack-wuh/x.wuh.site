@@ -20,7 +20,7 @@ export class CommentService {
     try {
       const comment = new this.commentModel({
         ...createCommentDto,
-        footprint: uuidv4(),
+        footprint: createCommentDto.footprint || uuidv4(),
         avatarUrl: this.generateAvatarUrl(createCommentDto.email || createCommentDto.nickname),
       });
       return await comment.save();

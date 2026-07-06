@@ -41,15 +41,18 @@ const MAX_LENGTH = 100
 const MIN_NICKNAME_LENGTH = 2
 const MIN_CONTENT_LENGTH = 5
 const NICKNAME_STORAGE_KEY = 'wuh.site.guestbook.nickname'
+const FOOTPRINT_STORAGE_KEY = 'wuh.site.guestbook.footprint'
 const GUESTBOOK_ISSUE_NUMBER = 999999
 
 type GuestbookMessage = {
   id: string
   nickname: string
   content: string
+  footprint?: string
   createdAt: string
   status: 'sending' | 'sent' | 'failed'
   error?: string
+  mine?: boolean
 }
 
 type ChatMessage = {
@@ -71,12 +74,19 @@ const sampleMessages = [
 const getAvatarText = (nickname: string) => nickname.trim().charAt(0).toUpperCase() || '?'
 const formatDraftTime = (createdAt: string) =>
   new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(createdAt))
+const createFootprint = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `guestbook-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
 
 export default function GuestbookBarrageDialog() {
   const [open, setOpen] = useState(false)
   const [content, setContent] = useState('')
   const [nickname, setNickname] = useState('')
   const [persistedMessages, setPersistedMessages] = useState<GuestbookMessage[]>([])
+  const [footprint, setFootprint] = useState('')
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [listError, setListError] = useState<string | null>(null)
   const [localMessages, setLocalMessages] = useState<GuestbookMessage[]>([])
@@ -98,7 +108,7 @@ export default function GuestbookBarrageDialog() {
         content: item.content,
         nickname: item.nickname,
         time: formatDraftTime(item.createdAt),
-        mine,
+        mine: mine || Boolean(item.mine),
         status: mine ? item.status : undefined,
         error: item.error,
       }
@@ -111,8 +121,17 @@ export default function GuestbookBarrageDialog() {
     try {
       const cachedNickname = window.localStorage.getItem(NICKNAME_STORAGE_KEY)
       if (cachedNickname) setNickname(cachedNickname)
+      const cachedFootprint = window.localStorage.getItem(FOOTPRINT_STORAGE_KEY)
+      if (cachedFootprint) {
+        setFootprint(cachedFootprint)
+      } else {
+        const nextFootprint = createFootprint()
+        window.localStorage.setItem(FOOTPRINT_STORAGE_KEY, nextFootprint)
+        setFootprint(nextFootprint)
+      }
     } catch {
       // localStorage can be unavailable in hardened browsing modes.
+      setFootprint(createFootprint())
     }
   }, [])
 
@@ -145,7 +164,7 @@ export default function GuestbookBarrageDialog() {
         }
 
         if (!cancelled) {
-          setPersistedMessages(normalizeGuestbookComments(data) as GuestbookMessage[])
+          setPersistedMessages(normalizeGuestbookComments(data, footprint) as GuestbookMessage[])
         }
       } catch (error) {
         if (!cancelled) {
@@ -161,7 +180,7 @@ export default function GuestbookBarrageDialog() {
     return () => {
       cancelled = true
     }
-  }, [open])
+  }, [footprint, open])
 
   const handleChange = (value: string) => {
     const next = clampGuestbookContent(value)
@@ -188,6 +207,7 @@ export default function GuestbookBarrageDialog() {
     const nextMessages = createGuestbookMessage(localMessages, {
       nickname,
       content,
+      footprint,
     }) as GuestbookMessage[]
     const currentMessage = nextMessages[nextMessages.length - 1]
     if (!currentMessage) return
@@ -204,6 +224,7 @@ export default function GuestbookBarrageDialog() {
         body: JSON.stringify({
           nickname: currentMessage.nickname,
           content: currentMessage.content,
+          footprint: currentMessage.footprint,
           page: 'about-guestbook',
         }),
       })

@@ -19,6 +19,11 @@ export class CreateAnonymousCommentDto implements ICreateAnonymousCommentDto {
   @MinLength(5)
   content: string;
 
+  @ApiPropertyOptional({ description: 'Anonymous visitor footprint' })
+  @IsString()
+  @IsOptional()
+  footprint?: string;
+
   @ApiPropertyOptional({ description: 'Page identifier (e.g. about-guestbook)' })
   @IsString()
   @IsOptional()

@@ -18,26 +18,31 @@ export function createGuestbookMessage(queue, message) {
     id: message?.id ?? `${queue.length + 1}`,
     nickname,
     content,
+    footprint: message?.footprint,
     createdAt: message?.createdAt ?? new Date().toISOString(),
     status: message?.status ?? 'sending',
   })
 }
 
-export function normalizeGuestbookComments(payload) {
+export function normalizeGuestbookComments(payload, currentFootprint) {
   const rows = Array.isArray(payload?.data) ? payload.data : []
+  const footprint = String(currentFootprint || '').trim()
 
   return rows
     .map((item, index) => {
       const nickname = String(item?.nickname || item?.user?.login || '访客').trim()
       const content = String(item?.content || item?.body || '').trim()
+      const itemFootprint = String(item?.footprint || '').trim()
       if (!content) return null
 
       return {
         id: String(item?.externalId || item?._id || item?.id || `comment-${index}`),
         nickname: nickname || '访客',
         content,
+        footprint: itemFootprint || undefined,
         createdAt: item?.createdAt || item?.createdAtGitHub || new Date().toISOString(),
         status: 'sent',
+        mine: Boolean(footprint && itemFootprint && footprint === itemFootprint),
       }
     })
     .filter(Boolean)

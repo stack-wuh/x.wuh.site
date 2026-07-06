@@ -124,10 +124,46 @@ export const GuestbookTriggerCta = styled.span`
 `
 
 export const GuestbookWrapper = styled.div`
+  --guestbook-border: color-mix(in oklab, var(--normal-300) 34%, transparent);
+  --guestbook-border-strong: color-mix(in oklab, var(--normal-300) 45%, transparent);
+  --guestbook-stage-grid: color-mix(in oklab, var(--normal-300) 14%, transparent);
+  --guestbook-stage-bg: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--background-200) 58%, transparent),
+    var(--background-100)
+  );
+  --guestbook-avatar-bg: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
+  --guestbook-bubble-mine-bg: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
+  --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-100) 94%, var(--background-200));
+  --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 24%, transparent);
+  --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-300) 36%, transparent);
+  --guestbook-composer-bg: color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%);
+  --guestbook-control-bg: var(--background-100);
+  --guestbook-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
+
+  [data-color-scheme="dark"] & {
+    --guestbook-border: color-mix(in oklab, var(--normal-600) 42%, transparent);
+    --guestbook-border-strong: color-mix(in oklab, var(--normal-500) 48%, transparent);
+    --guestbook-stage-grid: color-mix(in oklab, var(--normal-600) 16%, transparent);
+    --guestbook-stage-bg: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--background-200) 72%, var(--background-100)),
+      var(--background-100)
+    );
+    --guestbook-avatar-bg: color-mix(in oklab, var(--primary-color) 20%, var(--background-200));
+    --guestbook-bubble-mine-bg: color-mix(in oklab, var(--primary-color) 24%, var(--background-100));
+    --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-200) 78%, var(--background-100));
+    --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 36%, transparent);
+    --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-500) 42%, transparent);
+    --guestbook-composer-bg: color-mix(in oklab, var(--background-200) 72%, var(--background-100));
+    --guestbook-control-bg: color-mix(in oklab, var(--background-200) 86%, var(--background-100));
+    --guestbook-shadow: 0 12px 20px rgba(0, 0, 0, 0.16);
+  }
 `
 
 export const GuestbookHeader = styled.header`
@@ -136,11 +172,7 @@ export const GuestbookHeader = styled.header`
   justify-content: space-between;
   gap: 16px;
   padding: 12px 0 16px;
-  border-bottom: 1px solid color-mix(in oklab, var(--normal-300) 32%, transparent);
-
-  @media (prefers-color-scheme: dark) {
-    border-bottom-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
-  }
+  border-bottom: 1px solid var(--guestbook-border);
 `
 
 export const GuestbookTitle = styled.h3`
@@ -189,19 +221,11 @@ export const GuestbookStage = styled.div`
   min-height: 320px;
   overflow: hidden;
   border-radius: 14px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 35%, transparent);
+  border: 1px solid var(--guestbook-border);
   background:
-    linear-gradient(90deg, color-mix(in oklab, var(--normal-300) 15%, transparent) 1px, transparent 1px),
-    linear-gradient(180deg, color-mix(in oklab, var(--background-200) 58%, transparent), var(--background-100));
+    linear-gradient(90deg, var(--guestbook-stage-grid) 1px, transparent 1px),
+    var(--guestbook-stage-bg);
   background-size: 22px 22px, auto;
-
-  @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 50%, transparent);
-    background:
-      linear-gradient(90deg, color-mix(in oklab, var(--normal-700) 18%, transparent) 1px, transparent 1px),
-      linear-gradient(180deg, color-mix(in oklab, var(--normal-700) 18%, var(--background-100)), var(--background-100));
-    background-size: 22px 22px, auto;
-  }
 `
 
 export const ChatFeed = styled.div`
@@ -234,7 +258,7 @@ export const ChatAvatar = styled.span`
   height: 34px;
   flex: 0 0 34px;
   border-radius: 10px;
-  background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
+  background: var(--guestbook-avatar-bg);
   color: var(--primary-color);
   border: 1px solid color-mix(in oklab, var(--primary-color) 18%, transparent);
   font-size: 0.82rem;
@@ -247,16 +271,12 @@ export const ChatBubble = styled.div<{ $mine: boolean }>`
   padding: 9px 11px 8px;
   border-radius: ${({ $mine }) => ($mine ? '12px 2px 12px 12px' : '2px 12px 12px 12px')};
   background: ${({ $mine }) =>
-    $mine
-      ? 'color-mix(in oklab, var(--primary-color) 14%, var(--background-100))'
-      : 'color-mix(in oklab, var(--background-100) 92%, transparent)'};
+    $mine ? 'var(--guestbook-bubble-mine-bg)' : 'var(--guestbook-bubble-other-bg)'};
   color: var(--text-primary);
   border: 1px solid
     ${({ $mine }) =>
-      $mine
-        ? 'color-mix(in oklab, var(--primary-color) 22%, transparent)'
-        : 'color-mix(in oklab, var(--normal-300) 34%, transparent)'};
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+      $mine ? 'var(--guestbook-bubble-mine-border)' : 'var(--guestbook-bubble-other-border)'};
+  box-shadow: var(--guestbook-shadow);
 
   p {
     margin: 5px 0 0;
@@ -267,18 +287,6 @@ export const ChatBubble = styled.div<{ $mine: boolean }>`
 
   @media (max-width: 640px) {
     max-width: calc(100% - 44px);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background: ${({ $mine }) =>
-      $mine
-        ? 'color-mix(in oklab, var(--primary-color) 18%, var(--background-100))'
-        : 'color-mix(in oklab, var(--normal-700) 26%, var(--background-100))'};
-    border-color: ${({ $mine }) =>
-      $mine
-        ? 'color-mix(in oklab, var(--primary-color) 30%, transparent)'
-        : 'color-mix(in oklab, var(--normal-700) 45%, transparent)'};
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.16);
   }
 `
 
@@ -316,16 +324,16 @@ export const Composer = styled.form`
   gap: 8px;
   padding: 12px;
   border-radius: 14px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 26%, transparent);
-  background: color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%);
+  border: 1px solid var(--guestbook-border);
+  background: var(--guestbook-composer-bg);
 
   input {
     width: 100%;
     min-height: 38px;
-    border: 1px solid color-mix(in oklab, var(--normal-300) 40%, transparent);
+    border: 1px solid var(--guestbook-border-strong);
     border-radius: 10px;
     padding: 8px 11px;
-    background: var(--background-100);
+    background: var(--guestbook-control-bg);
     color: var(--text-primary);
     font: inherit;
     font-size: 0.82rem;
@@ -341,21 +349,16 @@ export const Composer = styled.form`
     border-color: color-mix(in oklab, var(--primary-color) 36%, var(--normal-300) 64%);
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 12%, transparent);
   }
-
-  @media (prefers-color-scheme: dark) {
-    background: color-mix(in oklab, var(--normal-700) 22%, var(--background-100));
-    border-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
-  }
 `
 
 export const ComposerTextArea = styled.textarea`
   width: 100%;
   min-height: 38px;
   resize: none;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 40%, transparent);
+  border: 1px solid var(--guestbook-border-strong);
   border-radius: 10px;
   padding: 8px 11px;
-  background: var(--background-100);
+  background: var(--guestbook-control-bg);
   color: var(--text-primary);
   font: inherit;
   font-size: 0.82rem;
@@ -395,8 +398,8 @@ export const ComposerActions = styled.div`
     min-height: 36px;
     padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
-    background: var(--background-100);
+    border: 1px solid var(--guestbook-border-strong);
+    background: var(--guestbook-control-bg);
     color: var(--text-primary);
     cursor: pointer;
     font-size: 0.82rem;
