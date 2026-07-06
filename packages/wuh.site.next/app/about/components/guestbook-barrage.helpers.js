@@ -22,3 +22,24 @@ export function createGuestbookMessage(queue, message) {
     status: message?.status ?? 'sending',
   })
 }
+
+export function normalizeGuestbookComments(payload) {
+  const rows = Array.isArray(payload?.data) ? payload.data : []
+
+  return rows
+    .map((item, index) => {
+      const nickname = String(item?.nickname || item?.user?.login || '访客').trim()
+      const content = String(item?.content || item?.body || '').trim()
+      if (!content) return null
+
+      return {
+        id: String(item?.externalId || item?._id || item?.id || `comment-${index}`),
+        nickname: nickname || '访客',
+        content,
+        createdAt: item?.createdAt || item?.createdAtGitHub || new Date().toISOString(),
+        status: 'sent',
+      }
+    })
+    .filter(Boolean)
+    .reverse()
+}

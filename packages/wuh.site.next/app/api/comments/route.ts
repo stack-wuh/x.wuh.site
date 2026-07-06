@@ -60,3 +60,35 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message }, { status: 502 })
   }
 }
+
+export async function GET(request: NextRequest) {
+  const query = request.nextUrl.searchParams.toString()
+  const url = query ? `${nestApiUrl}/comments?${query}` : `${nestApiUrl}/comments`
+
+  try {
+    const upstream = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store',
+    })
+    const text = await upstream.text()
+    const data = parseResponseBody(text)
+
+    if (!upstream.ok) {
+      logGuestbookError('comment list failed', {
+        status: upstream.status,
+        data,
+      })
+      return NextResponse.json(data, { status: upstream.status })
+    }
+
+    return NextResponse.json(data, { status: upstream.status })
+  } catch (error) {
+    const message = toErrorMessage(error)
+    logGuestbookError('comment list proxy failed', {
+      message,
+      nestApiUrl,
+    })
+    return NextResponse.json({ message }, { status: 502 })
+  }
+}
