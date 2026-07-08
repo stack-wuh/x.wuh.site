@@ -126,11 +126,16 @@ export const GuestbookTriggerCta = styled.span`
 export const GuestbookWrapper = styled.div`
   --guestbook-border: color-mix(in oklab, var(--normal-300) 34%, transparent);
   --guestbook-border-strong: color-mix(in oklab, var(--normal-300) 45%, transparent);
-  --guestbook-stage-grid: color-mix(in oklab, var(--normal-300) 14%, transparent);
   --guestbook-stage-bg: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--background-200) 58%, transparent),
-    var(--background-100)
+    color-mix(in oklab, var(--background-100) 94%, var(--accent-color) 6%),
+    color-mix(in oklab, var(--background-200) 86%, var(--background-100) 14%)
+  );
+  --guestbook-stage-highlight: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--accent-color) 9%, transparent),
+    transparent 36%,
+    color-mix(in oklab, var(--primary-color) 5%, transparent)
   );
   --guestbook-avatar-bg: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
   --guestbook-bubble-mine-bg: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
@@ -149,11 +154,16 @@ export const GuestbookWrapper = styled.div`
   [data-color-scheme="dark"] & {
     --guestbook-border: color-mix(in oklab, var(--normal-600) 42%, transparent);
     --guestbook-border-strong: color-mix(in oklab, var(--normal-500) 48%, transparent);
-    --guestbook-stage-grid: color-mix(in oklab, var(--normal-600) 16%, transparent);
     --guestbook-stage-bg: linear-gradient(
       180deg,
-      color-mix(in oklab, var(--background-200) 72%, var(--background-100)),
-      var(--background-100)
+      color-mix(in oklab, var(--background-100) 88%, var(--accent-color) 12%),
+      color-mix(in oklab, var(--background-100) 92%, var(--background-200) 8%)
+    );
+    --guestbook-stage-highlight: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--accent-color) 10%, transparent),
+      transparent 42%,
+      color-mix(in oklab, var(--primary-color) 6%, transparent)
     );
     --guestbook-avatar-bg: color-mix(in oklab, var(--primary-color) 20%, var(--background-200));
     --guestbook-bubble-mine-bg: color-mix(in oklab, var(--primary-color) 24%, var(--background-100));
@@ -223,9 +233,11 @@ export const GuestbookStage = styled.div`
   border-radius: 14px;
   border: 1px solid var(--guestbook-border);
   background:
-    linear-gradient(90deg, var(--guestbook-stage-grid) 1px, transparent 1px),
+    var(--guestbook-stage-highlight),
     var(--guestbook-stage-bg);
-  background-size: 22px 22px, auto;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--background-100) 76%, transparent),
+    inset 0 -24px 48px color-mix(in oklab, var(--background-100) 62%, transparent);
 `
 
 export const ChatFeed = styled.div`
