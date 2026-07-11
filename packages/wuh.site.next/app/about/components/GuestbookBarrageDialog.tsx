@@ -41,7 +41,7 @@ const GuestbookGuide = styled.p`
     padding: 6px 12px 4px;
     font-size: 13px;
   }
-\`
+`
 import {
   clampGuestbookContent,
   createGuestbookMessage,
