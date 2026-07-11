@@ -11,15 +11,11 @@ import {
   ChatRow,
   ChatStatus,
   Composer,
-  ComposerActions,
-  ComposerMeta,
-  ComposerTextArea,
-  GuestbookBody,
-  GuestbookHeader,
-  GuestbookPanel,
+  ComposerBadge,
+  ComposerInput,
+  ComposerNicknameInput,
+  ComposerSend,
   GuestbookStage,
-  GuestbookSubtitle,
-  GuestbookTitle,
   GuestbookTrigger,
   GuestbookTriggerAvatar,
   GuestbookTriggerAvatars,
@@ -29,7 +25,6 @@ import {
   GuestbookTriggerPreview,
   GuestbookTriggerTitle,
   GuestbookWrapper,
-  LayoutBadge,
 } from './guestbook-barrage.styles'
 import {
   clampGuestbookContent,
@@ -91,7 +86,9 @@ export default function GuestbookBarrageDialog() {
   const [listError, setListError] = useState<string | null>(null)
   const [localMessages, setLocalMessages] = useState<GuestbookMessage[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [editingNickname, setEditingNickname] = useState(false)
   const feedRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const clamped = useMemo(() => clampGuestbookContent(content), [content])
   const trimmedNickname = nickname.trim()
@@ -130,14 +127,13 @@ export default function GuestbookBarrageDialog() {
         setFootprint(nextFootprint)
       }
     } catch {
-      // localStorage can be unavailable in hardened browsing modes.
       setFootprint(createFootprint())
     }
   }, [])
 
   useEffect(() => {
     feedRef.current?.scrollTo({ top: feedRef.current.scrollHeight, behavior: 'smooth' })
-  }, [chatMessages.length, open])
+  }, [chatMessages.length])
 
   useEffect(() => {
     if (!open) return
@@ -182,9 +178,15 @@ export default function GuestbookBarrageDialog() {
     }
   }, [footprint, open])
 
+  useEffect(() => {
+    if (open && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [open])
+
   const handleChange = (value: string) => {
-    const next = clampGuestbookContent(value)
-    setContent(next.value)
+    if (value.length > MAX_LENGTH) return
+    setContent(value)
   }
 
   const handleNicknameChange = (value: string) => {
@@ -205,15 +207,14 @@ export default function GuestbookBarrageDialog() {
     if (!canSubmit || submitting) return
 
     const nextMessages = createGuestbookMessage(localMessages, {
-      nickname,
-      content,
+      nickname: trimmedNickname,
+      content: clamped.value.trim(),
       footprint,
     }) as GuestbookMessage[]
     const currentMessage = nextMessages[nextMessages.length - 1]
     if (!currentMessage) return
 
     setLocalMessages(nextMessages)
-    handleNicknameChange(nickname)
     setContent('')
     setSubmitting(true)
 
@@ -263,6 +264,14 @@ export default function GuestbookBarrageDialog() {
     }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      const form = (event.target as HTMLInputElement).closest('form')
+      form?.requestSubmit()
+    }
+  }
+
   return (
     <>
       <GuestbookTrigger type='button' onClick={() => setOpen(true)}>
@@ -272,11 +281,11 @@ export default function GuestbookBarrageDialog() {
         </GuestbookTriggerAvatars>
         <GuestbookTriggerCopy>
           <GuestbookTriggerLabel>Guestbook</GuestbookTriggerLabel>
-          <GuestbookTriggerTitle>潘江陆海，各撒云尔~</GuestbookTriggerTitle>
+          <GuestbookTriggerTitle>给我留一句话</GuestbookTriggerTitle>
           <GuestbookTriggerPreview>最近看到的想法、建议或者招呼，都可以放在这里。</GuestbookTriggerPreview>
         </GuestbookTriggerCopy>
         <GuestbookTriggerCta>
-          <span>见字如面</span>
+          <span>进入</span>
           <IconArrowRight />
         </GuestbookTriggerCta>
       </GuestbookTrigger>
@@ -289,81 +298,73 @@ export default function GuestbookBarrageDialog() {
         height='min(720px, calc(100vh - 80px))'
       >
         <GuestbookWrapper>
-          <GuestbookHeader>
-            <div>
-              <GuestbookTitle>留言板</GuestbookTitle>
-              <GuestbookSubtitle>像群聊一样留下一句话，点击发送后会立即提交。</GuestbookSubtitle>
+          <GuestbookStage>
+            <ChatFeed ref={feedRef}>
+              {loadingMessages && (
+                <div>留言加载中...</div>
+              )}
+              {listError && (
+                <div>留言加载失败</div>
+              )}
+              {!loadingMessages && !listError && chatMessages.map((item) => (
+                <ChatRow key={item.id} $mine={Boolean(item.mine)}>
+                  <ChatAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</ChatAvatar>
+                  <ChatBubble $mine={Boolean(item.mine)}>
+                    <ChatMessageMeta>
+                      <span>{item.nickname}</span>
+                      <time>{item.time}</time>
+                    </ChatMessageMeta>
+                    <p>{item.content}</p>
+                    {item.status === 'sending' && <ChatStatus>发送中...</ChatStatus>}
+                    {item.status === 'sent' && <ChatStatus>已发送</ChatStatus>}
+                    {item.status === 'failed' && (
+                      <ChatStatus $tone='error'>{item.error || '发送失败'}</ChatStatus>
+                    )}
+                  </ChatBubble>
+                </ChatRow>
+              ))}
+              {!loadingMessages && !listError && chatMessages.length === 0 && (
+                <div style={{ color: 'var(--text-muted)', padding: '24px 0', textAlign: 'center', fontSize: '0.82rem' }}>
+                  还没有留言，来发第一条吧。
+                </div>
+              )}
+            </ChatFeed>
+          </GuestbookStage>
+
+          <Composer onSubmit={handleSubmit}>
+            <ComposerBadge type='button' onClick={() => setEditingNickname(!editingNickname)} title='点击修改昵称'>
+              {getAvatarText(trimmedNickname)}
+            </ComposerBadge>
+            {editingNickname ? (
+              <ComposerNicknameInput
+                value={nickname}
+                placeholder='你的昵称'
+                maxLength={20}
+                onChange={(event) => handleNicknameChange(event.target.value)}
+                onBlur={() => setEditingNickname(false)}
+                onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); setEditingNickname(false); }}}
+                autoFocus
+              />
+            ) : (
+              <ComposerInput
+                ref={inputRef}
+                value={content}
+                placeholder={trimmedNickname ? `作为 ${trimmedNickname}，说点什么...` : '说点什么...'}
+                onChange={(event) => handleChange(event.target.value)}
+                onKeyDown={handleKeyDown}
+                maxLength={MAX_LENGTH}
+              />
+            )}
+            <ComposerSend type='submit' disabled={!canSubmit || submitting}>
+              <IconArrowRight />
+            </ComposerSend>
+          </Composer>
+
+          {failedCount > 0 && (
+            <div style={{ textAlign: 'center', fontSize: '0.72rem', color: 'var(--primary-color)' }}>
+              {failedCount} 条发送失败
             </div>
-            <LayoutBadge>
-              {submitting
-                ? '发送中'
-                : loadingMessages
-                  ? '加载中'
-                  : listError
-                    ? '加载失败'
-                    : failedCount
-                      ? `${failedCount} 条失败`
-                      : '群聊模式'}
-            </LayoutBadge>
-          </GuestbookHeader>
-
-          <GuestbookBody>
-            <GuestbookPanel>
-              <GuestbookStage>
-                <ChatFeed ref={feedRef}>
-                  {chatMessages.map((item) => (
-                    <ChatRow key={item.id} $mine={Boolean(item.mine)}>
-                      <ChatAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</ChatAvatar>
-                      <ChatBubble $mine={Boolean(item.mine)}>
-                        <ChatMessageMeta>
-                          <span>{item.nickname}</span>
-                          <time>{item.time}</time>
-                        </ChatMessageMeta>
-                        <p>{item.content}</p>
-                        {item.status === 'sending' && <ChatStatus>发送中...</ChatStatus>}
-                        {item.status === 'sent' && <ChatStatus>已发送</ChatStatus>}
-                        {item.status === 'failed' && (
-                          <ChatStatus $tone='error'>{item.error || '发送失败'}</ChatStatus>
-                        )}
-                      </ChatBubble>
-                    </ChatRow>
-                  ))}
-                </ChatFeed>
-              </GuestbookStage>
-
-              <Composer onSubmit={handleSubmit}>
-                <input
-                  value={nickname}
-                  placeholder='你的昵称'
-                  maxLength={20}
-                  onChange={(event) => handleNicknameChange(event.target.value)}
-                />
-                <ComposerTextArea
-                  value={content}
-                  maxLength={MAX_LENGTH}
-                  rows={2}
-                  placeholder='在群里说点什么...'
-                  onChange={(event) => handleChange(event.target.value)}
-                />
-                <ComposerMeta $overLimit={clamped.remaining === 0 && clamped.length > 0}>
-                  <span>
-                    {trimmedNickname.length < MIN_NICKNAME_LENGTH
-                      ? '昵称至少 2 个字符'
-                      : trimmedContent.length < MIN_CONTENT_LENGTH
-                        ? '内容至少 5 个字符'
-                        : `当前昵称：${trimmedNickname}`}
-                  </span>
-                  <span>{clamped.length} / {MAX_LENGTH}</span>
-                </ComposerMeta>
-                <ComposerActions>
-                  <button type='submit' disabled={!canSubmit || submitting}>
-                    <IconArrowRight />
-                    发送
-                  </button>
-                </ComposerActions>
-              </Composer>
-            </GuestbookPanel>
-          </GuestbookBody>
+          )}
         </GuestbookWrapper>
       </Dialog>
     </>

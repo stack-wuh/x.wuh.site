@@ -1,5 +1,7 @@
 import styled from '@wuh.site/components/styled'
 
+/* ====== Trigger ====== */
+
 export const GuestbookTrigger = styled.button`
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -123,6 +125,8 @@ export const GuestbookTriggerCta = styled.span`
   }
 `
 
+/* ====== Dialog Inner ====== */
+
 export const GuestbookWrapper = styled.div`
   --guestbook-border: color-mix(in oklab, var(--normal-300) 34%, transparent);
   --guestbook-border-strong: color-mix(in oklab, var(--normal-300) 45%, transparent);
@@ -142,8 +146,6 @@ export const GuestbookWrapper = styled.div`
   --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-100) 94%, var(--background-200));
   --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 24%, transparent);
   --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-300) 36%, transparent);
-  --guestbook-composer-bg: color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%);
-  --guestbook-control-bg: var(--background-100);
   --guestbook-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
 
   display: flex;
@@ -170,51 +172,13 @@ export const GuestbookWrapper = styled.div`
     --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-200) 78%, var(--background-100));
     --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 36%, transparent);
     --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-500) 42%, transparent);
-    --guestbook-composer-bg: color-mix(in oklab, var(--background-200) 72%, var(--background-100));
-    --guestbook-control-bg: color-mix(in oklab, var(--background-200) 86%, var(--background-100));
     --guestbook-shadow: 0 12px 20px rgba(0, 0, 0, 0.16);
   }
-`
-
-export const GuestbookHeader = styled.header`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 0 16px;
-  border-bottom: 1px solid var(--guestbook-border);
-`
-
-export const GuestbookTitle = styled.h3`
-  margin: 0;
-  font-size: 0.98rem;
-`
-
-export const GuestbookSubtitle = styled.p`
-  margin: 6px 0 0;
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-  line-height: 1.6;
-`
-
-export const LayoutBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--primary-color) 10%, transparent);
-  color: var(--primary-color);
-  font-size: 0.72rem;
-  font-weight: 600;
-  white-space: nowrap;
 `
 
 export const GuestbookBody = styled.div`
   flex: 1;
   min-height: 0;
-  padding-top: 16px;
 `
 
 export const GuestbookPanel = styled.section`
@@ -222,7 +186,6 @@ export const GuestbookPanel = styled.section`
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  gap: 12px;
 `
 
 export const GuestbookStage = styled.div`
@@ -230,7 +193,7 @@ export const GuestbookStage = styled.div`
   flex: 1;
   min-height: 320px;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 16px 16px 12px 12px;
   border: 1px solid var(--guestbook-border);
   background:
     var(--guestbook-stage-highlight),
@@ -247,11 +210,11 @@ export const ChatFeed = styled.div`
   flex-direction: column;
   gap: 12px;
   overflow: auto;
-  padding: 18px;
+  padding: 18px 18px 80px;
   scroll-behavior: smooth;
 
   @media (max-width: 640px) {
-    padding: 14px 12px;
+    padding: 14px 12px 76px;
   }
 `
 
@@ -330,100 +293,128 @@ export const ChatStatus = styled.span<{ $tone?: 'error' }>`
   font-size: 0.7rem;
 `
 
+/* ====== Floating Composer Bar ====== */
+
 export const Composer = styled.form`
+  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
-  padding: 12px;
+  margin: -22px 8px 8px;
+  padding: 10px 10px 10px 16px;
   border-radius: 14px;
-  border: 1px solid var(--guestbook-border);
-  background: var(--guestbook-composer-bg);
+  border: 1px solid color-mix(in oklab, var(--normal-300) 26%, transparent);
+  background: color-mix(in oklab, var(--background-100) 94%, var(--background-200) 6%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 0 0 1px var(--background-100);
+  z-index: 2;
 
-  input {
-    width: 100%;
-    min-height: 38px;
-    border: 1px solid var(--guestbook-border-strong);
-    border-radius: 10px;
-    padding: 8px 11px;
-    background: var(--guestbook-control-bg);
-    color: var(--text-primary);
-    font: inherit;
-    font-size: 0.82rem;
-    line-height: 1.5;
-    outline: none;
+  &:focus-within {
+    border-color: color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
   }
 
-  input::placeholder {
-    color: var(--text-secondary);
-  }
-
-  input:focus {
-    border-color: color-mix(in oklab, var(--primary-color) 36%, var(--normal-300) 64%);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 12%, transparent);
+  [data-color-scheme="dark"] & {
+    background: color-mix(in oklab, var(--background-100) 88%, var(--background-200) 12%);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.24),
+      0 0 0 1px color-mix(in oklab, var(--background-100) 80%, transparent);
   }
 `
 
-export const ComposerTextArea = styled.textarea`
-  width: 100%;
-  min-height: 38px;
-  resize: none;
-  border: 1px solid var(--guestbook-border-strong);
-  border-radius: 10px;
-  padding: 8px 11px;
-  background: var(--guestbook-control-bg);
+export const ComposerInput = styled.input`
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  padding: 0;
+  background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   line-height: 1.5;
   outline: none;
 
   &::placeholder {
-    color: var(--text-secondary);
-  }
-
-  &:focus {
-    border-color: color-mix(in oklab, var(--primary-color) 36%, var(--normal-300) 64%);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 12%, transparent);
+    color: var(--text-muted);
   }
 `
 
-export const ComposerMeta = styled.div<{ $overLimit: boolean }>`
-  display: flex;
+export const ComposerSend = styled.button`
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: ${({ $overLimit }) => ($overLimit ? 'var(--primary-color)' : 'var(--text-secondary)')};
-  font-size: 0.72rem;
-`
+  justify-content: center;
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: var(--background-100);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  line-height: 0;
 
-export const ComposerActions = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--guestbook-border-strong);
-    background: var(--guestbook-control-bg);
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 0.82rem;
+  &:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--primary-color) 82%, black);
+    transform: scale(1.04);
   }
 
-  button:disabled {
+  &:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.3;
   }
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+  }
+`
+
+export const ComposerBadge = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 4px;
+  border: 1px solid var(--guestbook-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--primary-color) 30%, var(--normal-300) 70%);
+  }
+`
+
+export const ComposerNicknameInput = styled.input`
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  outline: none;
+
+  &::placeholder {
+    color: var(--text-muted);
   }
 `
