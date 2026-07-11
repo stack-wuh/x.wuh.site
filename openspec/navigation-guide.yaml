@@ -1,0 +1,143 @@
+# ================================================================
+# OpenSpec Navigation Guide
+# 组件/Hooks/公共函数索引 — 按领域关键字检索
+# ================================================================
+version: 1
+updated: 2026-07-11
+
+categories:
+  - name: UI 组件
+    key: ui-component
+    items:
+      - name: Card
+        path: "@wuh.site/components/card"
+        description: 文章卡片容器，支持 variant/elevation/interactive 等变体，复合组件含 Card.Header/Card.Content/Card.Actions
+        keywords: [card, article, post, container, preview, 卡片, 文章, 博客, 预览]
+        scenarios:
+          - wuh.site/demo-blog-list
+
+      - name: Tag
+        path: "@wuh.site/components/tag"
+        description: 标签徽标，支持自定义颜色，左侧彩色竖线区分
+        keywords: [tag, label, badge, category, chip, 标签, 分类, 徽标]
+        scenarios:
+          - wuh.site/demo-tag-display
+          - wuh.site/demo-tag-filter
+
+      - name: Button
+        path: "@wuh.site/components/button"
+        description: 按钮组件，支持 filled/outlined/text 三种 variant，primary/secondary/success/warning/danger 色彩，可渲染为 <a> 链接
+        keywords: [button, action, submit, link, cta, 按钮, 操作, 提交, 链接]
+        scenarios:
+          - wuh.site/demo-primary-action
+          - wuh.site/demo-icon-button
+
+      - name: Pagination
+        path: "@wuh.site/components/pagination"
+        description: WUH 字母图标分页组件，支持当前页/总页数/getPageUrl，单页时自动隐藏
+        keywords: [pagination, pager, page, navigate, 分页, 翻页, 页码]
+        scenarios:
+          - wuh.site/demo-pagination-blog
+
+      - name: Dialog
+        path: "@wuh.site/components/dialog"
+        description: 模态对话框，支持 center/bottom placement，fullScreen，lockScroll，ESC 关闭，动画过渡
+        keywords: [dialog, modal, popup, alert, confirm, 对话框, 弹窗, 模态, 确认]
+        scenarios:
+          - wuh.site/demo-dialog-confirm
+
+      - name: Flex / Row / Column
+        path: "@wuh.site/components/flex"
+        description: 弹性布局容器，含 Flex/Row/Column/Center/SpaceBetween/Wrap 等便捷变体
+        keywords: [layout, flex, row, column, align, center, space, 布局, 弹性, 对齐, 居中]
+        scenarios:
+          - wuh.site/demo-page-layout
+
+      - name: Skeleton
+        path: "@wuh.site/components/skeleton"
+        description: 骨架屏加载占位，支持 text/rect/circle variant，shimmer 动画
+        keywords: [skeleton, loading, placeholder, shimmer, 骨架, 加载占位, 加载中]
+        scenarios:
+          - wuh.site/demo-loading-skeleton
+
+      - name: Empty
+        path: "@wuh.site/components/empty"
+        description: 空状态占位，支持自定义 title/description/icon/actions（按钮组）
+        keywords: [empty, no-data, placeholder, nothing, 空状态, 无数据, 暂无]
+        scenarios:
+          - wuh.site/demo-empty-state
+
+      - name: Result
+        path: "@wuh.site/components/result"
+        description: 错误结果页（404/500/info/error），图文卡片布局，支持自定义链接组
+        keywords: [error, 404, 500, not-found, result, page, 错误, 结果页, 找不到, 异常]
+        scenarios:
+          - wuh.site/demo-result-error
+
+      - name: Message
+        path: "@wuh.site/components/message"
+        description: 全局消息提示，支持 info/success/warning/error/loading 类型，6 方向 placement
+        keywords: [message, toast, notification, snackbar, 消息, 提示, 通知, 吐司]
+        scenarios:
+          - wuh.site/demo-toast-message
+
+      - name: Image
+        path: "@wuh.site/components/image"
+        description: 图片组件（基于 next/image），支持 lazy loading、variant (cover/contain)、fallback、骨架过渡
+        keywords: [image, picture, photo, cover, thumbnail, 图片, 封面, 缩略图, 照片]
+        scenarios:
+          - wuh.site/demo-image-cover
+
+      - name: ImagePreview
+        path: "@wuh.site/components/image-preview"
+        description: 图片画廊预览，支持缩放/旋转/全屏/手势/键盘导航/缩略图轨
+        keywords: [gallery, preview, lightbox, image viewer, 画廊, 预览, 灯箱, 图片查看]
+        scenarios:
+          - wuh.site/demo-image-gallery
+
+      - name: Alert
+        path: "@wuh.site/components/alert"
+        description: 信息提示横幅，展示文章元信息（更新时间/原文链接/标签/许可/分享）
+        keywords: [alert, meta, info, source, license, metadata, 提示, 元信息, 来源, 许可]
+        scenarios:
+          - wuh.site/demo-post-meta
+
+  - name: Hooks
+    key: hook
+    items:
+      - name: useDialog
+        path: "packages/hooks/useDialog"
+        description: Dialog 开关状态管理，返回 open + openDialog/closeDialog/toggleDialog，提供 bind 对象直传 Dialog
+        keywords: [dialog, open, close, toggle, modal hook, 弹窗, 开关, 模态 hook]
+        scenarios:
+          - wuh.site/demo-dialog-confirm
+
+      - name: useFetch
+        path: "packages/hooks/useFetch"
+        description: 通用请求封装（fetcher），支持 GET/POST、query、body、timeout、AbortSignal，返回 FetchResult<T>
+        keywords: [fetch, request, api, http, data fetching, 请求, API, 数据获取]
+        scenarios:
+          - wuh.site/demo-api-fetch
+
+      - name: useImagePreview
+        path: "packages/hooks/useImagePreview"
+        description: 图片预览状态管理，返回 open + index + openPreview/closePreview/next/previous + bind
+        keywords: [image, preview, gallery, lightbox hook, 图片, 预览, 画廊, 灯箱 hook]
+        scenarios:
+          - wuh.site/demo-image-gallery
+
+      - name: useTheme / useTokens
+        path: "packages/hooks/useTheme"
+        description: 从 ThemeProvider 获取主题 CSS 变量和 Token 对象
+        keywords: [theme, token, color, css variable, style, 主题, 样式, 颜色]
+        scenarios: []
+
+  - name: 公共函数与工具
+    key: utility
+    items:
+      - name: SharedLinkGroup
+        path: "@wuh.site/components/shared-link-group"
+        description: 社交分享链接组，支持多个分享目标
+        keywords: [share, social, link group, 分享, 社交]
+        scenarios:
+          - wuh.site/demo-post-meta
