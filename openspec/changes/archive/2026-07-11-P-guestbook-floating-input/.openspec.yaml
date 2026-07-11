@@ -2,5 +2,5 @@ project: x.wuh.site
 change: 2026-07-11-P-guestbook-floating-input
 date: 2026-07-11
 type: P
-status: merged
+status: archived
 issue: https://github.com/stack-wuh/x.wuh.site/issues/194

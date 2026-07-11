@@ -72,3 +72,20 @@ import { useDialog } from 'packages/hooks/useDialog'
 - `useDialog().bind` 可以直接作为 Dialog 的 props 展开
 - `placement="bottom"` 时底部出现拖拽手柄
 - 打开时自动锁定 body 滚动，关闭后恢复
+
+### Dialog subtitle 用法
+
+Dialog 支持 `subtitle` prop，在标题下方渲染副文本：
+
+```tsx
+<Dialog
+  open={open}
+  onClose={() => setOpen(false)}
+  title="留言板"
+  subtitle="声无哀乐"
+>
+  ...
+</Dialog>
+```
+
+subtitle 会跟随 DialogHeader 垂直排列，关闭按钮居顶部对齐。
