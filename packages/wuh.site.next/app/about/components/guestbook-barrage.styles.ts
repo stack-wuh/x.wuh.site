@@ -146,10 +146,7 @@ export const GuestbookWrapper = styled.div`
   --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-100) 94%, var(--background-200));
   --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 24%, transparent);
   --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-300) 36%, transparent);
-  --guestbook-composer-bg: color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%);
-  --guestbook-control-bg: var(--background-100);
   --guestbook-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
-  --guestbook-bar-bg: color-mix(in oklab, var(--background-200) 92%, var(--background-100));
 
   display: flex;
   flex-direction: column;
@@ -175,10 +172,7 @@ export const GuestbookWrapper = styled.div`
     --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-200) 78%, var(--background-100));
     --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 36%, transparent);
     --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-500) 42%, transparent);
-    --guestbook-composer-bg: color-mix(in oklab, var(--background-200) 72%, var(--background-100));
-    --guestbook-control-bg: color-mix(in oklab, var(--background-200) 86%, var(--background-100));
     --guestbook-shadow: 0 12px 20px rgba(0, 0, 0, 0.16);
-    --guestbook-bar-bg: color-mix(in oklab, var(--background-100) 86%, var(--background-200) 14%);
   }
 `
 
@@ -192,7 +186,6 @@ export const GuestbookPanel = styled.section`
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  gap: 8px;
 `
 
 export const GuestbookStage = styled.div`
@@ -200,7 +193,7 @@ export const GuestbookStage = styled.div`
   flex: 1;
   min-height: 320px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 16px 16px 12px 12px;
   border: 1px solid var(--guestbook-border);
   background:
     var(--guestbook-stage-highlight),
@@ -217,11 +210,11 @@ export const ChatFeed = styled.div`
   flex-direction: column;
   gap: 12px;
   overflow: auto;
-  padding: 18px;
+  padding: 18px 18px 80px;
   scroll-behavior: smooth;
 
   @media (max-width: 640px) {
-    padding: 14px 12px;
+    padding: 14px 12px 76px;
   }
 `
 
@@ -300,106 +293,128 @@ export const ChatStatus = styled.span<{ $tone?: 'error' }>`
   font-size: 0.7rem;
 `
 
-/* ====== Composer Bar ====== */
+/* ====== Floating Composer Bar ====== */
 
 export const Composer = styled.form`
+  position: relative;
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 16px;
-  border: 1px solid var(--guestbook-border);
-  background: var(--guestbook-bar-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-`
+  align-items: center;
+  gap: 8px;
+  margin: -22px 8px 8px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 26%, transparent);
+  background: color-mix(in oklab, var(--background-100) 94%, var(--background-200) 6%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 0 0 1px var(--background-100);
+  z-index: 2;
 
-export const ComposerFields = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-`
+  &:focus-within {
+    border-color: color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
+  }
 
-export const ComposerInput = styled.input`
-  min-height: 30px;
-  border: none;
-  padding: 0;
-  background: transparent;
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  outline: none;
-
-  &::placeholder {
-    color: var(--text-muted);
+  [data-color-scheme="dark"] & {
+    background: color-mix(in oklab, var(--background-100) 88%, var(--background-200) 12%);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.24),
+      0 0 0 1px color-mix(in oklab, var(--background-100) 80%, transparent);
   }
 `
 
-export const ComposerTextArea = styled.textarea`
-  width: 100%;
-  min-height: 22px;
-  max-height: 80px;
-  resize: none;
+export const ComposerInput = styled.input`
+  flex: 1;
+  min-height: 40px;
   border: none;
   padding: 0;
   background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   line-height: 1.5;
   outline: none;
 
   &::placeholder {
     color: var(--text-muted);
   }
-
-  &:focus {
-    outline: none;
-  }
 `
 
-export const ComposerActions = styled.div`
-  display: flex;
+export const ComposerSend = styled.button`
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: var(--background-100);
+  cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.2s ease;
+  line-height: 0;
 
-  button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    min-width: 40px;
-    min-height: 40px;
-    padding: 0;
-    border: 2px solid color-mix(in oklab, var(--primary-color) 20%, transparent);
-    border-radius: 50%;
-    background: color-mix(in oklab, var(--primary-color) 12%, var(--background-100));
-    color: var(--primary-color);
-    cursor: pointer;
-    font-size: 0.82rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
-
-    &:hover:not(:disabled) {
-      background: color-mix(in oklab, var(--primary-color) 20%, var(--background-100));
-      border-color: color-mix(in oklab, var(--primary-color) 40%, transparent);
-    }
+  &:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--primary-color) 82%, black);
+    transform: scale(1.04);
   }
 
-  button:disabled {
+  &:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  &:disabled {
     cursor: not-allowed;
-    opacity: 0.4;
+    opacity: 0.3;
   }
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
+`
 
-  span {
-    display: none;
+export const ComposerBadge = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 4px;
+  border: 1px solid var(--guestbook-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--primary-color) 30%, var(--normal-300) 70%);
+  }
+`
+
+export const ComposerNicknameInput = styled.input`
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  outline: none;
+
+  &::placeholder {
+    color: var(--text-muted);
   }
 `
