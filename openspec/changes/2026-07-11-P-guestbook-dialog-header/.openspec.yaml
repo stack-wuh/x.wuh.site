@@ -1,0 +1,25 @@
+project: x.wuh.site
+change: guestbook-dialog-header
+date: 2026-07-11
+type: P
+status: proposed
+issue: https://github.com/stack-wuh/x.wuh.site/issues/196
+
+domain:
+  name: 留言板 Dialog 头部优化
+  keywords:
+    - guestbook
+    - dialog
+    - header
+    - title
+    - subtitle
+    - description
+    - 留言板
+    - 弹窗
+    - 头部
+    - 标题
+    - 副标题
+    - 引导
+    - 提示
+    - 文案
+    - 对话框

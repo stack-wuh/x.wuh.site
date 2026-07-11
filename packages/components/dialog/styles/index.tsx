@@ -153,6 +153,22 @@ export const DialogSurface = styled.div<{
   ${dialogSurfaceBase}
 `
 
+
+export const DialogHeaderContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+`
+
+export const DialogSubtitle = styled.p`
+  margin: 0;
+  font-size: var(--font-size-sm, 14px);
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+`
+
 export const DragHandle = styled.div`
   width: 36px;
   height: 4px;
@@ -164,7 +180,7 @@ export const DragHandle = styled.div`
 
 export const DialogHeader = styled.header`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-md, 16px);
   padding: 12px 22px;
@@ -194,7 +210,7 @@ export const CloseButton = styled.button`
   min-width: 44px;
   min-height: 44px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 0;
   border-radius: 8px;
@@ -224,7 +240,7 @@ export const DialogBody = styled.div`
 
 export const DialogFooter = styled.footer`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   gap: var(--space-sm, 12px);
   padding: var(--space-md, 16px) 22px;

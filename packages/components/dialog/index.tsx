@@ -5,7 +5,9 @@ import {
   Barrier,
   DialogSurface,
   DialogHeader,
+  DialogHeaderContent,
   DialogTitle,
+  DialogSubtitle,
   CloseButton,
   DialogBody,
   DialogFooter,
@@ -26,6 +28,8 @@ export interface DialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   open: boolean
   onClose?: () => void
   title?: React.ReactNode
+  /** 标题下方副文本 */
+  subtitle?: React.ReactNode
   footer?: React.ReactNode | FooterRenderer
   closeOnOverlay?: boolean
   closeOnEsc?: boolean
@@ -54,6 +58,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     open,
     onClose,
     title,
+    subtitle,
     children,
     footer,
     closeOnOverlay = true,
@@ -218,7 +223,10 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
         {derivedPlacement === 'bottom' && !fullScreen && <DragHandle />}
         {title && (
           <DialogHeader>
-            <DialogTitle id={titleId}>{title}</DialogTitle>
+            <DialogHeaderContent>
+              <DialogTitle id={titleId}>{title}</DialogTitle>
+              {subtitle && <DialogSubtitle>{subtitle}</DialogSubtitle>}
+            </DialogHeaderContent>
             {!hideCloseButton && (
               <CloseButton type="button" aria-label="关闭" onClick={handleClose}>
                 ×

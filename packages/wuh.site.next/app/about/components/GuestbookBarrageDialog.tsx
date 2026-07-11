@@ -26,6 +26,22 @@ import {
   GuestbookTriggerTitle,
   GuestbookWrapper,
 } from './guestbook-barrage.styles'
+import styled from '@wuh.site/components/styled'
+
+const GuestbookGuide = styled.p`
+  margin: 0;
+  padding: 6px 18px 4px;
+  font-size: var(--font-size-sm, 14px);
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.6;
+  text-align: center;
+
+  @media (max-width: 640px) {
+    padding: 6px 12px 4px;
+    font-size: 13px;
+  }
+\`
 import {
   clampGuestbookContent,
   createGuestbookMessage,
@@ -62,7 +78,6 @@ type ChatMessage = {
 
 const sampleMessages = [
   { id: 'sample-1', nickname: '吴尒红', content: '来这里打个招呼，顺便看看最近在折腾什么。', time: '刚刚' },
-  { id: 'sample-2', nickname: '吴尒红', content: '欢迎留言，短句也很好。这里会像群聊一样一条条留住。', time: '2 分钟前' },
   { id: 'sample-3', nickname: '远方的朋友', content: '这个聊天式留言板比弹幕更容易回看。', time: '5 分钟前' },
 ] as const
 
@@ -281,11 +296,11 @@ export default function GuestbookBarrageDialog() {
         </GuestbookTriggerAvatars>
         <GuestbookTriggerCopy>
           <GuestbookTriggerLabel>Guestbook</GuestbookTriggerLabel>
-          <GuestbookTriggerTitle>给我留一句话</GuestbookTriggerTitle>
+          <GuestbookTriggerTitle>潘江陆海，各洒云尔~</GuestbookTriggerTitle>
           <GuestbookTriggerPreview>最近看到的想法、建议或者招呼，都可以放在这里。</GuestbookTriggerPreview>
         </GuestbookTriggerCopy>
         <GuestbookTriggerCta>
-          <span>进入</span>
+          <span>见字如面</span>
           <IconArrowRight />
         </GuestbookTriggerCta>
       </GuestbookTrigger>
@@ -294,10 +309,12 @@ export default function GuestbookBarrageDialog() {
         open={open}
         onClose={() => setOpen(false)}
         title='留言板'
+        subtitle='声无哀乐'
         width='min(1120px, calc(100vw - 32px))'
         height='min(720px, calc(100vh - 80px))'
       >
         <GuestbookWrapper>
+          <GuestbookGuide>萍水楚客，路远情长</GuestbookGuide>
           <GuestbookStage>
             <ChatFeed ref={feedRef}>
               {loadingMessages && (
