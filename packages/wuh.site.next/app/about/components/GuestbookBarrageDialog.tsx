@@ -272,11 +272,11 @@ export default function GuestbookBarrageDialog() {
         </GuestbookTriggerAvatars>
         <GuestbookTriggerCopy>
           <GuestbookTriggerLabel>Guestbook</GuestbookTriggerLabel>
-          <GuestbookTriggerTitle>给我留一句话</GuestbookTriggerTitle>
+          <GuestbookTriggerTitle>潘江陆海，各撒云尔~</GuestbookTriggerTitle>
           <GuestbookTriggerPreview>最近看到的想法、建议或者招呼，都可以放在这里。</GuestbookTriggerPreview>
         </GuestbookTriggerCopy>
         <GuestbookTriggerCta>
-          <span>进入</span>
+          <span>见字如面</span>
           <IconArrowRight />
         </GuestbookTriggerCta>
       </GuestbookTrigger>
