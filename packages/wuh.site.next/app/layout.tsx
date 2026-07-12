@@ -46,15 +46,25 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
 (function() {
+  // Step 1: disable all CSS transitions before touching data attrs
+  document.documentElement.setAttribute('data-no-transition', '');
+  // Force reflow so the transition:none rule is applied
+  void document.documentElement.offsetHeight;
+
+  // Step 2: set theme color scheme
   var scheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   document.documentElement.dataset.colorScheme = scheme;
+
+  // Step 3: restore persisted theme family
   try {
     var stored = window.localStorage.getItem('wuh.site.theme');
     if (stored === 'wine' || stored === 'plain') {
       document.documentElement.dataset.themeFamily = stored;
     }
   } catch (_) {}
-  document.documentElement.dataset.noTransition = 'true';
+
+  // Step 4: re-enable transitions now that data attrs are settled
+  document.documentElement.removeAttribute('data-no-transition');
 })();
           `.trim(),
           }}
