@@ -13,7 +13,7 @@ export default function PostCover({ src, alt }: Props) {
 
   return (
     <CoverImage>
-      <Image src={src} alt={alt} />
+      <Image src={src} alt={alt} fill />
     </CoverImage>
   )
 }
