@@ -135,9 +135,9 @@ export const Toolbar = styled.div`
     padding: 0 10px;
     font-size: 0.8rem;
     font-weight: 500;
-    color: var(--normal-400);
+    color: var(--primary-color);
     text-decoration: none;
-    opacity: 0.45;
+    opacity: 0.7;
     transition: opacity 0.2s ease, color 0.2s ease;
     z-index: 2;
   }
