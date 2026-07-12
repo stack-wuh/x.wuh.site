@@ -250,6 +250,7 @@ type Props = {
 export default function PostComments({ issueNumber }: Props) {
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [nickname, setNickname] = useState('')
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -257,13 +258,16 @@ export default function PostComments({ issueNumber }: Props) {
 
   const fetchComments = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch(`/api/comments?issueNumber=${issueNumber}&limit=50`, { cache: 'no-store' })
+      if (!res.ok) throw new Error('评论加载失败')
       const data = await res.json()
       const list = data.data || data || []
+      if (!Array.isArray(list)) throw new Error('数据格式异常')
       setComments(list.filter((c: Comment) => c.status !== 'rejected'))
     } catch {
-      // Silent fail
+      setError('评论加载失败')
     } finally {
       setLoading(false)
     }
@@ -337,9 +341,7 @@ export default function PostComments({ issueNumber }: Props) {
       {loading ? (
         <LoadingState>加载中...</LoadingState>
       ) : comments.length === 0 ? (
-        <EmptyState>
-          还没有评论，来发表第一条吧。
-        </EmptyState>
+        error ? <EmptyState>{error}</EmptyState> : <EmptyState>还没有评论，来发表第一条吧。</EmptyState>
       ) : (
         comments.map((comment) => (
           <CommentItem key={comment._id || comment.externalId} $isGithub={isGithubComment(comment)}>

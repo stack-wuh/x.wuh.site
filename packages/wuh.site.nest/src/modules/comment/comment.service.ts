@@ -112,6 +112,7 @@ export class CommentService {
   async approveAndPostToGitHub(commentId: string): Promise<CommentDocument | null> {
     const comment = await this.commentModel.findById(commentId).exec();
     if (!comment) return null;
+    if (comment.status === 'approved') return comment;
 
     if (!this.octokit) {
       this.logger.error('GitHub token not configured, cannot post comment');
