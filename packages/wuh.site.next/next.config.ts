@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.image.myqcloud.com',
       },
+      {
+        protocol: 'https',
+        hostname: '*.githubusercontent.com',
+      },
     ],
   },
   // API rewrite to NestJS backend

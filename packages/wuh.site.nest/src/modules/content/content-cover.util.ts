@@ -1,5 +1,6 @@
-const HTML_IMAGE_RE = /<img\b[^>]*\bsrc\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'=<>`]+))/i;
+const HTML_IMAGE_RE = /<img\b[^>]*\bsrc\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'=<>`]+))[^>]*>/i;
 const MARKDOWN_IMAGE_RE = /!\[[^\]]*]\(\s*(?:<([^>]+)>|([^\s)]+))(?:\s+["'][^"']*["'])?\s*\)/;
+const EMPTY_ANCHOR_RE = /<a\b[^>]*>\s*<\/a>/gi;
 
 function normalizeImageUrl(url?: string): string | undefined {
   const normalized = url?.trim();
@@ -28,5 +29,6 @@ export function extractFirstImageAndClean(
     return { url, cleanHtml: bodyHtml };
   }
   const cleanHtml = bodyHtml.replace(HTML_IMAGE_RE, '');
-  return { url, cleanHtml: cleanHtml || null };
+  const cleanedAnchorHtml = cleanHtml.replace(EMPTY_ANCHOR_RE, '');
+  return { url, cleanHtml: cleanedAnchorHtml || null };
 }
