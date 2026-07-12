@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.githubusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.wuh.site',
+      },
     ],
   },
   // API rewrite to NestJS backend
