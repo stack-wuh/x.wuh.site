@@ -133,6 +133,10 @@
 - **需求:** PostToolbar 流动阅读线样式
 - **路径:** `openspec/specs/post/spec.md`
 
+## visit-stats — 全站访问量统计
+- **关键词:** 访问量统计, visit-stats, 统计, pageview, 计数器, analytics, 独立访客, UV
+- **需求:** 前端自动上报访问, 后端按 IP 去重计数, 查询访问量统计, 页面展示统计数据
+- **路径:** `openspec/specs/visit-stats/spec.md`
 ## openspec-workflow — 工作流规范
 - **关键词:** OpenSpec, 工作流, propose, discuss, apply, review, archive
 - **需求:** propose, discuss, apply, review, archive, 单一Skill入口

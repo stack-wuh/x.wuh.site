@@ -21,7 +21,7 @@ apply:
     - openspec/changes/2026-07-12-P-site-visit-stats/design.md
     - openspec/changes/2026-07-12-P-site-visit-stats/tasks.md
   tasks: tasks.md
-status: proposed
+status: archived
 
 domain:
   name: 全站访问量统计
