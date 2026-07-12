@@ -15,6 +15,7 @@ import { ApiV2Module } from './modules/api-v2/api-v2.module';
 import { ReposModule } from './modules/repos/repos.module';
 import { WereadModule } from './modules/weread/weread.module';
 import { FootprintModule } from './modules/footprint/footprint.module';
+import { VisitStatsModule } from './modules/visit-stats/visit-stats.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -63,6 +64,7 @@ import { AppService } from './app.service';
     ReposModule,
     WereadModule,
     FootprintModule,
+    VisitStatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

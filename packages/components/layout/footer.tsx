@@ -2,6 +2,7 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { Row, Column, SpaceBetween } from '@wuh.site/components/flex'
 import { IconLogo } from '@wuh.site/components/icons'
+import { SiteStats } from './site-stats'
 
 const footerConf = {
   slogan: '驿寄梅花, 鱼传尺素',
@@ -54,6 +55,7 @@ const Footer = () => {
           <Column className="footer-col">
             <div>{footerConf.slogan}</div>
             <div>{footerConf.copyright}</div>
+            <SiteStats />
           </Column>
         </Row>
         <Row className="footer-row" gap={'3xl'}>
