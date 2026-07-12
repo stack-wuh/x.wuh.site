@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ContentService } from './content.service';
 import { QueryContentDto } from './dto/content.dto';
 import { Request, Response } from 'express';
-import { extractFirstImageUrl } from './content-cover.util';
+import { extractFirstImageAndClean } from './content-cover.util';
 
 const ANON_COOKIE_NAME = 'anonId';
 const ANON_COOKIE_MAX_AGE = 1000 * 60 * 60 * 24 * 365;
@@ -45,11 +45,16 @@ type PostWithCoverSource = {
 };
 
 function withDerivedCover<T extends PostWithCoverSource>(post: T): T {
-  const cover = post.metadata?.cover || extractFirstImageUrl(post.bodyHtml, post.body);
+  if (post.metadata?.cover) {
+    return post;
+  }
+
+  const { url: cover, cleanHtml } = extractFirstImageAndClean(post.bodyHtml, post.body);
   if (!cover) return post;
 
   return {
     ...post,
+    bodyHtml: cleanHtml,
     metadata: {
       ...(post.metadata ?? {}),
       cover,
