@@ -146,3 +146,8 @@
 - **关键词:** 闪烁, flash, data-no-transition, reflow, 过渡动画, setAttribute, offsetHeight
 - **需求:** 修复防闪烁机制中 dataset API 导致的属性名不匹配；调整执行顺序防止过渡动画可见
 - **路径:** `openspec/changes/archive/2026-07-12-B-fix-page-flash/specs/page-flash-fix/spec.md`
+
+## blog-comments — 博客评论
+- **关键词:** 评论, comment, GitHub Issues, 匿名评论, 审核
+- **需求:** 博客详情页展示评论, 匿名提交评论, 审批后发到 GitHub Issue, 重复审批拦截
+- **路径:** `openspec/changes/archive/2026-07-12-P-blog-comments/specs/blog-comments/spec.md`
