@@ -384,7 +384,7 @@ export const GuestbookTextarea = styled.textarea`
   }
 `
 
-export const GuestbookSubmit = styled.button`
+export const GuestbookSubmit = styled(Button)`
   align-self: flex-end;
   padding: 8px 20px;
   border-radius: 999px;
