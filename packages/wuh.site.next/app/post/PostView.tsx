@@ -12,14 +12,12 @@ import { useHeadingObserver } from './hooks/useHeadingObserver'
 import PostHeader from './components/PostHeader'
 import PostCover from './components/PostCover'
 import PostToolbar from './components/PostToolbar'
-import PostComments from './components/PostComments'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
 import {
   ArticleCard,
-  PostComments,
   Container,
   ContentGrid,
   MainColumn,
@@ -28,6 +26,7 @@ import {
   ShareCardInner,
   ShareInfoCard,
   StatusEmpty,
+  CommentPlaceholder,
   TocAside,
   TocCard,
   TocItemLink,

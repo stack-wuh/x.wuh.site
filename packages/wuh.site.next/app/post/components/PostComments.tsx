@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from '@wuh.site/components/styled'
 import Button from '@wuh.site/components/button'
 import { IconGithub, IconTag } from '@wuh.site/components/icons'
@@ -328,8 +328,8 @@ export default function PostComments({ issueNumber }: Props) {
     }
   }, [canSubmit, submitting, trimmedNickname, trimmedContent, issueNumber])
 
-  const approveCount = comments.filter((c) => c.status === 'approved').length
-  const pendingCount = comments.filter((c) => c.status === 'pending').length
+  const _approveCount = comments.filter((c) => c.status === 'approved').length
+  const _pendingCount = comments.filter((c) => c.status === 'pending').length
   const totalCount = comments.length
 
   return (
