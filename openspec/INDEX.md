@@ -119,8 +119,8 @@
 - **路径:** `openspec/specs/code-style/spec.md`
 
 ## next — 前端构建
-- **关键词:** Next.js, 导入路径, tsconfig paths, CDN
-- **需求:** 导入路径统一无 /index 后缀, shared-contracts 路径映射
+- **关键词:** Next.js, 导入路径, tsconfig paths, CDN, 路径别名, @/*
+- **需求:** 导入路径统一无 /index 后缀, shared-contracts 路径映射, 优先使用 @/* 路径别名
 - **路径:** `openspec/specs/next/spec.md`
 
 ## pagination — 分页器
