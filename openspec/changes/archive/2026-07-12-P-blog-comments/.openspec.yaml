@@ -1,0 +1,17 @@
+project: x.wuh.site
+change: 2026-07-12-P-blog-comments
+date: 2026-07-12
+type: P
+status: archived
+issue: https://github.com/stack-wuh/x.wuh.site/issues/215
+
+domain:
+  name: 博客评论
+  keywords:
+    - 评论
+    - comment
+    - GitHub Issues
+    - 后端API
+    - 前端组件
+    - PostComments
+  description: 博客详情页评论功能，匿名评论审核后发到 GitHub Issue，同步回来
