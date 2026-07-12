@@ -137,3 +137,8 @@
 - **关键词:** OpenSpec, 工作流, propose, discuss, apply, review, archive
 - **需求:** propose, discuss, apply, review, archive, 单一Skill入口
 - **路径:** `openspec/specs/openspec-workflow/spec.md`
+
+## page-flash-fix — 页面刷新闪烁修复
+- **关键词:** 闪烁, flash, data-no-transition, reflow, 过渡动画, setAttribute, offsetHeight
+- **需求:** 修复防闪烁机制中 dataset API 导致的属性名不匹配；调整执行顺序防止过渡动画可见
+- **路径:** `openspec/changes/archive/2026-07-12-B-fix-page-flash/specs/page-flash-fix/spec.md`

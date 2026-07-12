@@ -80,11 +80,13 @@
 - **AND** 不出现亮→暗或暗→亮的视觉闪烁
 
 ### Requirement: 首屏禁用过渡动画
-- **GIVEN** `<head>` 脚本执行完毕
-- **WHEN** 页面首次渲染
-- **THEN** `<html>` 元素带有 `data-no-transition` 属性
-- **AND** 所有元素的 `transition` 被禁用，防止颜色从默认值过渡到目标值产生反向闪动
-- **AND** React hydration 后 `ThemeModeProvider` 移除 `data-no-transition`
+- **GIVEN** `<head>` 脚本开始执行
+- **WHEN** 同步脚本设置主题数据属性之前
+- **THEN** 脚本使用 `setAttribute('data-no-transition', '')` 设置属性（而非 dataset API）
+- **AND** 脚本调用 `void document.documentElement.offsetHeight` 强制重排，确保浏览器已应用 `transition: none`
+- **AND** 所有元素的 `transition` 被禁用后，脚本才设置 `data-colorScheme` 和 `data-themeFamily`
+- **AND** 设置完毕后立即调用 `removeAttribute('data-no-transition')` 恢复过渡
+- **AND** 整个流程在同一个同步块中完成，不依赖 React hydration
 
 ### Requirement: 全局主题色过渡动画
 - **GIVEN** 系统或用户切换亮暗主题
