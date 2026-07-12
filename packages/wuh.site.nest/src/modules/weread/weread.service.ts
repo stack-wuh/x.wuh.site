@@ -73,7 +73,7 @@ export class WereadService {
     const [data, total] = await Promise.all([
       this.wereadBookModel
         .find(filter)
-        .sort({ shelfIndex: 1, readUpdateTime: -1 })
+        .sort({ readUpdateTime: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .lean()
