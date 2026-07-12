@@ -7,6 +7,7 @@ import { useRef } from 'react'
 import { useEventListener, useRequest } from 'ahooks'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
+import { VisitStatsReporter } from '../components/visit-stats/visit-stats-reporter'
 import dynamic from 'next/dynamic'
 import { AudioPlayerProvider } from '@wuh.site/components/audio-player/provider'
 
@@ -57,6 +58,7 @@ export default function AppProviders({ children }: { children: ReactNode }) {
           <ThemeModeProvider>
             <AudioPlayerProvider trackResolver={resolveTrackSource}>
               <SiteHeader />
+              <VisitStatsReporter />
               <ProgressProvider
                 color="var(--primary-color)"
                 height="3px"

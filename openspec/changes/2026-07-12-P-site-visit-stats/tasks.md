@@ -55,15 +55,15 @@
 
 - [ ] **文件:** `packages/wuh.site.next/components/visit-stats/visit-stats-reporter.tsx`
 - [ ] `'use client'` 组件
-- [ ] 首次加载和路由变化时 POST `/v2/visit-stats/stats`
+- [ ] 首次加载和路由变化时 POST `/api/visit-stats/stats`
 - [ ] 使用 fetch（无需缓存）
 - [ ] **验证:** 页面加载后 Network tab 可见 POST 请求
 
 ### Task 7: 创建 SiteStats 展示组件
 
-- [ ] **文件:** `packages/components/layout/footer/site-stats.tsx`
+- [ ] **文件:** `packages/components/layout/site-stats.tsx`
 - [ ] `'use client'` 组件
-- [ ] 组件挂载时和路由变化时调用 GET `/v2/visit-stats/stats` 获取数据
+- [ ] 组件挂载时调用 GET `/api/visit-stats/stats` 获取数据，每 60s 定时刷新兜底
 - [ ] 显示 "总访问量: {total} | 今日: {today}"
 - [ ] 使用 CSS 变量 `var(--text-muted)` 保持 Footer 样式统一
 - [ ] **验证:** `npx tsc --noEmit` 零错误

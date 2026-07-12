@@ -9,7 +9,7 @@ library:
       at: packages/wuh.site.next/components/visit-stats/visit-stats-reporter.tsx
       for: 前端路由变化时向后端上报访问记录
     - component: SiteStats
-      at: packages/components/layout/footer/site-stats.tsx
+      at: packages/components/layout/site-stats.tsx
       for: 在 Footer 展示总访问量和今日访问量
 apply:
   instructions: |

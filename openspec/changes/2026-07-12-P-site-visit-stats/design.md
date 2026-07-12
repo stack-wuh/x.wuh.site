@@ -98,7 +98,7 @@ const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim
 }
 ```
 
-**说明:** GET 数据按导航刷新（路由变化时自动重新获取），不设定时轮询。
+**说明:** 前端使用 `/api/visit-stats/stats`（通过 Next.js rewrite → NestJS `/v2/visit-stats/stats`），GET 数据按导航刷新 + 60s 定时轮询兜底。
 
 ## 组件/模块设计
 
