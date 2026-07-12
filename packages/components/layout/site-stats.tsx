@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from '@wuh.site/components/styled';
 
 const StatsText = styled.div`
-  color: var(--text-muted);
   font-size: var(--font-size-sm);
 `;
 
