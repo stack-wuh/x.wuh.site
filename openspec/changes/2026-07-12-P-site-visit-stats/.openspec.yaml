@@ -1,0 +1,44 @@
+project: x.wuh.site
+change: 2026-07-12-P-site-visit-stats
+date: 2026-07-12
+type: P
+issue: https://github.com/stack-wuh/x.wuh.site/issues/201
+library:
+  new:
+    - component: VisitStatsReporter
+      at: packages/wuh.site.next/components/visit-stats/visit-stats-reporter.tsx
+      for: 前端路由变化时向后端上报访问记录
+    - component: SiteStats
+      at: packages/components/layout/footer/site-stats.tsx
+      for: 在 Footer 展示总访问量和今日访问量
+apply:
+  instructions: |
+    本需求新增全站访问量统计功能，前后端分离。
+    后端新增 visit-stats 模块（Schema → Service → Controller → Module），注册到 AppModule。
+    前端新增 VisitStatsReporter（嵌入 AppProviders）和 SiteStats（嵌入 Footer）。
+    所有新组件在对应包下新建，具体任务和顺序见 tasks.md。
+  contextFiles:
+    - openspec/changes/2026-07-12-P-site-visit-stats/design.md
+    - openspec/changes/2026-07-12-P-site-visit-stats/tasks.md
+  tasks: tasks.md
+status: proposed
+
+domain:
+  name: 全站访问量统计
+  keywords:
+    - 访问量
+    - visit
+    - stats
+    - 统计
+    - pageview
+    - 全站
+    - site-wide
+    - 计数器
+    - counter
+    - 独立访客
+    - unique visitor
+    - UV
+    - 上报
+    - report
+    - analytics
+  description: 给 wuh.site 添加全站访问量统计，前端上报、后端去重计数、展示总访问量和今日访问量
