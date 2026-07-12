@@ -12,6 +12,7 @@ import { useHeadingObserver } from './hooks/useHeadingObserver'
 import PostHeader from './components/PostHeader'
 import PostCover from './components/PostCover'
 import PostToolbar from './components/PostToolbar'
+import PostComments from './components/PostComments'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
@@ -26,7 +27,6 @@ import {
   ShareCardInner,
   ShareInfoCard,
   StatusEmpty,
-  CommentPlaceholder,
   TocAside,
   TocCard,
   TocItemLink,
@@ -251,7 +251,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
             </ShareCardInner>
           </ShareInfoCard>
 
-          <CommentPlaceholder title='空空如也~' description='评论功能正在开发中，欢迎稍后回来留言交流。' />
+          <PostComments issueNumber={issue.number} />
 
           <PostToolbar prevIssue={prevIssue} nextIssue={nextIssue} currentNumber={issue.number} total={total} position={position} />
         </MainColumn>
