@@ -2,11 +2,14 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
+  Param,
   Query,
   Req,
   UseGuards,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
@@ -54,16 +57,35 @@ export class CommentController {
       throw new BadRequestException('nickname and content are required');
     }
 
+    const issueNumber = createCommentDto.issueNumber ?? GUESTBOOK_ISSUE_NUMBER;
+
     const commentData: any = {
       ...createCommentDto,
       body: createCommentDto.content,
       clientIp: req.ip || req.socket.remoteAddress,
       userAgent: req.headers['user-agent'],
       externalId: uuidv4(),
-      issueId: GUESTBOOK_ISSUE_NUMBER,
-      issueNumber: GUESTBOOK_ISSUE_NUMBER,
-      repo: 'guestbook',
+      issueId: issueNumber,
+      issueNumber: issueNumber,
+      repo: issueNumber === GUESTBOOK_ISSUE_NUMBER ? 'guestbook' : 'blog',
     };
+
+    // Blog comments start as pending, guestbook auto-approved
+    if (issueNumber !== GUESTBOOK_ISSUE_NUMBER) {
+      commentData.status = 'pending';
+    }
     return this.commentService.create(commentData);
   }
+  @Patch(':id/approve')
+  @ApiOperation({ summary: 'Approve and post comment to GitHub Issue' })
+  @ApiResponse({ status: 200, description: 'Comment approved and posted to GitHub' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
+  async approveComment(@Param('id') id: string) {
+    const result = await this.commentService.approveAndPostToGitHub(id);
+    if (!result) {
+      throw new NotFoundException('Comment not found');
+    }
+    return result;
+  }
 }
+

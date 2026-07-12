@@ -92,6 +92,7 @@ export interface CreateAnonymousCommentDto {
   content: string;
   footprint?: string;
   page?: string;
+  issueNumber?: number;
 }
 
 export interface QueryCommentDto {
