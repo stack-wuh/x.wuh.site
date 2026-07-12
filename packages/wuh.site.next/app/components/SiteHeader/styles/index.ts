@@ -1,3 +1,4 @@
+import Button from '@wuh.site/components/button'
 import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 
@@ -77,7 +78,7 @@ export const NavLink = styled(Link)`
   }
 `
 
-export const MobileToggle = styled.button`
+export const MobileToggle = styled(Button)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -105,7 +106,7 @@ export const MobileToggle = styled.button`
   @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
 `
 
-export const ThemeToggle = styled.button`
+export const ThemeToggle = styled(Button)`
   --toggle-h: 32px;
   display: inline-flex;
   align-items: center;
@@ -191,7 +192,7 @@ export const MobileActions = styled.div`
   align-items: center;
 `
 
-export const MobileActionButton = styled.button`
+export const MobileActionButton = styled(Button)`
   padding: 12px 14px;
   border-radius: 14px;
   color: var(--text-primary);

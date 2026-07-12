@@ -1,0 +1,24 @@
+project: x.wuh.site
+change: 2026-07-12-P-component-standardization
+date: 2026-07-12
+type: P
+status: proposed
+issue: https://github.com/stack-wuh/x.wuh.site/issues/203
+
+domain:
+  name: 组件标准化
+  keywords:
+    - 按钮
+    - 图标
+    - 图片
+    - button
+    - icon
+    - image
+    - img
+    - 代码优化
+    - component
+    - 复用
+    - styled-button
+    - 前端页面
+    - 交互元素
+  description: 将业务代码中的自定义 styled.button 替换为 @wuh.site/components/button 组件，原生 <img> 替换为 @wuh.site/components/image，确认业务代码图标已使用 @wuh.site/components/icons

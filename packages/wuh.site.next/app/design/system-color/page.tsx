@@ -1,6 +1,7 @@
 'use client'
 import * as React from 'react'
 import styled from '@wuh.site/components/styled'
+import Button from '@wuh.site/components/button'
 import { useThemeMode, type Theme } from '@/app/components/theme/ThemeModeProvider'
 
 const H2 = styled.h2`
@@ -42,7 +43,7 @@ const ToggleBar = styled.div`
   margin: 16px 0 32px;
 `
 
-const ThemeChip = styled.button<{ $active: boolean }>`
+const ThemeChip = styled(Button)`
   padding: 6px 16px;
   border: 1px solid ${(p) => (p.$active ? 'var(--primary-color)' : 'var(--normal-300)')};
   background: ${(p) => (p.$active ? 'color-mix(in srgb, var(--primary-color) 12%, transparent)' : 'var(--background-100)')};

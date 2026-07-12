@@ -1,3 +1,4 @@
+import Button from '@wuh.site/components/button'
 import styled from '@wuh.site/components/styled'
 
 /* ====== Trigger ====== */

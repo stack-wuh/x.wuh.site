@@ -5,6 +5,7 @@ import { useRequest } from 'ahooks'
 import dynamic from 'next/dynamic'
 import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
+import Image from '@wuh.site/components/image'
 import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
@@ -99,8 +100,8 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
                     rel='noopener noreferrer'
                     aria-label={`${name} GitHub profile`}
                   >
-                    <img
-                      src={avatarUrl}
+                    <Image
+                      src={avatarUrl || ''}
                       alt={name}
                       width={56}
                       height={56}
