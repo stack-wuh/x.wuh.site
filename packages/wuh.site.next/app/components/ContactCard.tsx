@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import styled from '@wuh.site/components/styled'
+import Button from '@wuh.site/components/button'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
 import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord } from '@wuh.site/components/icons'
@@ -41,7 +42,7 @@ const Body = styled.div`
 `
 
 /* 左侧操作区 */
-const ActionArea = styled.button`
+const ActionArea = styled(Button).attrs({ variant: "outlined", color: "secondary", size: "small" })`
   width: 200px;
   height: 200px;
   border-radius: var(--radius-card);

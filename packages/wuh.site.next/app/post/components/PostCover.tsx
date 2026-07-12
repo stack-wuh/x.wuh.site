@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import Image from '@wuh.site/components/image'
 import { CoverImage } from '../styles'
 
 type Props = {
@@ -9,24 +9,11 @@ type Props = {
 }
 
 export default function PostCover({ src, alt }: Props) {
-  const [hidden, setHidden] = useState(false)
-
-  useEffect(() => {
-    setHidden(false)
-  }, [src])
-
-  if (!src || hidden) return null
+  if (!src) return null
 
   return (
     <CoverImage>
-      <img
-        src={src}
-        alt={alt}
-        loading='lazy'
-        onError={() => {
-          setHidden(true)
-        }}
-      />
+      <Image src={src} alt={alt} />
     </CoverImage>
   )
 }

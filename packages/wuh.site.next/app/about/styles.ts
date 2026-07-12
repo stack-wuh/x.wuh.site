@@ -1,3 +1,4 @@
+import Button from '@wuh.site/components/button'
 import { styled } from '@wuh.site/components/styled'
 
 /* ====== Page Root ====== */
@@ -383,7 +384,7 @@ export const GuestbookTextarea = styled.textarea`
   }
 `
 
-export const GuestbookSubmit = styled.button`
+export const GuestbookSubmit = styled(Button)`
   align-self: flex-end;
   padding: 8px 20px;
   border-radius: 999px;

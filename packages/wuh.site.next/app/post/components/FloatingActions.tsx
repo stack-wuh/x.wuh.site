@@ -2,8 +2,9 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
+import Button from '@wuh.site/components/button'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
-import { FloatingButtonGroup, FloatingButton, LikeButton } from '../styles'
+import { FloatingButtonGroup } from '../styles'
 
 export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false }: {
   issueNumber: number
@@ -44,27 +45,35 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
 
   return (
     <FloatingButtonGroup>
-      <FloatingButton
+      <Button
+        variant="outlined"
+        color="secondary"
+        size="small"
+        icon={<IconHome />}
         type='button'
         aria-label='返回首页'
         title='返回首页'
         onClick={() => {
           window.location.href = '/'
         }}
-      >
-        <IconHome />
-      </FloatingButton>
-      <FloatingButton
+      />
+      <Button
+        variant="outlined"
+        color="secondary"
+        size="small"
+        icon={<IconArrowUp />}
         type='button'
         aria-label='回到顶部'
         title='回到顶部'
         onClick={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}
-      >
-        <IconArrowUp />
-      </FloatingButton>
-      <LikeButton
+      />
+      <Button
+        variant="outlined"
+        color="primary"
+        size="small"
+        icon={<IconThumbUp />}
         type='button'
         aria-label={liked ? '取消点赞' : '点赞'}
         title={liked ? '取消点赞' : '点赞'}
@@ -72,9 +81,8 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         disabled={loading}
         style={liked ? { opacity: 0.8 } : undefined}
       >
-        <IconThumbUp />
-        <span>{liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}</span>
-      </LikeButton>
+        {liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}
+      </Button>
     </FloatingButtonGroup>
   )
 }

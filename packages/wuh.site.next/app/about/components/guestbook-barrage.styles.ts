@@ -1,8 +1,9 @@
+import Button from '@wuh.site/components/button'
 import styled from '@wuh.site/components/styled'
 
 /* ====== Trigger ====== */
 
-export const GuestbookTrigger = styled.button`
+export const GuestbookTrigger = styled(Button)`
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -341,7 +342,7 @@ export const ComposerInput = styled.input`
   }
 `
 
-export const ComposerSend = styled.button`
+export const ComposerSend = styled(Button)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -378,7 +379,7 @@ export const ComposerSend = styled.button`
   }
 `
 
-export const ComposerBadge = styled.button`
+export const ComposerBadge = styled(Button)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
