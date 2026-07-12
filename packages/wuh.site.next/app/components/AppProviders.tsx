@@ -7,7 +7,7 @@ import { useRef } from 'react'
 import { useEventListener, useRequest } from 'ahooks'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
-import { VisitStatsReporter } from '../../components/visit-stats/visit-stats-reporter'
+import { VisitStatsReporter } from '@/components/visit-stats/visit-stats-reporter'
 import dynamic from 'next/dynamic'
 import { AudioPlayerProvider } from '@wuh.site/components/audio-player/provider'
 
