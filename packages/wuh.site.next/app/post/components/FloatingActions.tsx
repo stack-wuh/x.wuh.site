@@ -2,9 +2,8 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
-import Button from '@wuh.site/components/button'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
-import { FloatingButtonGroup } from '../styles'
+import { FloatingButtonGroup, FloatingButton, LikeButton } from '../styles'
 
 export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false }: {
   issueNumber: number
@@ -45,7 +44,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
 
   return (
     <FloatingButtonGroup>
-      <Button
+      <FloatingButton
         variant="outlined"
         color="secondary"
         size="small"
@@ -57,7 +56,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
           window.location.href = '/'
         }}
       />
-      <Button
+      <FloatingButton
         variant="outlined"
         color="secondary"
         size="small"
@@ -69,7 +68,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}
       />
-      <Button
+      <LikeButton
         variant="outlined"
         color="primary"
         size="small"
@@ -82,7 +81,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         style={liked ? { opacity: 0.8 } : undefined}
       >
         {liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}
-      </Button>
+      </LikeButton>
     </FloatingButtonGroup>
   )
 }
