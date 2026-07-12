@@ -211,12 +211,6 @@ export const CssVariableStyles = createGlobalStyle`
     --font-serif: Georgia, 'Songti SC', 'STSong', serif;
   }
 
-  @media (prefers-color-scheme: dark) {
-    html {
-      color-scheme: dark;
-    }
-  }
-
   html[data-no-transition] *,
   html[data-no-transition] *::before,
   html[data-no-transition] *::after {
