@@ -28,6 +28,11 @@
 - **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容
 - **路径:** `openspec/specs/seo/spec.md`
 
+
+## mobile-viewport — 移动端 viewport 增强
+- **关键词:** viewport, themeColor, colorScheme, 移动端, 浏览器主题色, 闪白修复
+- **需求:** 亮/暗主题工具栏颜色, colorScheme 声明
+- **路径:** `openspec/changes/archive/2026-07-12-P-mobile-viewport-enhance/specs/mobile-viewport/spec.md`
 ## repos-api — 仓库 API
 - **关键词:** GitHub API, 仓库, 置顶, GraphQL, Octokit, 缓存
 - **需求:** Get GitHub pinned repositories, 5-minute memory cache, Stale cache fallback
