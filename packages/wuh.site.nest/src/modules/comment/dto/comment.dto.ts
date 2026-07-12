@@ -28,6 +28,12 @@ export class CreateAnonymousCommentDto implements ICreateAnonymousCommentDto {
   @IsString()
   @IsOptional()
   page?: string;
+
+  @ApiPropertyOptional({ description: 'GitHub issue number (blog post)' })
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  issueNumber?: number;
 }
 
 export class QueryCommentDto implements IQueryCommentDto {

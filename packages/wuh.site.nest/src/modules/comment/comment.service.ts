@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Octokit } from '@octokit/rest';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
@@ -14,7 +16,19 @@ export class CommentService {
 
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    const token = this.configService.get<string>('GITHUB_PERSONAL_TOKEN');
+    if (token) {
+      this.octokit = new Octokit({ auth: token });
+      this.repoOwner = this.configService.get<string>('CONTENT_REPO_OWNER') || '';
+      this.repoName = this.configService.get<string>('CONTENT_REPO_NAME') || '';
+    }
+  }
+
+  private octokit?: Octokit;
+  private repoOwner = '';
+  private repoName = '';
 
   async create(createCommentDto: CreateAnonymousCommentDto): Promise<CommentDocument> {
     try {
@@ -93,6 +107,47 @@ export class CommentService {
 
   async delete(id: string): Promise<CommentDocument | null> {
     return this.commentModel.findByIdAndDelete(id).exec();
+  }
+
+  async approveAndPostToGitHub(commentId: string): Promise<CommentDocument | null> {
+    const comment = await this.commentModel.findById(commentId).exec();
+    if (!comment) return null;
+
+    if (!this.octokit) {
+      this.logger.error('GitHub token not configured, cannot post comment');
+      return this.commentModel
+        .findByIdAndUpdate(commentId, { status: 'approved' }, { new: true })
+        .exec();
+    }
+
+    try {
+      const body = comment.nickname
+        ? `**${comment.nickname}** 评论：
+
+${comment.body}`
+        : comment.body;
+
+      const { data } = await this.octokit.issues.createComment({
+        owner: this.repoOwner,
+        repo: this.repoName,
+        issue_number: comment.issueNumber,
+        body,
+      });
+
+      return this.commentModel
+        .findByIdAndUpdate(
+          commentId,
+          {
+            externalId: String(data.id),
+            status: 'approved',
+          },
+          { new: true },
+        )
+        .exec();
+    } catch (error) {
+      this.logger.error(`Failed to post comment to GitHub: ${error.message}`);
+      throw error;
+    }
   }
 
   private generateAvatarUrl(seed: string): string {
