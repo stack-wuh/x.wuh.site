@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Noto_Serif_SC } from 'next/font/google'
 import AppProviders from './components/AppProviders'
 
@@ -19,6 +19,13 @@ const notoSerifSC = Noto_Serif_SC({
 export const metadata: Metadata = {
   metadataBase: new URL('https://wuh.site'),
   robots: { index: true, follow: true },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
