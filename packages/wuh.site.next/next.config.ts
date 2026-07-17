@@ -27,10 +27,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.wuh.site',
+      },
       {
         protocol: 'https',
         hostname: 'src.wuh.site',
-      },      },
+      },
     ],
   },
   // API rewrite to NestJS backend
