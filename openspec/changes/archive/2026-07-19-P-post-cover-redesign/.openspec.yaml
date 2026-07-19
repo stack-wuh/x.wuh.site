@@ -380,7 +380,13 @@ commit:
     - hash: 2b40a5b
       message: 'feat(post): 重构博客详情页封面图体验 (#226)'
       at: 2026-07-19T16:10:00+08:00
-  pullRequest: null
+    - hash: 742db98
+      message: 'chore(openspec): 记录博客封面改版提交'
+      at: 2026-07-19T16:10:00+08:00
+  pullRequest:
+    number: 228
+    url: https://github.com/stack-wuh/x.wuh.site/pull/228
+    state: open
 runtime:
   phase: commit
   state: completed
