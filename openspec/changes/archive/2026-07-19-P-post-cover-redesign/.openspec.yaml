@@ -377,7 +377,7 @@ commit:
   status: pending
   branch: 226-feat-博客封面
   commits:
-    - hash: 23c6b89
+    - hash: 2b40a5b
       message: 'feat(post): 重构博客详情页封面图体验 (#226)'
       at: 2026-07-19T16:10:00+08:00
   pullRequest: null
