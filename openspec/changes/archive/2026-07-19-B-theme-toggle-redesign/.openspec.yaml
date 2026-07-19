@@ -370,18 +370,21 @@ archive:
           at: 2026-07-19T00:00:00+08:00
 
 commit:
-  status: pending # pending | completed | blocked
+  status: completed # pending | completed | blocked
   branch: 229-fix-主题切换按钮
-  commits: []
+  commits:
+    - hash: abfafac4fcdb3c6623df488623406a0bc1a6351e
+      message: fix: 重设计首页主题切换控件
+      at: 2026-07-19T00:00:00+08:00
   pullRequest: null
 
 runtime:
   phase: commit # propose | discuss | apply | review | archive | commit
-  state: running # idle | running | waiting_for_input | blocked | failed | completed
+  state: completed # idle | running | waiting_for_input | blocked | failed | completed
   attempts: 0
   resume:
     taskId: null
-    command: 提交
+    command: 已提交
   requiredInputs: []
   failure: null
   updatedAt: 2026-07-19T00:00:00+08:00
