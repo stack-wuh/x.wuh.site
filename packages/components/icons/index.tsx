@@ -33,6 +33,8 @@ export {
 export {
   Home as IconHome,
   Menu as IconBars,
+  Palette as IconPalette,
+  ChevronDown as IconChevronDown,
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
   RotateCw as IconRotate,

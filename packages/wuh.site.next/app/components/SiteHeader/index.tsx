@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useId, useState } from 'react'
-import { IconBars, IconLogo } from '@wuh.site/components/icons'
+import { IconBars, IconChevronDown, IconLogo, IconPalette } from '@wuh.site/components/icons'
 import { useThemeMode, type Theme } from '../theme/ThemeModeProvider'
 import * as S from './styles'
 
@@ -47,10 +47,19 @@ export default function SiteHeader() {
             </S.NavLink>
           </S.Nav>
 
-          <S.ThemeToggle type='button' onClick={toggleTheme} aria-label={`切换主题（当前：${THEME_LABELS[theme]}）`}>
-            <S.ThemeDot aria-hidden='true' />
-            <span>{THEME_LABELS[theme]}</span>
-          </S.ThemeToggle>
+          <S.DesktopThemeToggle
+            type='button'
+            onClick={toggleTheme}
+            aria-label={`切换主题（当前：${THEME_LABELS[theme]}）`}
+          >
+            <S.ThemeIcon aria-hidden='true'>
+              <IconPalette size={16} strokeWidth={2} />
+            </S.ThemeIcon>
+            <S.ThemeValue>{THEME_LABELS[theme]}</S.ThemeValue>
+            <S.ThemeChevron aria-hidden='true'>
+              <IconChevronDown size={14} strokeWidth={2} />
+            </S.ThemeChevron>
+          </S.DesktopThemeToggle>
 
           <S.MobileToggle
             type='button'
@@ -73,18 +82,27 @@ export default function SiteHeader() {
             知识库
           </S.MobileItem>
           <S.MobileActions>
-            <S.MobileActionButton
+            <S.MobileThemeAction
               type='button'
               onClick={() => {
                 toggleTheme()
                 close()
               }}
+              aria-label={`切换主题（当前：${THEME_LABELS[theme]}）`}
             >
-              <S.MobileThemeLabel>
-                <S.ThemeDot aria-hidden='true' />
-                <span>主题：{THEME_LABELS[theme]}</span>
-              </S.MobileThemeLabel>
-            </S.MobileActionButton>
+              <S.MobileThemeMain>
+                <S.ThemeIcon aria-hidden='true'>
+                  <IconPalette size={18} strokeWidth={2} />
+                </S.ThemeIcon>
+                <S.MobileThemeCopy>
+                  <S.MobileThemeTitle>切换主题</S.MobileThemeTitle>
+                  <S.MobileThemeCurrent>当前：{THEME_LABELS[theme]}</S.MobileThemeCurrent>
+                </S.MobileThemeCopy>
+              </S.MobileThemeMain>
+              <S.ThemeChevron aria-hidden='true'>
+                <IconChevronDown size={16} strokeWidth={2} />
+              </S.ThemeChevron>
+            </S.MobileThemeAction>
           </S.MobileActions>
         </S.MobileNav>
       </S.MobilePanel>
