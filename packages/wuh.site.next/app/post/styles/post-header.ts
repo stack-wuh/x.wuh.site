@@ -5,6 +5,11 @@ export const Header = styled.header`
   flex-direction: column;
   gap: var(--space-sm);
   margin-bottom: var(--space-xl);
+  order: 1;
+
+  @media (max-width: 767px) {
+    order: 2;
+  }
 `
 
 export const Title = styled.h1`
@@ -37,7 +42,30 @@ export const CoverImage = styled.div`
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: var(--space-lg);
+  order: 2;
   background: color-mix(in oklab, var(--background-200) 88%, var(--accent-color) 12%);
+  animation: coverEnter 280ms ease-out both;
+
+  @keyframes coverEnter {
+    from { opacity: 0; transform: scale(1.02); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @media (max-width: 767px) {
+    width: calc(100% + 48px);
+    height: clamp(220px, 60vw, 300px);
+    aspect-ratio: auto;
+    max-height: none;
+    margin: 0 -24px var(--space-lg);
+    border-radius: 0;
+    order: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  > * { height: 100%; }
 
   img {
     width: 100%;
@@ -45,6 +73,11 @@ export const CoverImage = styled.div`
     object-fit: cover;
     display: block;
   }
+`
+
+export const PostLead = styled.div`
+  display: flex;
+  flex-direction: column;
 `
 
 export const AuthorRow = styled.div`

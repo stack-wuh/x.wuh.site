@@ -23,6 +23,7 @@ import {
   ContentGrid,
   MainColumn,
   MarkdownBody,
+  PostLead,
   RedundantInfoCard,
   ShareCardInner,
   ShareInfoCard,
@@ -204,11 +205,12 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
   return (
     <Container ref={containerRef}>
-      <PostHeader issue={issue} />
-
       <ContentGrid>
         <MainColumn>
-          <PostCover src={issue.metadata?.cover} alt={issue.title} />
+          <PostLead>
+            <PostCover src={issue.metadata?.cover} alt={issue.metadata?.coverAlt || issue.title} />
+            <PostHeader issue={issue} />
+          </PostLead>
 
           {tocResult.toc.length > 0 && (
             <TocMobile>

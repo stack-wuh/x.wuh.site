@@ -58,6 +58,7 @@ export interface CreateContentDto {
     slug?: string;
     summary?: string;
     cover?: string;
+    coverAlt?: string;
     keywords?: string[];
     rssExcluded?: boolean;
     extra?: Record<string, unknown>;
@@ -68,6 +69,7 @@ export interface UpdateContentMetadataDto {
   slug?: string;
   summary?: string;
   cover?: string;
+  coverAlt?: string;
   keywords?: string[];
   rssExcluded?: boolean;
   extra?: Record<string, unknown>;
@@ -130,6 +132,7 @@ export interface ContentItem {
     slug?: string;
     summary?: string;
     cover?: string;
+    coverAlt?: string;
     keywords?: string[];
     rssExcluded?: boolean;
     extra?: Record<string, unknown>;

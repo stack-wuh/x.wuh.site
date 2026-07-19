@@ -41,6 +41,7 @@ export class CreateContentDto implements ICreateContentDto {
     slug?: string;
     summary?: string;
     cover?: string;
+    coverAlt?: string;
     keywords?: string[];
     rssExcluded?: boolean;
     extra?: Record<string, unknown>;
@@ -62,6 +63,11 @@ export class UpdateContentMetadataDto implements IUpdateContentMetadataDto {
   @IsString()
   @IsOptional()
   cover?: string;
+
+  @ApiPropertyOptional({ description: 'Cover image alternative text' })
+  @IsString()
+  @IsOptional()
+  coverAlt?: string;
 
   @ApiPropertyOptional({ description: 'Keywords', type: [String] })
   @IsArray()

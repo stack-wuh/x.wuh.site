@@ -12,6 +12,7 @@ export type IssueUser = {
 
 export type IssueMetadata = {
   cover?: string | null
+  coverAlt?: string | null
   summary?: string | null
   slug?: string | null
   keywords?: string[] | null

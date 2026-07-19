@@ -133,6 +133,11 @@
 - **需求:** PostToolbar 流动阅读线样式
 - **路径:** `openspec/specs/post/spec.md`
 
+## post-cover — 博客详情页封面图
+- **关键词:** 博客, 封面图, GitHub Issue, metadata.cover, coverAlt, 移动端, 动效
+- **需求:** Issue 隐藏封面元数据, 显式封面与正文图片独立, 移动端封面开场, 封面动效可访问性, 文章详情封面回退与去重, 桌面端阅读栏封面
+- **路径:** `openspec/specs/post-cover/spec.md`
+
 ## visit-stats — 全站访问量统计
 - **关键词:** 访问量统计, visit-stats, 统计, pageview, 计数器, analytics, 独立访客, UV
 - **需求:** 前端自动上报访问, 后端按 IP 去重计数, 查询访问量统计, 页面展示统计数据

@@ -23,12 +23,18 @@ export function extractFirstImageUrl(bodyHtml?: string | null, body?: string | n
 export function extractFirstImageAndClean(
   bodyHtml?: string | null,
   body?: string | null,
-): { url: string | undefined; cleanHtml: string | null | undefined } {
+): { url: string | undefined; cleanHtml: string | null | undefined; cleanBody: string | null | undefined } {
   const url = extractFirstImageUrl(bodyHtml, body);
-  if (!url || !bodyHtml) {
-    return { url, cleanHtml: bodyHtml };
+  if (!url) {
+    return { url, cleanHtml: bodyHtml, cleanBody: body };
   }
-  const cleanHtml = bodyHtml.replace(HTML_IMAGE_RE, '');
-  const cleanedAnchorHtml = cleanHtml.replace(EMPTY_ANCHOR_RE, '');
-  return { url, cleanHtml: cleanedAnchorHtml || null };
+
+  const cleanHtml = bodyHtml?.replace(HTML_IMAGE_RE, '').replace(EMPTY_ANCHOR_RE, '') || null;
+  const cleanBody = body
+    ?.replace(HTML_IMAGE_RE, '')
+    .replace(MARKDOWN_IMAGE_RE, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  return { url, cleanHtml, cleanBody };
 }

@@ -1,0 +1,392 @@
+schema: agent-loop/v1
+change:
+  id: 2026-07-19-P-post-cover-redesign
+  title: 重构博客详情页封面图体验
+  type: feature
+  status: archived
+  issue: https://github.com/stack-wuh/x.wuh.site/issues/226
+artifacts:
+  proposal:
+    path: proposal.md
+    status: completed
+    template:
+      id: proposal
+      source: skills/shadow-dev-propose/templates/proposal.md
+      contractVersion: 1
+      digest: sha256:426c31b60cb50e7457a6e4aa6f86c9bd6718cdd6217f292d98f1b9739ad612fd
+    validation:
+      status: passed
+      checkedAt: 2026-07-19T11:04:57+08:00
+      missing: []
+      invalidPatterns: []
+  design:
+    path: design.md
+    status: completed
+    template:
+      id: design
+      source: skills/shadow-dev-propose/templates/design.md
+      contractVersion: 1
+      digest: sha256:2483c466de2ab4e8e34a1e147e098a6cef61ff6b5a69d567f565987fdd77b3e4
+    validation:
+      status: passed
+      checkedAt: 2026-07-19T11:27:36+08:00
+      missing: []
+      invalidPatterns: []
+  tasks:
+    path: tasks.md
+    status: completed
+    template:
+      id: tasks
+      source: skills/shadow-dev-propose/templates/tasks.md
+      contractVersion: 1
+      digest: sha256:d67578bdb054f235acd942e8cf1bb436abbd6831ff52469e30b82c9c845d37f9
+    validation:
+      status: passed
+      checkedAt: 2026-07-19T11:27:36+08:00
+      missing: []
+      invalidPatterns: []
+  specs:
+    status: completed
+    entries:
+      - path: specs/post-cover/spec.md
+        status: completed
+        template:
+          id: spec
+          source: skills/shadow-dev-propose/templates/spec.md
+          contractVersion: 1
+          digest: sha256:322bb9b2a379e72fa08f5ce84fbee689fddac788245ebf2c4d01153947072ea5
+        validation:
+          status: passed
+          checkedAt: 2026-07-19T11:04:57+08:00
+          missing: []
+          invalidPatterns: []
+proposal:
+  status: completed
+  source:
+    channel: codex
+    userIntent: 重新设计博客详情页封面图，并让封面元数据兼容 GitHub Issues 同步。
+  intent: 为博客详情页建立独立、可编辑、非重复的封面图机制，并以端侧差异化布局改善阅读开场。
+  background: 现有详情响应会在 metadata.cover 缺失时从正文首图推导封面并移除该图，无法区分文章封面与第一张内容图。
+  goals:
+    - 支持 HTML 注释中的显式封面 URL 与替代文本。
+    - 兼容未迁移历史文章的首图回退与去重。
+    - 移动端使用受高度限制的全宽封面开场。
+    - 桌面端在主阅读栏内保留克制的封面展示。
+    - 提供尊重减少动态效果偏好的轻量封面动效。
+  nonGoals:
+    - 不批量修改现有 Issues。
+    - 不新增图片托管、封面生成或可视化内容编辑能力。
+    - 不改造桌面端为跨栏大图布局。
+  scope:
+    packages:
+      - packages/wuh.site.nest
+      - packages/shared-contracts
+      - packages/wuh.site.next
+    files:
+      - packages/wuh.site.nest/src/modules/sync/sync.service.ts
+      - packages/wuh.site.nest/src/modules/content/content.controller.ts
+      - packages/wuh.site.nest/src/modules/content/content-cover.util.ts
+      - packages/shared-contracts/src/index.ts
+      - packages/wuh.site.next/app/post/PostView.tsx
+      - packages/wuh.site.next/app/post/components/PostCover.tsx
+      - packages/wuh.site.next/app/post/styles/post-header.ts
+  acceptanceCriteria:
+    - HTML 注释配置的 cover 不在 GitHub Issue 或博客正文可见内容中出现。
+    - 显式封面与正文第一张图片可同时展示且互不删除。
+    - 未显式配置封面的旧文章维持首图回退，且首图不在正文重复出现。
+    - 移动端封面位于文章信息之前且有明确高度上限。
+    - 桌面端封面不越过主阅读栏。
+    - 动效在减少动态效果偏好下停用。
+  constraints:
+    - GitHub Issues 仍是唯一内容源，写作流程不得要求额外后台。
+    - 延续 styled-components 和现有 CSS 变量主题令牌。
+    - 保持已有 Open Graph、Twitter Card 和 JSON-LD 封面使用方式兼容。
+  risks:
+    - 隐藏元数据语法需具备容错性，避免误解析普通 HTML 注释。
+    - 外部封面 URL 仍需符合 Next.js 图片远程域名配置。
+    - 图像裁切会影响不同主体位置，需要在实现中允许通过 object-position 处理。
+  domain:
+    name: post-cover
+    keywords:
+      - 博客
+      - 封面图
+      - GitHub Issue
+      - metadata.cover
+      - 移动端
+      - 动效
+    description: 博客详情页封面来源、去重、响应式展示和可访问动效规范。
+discuss:
+  status: completed
+  implementationNotes:
+    readFiles:
+      - packages/wuh.site.nest/src/modules/sync/sync.service.ts
+      - packages/wuh.site.nest/src/modules/content/content-cover.util.ts
+      - packages/wuh.site.nest/src/modules/content/content.controller.ts
+      - packages/wuh.site.nest/src/modules/content/content.controller.spec.ts
+      - packages/shared-contracts/src/index.ts
+      - packages/wuh.site.next/app/post/[number]/page.tsx
+      - packages/wuh.site.next/app/post/PostView.tsx
+      - packages/wuh.site.next/app/post/components/PostCover.tsx
+      - packages/wuh.site.next/app/post/components/PostHeader.tsx
+      - packages/wuh.site.next/app/post/styles/post-header.ts
+      - packages/wuh.site.next/app/post/styles/post-layout.ts
+      - packages/wuh.site.next/next.config.ts
+    observations:
+      - SyncService already parses wuh-site-metadata JSON comments.
+      - The detail controller only removes fallback images from bodyHtml, while the Next.js route re-renders the raw body.
+      - Existing cover rendering is a single PostCover below the title and has a 16:9/360px desktop constraint.
+  decisions:
+    - id: issue-metadata-format
+      question: 封面在 GitHub Issue 中的声明格式
+      options: [existing-json-comment, new-yaml-frontmatter-comment, issue-label-or-separate-record]
+      selected: existing-json-comment
+      rationale: 复用已存在的 wuh-site-metadata JSON 注释解析器，避免双重写作规范和可见正文噪声。
+    - id: fallback-deduplication
+      question: 首图回退时如何防止正文重复
+      options: [clean-html-only, clean-returned-markdown-and-html, keep-duplicate]
+      selected: clean-returned-markdown-and-html
+      rationale: 前端从 body 重新渲染 Markdown，必须同步清理两种展示格式才会真正去重。
+    - id: responsive-cover-order
+      question: 封面在移动端与桌面端的排列
+      options: [single-node-css-order, duplicate-mobile-and-desktop-nodes, same-order-on-all-viewports]
+      selected: single-node-css-order
+      rationale: 使用一个封面节点避免重复请求和重复无障碍语义，同时满足移动端封面在标题前、桌面端标题在前。
+  architecture:
+    summary: 后端解析并清理隐藏元数据，详情响应按显式封面或首图回退返回无重复内容；前端以单一响应式文章开场展示封面。
+    modules: [content-metadata.util, content-cover.util, ContentController, shared-contracts, PostLead]
+  contracts:
+    api:
+      - GET /content/posts/:slugOrNumber response metadata gains optional coverAlt.
+    data:
+      - Content.metadata gains optional coverAlt.
+      - wuh-site-metadata JSON comment supports cover and coverAlt.
+  reuse:
+    components: ['@wuh.site/components/image', '@wuh.site/components/styled', PostHeader, PostCover]
+    newComponents: [content-metadata.util, PostLead]
+  impact:
+    dependencies: []
+    compatibility: Existing Issues without cover keep first-image fallback; existing clients can ignore coverAlt.
+    rollback: Revert response cleaning and responsive lead styling; persisted optional metadata needs no migration.
+apply:
+  status: completed
+  generatedFrom: [proposal, discuss]
+  instructions:
+    - Follow TDD for behavior changes: capture failing targeted tests before production code.
+    - Preserve the original GitHub Issue body in MongoDB; only sanitize detail responses.
+    - Do not introduce a second Issue metadata syntax.
+  workflow:
+    - id: cover-contract-tests
+      title: 为隐藏元数据和首图回退补充失败测试
+      status: completed
+      dependsOn: []
+      files:
+        - packages/wuh.site.nest/src/modules/content/content-metadata.util.spec.ts
+        - packages/wuh.site.nest/src/modules/content/content-cover.util.spec.ts
+        - packages/wuh.site.nest/src/modules/content/content.controller.spec.ts
+      instructions:
+        - Add tests before changing production code.
+        - Record the initial failing targeted Jest result in task evidence.
+      verification:
+        - pnpm --filter @wuh.site/nest test -- content-metadata.util.spec.ts content-cover.util.spec.ts content.controller.spec.ts
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: Node 20 + direct Jest baseline for content-cover.util.spec.ts and content.controller.spec.ts
+          result: passed; 10 tests passed
+          at: 2026-07-19T11:30:00+08:00
+        - command: Node 20 + direct Jest red run for content-metadata.util.spec.ts, content-cover.util.spec.ts, and content.controller.spec.ts
+          result: failed as expected; missing metadata utility, missing cleanBody, and unstripped detail body
+          at: 2026-07-19T11:30:00+08:00
+      failure: null
+    - id: implement-cover-contract
+      title: 实现元数据清理和双格式首图去重
+      status: completed
+      dependsOn: [cover-contract-tests]
+      files:
+        - packages/wuh.site.nest/src/modules/content/content-metadata.util.ts
+        - packages/wuh.site.nest/src/modules/content/content-cover.util.ts
+        - packages/wuh.site.nest/src/modules/content/content.controller.ts
+        - packages/wuh.site.nest/src/modules/sync/sync.service.ts
+      instructions:
+        - Implement only the behavior covered by the new tests.
+        - Keep explicit cover images independent from content images.
+      verification:
+        - pnpm --filter @wuh.site/nest test -- content-metadata.util.spec.ts content-cover.util.spec.ts content.controller.spec.ts
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: Node 20 + direct Jest after clearing cache for content-metadata.util.spec.ts
+          result: passed; 2 tests passed
+          at: 2026-07-19T11:30:00+08:00
+        - command: Node 20 + ts-node direct utility assertions
+          result: passed; metadata parsing, stripping, and Markdown/HTML fallback cleanup asserted
+          at: 2026-07-19T11:30:00+08:00
+        - command: Node 20 + direct Jest for cover/controller tests
+          result: unstable; exited SIGSEGV or hung before assertions despite cache clearing
+          at: 2026-07-19T11:49:39+08:00
+      failure:
+        kind: verification
+        message: Jest/ts-jest is unstable in this environment. User explicitly authorized continuation with targeted manual assertions and later CI verification.
+    - id: propagate-cover-alt
+      title: 贯通 coverAlt 的 schema、共享类型和 SEO 映射
+      status: completed
+      dependsOn: [implement-cover-contract]
+      files:
+        - packages/wuh.site.nest/src/modules/content/schemas/content.schema.ts
+        - packages/wuh.site.nest/src/modules/content/dto/content.dto.ts
+        - packages/shared-contracts/src/index.ts
+        - packages/wuh.site.next/app/post/PostView.types.ts
+        - packages/wuh.site.next/app/post/[number]/page.tsx
+      instructions:
+        - Add coverAlt as an optional field without breaking existing metadata consumers.
+        - Use it for Open Graph image alt with title fallback.
+      verification:
+        - pnpm exec tsc --noEmit
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: Static contract inspection and git diff --check
+          result: passed; coverAlt is optional through schema, DTO, shared contracts, Issue mapping, and Open Graph alt fallback
+          at: 2026-07-19T12:00:00+08:00
+      failure: null
+    - id: implement-responsive-post-lead
+      title: 重构文章开场区域并实现封面高度与动效
+      status: completed
+      dependsOn: [propagate-cover-alt]
+      files:
+        - packages/wuh.site.next/app/post/PostView.tsx
+        - packages/wuh.site.next/app/post/components/PostCover.tsx
+        - packages/wuh.site.next/app/post/styles/post-header.ts
+        - packages/wuh.site.next/app/post/styles/post-layout.ts
+        - packages/wuh.site.next/app/post/styles/index.ts
+      instructions:
+        - Render a single PostCover node and use responsive styling to order it around PostHeader.
+        - Apply mobile full-bleed height constraints and a reduced-motion-safe entry animation.
+      verification:
+        - pnpm exec tsc --noEmit
+        - Playwright screenshots at 390px and 1440px
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: git diff --check
+          result: passed; single responsive PostCover node, mobile full-bleed styling, and reduced-motion rule added
+          at: 2026-07-19T12:00:00+08:00
+        - command: Node 20 frontend TypeScript check
+          result: blocked; process hung without diagnostics in the same unstable local runtime
+          at: 2026-07-19T12:00:00+08:00
+      failure: null
+    - id: verify-post-cover-experience
+      title: 验证封面数据、响应式布局与无障碍降级
+      status: completed
+      dependsOn: [implement-responsive-post-lead]
+      files:
+        - packages/wuh.site.nest/src/modules/content/content-metadata.util.spec.ts
+        - packages/wuh.site.next/app/post/
+      instructions:
+        - Verify explicit cover, first-image fallback, and no-cover behavior.
+        - Verify both viewport layouts and reduced-motion behavior.
+      verification:
+        - pnpm --filter @wuh.site/nest test -- content-metadata.util.spec.ts content-cover.util.spec.ts content.controller.spec.ts
+        - pnpm exec tsc --noEmit
+        - Playwright screenshots at 390px and 1440px
+      requiredInputs: []
+      attempts: 2
+      maxAttempts: 2
+      evidence:
+        - command: Local Node/Jest and frontend TypeScript verification
+          result: blocked; Jest intermittently segfaults or hangs and frontend TypeScript check hangs
+          at: 2026-07-19T12:00:00+08:00
+        - command: Node 20 direct Jest with --runInBand --no-cache and isolated cacheDirectory
+          result: passed; 3 suites and 14 tests passed
+          at: 2026-07-19T12:10:00+08:00
+        - command: Node 20 direct frontend tsc with declaration enabled
+          result: blocked; TypeScript process exited SIGSEGV after the existing declarationMap configuration constraint was resolved
+          at: 2026-07-19T12:10:00+08:00
+        - command: Node 20 + PORT=3001 pnpm dev:next
+          result: blocked; no Next.js ready output after 60 seconds, process stopped to avoid a hanging terminal
+          at: 2026-07-19T12:15:00+08:00
+        - command: Node 20 direct next dev -p 3001 with GC flags
+          result: blocked; process remained alive without logs, did not open TCP port 3001, and was stopped after verification
+          at: 2026-07-19T12:20:00+08:00
+      failure:
+        kind: verification
+        message: Backend Jest verification is stable with an isolated no-cache Node 20 invocation, but frontend TypeScript and browser verification still require a stable local runtime or CI execution.
+  repairWorkflow: []
+review:
+  status: passed
+  summary: 后端定向 Jest 通过，四份 OpenSpec 固定产物契约与差异空白检查通过；本机前端 TypeScript 和浏览器验证不可用的 warning 已由用户验收接受。
+  verification:
+    - id: backend-cover-tests
+      command: Node 20 direct Jest with --runInBand --no-cache and isolated cacheDirectory
+      result: passed
+      summary: 3 suites and 14 tests passed.
+      at: 2026-07-19T12:10:00+08:00
+    - id: artifact-contracts
+      command: validate-artifact-contract for proposal, design, tasks, and spec
+      result: passed
+      summary: All four artifacts passed their template contracts.
+      at: 2026-07-19T12:20:00+08:00
+    - id: diff-whitespace
+      command: git diff --check
+      result: passed
+      summary: No whitespace errors.
+      at: 2026-07-19T12:20:00+08:00
+    - id: frontend-local-verification
+      command: Node 20 direct frontend tsc and next dev
+      result: unavailable
+      summary: Local TypeScript exits SIGSEGV and Next never opens its port; user accepted this warning during acceptance.
+      at: 2026-07-19T12:20:00+08:00
+  findings:
+    - id: R-001
+      severity: warning
+      file: packages/wuh.site.next
+      message: Local frontend TypeScript and browser verification could not run because the Node/Next runtime exits or hangs before diagnostics/listening.
+      status: accepted
+archive:
+  status: completed
+  movedAt: 2026-07-19T16:00:47+08:00
+  archivedAt: 2026-07-19T16:00:47+08:00
+  source: openspec/changes/2026-07-19-P-post-cover-redesign
+  destination: openspec/changes/archive/2026-07-19-P-post-cover-redesign
+  specSync:
+    - domain: post-cover
+      source: specs/post-cover/spec.md
+      target: openspec/specs/post-cover/spec.md
+      result: created
+      evidence:
+        - command: copy incremental post-cover spec to main OpenSpec spec
+          result: passed
+          at: 2026-07-19T16:00:47+08:00
+  componentScenarios:
+    - component: PostLead
+      decision: not-applicable
+      rationale: 私有详情页布局包装，不是组件库可复用组件；不创建 demo 或 navigation scenario。
+  indexEntry:
+    domain: post-cover
+    path: openspec/specs/post-cover/spec.md
+    result: added
+    evidence:
+      - command: update openspec/INDEX.md
+        result: passed
+        at: 2026-07-19T16:00:47+08:00
+commit:
+  status: pending
+  branch: 226-feat-博客封面
+  commits:
+    - hash: 23c6b89
+      message: 'feat(post): 重构博客详情页封面图体验 (#226)'
+      at: 2026-07-19T16:10:00+08:00
+  pullRequest: null
+runtime:
+  phase: commit
+  state: completed
+  startedAt: 2026-07-19T11:04:57+08:00
+  updatedAt: 2026-07-19T16:00:47+08:00
+  failure: null
+  requiredInputs: []
+  resume:
+    command: 提交
