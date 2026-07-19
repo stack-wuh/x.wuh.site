@@ -54,6 +54,7 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   body_html: item.bodyHtml || '',
   metadata: item.metadata ? {
     cover: item.metadata.cover || null,
+    coverAlt: item.metadata.coverAlt || null,
     summary: item.metadata.summary || null,
     slug: item.metadata.slug || null,
     keywords: item.metadata.keywords || null,
@@ -119,7 +120,7 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
       type: 'article',
       publishedTime: issue.created_at,
       modifiedTime: issue.updated_at,
-      images: cover ? [{ url: cover, alt: issue.title }] : [],
+      images: cover ? [{ url: cover, alt: issue.metadata?.coverAlt || issue.title }] : [],
     },
     twitter: {
       card: 'summary_large_image',

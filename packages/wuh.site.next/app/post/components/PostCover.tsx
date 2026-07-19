@@ -13,7 +13,7 @@ export default function PostCover({ src, alt }: Props) {
 
   return (
     <CoverImage>
-      <Image src={src} alt={alt} fill ratio='16:9' />
+      <Image src={src} alt={alt} fill ratio='16:9' priority />
     </CoverImage>
   )
 }

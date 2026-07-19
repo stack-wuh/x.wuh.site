@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Octokit } from '@octokit/rest';
 import { ContentService } from '../content/content.service';
 import { CommentService } from '../comment/comment.service';
+import { parseIssueMetadata } from '../content/content-metadata.util';
 
 @Injectable()
 export class SyncService {
@@ -73,7 +74,7 @@ export class SyncService {
         issue_number: issueNumber,
       });
 
-      const extractedMeta = extractMetadata(issue.body || '')
+      const extractedMeta = parseIssueMetadata(issue.body || '')
 
       const contentData = {
         externalId: issue.id,
@@ -191,17 +192,5 @@ export class SyncService {
       this.logger.error(`Failed to post comment to GitHub: ${error.message}`);
       throw error;
     }
-  }
-}
-
-const METADATA_RE = /<!--\s*wuh-site-metadata:\s*(\{[\s\S]*?\})\s*-->/;
-
-function extractMetadata(body: string): Record<string, unknown> | null {
-  try {
-    const match = body.match(METADATA_RE);
-    if (!match) return null;
-    return JSON.parse(match[1]);
-  } catch {
-    return null;
   }
 }

@@ -165,5 +165,42 @@ describe('ContentController likePost', () => {
     const result = await controller.getPostDetail('155', req, res);
 
     expect(result.metadata.cover).toBe('https://example.com/cover.png');
+    expect(result.body).toBe('');
+    expect(result.bodyHtml).toBe('<p>intro</p>');
+  });
+
+  it('keeps the first content image when an explicit cover is configured', async () => {
+    const contentService = {
+      findBySlugOrNumber: jest.fn().mockResolvedValue({
+        number: 155,
+        toJSON: () => ({
+          number: 155,
+          title: 'Post',
+          body:
+            '<!-- wuh-site-metadata: {"cover":"https://example.com/cover.png","coverAlt":"封面描述"} -->\n\n![content](https://example.com/content.png)',
+          bodyHtml: '<img src="https://example.com/content.png" />',
+          metadata: { cover: 'https://example.com/cover.png', coverAlt: '封面描述' },
+          labels: [],
+          state: 'open',
+          comments: 0,
+          viewCount: 0,
+          likeCount: 1,
+          createdAtGitHub: new Date(),
+          updatedAtGitHub: new Date(),
+        }),
+      }),
+      incrementViewCount: jest.fn().mockResolvedValue(undefined),
+      findAdjacentPosts: jest.fn().mockResolvedValue({ prev: null, next: null, total: 1, position: 1 }),
+      hasLiked: jest.fn().mockResolvedValue(false),
+    };
+    const controller = new ContentController(contentService as any);
+    const req = { cookies: { anonId: 'anon-123' }, headers: {} } as any;
+    const res = { cookie: jest.fn() } as any;
+
+    const result = await controller.getPostDetail('155', req, res);
+
+    expect(result.metadata).toEqual({ cover: 'https://example.com/cover.png', coverAlt: '封面描述' });
+    expect(result.body).toBe('![content](https://example.com/content.png)');
+    expect(result.bodyHtml).toBe('<img src="https://example.com/content.png" />');
   });
 });

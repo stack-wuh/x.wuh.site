@@ -44,6 +44,7 @@ export class Content {
       slug: String,
       summary: String,
       cover: String,
+      coverAlt: String,
       keywords: [String],
       rssExcluded: Boolean,
       extra: { type: Map, of: String },
@@ -54,6 +55,7 @@ export class Content {
     slug?: string;
     summary?: string;
     cover?: string;
+    coverAlt?: string;
     keywords?: string[];
     rssExcluded?: boolean;
     extra?: Record<string, unknown>;

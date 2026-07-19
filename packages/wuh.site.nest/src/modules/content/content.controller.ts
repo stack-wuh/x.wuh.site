@@ -5,6 +5,7 @@ import { ContentService } from './content.service';
 import { QueryContentDto } from './dto/content.dto';
 import { Request, Response } from 'express';
 import { extractFirstImageAndClean } from './content-cover.util';
+import { stripIssueMetadata } from './content-metadata.util';
 
 const ANON_COOKIE_NAME = 'anonId';
 const ANON_COOKIE_MAX_AGE = 1000 * 60 * 60 * 24 * 365;
@@ -45,15 +46,29 @@ type PostWithCoverSource = {
 };
 
 function withDerivedCover<T extends PostWithCoverSource>(post: T): T {
+  const body = stripIssueMetadata(post.body);
+  const bodyHtml = stripIssueMetadata(post.bodyHtml);
+
   if (post.metadata?.cover) {
-    return post;
+    return {
+      ...post,
+      body,
+      bodyHtml,
+    } as T;
   }
 
-  const { url: cover, cleanHtml } = extractFirstImageAndClean(post.bodyHtml, post.body);
-  if (!cover) return post;
+  const { url: cover, cleanHtml, cleanBody } = extractFirstImageAndClean(bodyHtml, body);
+  if (!cover) {
+    return {
+      ...post,
+      body,
+      bodyHtml,
+    } as T;
+  }
 
   return {
     ...post,
+    body: cleanBody,
     bodyHtml: cleanHtml,
     metadata: {
       ...(post.metadata ?? {}),

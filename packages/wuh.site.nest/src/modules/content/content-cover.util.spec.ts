@@ -1,4 +1,4 @@
-import { extractFirstImageUrl } from './content-cover.util';
+import { extractFirstImageAndClean, extractFirstImageUrl } from './content-cover.util';
 
 describe('extractFirstImageUrl', () => {
   it('extracts the first html image src', () => {
@@ -23,5 +23,18 @@ describe('extractFirstImageUrl', () => {
 
   it('returns undefined when no image is present', () => {
     expect(extractFirstImageUrl('<p>no image</p>', 'plain text')).toBeUndefined();
+  });
+
+  it('removes the fallback image from both HTML and Markdown', () => {
+    expect(
+      extractFirstImageAndClean(
+        '<p>intro</p><img src="https://example.com/cover.png" /><img src="https://example.com/second.png" />',
+        'intro\n\n![cover](https://example.com/cover.png)\n\n![second](https://example.com/second.png)',
+      ),
+    ).toEqual({
+      url: 'https://example.com/cover.png',
+      cleanHtml: '<p>intro</p><img src="https://example.com/second.png" />',
+      cleanBody: 'intro\n\n![second](https://example.com/second.png)',
+    });
   });
 });
