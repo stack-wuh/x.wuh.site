@@ -3,7 +3,7 @@
 # 组件/Hooks/公共函数索引 — 按领域关键字检索
 # ================================================================
 version: 1
-updated: 2026-07-11
+updated: 2026-07-19
 
 categories:
   - name: UI 组件
@@ -31,6 +31,13 @@ categories:
         scenarios:
           - wuh.site/demo-primary-action
           - wuh.site/demo-icon-button
+
+      - name: SiteHeader Theme Toggle
+        path: "packages/wuh.site.next/app/components/SiteHeader"
+        description: 首页头部主题切换控件，桌面端为胶囊按钮，移动端为菜单内整行操作项，使用 outline 图标和动态无障碍标签
+        keywords: [theme, theme-toggle, palette, responsive, mobile, accessibility, 主题, 主题切换, 调色盘, 响应式, 移动端, 可访问性]
+        scenarios:
+          - wuh.site/demo-theme-toggle
 
       - name: Pagination
         path: "@wuh.site/components/pagination"
