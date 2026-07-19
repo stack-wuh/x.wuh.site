@@ -376,7 +376,13 @@ commit:
     - hash: abfafac4fcdb3c6623df488623406a0bc1a6351e
       message: fix: 重设计首页主题切换控件
       at: 2026-07-19T00:00:00+08:00
-  pullRequest: null
+    - hash: 56d46fe
+      message: chore: 记录主题切换变更提交状态
+      at: 2026-07-19T00:00:00+08:00
+  pullRequest:
+    number: 230
+    url: https://github.com/stack-wuh/x.wuh.site/pull/230
+    state: open
 
 runtime:
   phase: commit # propose | discuss | apply | review | archive | commit
