@@ -18,6 +18,14 @@ const notoSerifSC = Noto_Serif_SC({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://wuh.site'),
+  title: {
+    default: 'wuh.site · 朝朝如念',
+    template: '%s · wuh.site',
+  },
+  description: '记录前端工程、开源项目、设计系统与个人思考。',
+  authors: [{ name: 'shadow', url: 'https://github.com/stack-wuh' }],
+  creator: 'shadow',
+  publisher: 'wuh.site',
   robots: { index: true, follow: true },
 }
 

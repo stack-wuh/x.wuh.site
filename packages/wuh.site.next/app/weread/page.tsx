@@ -7,11 +7,11 @@ const SITE_URL = 'https://wuh.site'
 const PER_PAGE = 10
 
 export const metadata: Metadata = {
-  title: '微信读书 · wuh.site',
+  title: '微信读书',
   description: 'stack-wuh 的微信读书书架',
   alternates: { canonical: `${SITE_URL}/weread` },
   openGraph: {
-    title: '微信读书 · wuh.site',
+    title: '微信读书',
     description: 'stack-wuh 的微信读书书架',
     url: `${SITE_URL}/weread`,
     siteName: 'wuh.site',

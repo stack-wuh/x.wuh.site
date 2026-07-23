@@ -5,7 +5,6 @@ import HomeView from './HomeView'
 
 const SITE_URL = 'https://wuh.site'
 
-export const dynamic = 'force-dynamic'
 
 function logHomeFetchError(moduleName: string, error: unknown) {
   const message = error instanceof Error ? error.message : JSON.stringify(error)
@@ -13,12 +12,12 @@ function logHomeFetchError(moduleName: string, error: unknown) {
 }
 
 export const metadata: Metadata = {
-  title: 'wuh.site · 朝朝如念',
+  title: '朝朝如念',
   description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
   robots: { index: true, follow: true },
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: 'wuh.site · 朝朝如念',
+    title: '朝朝如念',
     description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
     url: SITE_URL,
     siteName: 'wuh.site',
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'wuh.site · 朝朝如念',
+    title: '朝朝如念',
     description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
   },
 }

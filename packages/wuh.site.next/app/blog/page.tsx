@@ -7,7 +7,7 @@ import { toLabelParams } from './blog-filter-utils'
 const SITE_URL = 'https://wuh.site'
 
 export const metadata: Metadata = {
-  title: '博客 · wuh.site',
+  title: '博客',
   description: '收录 GitHub Issues 中的全部博客文章',
   robots: { index: true, follow: true },
   alternates: { canonical: `${SITE_URL}/blog` },
