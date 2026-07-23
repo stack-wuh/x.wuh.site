@@ -3,9 +3,18 @@
 # 组件/Hooks/公共函数索引 — 按领域关键字检索
 # ================================================================
 version: 1
-updated: 2026-07-11
+updated: 2026-07-23
 
 categories:
+  - name: 后台 Console
+    key: admin-console
+    items:
+      - name: Console AdminShell
+        path: "packages/wuh.site.console/src/components/AdminShell.tsx"
+        description: 独立后台 Console 的导航壳层，展示当前 GitHub 用户与 root/reader 状态；仅供 Console 应用内部复用，不沉淀到通用组件包
+        keywords: [console, admin, shell, navigation, root, reader, 后台, 导航, 权限]
+        scenarios: []
+
   - name: UI 组件
     key: ui-component
     items:
