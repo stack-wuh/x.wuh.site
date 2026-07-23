@@ -43,3 +43,13 @@ test('桌面端主题控件与通用 Button 视觉样式解耦', () => {
   assert.match(stylesSource, /border-radius:\s*999px/)
   assert.match(stylesSource, /min-height:\s*36px/)
 })
+
+test('移动端 Header 菜单按钮使用独立按钮样式并固定汉堡图标尺寸', () => {
+  assert.match(headerSource, /<S\.MobileToggle[\s\S]*<IconBars \/>/)
+  assert.match(stylesSource, /export const MobileToggle = styled\.button/)
+  assert.match(stylesSource, /export const MobileToggle = styled\.button[\s\S]*?svg \{/)
+  assert.match(stylesSource, /MobileToggle[\s\S]*?svg[\s\S]*?width: 20px/)
+  assert.match(stylesSource, /MobileToggle[\s\S]*?svg[\s\S]*?height: 20px/)
+  assert.match(stylesSource, /MobileToggle[\s\S]*?svg[\s\S]*?display: block/)
+  assert.match(stylesSource, /MobileToggle[\s\S]*?svg[\s\S]*?flex-shrink: 0/)
+})

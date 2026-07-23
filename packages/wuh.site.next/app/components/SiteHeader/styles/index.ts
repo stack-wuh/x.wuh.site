@@ -1,4 +1,3 @@
-import Button from '@wuh.site/components/button'
 import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 
@@ -78,7 +77,8 @@ export const NavLink = styled(Link)`
   }
 `
 
-export const MobileToggle = styled(Button)`
+export const MobileToggle = styled.button`
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -86,10 +86,19 @@ export const MobileToggle = styled(Button)`
   height: 44px;
   border-radius: 12px;
   border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
+  padding: 0;
   background: color-mix(in oklab, var(--background-100) 70%, transparent);
   color: var(--text-primary);
+  font: inherit;
   cursor: pointer;
   transition: transform var(--transition-fast) ease, background var(--transition-fast) ease, border-color var(--transition-fast) ease;
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
 
   @media (min-width: ${BREAKPOINT}) { display: none; }
 
