@@ -693,7 +693,7 @@ commit:
   status: pending
   branch: 227-feat-后台-console
   commits:
-    - hash: a5529f8123831aeee143f9cecd5108025a715969
+    - hash: 8678245d0b1194ddcb331c86c8845e4a5585096f
       message: feat: 新增独立后台 Console 与权限管理
       at: 2026-07-23T15:00:00Z
   pullRequest: null
