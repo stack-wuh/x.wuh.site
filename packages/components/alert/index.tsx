@@ -61,6 +61,9 @@ export interface AlertProps extends Omit<React.HTMLAttributes<HTMLElement>, 'tit
   onClose?: () => void
 }
 
+
+const isExternalHref = (href: string) => /^https?:\/\//i.test(href)
+
 const pad = (value: number) => value.toString().padStart(2, '0')
 
 const formatDateTimeToSecond = (value?: DateInput | null) => {
@@ -219,7 +222,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
             </MetaLabel>
             <LabelList aria-label='文档标签'>
               {labels.map((label) => (
-                <LabelLink key={`${label.name}-${label.href}`} href={label.href} target='_blank' rel='noopener noreferrer' title={label.name}>
+                <LabelLink key={`${label.name}-${label.href}`} href={label.href} target={isExternalHref(label.href) ? '_blank' : undefined} rel={isExternalHref(label.href) ? 'noopener noreferrer' : undefined} title={label.name}>
                   <Tag label={label.name} color={label.color} />
                 </LabelLink>
               ))}

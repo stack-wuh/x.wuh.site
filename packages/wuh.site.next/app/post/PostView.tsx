@@ -17,6 +17,7 @@ import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
+import { buildTopicUrl } from '@/app/lib/topic-url'
 import {
   ArticleCard,
   BreadcrumbCurrent,
@@ -53,11 +54,6 @@ const copyToClipboard = async (text: string): Promise<boolean> => {
   } catch {
     return false
   }
-}
-
-const createLabelHref = (labelName: string) => {
-  const query = encodeURIComponent(`is:issue label:"${labelName}"`)
-  return `${BLOG_PROJECT_URL}/issues?q=${query}`
 }
 
 const toGithubWebUrl = (repositoryUrl?: string | null) => {
@@ -108,7 +104,7 @@ const createAlertLabels = (issue: Issue): AlertLabel[] =>
   issue.labels.map((label) => ({
     name: label.name,
     color: label.color,
-    href: createLabelHref(label.name),
+    href: buildTopicUrl(label.name),
   }))
 
 const createShareItems = (issue: Issue): ShareItem[] => {
