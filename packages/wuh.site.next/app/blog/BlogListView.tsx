@@ -6,6 +6,7 @@ import Pagination from '@wuh.site/components/pagination'
 import Empty from '@wuh.site/components/empty'
 import { IconBookOpen } from '@wuh.site/components/icons'
 import TitleWithTooltip from './components/TitleWithTooltip'
+import Button from '@wuh.site/components/button'
 import BackHomeLink from '@/app/components/BackHomeLink'
 import type { ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
 import { buildPostUrl } from '../lib/slug'
@@ -54,6 +55,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
             <S.Subtitle>收录 GitHub Issues 中的全部博客文章</S.Subtitle>
           </S.TitleGroup>
           <S.HeaderActions>
+            <Button href='/archive' variant='text' color='secondary' size='small'>归档</Button>
             <BackHomeLink href='/' />
           </S.HeaderActions>
         </S.Header>
