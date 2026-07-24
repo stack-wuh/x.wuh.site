@@ -696,15 +696,32 @@ commit:
     - hash: 8678245d0b1194ddcb331c86c8845e4a5585096f
       message: feat: 新增独立后台 Console 与权限管理
       at: 2026-07-23T15:00:00Z
-  pullRequest: null
+    - hash: b493dfb
+      message: docs: 记录后台 Console 提交状态
+      at: 2026-07-23T15:01:00Z
+    - hash: c3399d7
+      message: Merge latest main into feature branch
+      at: 2026-07-24T15:50:00Z
+    - hash: d204db3
+      message: fix: 清理导航指南合并标记
+      at: 2026-07-24T15:52:00Z
+  pullRequest:
+    number: 234
+    url: https://github.com/stack-wuh/x.wuh.site/pull/234
+    state: open
+    autoMerge: squash
+    waitingFor: 1 required approval
 
 runtime:
   phase: commit
-  state: completed
+  state: waiting_for_input
   attempts: 0
   resume:
     taskId: null
-    command: 提交代码
-  requiredInputs: []
+    command: 等待 PR 审批
+  requiredInputs:
+    - key: PR_234_APPROVAL
+      description: PR #234 已开启 squash Auto Merge，main 分支要求 1 个 approval；审批后 GitHub 将自动合并。
+      supplied: false
   failure: null
-  updatedAt: 2026-07-23T14:58:00Z
+  updatedAt: 2026-07-24T15:55:00Z
