@@ -28,6 +28,10 @@ import {
   MarkdownBody,
   PostLead,
   RedundantInfoCard,
+  RelatedPostLabels,
+  RelatedPostLink,
+  RelatedPostsSection,
+  RelatedPostTitle,
   ShareCardInner,
   ShareInfoCard,
   StatusEmpty,
@@ -159,7 +163,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
   ]
 }
 
-export default function PostView({ issue, prevIssue, nextIssue, total, position }: PostViewProps) {
+export default function PostView({ issue, prevIssue, nextIssue, total, position, relatedPosts = [] }: PostViewProps) {
   const renderedHtml = issue?.body_html || ''
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
@@ -237,6 +241,22 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <ArticleCard>
             <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
           </ArticleCard>
+
+          {relatedPosts.length > 0 && (
+            <RelatedPostsSection aria-labelledby='related-posts-title'>
+              <h2 id='related-posts-title'>相关文章</h2>
+              <ul>
+                {relatedPosts.map((post) => (
+                  <li key={post.number}>
+                    <RelatedPostLink href={buildPostUrl(post.number, post.title)}>
+                      <RelatedPostTitle>{post.title}</RelatedPostTitle>
+                      <RelatedPostLabels>{post.sharedLabels.slice(0, 2).join(' · ')}</RelatedPostLabels>
+                    </RelatedPostLink>
+                  </li>
+                ))}
+              </ul>
+            </RelatedPostsSection>
+          )}
 
           <ImagePreview {...previewProps} />
 

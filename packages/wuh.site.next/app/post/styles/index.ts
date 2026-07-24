@@ -1,6 +1,6 @@
 export { Container, ContentGrid, MainColumn } from './post-layout'
 export { TocAside, TocCard, TocTitle, TocList, TocItemLink, TocMobile } from './post-toc'
-export { ArticleCard, RedundantInfoCard, ShareInfoCard, ShareCardInner, MarkdownBody, StatusEmpty, CommentPlaceholder } from './post-article'
+export { ArticleCard, RedundantInfoCard, ShareInfoCard, ShareCardInner, MarkdownBody, StatusEmpty, CommentPlaceholder, RelatedPostsSection, RelatedPostLink, RelatedPostTitle, RelatedPostLabels } from './post-article'
 export { Toolbar } from './post-toolbar'
 export { Header, Title, MetaRow, TagGroup, CoverImage, PostLead, AuthorRow, AuthorAvatar, AuthorInfo, Summary, OrnamentDivider, BreadcrumbNav, BreadcrumbLink, BreadcrumbCurrent } from './post-header'
 export { FloatingButtonGroup, FloatingButton, LikeButton } from './post-floating'

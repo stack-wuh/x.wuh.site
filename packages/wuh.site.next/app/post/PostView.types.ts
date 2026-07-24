@@ -1,3 +1,5 @@
+import type { RelatedPost } from '../lib/related-posts'
+
 export type IssueLabel = {
   name: string
   color?: string | null
@@ -45,4 +47,5 @@ export type PostViewProps = {
   nextIssue: AdjacentIssue | null
   total?: number
   position?: number
+  relatedPosts?: RelatedPost[]
 }
