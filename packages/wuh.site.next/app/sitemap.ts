@@ -3,16 +3,34 @@ import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import {
   buildPostSitemapEntry,
   buildStaticSitemapRoutes,
+  buildTopicSitemapEntry,
   type SitemapPost,
+  type SitemapTopic,
 } from './lib/sitemap'
 
 const SITEMAP_PAGE_SIZE = 100
+
+type SitemapLabelsResponse = SitemapTopic[]
 
 type SitemapPostsResponse = {
   data: SitemapPost[]
   pagination?: {
     hasNextPage?: boolean
   }
+}
+
+
+async function getOpenLabels(): Promise<SitemapTopic[]> {
+  const { data, error } = await contentService.getLabels.server({
+    query: { state: 'open' },
+    revalidate: 3600,
+  })
+
+  if (error || !data) {
+    throw new Error('Failed to load sitemap labels')
+  }
+
+  return (data as SitemapLabelsResponse).filter((label) => label.name?.trim())
 }
 
 async function getPublishedPosts(): Promise<SitemapPost[]> {
@@ -44,9 +62,10 @@ async function getPublishedPosts(): Promise<SitemapPost[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await getPublishedPosts()
+  const [labels, posts] = await Promise.all([getOpenLabels(), getPublishedPosts()])
   return [
     ...buildStaticSitemapRoutes(),
+    ...labels.map(buildTopicSitemapEntry),
     ...posts.map(buildPostSitemapEntry),
   ]
 }

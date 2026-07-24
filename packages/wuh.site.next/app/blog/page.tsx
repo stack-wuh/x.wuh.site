@@ -6,23 +6,37 @@ import { toLabelParams } from './blog-filter-utils'
 
 const SITE_URL = 'https://wuh.site'
 
-export const metadata: Metadata = {
-  title: '博客',
-  description: '收录 GitHub Issues 中的全部博客文章',
-  robots: { index: true, follow: true },
-  alternates: { canonical: `${SITE_URL}/blog` },
-  openGraph: {
-    title: 'wuh.site 博客',
-    description: '收录 GitHub Issues 中的全部博客文章',
-    url: `${SITE_URL}/blog`,
-    siteName: 'wuh.site',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'wuh.site 博客',
-    description: '收录 GitHub Issues 中的全部博客文章',
-  },
+export async function generateMetadata({ searchParams }: { searchParams?: BlogSearchParams | Promise<BlogSearchParams> }): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams
+  const activeLabels = toLabelParams(resolvedSearchParams?.labels)
+  const hasActiveLabels = activeLabels.length > 0
+  const currentPage = toPageNumber(resolvedSearchParams?.page)
+  const canonicalPath = currentPage > 1 && !hasActiveLabels ? `/blog?page=${currentPage}` : '/blog'
+  const description = hasActiveLabels
+    ? `筛选 wuh.site 中与「${activeLabels.join('、')}」相关的博客文章。`
+    : '收录 GitHub Issues 中的全部博客文章'
+  const robots = hasActiveLabels
+    ? { index: false, follow: true }
+    : { index: true, follow: true }
+
+  return {
+    title: hasActiveLabels ? '博客筛选' : '博客',
+    description,
+    robots,
+    alternates: { canonical: hasActiveLabels ? `${SITE_URL}/blog` : `${SITE_URL}${canonicalPath}` },
+    openGraph: {
+      title: hasActiveLabels ? 'wuh.site 博客筛选' : 'wuh.site 博客',
+      description,
+      url: hasActiveLabels ? `${SITE_URL}/blog` : `${SITE_URL}${canonicalPath}`,
+      siteName: 'wuh.site',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title: hasActiveLabels ? 'wuh.site 博客筛选' : 'wuh.site 博客',
+      description,
+    },
+  }
 }
 
 const PER_PAGE = 10

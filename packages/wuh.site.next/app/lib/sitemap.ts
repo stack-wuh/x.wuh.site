@@ -1,7 +1,12 @@
 import type { MetadataRoute } from 'next'
 import { buildPostUrl } from './slug.ts'
+import { buildTopicUrl } from './topic-url.ts'
 
 export const SITE_URL = 'https://wuh.site'
+
+export type SitemapTopic = {
+  name: string
+}
 
 export type SitemapPost = {
   number: number
@@ -26,5 +31,14 @@ export function buildPostSitemapEntry(post: SitemapPost): MetadataRoute.Sitemap[
     ...(lastModified ? { lastModified: new Date(lastModified) } : {}),
     changeFrequency: 'weekly',
     priority: 0.6,
+  }
+}
+
+
+export function buildTopicSitemapEntry(topic: SitemapTopic): MetadataRoute.Sitemap[number] {
+  return {
+    url: `${SITE_URL}${buildTopicUrl(topic.name)}`,
+    changeFrequency: 'weekly',
+    priority: 0.5,
   }
 }
