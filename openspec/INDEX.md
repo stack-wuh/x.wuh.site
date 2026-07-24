@@ -38,6 +38,11 @@
 - **需求:** Get GitHub pinned repositories, 5-minute memory cache, Stale cache fallback
 - **路径:** `openspec/specs/repos-api/spec.md`
 
+## admin-console — 后台 Console 与权限
+- **关键词:** 后台, Console, Vite, React, GitHub OAuth, root, reader, 博客管理, 留言板, 评论审核
+- **需求:** 独立后台 Console, GitHub 认证登录, stack-wuh 唯一 Root, 其他用户自动 Read, 服务端写权限保护, 博客管理, 留言板管理, 博客评论管理
+- **路径:** `openspec/specs/admin-console/spec.md`
+
 ## api-standardization — API 标准化
 - **关键词:** API标准化, 前后端联调, OpenAPI, Swagger, 异常过滤器
 - **需求:** GET /v2/repos, Swagger 文档自动生成, 统一异常过滤器, 前端使用 NestJS API

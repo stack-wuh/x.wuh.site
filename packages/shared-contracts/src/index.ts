@@ -265,3 +265,5 @@ export type ExampleDto = { id: ID; name: string };
 export type { FootprintDto } from './footprint.dto';
 // Visit Stats
 export type { VisitStatsResponse } from './visit-stats.dto';
+
+export * from './admin.dto';

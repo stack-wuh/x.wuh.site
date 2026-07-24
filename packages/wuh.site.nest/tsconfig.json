@@ -16,9 +16,22 @@
     "noUnusedParameters": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ],
+      "@wuh.site/shared-contracts": [
+        "../../shared-contracts/src"
+      ],
+      "@wuh.site/shared-contracts/*": [
+        "../../shared-contracts/src/*"
+      ]
     }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

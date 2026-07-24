@@ -17,6 +17,7 @@
 ├── packages
 │   ├── wuh.site.next     # 前端 (Next.js 15 App Router)
 │   ├── wuh.site.nest     # 后端 (NestJS 10 + Mongoose 8)
+│   ├── wuh.site.console  # 后台 Console (Vite + React SPA)
 │   ├── components        # 组件库（@wuh.site/components）
 │   ├── hooks             # 共享 hooks
 │   ├── config            # 类型/配置包（@wuh.site/config）
@@ -29,6 +30,7 @@
 ## 技术栈
 
 - Next.js 15（App Router）
+- Vite（后台 Console SPA）
 - React 19
 - NestJS 10
 - MongoDB (Mongoose 8)
@@ -59,6 +61,10 @@ pnpm dev:next        # 启动 Next.js 开发服务器
 pnpm build:next      # 构建 Next.js
 pnpm start:next      # 生产启动 Next.js
 
+# 后台 Console (port 3300)
+pnpm dev:console     # 启动 Vite Console 开发服务器
+pnpm build:console   # 构建 Console 静态资源
+
 # 后端 (port 3200)
 pnpm dev:nest        # 启动 NestJS 开发服务器 (watch 模式)
 pnpm build:nest      # 构建 NestJS
@@ -70,6 +76,24 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 ```
 
 > 根目录 `dev:web`、`build:web`、`dev:astro` 等脚本属于历史遗留，不推荐使用。
+
+
+## 后台 Console
+
+后台 Console 是独立应用 `packages/wuh.site.console`，默认端口 `3300`，通过 NestJS `/v2/auth/**` 与 `/v2/admin/**` API 工作。
+
+权限固定为：
+
+- `stack-wuh`：Root，可执行博客、留言板、博客评论等写操作。
+- 其他 GitHub 登录用户：Read，只能查看后台资源。
+
+本地 GitHub OAuth callback 示例：
+
+```text
+http://localhost:3200/v2/auth/github/callback
+```
+
+关键环境变量见 `.env.example`。
 
 ## 页面与路由
 
