@@ -9,6 +9,7 @@ import TitleWithTooltip from './components/TitleWithTooltip'
 import BackHomeLink from '@/app/components/BackHomeLink'
 import type { ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
 import { buildPostUrl } from '../lib/slug'
+import { buildTopicUrl } from '../lib/topic-url'
 import { formatShortDate } from '../lib/date'
 import { buildBlogUrl, formatFilterOptionLabel, getFilterSummaryLabel, toggleLabel } from './blog-filter-utils'
 import * as S from './styles'
@@ -98,14 +99,18 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
               <S.YearGroup key={year}>
                 <S.YearLabel>{year}</S.YearLabel>
                 {yearPosts.map(post => (
-                  <S.PostRow key={post.id} href={buildPostUrl(post.number, post.title)}>
+                  <S.PostRow key={post.id}>
                     <S.InkDot />
-                    <TitleWithTooltip text={post.title} />
+                    <S.PostTitleLink href={buildPostUrl(post.number, post.title)}>
+                      <TitleWithTooltip text={post.title} />
+                    </S.PostTitleLink>
                     <S.IssueNumber>#{post.number}</S.IssueNumber>
                     {post.labels?.length > 0 && (
                       <S.PostTags>
                         {post.labels.slice(0, TAG_DISPLAY_LIMIT).map(label => (
-                          <Tag key={`${post.id}-${label.name}`} label={label.name} color={label.color} />
+                          <S.PostTagLink key={`${post.id}-${label.name}`} href={buildTopicUrl(label.name)} aria-label={`查看 ${label.name} 主题文章`}>
+                            <Tag label={label.name} color={label.color} />
+                          </S.PostTagLink>
                         ))}
                       </S.PostTags>
                     )}

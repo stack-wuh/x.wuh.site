@@ -140,7 +140,6 @@ export const FilterOption = styled(Link)<{ $active: boolean }>`
   &:hover {
     color: var(--primary-color);
     background: color-mix(in oklab, var(--accent-color) 16%, var(--background-100, #fff));
-    text-decoration: none;
   }
 `
 
@@ -199,13 +198,12 @@ export const YearLabel = styled.div`
   }
 `
 
-export const PostRow = styled(Link)`
+export const PostRow = styled.div`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-xs) 8px;
   border-radius: 6px;
-  text-decoration: none;
   color: inherit;
   transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
 
@@ -234,6 +232,38 @@ export const IssueNumber = styled.span`
   flex-shrink: 0;
   min-width: 36px;
   text-align: right;
+`
+
+export const PostTitleLink = styled(Link)`
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 36%, transparent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+`
+
+export const PostTagLink = styled(Link)`
+  display: inline-flex;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 36%, transparent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
 `
 
 export const PostTags = styled.span`
