@@ -8,6 +8,7 @@ import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue } from '../PostView.types'
 import JsonLd from '../../components/JsonLd'
+import { createArticleStructuredData, createBreadcrumbStructuredData } from '../../lib/structured-data'
 
 const SITE_URL = 'https://wuh.site'
 
@@ -132,25 +133,28 @@ export default async function Page({ params }: { params: Promise<{ number: strin
     permanentRedirect(buildPostUrl(issue.number, issue.title))
   }
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: issue.title,
+  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
+  const articleJsonLd = createArticleStructuredData({
+    url,
+    title: issue.title,
     description: buildDescription(issue),
-    image: issue.metadata?.cover || undefined,
-    datePublished: issue.created_at,
-    dateModified: issue.updated_at,
-    url: `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`,
-    author: {
-      '@type': 'Person',
-      name: 'shadow',
-      url: 'https://github.com/stack-wuh',
-    },
-  }
+    publishedAt: issue.created_at,
+    modifiedAt: issue.updated_at,
+    image: issue.metadata?.cover,
+    imageAlt: issue.metadata?.coverAlt,
+    keywords: issue.metadata?.keywords,
+    labels: issue.labels.map((label) => label.name),
+  })
+  const breadcrumbJsonLd = createBreadcrumbStructuredData([
+    { name: '首页', url: SITE_URL },
+    { name: '博客', url: `${SITE_URL}/blog` },
+    { name: issue.title, url },
+  ])
 
   return (
     <>
-      <JsonLd data={jsonLd as unknown as Record<string, unknown>} />
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} />
     </>
   )

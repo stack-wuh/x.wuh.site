@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Noto_Serif_SC } from 'next/font/google'
 import AppProviders from './components/AppProviders'
+import JsonLd from './components/JsonLd'
+import { createSiteStructuredData } from './lib/structured-data'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -79,6 +81,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${notoSerifSC.variable}`}>
+        <JsonLd data={createSiteStructuredData()} />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
