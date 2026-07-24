@@ -1,4 +1,3 @@
-import Button from '@wuh.site/components/button'
 import styled from '@wuh.site/components/styled'
 import Link from 'next/link'
 
@@ -78,7 +77,8 @@ export const NavLink = styled(Link)`
   }
 `
 
-export const MobileToggle = styled(Button)`
+export const MobileToggle = styled.button`
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -86,10 +86,19 @@ export const MobileToggle = styled(Button)`
   height: 44px;
   border-radius: 12px;
   border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
+  padding: 0;
   background: color-mix(in oklab, var(--background-100) 70%, transparent);
   color: var(--text-primary);
+  font: inherit;
   cursor: pointer;
   transition: transform var(--transition-fast) ease, background var(--transition-fast) ease, border-color var(--transition-fast) ease;
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
 
   @media (min-width: ${BREAKPOINT}) { display: none; }
 
@@ -106,45 +115,77 @@ export const MobileToggle = styled(Button)`
   @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
 `
 
-export const ThemeToggle = styled(Button)`
-  --toggle-h: 32px;
+export const DesktopThemeToggle = styled.button`
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: var(--toggle-h);
+  min-width: 44px;
+  min-height: 36px;
   padding: 0 10px;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 26%, rgba(0, 0, 0, 0.06));
-  background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100) 86%);
-  color: var(--primary-color);
-  cursor: pointer;
+  background: color-mix(in oklab, var(--primary-color) 10%, var(--background-100) 90%);
+  color: var(--text-primary);
+  font: inherit;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease, background var(--transition-fast) ease;
+  cursor: pointer;
+  transition:
+    transform 180ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
 
   &:hover {
     transform: translateY(-1px);
-    border-color: color-mix(in oklab, var(--primary-color) 38%, rgba(0, 0, 0, 0.06));
-    background: color-mix(in oklab, var(--primary-color) 20%, var(--background-100) 80%);
+    border-color: color-mix(in oklab, var(--primary-color) 48%, var(--normal-300) 52%);
+    background: color-mix(in oklab, var(--primary-color) 16%, var(--background-100) 84%);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--primary-color) 12%, transparent);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
   }
 
   &:focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white);
     outline-offset: 3px;
   }
 
-  @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
   @media (max-width: ${BREAKPOINT}) { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none;
+  }
 `
 
-export const ThemeDot = styled.span`
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--primary-color);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 18%, transparent);
+export const ThemeIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  color: var(--primary-color);
+`
+
+export const ThemeValue = styled.span`
+  min-width: 0;
+  white-space: nowrap;
+`
+
+export const ThemeChevron = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
 `
 
 export const MobilePanel = styled.div<{ $open: boolean }>`
@@ -192,30 +233,74 @@ export const MobileActions = styled.div`
   align-items: center;
 `
 
-export const MobileActionButton = styled(Button)`
-  padding: 12px 14px;
+export const MobileThemeAction = styled.button`
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 44px;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
   border-radius: 14px;
+  background: color-mix(in oklab, var(--primary-color) 8%, var(--background-100) 92%);
   color: var(--text-primary);
-  background: transparent;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 26%, rgba(0,0,0,0.06));
+  font: inherit;
+  text-align: left;
   cursor: pointer;
-  transition: background var(--transition-fast) ease, border-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+  touch-action: manipulation;
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
 
   &:hover {
-    background: color-mix(in oklab, var(--primary-color) 12%, var(--background-100) 88%);
-    border-color: color-mix(in oklab, var(--primary-color) 40%, rgba(0,0,0,0.06));
+    border-color: color-mix(in oklab, var(--primary-color) 46%, var(--normal-300) 54%);
+    background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100) 86%);
     box-shadow: var(--elevation-soft);
   }
 
+  &:active {
+    box-shadow: none;
+  }
+
   &:focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white);
     outline-offset: 3px;
   }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
-export const MobileThemeLabel = styled.span`
-  display: inline-flex;
+export const MobileThemeMain = styled.span`
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+`
+
+export const MobileThemeCopy = styled.span`
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+`
+
+export const MobileThemeTitle = styled.span`
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
+export const MobileThemeCurrent = styled.span`
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
