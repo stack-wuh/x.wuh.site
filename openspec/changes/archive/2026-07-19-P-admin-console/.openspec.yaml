@@ -10,7 +10,7 @@ change:
   id: 2026-07-19-P-admin-console
   title: 独立后台 Console 与 GitHub 认证只读权限
   type: feature
-  status: archived
+  status: committed
   createdAt: 2026-07-19T07:45:47Z
   issue: https://github.com/stack-wuh/x.wuh.site/issues/227
 
@@ -690,7 +690,7 @@ archive:
           at: 2026-07-23T14:57:30Z
 
 commit:
-  status: pending
+  status: completed
   branch: 227-feat-后台-console
   commits:
     - hash: 8678245d0b1194ddcb331c86c8845e4a5585096f
@@ -705,23 +705,31 @@ commit:
     - hash: d204db3
       message: "fix: 清理导航指南合并标记"
       at: 2026-07-24T15:52:00Z
+    - hash: 49bc997
+      message: "docs: 更新后台 Console PR 状态"
+      at: 2026-07-24T15:54:00Z
+    - hash: 0530cd8
+      message: "fix: 修正后台 Console 提交状态格式"
+      at: 2026-07-24T15:56:00Z
   pullRequest:
     number: 234
     url: https://github.com/stack-wuh/x.wuh.site/pull/234
-    state: open
+    state: merged
+    mergedAt: 2026-07-24T16:30:01Z
+    mergeCommit: 3eaf3fbcda08437df5602c9d9afd1709646d8ef7
     autoMerge: squash
-    waitingFor: "1 required approval"
+  issue:
+    number: 227
+    url: https://github.com/stack-wuh/x.wuh.site/issues/227
+    state: closed
 
 runtime:
   phase: commit
-  state: waiting_for_input
+  state: completed
   attempts: 0
   resume:
     taskId: null
-    command: 等待 PR 审批
-  requiredInputs:
-    - key: PR_234_APPROVAL
-      description: PR #234 已开启 squash Auto Merge，main 分支要求 1 个 approval；审批后 GitHub 将自动合并。
-      supplied: false
+    command: null
+  requiredInputs: []
   failure: null
-  updatedAt: 2026-07-24T15:55:00Z
+  updatedAt: 2026-07-25T00:00:00Z
