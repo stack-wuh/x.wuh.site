@@ -43,7 +43,6 @@ test('blog post title link fills the row so metadata remains right-aligned', () 
   assert.match(blogStylesSource, /export const PostTitleLink = styled\(Link\)`[\s\S]*?flex: 1 1 0;/)
 })
 
-
 test('blog post rows do not advertise full-row click behavior', () => {
   const postRowStyles = blogStylesSource.match(/export const PostRow = styled\.div`([\s\S]*?)`/)?.[1] || ''
 
