@@ -105,76 +105,59 @@ export const CommentPlaceholder = styled(Empty)`
   margin-top: var(--space-md);
 `
 
-
 export const RelatedPostsSection = styled.section`
   margin-top: var(--space-xl);
-  padding: 24px;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 14%, var(--normal-300));
-  border-radius: var(--radius-card);
-  background: color-mix(in oklab, var(--background-100) 96%, var(--primary-color) 4%);
+  padding-top: var(--space-md);
+  border-top: 1px solid color-mix(in oklab, var(--text-muted) 28%, transparent);
 
   h2 {
-    margin: 0 0 var(--space-md);
+    margin: 0 0 var(--space-sm);
     color: var(--text-primary);
     font-family: var(--font-serif);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
+    font-weight: 500;
   }
 
   ul {
     display: grid;
-    gap: 10px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
-
-  @media (max-width: 640px) {
-    padding: 18px;
-  }
 `
 
 export const RelatedPostLink = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
   gap: var(--space-md);
-  padding: 12px 14px;
-  color: var(--text-primary);
+  padding: 10px 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--text-muted) 18%, transparent);
+  color: var(--text-secondary);
   text-decoration: none;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
-  border-radius: 10px;
-  background: var(--background-100);
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: color var(--transition-fast) ease;
 
   &:hover {
-    border-color: color-mix(in oklab, var(--primary-color) 48%, transparent);
-    transform: translateY(-1px);
+    color: var(--primary-color);
   }
 
   &:focus-visible {
     outline: 2px solid color-mix(in srgb, var(--primary-color) 36%, transparent);
     outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
+    border-radius: 4px;
   }
 `
 
 export const RelatedPostTitle = styled.span`
   min-width: 0;
   overflow: hidden;
-  font-weight: 600;
+  color: var(--text-primary);
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 `
 
 export const RelatedPostLabels = styled.span`
-  flex: 0 0 auto;
   color: var(--text-muted);
   font-size: var(--font-size-xs);
   white-space: nowrap;

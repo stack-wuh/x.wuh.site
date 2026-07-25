@@ -82,9 +82,8 @@ test('post page builds article and breadcrumb structured data from the canonical
   assert.match(postPageSource, /name: '博客'/)
 })
 
-test('post view renders an accessible breadcrumb using canonical post URL', () => {
-  assert.match(postViewSource, /BreadcrumbNav aria-label='文章面包屑'/)
-  assert.match(postViewSource, /href='\/'/)
-  assert.match(postViewSource, /href='\/blog'/)
-  assert.match(postViewSource, /href=\{buildPostUrl\(issue.number, issue.title\)\}/)
+test('post page keeps breadcrumb structured data without rendering a visual breadcrumb', () => {
+  assert.match(postPageSource, /createBreadcrumbStructuredData/)
+  assert.doesNotMatch(postViewSource, /BreadcrumbNav/)
+  assert.doesNotMatch(postViewSource, /BreadcrumbLink/)
 })
