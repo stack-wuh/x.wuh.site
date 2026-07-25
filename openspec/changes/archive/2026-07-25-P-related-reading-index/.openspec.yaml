@@ -262,7 +262,10 @@ archive:
 commit:
   status: pending
   branch: codex/263-feat-阅读余韵索引
-  commits: []
+  commits:
+    - hash: 655a9e736d940b8a2b762f2bf25f9c6c079ca4e3
+      message: feat(next): add related reading index
+      at: 2026-07-25T10:56:00+08:00
   pullRequest: null
 
 runtime:
