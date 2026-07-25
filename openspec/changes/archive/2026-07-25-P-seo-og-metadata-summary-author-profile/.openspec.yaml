@@ -472,13 +472,12 @@ commit:
   branch: codex/253-feat-SEO元数据
   commits:
     - hash: 5063c91
-      message: feat(seo): improve metadata and author profile
+      message: "feat(seo): improve metadata and author profile"
       at: 2026-07-25T00:00:00+08:00
   pullRequest:
     number: 254
-    url: https://github.com/stack-wuh/x.wuh.site/pull/254
+    url: "https://github.com/stack-wuh/x.wuh.site/pull/254"
     state: open
-  pullRequest: null
 
 runtime:
   phase: commit
