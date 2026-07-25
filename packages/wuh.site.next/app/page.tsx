@@ -5,6 +5,8 @@ import HomeView from './HomeView'
 
 const SITE_URL = 'https://wuh.site'
 
+export const dynamic = 'force-dynamic'
+
 
 function logHomeFetchError(moduleName: string, error: unknown) {
   const message = error instanceof Error ? error.message : JSON.stringify(error)
