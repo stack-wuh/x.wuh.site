@@ -33,3 +33,13 @@ test('About 页面输出 ProfilePage JSON-LD 并关联站点 Person', () => {
   assert.match(aboutSource, /<JsonLd[\s\S]*data=/)
   assert.match(aboutSource, /ProfilePage/)
 })
+
+
+test('工具目录不使用 Next metadata route 保留文件名 sitemap.ts', async () => {
+  await assert.rejects(
+    readFile(resolve(appRoot, 'app/lib/sitemap.ts'), 'utf8'),
+    /ENOENT/,
+  )
+  const appSitemapSource = await readFile(resolve(appRoot, 'app/sitemap.ts'), 'utf8')
+  assert.match(appSitemapSource, /\.\/lib\/sitemap-utils/)
+})

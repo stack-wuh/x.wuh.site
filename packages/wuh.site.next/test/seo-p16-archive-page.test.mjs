@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
-import { buildStaticSitemapRoutes } from '../app/lib/sitemap.ts'
+import { buildStaticSitemapRoutes } from '../app/lib/sitemap-utils.ts'
 
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
