@@ -1,0 +1,494 @@
+schema: agent-loop/v1
+
+change:
+  id: 2026-07-25-P-seo-og-metadata-summary-author-profile
+  title: SEO Batch C：OG 图片、metadata、语义摘要与作者档案
+  type: feature
+  status: committed
+  createdAt: 2026-07-25T00:00:00+08:00
+  issue: https://github.com/stack-wuh/x.wuh.site/issues/253
+
+artifacts:
+  proposal:
+    path: openspec/changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/proposal.md
+    status: completed
+    summary: 按 Issue #253 明确 SEO Batch C 的背景、目标、非目标和受影响包。
+    template:
+      id: proposal
+      source: skills/shadow-dev-propose/templates/proposal.md
+      contractVersion: 1
+      digest: sha256:426c31b60cb50e7457a6e4aa6f86c9bd6718cdd6217f292d98f1b9739ad612fd
+    validation:
+      status: passed
+      checkedAt: 2026-07-25T00:00:00+08:00
+      missing: []
+  design:
+    path: openspec/changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/design.md
+    status: completed
+    summary: 采用方案 A，抽取 Markdown 摘要与 SEO/JSON-LD 纯函数，页面仅负责数据获取和输出。
+    template:
+      id: design
+      source: skills/shadow-dev-propose/templates/design.md
+      contractVersion: 1
+      digest: sha256:2483c466de2ab4e8e34a1e147e098a6cef61ff6b5a69d567f565987fdd77b3e4
+    validation:
+      status: passed
+      checkedAt: 2026-07-25T00:00:00+08:00
+      missing: []
+  tasks:
+    path: openspec/changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/tasks.md
+    status: completed
+    summary: 按 AST、纯函数、页面接入和集成验收分为 6 个有依赖关系的任务。
+    template:
+      id: tasks
+      source: skills/shadow-dev-propose/templates/tasks.md
+      contractVersion: 1
+      digest: sha256:d67578bdb054f235acd942e8cf1bb436abbd6831ff52469e30b82c9c845d37f9
+    validation:
+      status: passed
+      checkedAt: 2026-07-25T00:00:00+08:00
+      missing: []
+  specs:
+    status: completed
+    entries:
+      - path: openspec/changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/specs/seo/spec.md
+        template:
+          id: spec
+          source: skills/shadow-dev-propose/templates/spec.md
+          contractVersion: 1
+          digest: sha256:322bb9b2a379e72fa08f5ce84fbee689fddac788245ebf2c4d01153947072ea5
+        validation:
+          status: passed
+          checkedAt: 2026-07-25T00:00:00+08:00
+          missing: []
+
+proposal:
+  status: completed
+  source:
+    type: github_issue
+    issueNumber: 253
+  intent: 提升内容展示质量与搜索结果可读性，覆盖默认 OG 图片、文章 metadata、语义摘要和 About 作者档案。
+  background: 现有博客 metadata 在无封面文章、作者/关键词/分类表达、Markdown 摘要质量和 About 作者实体识别方面不完整。
+  goals:
+    - 全站默认 1200×630 OG 图片，文章无封面时回退使用。
+    - 文章 metadata 增加 authors、keywords、category，关键词优先 CMS、回退标签。
+    - 使用 Markdown AST 提取首个有效段落，CMS summary 始终优先。
+    - About 页面输出 ProfilePage JSON-LD，并关联 Person 与 GitHub profile。
+    - 补充测试并通过 Oxlint、TypeScript 与 diff check。
+  nonGoals:
+    - 动态文章标题 OG 图片。
+    - 本批次后端 DTO 强制校验 summary、keywords、coverAlt。
+    - Search Console / Rich Results 线上验收。
+    - 改造 CMS 内容编辑流程或新增可见 UI。
+  scope:
+    packages:
+      - packages/wuh.site.next
+    files:
+      - packages/wuh.site.next/app/layout.tsx
+      - packages/wuh.site.next/app/post/[number]/page.tsx
+      - packages/wuh.site.next/app/about/layout.tsx
+      - packages/wuh.site.next/app/about/page.tsx
+      - packages/wuh.site.next/app/components/JsonLd.tsx
+      - packages/wuh.site.next/public/
+      - packages/wuh.site.next/test/
+  acceptanceCriteria:
+    - 根路由和无 cover 文章均有可用的 1200×630 Open Graph 图片。
+    - 无 cover 文章同时有 openGraph.images 与 twitter.images。
+    - 文章 metadata 可表达 authors、keywords、category，且关键词按 CMS 优先、标签回退。
+    - 自动摘要来自 Markdown AST 首个有效段落，不从代码块或标题生成。
+    - CMS summary 始终优先于自动摘要。
+    - /about 输出包含 Person 与 GitHub profile 对应关系的 ProfilePage JSON-LD。
+    - 新增测试、Oxlint、TypeScript 与 diff check 通过。
+  constraints:
+    - 遵循现有 Next.js App Router generateMetadata 与 JsonLd 实现。
+    - 复用现有 seo、post-cover 和 blog-detail 规范，不破坏显式封面和 canonical URL 行为。
+    - 不增加后端 API 或 DTO 变更。
+    - 文档与测试使用中文语义说明，代码遵循现有 TypeScript 规范。
+  risks:
+    - Markdown AST 提取逻辑需要处理空段落、标题、代码块和异常 Markdown。
+    - 默认 OG 图片的部署路径和 metadataBase 配置必须在静态资源与生产域名下均可访问。
+    - About profile 数据可能来自远端 GitHub 服务，需要为缺失 profile 做稳定降级。
+  domain:
+    name: seo
+    keywords:
+      - SEO
+      - Open Graph
+      - Twitter Card
+      - metadata
+      - Markdown AST
+      - JSON-LD
+      - ProfilePage
+    description: 统一博客分享 metadata、语义摘要和作者结构化数据。
+  uiux:
+    mode: skipped
+    triggers: []
+    rationale: 本批次只调整 SEO metadata、结构化数据和摘要生成，不改变可见页面布局或交互。
+
+discuss:
+  status: completed
+  decisions:
+    - id: seo-architecture
+      question: SEO 与摘要逻辑放在哪里
+      options:
+        - A：抽取 app/lib/seo.ts 与 markdown.ts 纯函数，页面只负责组装
+        - B：仅抽取 Markdown 摘要，metadata 与 JSON-LD 逻辑留在页面
+        - C：新增独立共享 SEO 包
+      selected: A
+      rationale: 当前只有 Next 前端消费这些规则；纯函数便于测试，且避免页面逻辑重复，不引入额外包边界。
+    - id: keyword-category-mapping
+      question: 文章 keywords 与 category 的来源优先级
+      options:
+        - CMS keywords 优先、labels 回退；extra.category 优先、首个 label 回退
+        - 仅使用 labels
+        - 新增后端 DTO 字段和同步逻辑
+      selected: CMS keywords 优先、labels 回退；extra.category 优先、首个 label 回退
+      rationale: 复用现有 ContentItem 字段，不扩大本批次到后端模型和 CMS 编辑流程。
+    - id: default-image
+      question: 无封面文章的分享图片来源
+      options:
+        - public/og-default.png 静态 1200×630 图片
+        - 运行时生成动态标题图片
+        - 继续让图片字段为空
+      selected: public/og-default.png 静态 1200×630 图片
+      rationale: 满足 Batch C 验收，部署稳定，并明确排除动态标题 OG 图片。
+  architecture:
+    summary: 使用 app/lib/markdown.ts 解析首个有效 Markdown 段落，使用 app/lib/seo.ts 统一文章 metadata、BlogPosting 和 ProfilePage JSON-LD 规则；根 layout、文章页和 About 页通过纯函数与现有 JsonLd 接入。
+    modules:
+      - packages/wuh.site.next/app/lib/markdown.ts：AST 摘要提取
+      - packages/wuh.site.next/app/lib/seo.ts：metadata、图片、作者、关键词、分类与 JSON-LD builder
+      - packages/wuh.site.next/app/layout.tsx：全站默认 metadata
+      - packages/wuh.site.next/app/post/[number]/page.tsx：文章 metadata 和 BlogPosting 接入
+      - packages/wuh.site.next/app/about/page.tsx：ProfilePage JSON-LD 接入
+      - packages/wuh.site.next/public/og-default.png：默认分享图片
+  contracts:
+    api: []
+    data:
+      - ContentItem.metadata.summary 继续优先于自动摘要
+      - ContentItem.metadata.keywords 为空时使用 labels
+      - ContentItem.metadata.extra.category 为空时使用首个 label
+      - GitHubProfileDto 缺失时使用 stack-wuh 稳定降级实体
+  reuse:
+    components:
+      - packages/wuh.site.next/app/components/JsonLd.tsx
+      - packages/wuh.site.next/app/lib/markdown.ts 的 unified/remark processor
+      - packages/shared-contracts/src/index.ts 的 ContentItem 与 GitHubProfileDto
+      - 现有 contentService 与 reposService 数据获取
+    newComponents:
+      - packages/wuh.site.next/app/lib/seo.ts 纯函数模块
+  implementationNotes:
+    - 已读取 packages/wuh.site.next/app/layout.tsx、app/post/[number]/page.tsx、app/about/layout.tsx、app/about/page.tsx、app/components/JsonLd.tsx。
+    - 已读取 packages/wuh.site.next/app/lib/markdown.ts、app/lib/slug.ts、shared-contracts/src/index.ts、Next package.json 和现有 Node tests。
+    - 不需要调用 UI/UX 技能，因为 proposal.uiux.mode 为 skipped。
+  impact:
+    dependencies:
+      - 无新增依赖；复用 unified、remark-parse、remark-gfm。
+    compatibility: 不改变 API、DTO、数据库和可见 UI；保留显式 cover、canonical、旧 URL 和现有正文渲染。
+    rollback: 删除 seo.ts、摘要提取函数、默认图片和三处页面接入即可回滚，不需要数据迁移。
+  uiux:
+    status: skipped
+    triggers: []
+    capabilities: []
+    decisions: []
+    accessibility: []
+    acceptanceCriteria: []
+
+apply:
+  status: completed
+  generatedFrom:
+    - proposal
+    - discuss
+  instructions:
+    - 按 workflow 的依赖顺序执行；Phase 2 的 default-og-metadata、article-metadata、about-profile-jsonld 在 seo-utilities 完成后可并行。
+    - 每项任务完成后写入 evidence；失败必须记录 failure 并按 repairWorkflow 规则处理。
+  workflow:
+    - id: markdown-summary
+      title: Markdown 首段 AST 摘要
+      status: completed
+      dependsOn: []
+      files:
+        - packages/wuh.site.next/app/lib/markdown.ts
+        - packages/wuh.site.next/test/markdown-summary.test.mjs
+      instructions:
+        - 使用现有 remarkParse 和 remarkGfm 解析 AST。
+        - 跳过 heading、code、空段落，提取首个有效 paragraph 的可读文本并按 160 字符截断。
+        - 保留 renderMarkdown 现有行为。
+      verification:
+        - node --test packages/wuh.site.next/test/markdown-summary.test.mjs
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: cd packages/wuh.site.next && node --test test/markdown-summary.test.mjs
+          result: failed as expected before implementation (Node could not load the missing export)
+          at: 2026-07-25T00:00:00+08:00
+        - command: cd packages/wuh.site.next && node --experimental-strip-types --test test/markdown-summary.test.mjs
+          result: passed (4 tests, 0 failures)
+          at: 2026-07-25T00:00:00+08:00
+      failure: null
+    - id: seo-utilities
+      title: SEO metadata 与 JSON-LD 纯函数
+      status: completed
+      dependsOn:
+        - markdown-summary
+      files:
+        - packages/wuh.site.next/app/lib/seo.ts
+        - packages/wuh.site.next/test/seo-metadata.test.mjs
+      instructions:
+        - 集中实现默认图片、摘要、keywords、category、authors、article metadata、BlogPosting 和 ProfilePage builder。
+        - 保持 CMS summary/keywords、cover、category 的既定优先级。
+        - 对缺失 profile 输出稳定的 stack-wuh Person 降级实体。
+      verification:
+        - node --test packages/wuh.site.next/test/seo-metadata.test.mjs
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: cd packages/wuh.site.next && node --experimental-strip-types --test test/seo-metadata.test.mjs
+          result: failed as expected before implementation (seo.ts did not exist)
+          at: 2026-07-25T00:00:00+08:00
+        - command: cd packages/wuh.site.next && node --experimental-strip-types --test test/seo-metadata.test.mjs
+          result: passed (1 test, 7 assertions, 0 failures)
+          at: 2026-07-25T00:00:00+08:00
+      failure: null
+    - id: default-og-metadata
+      title: 全站默认 OG/Twitter metadata 与静态图片
+      status: completed
+      dependsOn:
+        - seo-utilities
+      files:
+        - packages/wuh.site.next/public/og-default.png
+        - packages/wuh.site.next/app/layout.tsx
+        - packages/wuh.site.next/test/seo-source-contract.test.mjs
+      instructions:
+        - 创建 1200×630 的 public/og-default.png。
+        - 在根 layout metadata 配置默认 Open Graph/Twitter 图片，不改动 robots、metadataBase 和 RSS。
+        - 增加资源尺寸和源码契约检查。
+      verification:
+        - node --test packages/wuh.site.next/test/seo-source-contract.test.mjs
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: cd packages/wuh.site.next && node --test test/seo-source-contract.test.mjs
+          result: failed as expected before asset and root metadata implementation (missing og-default.png)
+          at: 2026-07-25T00:00:00+08:00
+        - command: cd packages/wuh.site.next && node --test test/seo-source-contract.test.mjs
+          result: passed (2 tests, 0 failures; PNG dimensions 1200x630)
+          at: 2026-07-25T00:00:00+08:00
+      failure: null
+    - id: article-metadata
+      title: 博客文章 metadata 接入
+      status: completed
+      dependsOn:
+        - seo-utilities
+      files:
+        - packages/wuh.site.next/app/post/[number]/page.tsx
+        - packages/wuh.site.next/app/post/PostView.types.ts
+        - packages/wuh.site.next/test/seo-metadata.test.mjs
+      instructions:
+        - 删除页面内正则摘要逻辑，改用 seo.ts builder。
+        - 让有 cover 的文章保留显式图片，无 cover 文章回退默认图片。
+        - 写入 authors、keywords、category，并让 BlogPosting 复用同一 description/image/Person 映射。
+      verification:
+        - node --test packages/wuh.site.next/test/seo-metadata.test.mjs
+        - pnpm --filter @wuh.site/next run lint
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: cd packages/wuh.site.next && node --test --test-name-pattern='文章页面' test/seo-metadata.test.mjs
+          result: failed as expected before page integration (page did not reference SEO builders)
+          at: 2026-07-25T00:00:00+08:00
+        - command: node --input-type=module -e 'read and assert post page SEO builder/source contract'
+          result: passed (builder integration and regex summary removal confirmed)
+          at: 2026-07-25T00:00:00+08:00
+        - command: pnpm --filter @wuh.site/next run lint
+          result: passed (0 errors, 0 warnings)
+          at: 2026-07-25T00:00:00+08:00
+      failure: null
+    - id: about-profile-jsonld
+      title: About ProfilePage JSON-LD 接入
+      status: completed
+      dependsOn:
+        - seo-utilities
+      files:
+        - packages/wuh.site.next/app/about/page.tsx
+        - packages/wuh.site.next/app/components/JsonLd.tsx
+        - packages/wuh.site.next/test/seo-source-contract.test.mjs
+      instructions:
+        - 保留 About 现有数据请求和可见内容，增加 ProfilePage JSON-LD。
+        - mainEntity 使用站点 Person @id，sameAs 包含 GitHub profile。
+        - profile 为空时仍输出稳定降级实体。
+      verification:
+        - node --test packages/wuh.site.next/test/seo-source-contract.test.mjs
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: cd packages/wuh.site.next && node --test --test-name-pattern='全站默认|About 页面' test/seo-source-contract.test.mjs
+          result: failed as expected before About integration (ProfilePage builder/JsonLd missing)
+          at: 2026-07-25T00:00:00+08:00
+        - command: cd packages/wuh.site.next && node --test --test-name-pattern='全站默认|About 页面' test/seo-source-contract.test.mjs
+          result: passed (2 tests, 0 failures)
+          at: 2026-07-25T00:00:00+08:00
+        - command: pnpm --filter @wuh.site/next run lint
+          result: passed (0 errors, 0 warnings)
+          at: 2026-07-25T00:00:00+08:00
+      failure: null
+    - id: full-verification
+      title: 全量验证与 diff 检查
+      status: completed
+      dependsOn:
+        - default-og-metadata
+        - article-metadata
+        - about-profile-jsonld
+      files:
+        - packages/wuh.site.next/app/lib/markdown.ts
+        - packages/wuh.site.next/app/lib/seo.ts
+        - packages/wuh.site.next/app/layout.tsx
+        - packages/wuh.site.next/app/post/[number]/page.tsx
+        - packages/wuh.site.next/app/about/page.tsx
+        - packages/wuh.site.next/test/
+        - packages/wuh.site.next/public/og-default.png
+      instructions:
+        - 运行所有新增测试、Next lint、全仓 TypeScript 和 git diff check。
+        - 核对根路由、无 cover 文章、有 cover 文章和 About JSON-LD 契约。
+        - 不引入后端 API、DTO 或数据库变化。
+      verification:
+        - node --test packages/wuh.site.next/test/*.test.mjs
+        - pnpm --filter @wuh.site/next run lint
+        - pnpm exec tsc --noEmit
+        - git diff --check
+      requiredInputs: []
+      attempts: 1
+      maxAttempts: 2
+      evidence:
+        - command: cd packages/wuh.site.next && node --test --test-concurrency=1 test/blog-filter-utils.test.mjs
+          result: passed (4 tests, 0 failures)
+          at: 2026-07-25T00:00:00+08:00
+        - command: cd packages/wuh.site.next && node --test --test-concurrency=1 test/markdown-summary.test.mjs test/seo-metadata.test.mjs test/seo-source-contract.test.mjs
+          result: passed (6 tests, 0 failures)
+          at: 2026-07-25T00:00:00+08:00
+        - command: cd packages/wuh.site.next && node --test --test-concurrency=1 test/site-header-theme-toggle.test.mjs
+          result: passed (4 tests, 0 failures)
+          at: 2026-07-25T00:00:00+08:00
+        - command: pnpm --filter @wuh.site/next run lint
+          result: passed (0 errors, 0 warnings)
+          at: 2026-07-25T00:00:00+08:00
+        - command: node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/bin/tsc --noEmit --incremental false --declaration false --declarationMap false --pretty false
+          result: passed (full repository type check via direct compiler invocation)
+          at: 2026-07-25T00:00:00+08:00
+        - command: node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/bin/tsc --noEmit --incremental false --declaration false --declarationMap false --pretty false packages/wuh.site.next/app/lib/markdown.ts packages/wuh.site.next/app/lib/seo.ts packages/wuh.site.next/app/post/PostView.types.ts packages/wuh.site.next/app/post/[number]/page.tsx packages/wuh.site.next/app/about/page.tsx packages/wuh.site.next/app/layout.tsx
+          result: passed (changed frontend files type check)
+          at: 2026-07-25T00:00:00+08:00
+        - command: git diff --check
+          result: passed
+          at: 2026-07-25T00:00:00+08:00
+        - command: pnpm exec tsc --noEmit; pnpm --filter @wuh.site/next run build
+          result: warning (both wrapper/build processes terminated by environment SIGSEGV; direct TypeScript compiler and changed-file check passed)
+          at: 2026-07-25T00:00:00+08:00
+      failure: null
+  repairWorkflow: []
+  checkpoint:
+    lastCompletedTaskId: full-verification
+    updatedAt: 2026-07-25T00:00:00+08:00
+
+review:
+  status: passed
+  verification:
+    - id: artifact-contracts
+      command: node scripts/validate-artifact-contract.mjs for proposal.md, spec.md, design.md and tasks.md
+      result: passed
+      summary: 四份固定产物均通过模板契约校验。
+      at: 2026-07-25T00:00:00+08:00
+    - id: frontend-tests
+      command: node --test --test-concurrency=1 test/blog-filter-utils.test.mjs; node --test --test-concurrency=1 test/markdown-summary.test.mjs test/seo-metadata.test.mjs test/seo-source-contract.test.mjs; node --test --test-concurrency=1 test/site-header-theme-toggle.test.mjs
+      result: passed
+      summary: 14 个测试通过，0 失败。
+      at: 2026-07-25T00:00:00+08:00
+    - id: oxlint
+      command: pnpm --filter @wuh.site/next run lint
+      result: passed
+      summary: Oxlint 通过，0 errors，0 warnings。
+      at: 2026-07-25T00:00:00+08:00
+    - id: type-check-direct
+      command: node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/bin/tsc --noEmit --incremental false --declaration false --declarationMap false --pretty false
+      result: passed
+      summary: 直接 TypeScript 编译器完成全仓类型检查。
+      at: 2026-07-25T00:00:00+08:00
+    - id: diff-check
+      command: git diff --check
+      result: passed
+      summary: 无 whitespace 错误。
+      at: 2026-07-25T00:00:00+08:00
+    - id: package-wrapper-runtime
+      command: pnpm exec tsc --noEmit; pnpm --filter @wuh.site/next run build
+      result: unavailable
+      summary: 两个 pnpm 包装进程均因当前环境 SIGSEGV 退出；直接 TypeScript 编译器和变更文件类型检查已通过，Next build 未获得结果。
+      at: 2026-07-25T00:00:00+08:00
+  findings:
+    - id: R-001
+      severity: warning
+      file: package-manager runtime
+      line: null
+      message: pnpm wrapper 的 TypeScript 检查与 Next build 在当前运行环境中 SIGSEGV，无法取得 Next build 结果；需要用户决定接受该环境 warning，或先修复运行环境后再归档。
+      status: accepted
+  summary: 功能验收、测试、Oxlint、直接 TypeScript 编译和 diff check 均通过；用户已接受 package-manager/Next build 受环境 SIGSEGV 影响的 warning。
+
+archive:
+  status: completed
+  archivedAt: 2026-07-25T00:00:00+08:00
+  movedAt: 2026-07-25T00:00:00+08:00
+  specSync:
+    - domain: seo
+      source: openspec/changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/specs/seo/spec.md
+      target: openspec/specs/seo/spec.md
+      result: updated
+      evidence:
+        - command: "grep -n 'Requirement:' openspec/specs/seo/spec.md"
+          result: passed
+          at: 2026-07-25T00:00:00+08:00
+        - command: git diff --check
+          result: passed
+          at: 2026-07-25T00:00:00+08:00
+  indexEntry:
+    path: openspec/INDEX.md
+    result: updated
+    evidence:
+      - command: "grep -n -A3 '^## seo' openspec/INDEX.md"
+        result: passed
+        at: 2026-07-25T00:00:00+08:00
+  componentScenarios:
+    - decision: existing
+      path: openspec/navigation-guide.yaml
+      summary: 本变更只新增 SEO 公共函数和 metadata，不新增 UI 组件、props 组合或布局交互场景；导航索引已增加 SEO Metadata Builders 工具入口。
+      evidence:
+        - command: "grep -n -A4 'SEO Metadata Builders' openspec/navigation-guide.yaml"
+          result: passed
+          at: 2026-07-25T00:00:00+08:00
+
+commit:
+  status: completed
+  branch: codex/253-feat-SEO元数据
+  commits:
+    - hash: 5063c91
+      message: "feat(seo): improve metadata and author profile"
+      at: 2026-07-25T00:00:00+08:00
+  pullRequest:
+    number: 254
+    url: "https://github.com/stack-wuh/x.wuh.site/pull/254"
+    state: open
+
+runtime:
+  phase: commit
+  state: completed
+  attempts: 0
+  resume:
+    taskId: null
+    command: 继续归档
+  requiredInputs:
+    - key: review-warnings-decision
+      description: 是否接受 pnpm/Next build 在当前环境 SIGSEGV 的 warning 后继续归档。
+      supplied: true
+  failure: null
+  updatedAt: 2026-07-25T00:00:00+08:00

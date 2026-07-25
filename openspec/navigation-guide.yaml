@@ -3,7 +3,7 @@
 # 组件/Hooks/公共函数索引 — 按领域关键字检索
 # ================================================================
 version: 1
-updated: 2026-07-24
+updated: 2026-07-25
 
 categories:
   - name: 后台 Console
@@ -157,3 +157,9 @@ categories:
         keywords: [share, social, link group, 分享, 社交]
         scenarios:
           - wuh.site/demo-post-meta
+
+      - name: SEO Metadata Builders
+        path: "packages/wuh.site.next/app/lib/seo"
+        description: 文章 metadata、默认 OG 图片、Markdown 摘要和 BlogPosting/ProfilePage JSON-LD 纯函数
+        keywords: [seo, metadata, open graph, twitter card, markdown, json-ld, profile page, SEO, 元数据, 结构化数据]
+        scenarios: []

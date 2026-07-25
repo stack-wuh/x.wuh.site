@@ -18,17 +18,38 @@ const notoSerifSC = Noto_Serif_SC({
   display: 'swap',
 })
 
+const siteDescription = '记录前端工程、开源项目、设计系统与个人思考。'
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://wuh.site'),
   title: {
     default: 'wuh.site · 朝朝如念',
     template: '%s · wuh.site',
   },
-  description: '记录前端工程、开源项目、设计系统与个人思考。',
+  description: siteDescription,
   authors: [{ name: 'shadow', url: 'https://github.com/stack-wuh' }],
   creator: 'shadow',
   publisher: 'wuh.site',
   robots: { index: true, follow: true },
+  openGraph: {
+    title: 'wuh.site · 朝朝如念',
+    description: siteDescription,
+    url: 'https://wuh.site',
+    siteName: 'wuh.site',
+    type: 'website',
+    images: [{
+      url: '/og-default.png',
+      width: 1200,
+      height: 630,
+      alt: 'wuh.site',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'wuh.site · 朝朝如念',
+    description: siteDescription,
+    images: ['/og-default.png'],
+  },
 }
 
 export const viewport: Viewport = {

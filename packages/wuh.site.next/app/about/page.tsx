@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { reposService } from '@wuh.site/shared-contracts/endpoints'
 import type { GitHubProfileDto, RepoDto } from '@wuh.site/shared-contracts'
 import AboutView from './AboutView'
+import JsonLd from '../components/JsonLd'
+import { buildProfilePageJsonLd } from '../lib/seo'
 
 const SITE_URL = 'https://wuh.site'
 
@@ -36,5 +38,12 @@ export default async function AboutPage() {
     getProfile(),
     getRepos(),
   ])
-  return <AboutView profile={profile} repos={repos} />
+  const jsonLd = buildProfilePageJsonLd(profile)
+
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <AboutView profile={profile} repos={repos} />
+    </>
+  )
 }

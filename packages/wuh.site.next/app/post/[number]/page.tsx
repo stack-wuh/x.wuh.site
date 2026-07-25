@@ -3,6 +3,13 @@ import type { Metadata } from 'next'
 import { permanentRedirect } from 'next/navigation'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
+import {
+  buildArticleDescription,
+  buildArticleMetadata,
+  getArticleCategory,
+  getArticleImage,
+  getArticleKeywords,
+} from '../../lib/seo'
 import { buildPostUrl, isCanonicalPostPath } from '../../lib/slug'
 import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
@@ -12,15 +19,6 @@ import JsonLd from '../../components/JsonLd'
 import { createArticleStructuredData, createBreadcrumbStructuredData } from '../../lib/structured-data'
 
 const SITE_URL = 'https://wuh.site'
-
-function buildDescription(issue: Issue): string {
-  if (issue.metadata?.summary) return issue.metadata.summary
-  if (issue.body) {
-    const plain = issue.body.replace(/[#*`[\]()>{}!|-]/g, '').replace(/\s+/g, ' ').trim()
-    return plain.length > 160 ? plain.slice(0, 157) + '...' : plain
-  }
-  return '阅读这篇博客文章'
-}
 
 const FALLBACK_METADATA: Metadata = {
   title: '博客详情',
@@ -53,9 +51,9 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
     summary: item.metadata.summary || null,
     slug: item.metadata.slug || null,
     keywords: item.metadata.keywords || null,
+    extra: item.metadata.extra || undefined,
   } : null,
 })
-
 
 const mapContentToRelatedPost = (item: ContentItem): RelatedPostCandidate => ({
   number: item.number,
@@ -124,36 +122,12 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
     return FALLBACK_METADATA
   }
 
-  const description = buildDescription(issue)
-  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
-  const cover = issue.metadata?.cover
-
-  return {
-    title: issue.title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: issue.title,
-      description,
-      url,
-      siteName: 'wuh.site',
-      type: 'article',
-      publishedTime: issue.created_at,
-      modifiedTime: issue.updated_at,
-      images: cover ? [{ url: cover, alt: issue.metadata?.coverAlt || issue.title }] : [],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: issue.title,
-      description,
-      images: cover ? [cover] : [],
-    },
-  }
+  return buildArticleMetadata(issue) as Metadata
 }
 
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
-  const { number: raw } = await params;
-  const number = raw.split('-')[0];
+  const { number: raw } = await params
+  const number = raw.split('-')[0]
   const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number)
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />
 
@@ -163,16 +137,18 @@ export default async function Page({ params }: { params: Promise<{ number: strin
 
   const relatedPosts = await getRelatedPosts(issue)
   const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
+  const image = getArticleImage(issue)
+  const category = getArticleCategory(issue)
   const articleJsonLd = createArticleStructuredData({
     url,
     title: issue.title,
-    description: buildDescription(issue),
+    description: buildArticleDescription(issue),
     publishedAt: issue.created_at,
     modifiedAt: issue.updated_at,
-    image: issue.metadata?.cover,
-    imageAlt: issue.metadata?.coverAlt,
-    keywords: issue.metadata?.keywords,
-    labels: issue.labels.map((label) => label.name),
+    image: image.url,
+    imageAlt: image.alt,
+    keywords: getArticleKeywords(issue),
+    labels: category ? [category] : issue.labels.map((label) => label.name),
   })
   const breadcrumbJsonLd = createBreadcrumbStructuredData([
     { name: '首页', url: SITE_URL },
