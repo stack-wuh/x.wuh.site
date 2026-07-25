@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import JsonLd from '@/app/components/JsonLd'
 import Empty from '@wuh.site/components/empty'
 import Tag from '@wuh.site/components/tag'
 import { IconBookOpen } from '@wuh.site/components/icons'
@@ -8,6 +9,7 @@ import BackHomeLink from '@/app/components/BackHomeLink'
 import { buildPostUrl } from '@/app/lib/slug'
 import { buildTopicUrl, decodeTopicParam } from '@/app/lib/topic-url'
 import { formatShortDate } from '@/app/lib/date'
+import { createCollectionPageStructuredData } from '@/app/lib/structured-data'
 import * as S from '@/app/blog/styles'
 
 const SITE_URL = 'https://wuh.site'
@@ -74,9 +76,21 @@ export default async function TopicPage({ params }: { params: Promise<TopicPageP
   const { label: rawLabel } = await params
   const label = decodeTopicParam(rawLabel)
   const { posts, total } = await getTopicPosts(label)
+  const url = `${SITE_URL}${buildTopicUrl(label)}`
+  const collectionJsonLd = createCollectionPageStructuredData({
+    url,
+    name: `${label} 相关文章`,
+    description: `阅读 wuh.site 中与「${label}」相关的文章。`,
+    items: posts.map((post) => ({
+      name: post.title,
+      url: `${SITE_URL}${buildPostUrl(post.number, post.title)}`,
+    })),
+  })
 
   return (
-    <S.Root>
+    <>
+      <JsonLd data={collectionJsonLd} />
+      <S.Root>
       <S.Main>
         <BackHomeLink />
         <S.Header>
@@ -118,6 +132,7 @@ export default async function TopicPage({ params }: { params: Promise<TopicPageP
           </S.Timeline>
         )}
       </S.Main>
-    </S.Root>
+      </S.Root>
+    </>
   )
 }

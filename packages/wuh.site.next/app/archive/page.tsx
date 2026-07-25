@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import JsonLd from '@/app/components/JsonLd'
 import Empty from '@wuh.site/components/empty'
 import Tag from '@wuh.site/components/tag'
 import { IconBookOpen } from '@wuh.site/components/icons'
@@ -8,6 +9,7 @@ import BackHomeLink from '@/app/components/BackHomeLink'
 import { buildPostUrl } from '@/app/lib/slug'
 import { buildTopicUrl } from '@/app/lib/topic-url'
 import { formatShortDate } from '@/app/lib/date'
+import { createCollectionPageStructuredData } from '@/app/lib/structured-data'
 import * as S from '@/app/blog/styles'
 
 const SITE_URL = 'https://wuh.site'
@@ -83,9 +85,20 @@ async function getArchivePosts() {
 export default async function ArchivePage() {
   const posts = await getArchivePosts()
   const yearGroups = groupPostsByYear(posts)
+  const collectionJsonLd = createCollectionPageStructuredData({
+    url: `${SITE_URL}/archive`,
+    name: 'wuh.site 文章归档',
+    description: '按年份浏览 wuh.site 的全部博客文章。',
+    items: posts.map((post) => ({
+      name: post.title,
+      url: `${SITE_URL}${buildPostUrl(post.number, post.title)}`,
+    })),
+  })
 
   return (
-    <S.Root>
+    <>
+      <JsonLd data={collectionJsonLd} />
+      <S.Root>
       <S.Main>
         <S.Header>
           <S.TitleGroup>
@@ -132,6 +145,7 @@ export default async function ArchivePage() {
           </S.Timeline>
         )}
       </S.Main>
-    </S.Root>
+      </S.Root>
+    </>
   )
 }

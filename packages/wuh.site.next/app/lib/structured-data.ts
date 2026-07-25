@@ -114,3 +114,45 @@ export function createBreadcrumbStructuredData(items: BreadcrumbItem[]): JsonLdR
     })),
   }
 }
+
+type CollectionPageItem = {
+  name: string
+  url: string
+}
+
+type CollectionPageStructuredDataInput = {
+  url: string
+  name: string
+  description: string
+  items: CollectionPageItem[]
+}
+
+export function createCollectionPageStructuredData(input: CollectionPageStructuredDataInput): JsonLdRecord {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': input.url,
+    },
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    inLanguage: 'zh-CN',
+    isPartOf: {
+      '@type': 'Blog',
+      name: 'wuh.site',
+      url: `${SITE_URL}/blog`,
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: input.items.length,
+      itemListElement: input.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: item.url,
+      })),
+    },
+  }
+}
