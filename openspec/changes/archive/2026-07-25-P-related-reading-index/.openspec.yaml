@@ -266,7 +266,13 @@ commit:
     - hash: 655a9e736d940b8a2b762f2bf25f9c6c079ca4e3
       message: feat(next): add related reading index
       at: 2026-07-25T10:56:00+08:00
-  pullRequest: null
+    - hash: 4a28959
+      message: chore(openspec): record related reading commit
+      at: 2026-07-25T10:58:00+08:00
+  pullRequest:
+    number: 265
+    url: https://github.com/stack-wuh/x.wuh.site/pull/265
+    state: open
 
 runtime:
   phase: commit
@@ -278,4 +284,4 @@ runtime:
       description: 用户已接受 R-001；完整依赖环境中的类型与运行时视觉验收交由 CI 或部署环境完成。
       supplied: true
   failure: null
-  updatedAt: 2026-07-25T10:55:00+08:00
+  updatedAt: 2026-07-25T11:00:00+08:00
