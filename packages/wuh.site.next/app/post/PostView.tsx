@@ -20,9 +20,6 @@ import { buildPostUrl } from '@/app/lib/slug'
 import { buildTopicUrl } from '@/app/lib/topic-url'
 import {
   ArticleCard,
-  BreadcrumbCurrent,
-  BreadcrumbLink,
-  BreadcrumbNav,
   Container,
   ContentGrid,
   MainColumn,
@@ -211,15 +208,6 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position,
       <ContentGrid>
         <MainColumn>
           <PostLead>
-            <BreadcrumbNav aria-label='文章面包屑'>
-              <ol>
-                <li><BreadcrumbLink href='/'>首页</BreadcrumbLink></li>
-                <li aria-hidden='true'>/</li>
-                <li><BreadcrumbLink href='/blog'>博客</BreadcrumbLink></li>
-                <li aria-hidden='true'>/</li>
-                <li><BreadcrumbCurrent href={buildPostUrl(issue.number, issue.title)} aria-current='page'>{issue.title}</BreadcrumbCurrent></li>
-              </ol>
-            </BreadcrumbNav>
             <PostCover src={issue.metadata?.cover} alt={issue.metadata?.coverAlt || issue.title} />
             <PostHeader issue={issue} />
           </PostLead>

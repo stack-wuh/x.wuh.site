@@ -8,6 +8,7 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const postPageSource = await readFile(resolve(appRoot, 'app/post/[number]/page.tsx'), 'utf8')
 const postViewSource = await readFile(resolve(appRoot, 'app/post/PostView.tsx'), 'utf8')
+const postArticleStyles = await readFile(resolve(appRoot, 'app/post/styles/post-article.ts'), 'utf8')
 
 test('post page fetches candidates by labels with cached parallel requests', () => {
   assert.match(postPageSource, /async function getRelatedPosts/)
@@ -23,4 +24,15 @@ test('post view renders related posts only when candidates exist', () => {
   assert.match(postViewSource, /RelatedPostsSection aria-labelledby='related-posts-title'/)
   assert.match(postViewSource, /id='related-posts-title'>相关文章/)
   assert.match(postViewSource, /buildPostUrl\(post.number, post.title\)/)
+})
+
+
+test('related posts use a lightweight editorial list instead of nested cards', () => {
+  const relatedSection = postArticleStyles.match(/export const RelatedPostsSection = styled\.section`([\s\S]*?)`/)?.[1] || ''
+  const relatedLink = postArticleStyles.match(/export const RelatedPostLink = styled\.a`([\s\S]*?)`/)?.[1] || ''
+
+  assert.match(relatedSection, /border-top:/)
+  assert.doesNotMatch(relatedSection, /background:/)
+  assert.match(relatedLink, /border-bottom:/)
+  assert.doesNotMatch(relatedLink, /border-radius: 10px;|transform:/)
 })

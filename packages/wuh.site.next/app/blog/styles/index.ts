@@ -235,13 +235,6 @@ export const PostRow = styled.div`
   padding: var(--space-xs) 8px;
   border-radius: 6px;
   color: inherit;
-  transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
-
-  &:hover {
-    background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
-    padding-left: 12px;
-    text-decoration: none;
-  }
 
   @media (max-width: 520px) { flex-wrap: wrap; gap: 6px; }
 `
