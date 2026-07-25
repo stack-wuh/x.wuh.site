@@ -170,6 +170,36 @@ export const FilterToken = styled(Link)`
   }
 `
 
+export const ArchiveLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin-left: auto;
+  padding: 0 10px;
+  border: 1px solid color-mix(in oklab, var(--accent-color) 34%, var(--background-100, #fff));
+  border-radius: 6px;
+  color: var(--text-secondary);
+  background: color-mix(in oklab, var(--accent-color) 6%, var(--background-100, #fff));
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: border-color var(--transition-fast) ease, color var(--transition-fast) ease, background-color var(--transition-fast) ease;
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--accent-color) 58%, var(--background-100, #fff));
+    color: var(--primary-color);
+    background: color-mix(in oklab, var(--accent-color) 14%, var(--background-100, #fff));
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 36%, transparent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 520px) {
+    margin-left: 0;
+  }
+`
+
 export const YearGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -235,6 +265,8 @@ export const IssueNumber = styled.span`
 `
 
 export const PostTitleLink = styled(Link)`
+  display: block;
+  flex: 1 1 0;
   min-width: 0;
   color: inherit;
   text-decoration: none;

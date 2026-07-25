@@ -9,6 +9,7 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const archivePagePath = resolve(appRoot, 'app/archive/page.tsx')
 const blogListViewSource = await readFile(resolve(appRoot, 'app/blog/BlogListView.tsx'), 'utf8')
+const blogStylesSource = await readFile(resolve(appRoot, 'app/blog/styles/index.ts'), 'utf8')
 let archivePageSource = ''
 try {
   archivePageSource = await readFile(archivePagePath, 'utf8')
@@ -29,7 +30,15 @@ test('archive page exposes canonical metadata and canonical post/topic links', (
   assert.match(archivePageSource, /buildTopicUrl\(label.name\)/)
 })
 
-test('blog page header links to archive', () => {
-  assert.match(blogListViewSource, /href='\/archive'/)
-  assert.match(blogListViewSource, /归档/)
+test('blog page places the archive link in the filter toolbar and preserves the header actions', () => {
+  const headerActions = blogListViewSource.match(/<S\.HeaderActions>([\s\S]*?)<\/S\.HeaderActions>/)?.[1] || ''
+  const filterToolbar = blogListViewSource.match(/<S\.FilterToolbar>([\s\S]*?)<\/S\.FilterToolbar>/)?.[1] || ''
+
+  assert.doesNotMatch(headerActions, /href='\/archive'/)
+  assert.match(filterToolbar, /<S\.ArchiveLink href='\/archive'>归档<\/S\.ArchiveLink>/)
+  assert.match(blogStylesSource, /export const ArchiveLink = styled\(Link\)`[\s\S]*?margin-left: auto;/)
+})
+
+test('blog post title link fills the row so metadata remains right-aligned', () => {
+  assert.match(blogStylesSource, /export const PostTitleLink = styled\(Link\)`[\s\S]*?flex: 1 1 0;/)
 })
