@@ -102,7 +102,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
     <S.Root>
       <S.Main>
         <S.Hero>
-          <S.StyledLogo src='/logo.svg' alt='wuh.site.logo' width={64} height={38.4} priority />
+          <S.StyledLogo role='logo' src='/logo.svg' alt='wuh.site.logo' width={64} height={38.4} priority />
           <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</S.SiteTitle>
           <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
         </S.Hero>
@@ -204,7 +204,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
               <S.BooksList>
                 {wereadBooks.map((book) => (
                   <S.BookRow key={book.bookId}>
-                    <S.BookCover src={book.cover || ''} alt={book.title} width={36} height={54} />
+                    <S.BookCover role='book-cover' src={book.cover || ''} alt={book.title} width={36} height={54} />
                     <S.BookInfo>
                       <S.BookTitle>{book.title}</S.BookTitle>
                       <S.BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</S.BookMeta>

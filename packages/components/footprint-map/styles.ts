@@ -1,6 +1,7 @@
 'use client';
 
 import styled from 'styled-components';
+import Image from '@wuh.site/components/image';
 
 export const MapContainer = styled.div<{ $height?: string }>`
   width: 100%;
@@ -63,12 +64,24 @@ export const PhotoGrid = styled.div`
   gap: 8px;
 `;
 
-export const Photo = styled.img`
+export const Photo = styled(Image)`
   width: 100%;
   aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 8px;
   cursor: pointer;
+`;
+
+export const HtmlContent = styled.div`
+  line-height: 1.75;
+  font-size: 0.9375rem;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--background-100);
+  }
 `;
 
 export const EmptyPanel = styled.div`

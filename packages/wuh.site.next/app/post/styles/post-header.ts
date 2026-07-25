@@ -36,10 +36,11 @@ export const TagGroup = styled.div`
 `
 
 export const CoverImage = styled.div`
+  --post-cover-radius: 12px;
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 360px;
-  border-radius: 12px;
+  border-radius: var(--post-cover-radius);
   overflow: hidden;
   margin-bottom: var(--space-lg);
   order: 2;
@@ -52,12 +53,13 @@ export const CoverImage = styled.div`
   }
 
   @media (max-width: 767px) {
+    --post-cover-radius: 0;
     width: calc(100% + 48px);
     height: clamp(220px, 60vw, 300px);
     aspect-ratio: auto;
     max-height: none;
     margin: 0 -24px var(--space-lg);
-    border-radius: 0;
+    border-radius: var(--post-cover-radius);
     order: 1;
   }
 
@@ -87,12 +89,16 @@ export const AuthorRow = styled.div`
   margin-bottom: var(--space-md);
 `
 
-export const AuthorAvatar = styled.img`
+export const AuthorAvatarFrame = styled.span`
+  display: inline-flex;
   width: 36px;
   height: 36px;
+  padding: 2px;
   border-radius: 50%;
   border: 2px solid color-mix(in oklab, var(--accent-color) 30%, transparent);
   flex-shrink: 0;
+
+  > * { width: 100%; height: 100%; }
 `
 
 export const AuthorInfo = styled.div`

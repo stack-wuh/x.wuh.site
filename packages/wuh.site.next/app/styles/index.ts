@@ -32,9 +32,7 @@ export const Hero = styled.header`
 `
 
 export const StyledLogo = styled(Image).attrs({
-  showSkeleton: false,
   inline: true,
-  appearance: 'plain',
   imageClassName: 'logo-img'
 })`
   width: fit-content;
@@ -293,14 +291,9 @@ export const BookRow = styled.div`
   border-radius: 6px;
 `
 
-export const BookCover = styled(Image).attrs({
-  showSkeleton: true,
-  appearance: 'plain',
-  variant: 'contain',
-})`
+export const BookCover = styled(Image)`
   width: 36px;
   height: 54px;
-  border-radius: 4px;
   flex-shrink: 0;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 `

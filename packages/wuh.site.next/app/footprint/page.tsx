@@ -19,6 +19,7 @@ import {
   PlaceDate,
   PhotoGrid,
   Photo,
+  HtmlContent,
   EmptyPanel,
 } from '@wuh.site/components/footprint-map/styles'
 
@@ -78,11 +79,13 @@ export default function FootprintPage() {
                   <PhotoGrid>
                     {selected.photos.map((url, i) => (
                       <Photo
+                        role='thumbnail'
                         key={i}
                         src={url}
                         alt={selected.name}
+                        width={160}
+                        height={160}
                         onClick={() => handlePhotoClick(i)}
-                        loading="lazy"
                       />
                     ))}
                   </PhotoGrid>
@@ -104,10 +107,7 @@ export default function FootprintPage() {
               )}
 
               {selected.content && (
-                <div
-                  style={{ lineHeight: 1.75, fontSize: '0.9375rem' }}
-                  dangerouslySetInnerHTML={{ __html: selected.content }}
-                />
+                <HtmlContent dangerouslySetInnerHTML={{ __html: selected.content }} />
               )}
             </>
           ) : (

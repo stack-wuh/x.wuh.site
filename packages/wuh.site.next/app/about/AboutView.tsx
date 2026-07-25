@@ -103,9 +103,10 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
                     <Image
                       src={avatarUrl || ''}
                       alt={name}
+                      role='avatar'
                       width={56}
                       height={56}
-                      style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                      imageStyle={{ flexShrink: 0 }}
                     />
                   </ProfileAvatarLink>
                 ) : (

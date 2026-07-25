@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import styled from '@wuh.site/components/styled'
 import Button from '@wuh.site/components/button'
+import Image from '@wuh.site/components/image'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
 import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord } from '@wuh.site/components/icons'
@@ -71,11 +72,9 @@ const ActionArea = styled(Button).attrs({ variant: "outlined", color: "secondary
   }
 `
 
-const QRImage = styled.img`
+const QRImage = styled(Image)`
   width: 184px;
   height: 184px;
-  object-fit: cover;
-  border-radius: calc(var(--radius-card) - 4px);
 `
 
 const LinkButton = styled.a`
@@ -120,14 +119,18 @@ const Header = styled.div`
   gap: var(--space-sm);
 `
 
-const Avatar = styled.img`
+const Avatar = styled(Image)`
   width: 48px;
   height: auto;
-  border-radius: 4px;
   flex-shrink: 0;
 
+  .contact-logo {
+    width: 48px;
+    height: auto;
+  }
+
   @media (prefers-color-scheme: dark) {
-    filter: invert(1);
+    .contact-logo { filter: invert(1); }
   }
 `
 
@@ -245,7 +248,7 @@ const ContactCard = ({
             aria-label={hasLink ? `前往 ${badge}` : `查看 ${badge} 二维码`}
             onClick={hasQR ? () => setPreviewOpen(true) : undefined}
           >
-            {hasQR && <QRImage src={qrSrc} alt={`${name} 的 ${badge} 二维码`} />}
+            {hasQR && <QRImage role='qr' src={qrSrc} alt={`${name} 的 ${badge} 二维码`} width={184} height={184} />}
             {hasLink && (
               <LinkButton as='span'>
                 <LinkIcon>{linkIconMap[badge]}</LinkIcon>
@@ -255,7 +258,7 @@ const ContactCard = ({
           </ActionArea>
           <Info>
             <Header>
-              <Avatar src='/logo.svg' alt='wuh.site' />
+              <Avatar role='logo' imageClassName='contact-logo' src='/logo.svg' alt='wuh.site' width={48} height={29} />
               <NameBlock>
                 <Name>{name}</Name>
                 <Handle>{handle}</Handle>
