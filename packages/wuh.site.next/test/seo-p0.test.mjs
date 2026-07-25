@@ -42,7 +42,7 @@ test('home page uses revalidated data instead of force-dynamic rendering', () =>
 })
 
 test('sitemap uses the canonical slug URL', async () => {
-  const { buildPostSitemapEntry } = await import('../app/lib/sitemap.ts')
+  const { buildPostSitemapEntry } = await import('../app/lib/sitemap-utils.ts')
   const entry = buildPostSitemapEntry({
     number: 123,
     title: 'Next.js SEO',
@@ -55,7 +55,7 @@ test('sitemap uses the canonical slug URL', async () => {
 })
 
 test('static sitemap excludes the design token debug page', async () => {
-  const { buildStaticSitemapRoutes } = await import('../app/lib/sitemap.ts')
+  const { buildStaticSitemapRoutes } = await import('../app/lib/sitemap-utils.ts')
   const urls = buildStaticSitemapRoutes().map((route) => route.url)
   assert.equal(urls.includes('https://wuh.site/design/system-color'), false)
   assert.equal(urls.includes('https://wuh.site/blog'), true)

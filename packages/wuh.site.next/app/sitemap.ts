@@ -6,7 +6,7 @@ import {
   buildTopicSitemapEntry,
   type SitemapPost,
   type SitemapTopic,
-} from './lib/sitemap'
+} from './lib/sitemap-utils'
 
 const SITEMAP_PAGE_SIZE = 100
 
