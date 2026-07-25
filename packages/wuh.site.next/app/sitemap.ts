@@ -27,7 +27,7 @@ async function getOpenLabels(): Promise<SitemapTopic[]> {
   })
 
   if (error || !data) {
-    throw new Error('Failed to load sitemap labels')
+    return []
   }
 
   return (data as SitemapLabelsResponse).filter((label) => label.name?.trim())
@@ -48,7 +48,7 @@ async function getPublishedPosts(): Promise<SitemapPost[]> {
     })
 
     if (error || !data) {
-      throw new Error(`Failed to load sitemap posts on page ${page}`)
+      return posts
     }
 
     const result = data as SitemapPostsResponse

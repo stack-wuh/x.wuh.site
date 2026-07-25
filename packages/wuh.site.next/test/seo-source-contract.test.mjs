@@ -6,9 +6,10 @@ import { dirname, resolve } from 'node:path'
 
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
-const [layoutSource, aboutSource, defaultImage] = await Promise.all([
+const [layoutSource, aboutSource, sitemapSource, defaultImage] = await Promise.all([
   readFile(resolve(appRoot, 'app/layout.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/about/page.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/sitemap.ts'), 'utf8'),
   readFile(resolve(appRoot, 'public/og-default.png')),
 ])
 
@@ -42,4 +43,10 @@ test('工具目录不使用 Next metadata route 保留文件名 sitemap.ts', asy
   )
   const appSitemapSource = await readFile(resolve(appRoot, 'app/sitemap.ts'), 'utf8')
   assert.match(appSitemapSource, /\.\/lib\/sitemap-utils/)
+})
+
+
+test('sitemap 构建阶段 API 失败时降级而不是抛错', () => {
+  assert.doesNotMatch(sitemapSource, /throw new Error\(['"]Failed to load sitemap/)
+  assert.match(sitemapSource, /return \[\]/)
 })
