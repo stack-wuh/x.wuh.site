@@ -59,8 +59,8 @@
 - **路径:** `openspec/specs/blog-display/spec.md`
 
 ## blog-detail — 博客详情页
-- **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块, 封面图, 正文首图
-- **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性, Detail page shows cover below header metadata, Detail page hides unavailable cover image, Detail page hides failed cover image
+- **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块, 封面图, 正文首图, 相关文章, 继续阅读, 阅读余韵索引, 响应式, 可访问性
+- **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性, Detail page shows cover below header metadata, Detail page hides unavailable cover image, Detail page hides failed cover image, 相关文章以阅读余韵索引呈现, 索引项提供阅读判断信息, 索引项可访问且具备克制反馈, 索引在窄屏和减少动态偏好下保持可用
 - **路径:** `openspec/specs/blog-detail/spec.md`
 
 ## blog-code-highlighting — 代码高亮

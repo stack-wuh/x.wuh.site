@@ -26,8 +26,15 @@ import {
   MarkdownBody,
   PostLead,
   RedundantInfoCard,
+  RelatedPostArrow,
+  RelatedPostContent,
+  RelatedPostIndex,
   RelatedPostLabels,
   RelatedPostLink,
+  RelatedPostSummary,
+  RelatedPostsCount,
+  RelatedPostsHeader,
+  RelatedPostsHeading,
   RelatedPostsSection,
   RelatedPostTitle,
   ShareCardInner,
@@ -228,16 +235,29 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position,
 
           {relatedPosts.length > 0 && (
             <RelatedPostsSection aria-labelledby='related-posts-title'>
-              <h2 id='related-posts-title'>相关文章</h2>
+              <RelatedPostsHeader>
+                <RelatedPostsHeading id='related-posts-title'>继续阅读</RelatedPostsHeading>
+                <RelatedPostsCount>{relatedPosts.length} 篇同题文章</RelatedPostsCount>
+              </RelatedPostsHeader>
               <ul>
-                {relatedPosts.map((post) => (
-                  <li key={post.number}>
-                    <RelatedPostLink href={buildPostUrl(post.number, post.title)}>
-                      <RelatedPostTitle>{post.title}</RelatedPostTitle>
-                      <RelatedPostLabels>{post.sharedLabels.slice(0, 2).join(' · ')}</RelatedPostLabels>
-                    </RelatedPostLink>
-                  </li>
-                ))}
+                {relatedPosts.map((post, index) => {
+                  const summary = post.summary?.trim()
+                  const sharedLabels = post.sharedLabels.slice(0, 2).map((label) => `#${label}`).join(' · ')
+
+                  return (
+                    <li key={post.number}>
+                      <RelatedPostLink href={buildPostUrl(post.number, post.title)} aria-label={`继续阅读：${post.title}`}>
+                        <RelatedPostIndex>{String(index + 1).padStart(2, '0')}</RelatedPostIndex>
+                        <RelatedPostContent>
+                          <RelatedPostTitle>{post.title}</RelatedPostTitle>
+                          {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
+                          {sharedLabels && <RelatedPostLabels>{sharedLabels}</RelatedPostLabels>}
+                        </RelatedPostContent>
+                        <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>
+                      </RelatedPostLink>
+                    </li>
+                  )
+                })}
               </ul>
             </RelatedPostsSection>
           )}
