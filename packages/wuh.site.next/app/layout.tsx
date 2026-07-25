@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Noto_Serif_SC } from 'next/font/google'
 import AppProviders from './components/AppProviders'
+import JsonLd from './components/JsonLd'
+import { createSiteStructuredData } from './lib/structured-data'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,14 +18,22 @@ const notoSerifSC = Noto_Serif_SC({
   display: 'swap',
 })
 
+const siteDescription = '记录前端工程、开源项目、设计系统与个人思考。'
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://wuh.site'),
-  title: 'wuh.site',
-  description: '记录技术实践与个人思考的作者博客',
+  title: {
+    default: 'wuh.site · 朝朝如念',
+    template: '%s · wuh.site',
+  },
+  description: siteDescription,
+  authors: [{ name: 'shadow', url: 'https://github.com/stack-wuh' }],
+  creator: 'shadow',
+  publisher: 'wuh.site',
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'wuh.site',
-    description: '记录技术实践与个人思考的作者博客',
+    title: 'wuh.site · 朝朝如念',
+    description: siteDescription,
     url: 'https://wuh.site',
     siteName: 'wuh.site',
     type: 'website',
@@ -36,8 +46,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'wuh.site',
-    description: '记录技术实践与个人思考的作者博客',
+    title: 'wuh.site · 朝朝如念',
+    description: siteDescription,
     images: ['/og-default.png'],
   },
 }
@@ -92,6 +102,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${notoSerifSC.variable}`}>
+        <JsonLd data={createSiteStructuredData()} />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

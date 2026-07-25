@@ -28,6 +28,9 @@ test('SEO builder 集中处理摘要、图片、关键词、分类和 JSON-LD', 
 
 test('文章页面复用统一 SEO builder，移除正则摘要', () => {
   assert.match(pageSource, /buildArticleMetadata/)
-  assert.match(pageSource, /buildBlogPostingJsonLd/)
+  assert.match(pageSource, /createArticleStructuredData/)
+  assert.match(pageSource, /buildArticleDescription/)
+  assert.match(pageSource, /getArticleImage/)
+  assert.match(pageSource, /getArticleKeywords/)
   assert.doesNotMatch(pageSource, /issue\.body\.replace\(\//)
 })

@@ -17,14 +17,22 @@ import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
+import { buildTopicUrl } from '@/app/lib/topic-url'
 import {
   ArticleCard,
+  BreadcrumbCurrent,
+  BreadcrumbLink,
+  BreadcrumbNav,
   Container,
   ContentGrid,
   MainColumn,
   MarkdownBody,
   PostLead,
   RedundantInfoCard,
+  RelatedPostLabels,
+  RelatedPostLink,
+  RelatedPostsSection,
+  RelatedPostTitle,
   ShareCardInner,
   ShareInfoCard,
   StatusEmpty,
@@ -46,11 +54,6 @@ const copyToClipboard = async (text: string): Promise<boolean> => {
   } catch {
     return false
   }
-}
-
-const createLabelHref = (labelName: string) => {
-  const query = encodeURIComponent(`is:issue label:"${labelName}"`)
-  return `${BLOG_PROJECT_URL}/issues?q=${query}`
 }
 
 const toGithubWebUrl = (repositoryUrl?: string | null) => {
@@ -101,7 +104,7 @@ const createAlertLabels = (issue: Issue): AlertLabel[] =>
   issue.labels.map((label) => ({
     name: label.name,
     color: label.color,
-    href: createLabelHref(label.name),
+    href: buildTopicUrl(label.name),
   }))
 
 const createShareItems = (issue: Issue): ShareItem[] => {
@@ -156,7 +159,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
   ]
 }
 
-export default function PostView({ issue, prevIssue, nextIssue, total, position }: PostViewProps) {
+export default function PostView({ issue, prevIssue, nextIssue, total, position, relatedPosts = [] }: PostViewProps) {
   const renderedHtml = issue?.body_html || ''
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
@@ -208,6 +211,15 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
       <ContentGrid>
         <MainColumn>
           <PostLead>
+            <BreadcrumbNav aria-label='文章面包屑'>
+              <ol>
+                <li><BreadcrumbLink href='/'>首页</BreadcrumbLink></li>
+                <li aria-hidden='true'>/</li>
+                <li><BreadcrumbLink href='/blog'>博客</BreadcrumbLink></li>
+                <li aria-hidden='true'>/</li>
+                <li><BreadcrumbCurrent href={buildPostUrl(issue.number, issue.title)} aria-current='page'>{issue.title}</BreadcrumbCurrent></li>
+              </ol>
+            </BreadcrumbNav>
             <PostCover src={issue.metadata?.cover} alt={issue.metadata?.coverAlt || issue.title} />
             <PostHeader issue={issue} />
           </PostLead>
@@ -225,6 +237,22 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <ArticleCard>
             <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
           </ArticleCard>
+
+          {relatedPosts.length > 0 && (
+            <RelatedPostsSection aria-labelledby='related-posts-title'>
+              <h2 id='related-posts-title'>相关文章</h2>
+              <ul>
+                {relatedPosts.map((post) => (
+                  <li key={post.number}>
+                    <RelatedPostLink href={buildPostUrl(post.number, post.title)}>
+                      <RelatedPostTitle>{post.title}</RelatedPostTitle>
+                      <RelatedPostLabels>{post.sharedLabels.slice(0, 2).join(' · ')}</RelatedPostLabels>
+                    </RelatedPostLink>
+                  </li>
+                ))}
+              </ul>
+            </RelatedPostsSection>
+          )}
 
           <ImagePreview {...previewProps} />
 

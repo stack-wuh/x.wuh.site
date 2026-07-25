@@ -1,31 +1,71 @@
 import { type MetadataRoute } from 'next'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
+import {
+  buildPostSitemapEntry,
+  buildStaticSitemapRoutes,
+  buildTopicSitemapEntry,
+  type SitemapPost,
+  type SitemapTopic,
+} from './lib/sitemap'
 
-const SITE_URL = 'https://wuh.site'
+const SITEMAP_PAGE_SIZE = 100
 
-const staticRoutes: MetadataRoute.Sitemap = [
-  { url: SITE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
-  { url: `${SITE_URL}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-  { url: `${SITE_URL}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-  { url: `${SITE_URL}/design/system-color`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
-]
+type SitemapLabelsResponse = SitemapTopic[]
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { data, error } = await contentService.getPosts.server({
-    query: { limit: '9999', state: 'open' },
+type SitemapPostsResponse = {
+  data: SitemapPost[]
+  pagination?: {
+    hasNextPage?: boolean
+  }
+}
+
+
+async function getOpenLabels(): Promise<SitemapTopic[]> {
+  const { data, error } = await contentService.getLabels.server({
+    query: { state: 'open' },
+    revalidate: 3600,
   })
 
   if (error || !data) {
-    return staticRoutes
+    throw new Error('Failed to load sitemap labels')
   }
 
-  const result = data as any
-  const postRoutes: MetadataRoute.Sitemap = (result.data || []).map((post: any) => ({
-    url: `${SITE_URL}/post/${post.number}`,
-    lastModified: new Date(post.updatedAtGitHub || post.createdAtGitHub),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }))
+  return (data as SitemapLabelsResponse).filter((label) => label.name?.trim())
+}
 
-  return [...staticRoutes, ...postRoutes]
+async function getPublishedPosts(): Promise<SitemapPost[]> {
+  const posts: SitemapPost[] = []
+  let page = 1
+
+  while (true) {
+    const { data, error } = await contentService.getPosts.server({
+      query: {
+        page: String(page),
+        limit: String(SITEMAP_PAGE_SIZE),
+        state: 'open',
+      },
+      revalidate: 3600,
+    })
+
+    if (error || !data) {
+      throw new Error(`Failed to load sitemap posts on page ${page}`)
+    }
+
+    const result = data as SitemapPostsResponse
+    posts.push(...(result.data || []))
+
+    if (!result.pagination?.hasNextPage) break
+    page += 1
+  }
+
+  return posts
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [labels, posts] = await Promise.all([getOpenLabels(), getPublishedPosts()])
+  return [
+    ...buildStaticSitemapRoutes(),
+    ...labels.map(buildTopicSitemapEntry),
+    ...posts.map(buildPostSitemapEntry),
+  ]
 }

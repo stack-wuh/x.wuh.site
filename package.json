@@ -22,7 +22,10 @@
     "version:major": "standard-version -r major",
     "version:minor": "standard-version -r minor",
     "version:patch": "standard-version -r patch",
-    "release": "pnpm changelog && pnpm version:major"
+    "release": "pnpm changelog && pnpm version:major",
+    "dev:console": "pnpm --filter @wuh.site/console run dev",
+    "build:console": "pnpm --filter @wuh.site/console run build",
+    "preview:console": "pnpm --filter @wuh.site/console run preview"
   },
   "workspaces": [
     "packages/**"
@@ -56,6 +59,12 @@
     }
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@swc/core", "@nestjs/core", "@scarf/scarf", "@sentry/cli", "sharp"]
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "@nestjs/core",
+      "@scarf/scarf",
+      "@sentry/cli",
+      "sharp"
+    ]
   }
 }

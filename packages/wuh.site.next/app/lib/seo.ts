@@ -3,7 +3,7 @@ import { buildPostUrl } from './slug'
 
 export const SITE_URL = 'https://wuh.site'
 export const GITHUB_PROFILE_URL = 'https://github.com/stack-wuh'
-export const SITE_PERSON_ID = `${SITE_URL}/#person`
+export const SITE_PERSON_ID = `${SITE_URL}/about#person`
 export const DEFAULT_OG_IMAGE_PATH = '/og-default.png'
 export const DEFAULT_ARTICLE_DESCRIPTION = '阅读这篇博客文章'
 
@@ -100,7 +100,7 @@ export function buildArticleMetadata(issue: ArticleIssue): Record<string, unknow
   }
 
   return {
-    title: `${issue.title} · wuh.site`,
+    title: issue.title,
     description,
     authors: [author],
     keywords,

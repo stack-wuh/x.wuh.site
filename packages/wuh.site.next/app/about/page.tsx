@@ -8,12 +8,12 @@ import { buildProfilePageJsonLd } from '../lib/seo'
 const SITE_URL = 'https://wuh.site'
 
 export const metadata: Metadata = {
-  title: 'About · wuh.site',
+  title: '关于',
   description: '输出节奏总览 — 记录思考，串联碎片，构建自己的知识系统',
   robots: { index: true, follow: true },
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
-    title: 'About · wuh.site',
+    title: '关于',
     description: '输出节奏总览 — 记录思考，串联碎片，构建自己的知识系统',
     url: `${SITE_URL}/about`,
     siteName: 'wuh.site',

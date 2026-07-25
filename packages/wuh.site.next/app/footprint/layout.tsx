@@ -4,11 +4,11 @@ import type { Metadata } from 'next'
 const SITE_URL = 'https://wuh.site'
 
 export const metadata: Metadata = {
-  title: '足迹 · wuh.site',
+  title: '足迹',
   description: '深圳周边的旅游足迹记录，探索路线与风景',
   alternates: { canonical: `${SITE_URL}/footprint` },
   openGraph: {
-    title: '足迹 · wuh.site',
+    title: '足迹',
     description: '深圳周边的旅游足迹记录',
     url: `${SITE_URL}/footprint`,
     siteName: 'wuh.site',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: '足迹 · wuh.site',
+    title: '足迹',
     description: '深圳周边的旅游足迹记录',
   },
 }

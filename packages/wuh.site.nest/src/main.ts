@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { pino } from 'pino';
+import { parseCorsOrigin } from './common/utils/cors-origin.util';
 
 const logger = pino();
 
@@ -34,7 +35,7 @@ async function bootstrap() {
 
   // Enable CORS for frontend
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: parseCorsOrigin(process.env.CORS_ORIGIN),
     credentials: true,
   });
 

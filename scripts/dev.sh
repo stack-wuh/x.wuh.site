@@ -46,12 +46,16 @@ trap cleanup EXIT INT TERM
 
 release_port 3000
 release_port 3200
+release_port 3300
 
 echo "🐳 启动 dev 服务..."
 bash "$root_dir/scripts/dev-next.sh" &
 child_pids+=("$!")
 
 bash "$root_dir/scripts/dev-nest.sh" &
+child_pids+=("$!")
+
+( cd "$root_dir" && pnpm dev:console ) &
 child_pids+=("$!")
 
 wait "${child_pids[@]}"
