@@ -4,24 +4,39 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { ThemeFamily, ColorScheme } from '@wuh.site/components/themes/tokens'
 
 export type Theme = ThemeFamily
+export type ColorSchemeMode = 'system' | ColorScheme
 
 type ThemeContextValue = {
-  theme: Theme
-  toggle: () => void
+  themeFamily: ThemeFamily
+  colorSchemeMode: ColorSchemeMode
+  resolvedColorScheme: ColorScheme
+  setThemeFamily: (family: ThemeFamily) => void
+  setColorSchemeMode: (mode: ColorSchemeMode) => void
 }
 
-const STORAGE_KEY = 'wuh.site.theme'
-
+const THEME_STORAGE_KEY = 'wuh.site.theme'
+const COLOR_SCHEME_STORAGE_KEY = 'wuh.site.color-scheme-mode'
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
-const THEME_CYCLE: Theme[] = ['wine', 'plain']
-
-function isValidTheme(value: unknown): value is Theme {
+function isValidTheme(value: unknown): value is ThemeFamily {
   return value === 'wine' || value === 'plain'
 }
 
-function parseTheme(raw: unknown): Theme {
-  return isValidTheme(raw) ? raw : 'wine'
+function parseTheme(value: unknown): ThemeFamily {
+  return isValidTheme(value) ? value : 'wine'
+}
+
+function isValidColorSchemeMode(value: unknown): value is ColorSchemeMode {
+  return value === 'system' || value === 'light' || value === 'dark'
+}
+
+function parseColorSchemeMode(value: unknown): ColorSchemeMode {
+  return isValidColorSchemeMode(value) ? value : 'system'
+}
+
+function getSystemColorScheme(): ColorScheme {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return 'light'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 function applyColorScheme(scheme: ColorScheme) {
@@ -35,50 +50,78 @@ function applyThemeFamily(family: ThemeFamily) {
 }
 
 export function ThemeModeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('wine')
+  const [themeFamily, setThemeFamilyState] = useState<ThemeFamily>('wine')
+  const [colorSchemeMode, setColorSchemeModeState] = useState<ColorSchemeMode>('system')
+  const [resolvedColorScheme, setResolvedColorScheme] = useState<ColorScheme>('light')
 
   useEffect(() => {
-    let stored: Theme | null = null
+    let storedTheme: unknown = null
+    let storedMode: unknown = null
     try {
-      stored = parseTheme(window.localStorage.getItem(STORAGE_KEY))
+      storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
+      storedMode = window.localStorage.getItem(COLOR_SCHEME_STORAGE_KEY)
     } catch {}
-    const resolved = stored ?? 'wine'
-    setThemeState(resolved)
-    applyThemeFamily(resolved)
 
-    const mql = window.matchMedia('(prefers-color-scheme: dark)')
-    const onSystemSchemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      applyColorScheme(e.matches ? 'dark' : 'light')
+    const nextTheme = parseTheme(storedTheme)
+    const nextMode = parseColorSchemeMode(storedMode)
+    const nextScheme = nextMode === 'system' ? getSystemColorScheme() : nextMode
+
+    setThemeFamilyState(nextTheme)
+    setColorSchemeModeState(nextMode)
+    setResolvedColorScheme(nextScheme)
+    applyThemeFamily(nextTheme)
+    applyColorScheme(nextScheme)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const onSystemSchemeChange = (event: MediaQueryListEvent | MediaQueryList) => {
+      if (colorSchemeMode === 'system') {
+        const nextScheme: ColorScheme = event.matches ? 'dark' : 'light'
+        setResolvedColorScheme(nextScheme)
+        applyColorScheme(nextScheme)
+      }
     }
-    onSystemSchemeChange(mql)
-    mql.addEventListener('change', onSystemSchemeChange)
-    document.documentElement.removeAttribute('data-no-transition')
-    return () => mql.removeEventListener('change', onSystemSchemeChange)
-  }, [])
 
-  useEffect(() => {
-    applyThemeFamily(theme)
+    mediaQuery.addEventListener('change', onSystemSchemeChange)
+    return () => mediaQuery.removeEventListener('change', onSystemSchemeChange)
+  }, [colorSchemeMode])
+
+  const setThemeFamily = useCallback((family: ThemeFamily) => {
+    setThemeFamilyState(family)
+    applyThemeFamily(family)
     try {
-      window.localStorage.setItem(STORAGE_KEY, theme)
+      window.localStorage.setItem(THEME_STORAGE_KEY, family)
     } catch {}
-  }, [theme])
-
-  const toggle = useCallback(() => {
-    setThemeState((current) => {
-      const idx = THEME_CYCLE.indexOf(current)
-      return THEME_CYCLE[(idx + 1) % THEME_CYCLE.length]
-    })
   }, [])
 
-  const value = useMemo<ThemeContextValue>(() => ({ theme, toggle }), [theme, toggle])
+  const setColorSchemeMode = useCallback((mode: ColorSchemeMode) => {
+    const nextScheme = mode === 'system' ? getSystemColorScheme() : mode
+    setColorSchemeModeState(mode)
+    setResolvedColorScheme(nextScheme)
+    applyColorScheme(nextScheme)
+    try {
+      window.localStorage.setItem(COLOR_SCHEME_STORAGE_KEY, mode)
+    } catch {}
+  }, [])
+
+  const value = useMemo<ThemeContextValue>(() => ({
+    themeFamily,
+    colorSchemeMode,
+    resolvedColorScheme,
+    setThemeFamily,
+    setColorSchemeMode,
+  }), [themeFamily, colorSchemeMode, resolvedColorScheme, setThemeFamily, setColorSchemeMode])
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
 export function useThemeMode(): ThemeContextValue {
-  const ctx = useContext(ThemeContext)
-  if (!ctx) {
+  const context = useContext(ThemeContext)
+  if (!context) {
     throw new Error('useThemeMode must be used within ThemeModeProvider')
   }
-  return ctx
+  return context
 }

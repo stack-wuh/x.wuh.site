@@ -82,17 +82,24 @@ export default function RootLayout({
   // Force reflow so the transition:none rule is applied
   void document.documentElement.offsetHeight;
 
-  // Step 2: set theme color scheme
-  var scheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  document.documentElement.dataset.colorScheme = scheme;
-
-  // Step 3: restore persisted theme family
+  // Step 2: restore persisted theme family
+  var family = 'wine';
   try {
-    var stored = window.localStorage.getItem('wuh.site.theme');
-    if (stored === 'wine' || stored === 'plain') {
-      document.documentElement.dataset.themeFamily = stored;
-    }
+    var storedFamily = window.localStorage.getItem('wuh.site.theme');
+    if (storedFamily === 'wine' || storedFamily === 'plain') family = storedFamily;
   } catch (_) {}
+  document.documentElement.dataset.themeFamily = family;
+
+  // Step 3: restore display mode and resolve the effective color scheme
+  var mode = 'system';
+  try {
+    var storedMode = window.localStorage.getItem('wuh.site.color-scheme-mode');
+    if (storedMode === 'system' || storedMode === 'light' || storedMode === 'dark') mode = storedMode;
+  } catch (_) {}
+  var scheme = mode === 'light' || mode === 'dark'
+    ? mode
+    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.colorScheme = scheme;
 
   // Step 4: re-enable transitions now that data attrs are settled
   document.documentElement.removeAttribute('data-no-transition');

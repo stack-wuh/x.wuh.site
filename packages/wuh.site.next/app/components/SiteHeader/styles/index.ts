@@ -115,52 +115,170 @@ export const MobileToggle = styled.button`
   @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
 `
 
-export const DesktopThemeToggle = styled.button`
+export const AppearanceRoot = styled.div`
+  position: relative;
+  display: none;
+
+  @media (min-width: ${BREAKPOINT}) { display: block; }
+`
+
+export const AppearanceTrigger = styled.button`
   appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 44px;
+  min-width: 88px;
   min-height: 36px;
-  padding: 0 10px;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
+  padding: 0 11px;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 25%, var(--normal-300) 75%);
   border-radius: 999px;
-  background: color-mix(in oklab, var(--primary-color) 10%, var(--background-100) 90%);
+  background: color-mix(in oklab, var(--background-100) 88%, transparent);
   color: var(--text-primary);
+  box-shadow: inset 0 1px color-mix(in oklab, white 45%, transparent);
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-weight: 650;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition:
-    transform 180ms ease-out,
-    background-color 180ms ease-out,
-    border-color 180ms ease-out,
-    box-shadow 180ms ease-out;
+  transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
 
   &:hover {
     transform: translateY(-1px);
     border-color: color-mix(in oklab, var(--primary-color) 48%, var(--normal-300) 52%);
-    background: color-mix(in oklab, var(--primary-color) 16%, var(--background-100) 84%);
-    box-shadow: 0 4px 12px color-mix(in oklab, var(--primary-color) 12%, transparent);
+    background: color-mix(in oklab, var(--primary-color) 8%, var(--background-100) 92%);
+    box-shadow: 0 6px 16px color-mix(in oklab, var(--primary-color) 12%, transparent);
   }
 
-  &:active {
-    transform: translateY(0);
-    box-shadow: none;
+  &:active { transform: translateY(0); box-shadow: none; }
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
+`
+
+export const DesktopAppearancePopover = styled.div`
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 70;
+  width: 292px;
+  padding: 16px;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 58%, transparent);
+  border-radius: 20px;
+  background: color-mix(in oklab, var(--background-100) 97%, transparent);
+  box-shadow: 0 20px 45px color-mix(in oklab, var(--normal-900) 14%, transparent), inset 0 1px color-mix(in oklab, white 50%, transparent);
+  backdrop-filter: blur(18px);
+  animation: appearance-enter 200ms ease-out;
+
+  @keyframes appearance-enter {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  &:focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white);
-    outline-offset: 3px;
-  }
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+`
 
-  @media (max-width: ${BREAKPOINT}) { display: none; }
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
-  }
+export const AppearanceHeading = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 17px;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+
+  small { color: var(--text-secondary); font-family: var(--font-sans); font-size: 11px; font-weight: 500; }
+`
+
+export const AppearanceGroup = styled.div`
+  & + & { margin-top: 17px; padding-top: 16px; border-top: 1px solid color-mix(in oklab, var(--normal-300) 48%, transparent); }
+`
+
+export const AppearanceLabel = styled.div`
+  margin-bottom: 9px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+`
+
+export const ThemeSwatches = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+`
+
+export const ThemeSwatch = styled.button<{ $family: 'wine' | 'plain' }>`
+  appearance: none;
+  position: relative;
+  display: grid;
+  gap: 7px;
+  min-height: 80px;
+  padding: 7px;
+  border: 1px solid ${({ $family }) => $family === 'wine' ? 'color-mix(in oklab, var(--primary-color) 22%, var(--normal-300) 78%)' : 'color-mix(in oklab, var(--normal-400) 45%, transparent)'};
+  border-radius: 13px;
+  background: color-mix(in oklab, var(--background-200) 78%, transparent);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+
+  &[aria-pressed='true'] { border-color: var(--primary-color); box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary-color) 14%, transparent); }
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
+`
+
+export const SwatchPreview = styled.span`
+  display: block;
+  height: 39px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
+  background: linear-gradient(135deg, var(--primary-color) 0 48%, var(--background-color) 48% 100%);
+`
+
+export const SelectionMark = styled.span`
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  display: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--background-100);
+  color: var(--primary-color);
+  font-size: 11px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+
+  [aria-pressed='true'] & { display: grid; }
+`
+
+export const SchemeOptions = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  padding: 4px;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--background-200) 82%, transparent);
+`
+
+export const SchemeOption = styled.button`
+  appearance: none;
+  min-height: 38px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+
+  &[aria-pressed='true'] { border-color: color-mix(in oklab, var(--primary-color) 26%, transparent); background: var(--primary-color); color: var(--background-100); box-shadow: 0 4px 10px color-mix(in oklab, var(--primary-color) 20%, transparent); }
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
 `
 
 export const ThemeIcon = styled.span`
@@ -178,7 +296,7 @@ export const ThemeValue = styled.span`
   white-space: nowrap;
 `
 
-export const ThemeChevron = styled.span`
+export const ThemeChevron = styled.span<{ $open?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -186,6 +304,10 @@ export const ThemeChevron = styled.span`
   width: 16px;
   height: 16px;
   color: var(--text-secondary);
+  transform: rotate(${({ $open }) => ($open ? '180deg' : '0')});
+  transition: transform 180ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
 export const MobilePanel = styled.div<{ $open: boolean }>`
@@ -233,7 +355,7 @@ export const MobileActions = styled.div`
   align-items: center;
 `
 
-export const MobileThemeAction = styled.button`
+export const MobileAppearanceAction = styled.button`
   appearance: none;
   display: flex;
   align-items: center;
@@ -272,6 +394,91 @@ export const MobileThemeAction = styled.button`
   }
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
+`
+
+export const MobileAppearanceOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgb(18 10 12 / 44%);
+  backdrop-filter: blur(3px);
+  animation: overlay-enter 200ms ease-out;
+
+  @keyframes overlay-enter { from { opacity: 0; } to { opacity: 1; } }
+  @media (min-width: ${BREAKPOINT}) { display: none; }
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+`
+
+export const MobileAppearanceSheet = styled.div`
+  width: 100%;
+  max-height: 80dvh;
+  overflow-y: auto;
+  padding: 10px 18px calc(22px + env(safe-area-inset-bottom));
+  border: 1px solid color-mix(in oklab, var(--normal-300) 58%, transparent);
+  border-bottom: 0;
+  border-radius: 22px 22px 0 0;
+  background: color-mix(in oklab, var(--background-100) 98%, transparent);
+  color: var(--text-primary);
+  box-shadow: 0 -24px 60px rgb(0 0 0 / 22%);
+  overscroll-behavior: contain;
+  animation: sheet-enter 220ms ease-out;
+
+  @keyframes sheet-enter {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+`
+
+export const SheetHandle = styled.div`
+  width: 42px;
+  height: 4px;
+  margin: 0 auto 15px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--normal-500) 45%, transparent);
+`
+
+export const SheetHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 21px;
+`
+
+export const SheetTitle = styled.h2`
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: 21px;
+  line-height: 1.3;
+`
+
+export const SheetCurrent = styled.p`
+  margin: 3px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+`
+
+export const SheetClose = styled.button`
+  appearance: none;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--background-200) 80%, transparent);
+  color: var(--text-primary);
+  font: 300 25px/1 var(--font-sans);
+  cursor: pointer;
+
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
 `
 
 export const MobileThemeMain = styled.span`
