@@ -1,22 +1,17 @@
 import { cache } from 'react'
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
+import { permanentRedirect } from 'next/navigation'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
-import { buildPostUrl } from '../../lib/slug'
+import { buildPostUrl, isCanonicalPostPath } from '../../lib/slug'
 import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue } from '../PostView.types'
+import { selectRelatedPosts, type RelatedPostCandidate } from '../../lib/related-posts'
 import JsonLd from '../../components/JsonLd'
+import { createArticleStructuredData, createBreadcrumbStructuredData } from '../../lib/structured-data'
 
 const SITE_URL = 'https://wuh.site'
-const ANON_COOKIE_NAME = 'anonId'
-
-async function getAnonCookieHeader() {
-  const anonId = (await cookies()).get(ANON_COOKIE_NAME)?.value
-  if (!anonId) return undefined
-  return `${ANON_COOKIE_NAME}=${encodeURIComponent(anonId)}`
-}
 
 function buildDescription(issue: Issue): string {
   if (issue.metadata?.summary) return issue.metadata.summary
@@ -28,7 +23,7 @@ function buildDescription(issue: Issue): string {
 }
 
 const FALLBACK_METADATA: Metadata = {
-  title: '博客详情 · wuh.site',
+  title: '博客详情',
   description: '阅读这篇博客文章',
 }
 
@@ -61,6 +56,33 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   } : null,
 })
 
+
+const mapContentToRelatedPost = (item: ContentItem): RelatedPostCandidate => ({
+  number: item.number,
+  title: item.title,
+  labels: item.labels,
+  updatedAt: item.updatedAtGitHub || item.createdAtGitHub,
+  summary: item.metadata?.summary || null,
+})
+
+async function getRelatedPosts(issue: Issue) {
+  const labels = Array.from(new Set(issue.labels.map((label) => label.name.trim()).filter(Boolean))).slice(0, 3)
+  if (labels.length === 0) return []
+
+  const responses = await Promise.all(
+    labels.map((label) => contentService.getPosts.server({
+      query: { labels: [label], limit: '10', state: 'open' },
+      revalidate: 3600,
+    })),
+  )
+  const candidates = responses.flatMap(({ data, error }) => {
+    if (error || !data) return []
+    return (((data as any).data || []) as ContentItem[]).map(mapContentToRelatedPost)
+  })
+
+  return selectRelatedPosts({ number: issue.number, labels }, candidates)
+}
+
 type IssueData = {
   issue: Issue | null
   prev: AdjacentPost
@@ -69,11 +91,10 @@ type IssueData = {
   position: number
 }
 
-const getIssue = cache(async (num: string, cookie?: string): Promise<IssueData> => {
+const getIssue = cache(async (num: string): Promise<IssueData> => {
   const { data, error } = await contentService.getPost.server({
     params: { slug: num },
-    revalidate: 0,
-    headers: cookie ? { Cookie: cookie } : undefined,
+    revalidate: 3600,
   })
 
   if (error || !data) {
@@ -97,8 +118,7 @@ const getIssue = cache(async (num: string, cookie?: string): Promise<IssueData> 
 export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
   const { number: raw } = await params
   const number = raw.split('-')[0]
-  const cookie = await getAnonCookieHeader()
-  const { issue } = await getIssue(number, cookie)
+  const { issue } = await getIssue(number)
 
   if (!issue) {
     return FALLBACK_METADATA
@@ -109,7 +129,7 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
   const cover = issue.metadata?.cover
 
   return {
-    title: `${issue.title} · wuh.site`,
+    title: issue.title,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -134,30 +154,37 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
   const { number: raw } = await params;
   const number = raw.split('-')[0];
-  const cookie = await getAnonCookieHeader()
-  const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number, cookie);
-  if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
+  const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number)
+  if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: issue.title,
-    description: buildDescription(issue),
-    image: issue.metadata?.cover || undefined,
-    datePublished: issue.created_at,
-    dateModified: issue.updated_at,
-    url: `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`,
-    author: {
-      '@type': 'Person',
-      name: 'shadow',
-      url: 'https://github.com/stack-wuh',
-    },
+  if (!isCanonicalPostPath(raw, issue.number, issue.title)) {
+    permanentRedirect(buildPostUrl(issue.number, issue.title))
   }
+
+  const relatedPosts = await getRelatedPosts(issue)
+  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
+  const articleJsonLd = createArticleStructuredData({
+    url,
+    title: issue.title,
+    description: buildDescription(issue),
+    publishedAt: issue.created_at,
+    modifiedAt: issue.updated_at,
+    image: issue.metadata?.cover,
+    imageAlt: issue.metadata?.coverAlt,
+    keywords: issue.metadata?.keywords,
+    labels: issue.labels.map((label) => label.name),
+  })
+  const breadcrumbJsonLd = createBreadcrumbStructuredData([
+    { name: '首页', url: SITE_URL },
+    { name: '博客', url: `${SITE_URL}/blog` },
+    { name: issue.title, url },
+  ])
 
   return (
     <>
-      <JsonLd data={jsonLd as unknown as Record<string, unknown>} />
-      <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} />
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} relatedPosts={relatedPosts} />
     </>
-  );
+  )
 }
