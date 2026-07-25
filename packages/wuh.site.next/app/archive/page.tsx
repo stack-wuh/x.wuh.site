@@ -69,7 +69,7 @@ async function getArchivePosts() {
     })
 
     if (error || !data) {
-      throw new Error(`Failed to load archive posts on page ${page}`)
+      return posts
     }
 
     const result = data as any

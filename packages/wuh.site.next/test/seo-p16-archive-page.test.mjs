@@ -24,6 +24,7 @@ test('archive page exposes canonical metadata and canonical post/topic links', (
   assert.match(archivePageSource, /canonical:\s*`?\$\{SITE_URL\}\/archive`?/)
   assert.match(archivePageSource, /while \(true\)/)
   assert.match(archivePageSource, /contentService\.getPosts\.server/)
+  assert.match(archivePageSource, /if \(error \|\| !data\) \{\s*return posts\s*\}/)
   assert.match(archivePageSource, /buildPostUrl\(post.number, post.title\)/)
   assert.match(archivePageSource, /buildTopicUrl\(label.name\)/)
 })
