@@ -18,7 +18,28 @@ const notoSerifSC = Noto_Serif_SC({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://wuh.site'),
+  title: 'wuh.site',
+  description: '记录技术实践与个人思考的作者博客',
   robots: { index: true, follow: true },
+  openGraph: {
+    title: 'wuh.site',
+    description: '记录技术实践与个人思考的作者博客',
+    url: 'https://wuh.site',
+    siteName: 'wuh.site',
+    type: 'website',
+    images: [{
+      url: '/og-default.png',
+      width: 1200,
+      height: 630,
+      alt: 'wuh.site',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'wuh.site',
+    description: '记录技术实践与个人思考的作者博客',
+    images: ['/og-default.png'],
+  },
 }
 
 export const viewport: Viewport = {

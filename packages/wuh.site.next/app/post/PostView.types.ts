@@ -16,6 +16,7 @@ export type IssueMetadata = {
   summary?: string | null
   slug?: string | null
   keywords?: string[] | null
+  extra?: Record<string, unknown>
 }
 
 export type Issue = {

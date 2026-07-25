@@ -24,8 +24,8 @@
 - **路径:** `openspec/specs/weread-shelf-order/spec.md`
 
 ## seo — SEO 优化
-- **关键词:** SEO, Open Graph, Twitter Card, JSON-LD, canonical, 结构化数据, URL slug
-- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 差异化 description, JSON-LD BlogPosting, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容
+- **关键词:** SEO, Open Graph, Twitter Card, metadata, Markdown AST, JSON-LD, ProfilePage, canonical, 结构化数据, URL slug
+- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 文章差异化 description, 全站默认 Open Graph 图片, 文章 Twitter 图片回退, 文章作者关键词与分类 metadata, 语义 Markdown 自动摘要, CMS 摘要优先, JSON-LD BlogPosting, About 作者档案结构化数据, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容
 - **路径:** `openspec/specs/seo/spec.md`
 
 

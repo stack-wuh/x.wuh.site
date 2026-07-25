@@ -3,13 +3,12 @@ import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { renderMarkdown } from '../../lib/markdown'
-import { buildPostUrl } from '../../lib/slug'
+import { buildArticleMetadata, buildBlogPostingJsonLd } from '../../lib/seo'
 import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
 import PostView from '../PostView'
 import type { Issue } from '../PostView.types'
 import JsonLd from '../../components/JsonLd'
 
-const SITE_URL = 'https://wuh.site'
 const ANON_COOKIE_NAME = 'anonId'
 
 async function getAnonCookieHeader() {
@@ -18,14 +17,6 @@ async function getAnonCookieHeader() {
   return `${ANON_COOKIE_NAME}=${encodeURIComponent(anonId)}`
 }
 
-function buildDescription(issue: Issue): string {
-  if (issue.metadata?.summary) return issue.metadata.summary
-  if (issue.body) {
-    const plain = issue.body.replace(/[#*`[\]()>{}!|-]/g, '').replace(/\s+/g, ' ').trim()
-    return plain.length > 160 ? plain.slice(0, 157) + '...' : plain
-  }
-  return '阅读这篇博客文章'
-}
 
 const FALLBACK_METADATA: Metadata = {
   title: '博客详情 · wuh.site',
@@ -58,6 +49,7 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
     summary: item.metadata.summary || null,
     slug: item.metadata.slug || null,
     keywords: item.metadata.keywords || null,
+    extra: item.metadata.extra || undefined,
   } : null,
 })
 
@@ -104,31 +96,7 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
     return FALLBACK_METADATA
   }
 
-  const description = buildDescription(issue)
-  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
-  const cover = issue.metadata?.cover
-
-  return {
-    title: `${issue.title} · wuh.site`,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: issue.title,
-      description,
-      url,
-      siteName: 'wuh.site',
-      type: 'article',
-      publishedTime: issue.created_at,
-      modifiedTime: issue.updated_at,
-      images: cover ? [{ url: cover, alt: issue.metadata?.coverAlt || issue.title }] : [],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: issue.title,
-      description,
-      images: cover ? [cover] : [],
-    },
-  }
+  return buildArticleMetadata(issue)
 }
 
 export default async function Page({ params }: { params: Promise<{ number: string }> }) {
@@ -138,21 +106,7 @@ export default async function Page({ params }: { params: Promise<{ number: strin
   const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number, cookie);
   if (!issue) return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: issue.title,
-    description: buildDescription(issue),
-    image: issue.metadata?.cover || undefined,
-    datePublished: issue.created_at,
-    dateModified: issue.updated_at,
-    url: `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`,
-    author: {
-      '@type': 'Person',
-      name: 'shadow',
-      url: 'https://github.com/stack-wuh',
-    },
-  }
+  const jsonLd = buildBlogPostingJsonLd(issue)
 
   return (
     <>
