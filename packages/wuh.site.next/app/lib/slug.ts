@@ -10,6 +10,14 @@ export function buildPostUrl(number: number | string, title: string): string {
   return `/post/${number}-${toSlug(title)}`
 }
 
+function decodePathname(pathname: string): string {
+  try {
+    return decodeURIComponent(pathname)
+  } catch {
+    return pathname
+  }
+}
+
 export function isCanonicalPostPath(pathname: string, number: number | string, title: string): boolean {
-  return pathname === `${number}-${toSlug(title)}`
+  return decodePathname(pathname) === `${number}-${toSlug(title)}`
 }

@@ -24,6 +24,7 @@ test('accepts only the current canonical post path', () => {
   assert.equal(isCanonicalPostPath('123-Next.js-15-SEO', 123, 'Next.js #15 / SEO'), true)
   assert.equal(isCanonicalPostPath('123', 123, 'Next.js #15 / SEO'), false)
   assert.equal(isCanonicalPostPath('123-old-title', 123, 'Next.js #15 / SEO'), false)
+  assert.equal(isCanonicalPostPath('165-%E5%86%8D%E8%AF%BB%E3%80%8A%E5%9D%90%E5%BF%98%E6%AD%8C%E3%80%8B', 165, '再读《坐忘歌》'), true)
 })
 
 test('post SEO rendering does not depend on request cookies and uses ISR', () => {
