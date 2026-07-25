@@ -50,3 +50,8 @@ test('sitemap 构建阶段 API 失败时降级而不是抛错', () => {
   assert.doesNotMatch(sitemapSource, /throw new Error\(['"]Failed to load sitemap/)
   assert.match(sitemapSource, /return \[\]/)
 })
+
+test('sitemap API 失败时写入可观测错误日志', () => {
+  assert.match(sitemapSource, /logSitemapFetchError/)
+  assert.match(sitemapSource, /process\.stderr\.write/)
+})

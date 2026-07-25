@@ -19,6 +19,10 @@ type SitemapPostsResponse = {
   }
 }
 
+function logSitemapFetchError(scope: string, error: unknown) {
+  const message = error instanceof Error ? error.message : JSON.stringify(error)
+  process.stderr.write(`[sitemap] Failed to fetch ${scope}: ${message}\n`)
+}
 
 async function getOpenLabels(): Promise<SitemapTopic[]> {
   const { data, error } = await contentService.getLabels.server({
@@ -27,6 +31,7 @@ async function getOpenLabels(): Promise<SitemapTopic[]> {
   })
 
   if (error || !data) {
+    logSitemapFetchError('open labels', error || new Error('empty response'))
     return []
   }
 
@@ -48,6 +53,7 @@ async function getPublishedPosts(): Promise<SitemapPost[]> {
     })
 
     if (error || !data) {
+      logSitemapFetchError(`open posts page ${page}`, error || new Error('empty response'))
       return posts
     }
 
