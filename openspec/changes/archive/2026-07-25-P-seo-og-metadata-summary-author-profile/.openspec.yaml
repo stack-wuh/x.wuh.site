@@ -4,7 +4,7 @@ change:
   id: 2026-07-25-P-seo-og-metadata-summary-author-profile
   title: SEO Batch C：OG 图片、metadata、语义摘要与作者档案
   type: feature
-  status: archived
+  status: committed
   createdAt: 2026-07-25T00:00:00+08:00
   issue: https://github.com/stack-wuh/x.wuh.site/issues/253
 
@@ -468,9 +468,13 @@ archive:
           at: 2026-07-25T00:00:00+08:00
 
 commit:
-  status: pending
+  status: completed
   branch: codex/253-feat-SEO元数据
-  commits: []
+  commits:
+    - hash: 5063c91
+      message: feat(seo): improve metadata and author profile
+      at: 2026-07-25T00:00:00+08:00
+  pullRequest: null
   pullRequest: null
 
 runtime:
