@@ -3,7 +3,8 @@
 import { DiamondDivider } from '@wuh.site/components/icons'
 import type { Issue } from '../PostView.types'
 import { formatFullDate } from '@/app/lib/date'
-import { AuthorRow, AuthorAvatar, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
+import Image from '@wuh.site/components/image'
+import { AuthorRow, AuthorAvatarFrame, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
 
 type Props = {
   issue: Issue
@@ -23,7 +24,9 @@ export default function PostHeader({ issue }: Props) {
         {/* 作者行 */}
         {avatarUrl && (
           <AuthorRow>
-            <AuthorAvatar src={avatarUrl} alt={userName} width={36} height={36} />
+            <AuthorAvatarFrame>
+              <Image role='avatar' src={avatarUrl} alt={userName} width={32} height={32} />
+            </AuthorAvatarFrame>
             <AuthorInfo>
               <strong>{userName}</strong>
               <span>{date} · {issue.viewCount ?? 0} 次阅读</span>

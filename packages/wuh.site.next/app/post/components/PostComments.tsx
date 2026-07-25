@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from '@wuh.site/components/styled'
 import Button from '@wuh.site/components/button'
 import { IconGithub, IconTag } from '@wuh.site/components/icons'
+import Image from '@wuh.site/components/image'
 import message from '@wuh.site/components/message'
 
 type Comment = {
@@ -43,7 +44,7 @@ function formatTime(dateStr?: string): string {
   return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-function getAvatarText(name: string): string {
+function getAvatarInitial(name: string): string {
   return name.trim().charAt(0).toUpperCase() || '?'
 }
 
@@ -107,6 +108,13 @@ const CommentAvatar = styled.div`
   }
 `
 
+const AvatarFallback = styled.span`
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+`
+
 const CommentBody = styled.div`
   flex: 1;
   min-width: 0;
@@ -146,6 +154,15 @@ const CommentText = styled.div`
   color: var(--text-secondary);
   line-height: 1.6;
   word-break: break-word;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--background-100);
+  }
 `
 
 const CommentStatusBadge = styled.span<{ $status: string }>`
@@ -347,9 +364,16 @@ export default function PostComments({ issueNumber }: Props) {
           <CommentItem key={comment._id || comment.externalId} $isGithub={isGithubComment(comment)}>
             <CommentAvatar>
               {getAvatarUrl(comment) ? (
-                <img src={getAvatarUrl(comment)!} alt={getDisplayName(comment)} />
+                <Image
+                  role='avatar'
+                  src={getAvatarUrl(comment)!}
+                  alt={getDisplayName(comment)}
+                  width={36}
+                  height={36}
+                  errorFallback={<AvatarFallback>{getAvatarInitial(getDisplayName(comment))}</AvatarFallback>}
+                />
               ) : (
-                getAvatarText(getDisplayName(comment))
+                getAvatarInitial(getDisplayName(comment))
               )}
             </CommentAvatar>
             <CommentBody>

@@ -4,8 +4,8 @@
 > 每个领域列出核心需求和关键词，匹配后可深入阅读对应 spec.md。
 
 ## components — 组件包
-- **关键词:** 组件库, exports map, 导入路径, pnpm workspace, 图片预览, 动画, framer-motion
-- **需求:** 组件包使用 exports map 导出, 图片切换有过渡动画, 缩放和旋转有弹性动画, ImagePreview 组件代码按职责拆分
+- **关键词:** 组件库, exports map, 图片组件, 语义角色, 头像, 书封, 二维码, 透明背景, 图片预览, 动画, framer-motion
+- **需求:** 组件包使用 exports map 导出, 图片切换有过渡动画, 缩放和旋转有弹性动画, ImagePreview 组件代码按职责拆分, Image 支持语义角色, 图片外轮廓由 Wrapper 单点负责, 内部图片提供正式样式通道, 未传 role 时保持兼容, 头像角色使用圆形透明外观, 书封角色保持实体书轮廓, 内容图片具有稳定阅读外观, 页面封面圆角由上下文明确控制, 缩略图使用紧凑状态, Logo 保持透明完整, 二维码保持可扫描性, 专用图片链路保持例外
 - **路径:** `openspec/specs/components/spec.md`
 
 ## content-api — 内容 API

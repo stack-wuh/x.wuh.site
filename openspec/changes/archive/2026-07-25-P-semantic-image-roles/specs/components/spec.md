@@ -1,26 +1,6 @@
-# Components — 组件包
+# Spec: 图片语义角色体系
 
-## MODIFIED
-
-### Requirement: 组件包使用 exports map 导出
-- **GIVEN** 消费者导入 `@wuh.site/components/flex`
-- **WHEN** 构建工具解析模块路径
-- **THEN** 通过 `exports` map 直接映射到对应子路径，无需桶文件
-
-### Requirement: 图片切换有过渡动画
-- **GIVEN** 用户在 ImagePreview 中切换到上一张或下一张
-- **WHEN** 图片 src 发生变化
-- **THEN** 旧图淡出并向切换反方向滑动，新图淡入并从切换方向滑入
-
-### Requirement: 缩放和旋转有弹性动画
-- **GIVEN** 用户点击缩放或旋转按钮
-- **WHEN** zoom 或 rotation 值变化
-- **THEN** 图片以 spring 动画过渡到新状态
-
-### Requirement: ImagePreview 组件代码按职责拆分
-- **GIVEN** ImagePreview 组件文件
-- **WHEN** 开发者查看代码
-- **THEN** types、hooks、Toolbar、MoreMenu、ThumbnailRail 各自独立文件，主组件不超过 500 行
+## ADDED
 
 ### Requirement: Image 支持语义角色
 - **GIVEN** 消费者使用共享 Image 渲染具有明确用途的图片
@@ -53,7 +33,7 @@
 - **GIVEN** Image role 为 `avatar`
 - **WHEN** 头像、Skeleton 或 fallback 渲染
 - **THEN** Wrapper 为 1:1 圆形并使用 cover
-- **AND** Wrapper 与默认失败态背景透明
+- **AND** Wrapper 背景透明且无默认黑色、品牌色或纸张色底板
 - **AND** 透明像素直接显示页面背景
 - **AND** flex 布局下头像不被压缩变形
 
@@ -63,19 +43,22 @@
 - **THEN** Wrapper 使用 2px 圆角和 contain
 - **AND** 使用中性纸张底色承载透明边缘
 - **AND** Skeleton 与加载失败状态保持书封形状
+- **AND** 首页和微信读书页允许保留不同尺寸
 
 ### Requirement: 内容图片具有稳定阅读外观
 - **GIVEN** Image role 为 `content` 或图片来自 Markdown、评论、足迹 HTML 内容
 - **WHEN** 图片渲染
 - **THEN** 图片最大宽度不超过内容容器且高度按比例自适应
 - **AND** 使用 8px 圆角、内容背景和轻边框
+- **AND** 透明 PNG 在浅色与深色主题下均可辨识
 - **AND** 窄屏不产生横向滚动
 
 ### Requirement: 页面封面圆角由上下文明确控制
 - **GIVEN** Image role 为 `cover`
 - **WHEN** 文章封面在桌面或移动端渲染
-- **THEN** 桌面圆角直接应用于 Image Wrapper
-- **AND** 移动端 edge-to-edge 场景将 Wrapper 圆角设为 0
+- **THEN** 使用 cover fit 和中性加载底
+- **AND** 桌面圆角直接应用于 Image Wrapper
+- **AND** 移动端 edge-to-edge 场景可将 Wrapper 圆角设为 0
 - **AND** 不存在父容器与内部 Wrapper 的双重冲突圆角
 
 ### Requirement: 缩略图使用紧凑状态
@@ -83,13 +66,14 @@
 - **WHEN** 足迹或普通媒体缩略图渲染
 - **THEN** 使用 cover、8px 圆角和调用方指定 ratio
 - **AND** 加载失败时使用不撑开布局的紧凑 fallback
+- **AND** 点击预览和键盘交互不因迁移改变
 
 ### Requirement: Logo 保持透明完整
 - **GIVEN** Image role 为 `logo`
 - **WHEN** SVG 或透明 Logo 渲染
 - **THEN** Wrapper 使用 0 圆角、透明背景、无边框和 contain
 - **AND** 默认关闭 Skeleton
-- **AND** 默认失败态保持透明
+- **AND** 不裁切透明边缘
 - **AND** 暗色模式 filter 可通过内部图片样式通道稳定生效
 
 ### Requirement: 二维码保持可扫描性
@@ -97,9 +81,10 @@
 - **WHEN** 二维码在浅色或深色主题下渲染
 - **THEN** 使用 1:1、contain、2px 圆角和白色背景
 - **AND** 保留足够白色静区
+- **AND** 不因 cover 裁切、透明背景或主题底色降低扫码对比度
 
 ### Requirement: 专用图片链路保持例外
 - **GIVEN** 图片属于 ImagePreview 主图/内部缩略图、微信分享 popup 或地图 SDK 资源
-- **WHEN** 图片角色迁移执行
+- **WHEN** 本次图片角色迁移执行
 - **THEN** 保留其专用原生图片实现
-- **AND** 不引入会破坏专用交互的共享 Wrapper
+- **AND** 不引入会破坏缩放、旋转、拖动、按钮动画或 SDK 行为的共享 Wrapper

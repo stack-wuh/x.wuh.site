@@ -49,14 +49,9 @@ const BookRow = styled.div`
   border-radius: 6px;
 `
 
-const BookCover = styled(Image).attrs({
-  showSkeleton: true,
-  appearance: 'plain',
-  variant: 'contain',
-})`
+const BookCover = styled(Image)`
   width: 40px;
   height: 54px;
-  border-radius: 4px;
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 `
@@ -107,7 +102,7 @@ export default function WereadView({ books, total, currentPage, totalPages }: Pr
           <BookList>
             {books.map((book) => (
               <BookRow key={book.bookId}>
-                <BookCover src={book.cover || ''} alt={book.title} width={40} height={54} />
+                <BookCover role='book-cover' src={book.cover || ''} alt={book.title} width={40} height={54} />
                 <BookInfo>
                   <BookTitle>{book.title}</BookTitle>
                   <BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</BookMeta>
