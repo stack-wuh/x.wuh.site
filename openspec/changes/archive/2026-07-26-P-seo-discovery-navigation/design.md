@@ -6,7 +6,7 @@ SEO 能力按“规范 URL → 可抓取入口 → 聚合页 → 结构化数据
 
 ```text
 Content API
-├─ 分页文章 ──► canonical post URLs ──► sitemap / archive
+├─ 分页文章 ──► canonical post URLs ──► sitemap
 ├─ 标签汇总 ──► canonical topic URLs ──► sitemap / topic pages
 └─ 标签候选 ──► related-post selector ──► post detail links
 
@@ -39,7 +39,7 @@ Next.js server pages
 - `app/post/[number]/page.tsx` 不再依赖请求 Cookie，可由 ISR 缓存；非 canonical 路径会永久重定向。
 - sitemap 必须分页读取全部 open 文章；任一页加载失败时显式失败，避免生成不完整索引。
 - `/blog?labels=` 保留兼容但设为 noindex/follow，索引入口迁移至 `/topics/[label]`。
-- 主题页与归档页均输出 canonical metadata 和 CollectionPage/ItemList JSON-LD。
+- 主题页输出 canonical metadata 和 CollectionPage/ItemList JSON-LD。
 - Alert 仅对外部链接设置新窗口与安全属性，站内主题链接保持同窗口导航。
 - 不涉及数据库、DTO 或后端路由变更。
 
@@ -48,11 +48,10 @@ Next.js server pages
 - 文章 sitemap 数据使用 `number`、`title`、`updatedAtGitHub`、`createdAtGitHub`。
 - 相关文章候选使用 `number`、`title`、`labels`、`updatedAt` 和可选 `summary`。
 - topic URL 采用 `/topics/<encodeURIComponent(label)>`。
-- archive URL 固定为 `/archive`，内容按文章年份分组。
 - 集合 JSON-LD 的 `ItemList` 条目使用 canonical 文章 URL，并按页面顺序从 1 递增。
 
 ## 回滚
 
-- 主题页、归档页与结构化数据均为新增公开入口，可独立移除。
+- 主题页与结构化数据均为新增公开入口，可独立移除。
 - canonical 重定向回滚时仍需保留旧数字 URL 的正常渲染能力。
 - sitemap 变更可回退到上一个生成器，但不得输出调试页或 query 筛选 URL。

@@ -8,7 +8,6 @@ import { createCollectionPageStructuredData } from '../app/lib/structured-data.t
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const topicPageSource = await readFile(resolve(appRoot, 'app/topics/[label]/page.tsx'), 'utf8')
-const archivePageSource = await readFile(resolve(appRoot, 'app/archive/page.tsx'), 'utf8')
 
 test('creates a CollectionPage with canonical item list entries', () => {
   const data = createCollectionPageStructuredData({
@@ -28,9 +27,7 @@ test('creates a CollectionPage with canonical item list entries', () => {
   assert.equal(data.mainEntity.itemListElement[1].item, 'https://wuh.site/post/2-two')
 })
 
-test('topic and archive pages render collection structured data', () => {
+test('topic page renders collection structured data', () => {
   assert.match(topicPageSource, /createCollectionPageStructuredData/)
   assert.match(topicPageSource, /<JsonLd data=\{collectionJsonLd\}/)
-  assert.match(archivePageSource, /createCollectionPageStructuredData/)
-  assert.match(archivePageSource, /<JsonLd data=\{collectionJsonLd\}/)
 })

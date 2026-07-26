@@ -25,8 +25,8 @@
 - [x] 在文章页渲染可访问面包屑。  
   文件：`packages/wuh.site.next/app/post/PostView.tsx`、`packages/wuh.site.next/app/post/styles/`  
   预计耗时：1 小时；实际耗时：历史实施，未记录
-- [x] 为主题页和归档页输出 CollectionPage 与 ItemList。  
-  文件：`packages/wuh.site.next/app/lib/structured-data.ts`、`packages/wuh.site.next/app/topics/[label]/page.tsx`、`packages/wuh.site.next/app/archive/page.tsx`  
+- [x] 为主题页输出 CollectionPage 与 ItemList。  
+  文件：`packages/wuh.site.next/app/lib/structured-data.ts`、`packages/wuh.site.next/app/topics/[label]/page.tsx`  
   预计耗时：1 小时；实际耗时：历史实施，未记录
 
 ## Phase 3：内容发现与站内链接
@@ -40,9 +40,6 @@
 - [x] 将主题页加入 sitemap，并将旧标签 query 页设为 noindex/follow。  
   文件：`packages/wuh.site.next/app/lib/sitemap.ts`、`packages/wuh.site.next/app/sitemap.ts`、`packages/wuh.site.next/app/blog/page.tsx`  
   预计耗时：1 小时；实际耗时：历史实施，未记录
-- [x] 建立年份归档页、sitemap 条目和博客入口。  
-  文件：`packages/wuh.site.next/app/archive/page.tsx`、`packages/wuh.site.next/app/lib/sitemap.ts`、`packages/wuh.site.next/app/blog/BlogListView.tsx`  
-  预计耗时：2 小时；实际耗时：历史实施，未记录
 - [x] 区分 Alert 站内与站外链接行为。  
   文件：`packages/components/alert/index.tsx`  
   预计耗时：30 分钟；实际耗时：历史实施，未记录
