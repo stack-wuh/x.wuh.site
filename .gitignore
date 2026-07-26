@@ -7,5 +7,6 @@
 *.tsbuildinfo
 .claude
 .pnpm-store.superpowers/
-
 .worktrees/
+/docs
+.superpowers

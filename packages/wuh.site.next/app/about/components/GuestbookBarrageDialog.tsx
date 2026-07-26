@@ -111,7 +111,7 @@ export default function GuestbookBarrageDialog() {
   const failedCount = localMessages.filter((item) => item.status === 'failed').length
   const canSubmit = trimmedNickname.length >= MIN_NICKNAME_LENGTH && trimmedContent.length >= MIN_CONTENT_LENGTH
   const chatMessages = useMemo<ChatMessage[]>(() => {
-    const samples = sampleMessages.map((item) => ({ ...item, mine: item.nickname === 'Shadow' }))
+    const samples = sampleMessages.map((item) => ({ ...item, mine: item.nickname === '吴尒红' }))
     const persistedIds = new Set(persistedMessages.map((item) => item.id))
     const messages = [...persistedMessages, ...localMessages.filter((item) => !persistedIds.has(item.id))].map((item) => {
       const mine = localMessages.some((local) => local.id === item.id)
@@ -309,12 +309,11 @@ export default function GuestbookBarrageDialog() {
         open={open}
         onClose={() => setOpen(false)}
         title='留言板'
-        subtitle='声无哀乐'
+        subtitle='声无哀乐 · 萍水楚客，路远情长'
         width='min(1120px, calc(100vw - 32px))'
         height='min(720px, calc(100vh - 80px))'
       >
         <GuestbookWrapper>
-          <GuestbookGuide>萍水楚客，路远情长</GuestbookGuide>
           <GuestbookStage>
             <ChatFeed ref={feedRef}>
               {loadingMessages && (
