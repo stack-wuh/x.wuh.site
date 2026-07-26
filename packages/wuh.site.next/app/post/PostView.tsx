@@ -164,7 +164,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
 }
 
 export default function PostView({ issue, prevIssue, nextIssue, total, position, relatedPosts = [] }: PostViewProps) {
-  const renderedHtml = issue?.body_html || ''
+  const renderedHtml = issue?.body_html
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
   const activeHeading = useHeadingObserver(tocResult.toc)

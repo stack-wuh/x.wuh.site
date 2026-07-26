@@ -134,8 +134,8 @@
 - **路径:** `openspec/specs/pagination/spec.md`
 
 ## post — 博客详情
-- **关键词:** 博客详情, 导航, PostToolbar, 流动阅读线, 文章位置
-- **需求:** PostToolbar 流动阅读线样式
+- **关键词:** 博客详情, 500, 正文 fallback, slug, 发布 smoke test, PostToolbar, 流动阅读线
+- **需求:** PostToolbar 流动阅读线样式, 发布后博客详情页正常展示, 详情页回归必须捕获真实异常, Markdown 正文具有可靠 fallback, 详情路由兼容标题 slug, 发布流程验证真实文章详情
 - **路径:** `openspec/specs/post/spec.md`
 
 ## post-cover — 博客详情页封面图
