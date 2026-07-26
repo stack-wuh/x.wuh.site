@@ -124,3 +124,35 @@
 - **THEN** 控件提供动态描述当前主题和切换动作的 `aria-label`
 - **AND** `type` 为 `button`
 - **AND** focus-visible 状态具有清晰焦点环
+
+### Requirement: 主题风格色板预览使用固定主题色
+- **GIVEN** 外观选择器已打开
+- **WHEN** 主题风格色板渲染
+- **THEN** 酒红色板预览使用固定渐变 `linear-gradient(135deg, #C94A44 0 48%, #FFFBF8 48% 100%)`
+- **AND** 素雅色板预览使用固定渐变 `linear-gradient(135deg, #C89060 0 48%, #FFFDF9 48% 100%)`
+- **AND** 两张色板预览不读取当前页面 `var(--primary-color)` 或 `var(--background-color)`
+
+### Requirement: 移动端外观设置在一级菜单内展开
+- **GIVEN** 用户在视口宽度小于 768px 的页面打开移动菜单
+- **WHEN** 用户触发「外观设置」
+- **THEN** 主题风格与显示模式选项直接在当前移动菜单内展开
+- **AND** 不打开独立 Bottom Sheet、遮罩或第二层弹窗
+- **AND** 「外观设置」按钮通过 `aria-expanded` 和 `aria-controls` 描述折叠关系
+- **WHEN** 用户选择主题风格或显示模式
+- **THEN** 主题即时生效且移动菜单保持打开，便于连续比较
+- **WHEN** 用户点击汉堡关闭按钮、导航项或按 Escape
+- **THEN** 整个移动菜单关闭并将外观展开状态重置为收起
+
+### Requirement: 桌面端外观入口与导航风格统一
+- **GIVEN** 用户在视口宽度不小于 768px 的页面访问 Header
+- **WHEN** 外观入口渲染
+- **THEN** 入口按钮使用导航同款的轻量尺寸、圆角和交互节奏
+- **AND** 静态使用淡主题色底和主题色图标作轻强调
+- **AND** 不使用厚重边框、内阴影、胶囊圆角或上浮动效
+
+### Requirement: 外观选项控件共享
+- **GIVEN** 桌面浮层和移动菜单均需渲染主题色板和显示模式选项
+- **WHEN** 任一容器渲染外观选项
+- **THEN** 使用同一个共享 `AppearanceOptions` 组件
+- **AND** 两组选项的静态数据、文案、`aria-pressed` 行为和色板固定色值由该组件统一管理
+- **AND** 该组件不管理容器的打开关闭状态
