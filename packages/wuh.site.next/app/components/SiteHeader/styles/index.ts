@@ -58,17 +58,31 @@ export const Right = styled.div`
 `
 
 export const NavLink = styled(Link)`
+  position: relative;
   text-decoration: none;
   color: color-mix(in oklab, var(--text-color) 78%, transparent);
   font-size: var(--font-size-sm);
   padding: 10px 12px;
-  border-radius: 999px;
-  transition: background var(--transition-fast) ease, color var(--transition-fast) ease, transform var(--transition-fast) ease;
+  transition: color var(--transition-fast) ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 6px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
+    opacity: 0;
+  }
 
   &:hover {
     color: var(--text-color);
-    background: color-mix(in oklab, var(--background-100) 75%, transparent);
-    transform: translateY(-1px);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    opacity: 1;
   }
 
   &:focus-visible {
