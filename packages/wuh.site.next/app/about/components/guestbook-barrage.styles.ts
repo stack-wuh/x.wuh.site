@@ -4,6 +4,10 @@ import styled from '@wuh.site/components/styled'
 /* ====== Trigger ====== */
 
 export const GuestbookTrigger = styled(Button)`
+  --guestbook-trigger-title: var(--text-primary);
+  --guestbook-trigger-preview: var(--text-muted);
+  --guestbook-trigger-cta: var(--text-secondary);
+
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -20,8 +24,8 @@ export const GuestbookTrigger = styled(Button)`
   text-align: left;
   cursor: pointer;
   transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
+    background 220ms ease,
+    border-color 220ms ease;
 
   svg {
     width: 15px;
@@ -29,11 +33,16 @@ export const GuestbookTrigger = styled(Button)`
     flex-shrink: 0;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
+    --guestbook-trigger-title: var(--text-primary);
+    --guestbook-trigger-preview: var(--text-secondary);
+    --guestbook-trigger-cta: var(--primary-color);
+
     background:
-      linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 10%, transparent), transparent 48%),
-      var(--background-200);
-    border-color: color-mix(in oklab, var(--accent-color) 26%, var(--normal-300) 74%);
+      linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 11%, transparent), transparent 52%),
+      var(--background-100);
+    border-color: color-mix(in oklab, var(--accent-color) 28%, var(--normal-300) 72%);
   }
 
   &:focus-visible {
@@ -46,6 +55,18 @@ export const GuestbookTrigger = styled(Button)`
       linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 10%, transparent), transparent 44%),
       color-mix(in oklab, var(--normal-700) 22%, var(--background-100));
     border-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
+
+    &:hover,
+    &:focus-visible {
+      background:
+        linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 15%, transparent), transparent 52%),
+        color-mix(in oklab, var(--normal-700) 16%, var(--background-100));
+      border-color: color-mix(in oklab, var(--accent-color) 34%, var(--normal-600) 66%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 
   @media (max-width: 520px) {
@@ -101,24 +122,39 @@ export const GuestbookTriggerLabel = styled.span`
 `
 
 export const GuestbookTriggerTitle = styled.strong`
-  color: var(--text-primary);
+  color: var(--guestbook-trigger-title);
   font-size: 14px;
   font-weight: 700;
+  transition: color 220ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `
 
 export const GuestbookTriggerPreview = styled.span`
-  color: var(--text-muted);
+  color: var(--guestbook-trigger-preview);
   font-size: 12px;
   line-height: 1.55;
+  transition: color 220ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `
 
 export const GuestbookTriggerCta = styled.span`
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--text-secondary);
+  color: var(--guestbook-trigger-cta);
   font-size: 12px;
   white-space: nowrap;
+  transition: color 220ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   @media (max-width: 520px) {
     grid-column: 2;
