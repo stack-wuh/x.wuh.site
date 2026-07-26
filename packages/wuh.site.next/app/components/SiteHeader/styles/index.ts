@@ -128,32 +128,29 @@ export const AppearanceTrigger = styled.button`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 88px;
-  min-height: 36px;
-  padding: 0 11px;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 25%, var(--normal-300) 75%);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--background-100) 88%, transparent);
-  color: var(--text-primary);
-  box-shadow: inset 0 1px color-mix(in oklab, white 45%, transparent);
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--primary-color) 8%, transparent);
+  color: color-mix(in oklab, var(--text-color) 84%, transparent);
   font: inherit;
-  font-size: 13px;
-  font-weight: 650;
-  letter-spacing: 0.02em;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
 
-  &:hover {
-    transform: translateY(-1px);
-    border-color: color-mix(in oklab, var(--primary-color) 48%, var(--normal-300) 52%);
-    background: color-mix(in oklab, var(--primary-color) 8%, var(--background-100) 92%);
-    box-shadow: 0 6px 16px color-mix(in oklab, var(--primary-color) 12%, transparent);
+  &:hover,
+  &[aria-expanded='true'] {
+    color: var(--text-color);
+    background: color-mix(in oklab, var(--primary-color) 14%, transparent);
   }
 
-  &:active { transform: translateY(0); box-shadow: none; }
-  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 3px; }
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
+    outline-offset: 3px;
+  }
 
-  @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
+  @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
 export const DesktopAppearancePopover = styled.div`
@@ -230,12 +227,12 @@ export const ThemeSwatch = styled.button<{ $family: 'wine' | 'plain' }>`
   &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
 `
 
-export const SwatchPreview = styled.span`
+export const SwatchPreview = styled.span<{ $background: string }>`
   display: block;
   height: 39px;
   border-radius: 8px;
   border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
-  background: linear-gradient(135deg, var(--primary-color) 0 48%, var(--background-color) 48% 100%);
+  background: ${({ $background }) => $background};
 `
 
 export const SelectionMark = styled.span`
@@ -325,6 +322,9 @@ export const MobileNav = styled.nav`
   border: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent);
   background: color-mix(in oklab, var(--background-100) 78%, transparent);
   box-shadow: var(--elevation-soft);
+  max-height: calc(100dvh - 96px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: grid;
   gap: 10px;
 `
@@ -396,89 +396,23 @@ export const MobileAppearanceAction = styled.button`
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
-export const MobileAppearanceOverlay = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgb(18 10 12 / 44%);
-  backdrop-filter: blur(3px);
-  animation: overlay-enter 200ms ease-out;
-
-  @keyframes overlay-enter { from { opacity: 0; } to { opacity: 1; } }
-  @media (min-width: ${BREAKPOINT}) { display: none; }
-  @media (prefers-reduced-motion: reduce) { animation: none; }
-`
-
-export const MobileAppearanceSheet = styled.div`
-  width: 100%;
-  max-height: 80dvh;
-  overflow-y: auto;
-  padding: 10px 18px calc(22px + env(safe-area-inset-bottom));
-  border: 1px solid color-mix(in oklab, var(--normal-300) 58%, transparent);
-  border-bottom: 0;
-  border-radius: 22px 22px 0 0;
-  background: color-mix(in oklab, var(--background-100) 98%, transparent);
-  color: var(--text-primary);
-  box-shadow: 0 -24px 60px rgb(0 0 0 / 22%);
-  overscroll-behavior: contain;
-  animation: sheet-enter 220ms ease-out;
-
-  @keyframes sheet-enter {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: reduce) { animation: none; }
-`
-
-export const SheetHandle = styled.div`
-  width: 42px;
-  height: 4px;
-  margin: 0 auto 15px;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--normal-500) 45%, transparent);
-`
-
-export const SheetHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 21px;
-`
-
-export const SheetTitle = styled.h2`
-  margin: 0;
-  color: var(--text-primary);
-  font-family: var(--font-serif);
-  font-size: 21px;
-  line-height: 1.3;
-`
-
-export const SheetCurrent = styled.p`
-  margin: 3px 0 0;
-  color: var(--text-secondary);
-  font-size: 12px;
-`
-
-export const SheetClose = styled.button`
-  appearance: none;
+export const MobileAppearanceOptions = styled.div<{ $expanded: boolean }>`
   display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
-  border-radius: 50%;
-  background: color-mix(in oklab, var(--background-200) 80%, transparent);
-  color: var(--text-primary);
-  font: 300 25px/1 var(--font-sans);
-  cursor: pointer;
+  grid-template-rows: ${({ $expanded }) => ($expanded ? '1fr' : '0fr')};
+  opacity: ${({ $expanded }) => ($expanded ? 1 : 0)};
+  transition: grid-template-rows 200ms ease, opacity 160ms ease;
 
-  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+`
+
+export const MobileAppearanceOptionsInner = styled.div`
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 2px;
+
+  ${AppearanceGroup}:first-child {
+    padding-top: 4px;
+  }
 `
 
 export const MobileThemeMain = styled.span`
