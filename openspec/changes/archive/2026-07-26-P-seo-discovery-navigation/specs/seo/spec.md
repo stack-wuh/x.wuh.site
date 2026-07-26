@@ -85,15 +85,8 @@ requiredPatterns:
 - **THEN** metadata robots 为 `index: false, follow: true`
 - **AND** 保留内容正常渲染，但不增加重复索引
 
-### Requirement: 归档页使用 canonical URL 并提供博客入口
-- **GIVEN** 全部已发布文章
-- **WHEN** 渲染 `/archive` 页面
-- **THEN** 按年份分组展示文章标题并通过 `buildPostUrl` 生成链表
-- **AND** metadata 包含自身 canonical URL
-- **AND** sitemap 包含 `/archive` 条目
-
-### Requirement: 集合页面输出 CollectionPage 与 ItemList JSON-LD
-- **GIVEN** 主题页或归档页有可见的文章列表
+### Requirement: 主题集合页面输出 CollectionPage 与 ItemList JSON-LD
+- **GIVEN** 主题页有可见的文章列表
 - **WHEN** 生成页面 JSON-LD
 - **THEN** 输出 `CollectionPage` 类型结构化数据
 - **AND** `ItemList` 使用 canonical 文章 URL 且 `position` 从 1 递增

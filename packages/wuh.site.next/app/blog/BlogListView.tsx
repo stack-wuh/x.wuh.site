@@ -88,7 +88,6 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
                 <span aria-hidden="true">×</span>
               </S.FilterToken>
             ))}
-            <S.ArchiveLink href='/archive'>归档</S.ArchiveLink>
           </S.FilterToolbar>
         </S.FilterBar>
 
