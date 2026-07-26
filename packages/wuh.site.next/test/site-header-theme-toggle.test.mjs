@@ -164,6 +164,17 @@ test('移动端内联外观状态可独立展开和收起', () => {
   assert.match(headerSource, /<S\.MobileAppearanceOptions id=\{mobileAppearanceId\} \$expanded=\{mobileAppearanceExpanded\}>/)
 })
 
+test('桌面主导航只使用渐隐装饰下划线反馈', () => {
+  const navLinkSource = stylesSource.match(/export const NavLink = styled\(Link\)`([\s\S]*?)`/)?.[1] ?? ''
+  assert.match(navLinkSource, /position:\s*relative/)
+  assert.match(navLinkSource, /&::after\s*\{[\s\S]*height:\s*1px/)
+  assert.match(navLinkSource, /linear-gradient\(90deg,\s*transparent,[\s\S]*var\(--primary-color\)[\s\S]*transparent\)/)
+  assert.match(navLinkSource, /&:hover::after,[\s\S]*&:focus-visible::after\s*\{[\s\S]*opacity:\s*1/)
+  assert.doesNotMatch(navLinkSource, /border-radius:\s*999px/)
+  assert.doesNotMatch(navLinkSource, /background:\s*color-mix/)
+  assert.doesNotMatch(navLinkSource, /translateY/)
+})
+
 test('桌面外观入口采用导航同款轻量样式', () => {
   const triggerSource = stylesSource.match(/export const AppearanceTrigger = styled\.button`([\s\S]*?)`/)?.[1] ?? ''
   assert.match(triggerSource, /padding:\s*10px 12px/)
