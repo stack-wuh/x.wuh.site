@@ -99,8 +99,8 @@
 - **路径:** `openspec/specs/error-handling/spec.md`
 
 ## guestbook-barrage — 留言板群聊弹窗
-- **关键词:** 留言, 群聊, Dialog, About入口, 即时提交, 错误日志
-- **需求:** About 页面留言板入口, 群聊式留言弹窗, 输入框字数限制, 点击发送即提交, 缓存留言昵称, Next 留言代理, 匿名留言字段对齐, dev 与 build 输出目录隔离
+- **关键词:** 留言, 群聊, Dialog, About入口, Hover, 文字对比度, 过渡动画, reduced-motion, 即时提交, 错误日志
+- **需求:** About 页面留言板入口, 留言板入口 Hover 保持文字可读, 留言板入口状态同步渐进, 留言板入口尊重减少动态偏好, 群聊式留言弹窗, 输入框字数限制, 点击发送即提交, 缓存留言昵称, Next 留言代理, 匿名留言字段对齐, dev 与 build 输出目录隔离
 - **路径:** `openspec/specs/guestbook-barrage/spec.md`
 
 ## redesign-error-pages — 错误页面重设计
