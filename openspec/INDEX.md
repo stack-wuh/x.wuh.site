@@ -24,8 +24,8 @@
 - **路径:** `openspec/specs/weread-shelf-order/spec.md`
 
 ## seo — SEO 优化
-- **关键词:** SEO, Open Graph, Twitter Card, metadata, Markdown AST, JSON-LD, ProfilePage, canonical, 结构化数据, URL slug
-- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 文章差异化 description, 全站默认 Open Graph 图片, 文章 Twitter 图片回退, 文章作者关键词与分类 metadata, 语义 Markdown 自动摘要, CMS 摘要优先, JSON-LD BlogPosting, About 作者档案结构化数据, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容
+- **关键词:** SEO, Open Graph, Twitter Card, metadata, Markdown AST, JSON-LD, ProfilePage, canonical, 结构化数据, URL slug, ISR, redirect, sitemap, topic pages, 主题页, archive, 归档页, CollectionPage, ItemList, breadcrumb, 面包屑, structured-data builder
+- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 文章差异化 description, 全站默认 Open Graph 图片, 文章 Twitter 图片回退, 文章作者关键词与分类 metadata, 语义 Markdown 自动摘要, CMS 摘要优先, JSON-LD BlogPosting, About 作者档案结构化数据, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容, 文章页对非规范路径永久重定向, 公开文章页不依赖请求 Cookie 且使用 ISR, Sitemap 分页生成并错误即失败, 调试页不进入 sitemap, 根布局 Metadata 默认值, WebSite与Person JSON-LD, BlogPosting builder, 面包屑 JSON-LD, 主题页 canonical 与 sitemap, 主题URL编解码单一入口, 旧 labels 筛选页 noindex, 归档页 canonical, 集合页 CollectionPage 与 ItemList
 - **路径:** `openspec/specs/seo/spec.md`
 
 
@@ -39,8 +39,8 @@
 - **路径:** `openspec/specs/repos-api/spec.md`
 
 ## admin-console — 后台 Console 与权限
-- **关键词:** 后台, Console, Vite, React, GitHub OAuth, root, reader, 博客管理, 留言板, 评论审核
-- **需求:** 独立后台 Console, GitHub 认证登录, stack-wuh 唯一 Root, 其他用户自动 Read, 服务端写权限保护, 博客管理, 留言板管理, 博客评论管理
+- **关键词:** 后台, Console, Vite, React, GitHub OAuth, root, reader, 博客管理, 留言板, 评论审核, 生产部署, 静态镜像, SPA fallback, 同源 API, /v2, Nginx 代理, staging, 健康检查, 发布, 回滚, Cookie, 环境变量边界
+- **需求:** 独立后台 Console, GitHub 认证登录, stack-wuh 唯一 Root, 其他用户自动 Read, 服务端写权限保护, 博客管理, 留言板管理, 博客评论管理, Console 以独立静态镜像发布, Console 容器 SPA 路由, 外部 Nginx 代理保持原始路径, Console 使用同源 API, 生产 OAuth Callback Console 域名, 环境变量不注入 Secret, CI/CD Console 构建与发布, 首次上线同步发布, 后续纯静态变更独立发布, 静态资源缓存策略
 - **路径:** `openspec/specs/admin-console/spec.md`
 
 ## api-standardization — API 标准化
@@ -59,8 +59,8 @@
 - **路径:** `openspec/specs/blog-display/spec.md`
 
 ## blog-detail — 博客详情页
-- **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块, 封面图, 正文首图, 相关文章, 继续阅读, 阅读余韵索引, 响应式, 可访问性
-- **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性, Detail page shows cover below header metadata, Detail page hides unavailable cover image, Detail page hides failed cover image, 相关文章以阅读余韵索引呈现, 索引项提供阅读判断信息, 索引项可访问且具备克制反馈, 索引在窄屏和减少动态偏好下保持可用
+- **关键词:** 博客详情, 排版, 暗黑模式, WCAG, 对比度, 代码块, 封面图, 正文首图, 相关文章, 继续阅读, 阅读余韵索引, 响应式, 可访问性, 主题页链接, Alert 站内外链接
+- **需求:** 正文字号与行高, 标题层级字号, 文字色彩对比度, 代码块可读性, 素雅Dark模式完整性, Detail page shows cover below header metadata, Detail page hides unavailable cover image, Detail page hides failed cover image, 相关文章以阅读余韵索引呈现, 索引项提供阅读判断信息, 索引项可访问且具备克制反馈, 索引在窄屏和减少动态偏好下保持可用, 相关文章基于标签与时间排序去重且最多三篇, 文章标签链接指向站内主题页, Alert 区分站内外链接的打开行为
 - **路径:** `openspec/specs/blog-detail/spec.md`
 
 ## blog-code-highlighting — 代码高亮
@@ -109,8 +109,8 @@
 - **路径:** `openspec/specs/redesign-error-pages/spec.md`
 
 ## build-config — 构建配置
-- **关键词:** 构建, 环境变量, dotenv, MongoDB, health check, sync, Docker, NEST_API_URL
-- **需求:** dotenv环境变量加载, sync:init使用完整NestJS启动, MongooseModule异步工厂, health检查, sync仅同步open issues, Production server API fallback uses Docker service name
+- **关键词:** 构建, 环境变量, dotenv, MongoDB, health check, sync, Docker, NEST_API_URL, Console, Dockerfile, Docker Compose, deploy-docker.sh, staging, 端口规划
+- **需求:** dotenv环境变量加载, sync:init使用完整NestJS启动, MongooseModule异步工厂, health检查, sync仅同步open issues, Production server API fallback uses Docker service name, Dockerfile 支持 Console 构建, Docker Compose 包含 Console 服务, 部署脚本管理 Console 生命周期
 - **路径:** `openspec/specs/build-config/spec.md`
 
 ## code-split — 代码拆分
