@@ -1,7 +1,7 @@
 export interface ContributionDay {
-  date: string  // "2026-06-21"
+  date: string
   count: number
-  level: number // 0-4
+  level: number
   breakdown?: Record<string, number>
 }
 

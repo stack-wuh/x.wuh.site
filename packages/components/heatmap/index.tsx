@@ -12,6 +12,7 @@ const ACTIVITY_LABELS: Record<string, string> = {
   comments: '评论',
   guestbook: '留言',
   projectUpdates: '项目更新',
+  githubContributions: 'GitHub 贡献',
 }
 
 interface HeatmapProps {
@@ -27,20 +28,18 @@ interface HeatmapProps {
 function TooltipCell({
   date,
   count,
-  level,
   breakdown,
   activityLabel,
 }: {
   date: string
   count: number
-  level: number
   breakdown?: Record<string, number>
   activityLabel: string
 }) {
   const [visible, setVisible] = useState(false)
   const d = new Date(date + 'T00:00:00')
   const details = breakdown
-    ? `等级: ${level} · ${Object.entries(breakdown).map(([key, value]) => `${ACTIVITY_LABELS[key] ?? key}: ${value}`).join(' · ')}`
+    ? `总量: ${count} · ${Object.entries(breakdown).map(([key, value]) => `${ACTIVITY_LABELS[key] ?? key}: ${value}`).join(' · ')}`
     : `${count} 条${activityLabel}`
   const label = `${d.getMonth() + 1} 月 ${d.getDate()} 日 · ${details}`
 
@@ -139,7 +138,7 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
                 }
                 return (
                   <S.Cell key={colIndex} $color={colors[day.level]}>
-                    <TooltipCell date={day.date} count={day.count} level={day.level} breakdown={day.breakdown} activityLabel={activityLabel} />
+                    <TooltipCell date={day.date} count={day.count} breakdown={day.breakdown} activityLabel={activityLabel} />
                   </S.Cell>
                 )
               })}

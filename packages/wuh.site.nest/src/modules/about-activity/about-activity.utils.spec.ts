@@ -1,4 +1,4 @@
-import { calculateActivityLevels } from './about-activity.utils';
+import { calculateActivityLevels, mergeActivityLevels } from './about-activity.utils';
 
 describe('calculateActivityLevels', () => {
   it('normalizes each activity category independently and averages levels', () => {
@@ -83,6 +83,43 @@ describe('calculateActivityLevels', () => {
         count: 50,
         level: 4,
       },
+    ]);
+  });
+});
+
+describe('mergeActivityLevels', () => {
+  it('uses one combined total distribution including GitHub contributions', () => {
+    const result = mergeActivityLevels(
+      [
+        {
+          date: '2026-07-25',
+          breakdown: {
+            visits: 2,
+            published: 0,
+            updated: 0,
+            comments: 0,
+            guestbook: 0,
+            projectUpdates: 0,
+          },
+        },
+        {
+          date: '2026-07-26',
+          breakdown: {
+            visits: 0,
+            published: 0,
+            updated: 0,
+            comments: 0,
+            guestbook: 0,
+            projectUpdates: 0,
+          },
+        },
+      ],
+      new Map([['2026-07-25', 3]]),
+    );
+
+    expect(result).toEqual([
+      expect.objectContaining({ date: '2026-07-25', total: 5, level: 4, counts: expect.objectContaining({ githubContributions: 3 }) }),
+      expect.objectContaining({ date: '2026-07-26', total: 0, level: 0, counts: expect.objectContaining({ githubContributions: 0 }) }),
     ]);
   });
 });
