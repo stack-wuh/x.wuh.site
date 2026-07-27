@@ -170,6 +170,7 @@ test('桌面主导航只使用渐隐装饰下划线反馈', () => {
   assert.match(navLinkSource, /&::after\s*\{[\s\S]*height:\s*1px/)
   assert.match(navLinkSource, /linear-gradient\(90deg,\s*transparent,[\s\S]*var\(--primary-color\)[\s\S]*transparent\)/)
   assert.match(navLinkSource, /&:hover::after,[\s\S]*&:focus-visible::after\s*\{[\s\S]*opacity:\s*1/)
+  assert.match(navLinkSource, /&:hover,[\s\S]*&:focus-visible\s*\{[\s\S]*text-decoration:\s*none/)
   assert.doesNotMatch(navLinkSource, /border-radius:\s*999px/)
   assert.doesNotMatch(navLinkSource, /background:\s*color-mix/)
   assert.doesNotMatch(navLinkSource, /translateY/)
