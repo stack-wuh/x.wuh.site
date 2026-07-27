@@ -1,10 +1,6 @@
 # Spec: About 统一综合热力图
 
-## Purpose
-
-定义 About 页面最近 365 天站点活动与 GitHub 贡献的统一聚合、展示及错误处理规范。
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: 提供最近 365 天统一综合活动聚合
 后端 MUST 将站点活动与 GitHub contribution 聚合为单一的 365 天数据集。
@@ -15,15 +11,6 @@
 - **AND** 每日数据按 `YYYY-MM-DD` 升序排列并包含站点活动分类与 `githubContributions`
 - **AND** 浏览器经 Next rewrite 请求 `/api/about/activity`，代理目标只包含一个 `/v2` 前缀
 
-### Requirement: 汇总站点活动分类
-后端 MUST 返回每日站点活动分类的原始计数。
-
-#### Scenario: 返回每日活动分类明细
-- **WHEN** 后端构建每日统一活动数据
-- **THEN** 每日结果包含访问、文章发布、文章更新、评论、留言和项目内容更新的原始计数
-- **AND** 当前无法从现有模型可靠识别项目 changelog，`projectUpdates` 明确为 0
-- **AND** 无法识别活动的日期分类计数为 0
-
 ### Requirement: 计算统一每日总量与等级
 后端 MUST 以所有活动来源的合计值计算热力图每日强度。
 
@@ -32,14 +19,6 @@
 - **THEN** 每日 `total` 等于所有站点活动分类计数与 GitHub contribution 计数之和
 - **AND** 每日 `level` 基于统一 `total` 分布计算 0–4 等级
 - **AND** 无活动日的 `total` 与 `level` 均为 0
-
-### Requirement: 补齐无活动日期
-后端 MUST 保留活动窗口内没有记录的自然日。
-
-#### Scenario: 无活动日期补零
-- **WHEN** 某个自然日没有任何来源记录
-- **THEN** 该日期仍出现在 365 天响应中
-- **AND** 该日期的所有原始计数、`total` 和 `level` 均为 0
 
 ### Requirement: 展示单一综合热力图
 About 页面 MUST 将所有活动来源展示为一张热力图。
@@ -55,14 +34,15 @@ About 页面 MUST 将所有活动来源展示为一张热力图。
 
 #### Scenario: 必要数据源失败时显示统一错误状态
 - **WHEN** 任一必要活动数据源不可用且访客请求统一活动接口
-- **THEN** 接口返回明确错误并记录失败数据源
+- **THEN** 接口返回明确错误
 - **AND** About 页面显示唯一的综合热力图错误状态
 - **AND** 不返回缺少某个数据源的伪完整成功数据
 
-### Requirement: Heatmap 组件支持多种数据语义
-Heatmap 组件 MUST 保持现有调用兼容，并支持综合活动详情。
+## REMOVED Requirements
 
-#### Scenario: 兼容既有调用并支持综合活动
-- **WHEN** 组件接收仅包含基础贡献数据的既有输入
-- **THEN** 旧调用方继续显示原有热力图
-- **AND** 综合活动调用方可传入活动文案、分类明细和移动端点击状态
+### Requirement: 保持 GitHub 热力图独立
+GitHub 贡献不再与站点活动分别渲染两张热力图。
+
+#### Scenario: 以统一热力图替代独立 GitHub 热力图
+- **WHEN** About 页面展示活动数据
+- **THEN** GitHub 贡献作为统一综合热力图的一个明细来源展示
