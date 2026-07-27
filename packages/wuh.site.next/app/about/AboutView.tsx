@@ -68,7 +68,7 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
 
   const { data: heatmapData, loading: heatmapLoading, error: heatmapError } = useRequest<HeatmapData>(
     async () => {
-      const res = await fetch('/v2/github/contributions?username=stack-wuh')
+      const res = await fetch('/api/v2/github/contributions?username=stack-wuh')
       if (!res.ok) throw new Error('Failed to fetch')
       return res.json()
     },
@@ -77,7 +77,7 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
 
   const { data: activityData, loading: activityLoading, error: activityError } = useRequest<SiteActivityHeatmap>(
     async () => {
-      const res = await fetch('/v2/about/activity')
+      const res = await fetch('/api/v2/about/activity')
       if (!res.ok) throw new Error('Failed to fetch site activity')
       return res.json()
     },
