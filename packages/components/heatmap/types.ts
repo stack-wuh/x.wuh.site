@@ -2,10 +2,11 @@ export interface ContributionDay {
   date: string  // "2026-06-21"
   count: number
   level: number // 0-4
+  breakdown?: Record<string, number>
 }
 
 export interface ContributionWeek {
-  days: ContributionDay[]
+  days: Array<ContributionDay | null>
 }
 
 export interface HeatmapData {

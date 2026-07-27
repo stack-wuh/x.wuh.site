@@ -102,6 +102,13 @@ export const SkeletonCell = styled.span`
   background: var(--background-300);
 `
 
+export const Error = styled.div`
+  padding: 24px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--error-color, #c0392b);
+`
+
 export const Empty = styled.div`
   padding: 24px 0;
   text-align: center;

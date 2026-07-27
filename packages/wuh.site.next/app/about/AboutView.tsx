@@ -7,6 +7,7 @@ import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
+import type { SiteActivityHeatmap } from '@wuh.site/shared-contracts'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
 const ContactCard = dynamic(() => import('../components/ContactCard'), {
@@ -38,6 +39,25 @@ interface AboutViewProps {
   repos: RepoDto[]
 }
 
+const buildActivityHeatmapData = (activityData: SiteActivityHeatmap | undefined): HeatmapData | null => {
+  if (!activityData || activityData.days.length === 0) return null
+
+  const firstDate = new Date(`${activityData.days[0].date}T00:00:00`)
+  const leadingEmptyDays = firstDate.getDay()
+  const paddedDays = [
+    ...Array.from({ length: leadingEmptyDays }, () => null),
+    ...activityData.days,
+  ]
+
+  return {
+    year: Number(activityData.endDate.slice(0, 4)),
+    total: activityData.total,
+    weeks: Array.from({ length: Math.ceil(paddedDays.length / 7) }, (_, index) => ({
+      days: paddedDays.slice(index * 7, index * 7 + 7),
+    })),
+  }
+}
+
 const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
   const githubLogin = profile?.login || 'stack-wuh'
   const githubUrl = `https://github.com/${githubLogin}`
@@ -46,13 +66,22 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
   const location = profile?.location || 'ShenZhen GuangDong China'
   const profileMeta = profile?.name ? `${profile.name} · ${location}` : location
 
-  const { data: heatmapData, loading: heatmapLoading } = useRequest<HeatmapData>(
+  const { data: heatmapData, loading: heatmapLoading, error: heatmapError } = useRequest<HeatmapData>(
     async () => {
       const res = await fetch('/v2/github/contributions?username=stack-wuh')
       if (!res.ok) throw new Error('Failed to fetch')
       return res.json()
     },
     { cacheKey: 'github-contributions' }
+  )
+
+  const { data: activityData, loading: activityLoading, error: activityError } = useRequest<SiteActivityHeatmap>(
+    async () => {
+      const res = await fetch('/v2/about/activity')
+      if (!res.ok) throw new Error('Failed to fetch site activity')
+      return res.json()
+    },
+    { cacheKey: 'about-site-activity' }
   )
 
   const { data: footprints } = useRequest<FootprintData[]>(
@@ -193,9 +222,27 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
       {/* 3. Heatmap */}
       <section>
         <SectionHeader>
-          <SectionLabel>产出热力图</SectionLabel>
+          <SectionLabel>站点活动热力图</SectionLabel>
         </SectionHeader>
-        <Heatmap data={heatmapData} loading={heatmapLoading} />
+        <Heatmap
+          data={buildActivityHeatmapData(activityData)}
+          loading={activityLoading}
+          error={activityError}
+          errorLabel='站点活动加载失败，请稍后重试'
+          colorScheme='warm'
+          activityLabel='活动'
+          emptyLabel='暂无站点活动数据'
+        />
+
+        <SectionHeader>
+          <SectionLabel>GitHub 贡献热力图</SectionLabel>
+        </SectionHeader>
+        <Heatmap
+          data={heatmapData}
+          loading={heatmapLoading}
+          error={heatmapError}
+          errorLabel='GitHub 贡献加载失败，请稍后重试'
+        />
       </section>
 
       {/* 4. Timeline */}
