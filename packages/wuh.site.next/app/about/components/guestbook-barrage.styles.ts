@@ -14,12 +14,16 @@ export const GuestbookTrigger = styled(Button)`
   gap: 14px;
   width: 100%;
   padding: 14px 16px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 44%, transparent);
-  border-left: 3px solid var(--accent-color);
+  border: 1px solid color-mix(in oklab, var(--primary-color) 18%, var(--normal-300) 82%);
+  border-left: 3px solid var(--primary-color);
   border-radius: 8px;
   background:
-    linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 7%, transparent), transparent 42%),
-    var(--background-100);
+    linear-gradient(
+      105deg,
+      color-mix(in oklab, var(--primary-color) 12%, var(--background-100)) 0%,
+      color-mix(in oklab, var(--primary-color) 6%, var(--background-100)) 42%,
+      var(--background-100) 78%
+    );
   color: var(--text-primary);
   text-align: left;
   cursor: pointer;
@@ -40,9 +44,13 @@ export const GuestbookTrigger = styled(Button)`
     --guestbook-trigger-cta: var(--primary-color);
 
     background:
-      linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 11%, transparent), transparent 52%),
-      var(--background-100);
-    border-color: color-mix(in oklab, var(--accent-color) 28%, var(--normal-300) 72%);
+      linear-gradient(
+        105deg,
+        color-mix(in oklab, var(--primary-color) 16%, var(--background-100)) 0%,
+        color-mix(in oklab, var(--primary-color) 8%, var(--background-100)) 48%,
+        var(--background-100) 82%
+      );
+    border-color: color-mix(in oklab, var(--primary-color) 32%, var(--normal-300) 68%);
   }
 
   &:focus-visible {
@@ -50,18 +58,26 @@ export const GuestbookTrigger = styled(Button)`
     outline-offset: 2px;
   }
 
-  @media (prefers-color-scheme: dark) {
+  [data-color-scheme='dark'] & {
     background:
-      linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 10%, transparent), transparent 44%),
-      color-mix(in oklab, var(--normal-700) 22%, var(--background-100));
-    border-color: color-mix(in oklab, var(--normal-700) 45%, transparent);
+      linear-gradient(
+        105deg,
+        color-mix(in oklab, var(--primary-color) 14%, var(--background-100)) 0%,
+        color-mix(in oklab, var(--primary-color) 7%, var(--background-100)) 44%,
+        var(--background-100) 78%
+      );
+    border-color: color-mix(in oklab, var(--primary-color) 24%, var(--normal-600) 76%);
 
     &:hover,
     &:focus-visible {
       background:
-        linear-gradient(90deg, color-mix(in oklab, var(--accent-color) 15%, transparent), transparent 52%),
-        color-mix(in oklab, var(--normal-700) 16%, var(--background-100));
-      border-color: color-mix(in oklab, var(--accent-color) 34%, var(--normal-600) 66%);
+        linear-gradient(
+          105deg,
+          color-mix(in oklab, var(--primary-color) 19%, var(--background-100)) 0%,
+          color-mix(in oklab, var(--primary-color) 10%, var(--background-100)) 48%,
+          var(--background-100) 82%
+        );
+      border-color: color-mix(in oklab, var(--primary-color) 38%, var(--normal-600) 62%);
     }
   }
 

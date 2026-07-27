@@ -14,6 +14,10 @@ const componentSource = (name) =>
 test('留言板入口使用纸张轻染并同步过渡交互状态', () => {
   const trigger = componentSource('GuestbookTrigger')
   assert.match(trigger, /transition:[\s\S]*220ms ease/)
+  assert.match(trigger, /linear-gradient\(\s*105deg,[\s\S]*var\(--primary-color\)/)
+  assert.doesNotMatch(trigger, /linear-gradient\([^)]*var\(--accent-color\)/)
+  assert.match(trigger, /\[data-color-scheme=["']dark["']\]\s*&/)
+  assert.doesNotMatch(trigger, /prefers-color-scheme:\s*dark/)
   assert.match(trigger, /&:hover,[\s\S]*&:focus-visible/)
   assert.match(trigger, /var\(--background-100\)/)
   assert.match(trigger, /&:hover,[\s\S]*&:focus-visible[\s\S]*--guestbook-trigger-title:\s*var\(--text-primary\)/)
