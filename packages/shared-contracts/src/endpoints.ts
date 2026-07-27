@@ -27,6 +27,10 @@ export const commentsService = defineService({
   create:     { url: '/comments', method: 'POST' },
 })
 
+export const aboutActivityService = defineService({
+  getActivity: { url: '/about/activity', method: 'GET' },
+})
+
 export const wereadService = defineService({
   getBooks: { url: '/weread/books', method: 'GET' },
 })

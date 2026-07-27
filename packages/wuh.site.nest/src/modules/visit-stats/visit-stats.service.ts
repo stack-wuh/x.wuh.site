@@ -16,7 +16,6 @@ export class VisitStatsService {
   async recordVisit(ip: string, userAgent?: string, path?: string): Promise<void> {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
-    // 查询最近 30 分钟内同一 IP 的记录
     const existing = await this.visitRecordModel
       .findOne({
         ip,
@@ -51,5 +50,23 @@ export class VisitStatsService {
     ]);
 
     return { total, today };
+  }
+
+  async getDailyCounts(start: Date, end: Date, timezone: string): Promise<Map<string, number>> {
+    const rows = await this.visitRecordModel
+      .aggregate([
+        { $match: { timestamp: { $gte: start, $lt: end } } },
+        {
+          $group: {
+            _id: {
+              $dateToString: { date: '$timestamp', format: '%Y-%m-%d', timezone },
+            },
+            count: { $sum: 1 },
+          },
+        },
+      ])
+      .exec();
+
+    return new Map(rows.map((row) => [row._id, row.count]));
   }
 }

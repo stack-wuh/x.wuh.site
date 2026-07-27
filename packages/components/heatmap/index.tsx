@@ -5,28 +5,61 @@ import type { HeatmapData, ColorScheme } from './types'
 import { GITHUB_COLORS, WARM_COLORS, DAY_LABELS, MONTH_LABELS } from './types'
 import * as S from './styles'
 
+const ACTIVITY_LABELS: Record<string, string> = {
+  visits: '浏览',
+  published: '发布',
+  updated: '更新',
+  comments: '评论',
+  guestbook: '留言',
+  projectUpdates: '项目更新',
+}
+
 interface HeatmapProps {
   data: HeatmapData | null
   loading?: boolean
+  error?: Error | null
   colorScheme?: ColorScheme
+  activityLabel?: string
+  emptyLabel?: string
+  errorLabel?: string
 }
 
-function TooltipCell({ date, count }: { date: string; count: number }) {
-  const [hovered, setHovered] = useState(false)
+function TooltipCell({
+  date,
+  count,
+  level,
+  breakdown,
+  activityLabel,
+}: {
+  date: string
+  count: number
+  level: number
+  breakdown?: Record<string, number>
+  activityLabel: string
+}) {
+  const [visible, setVisible] = useState(false)
   const d = new Date(date + 'T00:00:00')
-  const label = `${d.getMonth() + 1} 月 ${d.getDate()} 日 · ${count} 条贡献`
+  const details = breakdown
+    ? `等级: ${level} · ${Object.entries(breakdown).map(([key, value]) => `${ACTIVITY_LABELS[key] ?? key}: ${value}`).join(' · ')}`
+    : `${count} 条${activityLabel}`
+  const label = `${d.getMonth() + 1} 月 ${d.getDate()} 日 · ${details}`
 
   return (
     <S.CellInner
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      tabIndex={0}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+      onFocus={() => setVisible(true)}
+      onBlur={() => setVisible(false)}
+      onClick={() => setVisible((current) => !current)}
+      aria-label={label}
     >
-      <S.Tooltip $visible={hovered}>{label}</S.Tooltip>
+      <S.Tooltip $visible={visible}>{label}</S.Tooltip>
     </S.CellInner>
   )
 }
 
-export function Heatmap({ data, loading = false, colorScheme = 'github' }: HeatmapProps) {
+export function Heatmap({ data, loading = false, error = null, colorScheme = 'github', activityLabel = '贡献', emptyLabel = '暂无贡献数据', errorLabel = '加载失败' }: HeatmapProps) {
   const colors = colorScheme === 'warm' ? [...WARM_COLORS] : [...GITHUB_COLORS]
 
   const monthPositions = useMemo(() => {
@@ -35,7 +68,7 @@ export function Heatmap({ data, loading = false, colorScheme = 'github' }: Heatm
     let lastMonth = -1
 
     data.weeks.forEach((week, weekIndex) => {
-      const firstDay = week.days[0]
+      const firstDay = week.days.find((day) => day !== null)
       if (!firstDay) return
       const month = new Date(firstDay.date + 'T00:00:00').getMonth()
       if (month !== lastMonth) {
@@ -71,10 +104,18 @@ export function Heatmap({ data, loading = false, colorScheme = 'github' }: Heatm
     )
   }
 
+  if (error) {
+    return (
+      <S.Wrapper>
+        <S.Error role='alert'>{errorLabel}</S.Error>
+      </S.Wrapper>
+    )
+  }
+
   if (!data) {
     return (
       <S.Wrapper>
-        <S.Empty>暂无贡献数据</S.Empty>
+        <S.Empty>{emptyLabel}</S.Empty>
       </S.Wrapper>
     )
   }
@@ -98,7 +139,7 @@ export function Heatmap({ data, loading = false, colorScheme = 'github' }: Heatm
                 }
                 return (
                   <S.Cell key={colIndex} $color={colors[day.level]}>
-                    <TooltipCell date={day.date} count={day.count} />
+                    <TooltipCell date={day.date} count={day.count} level={day.level} breakdown={day.breakdown} activityLabel={activityLabel} />
                   </S.Cell>
                 )
               })}
