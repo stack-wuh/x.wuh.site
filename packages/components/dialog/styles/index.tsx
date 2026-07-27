@@ -180,7 +180,7 @@ export const DragHandle = styled.div`
 
 export const DialogHeader = styled.header`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-md, 16px);
   padding: 12px 22px;
@@ -210,7 +210,7 @@ export const CloseButton = styled.button`
   min-width: 44px;
   min-height: 44px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 0;
   border-radius: 8px;
