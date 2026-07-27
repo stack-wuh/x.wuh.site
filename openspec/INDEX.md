@@ -84,8 +84,8 @@
 - **路径:** `openspec/specs/blog-scroll-flicker-fix/spec.md`
 
 ## contact-dialog — 联系弹窗
-- **关键词:** 联系, 弹窗, 遮罩层, 移动端底部弹出, 动画, 纸张风
-- **需求:** Dialog遮罩层, Dialog圆角和间距, Dialog移动端底部弹出, Dialog动画(弹性缓动+退出), 纸张风视觉
+- **关键词:** 联系, 弹窗, Header, 关闭图标, 垂直对齐
+- **需求:** Dialog遮罩层, Dialog圆角和间距, Dialog移动端底部弹出, Dialog动画(弹性缓动+退出), 纸张风视觉, Dialog标题栏垂直对齐, Dialog副标题场景对齐
 - **路径:** `openspec/specs/contact-dialog/spec.md`
 
 ## homepage-data — 首页数据获取

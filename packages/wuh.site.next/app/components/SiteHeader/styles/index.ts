@@ -76,6 +76,11 @@ export const NavLink = styled(Link)`
     opacity: 0;
   }
 
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+  }
+
   &:hover {
     color: var(--text-color);
   }

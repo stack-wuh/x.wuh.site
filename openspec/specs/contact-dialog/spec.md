@@ -13,6 +13,7 @@
 - **WHEN** 弹窗渲染
 - **THEN** 四角 border-radius 为 16px
 - **AND** Header padding 为 12px 22px，底部带分割线
+- **AND** 标题区域与关闭按钮在 Header 内垂直居中
 - **AND** Body padding 为 12px 22px 18px
 - **AND** 默认宽度 max 480px
 
@@ -39,3 +40,15 @@
 - **THEN** ContactCard 使用 paper-style (background-100 + elevation + inset)
 - **AND** 暗色模式正常
 - **AND** 功能无回归（二维码预览、关闭弹窗）
+
+### Requirement: Dialog 标题栏垂直对齐
+- **GIVEN** 共享 Dialog 显示标题且关闭按钮可见
+- **WHEN** Dialog Header 渲染
+- **THEN** 标题区域与关闭按钮沿 Header 交叉轴垂直居中
+- **AND** 关闭图标在 44×44 像素点击区域内水平、垂直居中
+
+### Requirement: Dialog 副标题场景对齐
+- **GIVEN** 共享 Dialog 同时显示标题和副标题
+- **WHEN** Dialog Header 渲染
+- **THEN** 关闭按钮相对“标题 + 副标题”组成的标题组整体垂直居中
+- **AND** 桌面 center placement 与移动端 bottom placement 使用相同对齐规则
