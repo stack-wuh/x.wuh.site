@@ -7,23 +7,29 @@ export const SITE_ACTIVITY_CATEGORIES = [
   'projectUpdates',
 ] as const;
 
+export const UNIFIED_ACTIVITY_CATEGORIES = [...SITE_ACTIVITY_CATEGORIES, 'githubContributions'] as const;
+
 export type SiteActivityCategory = (typeof SITE_ACTIVITY_CATEGORIES)[number];
+export type UnifiedActivityCategory = (typeof UNIFIED_ACTIVITY_CATEGORIES)[number];
 export type SiteActivityLevel = 0 | 1 | 2 | 3 | 4;
 
 export type SiteActivityBreakdown = Record<SiteActivityCategory, number>;
+export type UnifiedActivityCounts = Record<UnifiedActivityCategory, number>;
 
-export interface SiteActivityDay {
+export interface UnifiedActivityDay {
   date: string;
-  count: number;
+  total: number;
   level: SiteActivityLevel;
-  breakdown: SiteActivityBreakdown;
-  levels: SiteActivityBreakdown;
+  counts: UnifiedActivityCounts;
 }
 
-export interface SiteActivityHeatmap {
+export interface UnifiedActivityHeatmap {
   startDate: string;
   endDate: string;
   timezone: string;
   total: number;
-  days: SiteActivityDay[];
+  days: UnifiedActivityDay[];
 }
+
+export type SiteActivityDay = UnifiedActivityDay;
+export type SiteActivityHeatmap = UnifiedActivityHeatmap;

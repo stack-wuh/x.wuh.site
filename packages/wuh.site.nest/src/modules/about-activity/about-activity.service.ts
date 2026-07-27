@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import type {
+  UnifiedActivityHeatmap,
   SiteActivityBreakdown,
-  SiteActivityDay,
-  SiteActivityHeatmap,
 } from '@wuh.site/shared-contracts';
 import { Content, ContentDocument } from '../content/schemas/content.schema';
 import { Comment, CommentDocument } from '../comment/schemas/comment.schema';
 import { VisitStatsService } from '../visit-stats/visit-stats.service';
-import { calculateActivityLevels } from './about-activity.utils';
+import { GithubService } from '../api-v2/github/github.service';
+import { mergeActivityLevels } from './about-activity.utils';
 
 const TIMEZONE = 'Asia/Shanghai';
 const DAY_COUNT = 365;
@@ -20,13 +20,14 @@ export class AboutActivityService {
 
   constructor(
     private readonly visitStatsService: VisitStatsService,
+    private readonly githubService: GithubService,
     @InjectModel(Content.name) private readonly contentModel: Model<ContentDocument>,
     @InjectModel(Comment.name) private readonly commentModel: Model<CommentDocument>,
   ) {}
 
-  async getActivity(): Promise<SiteActivityHeatmap> {
+  async getActivity(): Promise<UnifiedActivityHeatmap> {
     const { start, end, dates } = this.createDateWindow();
-    const [visits, content, comments] = await Promise.all([
+    const [visits, content, comments, github] = await Promise.all([
       this.visitStatsService.getDailyCounts(start, end, TIMEZONE).catch((error: unknown) => {
         this.logger.error(`Failed to aggregate visits: ${this.errorMessage(error)}`);
         throw error;
@@ -39,8 +40,15 @@ export class AboutActivityService {
         this.logger.error(`Failed to aggregate comments: ${this.errorMessage(error)}`);
         throw error;
       }),
+      this.githubService.getContributions('stack-wuh').catch((error: unknown) => {
+        this.logger.error(`Failed to aggregate GitHub contributions: ${this.errorMessage(error)}`);
+        throw error;
+      }),
     ]);
 
+    const githubContributions = new Map(
+      github.weeks.flatMap((week) => week.days.map((day) => [day.date, day.count] as const)),
+    );
     const days = dates.map((date) => ({
       date,
       breakdown: {
@@ -52,13 +60,13 @@ export class AboutActivityService {
         projectUpdates: 0,
       } satisfies SiteActivityBreakdown,
     }));
-    const leveledDays = calculateActivityLevels(days) as SiteActivityDay[];
+    const leveledDays = mergeActivityLevels(days, githubContributions);
 
     return {
       startDate: dates[0],
       endDate: dates[dates.length - 1],
       timezone: TIMEZONE,
-      total: leveledDays.reduce((total, day) => total + day.count, 0),
+      total: leveledDays.reduce((total, day) => total + day.total, 0),
       days: leveledDays,
     };
   }
