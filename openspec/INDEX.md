@@ -103,7 +103,11 @@
 - **需求:** Global exception filter, Swagger API documentation
 - **路径:** `openspec/specs/error-handling/spec.md`
 
-## guestbook-barrage — 留言板群聊弹窗
+## guestbook-virtual-scroll — 留言板虚拟滚动与历史分页
+- **关键词:** 虚拟滚动、react-virtuoso、自定义滚动条、留言板分页、500条
+- **需求:** VirtualScroll 基础渲染, 初始定位, followOutput, 主题化 Y 轴滚动条, 键盘与可访问性, 弹窗虚拟列表, 新留言提示, 独立页面入口, 独立页面列表展示, 无效页码, 空状态, 加载失败, 数据加载异常, 发送失败保留
+- **路径:** `openspec/specs/guestbook-virtual-scroll/spec.md`
+
 - **关键词:** 留言, 群聊, Dialog, About入口, Hover, 文字对比度, 过渡动画, reduced-motion, 即时提交, 错误日志
 - **需求:** About 页面留言板入口, 留言板入口 Hover 保持文字可读, 留言板入口状态同步渐进, 留言板入口尊重减少动态偏好, 群聊式留言弹窗, 输入框字数限制, 点击发送即提交, 缓存留言昵称, Next 留言代理, 匿名留言字段对齐, dev 与 build 输出目录隔离
 - **路径:** `openspec/specs/guestbook-barrage/spec.md`
