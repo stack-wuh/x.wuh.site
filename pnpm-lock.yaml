@@ -66,6 +66,9 @@ importers:
       react:
         specifier: 19.2.5
         version: 19.2.5
+      react-virtuoso:
+        specifier: 4.18.11
+        version: 4.18.11(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       styled-components:
         specifier: ^6.4.0
         version: 6.4.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -4925,6 +4928,12 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
+
+  react-virtuoso@4.18.11:
+    resolution: {integrity: sha512-Qeeq9vqa5seCxACvzbQTUeq3s2/Bu+VlwOMF0jfy3E/ZKHLiXWwJpXBhv2rckqYkvm1XRVFLCBMCmqCU8JNEJg==}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18 || >= 19'
+      react-dom: '>=16 || >=17 || >= 18 || >=19'
 
   react@19.2.5:
     resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
@@ -11009,6 +11018,11 @@ snapshots:
     dependencies:
       '@remix-run/router': 1.23.1
       react: 19.2.5
+
+  react-virtuoso@4.18.11(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+    dependencies:
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   react@19.2.5: {}
 

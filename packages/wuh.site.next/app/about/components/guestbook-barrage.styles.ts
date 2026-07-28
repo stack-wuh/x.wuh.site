@@ -259,16 +259,8 @@ export const GuestbookStage = styled.div`
 export const ChatFeed = styled.div`
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  overflow: auto;
-  padding: 18px 18px 80px;
-  scroll-behavior: smooth;
-
-  @media (max-width: 640px) {
-    padding: 14px 12px 76px;
-  }
+  min-height: 0;
+  /* 滚动由内部 VirtualScroll 容器负责 */
 `
 
 export const ChatRow = styled.div<{ $mine: boolean }>`
@@ -469,5 +461,65 @@ export const ComposerNicknameInput = styled.input`
 
   &::placeholder {
     color: var(--text-muted);
+  }
+`
+
+export const NewMessageBanner = styled.button`
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 30%, var(--normal-300) 70%);
+  background: color-mix(in oklab, var(--background-100) 90%, var(--primary-color) 10%);
+  color: var(--primary-color);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: background 180ms ease, border-color 180ms ease;
+
+  &:hover {
+    background: color-mix(in oklab, var(--background-100) 80%, var(--primary-color) 20%);
+    border-color: color-mix(in oklab, var(--primary-color) 50%, var(--normal-300) 50%);
+  }
+
+  [data-color-scheme='dark'] & {
+    background: color-mix(in oklab, var(--background-100) 88%, var(--primary-color) 12%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`
+
+export const GuestbookFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px 2px;
+  min-height: 32px;
+`
+
+export const GuestbookFooterLink = styled.a`
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 160ms ease;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `

@@ -1,8 +1,10 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import Dialog from '@wuh.site/components/dialog'
 import { IconArrowRight } from '@wuh.site/components/icons'
+import VirtualScroll, { type VirtualScrollHandle } from '@wuh.site/components/virtual-scroll'
 import {
   ChatAvatar,
   ChatBubble,
@@ -15,6 +17,8 @@ import {
   ComposerInput,
   ComposerNicknameInput,
   ComposerSend,
+  GuestbookFooter,
+  GuestbookFooterLink,
   GuestbookStage,
   GuestbookTrigger,
   GuestbookTriggerAvatar,
@@ -25,8 +29,15 @@ import {
   GuestbookTriggerPreview,
   GuestbookTriggerTitle,
   GuestbookWrapper,
+  NewMessageBanner,
 } from './guestbook-barrage.styles'
 import styled from '@wuh.site/components/styled'
+import {
+  clampGuestbookContent,
+  createGuestbookMessage,
+  normalizeGuestbookComments,
+  sortGuestbookAsc,
+} from './guestbook-barrage.helpers.js'
 
 const GuestbookGuide = styled.p`
   margin: 0;
@@ -42,11 +53,6 @@ const GuestbookGuide = styled.p`
     font-size: 13px;
   }
 `
-import {
-  clampGuestbookContent,
-  createGuestbookMessage,
-  normalizeGuestbookComments,
-} from './guestbook-barrage.helpers.js'
 
 const MAX_LENGTH = 100
 const MIN_NICKNAME_LENGTH = 2
@@ -102,7 +108,10 @@ export default function GuestbookBarrageDialog() {
   const [localMessages, setLocalMessages] = useState<GuestbookMessage[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [editingNickname, setEditingNickname] = useState(false)
-  const feedRef = useRef<HTMLDivElement>(null)
+  const feedRef = useRef<VirtualScrollHandle>(null)
+  const [atBottom, setAtBottom] = useState(true)
+  const [hasNewWhileAway, setHasNewWhileAway] = useState(false)
+  const [totalCount, setTotalCount] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const clamped = useMemo(() => clampGuestbookContent(content), [content])
@@ -146,9 +155,14 @@ export default function GuestbookBarrageDialog() {
     }
   }, [])
 
+  const prevChatLengthRef = useRef(0)
   useEffect(() => {
-    feedRef.current?.scrollTo({ top: feedRef.current.scrollHeight, behavior: 'smooth' })
-  }, [chatMessages.length])
+    const prev = prevChatLengthRef.current
+    prevChatLengthRef.current = chatMessages.length
+    if (!atBottom && chatMessages.length > prev) {
+      setHasNewWhileAway(true)
+    }
+  }, [chatMessages.length, atBottom])
 
   useEffect(() => {
     if (!open) return
@@ -161,8 +175,7 @@ export default function GuestbookBarrageDialog() {
       try {
         const params = new URLSearchParams({
           issueNumber: String(GUESTBOOK_ISSUE_NUMBER),
-          page: '1',
-          limit: '50',
+          limit: '500',
         })
         const res = await fetch(`/api/comments?${params.toString()}`, { cache: 'no-store' })
         const data = await res.json().catch(() => null)
@@ -175,7 +188,12 @@ export default function GuestbookBarrageDialog() {
         }
 
         if (!cancelled) {
-          setPersistedMessages(normalizeGuestbookComments(data, footprint) as GuestbookMessage[])
+          const normalized = normalizeGuestbookComments(data, footprint) as GuestbookMessage[]
+          setPersistedMessages(sortGuestbookAsc(normalized))
+          if (data && typeof data === 'object' && 'pagination' in data) {
+            const p = (data as { pagination?: { total?: number } }).pagination
+            if (typeof p?.total === 'number') setTotalCount(p.total)
+          }
         }
       } catch (error) {
         if (!cancelled) {
@@ -279,6 +297,14 @@ export default function GuestbookBarrageDialog() {
     }
   }
 
+  const handleScrollToBottom = () => {
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'instant'
+      : 'smooth'
+    feedRef.current?.scrollToBottom(behavior as ScrollBehavior)
+    setHasNewWhileAway(false)
+  }
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
@@ -315,37 +341,72 @@ export default function GuestbookBarrageDialog() {
       >
         <GuestbookWrapper>
           <GuestbookStage>
-            <ChatFeed ref={feedRef}>
-              {loadingMessages && (
-                <div>留言加载中...</div>
-              )}
+            <ChatFeed>
               {listError && (
-                <div>留言加载失败</div>
-              )}
-              {!loadingMessages && !listError && chatMessages.map((item) => (
-                <ChatRow key={item.id} $mine={Boolean(item.mine)}>
-                  <ChatAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</ChatAvatar>
-                  <ChatBubble $mine={Boolean(item.mine)}>
-                    <ChatMessageMeta>
-                      <span>{item.nickname}</span>
-                      <time>{item.time}</time>
-                    </ChatMessageMeta>
-                    <p>{item.content}</p>
-                    {item.status === 'sending' && <ChatStatus>发送中...</ChatStatus>}
-                    {item.status === 'sent' && <ChatStatus>已发送</ChatStatus>}
-                    {item.status === 'failed' && (
-                      <ChatStatus $tone='error'>{item.error || '发送失败'}</ChatStatus>
-                    )}
-                  </ChatBubble>
-                </ChatRow>
-              ))}
-              {!loadingMessages && !listError && chatMessages.length === 0 && (
-                <div style={{ color: 'var(--text-muted)', padding: '24px 0', textAlign: 'center', fontSize: '0.82rem' }}>
-                  还没有留言，来发第一条吧。
+                <div role='alert' style={{ padding: '8px 18px', fontSize: '0.78rem', color: 'var(--primary-color)' }}>
+                  {listError}
                 </div>
+              )}
+              <VirtualScroll
+                ref={feedRef}
+                items={chatMessages}
+                initialTopMostItemIndex='LAST'
+                followOutput={(isAtBottom) => isAtBottom}
+                onAtBottomStateChange={(val) => {
+                  setAtBottom(val)
+                  if (val) setHasNewWhileAway(false)
+                }}
+                aria-label='留言列表'
+                renderItem={(item) => (
+                  <ChatRow key={item.id} $mine={Boolean(item.mine)} style={{ padding: '6px 18px' }}>
+                    <ChatAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</ChatAvatar>
+                    <ChatBubble $mine={Boolean(item.mine)}>
+                      <ChatMessageMeta>
+                        <span>{item.nickname}</span>
+                        <time>{item.time}</time>
+                      </ChatMessageMeta>
+                      <p>{item.content}</p>
+                      {item.status === 'sending' && <ChatStatus>发送中...</ChatStatus>}
+                      {item.status === 'sent' && <ChatStatus>已发送</ChatStatus>}
+                      {item.status === 'failed' && (
+                        <ChatStatus $tone='error'>{item.error || '发送失败'}</ChatStatus>
+                      )}
+                    </ChatBubble>
+                  </ChatRow>
+                )}
+                emptyContent={
+                  loadingMessages ? (
+                    <div style={{ color: 'var(--text-muted)', padding: '24px 18px', textAlign: 'center', fontSize: '0.82rem' }}>
+                      留言加载中...
+                    </div>
+                  ) : (
+                    <div style={{ color: 'var(--text-muted)', padding: '24px 18px', textAlign: 'center', fontSize: '0.82rem' }}>
+                      还没有留言，来发第一条吧。
+                    </div>
+                  )
+                }
+              />
+              {hasNewWhileAway && (
+                <NewMessageBanner
+                  type='button'
+                  aria-label='有新留言，跳到最新'
+                  onClick={handleScrollToBottom}
+                >
+                  有新留言 ↓
+                </NewMessageBanner>
               )}
             </ChatFeed>
           </GuestbookStage>
+
+          <GuestbookFooter>
+            <GuestbookFooterLink
+              as={Link}
+              href='/guestbook'
+              title='查看全部留言历史'
+            >
+              {totalCount != null ? `查看全部 ${totalCount} 条留言 →` : '—'}
+            </GuestbookFooterLink>
+          </GuestbookFooter>
 
           <Composer onSubmit={handleSubmit}>
             <ComposerBadge type='button' onClick={() => setEditingNickname(!editingNickname)} title='点击修改昵称'>
