@@ -250,7 +250,7 @@ export const Caption = styled.div`
 `
 
 export const Counter = styled.span`
-  font-family: var(--font-mono, 'SFMono-Regular', monospace);
+  font-family: var(--font-mono);
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   color: rgba(148, 163, 184, 0.9);
