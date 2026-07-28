@@ -181,6 +181,7 @@ export const CssVariableStyles = createGlobalStyle`
   body {
     color: var(--text-color);
     background: var(--page-bg, var(--background-color));
+    font-synthesis: none;
   }
 
   a {
@@ -206,9 +207,9 @@ export const CssVariableStyles = createGlobalStyle`
   }
 
   :root {
-    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    --font-serif: Georgia, 'Songti SC', 'STSong', serif;
+    --font-sans: 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+    --font-serif: Georgia, serif;
   }
 
   html[data-no-transition] *,

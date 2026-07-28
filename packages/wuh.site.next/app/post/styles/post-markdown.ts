@@ -78,7 +78,7 @@ export const MarkdownBody = styled.article`
   }
 
   code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-family: var(--font-mono);
     font-size: 0.9em;
     background: var(--atom-inline-bg);
     padding: 0.15em 0.45em;
@@ -230,7 +230,7 @@ export const MarkdownBody = styled.article`
     display: inline-block;
     padding: 3px 6px;
     font-size: 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-family: var(--font-mono);
     background: var(--atom-inline-bg);
     border: 1px solid var(--atom-inline-border);
     border-radius: 6px;

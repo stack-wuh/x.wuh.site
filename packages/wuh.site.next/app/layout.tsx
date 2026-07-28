@@ -1,18 +1,25 @@
 import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Noto_Serif_SC } from 'next/font/google'
+import { Noto_Sans_SC, Noto_Serif_SC, JetBrains_Mono } from 'next/font/google'
 import AppProviders from './components/AppProviders'
 import JsonLd from './components/JsonLd'
 import { createSiteStructuredData } from './lib/structured-data'
 
-const inter = Inter({
+const notoSansSC = Noto_Sans_SC({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
 })
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
+
 const notoSerifSC = Noto_Serif_SC({
-  weight: ['400', '700'],
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-serif',
   display: 'swap',
@@ -108,7 +115,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${notoSerifSC.variable}`}>
+      <body className={`${notoSansSC.variable} ${notoSerifSC.variable} ${jetbrainsMono.variable}`}>
         <JsonLd data={createSiteStructuredData()} />
         <AppProviders>{children}</AppProviders>
       </body>
