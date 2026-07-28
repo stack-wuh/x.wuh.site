@@ -21,8 +21,24 @@
 - **GIVEN** 组件使用 CSS 变量
 - **THEN** 颜色: `--primary-color`, `--primary-{100-900}`, `--normal-{100-900}`, `--background-{100-900}`
 - **AND** 语义: `--text-primary`, `--text-secondary`, `--text-muted`, `--accent-color`
-- **AND** 排版: `--font-serif`, `--font-size-{scale}`, `--space-{scale}`
+- **AND** 排版: `--font-sans`, `--font-serif`, `--font-mono`, `--font-size-{scale}`, `--space-{scale}`
 - **AND** 视觉: `--elevation-{soft|card|card-hover}`, `--radius-card`, `--page-bg`
+- **AND** `--font-sans` 由 Noto Sans SC 自托管提供，覆盖中文和 Latin，fallback 为 `ui-sans-serif, system-ui, sans-serif`
+- **AND** `--font-serif` 由 Noto Serif SC 自托管提供，覆盖中文和 Latin，fallback 为 `Georgia, serif`
+- **AND** `--font-mono` 由 JetBrains Mono 自托管提供，fallback 为 `ui-monospace, 'Courier New', monospace`
+- **AND** 三个字体 token 的真实字重均覆盖 400/500/600/700，禁止浏览器 synthetic bold
+
+### Requirement: 全站字体 token 单一入口
+- **GIVEN** 全站组件需要引用字体
+- **WHEN** 任何组件或页面样式声明 font-family
+- **THEN** 只能引用 `var(--font-sans)`、`var(--font-serif)` 或 `var(--font-mono)` 三个语义 token
+- **AND** 不直接声明 Georgia、system-ui、Menlo、Consolas、SFMono、BlinkMacSystemFont、Segoe UI 等平台字体
+
+### Requirement: 禁止字体合成
+- **GIVEN** 浏览器渲染使用字体 token 的文本
+- **WHEN** 当前字重在字体文件中有真实字型
+- **THEN** 浏览器使用真实字型渲染，不合成粗体或斜体
+- **AND** 全局 `font-synthesis: none` 确保缺失字重在开发期暴露而非被静默合成
 
 ## ADDED: TypewriterMotto 打字动画
 
