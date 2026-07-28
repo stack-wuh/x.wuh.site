@@ -1,0 +1,65 @@
+import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
+import GuestbookPageView from './GuestbookPageView'
+
+export const metadata: Metadata = {
+  title: '留言板 - wuh.site',
+  description: '来这里留下你的足迹，说点什么都好。',
+}
+
+const GUESTBOOK_ISSUE_NUMBER = 999999
+const GUESTBOOK_LIMIT = 20
+const nestApiUrl =
+  process.env.NEST_API_URL ||
+  (process.env.NODE_ENV === 'production' ? 'http://nest:3200/v2' : 'http://localhost:3200/v2')
+
+function clampPage(raw: unknown): number {
+  const n = Number(raw)
+  return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1
+}
+
+export default async function GuestbookPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const params = await searchParams
+  const page = clampPage(params?.page)
+
+  const url = `${nestApiUrl}/comments?issueNumber=${GUESTBOOK_ISSUE_NUMBER}&page=${page}&limit=${GUESTBOOK_LIMIT}`
+
+  let data: {
+    data: Array<{ _id: string; externalId?: string; nickname: string; content: string; createdAt: string }>
+    pagination: { total: number; totalPages: number; page: number; hasNextPage: boolean; hasPreviousPage: boolean }
+  }
+
+  try {
+    const res = await fetch(url, { next: { revalidate: 60 } })
+    if (!res.ok) throw new Error(`API error ${res.status}`)
+    data = await res.json()
+  } catch {
+    throw new Error('留言板数据加载失败，请稍后重试。')
+  }
+
+  const totalPages = data.pagination.totalPages || 1
+
+  // 越界页码归一到第 1 页
+  if (page > totalPages && totalPages > 0) {
+    redirect('/guestbook?page=1')
+  }
+
+  const comments = data.data.map((item) => ({
+    id: String(item.externalId || item._id),
+    nickname: item.nickname,
+    content: item.content,
+    createdAt: item.createdAt,
+  }))
+
+  return (
+    <GuestbookPageView
+      comments={comments}
+      pagination={data.pagination}
+      currentPage={page}
+    />
+  )
+}

@@ -48,3 +48,16 @@ export function normalizeGuestbookComments(payload, currentFootprint) {
     .filter(Boolean)
     .reverse()
 }
+
+/**
+ * 将留言按 createdAt 升序排列（旧→新），返回新数组，不改变原数组。
+ * @param {Array<{createdAt: string}>} messages
+ * @returns {Array}
+ */
+export function sortGuestbookAsc(messages) {
+  return [...messages].sort((a, b) => {
+    const ta = new Date(a.createdAt).getTime()
+    const tb = new Date(b.createdAt).getTime()
+    return ta - tb
+  })
+}
