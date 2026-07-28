@@ -30,11 +30,15 @@ function TooltipCell({
   count,
   breakdown,
   activityLabel,
+  vertical,
+  horizontal,
 }: {
   date: string
   count: number
   breakdown?: Record<string, number>
   activityLabel: string
+  vertical: 'up' | 'down'
+  horizontal: 'left' | 'center' | 'right'
 }) {
   const [visible, setVisible] = useState(false)
   const d = new Date(date + 'T00:00:00')
@@ -53,7 +57,7 @@ function TooltipCell({
       onClick={() => setVisible((current) => !current)}
       aria-label={label}
     >
-      <S.Tooltip $visible={visible}>{label}</S.Tooltip>
+      <S.Tooltip $visible={visible} $vertical={vertical} $horizontal={horizontal}>{label}</S.Tooltip>
     </S.CellInner>
   )
 }
@@ -63,7 +67,7 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
 
   const monthPositions = useMemo(() => {
     if (!data) return []
-    const positions: { label: string; left: number }[] = []
+    const positions: { label: string; column: number }[] = []
     let lastMonth = -1
 
     data.weeks.forEach((week, weekIndex) => {
@@ -71,7 +75,7 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
       if (!firstDay) return
       const month = new Date(firstDay.date + 'T00:00:00').getMonth()
       if (month !== lastMonth) {
-        positions.push({ label: MONTH_LABELS[month], left: weekIndex * 15 })
+        positions.push({ label: MONTH_LABELS[month], column: weekIndex + 2 })
         lastMonth = month
       }
     })
@@ -86,9 +90,11 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
           {Array.from({ length: 7 }).map((_, row) => (
             <S.Row key={row}>
               <S.DayLabel>{DAY_LABELS[row]}</S.DayLabel>
-              {Array.from({ length: 53 }).map((_, col) => (
-                <S.SkeletonCell key={col} />
-              ))}
+              <S.Cells>
+                {Array.from({ length: 53 }).map((_, col) => (
+                  <S.SkeletonCell key={col} />
+                ))}
+              </S.Cells>
             </S.Row>
           ))}
         </S.Grid>
@@ -123,7 +129,7 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
     <S.Wrapper>
       <S.MonthRow>
         {monthPositions.map((m, i) => (
-          <S.MonthLabel key={i} $left={m.left}>{m.label}</S.MonthLabel>
+          <S.MonthLabel key={i} $column={m.column}>{m.label}</S.MonthLabel>
         ))}
       </S.MonthRow>
       <S.Grid>
@@ -138,7 +144,14 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
                 }
                 return (
                   <S.Cell key={colIndex} $color={colors[day.level]}>
-                    <TooltipCell date={day.date} count={day.count} breakdown={day.breakdown} activityLabel={activityLabel} />
+                    <TooltipCell
+                      date={day.date}
+                      count={day.count}
+                      breakdown={day.breakdown}
+                      activityLabel={activityLabel}
+                      vertical={rowIndex === 0 ? 'down' : 'up'}
+                      horizontal={colIndex < 4 ? 'left' : colIndex >= data.weeks.length - 4 ? 'right' : 'center'}
+                    />
                   </S.Cell>
                 )
               })}

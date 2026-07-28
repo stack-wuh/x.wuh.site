@@ -1,0 +1,6 @@
+project: x.wuh.site
+change: 2026-07-28-B-fix-heatmap-layout
+date: 2026-07-28
+type: B
+status: applied
+issue: https://github.com/stack-wuh/x.wuh.site/issues/291
