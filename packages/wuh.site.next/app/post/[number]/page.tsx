@@ -90,8 +90,8 @@ type IssueData = {
 }
 
 const ensureRenderedBody = async (issue: Issue): Promise<string> => {
-  if (issue.body_html?.trim()) return issue.body_html
   if (issue.body?.trim()) return renderMarkdown(issue.body)
+  if (issue.body_html?.trim()) return issue.body_html
   throw new Error(`Post ${issue.number} has no renderable body`)
 }
 

@@ -24,6 +24,12 @@ test('文章详情使用统一函数保证 Markdown 正文存在', () => {
   assert.match(pageSource, /issue\.body_html = await ensureRenderedBody\(issue\)/)
 })
 
+test('文章详情优先从 Markdown body 生成带锚点的正文', () => {
+  assert.match(pageSource, /if \(issue\.body\?\.trim\(\)\) return renderMarkdown\(issue\.body\)/)
+  assert.match(pageSource, /if \(issue\.body_html\?\.trim\(\)\) return issue\.body_html/)
+  assert.ok(pageSource.indexOf('renderMarkdown(issue.body)') < pageSource.indexOf('issue.body_html'))
+})
+
 test('PostView 不静默将缺失正文归一化为空字符串', () => {
   assert.doesNotMatch(postView, /issue\?\.body_html \|\| ''/)
   assert.match(postView, /issue\?\.body_html/)

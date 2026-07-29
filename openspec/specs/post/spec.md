@@ -25,10 +25,23 @@
 - **AND** 修复范围由错误堆栈确定
 
 ### Requirement: Markdown 正文具有可靠 fallback
-- **GIVEN** 详情 API 返回非空 `body` 且 `bodyHtml` 为空
+- **GIVEN** 详情 API 返回非空 `body` 且 `bodyHtml` 为空或缺少标题锚点
 - **WHEN** Next 详情页面准备 PostView 数据
 - **THEN** 使用统一服务端 Markdown renderer 生成非空 HTML
+- **AND** `h1`、`h2`、`h3` 标题应生成可用于目录跳转的 `id`
 - **AND** PostView 不静默渲染空正文
+
+### Requirement: 详情页展示文章目录
+- **GIVEN** 正文 HTML 包含带文本和 `id` 的 `h1`、`h2` 或 `h3`
+- **WHEN** 用户访问博客详情页
+- **THEN** 页面展示文章目录
+- **AND** 桌面端与移动端目录使用正文中的对应标题锚点
+
+### Requirement: 正文 HTML 兼容回退
+- **GIVEN** 详情 API 的 Markdown `body` 为空且 `bodyHtml` 非空
+- **WHEN** Next 详情页面准备 PostView 数据
+- **THEN** 使用有效的 `bodyHtml` 作为回退正文
+- **AND** 不因目录修复导致正文无法展示
 
 ### Requirement: 详情路由兼容标题 slug
 - **GIVEN** 详情 URL 包含文章编号和编码后的中文标题
