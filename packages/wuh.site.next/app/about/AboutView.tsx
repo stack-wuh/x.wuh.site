@@ -7,7 +7,7 @@ import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
-import type { UnifiedActivityHeatmap } from '@wuh.site/shared-contracts'
+import type { UnifiedActivityHeatmap, GitHubProfileDto } from '@wuh.site/shared-contracts'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
 const ContactCard = dynamic(() => import('../components/ContactCard'), {
@@ -15,7 +15,6 @@ const ContactCard = dynamic(() => import('../components/ContactCard'), {
 })
 const FootprintMap = dynamic(() => import('@wuh.site/components/footprint-map'), { ssr: false })
 
-import type { GitHubProfileDto, RepoDto } from '@wuh.site/shared-contracts'
 import type { FootprintData } from '@wuh.site/components/footprint-map'
 import {
   PageRoot,
@@ -36,7 +35,6 @@ import GuestbookBarrageDialog from './components/GuestbookBarrageDialog'
 
 interface AboutViewProps {
   profile: GitHubProfileDto | null
-  repos: RepoDto[]
 }
 
 const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | undefined): HeatmapData | null => {
@@ -63,7 +61,7 @@ const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | undefin
   }
 }
 
-const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
+const AboutView = ({ profile }: AboutViewProps) => {
   const githubLogin = profile?.login || 'stack-wuh'
   const githubUrl = `https://github.com/${githubLogin}`
   const name = githubLogin
@@ -71,7 +69,7 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
   const location = profile?.location || 'ShenZhen GuangDong China'
   const profileMeta = profile?.name ? `${profile.name} · ${location}` : location
 
-  const { data: activityData, loading: activityLoading, error: activityError } = useRequest<UnifiedActivityHeatmap>(
+  const { data: activityData, loading: activityLoading, error: activityError } = useRequest<UnifiedActivityHeatmap, []>(
     async () => {
       const res = await fetch('/api/about/activity')
       if (!res.ok) throw new Error('Failed to fetch unified activity')
@@ -80,7 +78,7 @@ const AboutView = ({ profile, repos: _ }: AboutViewProps) => {
     { cacheKey: 'about-unified-activity' }
   )
 
-  const { data: footprints } = useRequest<FootprintData[]>(
+  const { data: footprints } = useRequest<FootprintData[], []>(
     async () => {
       const res = await fetch('/api/footprints')
       if (!res.ok) return []

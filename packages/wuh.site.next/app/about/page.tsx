@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { reposService } from '@wuh.site/shared-contracts/endpoints'
-import type { GitHubProfileDto, RepoDto } from '@wuh.site/shared-contracts'
+import type { GitHubProfileDto } from '@wuh.site/shared-contracts'
 import AboutView from './AboutView'
 import JsonLd from '../components/JsonLd'
 import { buildProfilePageJsonLd } from '../lib/seo'
@@ -27,23 +27,14 @@ async function getProfile(): Promise<GitHubProfileDto | null> {
   return (data as any).profile as GitHubProfileDto
 }
 
-async function getRepos(): Promise<RepoDto[]> {
-  const { data } = await reposService.getAll.server({ revalidate: 3600 })
-  if (!data) return []
-  return (data as any).repos.slice(0, 6) as RepoDto[]
-}
-
 export default async function AboutPage() {
-  const [profile, repos] = await Promise.all([
-    getProfile(),
-    getRepos(),
-  ])
+  const profile = await getProfile()
   const jsonLd = buildProfilePageJsonLd(profile)
 
   return (
     <>
       <JsonLd data={jsonLd} />
-      <AboutView profile={profile} repos={repos} />
+      <AboutView profile={profile} />
     </>
   )
 }

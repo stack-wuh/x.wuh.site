@@ -98,10 +98,10 @@
 - **需求:** 统一Outline图标风格, 统一图标接口, 移除混用fill/stroke旧图标, Brand图标风格对齐
 - **路径:** `openspec/specs/icon-system/spec.md`
 
-## error-handling — 错误处理
-- **关键词:** 错误处理, 异常, 过滤器, Swagger, Sentry
-- **需求:** Global exception filter, Swagger API documentation
-- **路径:** `openspec/specs/error-handling/spec.md`
+## first-load-performance — 首屏加载性能
+- **关键词:** LCP、FP、FCP、TTFB、Web Vitals
+- **需求:** 首屏必要数据优先返回, 首页非首屏内容延后加载, 文章正文不依赖相关文章, About 首屏主体优先, Blog 列表主体优先, LCP 元素和资源可测量, 真实用户指标按页面聚合, Homepage fetches data at runtime after production build, Homepage logs server data fetch failures
+- **路径:** `openspec/specs/first-load-performance/spec.md`
 
 ## guestbook-virtual-scroll — 留言板虚拟滚动与历史分页
 - **关键词:** 虚拟滚动、react-virtuoso、自定义滚动条、留言板分页、500条

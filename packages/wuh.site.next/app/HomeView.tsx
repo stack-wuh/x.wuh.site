@@ -15,6 +15,7 @@ const ContactCard = dynamic(() => import('./components/ContactCard'), {
 })
 import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
 import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
+import { contentService, reposService, wereadService } from '@wuh.site/shared-contracts/endpoints'
 import { buildPostUrl } from './lib/slug'
 import { formatShortDate } from './lib/date'
 import * as S from './styles'
@@ -97,6 +98,15 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
   const closeContact = useCallback(() => setActiveContact(null), [])
   const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
 
+  const { data: reposData } = reposService.getAll.use({ query: { limit: '6' } })
+  const { data: summariesData } = contentService.getPosts.use({ query: { limit: '50', state: 'open' } })
+  const { data: booksData } = wereadService.getBooks.use({ query: { page: '1', limit: '6', finishReading: '0' } })
+  const clientRepos = reposData ? ((reposData as any).repos || []).slice(0, 6) as RepoDto[] : repos
+  const clientSummaries = summariesData
+    ? (((summariesData as any).data || []) as PostListItem[]).filter((post) => post.title.includes('年度总结')).slice(0, 3)
+    : yearlySummaries
+  const clientBooks = booksData ? (((booksData as any).data || []) as WereadBook[]) : wereadBooks
+
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
   return (
     <S.Root>
@@ -173,11 +183,11 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <S.SectionHeader>
             <S.SectionTitle>年度总结</S.SectionTitle>
           </S.SectionHeader>
-          {yearlySummaries.length === 0 ? (
+          {clientSummaries.length === 0 ? (
             <Empty icon={<IconCalendar />} title="暂无年度总结" description="还没有年度回顾文章" />
           ) : (
             <S.ProjectList>
-              {yearlySummaries.map(item => (
+              {clientSummaries.map(item => (
                 <S.PostRow key={item.id} href={buildPostUrl(item.number, item.title)}>
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
@@ -196,13 +206,13 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <S.Section>
             <S.SectionHeader>
               <S.SectionTitle>微信读书</S.SectionTitle>
-              {wereadBooks.length > 0 && <Button href='/weread' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>我的书架</Button>}
+              {clientBooks.length > 0 && <Button href='/weread' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>我的书架</Button>}
             </S.SectionHeader>
-            {wereadBooks.length === 0 ? (
+            {clientBooks.length === 0 ? (
               <Empty icon={<IconLibrary />} title="暂无书架" description="微信读书同步后这里会展示" actions={[{ label: '去看看书架', href: '/weread' }]} />
             ) : (
               <S.BooksList>
-                {wereadBooks.map((book) => (
+                {clientBooks.map((book) => (
                   <S.BookRow key={book.bookId}>
                     <S.BookCover role='book-cover' src={book.cover || ''} alt={book.title} width={36} height={54} />
                     <S.BookInfo>
@@ -222,11 +232,11 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <S.SectionHeader>
             <S.SectionTitle>精选项目</S.SectionTitle>
           </S.SectionHeader>
-          {repos.length === 0 ? (
+          {clientRepos.length === 0 ? (
             <Empty icon={<IconFolderGit2 />} title="暂无项目" description="获取 GitHub 数据失败，请稍后重试" />
           ) : (
             <S.ProjectList>
-              {repos.map(repo => (
+              {clientRepos.map(repo => (
                 <S.ProjectLink
                   key={repo.html_url}
                   href={repo.html_url}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Tag from '@wuh.site/components/tag'
 import Pagination from '@wuh.site/components/pagination'
 import Empty from '@wuh.site/components/empty'
@@ -8,6 +8,7 @@ import { IconBookOpen } from '@wuh.site/components/icons'
 import TitleWithTooltip from './components/TitleWithTooltip'
 import BackHomeLink from '@/app/components/BackHomeLink'
 import type { ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
+import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import { buildPostUrl } from '../lib/slug'
 import { buildTopicUrl } from '../lib/topic-url'
 import { formatShortDate } from '../lib/date'
@@ -41,8 +42,14 @@ const groupByYear = (posts: PostListItem[]) => {
  * 博客列表视图，按年份分组展示博客文章，支持分页。
  */
 export default function BlogListView({ posts, pagination, activeLabels, availableLabels }: Props) {
+  const [loadedLabels, setLoadedLabels] = useState<ContentLabelSummary[]>(availableLabels)
+  const { data: labelsData } = contentService.getLabels.use({ query: { state: 'open' } })
+  useEffect(() => {
+    if (Array.isArray(labelsData)) setLoadedLabels(labelsData as ContentLabelSummary[])
+  }, [labelsData])
+
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
-  const hasLabels = availableLabels.length > 0
+  const hasLabels = loadedLabels.length > 0
   const filteredTotal = pagination.total ?? posts.length
 
   return (
@@ -61,10 +68,10 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
         <S.FilterBar aria-label="博客分类过滤">
           <S.FilterToolbar>
             <S.FilterMenu>
-              <S.FilterSummary>{getFilterSummaryLabel(availableLabels, activeLabels, filteredTotal)}</S.FilterSummary>
+              <S.FilterSummary>{getFilterSummaryLabel(loadedLabels, activeLabels, filteredTotal)}</S.FilterSummary>
               <S.FilterMenuList>
                 {hasLabels ? (
-                  availableLabels.map(label => (
+                  loadedLabels.map(label => (
                     <S.FilterOption
                       key={label.name}
                       href={buildBlogUrl(1, toggleLabel(activeLabels, label.name))}
