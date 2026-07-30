@@ -70,6 +70,15 @@ type UseCallOptions<TQuery, TBody> = {
   onError?: (error: FetchError) => void
 }
 
+type ClientResult<TResponse> = Pick<FetchResult<TResponse>, 'data' | 'error'>
+
+export function resolveClientResult<TResponse>(result?: FetchResult<TResponse>): ClientResult<TResponse> {
+  return {
+    data: result?.data ?? null,
+    error: result?.error ?? null,
+  }
+}
+
 function createUseHook<TResponse, TQuery = Record<string, unknown>, TBody = unknown>(
   endpoint: EndpointDef,
   globalOnError?: (error: FetchError) => void
@@ -80,22 +89,25 @@ function createUseHook<TResponse, TQuery = Record<string, unknown>, TBody = unkn
 
     const onError = localOnError || globalOnError
 
-    const result = useRequest<TResponse, []>(
+    const result = useRequest<FetchResult<TResponse>, []>(
       () =>
         fetcher<TResponse>(url, {
           method: endpoint.method,
           headers: { 'Accept': 'application/json', ...headers },
           query: query as QueryRecord,
           body,
-        }) as Promise<TResponse>,
+        }),
       {
-        onError: (e) => onError?.(e as unknown as FetchError),
+        onSuccess: (response) => {
+          if (response.error) onError?.(response.error)
+        },
       }
     )
+    const clientResult = resolveClientResult(result.data)
 
     return {
-      data: result.data ?? null,
-      error: (result.error as unknown as FetchError) ?? null,
+      data: clientResult.data,
+      error: clientResult.error ?? ((result.error as unknown as FetchError) || null),
       loading: result.loading,
       run: result.run,
       refresh: result.refresh,
