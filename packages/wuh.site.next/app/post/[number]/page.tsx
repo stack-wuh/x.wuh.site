@@ -12,9 +12,8 @@ import {
 } from '../../lib/seo'
 import { buildPostUrl, isCanonicalPostPath } from '../../lib/slug'
 import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
-import PostView from '../PostView'
 import type { Issue } from '../PostView.types'
-import { selectRelatedPosts, type RelatedPostCandidate } from '../../lib/related-posts'
+import PostView from '../PostView'
 import JsonLd from '../../components/JsonLd'
 import { createArticleStructuredData, createBreadcrumbStructuredData } from '../../lib/structured-data'
 
@@ -55,36 +54,10 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   } : null,
 })
 
-const mapContentToRelatedPost = (item: ContentItem): RelatedPostCandidate => ({
-  number: item.number,
-  title: item.title,
-  labels: item.labels,
-  updatedAt: item.updatedAtGitHub || item.createdAtGitHub,
-  summary: item.metadata?.summary || null,
-})
-
-async function getRelatedPosts(issue: Issue) {
-  const labels = Array.from(new Set(issue.labels.map((label) => label.name.trim()).filter(Boolean))).slice(0, 3)
-  if (labels.length === 0) return []
-
-  const responses = await Promise.all(
-    labels.map((label) => contentService.getPosts.server({
-      query: { labels: [label], limit: '10', state: 'open' },
-      revalidate: 3600,
-    })),
-  )
-  const candidates = responses.flatMap(({ data, error }) => {
-    if (error || !data) return []
-    return (((data as any).data || []) as ContentItem[]).map(mapContentToRelatedPost)
-  })
-
-  return selectRelatedPosts({ number: issue.number, labels }, candidates)
-}
-
 type IssueData = {
   issue: Issue | null
-  prev: AdjacentPost
-  next: AdjacentPost
+  prev: AdjacentPost | null
+  next: AdjacentPost | null
   total: number
   position: number
 }
@@ -139,7 +112,6 @@ export default async function Page({ params }: { params: Promise<{ number: strin
     permanentRedirect(buildPostUrl(issue.number, issue.title))
   }
 
-  const relatedPosts = await getRelatedPosts(issue)
   const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
   const image = getArticleImage(issue)
   const category = getArticleCategory(issue)
@@ -164,7 +136,7 @@ export default async function Page({ params }: { params: Promise<{ number: strin
     <>
       <JsonLd data={articleJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} relatedPosts={relatedPosts} />
+      <PostView issue={issue} prevIssue={prevIssue} nextIssue={nextIssue} total={total} position={position} />
     </>
   )
 }

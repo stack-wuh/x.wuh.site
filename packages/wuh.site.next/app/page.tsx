@@ -1,12 +1,11 @@
-import { Metadata } from 'next'
-import { contentService, reposService, wereadService } from '@wuh.site/shared-contracts/endpoints'
-import type { ContentItem, RepoDto, PostListItem, WereadBook } from '@wuh.site/shared-contracts'
+import type { Metadata } from 'next'
+import { contentService } from '@wuh.site/shared-contracts/endpoints'
+import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
 import HomeView from './HomeView'
 
 const SITE_URL = 'https://wuh.site'
 
 export const dynamic = 'force-dynamic'
-
 
 function logHomeFetchError(moduleName: string, error: unknown) {
   const message = error instanceof Error ? error.message : JSON.stringify(error)
@@ -32,13 +31,6 @@ export const metadata: Metadata = {
   },
 }
 
-async function getRepos(): Promise<RepoDto[]> {
-  const { data, error } = await reposService.getAll.server({ revalidate: 3600 })
-  if (error) logHomeFetchError('repos', error)
-  if (!data) return []
-  return (data as any).repos.slice(0, 6) as RepoDto[]
-}
-
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
   number: item.number,
@@ -59,35 +51,7 @@ async function getFeaturedIssues(): Promise<PostListItem[]> {
   return (data as any).data.map(mapContentToPost) as PostListItem[]
 }
 
-async function getYearlySummaries(): Promise<PostListItem[]> {
-  const { data, error } = await contentService.getPosts.server({
-    query: { limit: '50', state: 'open' },
-    revalidate: 1800,
-  })
-  if (error) logHomeFetchError('yearly summaries', error)
-  if (!data) return []
-  return (data as any).data
-    .map(mapContentToPost)
-    .filter((post: PostListItem) => post.title.includes('年度总结'))
-    .slice(0, 3) as PostListItem[]
-}
-
-async function getWereadBooks(): Promise<WereadBook[]> {
-  const { data, error } = await wereadService.getBooks.server({
-    query: { page: '1', limit: '6', finishReading: '0' },
-    revalidate: 3600,
-  })
-  if (error) logHomeFetchError('weread books', error)
-  if (!data) return []
-  return ((data as any).data || []) as WereadBook[]
-}
-
 export default async function Home() {
-  const [repos, posts, yearlySummaries, wereadBooks] = await Promise.all([
-    getRepos(),
-    getFeaturedIssues(),
-    getYearlySummaries(),
-    getWereadBooks(),
-  ])
-  return <HomeView repos={repos} posts={posts} yearlySummaries={yearlySummaries} wereadBooks={wereadBooks} />
+  const posts = await getFeaturedIssues()
+  return <HomeView repos={[]} posts={posts} yearlySummaries={[]} wereadBooks={[]} />
 }

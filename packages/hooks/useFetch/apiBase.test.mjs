@@ -17,5 +17,8 @@ assert.equal(resolveApiBase({ NEST_API_URL: '  https://api.example.com/v2  ', NO
 assert.equal(resolveApiBase({ NODE_ENV: 'production' }), 'http://nest:3200/v2')
 assert.equal(resolveApiBase({ NODE_ENV: 'development' }), 'http://localhost:3200/v2')
 assert.equal(resolveApiBase({}), 'http://localhost:3200/v2')
+const browserContext = { process: { env: { NODE_ENV: 'production' } }, window: {} }
+vm.runInNewContext(`${js}\nthis.resolveApiBase = resolveApiBase`, browserContext)
+assert.equal(browserContext.resolveApiBase(), '/api')
 
 console.log('apiBase fallback tests passed')

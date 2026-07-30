@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
-import type { ContentItem, ContentLabelSummary, PostListItem } from '@wuh.site/shared-contracts'
+import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
 import { toLabelParams } from './blog-filter-utils'
 
@@ -89,15 +89,6 @@ async function getIssues(page: number, labels: string[]) {
   }
 }
 
-async function getLabels() {
-  const { data } = await contentService.getLabels.server({
-    query: { state: 'open' },
-    revalidate: 600,
-  })
-
-  return Array.isArray(data) ? (data as ContentLabelSummary[]) : []
-}
-
 export default async function Page({
   searchParams
 }: {
@@ -106,17 +97,14 @@ export default async function Page({
   const resolvedSearchParams = await searchParams
   const currentPage = toPageNumber(resolvedSearchParams?.page)
   const activeLabels = toLabelParams(resolvedSearchParams?.labels)
-  const [{ posts, pagination }, availableLabels] = await Promise.all([
-    getIssues(currentPage, activeLabels),
-    getLabels(),
-  ])
+  const { posts, pagination } = await getIssues(currentPage, activeLabels)
 
   return (
     <BlogListView
       posts={posts}
       pagination={pagination}
       activeLabels={activeLabels}
-      availableLabels={availableLabels}
+      availableLabels={[]}
     />
   )
 }

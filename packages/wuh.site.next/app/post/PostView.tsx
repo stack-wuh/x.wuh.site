@@ -13,6 +13,7 @@ import PostHeader from './components/PostHeader'
 import PostCover from './components/PostCover'
 import PostToolbar from './components/PostToolbar'
 import PostComments from './components/PostComments'
+import RelatedPosts from './components/RelatedPosts'
 import FloatingActions from './components/FloatingActions'
 import { openSharePopup, openWechatShareWindow } from '../share-utils'
 
@@ -26,17 +27,6 @@ import {
   MarkdownBody,
   PostLead,
   RedundantInfoCard,
-  RelatedPostArrow,
-  RelatedPostContent,
-  RelatedPostIndex,
-  RelatedPostLabels,
-  RelatedPostLink,
-  RelatedPostSummary,
-  RelatedPostsCount,
-  RelatedPostsHeader,
-  RelatedPostsHeading,
-  RelatedPostsSection,
-  RelatedPostTitle,
   ShareCardInner,
   ShareInfoCard,
   StatusEmpty,
@@ -163,7 +153,7 @@ const createShareItems = (issue: Issue): ShareItem[] => {
   ]
 }
 
-export default function PostView({ issue, prevIssue, nextIssue, total, position, relatedPosts = [] }: PostViewProps) {
+export default function PostView({ issue, prevIssue, nextIssue, total, position }: PostViewProps) {
   const renderedHtml = issue?.body_html
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
@@ -233,34 +223,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position,
             <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
           </ArticleCard>
 
-          {relatedPosts.length > 0 && (
-            <RelatedPostsSection aria-labelledby='related-posts-title'>
-              <RelatedPostsHeader>
-                <RelatedPostsHeading id='related-posts-title'>继续阅读</RelatedPostsHeading>
-                <RelatedPostsCount>{relatedPosts.length} 篇同题文章</RelatedPostsCount>
-              </RelatedPostsHeader>
-              <ul>
-                {relatedPosts.map((post, index) => {
-                  const summary = post.summary?.trim()
-                  const sharedLabels = post.sharedLabels.slice(0, 2).map((label) => `#${label}`).join(' · ')
-
-                  return (
-                    <li key={post.number}>
-                      <RelatedPostLink href={buildPostUrl(post.number, post.title)} aria-label={`继续阅读：${post.title}`}>
-                        <RelatedPostIndex>{String(index + 1).padStart(2, '0')}</RelatedPostIndex>
-                        <RelatedPostContent>
-                          <RelatedPostTitle>{post.title}</RelatedPostTitle>
-                          {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
-                          {sharedLabels && <RelatedPostLabels>{sharedLabels}</RelatedPostLabels>}
-                        </RelatedPostContent>
-                        <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>
-                      </RelatedPostLink>
-                    </li>
-                  )
-                })}
-              </ul>
-            </RelatedPostsSection>
-          )}
+          <RelatedPosts number={issue.number} labels={issue.labels.map((label) => label.name)} />
 
           <ImagePreview {...previewProps} />
 
