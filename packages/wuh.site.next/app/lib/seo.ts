@@ -5,7 +5,7 @@ export const SITE_URL = 'https://wuh.site'
 export const GITHUB_PROFILE_URL = 'https://github.com/stack-wuh'
 export const SITE_PERSON_ID = `${SITE_URL}/about#person`
 export const DEFAULT_OG_IMAGE_PATH = '/og-default.png'
-export const DEFAULT_ARTICLE_DESCRIPTION = '阅读这篇博客文章'
+export const DEFAULT_ARTICLE_DESCRIPTION = '吴尒红（Shadow）的技术文章'
 
 type ArticleIssue = {
   number: number

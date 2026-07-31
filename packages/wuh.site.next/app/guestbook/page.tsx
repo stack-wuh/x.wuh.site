@@ -4,7 +4,7 @@ import GuestbookPageView from './GuestbookPageView'
 
 export const metadata: Metadata = {
   title: '留言板 - wuh.site',
-  description: '来这里留下你的足迹，说点什么都好。',
+  description: '在吴尒红（Shadow）的个人站留下足迹，分享想法与问候。',
 }
 
 const GUESTBOOK_ISSUE_NUMBER = 999999

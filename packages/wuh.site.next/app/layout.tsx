@@ -25,7 +25,7 @@ const notoSerifSC = Noto_Serif_SC({
   display: 'swap',
 })
 
-const siteDescription = '记录前端工程、开源项目、设计系统与个人思考。'
+const siteDescription = '吴尒红（Shadow）的个人站，记录前端工程、开源项目、设计系统与个人思考。'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://wuh.site'),
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
     template: '%s · wuh.site',
   },
   description: siteDescription,
-  authors: [{ name: 'shadow', url: 'https://github.com/stack-wuh' }],
-  creator: 'shadow',
+  authors: [{ name: '吴尒红（Shadow）', url: 'https://github.com/stack-wuh' }],
+  creator: '吴尒红（Shadow）',
   publisher: 'wuh.site',
   robots: { index: true, follow: true },
   openGraph: {

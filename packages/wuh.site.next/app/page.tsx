@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   alternates: { canonical: SITE_URL },
   openGraph: {
     title: '朝朝如念',
-    description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+    description: '吴尒红（Shadow）的个人站，汇集前端工程、GitHub 开源项目、技术文章与工具',
     url: SITE_URL,
     siteName: 'wuh.site',
     type: 'website',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
     title: '朝朝如念',
-    description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+    description: '吴尒红（Shadow）的个人站，汇集前端工程、GitHub 开源项目、技术文章与工具',
   },
 }
 
