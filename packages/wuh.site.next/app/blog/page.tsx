@@ -13,8 +13,8 @@ export async function generateMetadata({ searchParams }: { searchParams?: BlogSe
   const currentPage = toPageNumber(resolvedSearchParams?.page)
   const canonicalPath = currentPage > 1 && !hasActiveLabels ? `/blog?page=${currentPage}` : '/blog'
   const description = hasActiveLabels
-    ? `筛选 wuh.site 中与「${activeLabels.join('、')}」相关的博客文章。`
-    : '收录 GitHub Issues 中的全部博客文章'
+    ? `阅读吴尒红（Shadow）与「${activeLabels.join('、')}」相关的博客文章。`
+    : '阅读吴尒红（Shadow）关于前端工程、开源项目与设计系统的技术文章'
   const robots = hasActiveLabels
     ? { index: false, follow: true }
     : { index: true, follow: true }

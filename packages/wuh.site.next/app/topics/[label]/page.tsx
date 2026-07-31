@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<TopicPagePa
   const { label: rawLabel } = await params
   const label = decodeTopicParam(rawLabel)
   const title = `${label} 相关文章`
-  const description = `阅读 wuh.site 中与「${label}」相关的文章。`
+  const description = `阅读吴尒红（Shadow）与「${label}」相关的文章。`
   const url = `${SITE_URL}${buildTopicUrl(label)}`
 
   return {
@@ -80,7 +80,7 @@ export default async function TopicPage({ params }: { params: Promise<TopicPageP
   const collectionJsonLd = createCollectionPageStructuredData({
     url,
     name: `${label} 相关文章`,
-    description: `阅读 wuh.site 中与「${label}」相关的文章。`,
+    description: `阅读吴尒红（Shadow）与「${label}」相关的文章。`,
     items: posts.map((post) => ({
       name: post.title,
       url: `${SITE_URL}${buildPostUrl(post.number, post.title)}`,

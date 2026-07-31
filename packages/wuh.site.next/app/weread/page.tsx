@@ -8,11 +8,11 @@ const PER_PAGE = 10
 
 export const metadata: Metadata = {
   title: '微信读书',
-  description: 'stack-wuh 的微信读书书架',
+  description: '吴尒红（Shadow）的微信读书书架与阅读记录',
   alternates: { canonical: `${SITE_URL}/weread` },
   openGraph: {
     title: '微信读书',
-    description: 'stack-wuh 的微信读书书架',
+    description: '吴尒红（Shadow）的微信读书书架与阅读记录',
     url: `${SITE_URL}/weread`,
     siteName: 'wuh.site',
     type: 'website',

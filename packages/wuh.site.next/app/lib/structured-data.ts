@@ -1,6 +1,8 @@
 const SITE_URL = 'https://wuh.site'
 const PERSON_URL = `${SITE_URL}/about`
+const PERSON_NAME = '吴尒红（Shadow）'
 const PERSON_ID = `${PERSON_URL}#person`
+const GITHUB_PROFILE_URL = 'https://github.com/stack-wuh'
 
 type JsonLdRecord = Record<string, unknown>
 
@@ -25,8 +27,9 @@ function createAuthorReference(): JsonLdRecord {
   return {
     '@type': 'Person',
     '@id': PERSON_ID,
-    name: 'shadow',
+    name: PERSON_NAME,
     url: PERSON_URL,
+    sameAs: [GITHUB_PROFILE_URL],
   }
 }
 
@@ -43,14 +46,14 @@ export function createSiteStructuredData(): JsonLdRecord {
         '@id': `${SITE_URL}/#website`,
         url: SITE_URL,
         name: 'wuh.site',
-        description: '记录前端工程、开源项目、设计系统与个人思考。',
+        description: '吴尒红（Shadow）的个人站，记录前端工程、开源项目、设计系统与个人思考。',
         inLanguage: 'zh-CN',
         publisher: { '@id': PERSON_ID },
       },
       {
         '@type': 'Person',
         '@id': PERSON_ID,
-        name: 'shadow',
+        name: PERSON_NAME,
         url: PERSON_URL,
         sameAs: ['https://github.com/stack-wuh'],
       },

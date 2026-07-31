@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
     title: '关于',
-    description: '输出节奏总览 — 记录思考，串联碎片，构建自己的知识系统',
+    description: '吴尒红（Shadow）的创作节奏总览，记录思考、串联碎片并构建知识系统',
     url: `${SITE_URL}/about`,
     siteName: 'wuh.site',
     type: 'website',
