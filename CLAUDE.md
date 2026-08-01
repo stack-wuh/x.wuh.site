@@ -103,6 +103,35 @@ src/modules/
 └── api-v2/       # 新版统一 API
 ```
 
+## 行为准则
+
+见 `~/.claude/rules/behavior.md`（12 条）和 `~/.claude/rules/iron-laws.md`（4 条铁律），个人全局配置，所有项目共享。
+
+## 项目铁律
+
+- 不生成测试文件/文档（除非明确要求）
+- 不执行 git 操作（除非明确要求）
+- 删文件/目录、git push --force、数据库变更等危险操作必须先弹确认
+- 注释只写必要的（函数用途、复杂参数、关键逻辑），禁止署名/TODO/FIXME/废话
+- 报错及解决方案、配置坑、阻塞替代方案 → 记录到 `~/.claude/projects/<path>/memory/`
+
+## 变更管理
+
+新需求/变更走 `shadow-docs/changes/<name>/brief.md`，单文件记录动机、决策、任务和结果。`shadow-docs/knowledge/` 存放项目领域知识片段。
+
+## Skill 触发
+
+| 场景 | Skill |
+|------|-------|
+| 新需求 / 架构设计 | `shadow-dev-propose` |
+| 开始执行 / 实现 | `shadow-dev-apply` |
+| 代码审查 / 验收 | `shadow-dev-review` |
+| 提交 / PR | `shadow-dev-ship` |
+| UI/UX 设计 | `ui-ux-pro-max` |
+| Amis 低代码 | `amis-builder` |
+
+提示格式：「Shadow，这个建议用 `/xxx` 审查一下，要不要调？」
+
 ## 记忆存储
 
 错误/阻塞经验自动记录到: `~/.claude/projects/-Users-wuhong-shadow-desktop-github-x-wuh-site/memory/`
