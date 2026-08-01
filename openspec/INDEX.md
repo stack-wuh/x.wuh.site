@@ -29,8 +29,8 @@
 - **路径:** `openspec/specs/weread-shelf-order/spec.md`
 
 ## seo — SEO 优化
-- **关键词:** SEO, Open Graph, Twitter Card, metadata, Markdown AST, JSON-LD, ProfilePage, canonical, 结构化数据, URL slug, ISR, redirect, sitemap, topic pages, 主题页, archive, 归档页, CollectionPage, ItemList, breadcrumb, 面包屑, structured-data builder
-- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 文章差异化 description, 全站默认 Open Graph 图片, 文章 Twitter 图片回退, 文章作者关键词与分类 metadata, 语义 Markdown 自动摘要, CMS 摘要优先, JSON-LD BlogPosting, About 作者档案结构化数据, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容, 文章页对非规范路径永久重定向, 公开文章页不依赖请求 Cookie 且使用 ISR, Sitemap 分页生成并错误即失败, 调试页不进入 sitemap, 根布局 Metadata 默认值, WebSite与Person JSON-LD, BlogPosting builder, 面包屑 JSON-LD, 主题页 canonical 与 sitemap, 主题URL编解码单一入口, 旧 labels 筛选页 noindex, 归档页 canonical, 集合页 CollectionPage 与 ItemList
+- **关键词:** SEO, Open Graph, Twitter Card, metadata, Markdown AST, JSON-LD, ProfilePage, canonical, 结构化数据, URL slug, ISR, redirect, sitemap, topic pages, 主题页, archive, 归档页, CollectionPage, ItemList, breadcrumb, 面包屑, structured-data builder, 个人品牌, 吴尒红, 作者姓名
+- **需求:** 全站 Open Graph 标签, Twitter Card 标签, 文章差异化 description, 全站默认 Open Graph 图片, 文章 Twitter 图片回退, 文章作者关键词与分类 metadata, 语义 Markdown 自动摘要, CMS 摘要优先, JSON-LD BlogPosting, About 作者档案结构化数据, canonical URL, 博客 URL 包含标题 slug, 旧 URL 格式向后兼容, 文章页对非规范路径永久重定向, 公开文章页不依赖请求 Cookie 且使用 ISR, Sitemap 分页生成并错误即失败, 调试页不进入 sitemap, 根布局 Metadata 默认值, WebSite与Person JSON-LD, BlogPosting builder, 面包屑 JSON-LD, 主题页 canonical 与 sitemap, 主题URL编解码单一入口, 旧 labels 筛选页 noindex, 归档页 canonical, 集合页 CollectionPage 与 ItemList, 可索引页面包含统一个人品牌姓名, 社交摘要保留个人品牌语义, 作者身份在 Metadata 与 JSON-LD 中一致, 页面 description 保持主题差异化
 - **路径:** `openspec/specs/seo/spec.md`
 
 
