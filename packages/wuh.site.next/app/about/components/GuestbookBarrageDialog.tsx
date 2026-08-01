@@ -31,29 +31,12 @@ import {
   GuestbookWrapper,
   NewMessageBanner,
 } from './guestbook-barrage.styles'
-import styled from '@wuh.site/components/styled'
 import {
   clampGuestbookContent,
   createGuestbookMessage,
   normalizeGuestbookComments,
   sortGuestbookAsc,
 } from './guestbook-barrage.helpers.js'
-
-const GuestbookGuide = styled.p`
-  margin: 0;
-  padding: 6px 18px 4px;
-  font-size: var(--font-size-sm, 14px);
-  color: var(--text-muted);
-  font-style: italic;
-  line-height: 1.6;
-  text-align: center;
-
-  @media (max-width: 640px) {
-    padding: 6px 12px 4px;
-    font-size: 13px;
-  }
-`
-
 const MAX_LENGTH = 100
 const MIN_NICKNAME_LENGTH = 2
 const MIN_CONTENT_LENGTH = 5
