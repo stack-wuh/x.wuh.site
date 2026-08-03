@@ -37,6 +37,11 @@ test('首页年度总结映射 GitHub 创建时间到视图日期字段', async 
   assert.match(homeView, /created_at:\s*item\.createdAtGitHub/)
 })
 
+test('AppProviders 引用的访问统计上报组件存在', async () => {
+  const reporter = await readFile(resolve(appRoot, 'components/visit-stats/visit-stats-reporter.tsx'), 'utf8')
+  assert.match(reporter, /export function VisitStatsReporter/)
+})
+
 test('博客分类在客户端加载', async () => {
   const blogView = await readFile(resolve(appRoot, 'app/blog/BlogListView.tsx'), 'utf8')
   assert.match(blogView, /contentService\.getLabels/)
