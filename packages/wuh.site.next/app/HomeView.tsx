@@ -14,7 +14,7 @@ const ContactCard = dynamic(() => import('./components/ContactCard'), {
   loading: () => null,
 })
 import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
-import type { RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
+import type { ContentItem, RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
 import { contentService, reposService, wereadService } from '@wuh.site/shared-contracts/endpoints'
 import { buildPostUrl } from './lib/slug'
 import { formatShortDate } from './lib/date'
@@ -103,7 +103,15 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
   const { data: booksData } = wereadService.getBooks.use({ query: { page: '1', limit: '6', finishReading: '0' } })
   const clientRepos = reposData ? ((reposData as any).repos || []).slice(0, 6) as RepoDto[] : repos
   const clientSummaries = summariesData
-    ? (((summariesData as any).data || []) as PostListItem[]).filter((post) => post.title.includes('年度总结')).slice(0, 3)
+    ? (((summariesData as any).data || []) as ContentItem[])
+        .filter((item) => item.title.includes('年度总结'))
+        .slice(0, 3)
+        .map((item) => ({
+          id: item.externalId,
+          number: item.number,
+          title: item.title,
+          created_at: item.createdAtGitHub,
+        }))
     : yearlySummaries
   const clientBooks = booksData ? (((booksData as any).data || []) as WereadBook[]) : wereadBooks
 
