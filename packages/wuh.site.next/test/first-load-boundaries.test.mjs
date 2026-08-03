@@ -32,6 +32,11 @@ test('首页非首屏数据在客户端加载', async () => {
   assert.match(homeView, /wereadService\.getBooks/)
 })
 
+test('首页年度总结映射 GitHub 创建时间到视图日期字段', async () => {
+  const homeView = await readFile(resolve(appRoot, 'app/HomeView.tsx'), 'utf8')
+  assert.match(homeView, /created_at:\s*item\.createdAtGitHub/)
+})
+
 test('博客分类在客户端加载', async () => {
   const blogView = await readFile(resolve(appRoot, 'app/blog/BlogListView.tsx'), 'utf8')
   assert.match(blogView, /contentService\.getLabels/)
