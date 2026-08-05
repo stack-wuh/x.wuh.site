@@ -87,18 +87,58 @@ export const Tooltip = styled.div<{
     if ($horizontal === 'right') return 'right: 0;'
     return 'left: 50%; transform: translateX(-50%);'
   }}
-  width: max-content;
-  max-width: min(280px, calc(100vw - 32px));
+  width: clamp(190px, 22vw, 240px);
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
   background: var(--text-primary);
   color: var(--background-color);
-  font-size: 11px;
-  line-height: 1.45;
-  padding: 6px 8px;
+  padding: 12px;
   border-radius: 4px;
   white-space: normal;
   pointer-events: none;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   z-index: 10;
+`
+
+export const TooltipDate = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+`
+
+export const TooltipTotal = styled.div`
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+`
+
+export const TooltipDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in oklab, currentColor 22%, transparent);
+`
+
+export const TooltipDetail = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+`
+
+export const TooltipDetailLabel = styled.span`
+  min-width: 0;
+  overflow-wrap: anywhere;
+`
+
+export const TooltipDetailValue = styled.span`
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 `
 
 export const Legend = styled.div`

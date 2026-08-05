@@ -42,10 +42,15 @@ function TooltipCell({
 }) {
   const [visible, setVisible] = useState(false)
   const d = new Date(date + 'T00:00:00')
+  const dateLabel = `${d.getMonth() + 1} 月 ${d.getDate()} 日`
   const details = breakdown
-    ? `总量: ${count} · ${Object.entries(breakdown).map(([key, value]) => `${ACTIVITY_LABELS[key] ?? key}: ${value}`).join(' · ')}`
-    : `${count} 条${activityLabel}`
-  const label = `${d.getMonth() + 1} 月 ${d.getDate()} 日 · ${details}`
+    ? Object.entries(breakdown).filter(([, value]) => value > 0)
+    : []
+  const totalLabel = breakdown ? `总量 ${count}` : `${count} 条${activityLabel}`
+  const accessibleDetails = details
+    .map(([key, value]) => `${ACTIVITY_LABELS[key] ?? key}: ${value}`)
+    .join(' · ')
+  const label = [dateLabel, totalLabel, accessibleDetails].filter(Boolean).join(' · ')
 
   return (
     <S.CellInner
@@ -57,7 +62,20 @@ function TooltipCell({
       onClick={() => setVisible((current) => !current)}
       aria-label={label}
     >
-      <S.Tooltip $visible={visible} $vertical={vertical} $horizontal={horizontal}>{label}</S.Tooltip>
+      <S.Tooltip $visible={visible} $vertical={vertical} $horizontal={horizontal}>
+        <S.TooltipDate>{dateLabel}</S.TooltipDate>
+        <S.TooltipTotal>{totalLabel}</S.TooltipTotal>
+        {details.length > 0 && (
+          <S.TooltipDetails>
+            {details.map(([key, value]) => (
+              <S.TooltipDetail key={key}>
+                <S.TooltipDetailLabel>{ACTIVITY_LABELS[key] ?? key}</S.TooltipDetailLabel>
+                <S.TooltipDetailValue>{value}</S.TooltipDetailValue>
+              </S.TooltipDetail>
+            ))}
+          </S.TooltipDetails>
+        )}
+      </S.Tooltip>
     </S.CellInner>
   )
 }
