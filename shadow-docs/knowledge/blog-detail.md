@@ -1,8 +1,21 @@
 ---
+title: 博客详情页排版
+domain: blog
 keywords: [博客详情, 排版, 字号, 行高, 对比度, 封面, 相关文章, 标签链接, 阅读余韵]
+scope:
+  - packages/wuh.site.next/app/post
+  - packages/wuh.site.next/app/post/[number]
+status: active
+source:
+  - changes/archive/博客详情页排版优化_2026_05_17/brief.md
+  - changes/archive/20260524_P_post_toolbar_redesign/brief.md
+  - changes/archive/20260729_B_restore-post-toc/brief.md
+verified: 2026-08-08
 ---
 
 # 博客详情页排版
+
+## 当前结论
 
 酒红主题：正文 16px、行高 1.8、h1/h2 为 30px；素雅主题：正文 16px、行高 2.0、h1/h2 为 27px。`--text-primary` 与背景对比度 >= 4.5:1，`--text-secondary` 与背景对比度 >= 3:1，代码块背景与字色对比度 >= 4.5:1。素雅 dark 模式所有 `--normal-*` 和 `--background-*` 变量有专属值，不继承酒红 dark。
 
@@ -11,3 +24,21 @@ keywords: [博客详情, 排版, 字号, 行高, 对比度, 封面, 相关文章
 相关文章基于标签与时间排序、去重且最多 3 篇：每个标签并发请求最多 10 篇候选，按共享标签数降序、更新时间降序、编号升序排序。「继续阅读」模块以阅读余韵索引呈现，不使用卡片背景或阴影，hover 仅改变标题与箭头颜色并使箭头轻微右移。窄屏下单向触达高度不低于 44px。
 
 文章标签链接使用 `buildTopicUrl` 生成 `/topics/<encoded>` 站内链接，不构造 GitHub Issue label query URL。Alert 组件区分站内外链接：外部域名设 `target="_blank"` + `rel="noopener noreferrer"`，站内路径同窗口导航。
+
+## 执行约束
+
+- 正文排版、目录锚点、前后篇工具栏和 slug 兼容必须一起回归；封面细节只引用 `post-cover.md`，不得在本卡重复定义。
+
+## 适用边界
+
+不约束博客列表卡片和封面解析的后端实现。
+
+## 验证方式
+
+检查 `PostView.tsx`、`components/PostToolbar.tsx`、目录组件和 `[number]/page.tsx`；验证数字与带 slug 路由均能取得同一文章。
+
+## 关联知识
+
+- [post cover](./post-cover.md)
+- [blog code highlighting](./blog-code-highlighting.md)
+- [seo](./seo.md)

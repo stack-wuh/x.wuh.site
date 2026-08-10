@@ -1,8 +1,20 @@
 ---
+title: 留言板虚拟滚动与分页
+domain: guestbook
 keywords: [虚拟滚动, VirtualScroll, 留言板, 分页, 动态行高, 滚动条, 键盘可访问, 新留言提示]
+scope:
+  - packages/wuh.site.next/app/guestbook
+  - packages/components/virtual-scroll
+  - /v2/comments
+status: active
+source:
+  - changes/archive/20260728_P_virtual_guestbook_scroll/brief.md
+verified: 2026-08-08
 ---
 
 # 留言板虚拟滚动与分页
+
+## 当前结论
 
 VirtualScroll 组件基于动态行高渲染，不要求固定行高。仅渲染可视区域及 overscan（默认 5）范围内的条目，500 条时 DOM 节点数不超过 30。`initialTopMostItemIndex: 'LAST'` 时直接定位末尾不播放长距离滚动动画。
 
@@ -11,3 +23,20 @@ VirtualScroll 组件基于动态行高渲染，不要求固定行高。仅渲染
 滚动条主题化：滑块显示主题主色渐变，轨道低对比中性色，默认 7px 宽，hover 仅增强对比度不改变宽度。触控设备（`pointer: coarse`）恢复系统覆盖式滚动条。容器 focus 时显示 2px primary-color 焦点环，Page Up/Down/方向键正常滚动。
 
 独立留言板页面 `/guestbook?page=N` 每页 20 条最新在前，使用 Pagination 组件，浏览器前进/后退可恢复页码。无效页码重定向到 page=1。评论数为 0 时显示空状态与返回入口。历史数据加载失败时保留已有本地消息、顶部显示 error Banner（`role="alert"`），发送失败的消息保留在原位置显示失败状态。
+
+## 执行约束
+
+- 长列表只渲染可视区与 overscan；靠近底部才自动跟随，新分页不得打乱当前位置或时间顺序。
+
+## 适用边界
+
+小数据量可退化为普通列表，但接口分页语义保持一致。
+
+## 验证方式
+
+以 500 条数据检查 DOM 节点数、滚动位置、新消息按钮和上一页加载后的顺序。
+
+## 关联知识
+
+- [guestbook barrage](./guestbook-barrage.md)
+- [pagination](./pagination.md)

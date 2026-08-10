@@ -105,7 +105,7 @@ src/modules/
 
 ## 行为准则
 
-见 `~/.claude/rules/behavior.md`（12 条）和 `~/.claude/rules/iron-laws.md`（4 条铁律），个人全局配置，所有项目共享。
+以 shadow-dev-workflow 的 `rules/`、`norms/` 和 active Knowledge 为准。
 
 ## 项目铁律
 
@@ -113,7 +113,8 @@ src/modules/
 - 不执行 git 操作（除非明确要求）
 - 删文件/目录、git push --force、数据库变更等危险操作必须先弹确认
 - 注释只写必要的（函数用途、复杂参数、关键逻辑），禁止署名/TODO/FIXME/废话
-- 报错及解决方案、配置坑、阻塞替代方案 → 记录到 `~/.claude/projects/<path>/memory/`
+- 长期有效的项目事实进入 `shadow-docs/knowledge/`；单次问题与验证结果留在当前 brief；跨项目稳定经验进入 shadow-dev-workflow `knowledge/`
+- 未复现或已失效的临时故障不沉淀为执行真相
 
 ## 变更管理
 
@@ -132,8 +133,6 @@ src/modules/
 
 提示格式：「Shadow，这个建议用 `/xxx` 审查一下，要不要调？」
 
-## 记忆存储
+## Knowledge 查询
 
-错误/阻塞经验自动记录到: `~/.claude/projects/-Users-wuhong-shadow-desktop-github-x-wuh-site/memory/`
-
-跨会话积累，避免重复踩坑。
+按 `shadow-docs/menu.md` 只读取任务域、关键词和 scope 命中的 active 卡片，不遍历项目外 memory。历史 brief 和 INDEX 仅供追溯，不能覆盖 active Knowledge。
