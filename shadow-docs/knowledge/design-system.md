@@ -1,8 +1,22 @@
 ---
+title: 设计系统
+domain: frontend
 keywords: [主题系统, CSS变量, 暗黑模式, 主题切换, 字体, 无闪动, 打字动画, Header导航, 外观设置]
+scope:
+  - packages/components/themes
+  - packages/wuh.site.next/app/layout.tsx
+  - packages/wuh.site.next/app/design/system-color
+status: active
+source:
+  - changes/archive/20260418_P_site-theme-optimization/brief.md
+  - changes/archive/20260627_P_theme_follow_system/brief.md
+  - changes/archive/2026-07-28-P-unify-cross-platform-fonts/brief.md
+verified: 2026-08-08
 ---
 
 # 设计系统
+
+## 当前结论
 
 双维度主题模型：`data-theme-family`（wine/plain）和 `data-color-scheme`（light/dark），组合为 4 种主题，存储于 localStorage key `wuh.site.theme`。
 
@@ -13,3 +27,20 @@ CSS 变量分三层：`:root` 注入 raw 调色板；4 个 selector 路由映射
 首页标语使用 TypewriterMotto 打字机效果逐字显示，两句循环："写作是抵抗遗忘的方式，代码是构建世界的语言。" / "不要停步不前，每一天都要做出改变。"
 
 桌面端 Header 导航项悬停时显示 1px 高、两端透明、中段使用 `--primary-color` 的渐隐装饰下划线，不使用胶囊背景或位移动效。桌面端外观入口与导航风格统一，外观选项由共享 `AppearanceOptions` 组件统一管理。移动端外观设置在菜单内展开，不弹出独立 Bottom Sheet。主题色板预览使用固定渐变色值，不读取页面 CSS 变量。
+
+## 执行约束
+
+- 颜色必须经主题变量暴露，不在业务组件硬编码；主题 family 与 color scheme 独立，SSR 初始化不得产生闪烁。
+
+## 适用边界
+
+品牌插图和外部内容图片的固有颜色不受主题 token 限制。
+
+## 验证方式
+
+检查主题变量生成、layout 初始化脚本和四种组合 selector；分别在 light/dark 与 wine/plain 下检查公开变量。
+
+## 关联知识
+
+- [components](./components.md)
+- [icon system](./icon-system.md)

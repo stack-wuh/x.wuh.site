@@ -103,8 +103,9 @@ src/modules/
 └── api-v2/       # 新版统一 API
 ```
 
-## 记忆存储
+## Knowledge 沉淀
 
-错误/阻塞经验自动记录到: `~/.Codex/projects/-Users-wuhong-shadow-desktop-github-x-wuh-site/memory/`
-
-跨会话积累，避免重复踩坑。
+- 长期有效的项目事实进入 `shadow-docs/knowledge/`，并通过 `shadow-docs/menu.md` 路由。
+- 单次问题、调查过程和验证结果留在当前 change brief。
+- 跨项目稳定经验进入 shadow-dev-workflow `knowledge/`。
+- 项目外 memory 不作为执行依据；未复现或已失效的临时故障不沉淀为 active Knowledge。
