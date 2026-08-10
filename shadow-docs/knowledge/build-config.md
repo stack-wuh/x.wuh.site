@@ -9,9 +9,9 @@ scope:
   - packages/wuh.site.nest/src/main.ts
 status: active
 source:
-  - changes/archive/20260504_P_docker-deployment/brief.md
-  - changes/archive/20260607_P_rolling_deploy/brief.md
-  - changes/archive/20260524_P_build_optimization/brief.md
+  - changes/archive/20260504-P-docker-deployment/brief.md
+  - changes/archive/20260607-P-rolling_deploy/brief.md
+  - changes/archive/20260524-P-build_optimization/brief.md
 verified: 2026-08-08
 ---
 

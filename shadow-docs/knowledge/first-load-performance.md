@@ -9,8 +9,8 @@ scope:
   - packages/wuh.site.next/app/blog
 status: active
 source:
-  - changes/archive/20260615_P_first_screen_optimization/brief.md
-  - changes/archive/2026-07-29-P-optimize-first-load/brief.md
+  - changes/archive/20260615-P-first_screen_optimization/brief.md
+  - changes/archive/20260729-P-optimize-first-load/brief.md
 verified: 2026-08-08
 ---
 

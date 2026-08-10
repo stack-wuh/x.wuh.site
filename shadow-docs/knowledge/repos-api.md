@@ -8,7 +8,7 @@ scope:
   - packages/wuh.site.next/app
 status: active
 source:
-  - changes/archive/20260621_P_about_github_data/brief.md
+  - changes/archive/20260621-P-about_github_data/brief.md
 verified: 2026-08-08
 ---
 

@@ -7,7 +7,7 @@ scope:
   - packages/wuh.site.next/app/post
 status: active
 source:
-  - changes/archive/20260510_B_blog-code-highlighting/brief.md
+  - changes/archive/20260510-B-blog-code-highlighting/brief.md
 verified: 2026-08-08
 ---
 

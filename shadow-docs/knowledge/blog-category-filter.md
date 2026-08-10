@@ -8,8 +8,8 @@ scope:
   - /blog?labels=
 status: active
 source:
-  - changes/archive/2026-07-05-P-blog-category-filter/brief.md
-  - changes/archive/2026-07-05-P-blog-multi-label-filter/brief.md
+  - changes/archive/20260705-P-blog-category-filter/brief.md
+  - changes/archive/20260705-P-blog-multi-label-filter/brief.md
 verified: 2026-08-08
 ---
 

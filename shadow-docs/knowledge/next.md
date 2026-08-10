@@ -8,8 +8,8 @@ scope:
   - packages/components/package.json
 status: active
 source:
-  - changes/archive/20260524_P_build_optimization/brief.md
-  - changes/archive/20260607_P_ts_config_redesign/brief.md
+  - changes/archive/20260524-P-build_optimization/brief.md
+  - changes/archive/20260607-P-ts_config_redesign/brief.md
 verified: 2026-08-08
 ---
 

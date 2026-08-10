@@ -7,7 +7,7 @@ scope:
   - packages/wuh.site.next/app/blog
 status: active
 source:
-  - changes/archive/20260607_P_分页器重新设计/brief.md
+  - changes/archive/20260607-P-分页器重新设计/brief.md
 verified: 2026-08-08
 ---
 

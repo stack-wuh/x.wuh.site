@@ -7,8 +7,8 @@ scope:
   - packages/wuh.site.next/app/about
 status: active
 source:
-  - changes/archive/2026-07-26-P-about-site-activity-heatmap/brief.md
-  - changes/archive/2026-07-28-b-fix-about-heatmap-merge/brief.md
+  - changes/archive/20260726-P-about-site-activity-heatmap/brief.md
+  - changes/archive/20260728-B-b-fix-about-heatmap-merge/brief.md
 verified: 2026-08-08
 ---
 

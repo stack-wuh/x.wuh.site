@@ -8,10 +8,10 @@ scope:
   - packages/wuh.site.next/app/lib/sitemap-utils.ts
 status: active
 source:
-  - changes/archive/20260524_P_seo_optimization/brief.md
-  - changes/archive/20260627_P_blog_url_slug_seo/brief.md
-  - changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/brief.md
-  - changes/archive/2026-07-26-P-seo-discovery-navigation/brief.md
+  - changes/archive/20260524-P-seo_optimization/brief.md
+  - changes/archive/20260627-P-blog_url_slug_seo/brief.md
+  - changes/archive/20260725-P-seo-og-metadata-summary-author-profile/brief.md
+  - changes/archive/20260726-P-seo-discovery-navigation/brief.md
 verified: 2026-08-08
 ---
 

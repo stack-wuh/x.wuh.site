@@ -7,9 +7,9 @@ scope:
   - packages/wuh.site.next/app/post/[number]
 status: active
 source:
-  - changes/archive/博客详情页排版优化_2026_05_17/brief.md
-  - changes/archive/20260524_P_post_toolbar_redesign/brief.md
-  - changes/archive/20260729_B_restore-post-toc/brief.md
+  - changes/archive/20260517-P-博客详情页排版优化/brief.md
+  - changes/archive/20260524-P-post_toolbar_redesign/brief.md
+  - changes/archive/20260729-B-restore-post-toc/brief.md
 verified: 2026-08-08
 ---
 

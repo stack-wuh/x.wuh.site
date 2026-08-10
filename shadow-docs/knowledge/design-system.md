@@ -8,9 +8,9 @@ scope:
   - packages/wuh.site.next/app/design/system-color
 status: active
 source:
-  - changes/archive/20260418_P_site-theme-optimization/brief.md
-  - changes/archive/20260627_P_theme_follow_system/brief.md
-  - changes/archive/2026-07-28-P-unify-cross-platform-fonts/brief.md
+  - changes/archive/20260418-P-site-theme-optimization/brief.md
+  - changes/archive/20260627-P-theme_follow_system/brief.md
+  - changes/archive/20260728-P-unify-cross-platform-fonts/brief.md
 verified: 2026-08-08
 ---
 

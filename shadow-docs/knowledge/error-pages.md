@@ -8,7 +8,7 @@ scope:
   - packages/wuh.site.next/app/post/[number]/error.tsx
 status: active
 source:
-  - changes/archive/20260510_P_redesign-error-pages/brief.md
+  - changes/archive/20260510-P-redesign-error-pages/brief.md
 verified: 2026-08-08
 ---
 

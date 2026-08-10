@@ -8,7 +8,7 @@ scope:
   - packages/wuh.site.next/app/post
 status: active
 source:
-  - changes/archive/20260701_P_date_format_view_count/brief.md
+  - changes/archive/20260701-P-date_format_view_count/brief.md
 verified: 2026-08-08
 ---
 

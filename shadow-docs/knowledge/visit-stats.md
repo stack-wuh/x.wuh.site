@@ -8,7 +8,7 @@ scope:
   - packages/components/layout
 status: active
 source:
-  - changes/archive/2026-07-12-P-site-visit-stats/brief.md
+  - changes/archive/20260712-P-site-visit-stats/brief.md
 verified: 2026-08-08
 ---
 

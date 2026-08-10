@@ -8,8 +8,8 @@ scope:
   - /v2/docs
 status: active
 source:
-  - changes/archive/2026-05-01-standardize-api-and-migrate-frontend/brief.md
-  - changes/archive/20260426_P_unify-frontend-backend/brief.md
+  - changes/archive/20260501-P-standardize-api-and-migrate-frontend/brief.md
+  - changes/archive/20260426-P-unify-frontend-backend/brief.md
 verified: 2026-08-08
 ---
 

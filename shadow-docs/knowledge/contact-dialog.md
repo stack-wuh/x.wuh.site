@@ -7,8 +7,8 @@ scope:
   - packages/wuh.site.next/app/components/ContactCard.tsx
 status: active
 source:
-  - changes/archive/20260530_P_dialog_redesign/brief.md
-  - changes/archive/2026-07-28-B-fix-dialog-header-alignment/brief.md
+  - changes/archive/20260530-P-dialog_redesign/brief.md
+  - changes/archive/20260728-B-fix-dialog-header-alignment/brief.md
 verified: 2026-08-08
 ---
 

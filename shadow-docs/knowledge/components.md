@@ -7,9 +7,9 @@ scope:
   - packages/hooks
 status: active
 source:
-  - changes/archive/2026-07-12-P-component-standardization/brief.md
-  - changes/archive/2026-07-25-P-semantic-image-roles/brief.md
-  - changes/archive/20260524_P_image_preview_optimize/brief.md
+  - changes/archive/20260712-P-component-standardization/brief.md
+  - changes/archive/20260725-P-semantic-image-roles/brief.md
+  - changes/archive/20260524-P-image_preview_optimize/brief.md
 verified: 2026-08-08
 ---
 

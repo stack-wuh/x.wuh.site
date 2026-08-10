@@ -8,8 +8,8 @@ scope:
   - packages/wuh.site.next/app/HomeView.tsx
 status: active
 source:
-  - changes/archive/2026-07-05-B-fix-weread-shelf-order/brief.md
-  - changes/archive/20260607_B_weread_fix_and_pagination/brief.md
+  - changes/archive/20260705-B-fix-weread-shelf-order/brief.md
+  - changes/archive/20260607-B-weread_fix_and_pagination/brief.md
 verified: 2026-08-08
 ---
 

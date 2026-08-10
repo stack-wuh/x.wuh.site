@@ -7,7 +7,7 @@ scope:
   - packages/wuh.site.next/app/layout.tsx
 status: active
 source:
-  - changes/archive/20260628_P_rss_fix_and_entry/brief.md
+  - changes/archive/20260628-P-rss_fix_and_entry/brief.md
 verified: 2026-08-08
 ---
 

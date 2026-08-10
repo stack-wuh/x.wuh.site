@@ -8,7 +8,7 @@ scope:
   - /v2/comments
 status: active
 source:
-  - changes/archive/20260728_P_virtual_guestbook_scroll/brief.md
+  - changes/archive/20260728-P-virtual_guestbook_scroll/brief.md
 verified: 2026-08-08
 ---
 

@@ -8,8 +8,8 @@ scope:
   - packages/wuh.site.nest/src/modules/comment
 status: active
 source:
-  - changes/archive/2026-07-05-P-about-guestbook-chat-ui/brief.md
-  - changes/archive/20260705_P_message_barrage_dialog/brief.md
+  - changes/archive/20260705-P-about-guestbook-chat-ui/brief.md
+  - changes/archive/20260705-P-message_barrage_dialog/brief.md
 verified: 2026-08-08
 ---
 

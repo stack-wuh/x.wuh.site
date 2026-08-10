@@ -6,7 +6,7 @@ scope:
   - packages/wuh.site.next/app/about
 status: active
 source:
-  - changes/archive/2026-05-04-about-code-split/brief.md
+  - changes/archive/20260504-P-about-code-split/brief.md
 verified: 2026-08-08
 ---
 

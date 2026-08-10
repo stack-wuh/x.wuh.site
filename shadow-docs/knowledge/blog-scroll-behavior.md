@@ -7,7 +7,7 @@ scope:
   - packages/wuh.site.next/app/post/styles
 status: active
 source:
-  - changes/archive/20260510_B_blog-scroll-flicker-fix/brief.md
+  - changes/archive/20260510-B-blog-scroll-flicker-fix/brief.md
 verified: 2026-08-08
 ---
 

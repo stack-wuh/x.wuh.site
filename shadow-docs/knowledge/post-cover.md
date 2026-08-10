@@ -8,9 +8,9 @@ scope:
   - packages/wuh.site.next/app/post
 status: active
 source:
-  - changes/archive/2026-07-05-P-add-post-cover-image/brief.md
-  - changes/archive/2026-07-19-P-post-cover-redesign/brief.md
-  - changes/archive/2026-07-25-P-semantic-image-roles/brief.md
+  - changes/archive/20260705-P-add-post-cover-image/brief.md
+  - changes/archive/20260719-P-post-cover-redesign/brief.md
+  - changes/archive/20260725-P-semantic-image-roles/brief.md
 verified: 2026-08-08
 ---
 

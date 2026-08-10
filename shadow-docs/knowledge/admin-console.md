@@ -8,8 +8,8 @@ scope:
   - packages/wuh.site.nest/src/modules/admin
 status: active
 source:
-  - changes/archive/2026-07-19-P-admin-console/brief.md
-  - changes/archive/2026-07-26-P-console-production-deployment/brief.md
+  - changes/archive/20260719-P-admin-console/brief.md
+  - changes/archive/20260726-P-console-production-deployment/brief.md
 verified: 2026-08-08
 ---
 

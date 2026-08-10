@@ -6,8 +6,8 @@ scope:
   - packages/components/icons
 status: active
 source:
-  - changes/archive/2026-05-04-extract-icons/brief.md
-  - changes/archive/统一图标风格-2026-05-17/brief.md
+  - changes/archive/20260504-P-extract-icons/brief.md
+  - changes/archive/20260517-P-统一图标风格/brief.md
 verified: 2026-08-08
 ---
 
