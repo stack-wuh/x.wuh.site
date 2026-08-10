@@ -127,7 +127,8 @@ src/modules/
 | 新需求 / 架构设计 | `shadow-dev-propose` |
 | 开始执行 / 实现 | `shadow-dev-apply` |
 | 代码审查 / 验收 | `shadow-dev-review` |
-| 提交 / PR | `shadow-dev-ship` |
+| 提交 / PR | `shadow-dev-release` |
+| 归档 | `shadow-dev-archive` |
 | UI/UX 设计 | `ui-ux-pro-max` |
 | Amis 低代码 | `amis-builder` |
 
