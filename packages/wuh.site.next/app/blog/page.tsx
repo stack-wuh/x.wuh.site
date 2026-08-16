@@ -3,8 +3,7 @@ import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
 import BlogListView from './BlogListView'
 import { toLabelParams } from './blog-filter-utils'
-
-const SITE_URL = 'https://wuh.site'
+import { PER_PAGE, SITE_URL, type BlogSearchParams } from './specs'
 
 export async function generateMetadata({ searchParams }: { searchParams?: BlogSearchParams | Promise<BlogSearchParams> }): Promise<Metadata> {
   const resolvedSearchParams = await searchParams
@@ -37,13 +36,6 @@ export async function generateMetadata({ searchParams }: { searchParams?: BlogSe
       description,
     },
   }
-}
-
-const PER_PAGE = 10
-
-type BlogSearchParams = {
-  page?: string | string[]
-  labels?: string | string[]
 }
 
 const mapContentToPost = (item: ContentItem): PostListItem => ({

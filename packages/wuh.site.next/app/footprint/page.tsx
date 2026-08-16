@@ -22,6 +22,7 @@ import {
   HtmlContent,
   EmptyPanel,
 } from '@wuh.site/components/footprint-map/styles'
+import * as S from './styles'
 
 export default function FootprintPage() {
   const [footprints, setFootprints] = useState<FootprintData[]>([])
@@ -48,10 +49,8 @@ export default function FootprintPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px' }}>
-      <h1 style={{ fontSize: '1.75rem', fontWeight: 600, marginBottom: 24 }}>
-        足迹
-      </h1>
+    <S.Root>
+      <S.Title>足迹</S.Title>
       <FullLayout>
         <MapPanel>
           <FootprintMap
@@ -99,9 +98,9 @@ export default function FootprintPage() {
               {selected.videos.length > 0 && (
                 <div>
                   {selected.videos.map((url, i) => (
-                    <div key={i} style={{ marginBottom: 12 }}>
+                    <S.VideoItem key={i}>
                       <BilibiliPlayer url={url} />
-                    </div>
+                    </S.VideoItem>
                   ))}
                 </div>
               )}
@@ -115,6 +114,6 @@ export default function FootprintPage() {
           )}
         </ContentPanel>
       </FullLayout>
-    </div>
+    </S.Root>
   )
 }

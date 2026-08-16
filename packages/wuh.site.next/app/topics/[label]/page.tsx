@@ -11,13 +11,7 @@ import { buildTopicUrl, decodeTopicParam } from '@/app/lib/topic-url'
 import { formatShortDate } from '@/app/lib/date'
 import { createCollectionPageStructuredData } from '@/app/lib/structured-data'
 import * as S from '@/app/blog/styles'
-
-const SITE_URL = 'https://wuh.site'
-const PER_PAGE = 20
-
-type TopicPageParams = {
-  label: string
-}
+import { PER_PAGE, SITE_URL, type TopicPageParams } from './specs'
 
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,

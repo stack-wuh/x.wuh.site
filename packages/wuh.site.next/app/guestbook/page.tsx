@@ -1,17 +1,12 @@
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 import GuestbookPageView from './GuestbookPageView'
+import { GUESTBOOK_ISSUE_NUMBER, GUESTBOOK_LIMIT, nestApiUrl, type GuestbookResponse, type GuestbookSearchParams } from './specs'
 
 export const metadata: Metadata = {
   title: '留言板 - wuh.site',
   description: '在吴尒红（Shadow）的个人站留下足迹，分享想法与问候。',
 }
-
-const GUESTBOOK_ISSUE_NUMBER = 999999
-const GUESTBOOK_LIMIT = 20
-const nestApiUrl =
-  process.env.NEST_API_URL ||
-  (process.env.NODE_ENV === 'production' ? 'http://nest:3200/v2' : 'http://localhost:3200/v2')
 
 function clampPage(raw: unknown): number {
   const n = Number(raw)
@@ -21,17 +16,14 @@ function clampPage(raw: unknown): number {
 export default async function GuestbookPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<GuestbookSearchParams>
 }) {
   const params = await searchParams
   const page = clampPage(params?.page)
 
   const url = `${nestApiUrl}/comments?issueNumber=${GUESTBOOK_ISSUE_NUMBER}&page=${page}&limit=${GUESTBOOK_LIMIT}`
 
-  let data: {
-    data: Array<{ _id: string; externalId?: string; nickname: string; content: string; createdAt: string }>
-    pagination: { total: number; totalPages: number; page: number; hasNextPage: boolean; hasPreviousPage: boolean }
-  }
+  let data: GuestbookResponse
 
   try {
     const res = await fetch(url, { next: { revalidate: 60 } })

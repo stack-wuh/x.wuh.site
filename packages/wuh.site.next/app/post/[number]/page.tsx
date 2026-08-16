@@ -11,18 +11,12 @@ import {
   getArticleKeywords,
 } from '../../lib/seo'
 import { buildPostUrl, isCanonicalPostPath } from '../../lib/slug'
-import type { ContentItem, AdjacentPost } from '@wuh.site/shared-contracts'
+import type { ContentItem } from '@wuh.site/shared-contracts'
 import type { Issue } from '../PostView.types'
 import PostView from '../PostView'
 import JsonLd from '../../components/JsonLd'
 import { createArticleStructuredData, createBreadcrumbStructuredData } from '../../lib/structured-data'
-
-const SITE_URL = 'https://wuh.site'
-
-const FALLBACK_METADATA: Metadata = {
-  title: '博客详情',
-  description: '阅读这篇博客文章',
-}
+import { FALLBACK_METADATA, SITE_URL, type IssueData, type PostPageParams } from './specs'
 
 const mapContentToIssue = (item: ContentItem): Issue => ({
   id: item.externalId,
@@ -54,14 +48,6 @@ const mapContentToIssue = (item: ContentItem): Issue => ({
   } : null,
 })
 
-type IssueData = {
-  issue: Issue | null
-  prev: AdjacentPost | null
-  next: AdjacentPost | null
-  total: number
-  position: number
-}
-
 const ensureRenderedBody = async (issue: Issue): Promise<string> => {
   if (issue.body?.trim()) return renderMarkdown(issue.body)
   if (issue.body_html?.trim()) return issue.body_html
@@ -90,7 +76,7 @@ const getIssue = cache(async (num: string): Promise<IssueData> => {
   }
 })
 
-export async function generateMetadata({ params }: { params: Promise<{ number: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<PostPageParams> }): Promise<Metadata> {
   const { number: raw } = await params
   const number = raw.split('-')[0]
   const { issue } = await getIssue(number)
@@ -102,7 +88,7 @@ export async function generateMetadata({ params }: { params: Promise<{ number: s
   return buildArticleMetadata(issue) as Metadata
 }
 
-export default async function Page({ params }: { params: Promise<{ number: string }> }) {
+export default async function Page({ params }: { params: Promise<PostPageParams> }) {
   const { number: raw } = await params
   const number = raw.split('-')[0]
   const { issue, prev: prevIssue, next: nextIssue, total, position } = await getIssue(number)

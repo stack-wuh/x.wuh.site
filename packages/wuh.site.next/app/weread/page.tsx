@@ -2,9 +2,7 @@ import type { Metadata } from 'next'
 import type { WereadBook } from '@wuh.site/shared-contracts'
 import { wereadService } from '@wuh.site/shared-contracts/endpoints'
 import WereadView from './WereadView'
-
-const SITE_URL = 'https://wuh.site'
-const PER_PAGE = 10
+import { PER_PAGE, SITE_URL, type WereadSearchParams } from './specs'
 
 export const metadata: Metadata = {
   title: '微信读书',
