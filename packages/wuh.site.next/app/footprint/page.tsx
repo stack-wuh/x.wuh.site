@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
-import { BilibiliPlayer } from '@wuh.site/components/footprint-map/bilibili'
-import type { FootprintData } from '@wuh.site/components/footprint-map'
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { BilibiliPlayer } from "@wuh.site/components/footprint-map/bilibili";
+import type { FootprintData } from "@wuh.site/components/footprint-map";
 
 const FootprintMap = dynamic(
-  () => import('@wuh.site/components/footprint-map'),
-  { ssr: false }
-)
-import ImagePreview from '@wuh.site/components/image-preview'
-import useImagePreview from '@wuh.site/hooks/useImagePreview'
+  () => import("@wuh.site/components/footprint-map"),
+  { ssr: false },
+);
+import ImagePreview from "@wuh.site/components/image-preview";
+import useImagePreview from "@wuh.site/hooks/useImagePreview";
 import {
   FullLayout,
   MapPanel,
@@ -21,32 +21,32 @@ import {
   Photo,
   HtmlContent,
   EmptyPanel,
-} from '@wuh.site/components/footprint-map/styles'
-import * as S from './styles'
+} from "@wuh.site/components/footprint-map/styles";
+import * as S from "./styles";
 
 export default function FootprintPage() {
-  const [footprints, setFootprints] = useState<FootprintData[]>([])
-  const [selected, setSelected] = useState<FootprintData | null>(null)
-  const imagePreview = useImagePreview()
+  const [footprints, setFootprints] = useState<FootprintData[]>([]);
+  const [selected, setSelected] = useState<FootprintData | null>(null);
+  const imagePreview = useImagePreview();
 
   useEffect(() => {
-    fetch('/api/footprints')
+    fetch("/api/footprints")
       .then((res) => res.json())
       .then((json) => {
-        const data = json.data || []
-        setFootprints(data)
-        if (data.length > 0) setSelected(data[0])
+        const data = json.data || [];
+        setFootprints(data);
+        if (data.length > 0) setSelected(data[0]);
       })
-      .catch(() => {})
-  }, [])
+      .catch(() => {});
+  }, []);
 
   const handleMarkerClick = (fp: FootprintData) => {
-    setSelected(fp)
-  }
+    setSelected(fp);
+  };
 
   const handlePhotoClick = (index: number) => {
-    imagePreview.open(index)
-  }
+    imagePreview.open(index);
+  };
 
   return (
     <S.Root>
@@ -65,10 +65,10 @@ export default function FootprintPage() {
               <div>
                 <PlaceName>{selected.name}</PlaceName>
                 <PlaceDate>
-                  {new Date(selected.date).toLocaleDateString('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                  {new Date(selected.date).toLocaleDateString("zh-CN", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </PlaceDate>
               </div>
@@ -78,7 +78,7 @@ export default function FootprintPage() {
                   <PhotoGrid>
                     {selected.photos.map((url, i) => (
                       <Photo
-                        role='thumbnail'
+                        role="thumbnail"
                         key={i}
                         src={url}
                         alt={selected.name}
@@ -90,7 +90,10 @@ export default function FootprintPage() {
                   </PhotoGrid>
                   <ImagePreview
                     bind={imagePreview.bind}
-                    images={selected.photos.map((src) => ({ src, alt: selected.name }))}
+                    images={selected.photos.map((src) => ({
+                      src,
+                      alt: selected.name,
+                    }))}
                   />
                 </div>
               )}
@@ -106,7 +109,9 @@ export default function FootprintPage() {
               )}
 
               {selected.content && (
-                <HtmlContent dangerouslySetInnerHTML={{ __html: selected.content }} />
+                <HtmlContent
+                  dangerouslySetInnerHTML={{ __html: selected.content }}
+                />
               )}
             </>
           ) : (
@@ -115,5 +120,5 @@ export default function FootprintPage() {
         </ContentPanel>
       </FullLayout>
     </S.Root>
-  )
+  );
 }
