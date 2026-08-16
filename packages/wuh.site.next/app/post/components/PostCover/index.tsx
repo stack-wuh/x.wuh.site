@@ -1,14 +1,10 @@
 'use client'
 
 import Image from '@wuh.site/components/image'
-import { CoverImage } from '../styles'
+import { CoverImage } from '../../styles'
+import type { PostCoverProps } from './specs'
 
-type Props = {
-  src?: string | null
-  alt: string
-}
-
-export default function PostCover({ src, alt }: Props) {
+export default function PostCover({ src, alt }: PostCoverProps) {
   if (!src) return null
 
   return (

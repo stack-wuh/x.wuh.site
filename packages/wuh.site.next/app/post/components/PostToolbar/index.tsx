@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import type { AdjacentIssue } from '../PostView.types'
+import type { AdjacentIssue } from '../../PostView.types'
 import { IconChevronLeft, IconChevronRight, IconBars } from '@wuh.site/components/icons'
-import { buildPostUrl } from '../../lib/slug'
-import { Toolbar } from '../styles'
+import { buildPostUrl } from '../../../lib/slug'
+import { Toolbar } from '../../styles'
+import type { PostToolbarProps } from './specs'
 
 const EMPTY_TEXT = '空空如也'
 
@@ -36,15 +37,7 @@ const ToolbarLink = ({
   )
 }
 
-type Props = {
-  prevIssue: AdjacentIssue | null
-  nextIssue: AdjacentIssue | null
-  currentNumber?: number
-  total?: number
-  position?: number
-}
-
-export default function PostToolbar({ prevIssue, nextIssue, total, position, currentNumber: _ }: Props) {
+export default function PostToolbar({ prevIssue, nextIssue, total, position, currentNumber: _ }: PostToolbarProps) {
   const hasBoth = prevIssue && nextIssue
   const showPosition = position != null && total != null && total > 0
 

@@ -3,13 +3,10 @@
 import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
-import { FloatingButtonGroup, FloatingButton, LikeButton } from '../styles'
+import { FloatingButtonGroup, FloatingButton, LikeButton } from '../../styles'
+import type { FloatingActionsProps } from './specs'
 
-export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false }: {
-  issueNumber: number
-  initialLikeCount?: number
-  initialLiked?: boolean
-}) {
+export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false }: FloatingActionsProps) {
   const [liked, setLiked] = useState(initialLiked)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [loading, setLoading] = useState(false)

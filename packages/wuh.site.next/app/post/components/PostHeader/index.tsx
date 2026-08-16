@@ -1,16 +1,12 @@
 'use client'
 
 import { DiamondDivider } from '@wuh.site/components/icons'
-import type { Issue } from '../PostView.types'
 import { formatFullDate } from '@/app/lib/date'
 import Image from '@wuh.site/components/image'
-import { AuthorRow, AuthorAvatarFrame, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../styles'
+import { AuthorRow, AuthorAvatarFrame, AuthorInfo, Header, Title, Summary, OrnamentDivider } from '../../styles'
+import type { PostHeaderProps } from './specs'
 
-type Props = {
-  issue: Issue
-}
-
-export default function PostHeader({ issue }: Props) {
+export default function PostHeader({ issue }: PostHeaderProps) {
   const date = formatFullDate(issue.created_at)
   const avatarUrl = issue.user?.avatarUrl
   const userName = issue.user?.userName?.trim() || issue.user?.login?.trim() || '匿名作者'

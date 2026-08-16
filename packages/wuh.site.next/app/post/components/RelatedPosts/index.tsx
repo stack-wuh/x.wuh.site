@@ -4,17 +4,16 @@ import { useEffect, useState } from 'react'
 import { API_BASE } from '@wuh.site/hooks/useFetch/apiBase'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import type { ContentItem } from '@wuh.site/shared-contracts'
-import { selectRelatedPosts, type RelatedPost } from '../../lib/related-posts'
-import { buildPostUrl } from '../../lib/slug'
+import { selectRelatedPosts, type RelatedPost } from '../../../lib/related-posts'
+import { buildPostUrl } from '../../../lib/slug'
 import {
   RelatedPostsSection, RelatedPostsHeader, RelatedPostsHeading, RelatedPostsCount,
   RelatedPostLink, RelatedPostIndex, RelatedPostContent, RelatedPostTitle,
   RelatedPostSummary, RelatedPostLabels, RelatedPostArrow,
-} from '../styles'
+} from '../../styles'
+import type { RelatedPostsProps } from './specs'
 
-type Props = { number: number; labels: string[] }
-
-export default function RelatedPosts({ number, labels }: Props) {
+export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
   const [posts, setPosts] = useState<RelatedPost[]>([])
 
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import SharedLinkGroup, { type ShareItem } from '../shared-link-group'
+import SharedLinkGroup from '../shared-link-group'
 import Tag from '../tag'
 import { IconClock, IconLink, IconFolder, IconShield, IconTag } from '../icons'
 import {
@@ -25,41 +25,9 @@ import {
   TitleWrap,
   type AlertVariant,
 } from './styles'
+import type { AlertProps } from './specs'
 
 type DateInput = string | number | Date
-
-export type AlertLink = {
-  label: string
-  href: string
-}
-
-export type AlertLabel = {
-  name: string
-  color?: string | null
-  href: string
-}
-
-export interface AlertProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
-  variant?: AlertVariant
-  framed?: boolean
-  showHeader?: boolean
-  title?: React.ReactNode
-  summary?: React.ReactNode
-  icon?: React.ReactNode
-  updatedAt?: DateInput | null
-  updatedBy?: string
-  updatedByLink?: string
-  sourceLink?: AlertLink
-  projectLink?: AlertLink
-  labels?: AlertLabel[]
-  license?: React.ReactNode
-  /** @deprecated 使用 `license` 代替 */
-  copyright?: React.ReactNode
-  shareItems?: ShareItem[]
-  shareLabel?: string
-  closable?: boolean
-  onClose?: () => void
-}
 
 
 const isExternalHref = (href: string) => /^https?:\/\//i.test(href)
@@ -243,6 +211,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
 })
 
 export type { AlertVariant } from './styles'
-export type { ShareItem }
+export type { AlertLabel, AlertLink, AlertProps } from './specs'
+export type { ShareItem } from '../shared-link-group'
 
 export default Alert
