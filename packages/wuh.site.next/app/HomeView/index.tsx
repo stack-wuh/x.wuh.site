@@ -7,38 +7,26 @@ import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
-const TypewriterMotto = dynamic(() => import('./components/TypewriterMotto'), {
+const TypewriterMotto = dynamic(() => import('../components/TypewriterMotto'), {
   loading: () => <S.MottoSkeleton />,
 })
-const ContactCard = dynamic(() => import('./components/ContactCard'), {
+const ContactCard = dynamic(() => import('../components/ContactCard'), {
   loading: () => null,
 })
 import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
-import type { ContentItem, RepoDto, WereadBook, PostListItem } from '@wuh.site/shared-contracts'
+import type { ContentItem, RepoDto, WereadBook } from '@wuh.site/shared-contracts'
 import { contentService, reposService, wereadService } from '@wuh.site/shared-contracts/endpoints'
-import { buildPostUrl } from './lib/slug'
-import { formatShortDate } from './lib/date'
-import * as S from './styles'
+import { buildPostUrl } from '../lib/slug'
+import { formatShortDate } from '../lib/date'
+import * as S from '../styles'
 import Empty from '@wuh.site/components/empty'
+import { CONTACT_CONFIG, type ContactType } from '../components/ContactConfig'
+import type { HomeViewProps } from './specs'
 
 const TAG_DISPLAY_LIMIT = 3
 
-type Props = {
-  repos: RepoDto[]
-  posts: PostListItem[]
-  yearlySummaries: {
-    id: number
-    number: number
-    title: string
-    created_at: string
-  }[]
-  wereadBooks: WereadBook[]
-}
-
-import { CONTACT_CONFIG, type ContactType } from './components/ContactConfig'
-
-const groupByYear = (posts: Props['posts']) => {
-  const map = new Map<number, Props['posts']>()
+const groupByYear = (posts: HomeViewProps['posts']) => {
+  const map = new Map<number, HomeViewProps['posts']>()
   posts.forEach(post => {
     const year = new Date(post.created_at).getFullYear()
     const list = map.get(year)
@@ -92,7 +80,7 @@ function LazySection({ children }: { children: React.ReactNode }) {
 /**
  * 首页视图，展示 Hero、格言、社交链接、精选博客、年度总结、微信读书、精选项目等板块。
  */
-export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }: Props) {
+export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }: HomeViewProps) {
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
   const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
   const closeContact = useCallback(() => setActiveContact(null), [])

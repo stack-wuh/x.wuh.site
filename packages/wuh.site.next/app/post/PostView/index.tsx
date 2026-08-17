@@ -5,17 +5,17 @@ import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/ale
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
 
-import type { Issue, PostViewProps } from './PostView.types'
-import { usePostImagePreview } from './usePostImagePreview'
-import { useToc } from './hooks/useToc'
-import { useHeadingObserver } from './hooks/useHeadingObserver'
-import PostHeader from './components/PostHeader'
-import PostCover from './components/PostCover'
-import PostToolbar from './components/PostToolbar'
-import PostComments from './components/PostComments'
-import RelatedPosts from './components/RelatedPosts'
-import FloatingActions from './components/FloatingActions'
-import { openSharePopup, openWechatShareWindow } from '../share-utils'
+import type { Issue, PostViewProps } from '../PostView.types'
+import { usePostImagePreview } from '../usePostImagePreview'
+import { useToc } from '../hooks/useToc'
+import { useHeadingObserver } from '../hooks/useHeadingObserver'
+import PostHeader from '../components/PostHeader'
+import PostCover from '../components/PostCover'
+import PostToolbar from '../components/PostToolbar'
+import PostComments from '../components/PostComments'
+import RelatedPosts from '../components/RelatedPosts'
+import FloatingActions from '../components/FloatingActions'
+import { openSharePopup, openWechatShareWindow } from '../../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
 import { buildTopicUrl } from '@/app/lib/topic-url'
@@ -36,7 +36,7 @@ import {
   TocList,
   TocMobile,
   TocTitle,
-} from './styles'
+} from '../styles'
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
 const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'

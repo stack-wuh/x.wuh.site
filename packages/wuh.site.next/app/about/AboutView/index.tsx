@@ -7,10 +7,10 @@ import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
-import type { UnifiedActivityHeatmap, GitHubProfileDto } from '@wuh.site/shared-contracts'
+import type { UnifiedActivityHeatmap } from '@wuh.site/shared-contracts'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
-const ContactCard = dynamic(() => import('../components/ContactCard'), {
+const ContactCard = dynamic(() => import('../../components/ContactCard'), {
   loading: () => null,
 })
 const FootprintMap = dynamic(() => import('@wuh.site/components/footprint-map'), { ssr: false })
@@ -25,17 +25,14 @@ import {
   Bio, TagRow, Tag,
   PlatformList, PlatformCard, PlatformName, PlatformDesc,
   TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
-} from './styles'
+} from '../styles'
 import {
   blogTags, personalBio, timelineFilters,
   timelineLogs, formatMonthDay,
-} from './data'
-import { CONTACT_CONFIG, type ContactType } from '../components/ContactConfig'
-import GuestbookBarrageDialog from './components/GuestbookBarrageDialog'
-
-interface AboutViewProps {
-  profile: GitHubProfileDto | null
-}
+} from '../data'
+import { CONTACT_CONFIG, type ContactType } from '../../components/ContactConfig'
+import GuestbookBarrageDialog from '../components/GuestbookBarrageDialog'
+import type { AboutViewProps } from './specs'
 
 const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | undefined): HeatmapData | null => {
   if (!activityData || activityData.days.length === 0) return null
