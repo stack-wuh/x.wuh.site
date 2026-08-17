@@ -1,11 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styled from '@wuh.site/components/styled';
-
-const StatsText = styled.div`
-  font-size: var(--font-size-sm);
-`;
+import { StatsText } from './styles';
 
 /** Footer 中展示全站访问量的组件 */
 export function SiteStats() {

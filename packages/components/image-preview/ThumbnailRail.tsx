@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { ImagePreviewItem, ThumbnailRenderProps } from './types'
+import type { ImagePreviewItem, ThumbnailRenderProps } from './specs'
 import { ThumbnailRail, ThumbnailButton, ThumbLabel } from './styles'
 
 type Props = {

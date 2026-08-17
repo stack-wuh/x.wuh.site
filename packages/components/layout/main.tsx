@@ -5,18 +5,13 @@ import classnames from 'classnames'
 
 import Footer from './footer'
 import styles from '../themes/layout.module.scss'
-
-type propsTypes = {
-  header?: React.ReactNode,
-  children: React.ReactNode,
-  footer?: React.ReactNode,
-}
+import type { MainProps } from './specs'
 
 const HeaderContent = () => {
   return (<div>Header</div>)
 }
 
-const Main:React.FC<propsTypes> = (props: propsTypes) => {
+const Main: React.FC<MainProps> = (props: MainProps) => {
   return <body className={classnames({
     [styles.wLayout]: true
   })}>

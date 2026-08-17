@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { ToolbarRenderProps } from './types'
+import type { ToolbarRenderProps } from './specs'
 import {
   IconClose,
   IconArrowLeft,

@@ -2,7 +2,7 @@ import * as React from 'react'
 import styled, { css } from 'styled-components'
 import { getSpacingValue } from '@wuh.site/components/themes/index'
 import { Tokens } from '@wuh.site/components/themes/tokens'
-import { IFlexProps, TFlexGap, TFlexSpace } from './types'
+import { IFlexProps, TFlexGap, TFlexSpace } from './specs'
 
 /** 仅用于 styled 的 transient props，不会透传到 DOM */
 interface IStyledFlexTransientProps {

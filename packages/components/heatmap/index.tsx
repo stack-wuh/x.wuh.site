@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import type { HeatmapData, ColorScheme } from './types'
-import { GITHUB_COLORS, WARM_COLORS, DAY_LABELS, MONTH_LABELS } from './types'
+import type { HeatmapData, ColorScheme } from './specs'
+import { GITHUB_COLORS, WARM_COLORS, DAY_LABELS, MONTH_LABELS } from './specs'
 import * as S from './styles'
 
 const ACTIVITY_LABELS: Record<string, string> = {

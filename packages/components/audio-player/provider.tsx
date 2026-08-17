@@ -15,7 +15,7 @@ import type {
   PlayerMode,
   Track,
   TrackResolver
-} from './types'
+} from './specs'
 
 const initialState = {
   queue: [] as Track[],
