@@ -11,52 +11,16 @@ import {
   type CardPadding,
   type CardVariant,
 } from './styles'
+import type { CardActionsProps, CardContentProps, CardHeaderProps, CardProps } from './specs'
 
 export type { CardVariant, CardElevation, CardPadding, CardActionsAlign }
+export type { CardActionsProps, CardContentProps, CardHeaderProps, CardProps } from './specs'
 
 const resolveElevation = (value: CardElevation | undefined): CardElevation => {
   if (typeof value !== 'number' || Number.isNaN(value)) return 1
   if (value <= 0) return 0
   if (value >= 5) return 5
   return value as CardElevation
-}
-
-export interface CardProps extends React.HTMLAttributes<HTMLElement> {
-  /** Card 视觉变体 */
-  variant?: CardVariant
-  /** Elevation 层级，范围 0-5 */
-  elevation?: CardElevation
-  /** 开启后启用 hover/active 交互态 */
-  interactive?: boolean
-  /** 是否撑满宽度 */
-  fullWidth?: boolean
-  /** 根容器内边距 */
-  padding?: CardPadding
-}
-
-export interface CardHeaderProps extends React.HTMLAttributes<HTMLElement> {
-  /** 底部分割线 */
-  divider?: boolean
-  /** 头部内边距 */
-  padding?: CardPadding
-}
-
-export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** 顶部分割线 */
-  divider?: boolean
-  /** 内容区内边距 */
-  padding?: CardPadding
-}
-
-export interface CardActionsProps extends React.HTMLAttributes<HTMLElement> {
-  /** 顶部分割线 */
-  divider?: boolean
-  /** 操作区内边距 */
-  padding?: CardPadding
-  /** 对齐方式 */
-  align?: CardActionsAlign
-  /** 操作项是否允许换行 */
-  wrap?: boolean
 }
 
 const CardBase = React.forwardRef<HTMLElement, CardProps>(function Card(props, ref) {

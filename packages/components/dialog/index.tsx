@@ -13,35 +13,9 @@ import {
   DialogFooter,
   DragHandle,
 } from './styles'
+import type { DialogProps } from './specs'
 
-type FooterRenderer = (helpers: { close: () => void }) => React.ReactNode
-
-type DialogControlBridge = {
-  openDialog?: () => void
-  closeDialog?: () => void
-  toggleDialog?: () => void
-  setOpen?: (value: boolean | ((prev: boolean) => boolean)) => void
-  bind?: unknown
-}
-
-export interface DialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'>, DialogControlBridge {
-  open: boolean
-  onClose?: () => void
-  title?: React.ReactNode
-  /** 标题下方副文本 */
-  subtitle?: React.ReactNode
-  footer?: React.ReactNode | FooterRenderer
-  closeOnOverlay?: boolean
-  closeOnEsc?: boolean
-  lockScroll?: boolean
-  fullScreen?: boolean
-  placement?: 'center' | 'bottom'
-  width?: number | string
-  height?: number | string
-  zIndex?: number
-  hideCloseButton?: boolean
-  disableAnimation?: boolean
-}
+export type { DialogControlBridge, DialogProps, FooterRenderer } from './specs'
 
 function resolvePlacement(
   placement: DialogProps['placement'],
