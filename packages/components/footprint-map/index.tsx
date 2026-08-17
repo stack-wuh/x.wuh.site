@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import type { FootprintData, FootprintMapProps } from './types'
+import type { FootprintData, FootprintMapProps } from './specs'
 
-export type { FootprintData, FootprintMapProps } from './types'
+export type { FootprintData, FootprintMapProps } from './specs'
 
 const STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/liberty'
 const STYLE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
-import type { PlayerMode } from './types'
+import type { PlayerMode } from './specs'
 
 const Backdrop = styled.div<{ $visible: boolean }>`
   position: fixed;

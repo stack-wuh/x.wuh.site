@@ -11,4 +11,4 @@ export type {
   AudioPlayerProviderProps,
   TrackSource,
   TrackResolver
-} from './types'
+} from './specs'
