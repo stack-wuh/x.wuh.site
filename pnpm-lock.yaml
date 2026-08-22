@@ -118,6 +118,9 @@ importers:
       '@sentry/node':
         specifier: ^7.77.0
         version: 7.120.4
+      '@wuh.site/core':
+        specifier: workspace:^
+        version: link:../../packages/core
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -185,9 +188,6 @@ importers:
       '@types/node':
         specifier: ^20.10.6
         version: 20.19.42
-      '@wuh.site/core':
-        specifier: workspace:^
-        version: link:../../packages/core
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
