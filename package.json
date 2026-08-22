@@ -38,6 +38,9 @@
   ],
   "author": "shadow <wuh201314@foxmail.com>",
   "license": "ISC",
+  "standard-version": {
+    "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]"
+  },
   "dependencies": {
     "ahooks": "3.7.1",
     "conventional-changelog-cli": "^5.0.0",
