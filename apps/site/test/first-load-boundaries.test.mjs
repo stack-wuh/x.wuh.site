@@ -22,18 +22,18 @@ test('首页首屏不等待非首屏数据', () => {
 test('文章详情首屏不等待相关文章', () => {
   assert.doesNotMatch(postPage, /const relatedPosts = await getRelatedPosts\(issue\)/)
   assert.doesNotMatch(postPage, /void getRelatedPosts\(issue\)/)
-  assert.match(postPage, /<PostView issue=\{issue\}/)
+  assert.match(postPage, /<PostView\s+issue=\{issue\}/)
 })
 
 test('首页非首屏数据在客户端加载', async () => {
-  const homeView = await readFile(resolve(appRoot, 'app/HomeView.tsx'), 'utf8')
+  const homeView = await readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8')
   assert.match(homeView, /reposService\.getAll/)
   assert.match(homeView, /contentService\.getPosts/)
   assert.match(homeView, /wereadService\.getBooks/)
 })
 
 test('首页年度总结映射 GitHub 创建时间到视图日期字段', async () => {
-  const homeView = await readFile(resolve(appRoot, 'app/HomeView.tsx'), 'utf8')
+  const homeView = await readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8')
   assert.match(homeView, /created_at:\s*item\.createdAtGitHub/)
 })
 
@@ -43,7 +43,7 @@ test('AppProviders 引用的访问统计上报组件存在', async () => {
 })
 
 test('博客分类在客户端加载', async () => {
-  const blogView = await readFile(resolve(appRoot, 'app/blog/BlogListView.tsx'), 'utf8')
+  const blogView = await readFile(resolve(appRoot, 'app/blog/BlogListView/index.tsx'), 'utf8')
   assert.match(blogView, /contentService\.getLabels/)
 })
 

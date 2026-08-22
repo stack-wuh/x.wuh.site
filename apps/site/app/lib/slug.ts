@@ -1,13 +1,5 @@
-export function toSlug(title: string): string {
-  return title
-    .trim()
-    .replace(/[\s#?&/\\]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-export function buildPostUrl(number: number | string, title: string): string {
-  return `/post/${number}-${toSlug(title)}`
+export function buildPostUrl(number: number | string): string {
+  return `/post/${number}`
 }
 
 function decodePathname(pathname: string): string {
@@ -18,6 +10,13 @@ function decodePathname(pathname: string): string {
   }
 }
 
-export function isCanonicalPostPath(pathname: string, number: number | string, title: string): boolean {
-  return decodePathname(pathname) === `${number}-${toSlug(title)}`
+/** 路径是否为纯数字文章 id（canonical 形式） */
+export function isCanonicalPostPath(pathname: string, number: number | string): boolean {
+  return decodePathname(pathname) === String(number)
+}
+
+/** 从路径中提取文章 id；兼容旧 slug 格式（165-xxx） */
+export function extractPostNumber(pathname: string): string | null {
+  const match = decodePathname(pathname).match(/^(\d+)/)
+  return match ? match[1] : null
 }

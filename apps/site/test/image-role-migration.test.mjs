@@ -8,17 +8,18 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const root = resolve(appRoot, '..')
 
-const [about, home, homeStyles, weread, postHeader, postHeaderStyles, comments, contact, postCover, footprintStyles, footprintPage, markdownStyles] = await Promise.all([
-  readFile(resolve(appRoot, 'app/about/AboutView.tsx'), 'utf8'),
-  readFile(resolve(appRoot, 'app/HomeView.tsx'), 'utf8'),
+const [about, home, homeStyles, weread, postHeader, postHeaderStyles, comments, commentsStyles, contact, postCover, footprintStyles, footprintPage, markdownStyles] = await Promise.all([
+  readFile(resolve(appRoot, 'app/about/AboutView/index.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/styles/index.ts'), 'utf8'),
-  readFile(resolve(appRoot, 'app/weread/WereadView.tsx'), 'utf8'),
-  readFile(resolve(appRoot, 'app/post/components/PostHeader.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/weread/WereadView/index.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/post/components/PostHeader/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/post/styles/post-header.ts'), 'utf8'),
-  readFile(resolve(appRoot, 'app/post/components/PostComments.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/post/components/PostComments/index.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/post/components/PostComments/styles/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/components/ContactCard.tsx'), 'utf8'),
-  readFile(resolve(appRoot, 'app/post/components/PostCover.tsx'), 'utf8'),
-  readFile(resolve(root, 'components/footprint-map/styles.ts'), 'utf8'),
+  readFile(resolve(appRoot, 'app/post/components/PostCover/index.tsx'), 'utf8'),
+  readFile(resolve(appRoot, '../../packages/components/footprint-map/styles.ts'), 'utf8'),
   readFile(resolve(appRoot, 'app/footprint/page.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/post/styles/post-markdown.ts'), 'utf8'),
 ])
@@ -29,8 +30,8 @@ test('About 头像使用 avatar role 且不再以内联圆角修补内部图片'
 })
 
 test('首页和微信读书页书封使用 book-cover role', () => {
-  assert.match(home, /<S\.BookCover[\s\S]*role='book-cover'/)
-  assert.match(weread, /<BookCover[\s\S]*role='book-cover'/)
+  assert.match(home, /<S\.BookCover[\s\S]*role=["']book-cover["']/)
+  assert.match(weread, /<S\.BookCover[\s\S]*role=["']book-cover["']/)
   assert.doesNotMatch(homeStyles, /const BookCover[\s\S]*border-radius:\s*4px/)
   assert.doesNotMatch(weread, /const BookCover[\s\S]*border-radius:\s*4px/)
 })
@@ -47,11 +48,11 @@ test('评论头像图片使用 avatar role 并保留首字母 fallback', () => {
 })
 
 test('评论头像错误首字母使用绝对居中容器', () => {
-  assert.match(comments, /const AvatarFallback = styled\.span/)
-  assert.match(comments, /position:\s*absolute/)
-  assert.match(comments, /inset:\s*0/)
-  assert.match(comments, /place-items:\s*center/)
-  assert.match(comments, /errorFallback=\{<AvatarFallback>/)
+  assert.match(commentsStyles, /export const AvatarFallback = styled\.span/)
+  assert.match(commentsStyles, /position:\s*absolute/)
+  assert.match(commentsStyles, /inset:\s*0/)
+  assert.match(commentsStyles, /place-items:\s*center/)
+  assert.match(comments, /errorFallback=\{<S\.AvatarFallback>/)
 })
 
 test('首页和 ContactCard Logo 使用 logo role 与内部图片样式通道', () => {
@@ -75,12 +76,12 @@ test('文章封面使用 cover role 并显式响应移动端圆角', () => {
 
 test('足迹照片使用 thumbnail role 并保留预览点击', () => {
   assert.match(footprintStyles, /styled\(Image\)/)
-  assert.match(footprintPage, /<Photo[\s\S]*role='thumbnail'/)
+  assert.match(footprintPage, /<Photo[\s\S]*role=["']thumbnail["']/)
   assert.match(footprintPage, /onClick=\{\(\) => handlePhotoClick\(i\)\}/)
 })
 
 test('Markdown 评论和足迹 HTML 图片遵循 content 视觉规范', () => {
-  for (const source of [markdownStyles, comments, footprintStyles]) {
+  for (const source of [markdownStyles, commentsStyles, footprintStyles]) {
     assert.match(source, /img\s*\{[\s\S]*max-width:\s*100%/)
     assert.match(source, /img\s*\{[\s\S]*height:\s*auto/)
     assert.match(source, /img\s*\{[\s\S]*border-radius:\s*8px/)

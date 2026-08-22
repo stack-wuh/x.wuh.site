@@ -27,5 +27,5 @@ test('blog metadata noindexes label query pages but leaves base blog indexable',
   assert.match(blogPageSource, /activeLabels\.length > 0/)
   assert.match(blogPageSource, /index:\s*false/)
   assert.match(blogPageSource, /follow:\s*true/)
-  assert.match(blogPageSource, /canonical:\s*hasActiveLabels \? `\$\{SITE_URL\}\/blog`/)
+  assert.match(blogPageSource, /canonical:\s*hasActiveLabels\s*\?\s*`\$\{SITE_URL\}\/blog`/)
 })

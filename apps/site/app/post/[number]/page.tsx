@@ -10,7 +10,7 @@ import {
   getArticleImage,
   getArticleKeywords,
 } from "../../lib/seo";
-import { buildPostUrl, isCanonicalPostPath } from "../../lib/slug";
+import { buildPostUrl, extractPostNumber, isCanonicalPostPath } from "../../lib/slug";
 import type { ContentItem } from "@wuh.site/core";
 import type { Issue } from "../PostView.types";
 import PostView from "../PostView";
@@ -98,7 +98,7 @@ export async function generateMetadata({
   params: Promise<PostPageParams>;
 }): Promise<Metadata> {
   const { number: raw } = await params;
-  const number = raw.split("-")[0];
+  const number = extractPostNumber(raw) ?? raw;
   const { issue } = await getIssue(number);
 
   if (!issue) {
@@ -114,7 +114,7 @@ export default async function Page({
   params: Promise<PostPageParams>;
 }) {
   const { number: raw } = await params;
-  const number = raw.split("-")[0];
+  const number = extractPostNumber(raw) ?? raw;
   const {
     issue,
     prev: prevIssue,
@@ -125,11 +125,11 @@ export default async function Page({
   if (!issue)
     return <PostView issue={null} prevIssue={null} nextIssue={null} />;
 
-  if (!isCanonicalPostPath(raw, issue.number, issue.title)) {
-    permanentRedirect(buildPostUrl(issue.number, issue.title));
+  if (!isCanonicalPostPath(raw, issue.number)) {
+    permanentRedirect(buildPostUrl(issue.number));
   }
 
-  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`;
+  const url = `${SITE_URL}${buildPostUrl(issue.number)}`;
   const image = getArticleImage(issue);
   const category = getArticleCategory(issue);
   const articleJsonLd = createArticleStructuredData({

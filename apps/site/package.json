@@ -15,6 +15,7 @@
     "@bprogress/next": "^3",
     "@bprogress/react": "^1",
     "@wuh.site/components": "workspace:^",
+    "@wuh.site/core": "workspace:^",
     "ahooks": "3.7.1",
     "highlight.js": "^11.11.1",
     "next": "15.2.9",

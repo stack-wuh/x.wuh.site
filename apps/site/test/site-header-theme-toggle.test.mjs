@@ -9,7 +9,7 @@ const appRoot = resolve(testDir, '..')
 const headerPath = resolve(appRoot, 'app/components/SiteHeader/index.tsx')
 const stylesPath = resolve(appRoot, 'app/components/SiteHeader/styles/index.ts')
 const appearanceOptionsPath = resolve(appRoot, 'app/components/SiteHeader/AppearanceOptions.tsx')
-const iconsPath = resolve(appRoot, '../components/icons/index.tsx')
+const iconsPath = resolve(appRoot, '../../packages/components/icons/index.tsx')
 const providerPath = resolve(appRoot, 'app/components/theme/ThemeModeProvider.tsx')
 const layoutPath = resolve(appRoot, 'app/layout.tsx')
 

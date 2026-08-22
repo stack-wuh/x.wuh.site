@@ -8,9 +8,9 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const [stylesIndex, postHeader, pageSource, postView] = await Promise.all([
   readFile(resolve(appRoot, 'app/post/styles/index.ts'), 'utf8'),
-  readFile(resolve(appRoot, 'app/post/components/PostHeader.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/post/components/PostHeader/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/post/[number]/page.tsx'), 'utf8'),
-  readFile(resolve(appRoot, 'app/post/PostView.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/post/PostView/index.tsx'), 'utf8'),
 ])
 
 test('文章样式桶导出 PostHeader 实际使用的 AuthorAvatarFrame', () => {

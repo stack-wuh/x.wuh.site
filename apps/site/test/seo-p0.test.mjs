@@ -16,15 +16,15 @@ try {
   designLayoutSource = await readFile(designLayoutPath, 'utf8')
 } catch {}
 
-test('builds a canonical post URL from number and title', () => {
-  assert.equal(buildPostUrl(123, 'Next.js #15 / SEO'), '/post/123-Next.js-15-SEO')
+test('builds a canonical post URL from number only', () => {
+  assert.equal(buildPostUrl(123), '/post/123')
 })
 
-test('accepts only the current canonical post path', () => {
-  assert.equal(isCanonicalPostPath('123-Next.js-15-SEO', 123, 'Next.js #15 / SEO'), true)
-  assert.equal(isCanonicalPostPath('123', 123, 'Next.js #15 / SEO'), false)
-  assert.equal(isCanonicalPostPath('123-old-title', 123, 'Next.js #15 / SEO'), false)
-  assert.equal(isCanonicalPostPath('165-%E5%86%8D%E8%AF%BB%E3%80%8A%E5%9D%90%E5%BF%98%E6%AD%8C%E3%80%8B', 165, '再读《坐忘歌》'), true)
+test('accepts only the canonical numeric post path', () => {
+  assert.equal(isCanonicalPostPath('123', 123), true)
+  assert.equal(isCanonicalPostPath('123-Next.js-15-SEO', 123), false)
+  assert.equal(isCanonicalPostPath('123-old-title', 123), false)
+  assert.equal(isCanonicalPostPath('165-%E5%86%8D%E8%AF%BB%E3%80%8A%E5%9D%90%E5%BF%98%E6%AD%8C%E3%80%8B', 165), false)
 })
 
 test('post SEO rendering does not depend on request cookies and uses ISR', () => {
@@ -51,7 +51,7 @@ test('sitemap uses the canonical slug URL', async () => {
     createdAtGitHub: '2026-07-19T00:00:00.000Z',
   })
 
-  assert.equal(entry.url, 'https://wuh.site/post/123-Next.js-SEO')
+  assert.equal(entry.url, 'https://wuh.site/post/123')
   assert.equal(entry.lastModified.toISOString(), '2026-07-20T00:00:00.000Z')
 })
 
@@ -64,7 +64,7 @@ test('static sitemap excludes the design token debug page', async () => {
 
 test('root metadata provides a title template and default description', () => {
   assert.match(rootLayoutSource, /title:\s*\{/) 
-  assert.match(rootLayoutSource, /template:\s*['"]%s · wuh\.site['"]/) 
+  assert.match(rootLayoutSource, /template:\s*`%s · \$\{SITE_NAME\}`/)
   assert.match(rootLayoutSource, /description:/)
 })
 

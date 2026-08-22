@@ -55,7 +55,7 @@ export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
           const sharedLabels = post.sharedLabels.slice(0, 2).map((label) => `#${label}`).join(' · ')
           return (
             <li key={post.number}>
-              <RelatedPostLink href={buildPostUrl(post.number, post.title)} aria-label={`继续阅读：${post.title}`}>
+              <RelatedPostLink href={buildPostUrl(post.number)} aria-label={`继续阅读：${post.title}`}>
                 <RelatedPostIndex>{String(index + 1).padStart(2, '0')}</RelatedPostIndex>
                 <RelatedPostContent>
                   <RelatedPostTitle>{post.title}</RelatedPostTitle>

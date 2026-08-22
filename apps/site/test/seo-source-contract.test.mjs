@@ -25,7 +25,7 @@ test('根 layout 配置默认 Open Graph 与 Twitter 大图 metadata', () => {
   assert.match(layoutSource, /openGraph:\s*\{[\s\S]*images:\s*\[[\s\S]*og-default\.png/)
   assert.match(layoutSource, /twitter:\s*\{[\s\S]*card:\s*['"]summary_large_image['"]/)
   assert.match(layoutSource, /twitter:\s*\{[\s\S]*images:\s*\[[\s\S]*og-default\.png/)
-  assert.match(layoutSource, /metadataBase:\s*new URL\('https:\/\/wuh\.site'\)/)
+  assert.match(layoutSource, /metadataBase:\s*new URL\(SITE_URL\)/)
 })
 
 

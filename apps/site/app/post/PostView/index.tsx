@@ -102,7 +102,7 @@ const createAlertLabels = (issue: Issue): AlertLabel[] =>
   }))
 
 const createShareItems = (issue: Issue): ShareItem[] => {
-  const siteUrl = `https://wuh.site${buildPostUrl(issue.number, issue.title)}`
+  const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
   const shareTitle = issue.title?.trim() || 'wuh.site 文章'
   const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
   const encodedUrl = encodeURIComponent(siteUrl)

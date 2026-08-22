@@ -7,7 +7,7 @@ import { dirname, resolve } from 'node:path'
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const topicPagePath = resolve(appRoot, 'app/topics/[label]/page.tsx')
-const blogListViewSource = await readFile(resolve(appRoot, 'app/blog/BlogListView.tsx'), 'utf8')
+const blogListViewSource = await readFile(resolve(appRoot, 'app/blog/BlogListView/index.tsx'), 'utf8')
 const blogStylesSource = await readFile(resolve(appRoot, 'app/blog/styles/index.ts'), 'utf8')
 let topicPageSource = ''
 try {
@@ -30,6 +30,6 @@ test('blog post tags link to stable topic pages', () => {
 
 test('blog rows avoid nested anchors by using separate title and topic links', () => {
   assert.match(blogStylesSource, /export const PostRow = styled\.div/)
-  assert.match(blogListViewSource, /PostTitleLink href=\{buildPostUrl\(post.number, post.title\)\}/)
+  assert.match(blogListViewSource, /PostTitleLink href=\{buildPostUrl\(post\.number\)\}/)
   assert.match(blogListViewSource, /PostTagLink key=\{`\$\{post.id\}-\$\{label.name\}`\} href=\{buildTopicUrl\(label.name\)\}/)
 })
