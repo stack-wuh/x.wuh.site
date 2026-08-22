@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as Sentry from '@sentry/node';
+import { SITE_URL } from '@wuh.site/shared-contracts';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { pino } from 'pino';
@@ -52,7 +53,7 @@ async function bootstrap() {
       .setDescription('wuh.site 博客后端 API 文档')
       .setVersion('2.0')
       .addServer('http://localhost:3200', 'Local development')
-      .addServer('https://wuh.site', 'Production')
+      .addServer(SITE_URL, 'Production')
       .build();
     const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('v2/docs', app, document);

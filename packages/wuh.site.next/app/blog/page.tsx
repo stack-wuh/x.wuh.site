@@ -3,7 +3,7 @@ import { contentService } from "@wuh.site/shared-contracts/endpoints";
 import type { ContentItem, PostListItem } from "@wuh.site/shared-contracts";
 import BlogListView from "./BlogListView";
 import { toLabelParams } from "./blog-filter-utils";
-import { PER_PAGE, SITE_URL, type BlogSearchParams } from "./specs";
+import { PER_PAGE, SITE_URL, SITE_NAME, type BlogSearchParams } from "./specs";
 
 export async function generateMetadata({
   searchParams,
@@ -36,7 +36,7 @@ export async function generateMetadata({
       title: hasActiveLabels ? "wuh.site 博客筛选" : "wuh.site 博客",
       description,
       url: hasActiveLabels ? `${SITE_URL}/blog` : `${SITE_URL}${canonicalPath}`,
-      siteName: "wuh.site",
+      siteName: SITE_NAME,
       type: "website",
     },
     twitter: {

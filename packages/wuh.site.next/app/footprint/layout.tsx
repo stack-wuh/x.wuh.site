@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-
-const SITE_URL = 'https://wuh.site'
+import { SITE_URL, SITE_NAME } from '@wuh.site/shared-contracts'
 
 export const metadata: Metadata = {
   title: '足迹',
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
     title: '足迹',
     description: '吴尒红（Shadow）记录的深圳周边旅游足迹与沿途风景',
     url: `${SITE_URL}/footprint`,
-    siteName: 'wuh.site',
+    siteName: SITE_NAME,
     type: 'website',
   },
   twitter: {

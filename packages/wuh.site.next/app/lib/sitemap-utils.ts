@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next'
 import { buildPostUrl } from './slug.ts'
 import { buildTopicUrl } from './topic-url.ts'
+import { SITE_URL } from '@wuh.site/shared-contracts'
 
-export const SITE_URL = 'https://wuh.site'
+export { SITE_URL }
 
 export type SitemapTopic = {
   name: string

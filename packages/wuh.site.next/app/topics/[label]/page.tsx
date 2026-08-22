@@ -11,7 +11,7 @@ import { buildTopicUrl, decodeTopicParam } from "@/app/lib/topic-url";
 import { formatShortDate } from "@/app/lib/date";
 import { createCollectionPageStructuredData } from "@/app/lib/structured-data";
 import * as S from "@/app/blog/styles";
-import { PER_PAGE, SITE_URL, type TopicPageParams } from "./specs";
+import { PER_PAGE, SITE_URL, SITE_NAME, type TopicPageParams } from "./specs";
 
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
@@ -64,7 +64,7 @@ export async function generateMetadata({
       title,
       description,
       url,
-      siteName: "wuh.site",
+      siteName: SITE_NAME,
       type: "website",
     },
     twitter: {

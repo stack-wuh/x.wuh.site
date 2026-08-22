@@ -1,11 +1,10 @@
 import { Metadata } from 'next'
 import { reposService } from '@wuh.site/shared-contracts/endpoints'
 import type { GitHubProfileDto } from '@wuh.site/shared-contracts'
+import { SITE_URL, SITE_NAME } from '@wuh.site/shared-contracts'
 import AboutView from './AboutView'
 import JsonLd from '../components/JsonLd'
 import { buildProfilePageJsonLd } from '../lib/seo'
-
-const SITE_URL = 'https://wuh.site'
 
 export const metadata: Metadata = {
   title: '关于',
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
     title: '关于',
     description: '吴尒红（Shadow）的创作节奏总览，记录思考、串联碎片并构建知识系统',
     url: `${SITE_URL}/about`,
-    siteName: 'wuh.site',
+    siteName: SITE_NAME,
     type: 'website',
   },
 }

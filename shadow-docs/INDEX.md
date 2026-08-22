@@ -4,6 +4,9 @@
 
 | 日期 | 变更 | 状态 |
 |------|------|------|
+| 2026-08-17 | `20260817-P-site-config-constants` | 已完成 |
+| 2026-08-16 | `20260816-P-component-folder-structure` | 已完成 |
+| 2026-08-16 | `20260816-P-frontend-page-structure` | 已完成 |
 | 2026-08-08 | `2026-08-08-P-knowledge-system` | 已实施，验收修正中 |
 | 2026-08-04 | `2026-08-04-P-optimize-heatmap-popover` | 已完成 |
 | 2026-08-04 | `2026-08-04-B-homepage-summary-invalid-date` | 已完成 |
