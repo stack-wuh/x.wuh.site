@@ -16,9 +16,9 @@ USAGE
 }
 
 level="${1:-patch}"
-case "$level" in
+case "${level}" in
   major|minor|patch) ;;
-  *) echo "未知版本级别: $level（可选 major|minor|patch）" >&2; exit 1 ;;
+  *) echo "未知版本级别: ${level}（可选 major|minor|patch）" >&2; exit 1 ;;
 esac
 
 echo "🔍 校验发布前置条件..."
@@ -42,19 +42,19 @@ fi
 
 echo ""
 echo "📦 将执行发布链:"
-echo "  1. pnpm version:$level（standard-version：版本 + CHANGELOG + 提交 + tag）"
+echo "  1. pnpm version:${level}（standard-version：版本 + CHANGELOG + 提交 + tag）"
 echo "  2. git push origin main --follow-tags"
 echo "  3. gh release create（触发 CI 部署链）"
 echo ""
-read -r -p "确认发布 $level 版本？(y/N) " answer
+read -r -p "确认发布 ${level} 版本？(y/N) " answer
 if [ "${answer:-N}" != "y" ] && [ "${answer:-N}" != "Y" ]; then
   echo "已取消"
   exit 0
 fi
 
 echo ""
-echo "🚀 提升版本 ($level)..."
-pnpm "version:$level"
+echo "🚀 提升版本 (${level})..."
+pnpm "version:${level}"
 
 echo ""
 echo "📤 推送 main 与 tag..."
