@@ -25,6 +25,7 @@ RUN --mount=type=cache,target=/app/apps/site/.next/cache \
 
 # Stage 4: builder-nest
 FROM deps AS builder-nest
+RUN pnpm --filter @wuh.site/core run build
 RUN pnpm run build:nest
 
 # Stage 5: deps-pruned — strip devDependencies from full install (keeps workspace packages)
@@ -51,6 +52,7 @@ COPY --from=deps-pruned /app/node_modules ./node_modules
 COPY --from=deps-pruned /app/packages ./packages
 COPY --from=deps-pruned /app/apps ./apps
 COPY --from=builder-nest /app/apps/server/dist ./apps/server/dist
+COPY --from=builder-nest /app/packages/core/dist ./packages/core/dist
 COPY package.json pnpm-workspace.yaml ./
 EXPOSE 3200
 ENV NODE_ENV=production
