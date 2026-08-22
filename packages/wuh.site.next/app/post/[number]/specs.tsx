@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { AdjacentPost } from "@wuh.site/shared-contracts";
 import type { Issue } from "../PostView.types";
 
-export const SITE_URL = "https://wuh.site";
+export { SITE_URL } from '@wuh.site/shared-contracts';
 
 export const FALLBACK_METADATA: Metadata = {
   title: "博客详情",

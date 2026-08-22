@@ -1,4 +1,4 @@
-// Shared DTOs and types used by frontend and backend (typescript-only, no runtime deps)
+// Shared DTOs, API endpoints, and site constants used by frontend and backend
 
 export type ID = string;
 
@@ -269,3 +269,6 @@ export type { FootprintDto } from './footprint.dto';
 export type { VisitStatsResponse } from './visit-stats.dto';
 
 export * from './admin.dto';
+
+// 站点级共享常量
+export * from './site';
