@@ -35,7 +35,7 @@ if [ "$current_branch" != "main" ]; then
 fi
 
 git fetch origin main
-if ! git merge-base --is-ancestor HEAD "origin/main"; then
+if ! git merge-base --is-ancestor "origin/main" HEAD; then
   echo "❌ 本地 main 落后于 origin/main，先 pull 后再发布" >&2
   exit 1
 fi
