@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_SC, Noto_Serif_SC, JetBrains_Mono } from 'next/font/google'
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, AUTHOR_NAME, AUTHOR_URL } from '@wuh.site/shared-contracts'
 import AppProviders from './components/AppProviders'
 import JsonLd from './components/JsonLd'
 import { createSiteStructuredData } from './lib/structured-data'
@@ -25,36 +26,34 @@ const notoSerifSC = Noto_Serif_SC({
   display: 'swap',
 })
 
-const siteDescription = '吴尒红（Shadow）的个人站，记录前端工程、开源项目、设计系统与个人思考。'
-
 export const metadata: Metadata = {
-  metadataBase: new URL('https://wuh.site'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'wuh.site · 朝朝如念',
-    template: '%s · wuh.site',
+    default: SITE_TITLE,
+    template: `%s · ${SITE_NAME}`,
   },
-  description: siteDescription,
-  authors: [{ name: '吴尒红（Shadow）', url: 'https://github.com/stack-wuh' }],
-  creator: '吴尒红（Shadow）',
-  publisher: 'wuh.site',
+  description: SITE_DESCRIPTION,
+  authors: [{ name: AUTHOR_NAME, url: AUTHOR_URL }],
+  creator: AUTHOR_NAME,
+  publisher: SITE_NAME,
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'wuh.site · 朝朝如念',
-    description: siteDescription,
-    url: 'https://wuh.site',
-    siteName: 'wuh.site',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     type: 'website',
     images: [{
       url: '/og-default.png',
       width: 1200,
       height: 630,
-      alt: 'wuh.site',
+      alt: SITE_NAME,
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'wuh.site · 朝朝如念',
-    description: siteDescription,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: ['/og-default.png'],
   },
 }

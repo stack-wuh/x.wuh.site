@@ -29,9 +29,6 @@
       "@wuh.site/shared-contracts/*": [
         "../shared-contracts/src/*"
       ],
-      "@wuh.site/config/*": [
-        "../config/*"
-      ],
       "@wuh.site/hooks/*": [
         "../hooks/*"
       ]

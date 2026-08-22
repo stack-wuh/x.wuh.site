@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Feed } from 'feed';
+import { SITE_URL, AUTHOR_URL } from '@wuh.site/shared-contracts';
 import { Content, ContentDocument } from '../content/schemas/content.schema';
 
 @Injectable()
@@ -37,10 +38,10 @@ export class RssService {
       const feed = new Feed({
         title: 'wuh.site - 博客订阅',
         description: '吴尒红的个人博客内容',
-        id: 'https://wuh.site',
-        link: 'https://wuh.site',
+        id: SITE_URL,
+        link: SITE_URL,
         language: 'zh-cn',
-        favicon: 'https://wuh.site/favicon.ico',
+        favicon: `${SITE_URL}/favicon.ico`,
         copyright: '© 2024 wuh.site',
       });
 
@@ -48,15 +49,15 @@ export class RssService {
         feed.addItem({
           title: content.title,
           id: `${content.number}`,
-          link: `https://wuh.site/post/${content.number}`,
+          link: `${SITE_URL}/post/${content.number}`,
           description: content.metadata?.summary || content.body?.substring(0, 200) || '',
           content: content.bodyHtml || content.body || '',
           author: content.author ? [
             {
               name: content.author.login || 'shadow',
-              link: content.author.url || 'https://github.com/stack-wuh',
+              link: content.author.url || AUTHOR_URL,
             },
-          ] : [{ name: 'shadow', link: 'https://github.com/stack-wuh' }],
+          ] : [{ name: 'shadow', link: AUTHOR_URL }],
           date: content.createdAtGitHub ? new Date(content.createdAtGitHub) : new Date(),
           image: content.metadata?.cover,
         });

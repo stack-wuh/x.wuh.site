@@ -1,8 +1,9 @@
 import { extractFirstParagraphText } from './markdown'
 import { buildPostUrl } from './slug'
+import { SITE_URL, SITE_NAME, AUTHOR_URL } from '@wuh.site/shared-contracts'
 
-export const SITE_URL = 'https://wuh.site'
-export const GITHUB_PROFILE_URL = 'https://github.com/stack-wuh'
+export { SITE_URL }
+export const GITHUB_PROFILE_URL = AUTHOR_URL
 export const SITE_PERSON_ID = `${SITE_URL}/about#person`
 export const DEFAULT_OG_IMAGE_PATH = '/og-default.png'
 export const DEFAULT_ARTICLE_DESCRIPTION = '吴尒红（Shadow）的技术文章'
@@ -110,7 +111,7 @@ export function buildArticleMetadata(issue: ArticleIssue): Record<string, unknow
       title: issue.title,
       description,
       url,
-      siteName: 'wuh.site',
+      siteName: SITE_NAME,
       type: 'article',
       publishedTime: issue.created_at,
       modifiedTime: issue.updated_at,

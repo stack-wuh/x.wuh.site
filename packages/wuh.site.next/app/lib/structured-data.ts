@@ -1,8 +1,9 @@
-const SITE_URL = 'https://wuh.site'
+import { SITE_URL, AUTHOR_NAME, AUTHOR_URL } from '@wuh.site/shared-contracts'
+
 const PERSON_URL = `${SITE_URL}/about`
-const PERSON_NAME = '吴尒红（Shadow）'
+const PERSON_NAME = AUTHOR_NAME
 const PERSON_ID = `${PERSON_URL}#person`
-const GITHUB_PROFILE_URL = 'https://github.com/stack-wuh'
+const GITHUB_PROFILE_URL = AUTHOR_URL
 
 type JsonLdRecord = Record<string, unknown>
 

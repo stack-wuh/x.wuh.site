@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { contentService } from '@wuh.site/shared-contracts/endpoints'
 import type { ContentItem, PostListItem } from '@wuh.site/shared-contracts'
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION } from '@wuh.site/shared-contracts'
 import HomeView from './HomeView'
-
-const SITE_URL = 'https://wuh.site'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,21 +12,21 @@ function logHomeFetchError(moduleName: string, error: unknown) {
 }
 
 export const metadata: Metadata = {
-  title: '朝朝如念 · wuh.site',
-  description: '基于 Next.js 的个人站，汇集 GitHub 项目、文章与工具',
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   robots: { index: true, follow: true },
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: '朝朝如念·wuh.site',
-    description: '吴尒红（Shadow）的个人站，汇集前端工程、GitHub 开源项目、技术文章与工具',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     url: SITE_URL,
-    siteName: 'wuh.site',
+    siteName: SITE_NAME,
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: '朝朝如念·wuh.site',
-    description: '吴尒红（Shadow）的个人站，汇集前端工程、GitHub 开源项目、技术文章与工具',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
 }
 
