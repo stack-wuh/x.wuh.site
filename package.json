@@ -22,7 +22,7 @@
     "version:major": "standard-version -r major",
     "version:minor": "standard-version -r minor",
     "version:patch": "standard-version -r patch",
-    "release": "pnpm changelog && pnpm version:major",
+    "release": "bash scripts/release.sh",
     "dev:console": "pnpm --filter @wuh.site/console run dev",
     "build:console": "pnpm --filter @wuh.site/console run build",
     "preview:console": "pnpm --filter @wuh.site/console run preview"
