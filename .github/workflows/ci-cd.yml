@@ -3,9 +3,11 @@ name: CI-CD
 on:
   push:
     branches: [ main ]
+  release:
+    types: [ published ]
 
 concurrency:
-  group: ci-cd
+  group: ${{ github.event_name == 'release' && format('ci-deploy-{0}', github.ref_name) || 'ci-quality' }}
   cancel-in-progress: false
 
 jobs:
@@ -34,6 +36,7 @@ jobs:
 
   prepare:
     needs: [quality-gate]
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Pull latest code
@@ -52,6 +55,7 @@ jobs:
 
   prepare-deps:
     needs: [prepare]
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
@@ -68,6 +72,7 @@ jobs:
 
   build-next:
     needs: [prepare-deps]
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Build Next.js
@@ -84,6 +89,7 @@ jobs:
 
   build-nest:
     needs: [prepare-deps]
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Build NestJS
@@ -100,6 +106,7 @@ jobs:
 
   staging-test:
     needs: [build-next, build-nest]
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Run staging test
@@ -115,6 +122,7 @@ jobs:
 
   switch-traffic:
     needs: [staging-test]
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Switch traffic
