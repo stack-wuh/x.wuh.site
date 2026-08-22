@@ -1,6 +1,8 @@
 /node_modules
 /packages/**/node_modules
 /packages/**/dist
+/apps/**/node_modules
+/apps/**/dist
 .DS_Store
 .env
 .env.local

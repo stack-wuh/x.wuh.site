@@ -8,18 +8,19 @@ WORKDIR /app
 # Stage 2: deps — full install for building
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.json tsconfig.base.json ./
-COPY packages/wuh.site.next/package.json packages/wuh.site.next/
-COPY packages/wuh.site.nest/package.json packages/wuh.site.nest/
+COPY apps/site/package.json apps/site/
+COPY apps/server/package.json apps/server/
 COPY packages/components/package.json packages/components/
-COPY packages/config/package.json packages/config/
-COPY packages/shared-contracts/package.json packages/shared-contracts/
+COPY packages/core/package.json packages/core/
+COPY packages/hooks/package.json packages/hooks/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm-store \
   pnpm install --frozen-lockfile
 COPY packages/ ./packages/
+COPY apps/ ./apps/
 
 # Stage 3: builder-next
 FROM deps AS builder-next
-RUN --mount=type=cache,target=/app/packages/wuh.site.next/.next/cache \
+RUN --mount=type=cache,target=/app/apps/site/.next/cache \
   pnpm run build:next
 
 # Stage 4: builder-nest
@@ -34,7 +35,8 @@ RUN pnpm prune --ignore-scripts
 FROM base AS runner-next
 COPY --from=deps-pruned /app/node_modules ./node_modules
 COPY --from=deps-pruned /app/packages ./packages
-COPY --from=builder-next /app/packages/wuh.site.next/dist ./packages/wuh.site.next/dist
+COPY --from=deps-pruned /app/apps ./apps
+COPY --from=builder-next /app/apps/site/dist ./apps/site/dist
 COPY package.json pnpm-workspace.yaml ./
 EXPOSE 3000
 ENV NODE_ENV=production
@@ -47,10 +49,11 @@ CMD ["pnpm", "run", "start:next"]
 FROM base AS runner-nest
 COPY --from=deps-pruned /app/node_modules ./node_modules
 COPY --from=deps-pruned /app/packages ./packages
-COPY --from=builder-nest /app/packages/wuh.site.nest/dist ./packages/wuh.site.nest/dist
+COPY --from=deps-pruned /app/apps ./apps
+COPY --from=builder-nest /app/apps/server/dist ./apps/server/dist
 COPY package.json pnpm-workspace.yaml ./
 EXPOSE 3200
 ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
   CMD curl -f http://localhost:3200/v2/health || exit 1
-CMD ["node", "packages/wuh.site.nest/dist/main"]
+CMD ["node", "apps/server/dist/main"]

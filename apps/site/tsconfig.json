@@ -1,0 +1,51 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2021"
+    ],
+    "jsx": "preserve",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@wuh.site/components/*": [
+        "../../packages/components/*"
+      ],
+      "@wuh.site/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@wuh.site/core/*": [
+        "../../packages/core/src/*"
+      ],
+      "@wuh.site/hooks/*": [
+        "../../packages/hooks/*"
+      ]
+    },
+    "allowJs": true
+  },
+  "include": [
+    "./dist/site/types/**/*.ts",
+    "app/**/*",
+    "components/**/*",
+    "next-env.d.ts",
+    "types/**/*",
+    "./dist/site-dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist"
+  ]
+}

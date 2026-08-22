@@ -46,7 +46,7 @@ while true; do
     sleep 1
   fi
   (
-    cd "$root_dir/packages/wuh.site.nest"
+    cd "$root_dir/apps/server"
     node --env-file=../../.env --no-concurrent-sweeping --no-concurrent-marking ./node_modules/@nestjs/cli/bin/nest.js start --watch
   ) &
   child_pid="$!"

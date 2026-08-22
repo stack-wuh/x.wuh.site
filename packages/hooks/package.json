@@ -1,0 +1,9 @@
+{
+  "name": "@wuh.site/hooks",
+  "version": "1.0.0",
+  "description": "Shared React hooks",
+  "exports": {
+    "./*": "./*"
+  },
+  "license": "ISC"
+}

@@ -14,15 +14,15 @@
 
 ```text
 .
+├── apps
+│   ├── site             # 前端 (Next.js 15 App Router)
+│   ├── server           # 后端 (NestJS 10 + Mongoose 8)
+│   └── console          # 后台 Console (Vite + React SPA)
 ├── packages
-│   ├── wuh.site.next     # 前端 (Next.js 15 App Router)
-│   ├── wuh.site.nest     # 后端 (NestJS 10 + Mongoose 8)
-│   ├── wuh.site.console  # 后台 Console (Vite + React SPA)
-│   ├── components        # 组件库（@wuh.site/components）
-│   ├── hooks             # 共享 hooks
-│   ├── config            # 类型/配置包（@wuh.site/config）
-│   ├── shared-contracts  # 前后端共享 DTO 类型
-│   └── docs              # 文档预留
+│   ├── components       # 组件库（@wuh.site/components）
+│   ├── hooks            # 共享 hooks（@wuh.site/hooks）
+│   ├── core             # 核心共享（@wuh.site/core，DTO + 端点 + 站点常量）
+│   └── docs             # 文档预留
 ├── openspec              # OpenSpec 规格与变更记录
 └── README.md
 ```
@@ -80,7 +80,7 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 
 ## 后台 Console
 
-后台 Console 是独立应用 `packages/wuh.site.console`，默认端口 `3300`，通过 NestJS `/v2/auth/**` 与 `/v2/admin/**` API 工作。
+后台 Console 是独立应用 `apps/console`，默认端口 `3300`，通过 NestJS `/v2/auth/**` 与 `/v2/admin/**` API 工作。
 
 权限固定为：
 

@@ -4,6 +4,7 @@
 
 | 日期 | 变更 | 状态 |
 |------|------|------|
+| 2026-08-22 | `20260817-P-monorepo-restructure` | 已完成 |
 | 2026-08-17 | `20260817-P-site-config-constants` | 已完成 |
 | 2026-08-16 | `20260816-P-component-folder-structure` | 已完成 |
 | 2026-08-16 | `20260816-P-frontend-page-structure` | 已完成 |

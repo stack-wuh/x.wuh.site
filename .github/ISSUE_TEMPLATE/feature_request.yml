@@ -37,12 +37,12 @@ body:
       label: 受影响包
       description: 选择此变更涉及的包（可多选）
       options:
-        - label: wuh.site.next（前端）
-        - label: wuh.site.nest（后端）
+        - label: site（前端）
+        - label: server（后端）
         - label: components（组件库）
         - label: hooks
         - label: config
-        - label: shared-contracts
+        - label: core
     validations:
       required: true
 
