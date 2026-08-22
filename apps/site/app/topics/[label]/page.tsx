@@ -90,7 +90,7 @@ export default async function TopicPage({
     description: `阅读吴尒红（Shadow）与「${label}」相关的文章。`,
     items: posts.map((post) => ({
       name: post.title,
-      url: `${SITE_URL}${buildPostUrl(post.number, post.title)}`,
+      url: `${SITE_URL}${buildPostUrl(post.number)}`,
     })),
   });
 
@@ -124,7 +124,7 @@ export default async function TopicPage({
                   <S.PostRow key={post.id}>
                     <S.InkDot />
                     <S.PostTitleLink
-                      href={buildPostUrl(post.number, post.title)}
+                      href={buildPostUrl(post.number)}
                     >
                       <span>{post.title}</span>
                     </S.PostTitleLink>

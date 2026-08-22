@@ -28,7 +28,7 @@ export function buildPostSitemapEntry(post: SitemapPost): MetadataRoute.Sitemap[
   const lastModified = post.updatedAtGitHub || post.createdAtGitHub
 
   return {
-    url: `${SITE_URL}${buildPostUrl(post.number, post.title)}`,
+    url: `${SITE_URL}${buildPostUrl(post.number)}`,
     ...(lastModified ? { lastModified: new Date(lastModified) } : {}),
     changeFrequency: 'weekly',
     priority: 0.6,

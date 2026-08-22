@@ -7,7 +7,7 @@ import { dirname, resolve } from 'node:path'
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const repoRoot = resolve(appRoot, '../..')
-const postViewSource = await readFile(resolve(appRoot, 'app/post/PostView.tsx'), 'utf8')
+const postViewSource = await readFile(resolve(appRoot, 'app/post/PostView/index.tsx'), 'utf8')
 const alertSource = await readFile(resolve(repoRoot, 'packages/components/alert/index.tsx'), 'utf8')
 
 test('post alert labels link to internal topic pages', () => {

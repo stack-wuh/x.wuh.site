@@ -94,7 +94,7 @@ export function buildArticleMetadata(issue: ArticleIssue): Record<string, unknow
   const image = getArticleImage(issue)
   const category = getArticleCategory(issue)
   const keywords = getArticleKeywords(issue)
-  const url = `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`
+  const url = `${SITE_URL}${buildPostUrl(issue.number)}`
   const author = {
     name: getAuthorName(issue),
     url: getAuthorUrl(issue),
@@ -138,7 +138,7 @@ export function buildBlogPostingJsonLd(issue: ArticleIssue): Record<string, unkn
     image: image.url,
     datePublished: issue.created_at,
     dateModified: issue.updated_at,
-    url: `${SITE_URL}${buildPostUrl(issue.number, issue.title)}`,
+    url: `${SITE_URL}${buildPostUrl(issue.number)}`,
     author: {
       '@type': 'Person',
       '@id': SITE_PERSON_ID,

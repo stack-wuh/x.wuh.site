@@ -97,7 +97,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
                 {yearPosts.map(post => (
                   <S.PostRow key={post.id}>
                     <S.InkDot />
-                    <S.PostTitleLink href={buildPostUrl(post.number, post.title)}>
+                    <S.PostTitleLink href={buildPostUrl(post.number)}>
                       <TitleWithTooltip text={post.title} />
                     </S.PostTitleLink>
                     <S.IssueNumber>#{post.number}</S.IssueNumber>

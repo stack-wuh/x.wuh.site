@@ -30,7 +30,7 @@ const ToolbarLink = ({
   }
 
   return (
-    <Link className={className} href={buildPostUrl(targetIssue.number, targetIssue.title)} title={targetIssue.title}>
+    <Link className={className} href={buildPostUrl(targetIssue.number)} title={targetIssue.title}>
       <span className='toolbar-icon'>{icon}</span>
       <span className='toolbar-label'>{label}</span>
     </Link>

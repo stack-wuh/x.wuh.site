@@ -230,6 +230,9 @@ importers:
       '@wuh.site/components':
         specifier: workspace:^
         version: link:../../packages/components
+      '@wuh.site/core':
+        specifier: workspace:^
+        version: link:../../packages/core
       ahooks:
         specifier: 3.7.1
         version: 3.7.1(react@19.2.5)

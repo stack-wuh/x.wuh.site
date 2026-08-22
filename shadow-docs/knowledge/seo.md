@@ -12,7 +12,8 @@ source:
   - changes/archive/20260627_P_blog_url_slug_seo/brief.md
   - changes/archive/2026-07-25-P-seo-og-metadata-summary-author-profile/brief.md
   - changes/archive/2026-07-26-P-seo-discovery-navigation/brief.md
-verified: 2026-08-08
+  - changes/archive/20260822-feature-post-url-clean/brief.md
+verified: 2026-08-22
 ---
 
 # SEO
@@ -21,7 +22,7 @@ verified: 2026-08-08
 
 全站页面包含 `og:title`、`og:description`、`og:image`、`og:url`、`og:type` 和 Twitter Card 标签。默认 Open Graph 图片为 1200x630。博客文章 description 优先使用 CMS summary，fallback 到 Markdown AST 提取的首个有效段落（忽略代码块和标题），再 fallback 到正文前 160 字。
 
-博客详情页 URL 格式为 `/post/<number>-<title-slug>`，slug 中保留中文，URL 敏感字符替换为 `-`，连续 `-` 压缩。旧格式 `/post/<number>` 保持兼容。非规范路径执行 308 永久重定向至 canonical URL。canonical URL 由 `buildPostUrl` 和 `isCanonicalPostPath` 统一生成。
+博客详情页 URL 格式为 `/post/<number>`（只保留文章 id），旧格式 `/post/<number>-<title-slug>` 兼容并 301 重定向至 canonical。canonical URL 由 `buildPostUrl`（纯 id）和 `isCanonicalPostPath`（纯数字校验）统一生成，`extractPostNumber` 兼容旧 slug 格式提取 id。
 
 JSON-LD 结构化数据：根布局输出 WebSite + Person（指向 `https://github.com/stack-wuh`）；博客详情页输出 BlogPosting（通过 builder 统一构造）和 BreadcrumbList（与可见面包屑使用相同 canonical URL）；About 页输出 ProfilePage；主题页输出 CollectionPage + ItemList。
 

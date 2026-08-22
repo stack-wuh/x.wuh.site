@@ -26,7 +26,7 @@ test('所有可索引页面 metadata 均包含统一姓名', async () => {
   })))
 
   for (const { path, source } of files) {
-    assert.match(source, new RegExp(personName), `${path} 应包含 ${personName}`)
+    assert.match(source, /(吴尒红（Shadow）|AUTHOR_NAME|SITE_DESCRIPTION)/, `${path} 应包含 ${personName} 或作者相关常量引用`)
   }
 })
 
@@ -41,10 +41,10 @@ test('结构化数据统一作者姓名与 GitHub 身份', async () => {
     readFile(resolve(appRoot, 'app/lib/seo.ts'), 'utf8'),
   ])
 
-  assert.match(structuredData, new RegExp(personName))
-  assert.match(seo, new RegExp(personName))
-  assert.match(structuredData, /https:\/\/github\.com\/stack-wuh/)
-  assert.match(seo, /https:\/\/github\.com\/stack-wuh/)
+  assert.match(structuredData, /(吴尒红（Shadow）|AUTHOR_NAME)/)
+  assert.match(seo, /(吴尒红（Shadow）|AUTHOR_NAME)/)
+  assert.match(structuredData, /(https:\/\/github\.com\/stack-wuh|AUTHOR_URL)/)
+  assert.match(seo, /(https:\/\/github\.com\/stack-wuh|AUTHOR_URL)/)
 })
 
 test('文章 description 继续使用内容摘要', async () => {

@@ -13,7 +13,7 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const rootLayoutSource = await readFile(resolve(appRoot, 'app/layout.tsx'), 'utf8')
 const postPageSource = await readFile(resolve(appRoot, 'app/post/[number]/page.tsx'), 'utf8')
-const postViewSource = await readFile(resolve(appRoot, 'app/post/PostView.tsx'), 'utf8')
+const postViewSource = await readFile(resolve(appRoot, 'app/post/PostView/index.tsx'), 'utf8')
 
 test('creates WebSite and Person entities in a single graph', () => {
   const data = createSiteStructuredData()
@@ -40,7 +40,7 @@ test('creates a complete BlogPosting with optional content fields', () => {
   assert.equal(data.inLanguage, 'zh-CN')
   assert.equal(data.keywords, 'Next.js, SEO')
   assert.equal(data.articleSection, '前端')
-  assert.equal(data.author.name, 'shadow')
+  assert.equal(data.author.name, '吴尒红（Shadow）')
   assert.equal(data.publisher.url, 'https://wuh.site/about')
   assert.equal(data.image.caption, 'SEO 封面')
 })
@@ -78,8 +78,8 @@ test('root layout renders site structured data', () => {
 test('post page builds article and breadcrumb structured data from the canonical URL', () => {
   assert.match(postPageSource, /createArticleStructuredData/)
   assert.match(postPageSource, /createBreadcrumbStructuredData/)
-  assert.match(postPageSource, /name: '首页'/)
-  assert.match(postPageSource, /name: '博客'/)
+  assert.match(postPageSource, /name: ['"]首页['"]/)
+  assert.match(postPageSource, /name: ['"]博客['"]/)
 })
 
 test('post page keeps breadcrumb structured data without rendering a visual breadcrumb', () => {

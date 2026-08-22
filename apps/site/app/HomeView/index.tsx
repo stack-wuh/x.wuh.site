@@ -150,7 +150,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
                 <S.YearGroup key={year}>
                   <S.YearLabel>{year}</S.YearLabel>
                   {yearPosts.map(post => (
-                    <S.PostRow key={post.id} href={buildPostUrl(post.number, post.title)}>
+                    <S.PostRow key={post.id} href={buildPostUrl(post.number)}>
                       <S.InkDot />
                       <S.PostTitle>{post.title}</S.PostTitle>
                       {post.labels?.length > 0 && (
@@ -184,7 +184,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           ) : (
             <S.ProjectList>
               {clientSummaries.map(item => (
-                <S.PostRow key={item.id} href={buildPostUrl(item.number, item.title)}>
+                <S.PostRow key={item.id} href={buildPostUrl(item.number)}>
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
                   <S.PostMeta>
