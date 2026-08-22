@@ -18,7 +18,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "packages/wuh.site.console/src/*"
+        "apps/console/src/*"
+      ],
+      "@wuh.site/hooks/*": [
+        "packages/hooks/*"
       ]
     }
   },

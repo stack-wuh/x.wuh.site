@@ -5,13 +5,14 @@
 ## 仓库结构
 
 ```
+apps/
+├── site               # 主站前端 (Next.js 15 App Router, port 3000)
+├── server             # 后端 API (NestJS 10 + Mongoose 8, port 3200)
+└── console            # 管理后台 (Vite + React)
 packages/
-├── wuh.site.next      # 主站前端 (Next.js 15 App Router, port 3000)
-├── wuh.site.nest      # 后端 API (NestJS 10 + Mongoose 8, port 3200)
 ├── components         # UI 组件库 @wuh.site/components
-├── hooks              # 共享 hooks (useTheme, useFetch, useDialog, etc.)
-├── config             # 类型/配置包
-├── shared-contracts   # 前后端共享 DTO 类型
+├── hooks              # 共享 hooks @wuh.site/hooks (useTheme, useFetch, useDialog, etc.)
+├── core               # 核心共享 @wuh.site/core (DTO 类型 + API 端点 + 站点常量)
 └── docs               # 文档预留
 codex/                 # Codex 工作流历史，可参考但不再使用
 ```
@@ -49,7 +50,7 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 ### 导入路径
 - 组件导入使用 `@wuh.site/components/<name>`（如 `@wuh.site/components/button`）
 - hooks 从 `packages/hooks` 导入
-- 共享类型从 `@wuh.site/shared-contracts` 导入
+- 共享类型从 `@wuh.site/core` 导入
 - 前端内部路径使用 `@/*` 别名映射到项目根目录
 
 ### 前端规范

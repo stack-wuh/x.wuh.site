@@ -10,13 +10,13 @@
     "dev": "bash scripts/dev.sh",
     "typecheck": "tsc --noEmit",
     "dev:next": "bash scripts/dev-next.sh",
-    "build:next": "pnpm --filter @wuh.site/next run build",
-    "start:next": "pnpm --filter @wuh.site/next run start",
-    "lint:next": "pnpm --filter @wuh.site/next run lint",
+    "build:next": "pnpm --filter @wuh.site/site run build",
+    "start:next": "pnpm --filter @wuh.site/site run start",
+    "lint:next": "pnpm --filter @wuh.site/site run lint",
     "dev:nest": "bash scripts/dev-nest.sh",
-    "build:nest": "pnpm --filter @wuh.site/nest run build",
-    "start:nest": "pnpm --filter @wuh.site/nest run start:prod",
-    "sync:init": "pnpm --filter @wuh.site/nest run sync:init",
+    "build:nest": "pnpm --filter @wuh.site/server run build",
+    "start:nest": "pnpm --filter @wuh.site/server run start:prod",
+    "sync:init": "pnpm --filter @wuh.site/server run sync:init",
     "prepare": "husky",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "version:major": "standard-version -r major",
@@ -28,7 +28,8 @@
     "preview:console": "pnpm --filter @wuh.site/console run preview"
   },
   "workspaces": [
-    "packages/**"
+    "packages/**",
+    "apps/**"
   ],
   "keywords": [
     "wuh.site",

@@ -46,52 +46,14 @@ importers:
         specifier: ~5.7.2
         version: 5.7.3
 
-  packages/components:
-    dependencies:
-      '@next/third-parties':
-        specifier: ^16.2.7
-        version: 16.2.7(next@15.2.9(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
-      classnames:
-        specifier: ^2.5.1
-        version: 2.5.1
-      framer-motion:
-        specifier: ^11
-        version: 11.18.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      lucide-react:
-        specifier: ^1.16.0
-        version: 1.17.0(react@19.2.5)
-      maplibre-gl:
-        specifier: ^4.7.0
-        version: 4.7.1
-      react:
-        specifier: 19.2.5
-        version: 19.2.5
-      react-virtuoso:
-        specifier: 4.18.11
-        version: 4.18.11(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      styled-components:
-        specifier: ^6.4.0
-        version: 6.4.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-    devDependencies:
-      '@ant-design/colors':
-        specifier: 7.2.1
-        version: 7.2.1
-      '@types/react':
-        specifier: 19.2.4
-        version: 19.2.4
-
-  packages/config: {}
-
-  packages/shared-contracts: {}
-
-  packages/wuh.site.console:
+  apps/console:
     dependencies:
       '@wuh.site/components':
         specifier: workspace:^
-        version: link:../components
-      '@wuh.site/shared-contracts':
+        version: link:../../packages/components
+      '@wuh.site/core':
         specifier: workspace:^
-        version: link:../shared-contracts
+        version: link:../../packages/core
       react:
         specifier: 19.2.5
         version: 19.2.5
@@ -121,7 +83,7 @@ importers:
         specifier: 6.4.1
         version: 6.4.1(@types/node@20.19.42)(jiti@2.6.1)(terser@5.48.0)
 
-  packages/wuh.site.nest:
+  apps/server:
     dependencies:
       '@nestjs/common':
         specifier: ^10.3.0
@@ -223,9 +185,9 @@ importers:
       '@types/node':
         specifier: ^20.10.6
         version: 20.19.42
-      '@wuh.site/shared-contracts':
+      '@wuh.site/core':
         specifier: workspace:^
-        version: link:../shared-contracts
+        version: link:../../packages/core
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -257,7 +219,7 @@ importers:
         specifier: ~5.7.2
         version: 5.7.3
 
-  packages/wuh.site.next:
+  apps/site:
     dependencies:
       '@bprogress/next':
         specifier: ^3
@@ -267,7 +229,7 @@ importers:
         version: 1.2.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@wuh.site/components':
         specifier: workspace:^
-        version: link:../components
+        version: link:../../packages/components
       ahooks:
         specifier: 3.7.1
         version: 3.7.1(react@19.2.5)
@@ -329,6 +291,48 @@ importers:
       typescript:
         specifier: ~5.7.2
         version: 5.7.3
+
+  packages/components:
+    dependencies:
+      '@next/third-parties':
+        specifier: ^16.2.7
+        version: 16.2.7(next@15.2.9(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
+      framer-motion:
+        specifier: ^11
+        version: 11.18.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      lucide-react:
+        specifier: ^1.16.0
+        version: 1.17.0(react@19.2.5)
+      maplibre-gl:
+        specifier: ^4.7.0
+        version: 4.7.1
+      react:
+        specifier: 19.2.5
+        version: 19.2.5
+      react-virtuoso:
+        specifier: 4.18.11
+        version: 4.18.11(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      styled-components:
+        specifier: ^6.4.0
+        version: 6.4.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+    devDependencies:
+      '@ant-design/colors':
+        specifier: 7.2.1
+        version: 7.2.1
+      '@types/react':
+        specifier: 19.2.4
+        version: 19.2.4
+
+  packages/core:
+    dependencies:
+      '@wuh.site/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+
+  packages/hooks: {}
 
 packages:
 
