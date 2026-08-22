@@ -13,6 +13,7 @@ source:
   - changes/archive/20260607_P_rolling_deploy/brief.md
   - changes/archive/20260524_P_build_optimization/brief.md
   - changes/archive/20260822-build-release-trigger-deploy/brief.md
+  - changes/archive/20260822-build-release-script/brief.md
 verified: 2026-08-22
 ---
 
@@ -27,6 +28,8 @@ NestJS 通过 dotenv 自动加载项目根目录 `.env` 文件。MongooseModule 
 Docker 多阶段构建：deps、builder、runner。Console 使用 `nginx:alpine` 运行 Vite 构建产物，支持 SPA 路由 fallback（`try_files $uri $uri/ /index.html`）。端口规划：生产 next:3000、nest:3200、console:3300；staging 对应 3001、3201、3301。部署脚本提供 build、staging health、switch、diagnose、cancel 和 rollback 能力。
 
 CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链（prepare → build → staging-test → switch-traffic）。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。
+
+发布流程：`pnpm release`（即 `bash scripts/release.sh [major|minor|patch]`，默认 patch）一键完成 版本提升（standard-version + CHANGELOG + tag）→ push main → `gh release create`（触发部署链）。发布前置校验：工作区干净、分支为 main、不落后于 origin/main。
 
 ## 执行约束
 
