@@ -14,8 +14,8 @@ const ContactCard = dynamic(() => import('../components/ContactCard'), {
   loading: () => null,
 })
 import { IconMusic, IconDiscord, IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
-import type { ContentItem, RepoDto, WereadBook } from '@wuh.site/core'
-import { contentService, reposService, wereadService } from '@wuh.site/core/endpoints'
+import type { RepoDto, WereadBook } from '@wuh.site/core'
+import { reposService, wereadService } from '@wuh.site/core/endpoints'
 import { buildPostUrl } from '../lib/slug'
 import { formatShortDate } from '../lib/date'
 import * as S from '../styles'
@@ -87,20 +87,8 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
   const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
 
   const { data: reposData } = reposService.getAll.use({ query: { limit: '6' } })
-  const { data: summariesData } = contentService.getPosts.use({ query: { limit: '50', state: 'open' } })
   const { data: booksData } = wereadService.getBooks.use({ query: { page: '1', limit: '6', finishReading: '0' } })
   const clientRepos = reposData ? ((reposData as any).repos || []).slice(0, 6) as RepoDto[] : repos
-  const clientSummaries = summariesData
-    ? (((summariesData as any).data || []) as ContentItem[])
-        .filter((item) => item.title.includes('年度总结'))
-        .slice(0, 3)
-        .map((item) => ({
-          id: item.externalId,
-          number: item.number,
-          title: item.title,
-          created_at: item.createdAtGitHub,
-        }))
-    : yearlySummaries
   const clientBooks = booksData ? (((booksData as any).data || []) as WereadBook[]) : wereadBooks
 
   const yearGroups = useMemo(() => groupByYear(posts), [posts])
@@ -179,11 +167,11 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <S.SectionHeader>
             <S.SectionTitle>年度总结</S.SectionTitle>
           </S.SectionHeader>
-          {clientSummaries.length === 0 ? (
+          {yearlySummaries.length === 0 ? (
             <Empty icon={<IconCalendar />} title="暂无年度总结" description="还没有年度回顾文章" />
           ) : (
             <S.ProjectList>
-              {clientSummaries.map(item => (
+              {yearlySummaries.map(item => (
                 <S.PostRow key={item.id} href={buildPostUrl(item.number)}>
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
