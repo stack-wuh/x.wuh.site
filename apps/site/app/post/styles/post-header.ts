@@ -1,4 +1,4 @@
-import styled from '@wuh.site/components/styled'
+import styled, { css } from '@wuh.site/components/styled'
 
 export const Header = styled.header`
   display: flex;
@@ -35,8 +35,10 @@ export const TagGroup = styled.div`
   gap: 6px;
 `
 
-export const CoverImage = styled.div`
+/** 封面公共外壳：尺寸、圆角、边框、动效、移动端出血 */
+const coverShell = css`
   --post-cover-radius: 12px;
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 360px;
@@ -44,6 +46,7 @@ export const CoverImage = styled.div`
   overflow: hidden;
   margin-bottom: var(--space-lg);
   order: 2;
+  border: 1px solid color-mix(in oklab, var(--accent-color) 16%, transparent);
   background: color-mix(in oklab, var(--background-200) 88%, var(--accent-color) 12%);
   animation: coverEnter 280ms ease-out both;
 
@@ -60,12 +63,18 @@ export const CoverImage = styled.div`
     max-height: none;
     margin: 0 -24px var(--space-lg);
     border-radius: var(--post-cover-radius);
+    border-left: none;
+    border-right: none;
     order: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
+`
+
+export const CoverFrame = styled.div`
+  ${coverShell}
 
   > * { height: 100%; }
 
@@ -75,6 +84,101 @@ export const CoverImage = styled.div`
     object-fit: cover;
     display: block;
   }
+`
+
+/** 底部轻渐变过渡：只柔和压暗信息条附近的图，不改变图片主体观感 */
+export const CoverGradient = styled.div`
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, #000 40%, transparent) 0%,
+    transparent 40%
+  );
+  pointer-events: none;
+`
+
+/** 无封面时的生成式封面：主题渐变 + 装饰线 + 衬线标题 + 落款 */
+export const GeneratedCover = styled.div`
+  ${coverShell}
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: clamp(20px, 5vw, 40px);
+  background:
+    radial-gradient(110% 90% at 88% -10%, color-mix(in oklab, var(--accent-color) 16%, transparent), transparent 55%),
+    radial-gradient(90% 80% at 8% 110%, color-mix(in oklab, var(--accent-color) 12%, transparent), transparent 55%),
+    linear-gradient(165deg, var(--background-100) 0%, var(--background-200) 100%);
+`
+
+export const GeneratedOrnament = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding-top: clamp(12px, 3vw, 24px);
+  color: var(--accent-color);
+  opacity: 0.55;
+
+  svg {
+    width: min(240px, 60%);
+    height: auto;
+  }
+`
+
+export const GeneratedTitle = styled.h1`
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-3xl));
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`
+
+export const GeneratedSummary = styled.p`
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`
+
+export const GeneratedAuthorRow = styled.div`
+  margin-top: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: 1px solid color-mix(in oklab, var(--accent-color) 14%, transparent);
+`
+
+export const GeneratedAuthorInfo = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+`
+
+export const GeneratedColophon = styled.div`
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
 `
 
 export const PostLead = styled.div`
