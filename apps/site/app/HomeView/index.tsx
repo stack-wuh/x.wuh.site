@@ -13,7 +13,7 @@ const TypewriterMotto = dynamic(() => import('../components/TypewriterMotto'), {
 const ContactCard = dynamic(() => import('../components/ContactCard'), {
   loading: () => null,
 })
-import { IconMusic, IconDiscord, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
+import { IconMusic, IconDiscord, IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
 import type { ContentItem, RepoDto, WereadBook } from '@wuh.site/core'
 import { contentService, reposService, wereadService } from '@wuh.site/core/endpoints'
 import { buildPostUrl } from '../lib/slug'
@@ -108,7 +108,7 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
     <S.Root>
       <S.Main>
         <S.Hero>
-          <S.StyledLogo role='logo' src='/logo.svg' alt='wuh.site.logo' width={64} height={38.4} priority />
+          <IconLogo width={64} height={38.4} />
           <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</S.SiteTitle>
           <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
         </S.Hero>

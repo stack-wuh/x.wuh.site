@@ -55,11 +55,11 @@ test('评论头像错误首字母使用绝对居中容器', () => {
   assert.match(comments, /errorFallback=\{<S\.AvatarFallback>/)
 })
 
-test('首页和 ContactCard Logo 使用 logo role 与内部图片样式通道', () => {
-  assert.match(home, /<S\.StyledLogo[\s\S]*role='logo'/)
-  assert.match(homeStyles, /imageClassName: 'logo-img'/)
-  assert.match(contact, /role='logo'/)
-  assert.match(contact, /imageClassName='contact-logo'/)
+test('首页和 ContactCard Logo 使用 IconLogo 组件', () => {
+  assert.match(home, /<IconLogo width=\{64\} height=\{38\.4\}/)
+  assert.match(contact, /<IconLogo width=\{48\} height=\{29\}/)
+  assert.doesNotMatch(home, /logo\.svg/)
+  assert.doesNotMatch(contact, /logo\.svg/)
 })
 
 test('ContactCard 二维码使用 qr role 和 contain 语义', () => {

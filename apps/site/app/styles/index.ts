@@ -31,24 +31,6 @@ export const Hero = styled.header`
   padding: var(--space-xl) 0 var(--space-md);
 `
 
-export const StyledLogo = styled(Image).attrs({
-  inline: true,
-  imageClassName: 'logo-img'
-})`
-  width: fit-content;
-
-  .logo-img {
-    display: block;
-    transition: filter 0.2s ease;
-    width: 64px;
-    height: auto;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .logo-img { filter: invert(); }
-  }
-`
-
 export const SiteTitle = styled.p`
   font-family: var(--font-serif);
   font-size: var(--font-size-lg);
