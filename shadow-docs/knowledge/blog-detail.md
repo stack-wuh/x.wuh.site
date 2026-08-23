@@ -10,7 +10,8 @@ source:
   - changes/archive/博客详情页排版优化_2026_05_17/brief.md
   - changes/archive/20260524_P_post_toolbar_redesign/brief.md
   - changes/archive/20260729_B_restore-post-toc/brief.md
-verified: 2026-08-08
+  - changes/20260823-feature-post-cover-redesign/brief.md
+verified: 2026-08-23
 ---
 
 # 博客详情页排版
@@ -19,7 +20,7 @@ verified: 2026-08-08
 
 酒红主题：正文 16px、行高 1.8、h1/h2 为 30px；素雅主题：正文 16px、行高 2.0、h1/h2 为 27px。`--text-primary` 与背景对比度 >= 4.5:1，`--text-secondary` 与背景对比度 >= 3:1，代码块背景与字色对比度 >= 4.5:1。素雅 dark 模式所有 `--normal-*` 和 `--background-*` 变量有专属值，不继承酒红 dark。
 
-封面图在标题/元数据下方、正文上方展示。无封面时不渲染封面区域，封面加载失败时隐藏封面区域不显示破图。正文首张图片作为封面回退时从正文中移除该图片避免重复。
+封面图在标题/元数据下方、正文上方展示：有封面图为杂志卡（细边框 + 轻渐变），无封面图为生成式封面并承载 Header 信息（PostHeader 不重复渲染）。封面细节见 `post-cover.md`。
 
 相关文章基于标签与时间排序、去重且最多 3 篇：每个标签并发请求最多 10 篇候选，按共享标签数降序、更新时间降序、编号升序排序。「继续阅读」模块以阅读余韵索引呈现，不使用卡片背景或阴影，hover 仅改变标题与箭头颜色并使箭头轻微右移。窄屏下单向触达高度不低于 44px。
 

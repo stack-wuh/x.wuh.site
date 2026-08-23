@@ -205,8 +205,22 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
       <ContentGrid>
         <MainColumn>
           <PostLead>
-            <PostCover src={issue.metadata?.cover} alt={issue.metadata?.coverAlt || issue.title} />
-            <PostHeader issue={issue} />
+            {issue.metadata?.cover ? (
+              <>
+                <PostCover src={issue.metadata?.cover} alt={issue.metadata?.coverAlt || issue.title} />
+                <PostHeader issue={issue} />
+              </>
+            ) : (
+              <PostCover
+                src={null}
+                alt={issue.title}
+                title={issue.title}
+                authorName={issue.user?.userName?.trim() || issue.user?.login?.trim()}
+                createdAt={issue.created_at}
+                viewCount={issue.viewCount}
+                summary={issue.metadata?.summary}
+              />
+            )}
           </PostLead>
 
           {tocResult.toc.length > 0 && (
