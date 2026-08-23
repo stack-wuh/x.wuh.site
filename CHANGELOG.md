@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/stack-wuh/x.wuh.site/compare/v1.0.1...v1.1.0) (2026-08-23)
+
+
+### Features
+
+* 升级 Next.js 15 → 16.3.2 ([#327](https://github.com/stack-wuh/x.wuh.site/issues/327)) ([83e5cff](https://github.com/stack-wuh/x.wuh.site/commit/83e5cfff5fc593a42b5949b1f90e6154400f9844)), closes [#326](https://github.com/stack-wuh/x.wuh.site/issues/326)
+* 文章 URL 只保留 id，旧 slug URL 301 重定向 ([#323](https://github.com/stack-wuh/x.wuh.site/issues/323)) ([cff9b28](https://github.com/stack-wuh/x.wuh.site/commit/cff9b28e4bad336ce31ab052a3916e1ad7e08290)), closes [#233](https://github.com/stack-wuh/x.wuh.site/issues/233) [#322](https://github.com/stack-wuh/x.wuh.site/issues/322)
+
+
+### Bug Fixes
+
+* release 提交携带 [skip ci] 避免重复触发 CI ([e560b6d](https://github.com/stack-wuh/x.wuh.site/commit/e560b6de0e63379d411476f91b44e663e5a20ab0))
+* 配置 i.pravatar.cc 图片 host ([#325](https://github.com/stack-wuh/x.wuh.site/issues/325)) ([3836854](https://github.com/stack-wuh/x.wuh.site/commit/38368549e771382c6fcaa436f149ccf3b07e456f)), closes [#324](https://github.com/stack-wuh/x.wuh.site/issues/324)
+
 ### 1.0.1 (2026-08-22)
 
 
