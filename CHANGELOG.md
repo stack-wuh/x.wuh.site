@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.0...v1.1.1) (2026-08-23)
+
+
+### Features
+
+* **seo:** 首页 ISR 优化、低价值页面 robots 策略与文章 wordCount ([55f4976](https://github.com/stack-wuh/x.wuh.site/commit/55f497688c9be5be96897a24906d602cd1adfabc))
+
+
+### Bug Fixes
+
+* **seo:** 首页年度总结改为 SSR 数据 ([522ff1f](https://github.com/stack-wuh/x.wuh.site/commit/522ff1fc17792f772021f67f4b58205056cd3860))
+* 替换 /logo.svg 为 IconLogo 组件 ([333b4ed](https://github.com/stack-wuh/x.wuh.site/commit/333b4ed0f50902e2f153568b6b4077cd650f37af))
+* 移除 Node 24 不支持的 --no-concurrent-sweeping 标志 ([e15024a](https://github.com/stack-wuh/x.wuh.site/commit/e15024aa424f0954a9444bbcf4035714df1e4b5e))
+* 移除 Node 24 不支持的 --no-concurrent-sweeping 标志 ([#328](https://github.com/stack-wuh/x.wuh.site/issues/328)) ([2f04a25](https://github.com/stack-wuh/x.wuh.site/commit/2f04a2524ba68c9814be0c29428b04c48c9b8644))
+
 ## [1.1.0](https://github.com/stack-wuh/x.wuh.site/compare/v1.0.1...v1.1.0) (2026-08-23)
 
 
