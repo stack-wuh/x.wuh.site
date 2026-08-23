@@ -12,6 +12,7 @@ import {
 export const metadata: Metadata = {
   title: "留言板 - wuh.site",
   description: "在吴尒红（Shadow）的个人站留下足迹，分享想法与问候。",
+  robots: { index: false, follow: true },
 };
 
 function clampPage(raw: unknown): number {

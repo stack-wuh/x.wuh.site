@@ -89,6 +89,14 @@ export function getArticleImage(issue: ArticleIssue): ImageMetadata {
   }
 }
 
+export function getArticleWordCount(issue: ArticleIssue): number {
+  const body = issue.body?.trim()
+  if (!body) return 0
+  const chineseChars = (body.match(/[一-鿿]/g) || []).length
+  const englishWords = (body.match(/[a-zA-Z]+/g) || []).length
+  return chineseChars + englishWords
+}
+
 export function buildArticleMetadata(issue: ArticleIssue): Record<string, unknown> {
   const description = buildArticleDescription(issue)
   const image = getArticleImage(issue)
@@ -138,6 +146,7 @@ export function buildBlogPostingJsonLd(issue: ArticleIssue): Record<string, unkn
     image: image.url,
     datePublished: issue.created_at,
     dateModified: issue.updated_at,
+    wordCount: getArticleWordCount(issue),
     url: `${SITE_URL}${buildPostUrl(issue.number)}`,
     author: {
       '@type': 'Person',

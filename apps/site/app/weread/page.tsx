@@ -7,6 +7,7 @@ import { PER_PAGE, SITE_URL, SITE_NAME, type WereadSearchParams } from "./specs"
 export const metadata: Metadata = {
   title: "微信读书",
   description: "吴尒红（Shadow）的微信读书书架与阅读记录",
+  robots: { index: false, follow: true },
   alternates: { canonical: `${SITE_URL}/weread` },
   openGraph: {
     title: "微信读书",

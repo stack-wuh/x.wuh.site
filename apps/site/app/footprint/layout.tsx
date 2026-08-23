@@ -5,6 +5,7 @@ import { SITE_URL, SITE_NAME } from '@wuh.site/core'
 export const metadata: Metadata = {
   title: '足迹',
   description: '吴尒红（Shadow）记录的深圳周边旅游足迹、探索路线与沿途风景',
+  robots: { index: false, follow: false },
   alternates: { canonical: `${SITE_URL}/footprint` },
   openGraph: {
     title: '足迹',

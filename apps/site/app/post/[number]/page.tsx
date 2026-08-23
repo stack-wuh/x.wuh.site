@@ -9,6 +9,7 @@ import {
   getArticleCategory,
   getArticleImage,
   getArticleKeywords,
+  getArticleWordCount,
 } from "../../lib/seo";
 import { buildPostUrl, extractPostNumber, isCanonicalPostPath } from "../../lib/slug";
 import type { ContentItem } from "@wuh.site/core";
@@ -142,6 +143,7 @@ export default async function Page({
     imageAlt: image.alt,
     keywords: getArticleKeywords(issue),
     labels: category ? [category] : issue.labels.map((label) => label.name),
+    wordCount: getArticleWordCount(issue),
   });
   const breadcrumbJsonLd = createBreadcrumbStructuredData([
     { name: "首页", url: SITE_URL },
