@@ -8,7 +8,7 @@ function appendCookie(cookieHeader: string | null, name: string, value: string) 
   return cookieHeader ? `${cookieHeader}; ${cookie}` : cookie
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const existingAnonId = request.cookies.get(ANON_COOKIE_NAME)?.value
   if (existingAnonId) {
     return NextResponse.next()
