@@ -48,7 +48,25 @@ async function getFeaturedIssues(): Promise<PostListItem[]> {
   return (data as any).data.map(mapContentToPost) as PostListItem[]
 }
 
+async function getYearlySummaries() {
+  const { data, error } = await contentService.getPosts.server({
+    query: { limit: '50', state: 'open' },
+    revalidate: 1800,
+  })
+  if (error) logHomeFetchError('yearly summaries', error)
+  if (!data) return []
+  return ((data as any).data as ContentItem[])
+    .filter((item) => item.title.includes('年度总结'))
+    .slice(0, 3)
+    .map((item) => ({
+      id: item.externalId,
+      number: item.number,
+      title: item.title,
+      created_at: item.createdAtGitHub || '',
+    }))
+}
+
 export default async function Home() {
-  const posts = await getFeaturedIssues()
-  return <HomeView repos={[]} posts={posts} yearlySummaries={[]} wereadBooks={[]} />
+  const [posts, yearlySummaries] = await Promise.all([getFeaturedIssues(), getYearlySummaries()])
+  return <HomeView repos={[]} posts={posts} yearlySummaries={yearlySummaries} wereadBooks={[]} />
 }
