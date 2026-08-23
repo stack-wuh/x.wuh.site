@@ -4,8 +4,6 @@ import type { ContentItem, PostListItem } from '@wuh.site/core'
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION } from '@wuh.site/core'
 import HomeView from './HomeView'
 
-export const dynamic = 'force-dynamic'
-
 function logHomeFetchError(moduleName: string, error: unknown) {
   const message = error instanceof Error ? error.message : JSON.stringify(error)
   process.stderr.write(`[home] Failed to fetch ${moduleName}: ${message}\n`)

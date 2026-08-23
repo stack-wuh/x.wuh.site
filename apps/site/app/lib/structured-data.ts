@@ -17,6 +17,7 @@ type ArticleStructuredDataInput = {
   imageAlt?: string | null
   keywords?: string[] | null
   labels?: string[]
+  wordCount?: number
 }
 
 type BreadcrumbItem = {
@@ -93,6 +94,10 @@ export function createArticleStructuredData(input: ArticleStructuredDataInput): 
       url: input.image,
       caption: input.imageAlt || input.title,
     }
+  }
+
+  if (typeof input.wordCount === 'number' && input.wordCount > 0) {
+    data.wordCount = input.wordCount
   }
 
   if (keywords.length > 0) {
