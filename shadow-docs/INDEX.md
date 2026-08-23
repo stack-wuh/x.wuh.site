@@ -4,6 +4,7 @@
 
 | 日期 | 变更 | 状态 |
 |------|------|------|
+| 2026-08-23 | `20260823-feature-upgrade-next-16` | 已完成 |
 | 2026-08-22 | `20260822-build-release-script` | 已完成 |
 | 2026-08-22 | `20260822-build-release-trigger-deploy` | 已完成 |
 | 2026-08-22 | `20260817-P-monorepo-restructure` | 已完成 |
