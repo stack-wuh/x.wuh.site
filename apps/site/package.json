@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "NODE_OPTIONS=\"--max-old-space-size=2048\" next build",
     "build:debug": "NODE_OPTIONS=\"--max-old-space-size=2048 --trace-warnings\" next build --debug",
     "start": "next start",
@@ -18,7 +18,7 @@
     "@wuh.site/core": "workspace:^",
     "ahooks": "3.7.1",
     "highlight.js": "^11.11.1",
-    "next": "15.2.9",
+    "next": "16.3.2",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "rehype-autolink-headings": "^7.1.0",
