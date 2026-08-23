@@ -47,7 +47,7 @@ while true; do
   fi
   (
     cd "$root_dir/apps/site"
-    NODE_OPTIONS= node ./node_modules/next/dist/bin/next dev
+    node --no-concurrent-sweeping --no-concurrent-marking ./node_modules/next/dist/bin/next dev
   ) &
   child_pid="$!"
   set +e
