@@ -1,23 +1,26 @@
 ---
 title: Next.js 前端构建
 domain: build
-keywords: [Next.js, 导入路径, 路径别名, shared-contracts, 前端构建]
+keywords: [Next.js, Next.js 16, Turbopack, proxy, 导入路径, 路径别名, core, 前端构建]
 scope:
-  - packages/wuh.site.next/tsconfig.json
-  - packages/wuh.site.next
+  - apps/site/tsconfig.json
+  - apps/site
   - packages/components/package.json
 status: active
 source:
   - changes/archive/20260524_P_build_optimization/brief.md
   - changes/archive/20260607_P_ts_config_redesign/brief.md
-verified: 2026-08-08
+  - changes/archive/20260823-feature-upgrade-next-16/brief.md
+verified: 2026-08-23
 ---
 
 # Next.js 前端构建
 
 ## 当前结论
 
-导入路径规范：所有 `@wuh.site/components/*/index` 统一为 `@wuh.site/components/*`。前端文件引用内部模块优先使用 `@/*` 路径别名（映射到 Next.js 项目根目录），避免深层相对路径。仅在引用同层或相邻子目录时使用 `./xxx` 相对路径。`@wuh.site/shared-contracts` 通过 tsconfig paths 正确解析到源码目录。
+Next.js 16.3.2（App Router，Turbopack 默认用于 `next dev` 与 `next build`）。请求拦截使用 `proxy.ts`（Next 16 官方约定，替代已废弃的 `middleware.ts`，nodejs 运行时）。
+
+导入路径规范：所有 `@wuh.site/components/*/index` 统一为 `@wuh.site/components/*`。前端文件引用内部模块优先使用 `@/*` 路径别名（映射到 Next.js 项目根目录），避免深层相对路径。仅在引用同层或相邻子目录时使用 `./xxx` 相对路径。`@wuh.site/core` 通过 tsconfig paths 解析。
 
 ## 执行约束
 

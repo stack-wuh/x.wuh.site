@@ -14,7 +14,8 @@ source:
   - changes/archive/20260524_P_build_optimization/brief.md
   - changes/archive/20260822-build-release-trigger-deploy/brief.md
   - changes/archive/20260822-build-release-script/brief.md
-verified: 2026-08-22
+  - changes/archive/20260823-feature-upgrade-next-16/brief.md
+verified: 2026-08-23
 ---
 
 # 构建与部署配置
@@ -30,6 +31,8 @@ Docker 多阶段构建：deps、builder、runner。Console 使用 `nginx:alpine`
 CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链（prepare → build → staging-test → switch-traffic）。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。
 
 发布流程：`pnpm release`（即 `bash scripts/release.sh [major|minor|patch]`，默认 patch）一键完成 版本提升（standard-version + CHANGELOG + tag）→ push main → `gh release create`（触发部署链）。发布前置校验：工作区干净、分支为 main、不落后于 origin/main。
+
+Next.js 16 起 `next build` 默认使用 Turbopack（原 webpack），构建产物工具链变化，Docker 构建需在 CI 验证。
 
 ## 执行约束
 
