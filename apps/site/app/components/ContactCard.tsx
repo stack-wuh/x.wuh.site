@@ -6,7 +6,7 @@ import Button from '@wuh.site/components/button'
 import Image from '@wuh.site/components/image'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
-import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord } from '@wuh.site/components/icons'
+import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord, IconLogo } from '@wuh.site/components/icons'
 
 export type ContactCardProps = {
   badge: string
@@ -117,21 +117,6 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-`
-
-const Avatar = styled(Image)`
-  width: 48px;
-  height: auto;
-  flex-shrink: 0;
-
-  .contact-logo {
-    width: 48px;
-    height: auto;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .contact-logo { filter: invert(1); }
-  }
 `
 
 const NameBlock = styled.div`
@@ -258,7 +243,7 @@ const ContactCard = ({
           </ActionArea>
           <Info>
             <Header>
-              <Avatar role='logo' imageClassName='contact-logo' src='/logo.svg' alt='wuh.site' width={48} height={29} />
+              <IconLogo width={48} height={29} />
               <NameBlock>
                 <Name>{name}</Name>
                 <Handle>{handle}</Handle>
