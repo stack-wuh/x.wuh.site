@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.3...v1.1.4) (2026-08-23)
+
+
+### Features
+
+* **post:** 详情页封面重新设计，杂志卡 + 生成式封面 ([#331](https://github.com/stack-wuh/x.wuh.site/issues/331)) ([e6816e8](https://github.com/stack-wuh/x.wuh.site/commit/e6816e8decbe73794343c233edac5f9dc50097cb)), closes [#330](https://github.com/stack-wuh/x.wuh.site/issues/330)
+
 ### [1.1.3](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.2...v1.1.3) (2026-08-23)
 
 ### [1.1.2](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.1...v1.1.2) (2026-08-23)
