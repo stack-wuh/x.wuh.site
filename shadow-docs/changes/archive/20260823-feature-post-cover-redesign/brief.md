@@ -4,7 +4,7 @@
   "name": "20260823-feature-post-cover-redesign",
   "type": "feature",
   "scope": "site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260823-feature-post-cover-redesign",
   "files": [
@@ -21,17 +21,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 330,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/330",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 331,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/331"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "dc318c906c3f1443adf080a6169efc451dcfce16",
+    "verifiedCommit": "e6816e8decbe73794343c233edac5f9dc50097cb",
     "verifiedAt": "2026-08-23T15:45:58.823Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:330",
+    "checkpoint": "merged-pr:331",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
