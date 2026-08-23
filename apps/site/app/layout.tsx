@@ -1,29 +1,37 @@
 import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
-import { Noto_Sans_SC, Noto_Serif_SC, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, AUTHOR_NAME, AUTHOR_URL } from '@wuh.site/core'
 import AppProviders from './components/AppProviders'
+import FontPrefetch from './components/FontPrefetch'
 import JsonLd from './components/JsonLd'
 import { createSiteStructuredData } from './lib/structured-data'
 
-const notoSansSC = Noto_Sans_SC({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
+const notoSansSC = localFont({
+  src: [
+    { path: '../public/fonts/NotoSansSC-400.woff2', weight: '400' },
+    { path: '../public/fonts/NotoSansSC-700.woff2', weight: '700' },
+  ],
   variable: '--font-sans',
-  display: 'swap',
+  display: 'fallback',
 })
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
+const jetbrainsMono = localFont({
+  src: [
+    { path: '../public/fonts/JetBrainsMono-400.woff2', weight: '400' },
+  ],
   variable: '--font-mono',
-  display: 'swap',
+  display: 'fallback',
+  preload: false,
 })
 
-const notoSerifSC = Noto_Serif_SC({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
+const notoSerifSC = localFont({
+  src: [
+    { path: '../public/fonts/NotoSerifSC-400.woff2', weight: '400' },
+    { path: '../public/fonts/NotoSerifSC-700.woff2', weight: '700' },
+  ],
   variable: '--font-serif',
-  display: 'swap',
+  display: 'fallback',
 })
 
 export const metadata: Metadata = {
@@ -116,6 +124,7 @@ export default function RootLayout({
       </head>
       <body className={`${notoSansSC.variable} ${notoSerifSC.variable} ${jetbrainsMono.variable}`}>
         <JsonLd data={createSiteStructuredData()} />
+        <FontPrefetch sansFamily={notoSansSC.style.fontFamily} serifFamily={notoSerifSC.style.fontFamily} />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
