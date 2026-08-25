@@ -106,9 +106,43 @@ export const CommentPlaceholder = styled(Empty)`
 `
 
 export const RelatedPostsSection = styled.section`
-  margin-top: var(--space-xl);
-  padding-top: var(--space-md);
-  border-top: 1px solid color-mix(in oklab, var(--text-muted) 28%, transparent);
+  margin-top: var(--space-md);
+  background: var(--background-100);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  box-shadow:
+    var(--elevation-card),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--primary-color) 35%, rgba(0, 0, 0, 0.06));
+    box-shadow:
+      var(--elevation-card-hover),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  @media (max-width: 640px) {
+    padding: 20px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
+    box-shadow:
+      var(--elevation-card),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    &:hover {
+      box-shadow:
+        var(--elevation-card-hover),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   ul {
     display: grid;
@@ -127,7 +161,9 @@ export const RelatedPostsHeader = styled.div`
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid color-mix(in oklab, var(--normal-300) 50%, transparent);
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
@@ -142,7 +178,7 @@ export const RelatedPostsHeading = styled.h2`
   margin: 0;
   color: var(--text-primary);
   font-family: var(--font-serif);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   font-weight: 500;
 
   &::before {
@@ -161,9 +197,10 @@ export const RelatedPostsCount = styled.span`
 
 export const RelatedPostIndex = styled.span`
   padding-top: 2px;
-  color: var(--text-muted);
+  color: var(--accent-color);
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 `
 
