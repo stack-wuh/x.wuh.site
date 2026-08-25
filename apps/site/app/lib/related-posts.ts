@@ -3,6 +3,7 @@ export type RelatedPostCandidate = {
   title: string
   labels: string[]
   updatedAt: string
+  viewCount?: number
   summary?: string | null
 }
 
@@ -36,6 +37,9 @@ export function selectRelatedPosts(currentPost: CurrentPost, candidates: Related
     .sort((left, right) => {
       const sharedLabelsDifference = right.sharedLabels.length - left.sharedLabels.length
       if (sharedLabelsDifference !== 0) return sharedLabelsDifference
+
+      const viewCountDifference = (right.viewCount ?? 0) - (left.viewCount ?? 0)
+      if (viewCountDifference !== 0) return viewCountDifference
 
       const updatedAtDifference = toTimestamp(right.updatedAt) - toTimestamp(left.updatedAt)
       if (updatedAtDifference !== 0) return updatedAtDifference

@@ -32,6 +32,7 @@ export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
           title: item.title,
           labels: item.labels,
           updatedAt: item.updatedAtGitHub || item.createdAtGitHub,
+          viewCount: item.viewCount,
           summary: item.metadata?.summary || null,
         }))
       })

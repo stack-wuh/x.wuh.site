@@ -6,7 +6,7 @@ export const ArticleCard = styled.section`
   background: var(--background-100);
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: var(--radius-card);
-  padding: 32px;
+  padding: var(--space-lg);
   color: var(--text-primary);
   box-shadow:
     var(--elevation-card),
@@ -14,7 +14,7 @@ export const ArticleCard = styled.section`
   transition: box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
 
   @media (max-width: 640px) {
-    padding: 20px;
+    padding: var(--space-sm);
   }
 
   &:hover {
@@ -55,6 +55,10 @@ export const RedundantInfoCard = styled(Card)`
       var(--background-100)
     );
   box-shadow: none;
+
+  @media (max-width: 640px) {
+    padding: var(--space-sm);
+  }
 `
 
 export const ShareInfoCard = styled(RedundantInfoCard)`
@@ -110,7 +114,7 @@ export const RelatedPostsSection = styled.section`
   background: var(--background-100);
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: var(--radius-card);
-  padding: 24px 28px;
+  padding: var(--space-sm) var(--space-md);
   box-shadow:
     var(--elevation-card),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -124,7 +128,7 @@ export const RelatedPostsSection = styled.section`
   }
 
   @media (max-width: 640px) {
-    padding: 20px;
+    padding: var(--space-sm);
   }
 
   @media (prefers-color-scheme: dark) {
