@@ -11,8 +11,8 @@ github:
   repository: stack-wuh/x.wuh.site
   issue: 335
   issueUrl: https://github.com/stack-wuh/x.wuh.site/issues/335
-  pullRequest: null
-  pullRequestUrl: null
+  pullRequest: 337
+  pullRequestUrl: https://github.com/stack-wuh/x.wuh.site/pull/337
 review:
   conclusion: approved
   verifiedCommit: null
