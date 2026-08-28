@@ -15,7 +15,7 @@ export const Wrapper = styled.span`
     height: 1.5px;
     background: var(--primary-color);
     transform: scaleX(0);
-    transition: transform 0.25s ease;
+    transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   &:hover::after {
@@ -27,7 +27,7 @@ export const Wrapper = styled.span`
   }
 
   .button-icon {
-    transition: transform 0.25s ease;
+    transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   @media (prefers-reduced-motion: reduce) {

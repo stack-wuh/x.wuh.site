@@ -38,7 +38,7 @@ export default function WereadSection({ fallbackBooks }: { fallbackBooks: Weread
         <S.SectionSkeleton />
       ) : (
         <S.Section>
-          <S.SectionHeader>
+          <S.SectionHeader className='reveal'>
             <S.SectionTitle>微信读书</S.SectionTitle>
             {books.length > 0 && <Button href='/weread' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>我的书架</Button>}
           </S.SectionHeader>
@@ -47,7 +47,7 @@ export default function WereadSection({ fallbackBooks }: { fallbackBooks: Weread
           ) : (
             <S.BooksList>
               {books.map((book) => (
-                <S.BookRow key={book.bookId}>
+                <S.BookRow key={book.bookId} className='reveal'>
                   <S.BookCover role='book-cover' src={book.cover || ''} alt={book.title} width={36} height={54} />
                   <S.BookInfo>
                     <S.BookTitle>{book.title}</S.BookTitle>

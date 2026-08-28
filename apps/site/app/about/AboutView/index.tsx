@@ -100,7 +100,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
       {/* 2. 关于我 */}
       <section>
-        <SectionHeader>
+        <SectionHeader className='reveal'>
           <SectionLabel>关于我</SectionLabel>
         </SectionHeader>
         <AboutTimeline>
@@ -112,7 +112,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
           <AboutContent>
             {/* Profile */}
             <div>
-              <ProfileRow>
+              <ProfileRow className='reveal'>
                 {avatarUrl ? (
                   <ProfileAvatarLink
                     href={githubUrl}
@@ -164,7 +164,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
             <div>
               <SectionLabel style={{ marginBottom: 16 }}>输出平台</SectionLabel>
               <PlatformList>
-                <PlatformCard>
+                <PlatformCard className='reveal'>
                   <div>
                     <PlatformName>GitHub</PlatformName>
                     <PlatformDesc style={{ marginLeft: 8 }}>
@@ -174,13 +174,13 @@ const AboutView = ({ profile }: AboutViewProps) => {
                     </PlatformDesc>
                   </div>
                 </PlatformCard>
-                <PlatformCard>
+                <PlatformCard className='reveal'>
                   <div>
                     <PlatformName>语雀</PlatformName>
                     <PlatformDesc style={{ marginLeft: 8 }}>长篇技术文章，文档持续更新</PlatformDesc>
                   </div>
                 </PlatformCard>
-                <PlatformCard>
+                <PlatformCard className='reveal'>
                   <div>
                     <PlatformName>微信公众号</PlatformName>
                     <PlatformDesc style={{ marginLeft: 8 }}>碎片思考 & 周报，侧重经验总结与工具推荐</PlatformDesc>
@@ -212,7 +212,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
       {/* 3. Heatmap */}
       <section>
-        <SectionHeader>
+        <SectionHeader className='reveal'>
           <SectionLabel>综合活动热力图</SectionLabel>
         </SectionHeader>
         <Heatmap
@@ -228,7 +228,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
       {/* 4. Timeline */}
       <section>
-        <SectionHeader>
+        <SectionHeader className='reveal'>
           <SectionLabel>最近日志</SectionLabel>
           <TimelineSelect defaultValue={timelineFilters[0]}>
             {timelineFilters.map((f) => (
@@ -238,7 +238,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
         </SectionHeader>
         <TimelineList>
           {timelineLogs.map((log) => (
-            <TimelineRow key={log.date}>
+            <TimelineRow key={log.date} className='reveal'>
               <TimelineDate>{formatMonthDay(log.date)}</TimelineDate>
               <TimelineTitle>{log.summary}</TimelineTitle>
             </TimelineRow>
@@ -247,7 +247,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
       </section>
 
       <section>
-        <SectionHeader>
+        <SectionHeader className='reveal'>
           <SectionLabel>足迹</SectionLabel>
         </SectionHeader>
         <div style={{ height: '380px', borderRadius: 'var(--radius-card, 12px)', overflow: 'hidden' }}>
@@ -256,7 +256,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
       </section>
 
       <section>
-        <SectionHeader>
+        <SectionHeader className='reveal'>
           <SectionLabel>留言板</SectionLabel>
         </SectionHeader>
         <GuestbookBarrageDialog />

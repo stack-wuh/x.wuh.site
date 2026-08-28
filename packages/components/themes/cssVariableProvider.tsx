@@ -92,6 +92,13 @@ export const CssVariableStyles = createGlobalStyle`
         .join(';')
     }}
 
+    ${(props) => {
+      const theme = props.theme as Tokens
+      return Object.keys(theme.motion)
+        .map((key) => `--motion-${key}: ${theme.motion[key as keyof typeof theme.motion]};`)
+        .join(';')
+    }}
+
     --line-height-body: 1.8;
     --line-height-heading: 1.35;
   }
@@ -173,9 +180,11 @@ export const CssVariableStyles = createGlobalStyle`
   }
 
   /* ===== Base element styles ===== */
+  /* overflow-x 必须用 clip 而非 hidden：hidden 会让 body 成为滚动容器，
+     导致 scroll-driven 动画（view() 时间线）永远判定元素已进入视口 */
   html, body {
     max-width: 100vw;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {

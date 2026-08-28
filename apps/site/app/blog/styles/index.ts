@@ -9,7 +9,7 @@ export const Root = styled.div`
   font-family: var(--font-sans);
   background: transparent;
   padding: clamp(24px, 3vw, 64px) clamp(16px, 4vw, 60px);
-  animation: contentEnter 0.25s ease-out;
+  animation: contentEnter 0.25s var(--motion-ease-out-soft);
 
   @keyframes contentEnter {
     from { opacity: 0; transform: translateY(6px); }
@@ -175,7 +175,7 @@ export const YearGroup = styled.div`
   flex-direction: column;
   gap: 2px;
   opacity: 0;
-  animation: blogRowRise 0.35s ease forwards;
+  animation: blogRowRise 0.35s var(--motion-ease-out-soft) forwards;
 
   @keyframes blogRowRise {
     from { opacity: 0; transform: translateY(10px); }

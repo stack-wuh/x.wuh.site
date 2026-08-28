@@ -19,6 +19,7 @@ const Root = styled.div`
   justify-content: center;
   padding: 64px 24px;
   font-family: var(--font-sans);
+  animation: rise-fade var(--motion-dur-reveal) var(--motion-ease-out-soft) both;
 `
 
 const StatusCode = styled.p`

@@ -38,6 +38,7 @@ export const SiteTitle = styled.p`
   color: var(--text-primary);
   letter-spacing: 0.04em;
   margin-top: var(--space-xs);
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
 `
 
 export const SiteTagline = styled.p`
@@ -45,6 +46,8 @@ export const SiteTagline = styled.p`
   font-size: var(--font-size-sm);
   color: var(--text-muted);
   letter-spacing: 0.06em;
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 80ms;
 `
 
 export const MottoSkeleton = styled.div`
@@ -58,6 +61,8 @@ export const Ctas = styled.div`
   gap: var(--space-sm);
   width: 100%;
   margin-top: var(--space-xs);
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 160ms;
 `
 
 export const SocialRow = styled.div`
@@ -65,6 +70,8 @@ export const SocialRow = styled.div`
   justify-content: center;
   width: 100%;
   margin-top: var(--space-xs);
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 240ms;
 `
 
 export const DividerRow = styled.div`
@@ -222,10 +229,13 @@ export const ProjectLink = styled.a`
   border-radius: 6px;
   text-decoration: none;
   color: inherit;
-  transition: background-color var(--transition-fast) ease;
+  transition:
+    background-color var(--transition-fast) ease,
+    transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
+    transform: translateY(-4px);
     text-decoration: none;
   }
 
