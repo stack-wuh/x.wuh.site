@@ -4,7 +4,7 @@
   "name": "20260829-feature-custom-scrollbar",
   "type": "feature",
   "scope": "site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260829-feature-custom-scrollbar",
   "files": [
@@ -15,17 +15,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 338,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/338",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 339,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/339"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "8b1dbfef65b19bc1866c2eb709e4053830c9ea35",
+    "verifiedCommit": "b2cd717fe04a2bc41b940ae225fac20ee331a5b1",
     "verifiedAt": "2026-08-28T16:27:50.535Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:338",
+    "checkpoint": "merged-pr:339",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
