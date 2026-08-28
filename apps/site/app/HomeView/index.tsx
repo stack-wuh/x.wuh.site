@@ -1,27 +1,21 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Button from '@wuh.site/components/button'
 import dynamic from 'next/dynamic'
-import LinkGroup from '@wuh.site/components/link-group'
 import Tag from '@wuh.site/components/tag'
-
-const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
-const TypewriterMotto = dynamic(() => import('../components/TypewriterMotto'), {
-  loading: () => <S.MottoSkeleton />,
-})
-const ContactCard = dynamic(() => import('../components/ContactCard'), {
-  loading: () => null,
-})
-import { IconMusic, IconDiscord, IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconLibrary, IconFolderGit2, IconChevronRight } from '@wuh.site/components/icons'
-import type { RepoDto, WereadBook } from '@wuh.site/core'
-import { reposService, wereadService } from '@wuh.site/core/endpoints'
+import { IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconChevronRight } from '@wuh.site/components/icons'
 import { buildPostUrl } from '../lib/slug'
 import { formatShortDate } from '../lib/date'
 import * as S from '../styles'
 import Empty from '@wuh.site/components/empty'
-import { CONTACT_CONFIG, type ContactType } from '../components/ContactConfig'
+import ContactArea from './ContactArea'
+import WereadSection from './WereadSection'
+import ProjectsSection from './ProjectsSection'
 import type { HomeViewProps } from './specs'
+
+const TypewriterMotto = dynamic(() => import('../components/TypewriterMotto'), {
+  loading: () => <S.MottoSkeleton />,
+})
 
 const TAG_DISPLAY_LIMIT = 3
 
@@ -50,56 +44,22 @@ function OrnamentDivider() {
   )
 }
 
-function LazySection({ children }: { children: React.ReactNode }) {
-  const [visible, setVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '200px' }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
-  return (
-    <div ref={ref} style={{ width: '100%' }}>
-      {visible ? children : <S.SectionSkeleton />}
-    </div>
-  )
-}
-
 /**
- * 首页视图，展示 Hero、格言、社交链接、精选博客、年度总结、微信读书、精选项目等板块。
+ * 首页视图（Server Component）：纯展示区块不参与客户端水合，
+ * 交互部分（社交链接/联系弹窗/书架/项目刷新/打字机）为独立客户端叶子。
  */
-export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }: HomeViewProps) {
-  const [activeContact, setActiveContact] = useState<ContactType | null>(null)
-  const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
-  const closeContact = useCallback(() => setActiveContact(null), [])
-  const activeContactConfig = activeContact ? CONTACT_CONFIG[activeContact] : null
-
-  const { data: reposData } = reposService.getAll.use({ query: { limit: '6' } })
-  const { data: booksData } = wereadService.getBooks.use({ query: { page: '1', limit: '6', finishReading: '0' } })
-  const clientRepos = reposData ? ((reposData as any).repos || []).slice(0, 6) as RepoDto[] : repos
-  const clientBooks = booksData ? (((booksData as any).data || []) as WereadBook[]) : wereadBooks
-
-  const yearGroups = useMemo(() => groupByYear(posts), [posts])
+export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, hero }: HomeViewProps) {
+  const yearGroups = groupByYear(posts)
   return (
     <S.Root>
       <S.Main>
-        <S.Hero>
-          <IconLogo width={64} height={38.4} />
-          <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</S.SiteTitle>
-          <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
-        </S.Hero>
+        {hero ?? (
+          <S.Hero>
+            <IconLogo width={64} height={38.4} />
+            <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</S.SiteTitle>
+            <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
+          </S.Hero>
+        )}
 
         <TypewriterMotto />
 
@@ -107,21 +67,8 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
           <Button href='/blog' variant='outlined' color='primary' size='small'>查看博客</Button>
           <Button href='/about' variant='outlined' color='secondary' size='small'>关于我</Button>
         </S.Ctas>
-        <S.SocialRow>
-          <LinkGroup
-            items={[
-              { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
-              { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
-              { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
-              { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱', hideOnMobile: true },
-              { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
-              { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
-              { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
-              { type: 'custom', title: 'Discord', icon: <IconDiscord />, onClick: () => openContact('discord') },
-            ]}
-            size='medium'
-          />
-        </S.SocialRow>
+
+        <ContactArea />
 
         <OrnamentDivider />
 
@@ -186,65 +133,11 @@ export default function HomeView({ repos, posts, yearlySummaries, wereadBooks }:
 
         <OrnamentDivider />
 
-        <LazySection>
-          <S.Section>
-            <S.SectionHeader>
-              <S.SectionTitle>微信读书</S.SectionTitle>
-              {clientBooks.length > 0 && <Button href='/weread' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>我的书架</Button>}
-            </S.SectionHeader>
-            {clientBooks.length === 0 ? (
-              <Empty icon={<IconLibrary />} title="暂无书架" description="微信读书同步后这里会展示" actions={[{ label: '去看看书架', href: '/weread' }]} />
-            ) : (
-              <S.BooksList>
-                {clientBooks.map((book) => (
-                  <S.BookRow key={book.bookId}>
-                    <S.BookCover role='book-cover' src={book.cover || ''} alt={book.title} width={36} height={54} />
-                    <S.BookInfo>
-                      <S.BookTitle>{book.title}</S.BookTitle>
-                      <S.BookMeta>{book.author}{book.finishReading ? ' · 已读完' : ' · 阅读中'}</S.BookMeta>
-                    </S.BookInfo>
-                  </S.BookRow>
-                ))}
-              </S.BooksList>
-            )}
-          </S.Section>
-        </LazySection>
+        <WereadSection fallbackBooks={wereadBooks} />
 
         <OrnamentDivider />
 
-        <S.Section>
-          <S.SectionHeader>
-            <S.SectionTitle>精选项目</S.SectionTitle>
-          </S.SectionHeader>
-          {clientRepos.length === 0 ? (
-            <Empty icon={<IconFolderGit2 />} title="暂无项目" description="获取 GitHub 数据失败，请稍后重试" />
-          ) : (
-            <S.ProjectList>
-              {clientRepos.map(repo => (
-                <S.ProjectLink
-                  key={repo.html_url}
-                  href={repo.html_url}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  <S.ProjectName>{repo.name}</S.ProjectName>
-                  {repo.description && <S.ProjectDesc>{repo.description}</S.ProjectDesc>}
-                  <S.ProjectMeta>{repo.language ?? ''}{repo.stargazers_count > 0 ? ` \u00b7 \u2606 ${repo.stargazers_count}` : ''}</S.ProjectMeta>
-                </S.ProjectLink>
-              ))}
-            </S.ProjectList>
-          )}
-        </S.Section>
-
-        <Dialog
-          open={Boolean(activeContactConfig)}
-          onClose={closeContact}
-          title={activeContactConfig ? `${activeContactConfig.badge} 联系` : '联系'}
-          fullScreen={false}
-          width='min(760px, calc(100vw - 32px))'
-        >
-          {activeContactConfig && <ContactCard {...activeContactConfig} />}
-        </Dialog>
+        <ProjectsSection fallbackRepos={repos} />
       </S.Main>
     </S.Root>
   )

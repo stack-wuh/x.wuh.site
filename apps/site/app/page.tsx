@@ -68,5 +68,12 @@ async function getYearlySummaries() {
 
 export default async function Home() {
   const [posts, yearlySummaries] = await Promise.all([getFeaturedIssues(), getYearlySummaries()])
-  return <HomeView repos={[]} posts={posts} yearlySummaries={yearlySummaries} wereadBooks={[]} />
+  return (
+    <HomeView
+      repos={[]}
+      posts={posts}
+      yearlySummaries={yearlySummaries}
+      wereadBooks={[]}
+    />
+  )
 }
