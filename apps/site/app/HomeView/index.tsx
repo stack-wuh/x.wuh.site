@@ -73,7 +73,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
         <OrnamentDivider />
 
         <S.Section>
-          <S.SectionHeader>
+          <S.SectionHeader className='reveal'>
             <S.SectionTitle>精选博客</S.SectionTitle>
             <Button href='/blog' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>全部博客</Button>
           </S.SectionHeader>
@@ -85,7 +85,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
                 <S.YearGroup key={year}>
                   <S.YearLabel>{year}</S.YearLabel>
                   {yearPosts.map(post => (
-                    <S.PostRow key={post.id} href={buildPostUrl(post.number)}>
+                    <S.PostRow key={post.id} href={buildPostUrl(post.number)} className='reveal'>
                       <S.InkDot />
                       <S.PostTitle>{post.title}</S.PostTitle>
                       {post.labels?.length > 0 && (
@@ -111,7 +111,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
         <OrnamentDivider />
 
         <S.Section>
-          <S.SectionHeader>
+          <S.SectionHeader className='reveal'>
             <S.SectionTitle>年度总结</S.SectionTitle>
           </S.SectionHeader>
           {yearlySummaries.length === 0 ? (
@@ -119,7 +119,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
           ) : (
             <S.ProjectList>
               {yearlySummaries.map(item => (
-                <S.PostRow key={item.id} href={buildPostUrl(item.number)}>
+                <S.PostRow key={item.id} href={buildPostUrl(item.number)} className='reveal'>
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
                   <S.PostMeta>

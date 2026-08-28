@@ -66,12 +66,20 @@ export interface Tokens {
     '2xl': string
     '3xl': string
   }
+  motion: {
+    'ease-out-soft': string
+    'ease-in-out-soft': string
+    'dur-quick': string
+    'dur-reveal': string
+    'dur-write': string
+  }
 }
 
 export type TColorTokens = keyof Tokens['colors']
 export type TSpaceTokens = keyof Tokens['spaces']
 export type TFontSizeTokens = keyof Tokens['fontSizes']
 export type TBorderRadiusTokens = keyof Tokens['borderRadius']
+export type TMotionTokens = keyof Tokens['motion']
 export type TPrimaryColorLevelTokens = keyof Tokens['primary']
 export type TDangerColorLevelTokens = keyof Tokens['danger']
 export type TSuccessColorLevelTokens = keyof Tokens['success']

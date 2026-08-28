@@ -29,6 +29,7 @@ export const HeroLabel = styled.span`
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--accent-color);
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
 `
 
 export const HeroTitle = styled.h1`
@@ -37,6 +38,8 @@ export const HeroTitle = styled.h1`
   font-weight: 700;
   line-height: 1.35;
   color: var(--text-primary);
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 80ms;
 `
 
 export const HeroSub = styled.p`
@@ -44,6 +47,8 @@ export const HeroSub = styled.p`
   color: var(--text-secondary);
   line-height: 1.6;
   max-width: 480px;
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 160ms;
 `
 
 /* ====== Section Header ====== */

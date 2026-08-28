@@ -18,6 +18,7 @@ export const Title = styled.h1`
   font-size: var(--font-size-2xl);
   font-weight: 700;
   letter-spacing: -0.02em;
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
 `
 
 export const MetaRow = styled.div`
@@ -27,12 +28,16 @@ export const MetaRow = styled.div`
   color: color-mix(in oklab, var(--text-color) 76%, transparent);
   font-size: var(--font-size-sm);
   align-items: center;
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 80ms;
 `
 
 export const TagGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 160ms;
 `
 
 /** 封面公共外壳：尺寸、圆角、边框、动效、移动端出血 */
@@ -48,7 +53,7 @@ const coverShell = css`
   order: 2;
   border: 1px solid color-mix(in oklab, var(--accent-color) 16%, transparent);
   background: color-mix(in oklab, var(--background-200) 88%, var(--accent-color) 12%);
-  animation: coverEnter 280ms ease-out both;
+  animation: coverEnter 280ms var(--motion-ease-out-soft) both;
 
   @keyframes coverEnter {
     from { opacity: 0; transform: scale(1.02); }

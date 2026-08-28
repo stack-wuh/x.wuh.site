@@ -3,6 +3,7 @@
 import { StyledComponentsRegistry } from '@wuh.site/components/themes/registry'
 import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
+import { MotionStyles } from '@/app/styles/motion'
 import { useRef } from 'react'
 import { useEventListener, useRequest } from 'ahooks'
 import type { ReactNode } from 'react'
@@ -52,6 +53,7 @@ export default function AppProviders({ children }: { children: ReactNode }) {
     <ThemeProvider>
       <StyledComponentsRegistry>
         <CssVariableStyles />
+        <MotionStyles />
         <IconfontStyle>
           <GoogleAnalytics gaId="G-X4ZVBQXW9E" />
           <WebVitals gaId="G-X4ZVBQXW9E" />

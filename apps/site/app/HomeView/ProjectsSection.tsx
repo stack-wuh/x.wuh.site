@@ -13,7 +13,7 @@ export default function ProjectsSection({ fallbackRepos }: { fallbackRepos: Repo
 
   return (
     <S.Section>
-      <S.SectionHeader>
+      <S.SectionHeader className='reveal'>
         <S.SectionTitle>精选项目</S.SectionTitle>
       </S.SectionHeader>
       {repos.length === 0 ? (
@@ -26,6 +26,7 @@ export default function ProjectsSection({ fallbackRepos }: { fallbackRepos: Repo
               href={repo.html_url}
               target='_blank'
               rel='noopener noreferrer'
+              className='reveal'
             >
               <S.ProjectName>{repo.name}</S.ProjectName>
               {repo.description && <S.ProjectDesc>{repo.description}</S.ProjectDesc>}

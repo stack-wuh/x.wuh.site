@@ -23,7 +23,7 @@ export const Toolbar = styled.div`
     transition:
       transform 0.25s cubic-bezier(0.2, 0, 0, 1),
       box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
-      border-color 0.25s ease;
+      border-color 0.25s var(--motion-ease-out-soft);
 
     &::before {
       content: '';
@@ -60,7 +60,7 @@ export const Toolbar = styled.div`
     justify-content: center;
     border-radius: 10px;
     background: color-mix(in oklab, var(--normal-300) 14%, transparent);
-    transition: background 0.25s ease;
+    transition: background 0.25s var(--motion-ease-out-soft);
   }
 
   .toolbar-icon svg {
@@ -72,7 +72,7 @@ export const Toolbar = styled.div`
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: transform 0.25s ease;
+    transition: transform 0.25s var(--motion-ease-out-soft);
   }
 
   .toolbar-label {
@@ -138,7 +138,7 @@ export const Toolbar = styled.div`
     color: var(--primary-color);
     text-decoration: none;
     opacity: 0.7;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: opacity 0.2s var(--motion-ease-out-soft), color 0.2s var(--motion-ease-out-soft);
     z-index: 2;
   }
 
