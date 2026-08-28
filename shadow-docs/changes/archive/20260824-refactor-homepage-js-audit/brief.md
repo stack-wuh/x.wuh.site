@@ -4,7 +4,7 @@
   "name": "20260824-refactor-homepage-js-audit",
   "type": "refactor",
   "scope": "site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20260824-refactor-homepage-js-audit",
   "files": [
@@ -19,17 +19,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 332,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/332",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 333,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/333"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "75ef671c6744c1a3223ab17c646082c65e9a2378",
+    "verifiedCommit": "9f97796fafa689b9bc18d9879bf4540d583db2e9",
     "verifiedAt": "2026-08-23T16:27:03.275Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:332",
+    "checkpoint": "merged-pr:333",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
