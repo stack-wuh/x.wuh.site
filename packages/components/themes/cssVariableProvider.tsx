@@ -207,6 +207,52 @@ export const CssVariableStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  /* ===== 全局滚动条：主题色细条 ===== */
+  /* 颜色走 CSS 变量，4 主题自动适配；触控设备恢复系统覆盖式滚动条 */
+  @media (pointer: fine) {
+    /* Firefox（形状不可控，颜色统一） */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-color) transparent;
+    }
+
+    /* WebKit（Chrome/Edge/Safari）+ 标准 ::scrollbar 语法（Chrome 121+） */
+    *::-webkit-scrollbar,
+    *::scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    *::-webkit-scrollbar-track,
+    *::scrollbar-track {
+      background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb,
+    *::scrollbar-thumb {
+      background: linear-gradient(
+        180deg,
+        var(--primary-color),
+        color-mix(in oklab, var(--primary-color) 70%, black)
+      );
+      border-radius: 99px;
+    }
+
+    *::-webkit-scrollbar-thumb:hover,
+    *::scrollbar-thumb:hover {
+      background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--primary-color) 85%, white),
+        var(--primary-color)
+      );
+    }
+
+    *::-webkit-scrollbar-corner,
+    *::scrollbar-corner {
+      background: transparent;
+    }
+  }
+
   .iconfont {
     font-family: "iconfont" !important;
     font-size: 16px; font-style: normal;
