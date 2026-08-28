@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.5...v1.1.6) (2026-08-28)
+
+
+### Features
+
+* **site:** 全站动画规范：微光呼吸 × 书写显现 ([#337](https://github.com/stack-wuh/x.wuh.site/issues/337)) ([6d37c41](https://github.com/stack-wuh/x.wuh.site/commit/6d37c41870fca2a5b818700d03034453d7801824)), closes [#335](https://github.com/stack-wuh/x.wuh.site/issues/335)
+
 ### [1.1.5](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.4...v1.1.5) (2026-08-28)
 
 ### [1.1.4](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.3...v1.1.4) (2026-08-23)
