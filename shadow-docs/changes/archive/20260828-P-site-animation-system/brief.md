@@ -3,7 +3,7 @@ schema: shadow-dev/v1
 name: 20260828-P-site-animation-system
 type: feature
 scope: site
-status: applied
+status: released
 baseBranch: main
 branch: feature/20260828-P-site-animation-system
 files: []
