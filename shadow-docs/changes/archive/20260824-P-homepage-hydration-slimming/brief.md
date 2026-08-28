@@ -4,7 +4,7 @@
   "name": "20260824-P-homepage-hydration-slimming",
   "type": "refactor",
   "scope": "site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20260824-P-homepage-hydration-slimming",
   "files": [
@@ -17,17 +17,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 334,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/334",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 336,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/336"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "8006a9af1fbf098c1977f1cfe35e8857a63bf1da",
+    "verifiedCommit": "1c7c15f82a5720f7aa37e54b95fbc44a4ae5e1da",
     "verifiedAt": "2026-08-28T14:43:44.511Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:334",
+    "checkpoint": "merged-pr:336",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
