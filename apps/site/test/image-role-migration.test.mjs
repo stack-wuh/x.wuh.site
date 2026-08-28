@@ -8,11 +8,12 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const root = resolve(appRoot, '..')
 
-const [about, home, homeStyles, weread, postHeader, postHeaderStyles, comments, commentsStyles, contact, postCover, footprintStyles, footprintPage, markdownStyles] = await Promise.all([
+const [about, home, homeStyles, weread, wereadSection, postHeader, postHeaderStyles, comments, commentsStyles, contact, postCover, footprintStyles, footprintPage, markdownStyles] = await Promise.all([
   readFile(resolve(appRoot, 'app/about/AboutView/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/styles/index.ts'), 'utf8'),
   readFile(resolve(appRoot, 'app/weread/WereadView/index.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/HomeView/WereadSection.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/post/components/PostHeader/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/post/styles/post-header.ts'), 'utf8'),
   readFile(resolve(appRoot, 'app/post/components/PostComments/index.tsx'), 'utf8'),
@@ -30,7 +31,7 @@ test('About 头像使用 avatar role 且不再以内联圆角修补内部图片'
 })
 
 test('首页和微信读书页书封使用 book-cover role', () => {
-  assert.match(home, /<S\.BookCover[\s\S]*role=["']book-cover["']/)
+  assert.match(wereadSection, /<S\.BookCover[\s\S]*role=["']book-cover["']/)
   assert.match(weread, /<S\.BookCover[\s\S]*role=["']book-cover["']/)
   assert.doesNotMatch(homeStyles, /const BookCover[\s\S]*border-radius:\s*4px/)
   assert.doesNotMatch(weread, /const BookCover[\s\S]*border-radius:\s*4px/)
