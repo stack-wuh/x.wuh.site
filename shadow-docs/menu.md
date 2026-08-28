@@ -5,6 +5,7 @@
 | 任务域 | 关键词 | Active Knowledge |
 |--------|--------|------------------|
 | 主题与样式 | 主题 配色 字体 token styled-components | knowledge/design-system.md, knowledge/components.md, knowledge/icon-system.md |
+| 动画与动效 | 动画 motion 动效 渐入 view-timeline view-transition | knowledge/animation-system.md |
 | 博客详情 | 博客 文章 详情 排版 工具栏 目录 封面 | knowledge/blog-detail.md, knowledge/post-cover.md, knowledge/blog-display.md |
 | 博客列表与分类 | 博客列表 标签 分类 筛选 | knowledge/blog-category-filter.md, knowledge/blog-display.md |
 | 博客代码 | Markdown 高亮 代码块 | knowledge/blog-code-highlighting.md |

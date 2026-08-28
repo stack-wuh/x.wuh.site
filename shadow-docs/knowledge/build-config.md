@@ -32,7 +32,7 @@ CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；G
 
 发布流程：`pnpm release`（即 `bash scripts/release.sh [major|minor|patch]`，默认 patch）一键完成 版本提升（standard-version + CHANGELOG + tag）→ push main → `gh release create`（触发部署链）。发布前置校验：工作区干净、分支为 main、不落后于 origin/main。
 
-Next.js 16 起 `next build` 默认使用 Turbopack（原 webpack），构建产物工具链变化，Docker 构建需在 CI 验证。
+Next.js 16 起 `next build` 默认使用 Turbopack（原 webpack），构建产物工具链变化，Docker 构建需在 CI 验证。本机 `pnpm build:next`（脚本内置 `NODE_OPTIONS=--max-old-space-size=2048`）在高 swap 压力下会 SIGSEGV，去掉上限直跑 `apps/site/node_modules/.bin/next build` 稳定；CI/Docker 环境不受影响。
 
 ## 执行约束
 
