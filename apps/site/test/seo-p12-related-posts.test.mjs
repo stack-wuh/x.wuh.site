@@ -17,35 +17,34 @@ test('related posts fetch candidates by labels with parallel requests', () => {
   assert.match(relatedPostsSource, /state: 'open'/)
 })
 
-test('related posts render as personal note cards only when candidates exist', () => {
+test('related posts render as a literary thread when candidates exist', () => {
   assert.match(relatedPostsSource, /posts\.length === 0\) return null/)
   assert.match(relatedPostsSource, /RelatedPostsSection aria-labelledby='related-posts-title'/)
   assert.match(relatedPostsSource, /RelatedPostsHeader/)
   assert.match(relatedPostsSource, /id='related-posts-title'>继续阅读/)
-  assert.match(relatedPostsSource, /我想你也会喜欢这几篇/)
-  assert.match(relatedPostsSource, /RelatedPostsCount>\{posts\.length\} 张便签/)
-  assert.match(relatedPostsSource, /RelatedPostIndex aria-hidden='true'>\{String\(index \+ 1\)\.padStart\(2, '0'\)\}/)
+  assert.match(relatedPostsSource, /读罢意犹未尽/)
+  assert.match(relatedPostsSource, /拾遗 \{posts\.length\} 则/)
   assert.match(relatedPostsSource, /summary && <RelatedPostSummary>/)
-  assert.match(relatedPostsSource, /线索：\{sharedLabels\}/)
+  assert.match(relatedPostsSource, /线索 \/ \{sharedLabels\}/)
   assert.match(relatedPostsSource, /aria-label=\{`继续阅读：\$\{post\.title\}`\}/)
   assert.match(relatedPostsSource, /RelatedPostArrow aria-hidden='true'/)
   assert.match(relatedPostsSource, /buildPostUrl\(post\.number\)/)
 })
 
-test('related posts use the tokenized paper note style', () => {
+test('related posts use the tokenized thread-in-card style', () => {
   const relatedSection = postArticleStyles.match(/export const RelatedPostsSection = styled\.section`([\s\S]*?)`/)?.[1] || ''
   const relatedLink = postArticleStyles.match(/export const RelatedPostLink = styled\.a`([\s\S]*?)`/)?.[1] || ''
 
   assert.match(postArticleStyles, /export const RelatedPostsHeader/)
-  assert.match(postArticleStyles, /export const RelatedPostIndex/)
   assert.match(postArticleStyles, /export const RelatedPostSummary/)
   assert.match(postArticleStyles, /export const RelatedPostArrow/)
-  assert.match(relatedSection, /background:/)
+  assert.doesNotMatch(postArticleStyles, /export const RelatedPostIndex/)
+  assert.match(relatedSection, /border:/)
   assert.match(relatedSection, /border-radius:/)
-  assert.match(relatedSection, /color-mix\(in oklab, var\(--primary-color\)/)
-  assert.match(relatedLink, /border-radius:/)
+  assert.match(relatedSection, /background:/)
+  assert.match(relatedSection, /border-radius: 50%/)
+  assert.match(relatedSection, /width: 1px/)
   assert.match(relatedLink, /min-height: 44px;/)
-  assert.match(relatedLink, /box-shadow:/)
-  assert.match(relatedLink, /translateY\(-2px\)/)
   assert.match(relatedLink, /prefers-reduced-motion: reduce/)
+  assert.doesNotMatch(relatedLink, /border-radius:|box-shadow:|translateY|border-bottom-left-radius/)
 })

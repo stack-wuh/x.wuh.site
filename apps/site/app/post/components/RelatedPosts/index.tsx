@@ -8,7 +8,7 @@ import { selectRelatedPosts, type RelatedPost } from '../../../lib/related-posts
 import { buildPostUrl } from '../../../lib/slug'
 import {
   RelatedPostsSection, RelatedPostsHeader, RelatedPostsHeading, RelatedPostsCount,
-  RelatedPostLink, RelatedPostIndex, RelatedPostContent, RelatedPostTitle,
+  RelatedPostLink, RelatedPostContent, RelatedPostTitle,
   RelatedPostSummary, RelatedPostLabels, RelatedPostArrow,
 } from '../../styles'
 import type { RelatedPostsProps } from './specs'
@@ -47,21 +47,20 @@ export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
     <RelatedPostsSection aria-labelledby='related-posts-title'>
       <RelatedPostsHeader>
         <RelatedPostsHeading id='related-posts-title'>继续阅读</RelatedPostsHeading>
-        <RelatedPostsCount>{posts.length} 张便签</RelatedPostsCount>
+        <RelatedPostsCount>拾遗 {posts.length} 则</RelatedPostsCount>
       </RelatedPostsHeader>
-      <p>我想你也会喜欢这几篇，顺着这条线索，再翻几页。</p>
+      <p>读罢意犹未尽，可循此间数条小径，再行一程。</p>
       <ul>
-        {posts.map((post, index) => {
+        {posts.map((post) => {
           const summary = post.summary?.trim()
-          const sharedLabels = post.sharedLabels.slice(0, 2).join(' · ')
+          const sharedLabels = post.sharedLabels.slice(0, 2).join(' / ')
           return (
             <li key={post.number}>
               <RelatedPostLink href={buildPostUrl(post.number)} aria-label={`继续阅读：${post.title}`}>
-                <RelatedPostIndex aria-hidden='true'>{String(index + 1).padStart(2, '0')}</RelatedPostIndex>
                 <RelatedPostContent>
                   <RelatedPostTitle>{post.title}</RelatedPostTitle>
                   {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
-                  {sharedLabels && <RelatedPostLabels>线索：{sharedLabels}</RelatedPostLabels>}
+                  {sharedLabels && <RelatedPostLabels>线索 / {sharedLabels}</RelatedPostLabels>}
                 </RelatedPostContent>
                 <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>
               </RelatedPostLink>
