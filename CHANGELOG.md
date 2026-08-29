@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.1...v1.2.2) (2026-08-29)
+
+
+### Features
+
+* **site:** 继续阅读改为线索小径轻卡片结构 ([5d04dfa](https://github.com/stack-wuh/x.wuh.site/commit/5d04dfaad9914ac1be65e14ac836bfb82a8d7064))
+
 ### [1.2.1](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.0...v1.2.1) (2026-08-29)
 
 
