@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.2...v1.2.3) (2026-08-29)
+
+
+### Features
+
+* **site:** 博客详情正文书页式排版设计语言 ([f373122](https://github.com/stack-wuh/x.wuh.site/commit/f3731229904dea865efe39c5d32e5343ef823614))
+
 ### [1.2.2](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.1...v1.2.2) (2026-08-29)
 
 
