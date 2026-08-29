@@ -187,6 +187,19 @@ export const CssVariableStyles = createGlobalStyle`
     overflow-x: clip;
   }
 
+  /* 移动端行高收紧：小屏短行宽下大行高显松，桌面保持原值 */
+  @media (max-width: 640px) {
+    :root {
+      --line-height-body: 1.7;
+      --line-height-heading: 1.3;
+    }
+
+    [data-theme-family="plain"] {
+      --line-height-body: 1.8;
+      --line-height-heading: 1.35;
+    }
+  }
+
   body {
     color: var(--text-color);
     background: var(--page-bg, var(--background-color));
