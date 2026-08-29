@@ -25,6 +25,7 @@ import {
   ContentGrid,
   MainColumn,
   MarkdownBody,
+  UpdateDivider,
   PostLead,
   RedundantInfoCard,
   ShareCardInner,
@@ -194,6 +195,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   }
 
   const updatedAt = issue.updated_at ?? issue.created_at
+  const updatedDate = updatedAt ? updatedAt.slice(0, 10) : null
   const { userName: updatedBy, userHomePage } = resolveUpdatedBy(issue)
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
@@ -235,6 +237,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
           <ArticleCard>
             <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
+            {updatedDate && <UpdateDivider>更新于 {updatedDate}</UpdateDivider>}
           </ArticleCard>
 
           <RelatedPosts number={issue.number} labels={issue.labels.map((label) => label.name)} />

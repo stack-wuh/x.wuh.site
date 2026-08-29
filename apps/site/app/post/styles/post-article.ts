@@ -94,7 +94,7 @@ export const ShareCardInner = styled.div`
   }
 `
 
-export { MarkdownBody } from './post-markdown'
+export { MarkdownBody, UpdateDivider } from './post-markdown'
 
 export const StatusEmpty = styled(Empty)`
   margin-bottom: var(--space-lg);

@@ -40,29 +40,49 @@ export const MarkdownBody = styled.article`
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: var(--line-height-heading);
-    margin: 36px 0 18px;
-    color: inherit;
-  }
-
-  h1, h2 {
     font-family: var(--font-serif);
-    padding-bottom: 0.35em;
-    border-bottom: 1px solid var(--github-border);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 28px 0 10px;
+    color: inherit;
+    letter-spacing: 0.02em;
   }
 
-  h1 { font-size: var(--font-size-2xl); }
-  h2 { font-size: var(--font-size-xl); }
-  h3 { font-size: var(--font-size-lg); }
-  h4 { font-size: var(--font-size-md); }
-  h5 { font-size: var(--font-size-base); }
-  h6 { font-size: var(--font-size-sm); color: var(--github-muted); }
+  h1 { font-size: 26px; }
+  h2 { font-size: 18px; }
+  h3 { font-size: 16px; }
+  h4 { font-size: 15px; }
+  h5 { font-size: 14px; }
+  h6 { font-size: 13px; color: var(--github-muted); }
+
+  h2 {
+    position: relative;
+    padding-left: 14px;
+  }
+
+  h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+  }
 
   p {
-    margin: 20px 0;
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-body);
+    margin: 14px 0;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    p {
+      line-height: 1.5;
+    }
   }
 
   a {
@@ -145,31 +165,75 @@ export const MarkdownBody = styled.article`
   }
 
   blockquote {
-    margin: 24px 0;
-    padding: 16px 20px;
-    border-left: 4px solid var(--accent-color);
+    margin: 12px 0;
+    padding: 0 0 0 14px;
+    border-left: 2px solid var(--accent-color);
     color: var(--text-secondary);
-    background: color-mix(in oklab, var(--accent-color) 5%, var(--background-200));
-    border-radius: 0 8px 8px 0;
-    font-style: italic;
   }
 
   blockquote p {
-    margin: 8px 0;
+    margin: 6px 0;
   }
 
   ul,
   ol {
-    margin: 20px 0 20px 1.8em;
+    margin: 14px 0 14px 1.6em;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  ul > li {
+    position: relative;
+    padding-left: 16px;
+  }
+
+  ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-color);
+  }
+
+  ol {
+    counter-reset: li;
+    list-style: none;
+  }
+
+  ol > li {
+    position: relative;
+    padding-left: 24px;
+    counter-increment: li;
+  }
+
+  ol > li::before {
+    content: counter(li);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--font-serif);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-color);
+    font-weight: 600;
   }
 
   li + li {
-    margin-top: 8px;
+    margin-top: 7px;
   }
 
   .task-list-item {
     list-style: none;
     margin-left: -1.4em;
+    padding-left: 0;
+  }
+
+  .task-list-item::before {
+    content: none;
   }
 
   .task-list-item input {
@@ -179,32 +243,36 @@ export const MarkdownBody = styled.article`
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 24px 0;
-    font-size: 0.95em;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--github-border);
+    margin: 14px 0;
+    font-size: 13px;
   }
 
   th,
   td {
-    border: 1px solid var(--github-border);
-    padding: 10px 14px;
+    padding: 8px 12px;
     text-align: left;
   }
 
   th {
-    background: color-mix(in oklab, var(--accent-color) 8%, var(--background-200));
+    font-family: var(--font-serif);
     font-weight: 600;
+    border-bottom: 2px solid var(--accent-color);
+    color: var(--text-primary);
   }
 
-  tr:nth-child(even) td {
-    background: color-mix(in oklab, var(--background-200) 45%, transparent);
+  td {
+    border-bottom: 1px solid color-mix(in oklab, var(--github-border) 55%, transparent);
+    color: var(--text-secondary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
   }
 
   img {
     max-width: 100%;
     height: auto;
+    max-height: 340px;
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.06);
     background: var(--background-100);
@@ -221,9 +289,26 @@ export const MarkdownBody = styled.article`
   }
 
   hr {
+    position: relative;
     border: none;
-    border-bottom: 1px solid var(--github-border);
-    margin: 36px 0;
+    width: 200px;
+    height: 1px;
+    margin: 32px auto;
+    background: color-mix(in oklab, var(--accent-color) 55%, transparent);
+  }
+
+  hr::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    background: var(--background-100);
+    box-shadow: 0 0 0 4px var(--background-100);
   }
 
   kbd {
@@ -265,4 +350,24 @@ export const MarkdownBody = styled.article`
   .hljs-section, .hljs-name { color: var(--accent-color); }
   .hljs-emphasis { font-style: italic; }
   .hljs-strong { font-weight: bold; }
+`
+
+export const UpdateDivider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  color: var(--accent-color);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: color-mix(in oklab, var(--accent-color) 40%, transparent);
+  }
 `
