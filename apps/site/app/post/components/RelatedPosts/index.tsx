@@ -47,20 +47,21 @@ export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
     <RelatedPostsSection aria-labelledby='related-posts-title'>
       <RelatedPostsHeader>
         <RelatedPostsHeading id='related-posts-title'>继续阅读</RelatedPostsHeading>
-        <RelatedPostsCount>{posts.length} 篇同题文章</RelatedPostsCount>
+        <RelatedPostsCount>{posts.length} 张便签</RelatedPostsCount>
       </RelatedPostsHeader>
+      <p>我想你也会喜欢这几篇，顺着这条线索，再翻几页。</p>
       <ul>
         {posts.map((post, index) => {
           const summary = post.summary?.trim()
-          const sharedLabels = post.sharedLabels.slice(0, 2).map((label) => `#${label}`).join(' · ')
+          const sharedLabels = post.sharedLabels.slice(0, 2).join(' · ')
           return (
             <li key={post.number}>
               <RelatedPostLink href={buildPostUrl(post.number)} aria-label={`继续阅读：${post.title}`}>
-                <RelatedPostIndex>{String(index + 1).padStart(2, '0')}</RelatedPostIndex>
+                <RelatedPostIndex aria-hidden='true'>{String(index + 1).padStart(2, '0')}</RelatedPostIndex>
                 <RelatedPostContent>
                   <RelatedPostTitle>{post.title}</RelatedPostTitle>
                   {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
-                  {sharedLabels && <RelatedPostLabels>{sharedLabels}</RelatedPostLabels>}
+                  {sharedLabels && <RelatedPostLabels>线索：{sharedLabels}</RelatedPostLabels>}
                 </RelatedPostContent>
                 <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>
               </RelatedPostLink>
