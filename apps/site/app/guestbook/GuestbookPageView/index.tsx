@@ -2,6 +2,13 @@
 
 import Link from 'next/link'
 import Pagination from '@wuh.site/components/pagination'
+import {
+  MessageCard,
+  MessageContent,
+  MessageMeta,
+  MessageName,
+  MessageTime,
+} from '@wuh.site/components/message-card'
 import * as S from './styles'
 import type { GuestbookPageViewProps } from './specs'
 
@@ -39,15 +46,15 @@ export default function GuestbookPageView({
       ) : (
         <S.CommentList aria-label='留言列表'>
           {comments.map((comment) => (
-            <S.CommentItem key={comment.id}>
-              <S.CommentMeta>
-                <S.CommentNickname>{comment.nickname}</S.CommentNickname>
-                <S.CommentTime dateTime={comment.createdAt}>
+            <MessageCard key={comment.id} as='li'>
+              <MessageMeta>
+                <MessageName>{comment.nickname}</MessageName>
+                <MessageTime dateTime={comment.createdAt}>
                   {formatCommentTime(comment.createdAt)}
-                </S.CommentTime>
-              </S.CommentMeta>
-              <S.CommentContent>{comment.content}</S.CommentContent>
-            </S.CommentItem>
+                </MessageTime>
+              </MessageMeta>
+              <MessageContent>{comment.content}</MessageContent>
+            </MessageCard>
           ))}
         </S.CommentList>
       )}

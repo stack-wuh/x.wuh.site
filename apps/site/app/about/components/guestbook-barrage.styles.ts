@@ -1,4 +1,6 @@
 import Button from '@wuh.site/components/button'
+import { MessageCard } from '@wuh.site/components/message-card'
+import ScrollArea from '@wuh.site/components/scroll-area'
 import styled from '@wuh.site/components/styled'
 
 /* ====== Trigger ====== */
@@ -185,21 +187,12 @@ export const GuestbookWrapper = styled.div`
   --guestbook-border-strong: color-mix(in oklab, var(--normal-300) 45%, transparent);
   --guestbook-stage-bg: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--background-100) 94%, var(--accent-color) 6%),
-    color-mix(in oklab, var(--background-200) 86%, var(--background-100) 14%)
+    color-mix(in oklab, var(--background-100) 96%, var(--accent-color) 4%),
+    color-mix(in oklab, var(--background-200) 88%, var(--background-100) 12%)
   );
-  --guestbook-stage-highlight: linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--accent-color) 9%, transparent),
-    transparent 36%,
-    color-mix(in oklab, var(--primary-color) 5%, transparent)
-  );
-  --guestbook-avatar-bg: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
-  --guestbook-bubble-mine-bg: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
-  --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-100) 94%, var(--background-200));
-  --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 24%, transparent);
-  --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-300) 36%, transparent);
-  --guestbook-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+  --guestbook-stage-border: color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
+  --guestbook-composer-bg: color-mix(in oklab, var(--background-100) 94%, var(--accent-color) 6%);
+  --guestbook-composer-divider: color-mix(in oklab, var(--primary-color) 30%, transparent);
 
   display: flex;
   flex-direction: column;
@@ -211,21 +204,12 @@ export const GuestbookWrapper = styled.div`
     --guestbook-border-strong: color-mix(in oklab, var(--normal-500) 48%, transparent);
     --guestbook-stage-bg: linear-gradient(
       180deg,
-      color-mix(in oklab, var(--background-100) 88%, var(--accent-color) 12%),
-      color-mix(in oklab, var(--background-100) 92%, var(--background-200) 8%)
+      color-mix(in oklab, var(--background-100) 92%, var(--accent-color) 8%),
+      color-mix(in oklab, var(--background-100) 94%, var(--background-200) 6%)
     );
-    --guestbook-stage-highlight: linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--accent-color) 10%, transparent),
-      transparent 42%,
-      color-mix(in oklab, var(--primary-color) 6%, transparent)
-    );
-    --guestbook-avatar-bg: color-mix(in oklab, var(--primary-color) 20%, var(--background-200));
-    --guestbook-bubble-mine-bg: color-mix(in oklab, var(--primary-color) 24%, var(--background-100));
-    --guestbook-bubble-other-bg: color-mix(in oklab, var(--background-200) 78%, var(--background-100));
-    --guestbook-bubble-mine-border: color-mix(in oklab, var(--primary-color) 36%, transparent);
-    --guestbook-bubble-other-border: color-mix(in oklab, var(--normal-500) 42%, transparent);
-    --guestbook-shadow: 0 12px 20px rgba(0, 0, 0, 0.16);
+    --guestbook-stage-border: color-mix(in oklab, var(--primary-color) 34%, var(--normal-600) 66%);
+    --guestbook-composer-bg: color-mix(in oklab, var(--background-100) 92%, var(--background-200) 8%);
+    --guestbook-composer-divider: color-mix(in oklab, var(--primary-color) 36%, transparent);
   }
 `
 
@@ -247,20 +231,13 @@ export const GuestbookStage = styled.div`
   min-height: 320px;
   overflow: hidden;
   border-radius: 16px 16px 12px 12px;
-  border: 1px solid var(--guestbook-border);
-  background:
-    var(--guestbook-stage-highlight),
-    var(--guestbook-stage-bg);
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--background-100) 76%, transparent),
-    inset 0 -24px 48px color-mix(in oklab, var(--background-100) 62%, transparent);
+  border: 1px solid var(--guestbook-stage-border);
+  background: var(--guestbook-stage-bg);
 `
 
-export const ChatFeed = styled.div`
+export const GuestbookFeed = styled(ScrollArea)`
   position: absolute;
   inset: 0;
-  min-height: 0;
-  /* 滚动由内部 VirtualScroll 容器负责 */
 `
 
 export const ChatRow = styled.div<{ $mine: boolean }>`
@@ -270,72 +247,13 @@ export const ChatRow = styled.div<{ $mine: boolean }>`
   gap: 9px;
 `
 
-export const ChatAvatar = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  border-radius: 10px;
-  background: var(--guestbook-avatar-bg);
-  color: var(--primary-color);
-  border: 1px solid color-mix(in oklab, var(--primary-color) 18%, transparent);
-  font-size: 0.82rem;
-  font-weight: 700;
-`
-
-export const ChatBubble = styled.div<{ $mine: boolean }>`
-  position: relative;
+/* 气泡语境下的宽度约束：窄屏给头像留出空间 */
+export const GuestbookCard = styled(MessageCard)`
   max-width: min(68%, 620px);
-  padding: 9px 11px 8px;
-  border-radius: ${({ $mine }) => ($mine ? '12px 2px 12px 12px' : '2px 12px 12px 12px')};
-  background: ${({ $mine }) =>
-    $mine ? 'var(--guestbook-bubble-mine-bg)' : 'var(--guestbook-bubble-other-bg)'};
-  color: var(--text-primary);
-  border: 1px solid
-    ${({ $mine }) =>
-      $mine ? 'var(--guestbook-bubble-mine-border)' : 'var(--guestbook-bubble-other-border)'};
-  box-shadow: var(--guestbook-shadow);
-
-  p {
-    margin: 5px 0 0;
-    font-size: 0.86rem;
-    line-height: 1.62;
-    overflow-wrap: anywhere;
-  }
 
   @media (max-width: 640px) {
     max-width: calc(100% - 44px);
   }
-`
-
-export const ChatMessageMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: 0.72rem;
-
-  span {
-    max-width: 10em;
-    overflow: hidden;
-    color: var(--text-primary);
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  time {
-    white-space: nowrap;
-  }
-`
-
-export const ChatStatus = styled.span<{ $tone?: 'error' }>`
-  display: inline-flex;
-  margin-top: 6px;
-  color: ${({ $tone }) => ($tone === 'error' ? 'var(--primary-color)' : 'var(--text-secondary)')};
-  font-size: 0.7rem;
 `
 
 /* ====== Floating Composer Bar ====== */
@@ -345,27 +263,20 @@ export const Composer = styled.form`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: -22px 8px 8px;
+  margin: 0 8px 8px;
   padding: 10px 10px 10px 16px;
-  border-radius: 14px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 26%, transparent);
-  background: color-mix(in oklab, var(--background-100) 94%, var(--background-200) 6%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.06),
-    0 0 0 1px var(--background-100);
+  border: none;
+  border-top: 1px dashed var(--guestbook-composer-divider);
+  border-radius: 0 0 12px 12px;
+  background: var(--guestbook-composer-bg);
   z-index: 2;
 
   &:focus-within {
-    border-color: color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
+    border-top-color: color-mix(in oklab, var(--primary-color) 55%, transparent);
   }
 
-  [data-color-scheme="dark"] & {
-    background: color-mix(in oklab, var(--background-100) 88%, var(--background-200) 12%);
-    box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.24),
-      0 0 0 1px color-mix(in oklab, var(--background-100) 80%, transparent);
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `
 
@@ -466,34 +377,34 @@ export const ComposerNicknameInput = styled.input`
 
 export const NewMessageBanner = styled.button`
   position: absolute;
-  bottom: 80px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 14px;
-  border-radius: 20px;
+  padding: 6px 14px;
+  border-radius: 99px;
   border: 1px solid color-mix(in oklab, var(--primary-color) 30%, var(--normal-300) 70%);
-  background: color-mix(in oklab, var(--background-100) 90%, var(--primary-color) 10%);
+  background: color-mix(in oklab, var(--background-100) 92%, var(--primary-color) 8%);
   color: var(--primary-color);
   font: inherit;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--normal-700) 14%, transparent);
   transition: background 180ms ease, border-color 180ms ease;
 
   &:hover {
-    background: color-mix(in oklab, var(--background-100) 80%, var(--primary-color) 20%);
+    background: color-mix(in oklab, var(--background-100) 82%, var(--primary-color) 18%);
     border-color: color-mix(in oklab, var(--primary-color) 50%, var(--normal-300) 50%);
   }
 
   [data-color-scheme='dark'] & {
     background: color-mix(in oklab, var(--background-100) 88%, var(--primary-color) 12%);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.24);
   }
 
   @media (prefers-reduced-motion: reduce) {

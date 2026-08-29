@@ -4,19 +4,23 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import Dialog from '@wuh.site/components/dialog'
 import { IconArrowRight } from '@wuh.site/components/icons'
-import VirtualScroll, { type VirtualScrollHandle } from '@wuh.site/components/virtual-scroll'
 import {
-  ChatAvatar,
-  ChatBubble,
-  ChatFeed,
-  ChatMessageMeta,
+  MessageAvatar,
+  MessageContent,
+  MessageMeta,
+  MessageName,
+  MessageStatus,
+  MessageTime,
+} from '@wuh.site/components/message-card'
+import {
   ChatRow,
-  ChatStatus,
   Composer,
   ComposerBadge,
   ComposerInput,
   ComposerNicknameInput,
   ComposerSend,
+  GuestbookCard,
+  GuestbookFeed,
   GuestbookFooter,
   GuestbookFooterLink,
   GuestbookStage,
@@ -91,7 +95,7 @@ export default function GuestbookBarrageDialog() {
   const [localMessages, setLocalMessages] = useState<GuestbookMessage[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [editingNickname, setEditingNickname] = useState(false)
-  const feedRef = useRef<VirtualScrollHandle>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
   const [atBottom, setAtBottom] = useState(true)
   const [hasNewWhileAway, setHasNewWhileAway] = useState(false)
   const [totalCount, setTotalCount] = useState<number | null>(null)
@@ -138,11 +142,41 @@ export default function GuestbookBarrageDialog() {
     }
   }, [])
 
+  const prefersReducedMotion = () =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const scrollToBottom = (behavior: ScrollBehavior) => {
+    const viewport = viewportRef.current
+    if (viewport) {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior })
+    }
+  }
+
+  // 视口滚动监听：距底 50px 内视为贴底，恢复贴底时清除新留言提示
+  useEffect(() => {
+    if (!open) return
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    const handleScroll = () => {
+      const isAtBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <= 50
+      setAtBottom(isAtBottom)
+      if (isAtBottom) setHasNewWhileAway(false)
+    }
+
+    viewport.addEventListener('scroll', handleScroll, { passive: true })
+    return () => viewport.removeEventListener('scroll', handleScroll)
+  }, [open])
+
+  // 首次填充 instant 定位底部；后续新消息在贴底时跟随，否则提示
   const prevChatLengthRef = useRef(0)
   useEffect(() => {
     const prev = prevChatLengthRef.current
     prevChatLengthRef.current = chatMessages.length
-    if (!atBottom && chatMessages.length > prev) {
+    if (chatMessages.length <= prev) return
+    if (atBottom) {
+      scrollToBottom(prev === 0 || prefersReducedMotion() ? 'instant' : 'smooth')
+    } else {
       setHasNewWhileAway(true)
     }
   }, [chatMessages.length, atBottom])
@@ -281,10 +315,7 @@ export default function GuestbookBarrageDialog() {
   }
 
   const handleScrollToBottom = () => {
-    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ? 'instant'
-      : 'smooth'
-    feedRef.current?.scrollToBottom(behavior as ScrollBehavior)
+    scrollToBottom(prefersReducedMotion() ? 'instant' : 'smooth')
     setHasNewWhileAway(false)
   }
 
@@ -324,61 +355,45 @@ export default function GuestbookBarrageDialog() {
       >
         <GuestbookWrapper>
           <GuestbookStage>
-            <ChatFeed>
+            <GuestbookFeed viewportRef={viewportRef} aria-label='留言列表'>
               {listError && (
                 <div role='alert' style={{ padding: '8px 18px', fontSize: '0.78rem', color: 'var(--primary-color)' }}>
                   {listError}
                 </div>
               )}
-              <VirtualScroll
-                ref={feedRef}
-                items={chatMessages}
-                initialTopMostItemIndex='LAST'
-                followOutput={(isAtBottom) => isAtBottom}
-                onAtBottomStateChange={(val) => {
-                  setAtBottom(val)
-                  if (val) setHasNewWhileAway(false)
-                }}
-                aria-label='留言列表'
-                renderItem={(item) => (
+              {loadingMessages ? (
+                <div style={{ color: 'var(--text-muted)', padding: '24px 18px', textAlign: 'center', fontSize: '0.82rem' }}>
+                  留言加载中...
+                </div>
+              ) : (
+                chatMessages.map((item) => (
                   <ChatRow key={item.id} $mine={Boolean(item.mine)} style={{ padding: '6px 18px' }}>
-                    <ChatAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</ChatAvatar>
-                    <ChatBubble $mine={Boolean(item.mine)}>
-                      <ChatMessageMeta>
-                        <span>{item.nickname}</span>
-                        <time>{item.time}</time>
-                      </ChatMessageMeta>
-                      <p>{item.content}</p>
-                      {item.status === 'sending' && <ChatStatus>发送中...</ChatStatus>}
-                      {item.status === 'sent' && <ChatStatus>已发送</ChatStatus>}
-                      {item.status === 'failed' && (
-                        <ChatStatus $tone='error'>{item.error || '发送失败'}</ChatStatus>
-                      )}
-                    </ChatBubble>
+                    <MessageAvatar aria-hidden='true'>{getAvatarText(item.nickname)}</MessageAvatar>
+                    <GuestbookCard $mine={Boolean(item.mine)}>
+                      <MessageMeta align={item.mine ? 'end' : 'start'}>
+                        <MessageName>{item.nickname}</MessageName>
+                        <MessageTime>{item.time}</MessageTime>
+                        {item.status === 'sending' && <MessageStatus>发送中...</MessageStatus>}
+                        {item.status === 'sent' && <MessageStatus>已发送</MessageStatus>}
+                        {item.status === 'failed' && (
+                          <MessageStatus $tone='error'>{item.error || '发送失败'}</MessageStatus>
+                        )}
+                      </MessageMeta>
+                      <MessageContent>{item.content}</MessageContent>
+                    </GuestbookCard>
                   </ChatRow>
-                )}
-                emptyContent={
-                  loadingMessages ? (
-                    <div style={{ color: 'var(--text-muted)', padding: '24px 18px', textAlign: 'center', fontSize: '0.82rem' }}>
-                      留言加载中...
-                    </div>
-                  ) : (
-                    <div style={{ color: 'var(--text-muted)', padding: '24px 18px', textAlign: 'center', fontSize: '0.82rem' }}>
-                      还没有留言，来发第一条吧。
-                    </div>
-                  )
-                }
-              />
-              {hasNewWhileAway && (
-                <NewMessageBanner
-                  type='button'
-                  aria-label='有新留言，跳到最新'
-                  onClick={handleScrollToBottom}
-                >
-                  有新留言 ↓
-                </NewMessageBanner>
+                ))
               )}
-            </ChatFeed>
+            </GuestbookFeed>
+            {hasNewWhileAway && (
+              <NewMessageBanner
+                type='button'
+                aria-label='有新留言，跳到最新'
+                onClick={handleScrollToBottom}
+              >
+                有新留言 ↓
+              </NewMessageBanner>
+            )}
           </GuestbookStage>
 
           <GuestbookFooter>

@@ -38,53 +38,6 @@ export const CommentList = styled.ul`
   gap: 16px;
 `
 
-export const CommentItem = styled.li`
-  padding: 16px 18px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 40%, transparent);
-  border-radius: 12px;
-  background: var(--background-100);
-  transition: border-color 180ms ease;
-
-  &:hover {
-    border-color: color-mix(in oklab, var(--primary-color) 20%, var(--normal-300) 80%);
-  }
-
-  [data-color-scheme='dark'] & {
-    border-color: color-mix(in oklab, var(--normal-600) 45%, transparent);
-    background: color-mix(in oklab, var(--background-100) 90%, var(--background-200) 10%);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`
-
-export const CommentMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-`
-
-export const CommentNickname = styled.span`
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-primary);
-`
-
-export const CommentTime = styled.time`
-  font-size: 0.72rem;
-  color: var(--text-muted);
-`
-
-export const CommentContent = styled.p`
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.65;
-  color: var(--text-secondary);
-  overflow-wrap: anywhere;
-`
-
 export const EmptyState = styled.div`
   display: flex;
   flex-direction: column;
