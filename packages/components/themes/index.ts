@@ -1,5 +1,6 @@
 import { Tokens } from './tokens'
 import themeColors from './generator-color'
+export { BREAKPOINTS } from './breakpoints'
 export const DefaultTheme: Tokens = {
   colors: {
     primary: '#C94A44', // 酒红
@@ -17,16 +18,17 @@ export const DefaultTheme: Tokens = {
   warning: themeColors.warning,
   normal: themeColors.normal,
   background: themeColors.background,
+  // 大间距随视口收缩（窄屏收紧、桌面封顶原值），小间距保持固定
   spaces: {
     none: '0px',
     xs: '8px',
     sm: '16px',
     base: '12px',
-    md: '28px',
-    lg: '36px',
-    xl: '48px',
-    '2xl': '72px',
-    '3xl': '96px'
+    md: 'clamp(20px, 4vw, 28px)',
+    lg: 'clamp(24px, 5vw, 36px)',
+    xl: 'clamp(32px, 6vw, 48px)',
+    '2xl': 'clamp(48px, 8vw, 72px)',
+    '3xl': 'clamp(64px, 10vw, 96px)'
   },
   fontSizes: {
     none: '0px',

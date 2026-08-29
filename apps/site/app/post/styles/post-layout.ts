@@ -12,7 +12,7 @@ const scrollProgress = keyframes`
 export const Container = styled.div`
   max-width: 1100px;
   margin: 0 auto;
-  padding: clamp(40px, 5vw, 72px) 24px;
+  padding: clamp(24px, 5vw, 72px) clamp(16px, 4vw, 24px);
   color: var(--text-color);
   animation: contentEnter 0.25s ease-out;
 
