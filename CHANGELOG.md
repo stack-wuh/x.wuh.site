@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.0...v1.2.1) (2026-08-29)
+
+
+### Features
+
+* **site:** 优化博客详情继续阅读模块 ([916f2b7](https://github.com/stack-wuh/x.wuh.site/commit/916f2b7ac46ee29a720b660515ed37009ac08263))
+* **site:** 留言板信笺风改造，引入 scroll-area 与 message-card 组件 ([#344](https://github.com/stack-wuh/x.wuh.site/issues/344)) ([1478927](https://github.com/stack-wuh/x.wuh.site/commit/14789276d4f138a12ab050eb2808c2f402095a25))
+
 ## [1.2.0](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.9...v1.2.0) (2026-08-29)
 
 
