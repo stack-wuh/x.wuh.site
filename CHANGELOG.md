@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.9...v1.2.0) (2026-08-29)
+
+
+### Features
+
+* **site:** 响应式间距与行高体系，断点语义化 + 详情页移动端收紧 ([#343](https://github.com/stack-wuh/x.wuh.site/issues/343)) ([fc131af](https://github.com/stack-wuh/x.wuh.site/commit/fc131af1385a5929e1cb6ddc1ad08a63795a56cd)), closes [#342](https://github.com/stack-wuh/x.wuh.site/issues/342)
+
 ### [1.1.9](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.8...v1.1.9) (2026-08-29)
 
 
