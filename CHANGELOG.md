@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.7](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.6...v1.1.7) (2026-08-29)
+
+
+### Features
+
+* **site:** 系统级自定义滚动条，主题色细条统一各浏览器 ([#339](https://github.com/stack-wuh/x.wuh.site/issues/339)) ([b2cd717](https://github.com/stack-wuh/x.wuh.site/commit/b2cd717fe04a2bc41b940ae225fac20ee331a5b1)), closes [#A87348](https://github.com/stack-wuh/x.wuh.site/issues/A87348) [#E36A64](https://github.com/stack-wuh/x.wuh.site/issues/E36A64) [#338](https://github.com/stack-wuh/x.wuh.site/issues/338)
+
 ### [1.1.6](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.5...v1.1.6) (2026-08-28)
 
 
