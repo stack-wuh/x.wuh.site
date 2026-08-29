@@ -4,7 +4,7 @@
   "name": "20260829-feature-responsive-spacing",
   "type": "feature",
   "scope": "site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260829-feature-responsive-spacing",
   "files": [
@@ -19,17 +19,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 342,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/342",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 343,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/343"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "429278b661eebbdf8d7f9bbef30d20b9bc23c4c1",
+    "verifiedCommit": "fc131af1385a5929e1cb6ddc1ad08a63795a56cd",
     "verifiedAt": "2026-08-29T05:08:50.952Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:342",
+    "checkpoint": "merged-pr:343",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
