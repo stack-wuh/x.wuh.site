@@ -1,21 +1,22 @@
 ---
 title: 博客代码高亮
 domain: blog
-keywords: [代码高亮, 语法高亮, 服务端渲染, highlight.js, 主题适配, SSR]
+keywords: [代码高亮, 语法高亮, 服务端渲染, shiki, 双主题, 主题适配, SSR]
 scope:
   - packages/wuh.site.next/app/lib/markdown.ts
   - packages/wuh.site.next/app/post
 status: active
 source:
   - changes/archive/20260510_B_blog-code-highlighting/brief.md
-verified: 2026-08-08
+  - changes/20260830-P-shiki-highlighting/brief.md
+verified: 2026-08-30
 ---
 
 # 博客代码高亮
 
 ## 当前结论
 
-代码块语法高亮在服务端完成，不再依赖客户端 CDN 加载 highlight.js。高亮样式需适配当前站点的亮色与暗色主题。同时确保代码块现有功能（行号、语言标签等）在迁移后不受影响。
+代码块语法高亮在服务端完成，使用 Shiki（`@shikijs/rehype`，TextMate 语法，VS Code 同款），双主题 `github-light` / `github-dark`，`defaultColor: false` 输出 `--shiki-light` / `--shiki-dark` / `--shiki-light-bg` / `--shiki-dark-bg` 变量。双主题切换用 `[data-color-scheme="dark"] &` 选择器（跟随站点主题，而非系统 `prefers-color-scheme`）。代码块背景用项目主题 `--atom-pre-bg`，仅 token 字色用 Shiki 高亮。复制按钮为独立 DOM 功能（读 `pre code` 文本），迁移不受影响。
 
 ## 执行约束
 
