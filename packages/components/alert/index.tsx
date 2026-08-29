@@ -176,7 +176,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
               </MetaLabelIcon>
               开源许可:
             </MetaLabel>
-            <MetaValue title={typeof resolvedLicense === 'string' ? resolvedLicense : undefined}>{resolvedLicense}</MetaValue>
+            <MetaValue $wrap title={typeof resolvedLicense === 'string' ? resolvedLicense : undefined}>{resolvedLicense}</MetaValue>
           </MetaItem>
         ) : null}
 

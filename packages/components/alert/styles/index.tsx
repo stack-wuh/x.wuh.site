@@ -206,14 +206,14 @@ export const MetaLabel = styled.dt`
   flex: 0 0 auto;
 `
 
-export const MetaValue = styled.dd`
+export const MetaValue = styled.dd<{ $wrap?: boolean }>`
   margin: 0;
   font-size: var(--font-size-sm);
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: ${(props) => (props.$wrap ? 'normal' : 'nowrap')};
+  overflow: ${(props) => (props.$wrap ? 'visible' : 'hidden')};
+  text-overflow: ${(props) => (props.$wrap ? 'clip' : 'ellipsis')};
   min-width: 0;
   flex: 1 1 auto;
 `
