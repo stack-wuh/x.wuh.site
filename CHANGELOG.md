@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.9](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.8...v1.1.9) (2026-08-29)
+
+
+### Bug Fixes
+
+* **site:** 首页改回 force-dynamic，修复构建期空数据烘焙 ([#341](https://github.com/stack-wuh/x.wuh.site/issues/341)) ([0f26f5f](https://github.com/stack-wuh/x.wuh.site/commit/0f26f5f7cc25a3b3a6f2d34c634263d6dc57a597)), closes [#340](https://github.com/stack-wuh/x.wuh.site/issues/340)
+
 ### [1.1.8](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.7...v1.1.8) (2026-08-29)
 
 ### [1.1.7](https://github.com/stack-wuh/x.wuh.site/compare/v1.1.6...v1.1.7) (2026-08-29)
