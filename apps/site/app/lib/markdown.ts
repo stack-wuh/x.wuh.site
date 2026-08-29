@@ -3,7 +3,7 @@ import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import rehypeHighlight from 'rehype-highlight'
+import rehypeShiki from '@shikijs/rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeStringify from 'rehype-stringify'
 
@@ -12,7 +12,10 @@ export async function renderMarkdown(md: string): Promise<string> {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeHighlight)
+    .use(rehypeShiki, {
+      themes: { light: 'github-light', dark: 'github-dark' },
+      defaultColor: false,
+    })
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, {
       behavior: 'append',

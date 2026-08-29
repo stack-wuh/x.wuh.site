@@ -7,36 +7,14 @@ export const MarkdownBody = styled.article`
   --atom-inline-border: color-mix(in oklab, var(--accent-color) 22%, transparent);
   --atom-pre-bg: color-mix(in oklab, var(--background-200) 85%, var(--normal-300) 15%);
   --atom-pre-border: color-mix(in oklab, var(--normal-300) 35%, transparent);
-  --code-color: var(--text-primary);
-  --code-keyword: var(--accent-color);
-  --code-string: #3b7c3b;
-  --code-comment: var(--text-secondary);
-  --code-function: #5a4e9e;
-  --code-number: #b35c1e;
-  --code-literal: #7a3e8c;
-  --code-type: #2d7a8c;
-  --code-title: var(--text-primary);
-  --code-attr: #b3801e;
-  --code-tag: #2d5a8c;
 
-  @media (prefers-color-scheme: dark) {
+  [data-color-scheme="dark"] & {
     --github-border: color-mix(in oklab, var(--normal-600) 55%, transparent);
     --github-muted: var(--text-secondary);
     --atom-inline-bg: color-mix(in oklab, var(--accent-color) 14%, transparent);
     --atom-inline-border: color-mix(in oklab, var(--accent-color) 28%, transparent);
     --atom-pre-bg: #1a1a1a;
     --atom-pre-border: rgba(255, 255, 255, 0.06);
-    --code-color: #d4d4d4;
-    --code-keyword: #c678dd;
-    --code-string: #98c379;
-    --code-comment: #5c6370;
-    --code-function: #61afef;
-    --code-number: #d19a66;
-    --code-literal: #56b6c2;
-    --code-type: #e5c07b;
-    --code-title: #e06c75;
-    --code-attr: #e5c07b;
-    --code-tag: #e06c75;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -123,7 +101,6 @@ export const MarkdownBody = styled.article`
     padding: 0;
     border: none;
     display: block;
-    color: var(--code-color);
   }
 
   .copy-btn {
@@ -335,21 +312,19 @@ export const MarkdownBody = styled.article`
     font-weight: 600;
   }
 
-  .hljs { background: transparent; color: var(--code-color); }
-  .hljs-keyword, .hljs-selector-tag, .hljs-deletion { color: var(--code-keyword); }
-  .hljs-string, .hljs-addition { color: var(--code-string); }
-  .hljs-comment, .hljs-quote { color: var(--code-comment); font-style: italic; }
-  .hljs-function, .hljs-title.function_ { color: var(--code-function); }
-  .hljs-number, .hljs-meta .hljs-string { color: var(--code-number); }
-  .hljs-literal, .hljs-variable.language_ { color: var(--code-literal); }
-  .hljs-type, .hljs-built_in { color: var(--code-type); }
-  .hljs-title { color: var(--code-title); }
-  .hljs-attr, .hljs-variable, .hljs-template-variable, .hljs-selector-attr, .hljs-selector-pseudo { color: var(--code-attr); }
-  .hljs-tag, .hljs-selector-class { color: var(--code-tag); }
-  .hljs-symbol, .hljs-bullet, .hljs-link, .hljs-meta { color: var(--accent-color); }
-  .hljs-section, .hljs-name { color: var(--accent-color); }
-  .hljs-emphasis { font-style: italic; }
-  .hljs-strong { font-weight: bold; }
+  .shiki {
+    background-color: var(--atom-pre-bg);
+  }
+
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light, inherit);
+  }
+
+  [data-color-scheme="dark"] & .shiki,
+  [data-color-scheme="dark"] & .shiki span {
+    color: var(--shiki-dark, inherit);
+  }
 `
 
 export const UpdateDivider = styled.div`
