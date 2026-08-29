@@ -39,7 +39,7 @@ test('post page redirects non-canonical paths permanently', () => {
 
 test('home page fetches data at runtime to avoid build-time empty cache', () => {
   assert.match(homePageSource, /export const dynamic = 'force-dynamic'/)
-  assert.match(homePageSource, /revalidate:\s*1800/)
+  assert.doesNotMatch(homePageSource, /revalidate:\s*\d+/)
 })
 
 test('sitemap uses the canonical slug URL', async () => {

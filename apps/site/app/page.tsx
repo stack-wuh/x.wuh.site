@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   },
 }
 
+// 首页数据必须在运行时获取：构建期预渲染（Docker build 无 nest 连接）会把
+// 失败的空数组烘焙进 ISR 缓存，导致部署后首页空数据
+export const dynamic = 'force-dynamic'
+
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
   number: item.number,
@@ -41,7 +45,6 @@ const mapContentToPost = (item: ContentItem): PostListItem => ({
 async function getFeaturedIssues(): Promise<PostListItem[]> {
   const { data, error } = await contentService.getPosts.server({
     query: { limit: '6', state: 'open' },
-    revalidate: 1800,
   })
   if (error) logHomeFetchError('featured posts', error)
   if (!data) return []
@@ -51,7 +54,6 @@ async function getFeaturedIssues(): Promise<PostListItem[]> {
 async function getYearlySummaries() {
   const { data, error } = await contentService.getPosts.server({
     query: { limit: '50', state: 'open' },
-    revalidate: 1800,
   })
   if (error) logHomeFetchError('yearly summaries', error)
   if (!data) return []

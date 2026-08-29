@@ -16,7 +16,8 @@ const [homePage, postPage, aboutPage, blogPage] = await Promise.all([
 test('首页首屏不等待非首屏数据', () => {
   assert.match(homePage, /getFeaturedIssues\(\)/)
   assert.doesNotMatch(homePage, /Promise\.all\(\[\s*getRepos\(\)/)
-  assert.match(homePage, /HomeView repos=\{\[\]\} posts=\{posts\}/)
+  assert.match(homePage, /repos=\{\[\]\}/)
+  assert.match(homePage, /posts=\{posts\}/)
 })
 
 test('文章详情首屏不等待相关文章', () => {
@@ -26,15 +27,18 @@ test('文章详情首屏不等待相关文章', () => {
 })
 
 test('首页非首屏数据在客户端加载', async () => {
-  const homeView = await readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8')
-  assert.match(homeView, /reposService\.getAll/)
-  assert.match(homeView, /contentService\.getPosts/)
-  assert.match(homeView, /wereadService\.getBooks/)
+  const [homeView, projectsSection, wereadSection] = await Promise.all([
+    readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8'),
+    readFile(resolve(appRoot, 'app/HomeView/ProjectsSection.tsx'), 'utf8'),
+    readFile(resolve(appRoot, 'app/HomeView/WereadSection.tsx'), 'utf8'),
+  ])
+  assert.doesNotMatch(homeView, /reposService|wereadService|contentService/)
+  assert.match(projectsSection, /reposService\.getAll/)
+  assert.match(wereadSection, /wereadService\.getBooks/)
 })
 
-test('首页年度总结映射 GitHub 创建时间到视图日期字段', async () => {
-  const homeView = await readFile(resolve(appRoot, 'app/HomeView/index.tsx'), 'utf8')
-  assert.match(homeView, /created_at:\s*item\.createdAtGitHub/)
+test('首页年度总结映射 GitHub 创建时间到视图日期字段', () => {
+  assert.match(homePage, /created_at:\s*item\.createdAtGitHub/)
 })
 
 test('AppProviders 引用的访问统计上报组件存在', async () => {
