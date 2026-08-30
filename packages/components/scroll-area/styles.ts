@@ -2,7 +2,7 @@ import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import styled from '@wuh.site/components/styled'
 
 /* shadcn ScrollArea 移植：10px 可点区域 + 透明 border + 1px padding，thumb 圆角胶囊。
-   信笺风主题化：thumb 中性暖棕半透明，hover 加深带主色调；data-state 控制 hover 浮现。 */
+   主题色联动：thumb 跟随 primary-color，hover 加深；data-state 控制 hover 浮现。 */
 
 export const ScrollAreaRoot = styled(ScrollAreaPrimitive.Root)`
   position: relative;
@@ -49,19 +49,18 @@ export const ScrollAreaThumb = styled(ScrollAreaPrimitive.ScrollAreaThumb)`
   position: relative;
   flex: 1;
   border-radius: 99px;
-  background: color-mix(in oklab, var(--normal-500) 42%, transparent);
+  background: color-mix(in oklab, var(--primary-color) 38%, transparent);
   transition: background-color 180ms ease;
 
-  &:hover,
-  [data-state='visible'] &:hover {
-    background: color-mix(in oklab, var(--primary-color) 40%, var(--normal-500) 60%);
+  &:hover {
+    background: color-mix(in oklab, var(--primary-color) 58%, transparent);
   }
 
   [data-color-scheme='dark'] & {
-    background: color-mix(in oklab, var(--normal-600) 45%, transparent);
+    background: color-mix(in oklab, var(--primary-color) 42%, transparent);
 
     &:hover {
-      background: color-mix(in oklab, var(--primary-color) 45%, var(--normal-600) 55%);
+      background: color-mix(in oklab, var(--primary-color) 62%, transparent);
     }
   }
 

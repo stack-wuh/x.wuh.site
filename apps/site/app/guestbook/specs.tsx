@@ -15,7 +15,7 @@ export type GuestbookResponse = {
     _id: string;
     externalId?: string;
     nickname: string;
-    content: string;
+    body: string;
     createdAt: string;
   }>;
   pagination: {

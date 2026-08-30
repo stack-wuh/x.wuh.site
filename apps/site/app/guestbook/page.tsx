@@ -50,7 +50,7 @@ export default async function GuestbookPage({
   const comments = data.data.map((item) => ({
     id: String(item.externalId || item._id),
     nickname: item.nickname,
-    content: item.content,
+    content: item.body,
     createdAt: item.createdAt,
   }));
 

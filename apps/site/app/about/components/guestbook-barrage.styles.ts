@@ -196,7 +196,7 @@ export const GuestbookWrapper = styled.div`
 
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   min-height: 0;
 
   [data-color-scheme="dark"] & {
@@ -227,6 +227,8 @@ export const GuestbookPanel = styled.section`
 
 export const GuestbookStage = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 320px;
   overflow: hidden;
@@ -236,8 +238,7 @@ export const GuestbookStage = styled.div`
 `
 
 export const GuestbookFeed = styled(ScrollArea)`
-  position: absolute;
-  inset: 0;
+  height: 100%;
 `
 
 export const ChatRow = styled.div<{ $mine: boolean }>`

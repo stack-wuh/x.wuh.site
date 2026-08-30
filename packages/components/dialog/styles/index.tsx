@@ -229,6 +229,9 @@ export const CloseButton = styled.button`
 
 export const DialogBody = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   padding: 12px 22px 18px;
   overflow-y: auto;
   color: inherit;
