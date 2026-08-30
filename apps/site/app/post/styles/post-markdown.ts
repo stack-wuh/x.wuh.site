@@ -82,6 +82,8 @@ export const MarkdownBody = styled.article`
     padding: 0.15em 0.45em;
     border-radius: 5px;
     border: 1px solid var(--atom-inline-border);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
   pre {

@@ -12,7 +12,7 @@ export const TitleText = styled.span`
   display: block;
   font-weight: 500;
   font-size: var(--font-size-base);
-  color: var(--text-primary);
+  color: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
