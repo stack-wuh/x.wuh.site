@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.5](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.4...v1.2.5) (2026-08-30)
+
+
+### Features
+
+* **site:** 代码高亮迁移到 Shiki 双主题 ([5950e1f](https://github.com/stack-wuh/x.wuh.site/commit/5950e1f01315158c3ef0d2ef80fe7a5fe30b32e4))
+
 ### [1.2.4](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.3...v1.2.4) (2026-08-29)
 
 
