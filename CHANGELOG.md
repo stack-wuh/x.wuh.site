@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.6](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.5...v1.2.6) (2026-08-30)
+
+
+### Bug Fixes
+
+* **site:** 更新提示线仅在文章真正编辑过时显示 ([d1ca820](https://github.com/stack-wuh/x.wuh.site/commit/d1ca8203ab165dde9760c7a58d39194e32fcd2ce))
+
 ### [1.2.5](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.4...v1.2.5) (2026-08-30)
 
 
