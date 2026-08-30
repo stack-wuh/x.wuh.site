@@ -41,6 +41,10 @@ export {
   EllipsisVertical as IconMore
 } from 'lucide-react'
 
+// Custom icons
+export { default as IconShare } from './share-image'
+export { default as IconArticle } from './article'
+
 // Status icons — from lucide-react
 export {
   Info as IconInfo,

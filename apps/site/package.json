@@ -18,7 +18,9 @@
     "@wuh.site/components": "workspace:^",
     "@wuh.site/core": "workspace:^",
     "ahooks": "3.7.1",
+    "html-to-image": "^1.11.13",
     "next": "16.3.2",
+    "qrcode": "^1.5.4",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "rehype-autolink-headings": "^7.1.0",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@ant-design/colors": "7.2.1",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "19.2.0",
     "@types/react-dom": "19.2.3",
     "baseline-browser-mapping": "^2.10.0",

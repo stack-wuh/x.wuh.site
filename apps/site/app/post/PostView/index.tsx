@@ -4,6 +4,8 @@ import message from '@wuh.site/components/message'
 import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
+import { IconShare, IconArticle } from '@wuh.site/components/icons'
+import { useDialog } from '@wuh.site/hooks/useDialog'
 
 import type { Issue, PostViewProps } from '../PostView.types'
 import { usePostImagePreview } from '../usePostImagePreview'
@@ -15,6 +17,8 @@ import PostToolbar from '../components/PostToolbar'
 import PostComments from '../components/PostComments'
 import RelatedPosts from '../components/RelatedPosts'
 import FloatingActions from '../components/FloatingActions'
+import ShareCard from '../components/ShareCard'
+import ArticleExporter from '../components/ArticleExporter'
 import { openSharePopup, openWechatShareWindow } from '../../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
@@ -159,6 +163,8 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
   const activeHeading = useHeadingObserver(tocResult.toc)
+  const shareCardDialog = useDialog()
+  const articleExportDialog = useDialog()
 
   const renderToc = (onNavigate?: () => void) => (
     <TocList>
@@ -201,7 +207,47 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
   const alertLabels = createAlertLabels(issue)
-  const shareItems = createShareItems(issue)
+  const shareItems: ShareItem[] = [
+    ...createShareItems(issue),
+    {
+      type: 'custom',
+      title: '分享图',
+      icon: <IconShare />,
+      onClick: shareCardDialog.openDialog,
+    },
+    {
+      type: 'custom',
+      title: '导出全文',
+      icon: <IconArticle />,
+      onClick: articleExportDialog.openDialog,
+    },
+  ]
+
+  const shareCardData = {
+    title: issue.title,
+    summary: issue.metadata?.summary ?? null,
+    cover: issue.metadata?.cover ?? null,
+    coverAlt: issue.metadata?.coverAlt ?? null,
+    authorName: issue.user?.userName?.trim() || issue.user?.login?.trim() || 'wuh.site',
+    authorAvatar: issue.user?.avatarUrl ?? null,
+    createdAt: issue.created_at,
+    labels: issue.labels.map((l) => ({ name: l.name, color: l.color ?? null })),
+    url: `https://wuh.site${buildPostUrl(issue.number)}`,
+    viewCount: issue.viewCount,
+    likeCount: issue.likeCount,
+  }
+
+  const articleExportData = {
+    title: issue.title,
+    summary: issue.metadata?.summary ?? null,
+    cover: issue.metadata?.cover ?? null,
+    coverAlt: issue.metadata?.coverAlt ?? null,
+    authorName: issue.user?.userName?.trim() || issue.user?.login?.trim() || 'wuh.site',
+    authorAvatar: issue.user?.avatarUrl ?? null,
+    createdAt: issue.created_at,
+    bodyHtml: issue.body_html ?? '',
+    url: `https://wuh.site${buildPostUrl(issue.number)}`,
+  }
 
   return (
     <Container ref={containerRef}>
@@ -269,6 +315,18 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               />
             </ShareCardInner>
           </ShareInfoCard>
+
+          <ShareCard
+            open={shareCardDialog.open}
+            onClose={shareCardDialog.closeDialog}
+            data={shareCardData}
+          />
+
+          <ArticleExporter
+            open={articleExportDialog.open}
+            onClose={articleExportDialog.closeDialog}
+            data={articleExportData}
+          />
 
           <PostComments issueNumber={issue.number} />
 
