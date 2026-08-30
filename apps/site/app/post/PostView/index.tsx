@@ -195,7 +195,8 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   }
 
   const updatedAt = issue.updated_at ?? issue.created_at
-  const updatedDate = updatedAt ? updatedAt.slice(0, 10) : null
+  const wasEdited = Boolean(issue.updated_at && issue.updated_at !== issue.created_at)
+  const updatedDate = wasEdited && issue.updated_at ? issue.updated_at.slice(0, 10) : null
   const { userName: updatedBy, userHomePage } = resolveUpdatedBy(issue)
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)

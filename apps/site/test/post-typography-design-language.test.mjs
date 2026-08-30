@@ -50,6 +50,7 @@ test('正文图片限高且保留既有内容视觉规范', () => {
   assert.match(img, /max-height: 340px/)
 })
 
-test('文章末尾带更新提示线', () => {
+test('更新提示线仅在文章真正编辑过时显示', () => {
+  assert.match(postView, /issue\.updated_at !== issue\.created_at/)
   assert.match(postView, /更新于/)
 })
