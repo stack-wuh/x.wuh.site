@@ -221,32 +221,11 @@ export const ColophonShareRow = styled.div`
   margin-top: var(--space-md);
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
 
+  /* 仅中和 SharedLinkGroup 自带的分区容器壳（上边距/内边距/上边框），按钮保留组件原生按钮组样式 */
   > div {
     margin-top: 0 !important;
     padding: 0 !important;
     border-top: none !important;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  button {
-    background: transparent !important;
-    border-color: var(--normal-400) !important;
-    border-radius: 999px !important;
-    color: var(--text-secondary);
-  }
-
-  button:hover {
-    color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    button {
-      transition: none;
-    }
   }
 `
