@@ -95,7 +95,6 @@ export const MarkdownBody = styled.article`
     font-size: 0.9em;
     position: relative;
     margin: 24px 0;
-    box-shadow: var(--elevation-soft);
   }
 
   pre code {
@@ -253,9 +252,8 @@ export const MarkdownBody = styled.article`
     height: auto;
     max-height: 340px;
     border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid color-mix(in oklab, var(--normal-400) 35%, transparent);
     background: var(--background-100);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   }
 
   img[data-preview-index] {

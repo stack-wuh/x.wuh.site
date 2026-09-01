@@ -1,4 +1,5 @@
 import styled, { keyframes } from '@wuh.site/components/styled'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 const scrollProgress = keyframes`
   from {
@@ -60,7 +61,7 @@ export const ContentGrid = styled.div`
   gap: 0;
   align-items: start;
 
-  @media (min-width: 1024px) {
+  @media (min-width: ${BREAKPOINTS.tablet}px) {
     grid-template-columns: minmax(0, 820px) 260px;
     gap: 24px;
     justify-content: center;

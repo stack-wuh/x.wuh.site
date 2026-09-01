@@ -1,100 +1,10 @@
 import styled from '@wuh.site/components/styled'
-import Card from '@wuh.site/components/card'
 import Empty from '@wuh.site/components/empty'
-
-export const ArticleCard = styled.section`
-  background: var(--background-100);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius-card);
-  padding: 32px;
-  color: var(--text-primary);
-  box-shadow:
-    var(--elevation-card),
-    inset 0 1px 0 rgba(255,255,255,0.5);
-  transition: box-shadow var(--transition-fast) ease, border-color var(--transition-fast) ease;
-
-  @media (max-width: 640px) {
-    padding: 20px;
-  }
-
-  &:hover {
-    border-color: color-mix(in oklab, var(--primary-color) 35%, rgba(0,0,0,0.06));
-    box-shadow:
-      var(--elevation-card-hover),
-      inset 0 1px 0 rgba(255,255,255,0.5);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 60%, transparent);
-    box-shadow:
-      var(--elevation-card),
-      inset 0 1px 0 rgba(255,255,255,0.03);
-
-    &:hover {
-      box-shadow:
-        var(--elevation-card-hover),
-        inset 0 1px 0 rgba(255,255,255,0.03);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`
-
-export const RedundantInfoCard = styled(Card)`
-  margin-top: var(--space-md);
-  width: 100%;
-  border-radius: var(--radius-card);
-  border-color: color-mix(in oklab, var(--primary-color) 12%, var(--normal-300) 88%);
-  background:
-    radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--primary-color) 7%, transparent), transparent 52%),
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--background-100) 97%, var(--primary-color) 3%),
-      var(--background-100)
-    );
-  box-shadow: none;
-`
-
-export const ShareInfoCard = styled(RedundantInfoCard)`
-  margin-top: var(--space-sm);
-`
-
-export const ShareCardInner = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-
-  > div {
-    margin-top: 0 !important;
-    padding: 0 !important;
-    border-top: none !important;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  button {
-    background: transparent !important;
-    border-color: var(--normal-300) !important;
-    border-radius: 4px !important;
-  }
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    button {
-      border-color: var(--normal-500) !important;
-    }
-  }
-`
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 export { MarkdownBody, UpdateDivider } from './post-markdown'
+
+const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 
 export const StatusEmpty = styled(Empty)`
   margin-bottom: var(--space-lg);
@@ -107,12 +17,6 @@ export const CommentPlaceholder = styled(Empty)`
 
 export const RelatedPostsSection = styled.section`
   margin-top: var(--space-xl);
-  padding: var(--space-lg);
-  border: 1px solid color-mix(in oklab, var(--primary-color) 12%, var(--normal-300));
-  border-radius: var(--radius-card);
-  background:
-    linear-gradient(135deg, color-mix(in oklab, var(--background-100) 98%, var(--primary-color) 2%), transparent),
-    color-mix(in oklab, var(--background-100) 96%, var(--background-200) 4%);
 
   > p {
     max-width: 32rem;
@@ -161,10 +65,6 @@ export const RelatedPostsSection = styled.section`
       background: var(--background-100);
     }
   }
-
-  @media (max-width: 640px) {
-    padding: var(--space-md);
-  }
 `
 
 export const RelatedPostsHeader = styled.div`
@@ -173,7 +73,7 @@ export const RelatedPostsHeader = styled.div`
   align-items: baseline;
   gap: var(--space-sm);
 
-  @media (max-width: 640px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     grid-template-columns: 1fr;
     gap: 2px;
   }
@@ -185,6 +85,7 @@ export const RelatedPostsHeading = styled.h2`
   font-family: var(--font-serif);
   font-size: var(--font-size-lg);
   font-weight: 500;
+  letter-spacing: 0.08em;
 `
 
 export const RelatedPostsCount = styled.span`
@@ -266,5 +167,65 @@ export const RelatedPostLink = styled.a`
     &:hover ${RelatedPostArrow} {
       transform: none;
     }
+  }
+`
+
+/** 文章页脚：版权 / 来源 / 分享 / 点赞 合一的居中仪式式收笔 */
+export const ArticleColophon = styled.footer`
+  margin-top: var(--space-xl);
+  padding: var(--space-lg) 0;
+  text-align: center;
+  border-top: 1px solid ${hairline};
+  border-bottom: 1px solid ${hairline};
+`
+
+export const ColophonOrnament = styled.div`
+  color: var(--accent-color);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  opacity: 0.85;
+`
+
+export const ColophonRule = styled.div`
+  width: 120px;
+  height: 1px;
+  margin: 10px auto 14px;
+  background: linear-gradient(90deg, transparent, ${hairline}, transparent);
+`
+
+export const ColophonLicense = styled.p`
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+`
+
+export const ColophonMeta = styled.p`
+  margin: 6px 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+
+  a {
+    color: var(--accent-color);
+    text-decoration: none;
+    border-bottom: 1px dashed color-mix(in oklab, var(--accent-color) 42%, transparent);
+    transition: border-color 0.2s ease;
+  }
+
+  a:hover {
+    border-bottom-style: solid;
+  }
+`
+
+export const ColophonShareRow = styled.div`
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: center;
+
+  /* 仅中和 SharedLinkGroup 自带的分区容器壳（上边距/内边距/上边框），按钮保留组件原生按钮组样式 */
+  > div {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    border-top: none !important;
   }
 `

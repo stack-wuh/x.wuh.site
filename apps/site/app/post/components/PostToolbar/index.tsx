@@ -2,59 +2,64 @@
 
 import Link from 'next/link'
 import type { AdjacentIssue } from '../../PostView.types'
-import { IconChevronLeft, IconChevronRight, IconBars } from '@wuh.site/components/icons'
+import { IconBars } from '@wuh.site/components/icons'
 import { buildPostUrl } from '../../../lib/slug'
-import { Toolbar } from '../../styles'
+import { Toolbar, ToolbarMeta, Spread, SpreadDivider, SpreadSide, SpreadLabel, SpreadTitle, SpreadArrow } from '../../styles'
 import type { PostToolbarProps } from './specs'
 
 const EMPTY_TEXT = '空空如也'
 
-const ToolbarLink = ({
-  direction,
-  targetIssue,
-}: {
-  direction: 'prev' | 'next'
-  targetIssue: AdjacentIssue | null
-}) => {
-  const className = `toolbar-link ${direction}`
-  const label = targetIssue?.title?.trim() || EMPTY_TEXT
-  const icon = direction === 'prev' ? <IconChevronLeft /> : <IconChevronRight />
+function SpreadSideLink({ direction, targetIssue }: { direction: 'prev' | 'next'; targetIssue: AdjacentIssue | null }) {
+  const label = direction === 'prev' ? '上一篇' : '下一篇'
+  const title = targetIssue?.title?.trim() || EMPTY_TEXT
+
+  const content =
+    direction === 'prev' ? (
+      <>
+        <SpreadArrow aria-hidden='true'>‹</SpreadArrow>
+        <SpreadLabel>{label}</SpreadLabel>
+        <SpreadTitle>{title}</SpreadTitle>
+      </>
+    ) : (
+      <>
+        <SpreadTitle>{title}</SpreadTitle>
+        <SpreadLabel>{label}</SpreadLabel>
+        <SpreadArrow aria-hidden='true'>›</SpreadArrow>
+      </>
+    )
 
   if (!targetIssue) {
     return (
-      <span className={className} aria-disabled='true'>
-        <span className='toolbar-icon'>{icon}</span>
-        <span className='toolbar-label'>{label}</span>
-      </span>
+      <SpreadSide as='span' $next={direction === 'next'} $disabled aria-disabled='true'>
+        {content}
+      </SpreadSide>
     )
   }
 
   return (
-    <Link className={className} href={buildPostUrl(targetIssue.number)} title={targetIssue.title}>
-      <span className='toolbar-icon'>{icon}</span>
-      <span className='toolbar-label'>{label}</span>
-    </Link>
+    <SpreadSide $next={direction === 'next'} href={buildPostUrl(targetIssue.number)} title={targetIssue.title}>
+      {content}
+    </SpreadSide>
   )
 }
 
 export default function PostToolbar({ prevIssue, nextIssue, total, position, currentNumber: _ }: PostToolbarProps) {
-  const hasBoth = prevIssue && nextIssue
   const showPosition = position != null && total != null && total > 0
 
   return (
-    <Toolbar>
-      <ToolbarLink direction='prev' targetIssue={prevIssue} />
-      <Link className='toolbar-back' href='/blog' title='所有博客'>
-        <IconBars />
-        <span>所有博客</span>
-      </Link>
-      <span className='toolbar-flow'>
-        {hasBoth && <span className='toolbar-flow-line' />}
-        {showPosition && (
-          <span className='toolbar-position'>第 {position} / {total} 篇</span>
-        )}
-      </span>
-      <ToolbarLink direction='next' targetIssue={nextIssue} />
+    <Toolbar aria-label='文章导航'>
+      <ToolbarMeta>
+        {showPosition && <span>第 {position} / {total} 篇</span>}
+        <Link href='/blog' title='所有博客'>
+          <IconBars />
+          <span>所有博客</span>
+        </Link>
+      </ToolbarMeta>
+      <Spread>
+        <SpreadSideLink direction='prev' targetIssue={prevIssue} />
+        <SpreadDivider aria-hidden='true' />
+        <SpreadSideLink direction='next' targetIssue={nextIssue} />
+      </Spread>
     </Toolbar>
   )
 }

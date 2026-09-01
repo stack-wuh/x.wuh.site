@@ -1,7 +1,6 @@
 'use client'
 
 import message from '@wuh.site/components/message'
-import Alert, { type AlertLabel, type AlertLink } from '@wuh.site/components/alert'
 import ImagePreview from '@wuh.site/components/image-preview'
 import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
 import { IconShare, IconArticle } from '@wuh.site/components/icons'
@@ -22,25 +21,25 @@ import ArticleExporter from '../components/ArticleExporter'
 import { openSharePopup, openWechatShareWindow } from '../../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
-import { buildTopicUrl } from '@/app/lib/topic-url'
 import {
-  ArticleCard,
   Container,
   ContentGrid,
   MainColumn,
   MarkdownBody,
   UpdateDivider,
   PostLead,
-  RedundantInfoCard,
-  ShareCardInner,
-  ShareInfoCard,
   StatusEmpty,
+  ArticleColophon,
+  ColophonOrnament,
+  ColophonRule,
+  ColophonLicense,
+  ColophonMeta,
+  ColophonShareRow,
   TocAside,
-  TocCard,
+  TocTitle,
   TocItemLink,
   TocList,
   TocMobile,
-  TocTitle,
 } from '../styles'
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
@@ -76,16 +75,7 @@ const toGithubIssuePathLabel = (url: string) => {
   }
 }
 
-const resolveUpdatedBy = (issue: Issue) => {
-  const login = issue.user?.login?.trim()
-  const userName = issue.user?.userName?.trim() || login || 'github.userName'
-  return {
-    userName,
-    userHomePage: login ? `https://github.com/${login}` : undefined,
-  }
-}
-
-const createProjectLink = (issue: Issue): AlertLink => {
+const createProjectLink = (issue: Issue): { label: string; href: string } => {
   const href = toGithubWebUrl(issue.repository_url).replace(/\/+$/, '')
   const repoName = href.replace('https://github.com/', '')
   return {
@@ -94,17 +84,10 @@ const createProjectLink = (issue: Issue): AlertLink => {
   }
 }
 
-const createSourceLink = (issue: Issue): AlertLink => ({
+const createSourceLink = (issue: Issue): { label: string; href: string } => ({
   label: toGithubIssuePathLabel(issue.html_url),
   href: issue.html_url,
 })
-
-const createAlertLabels = (issue: Issue): AlertLabel[] =>
-  issue.labels.map((label) => ({
-    name: label.name,
-    color: label.color,
-    href: buildTopicUrl(label.name),
-  }))
 
 const createShareItems = (issue: Issue): ShareItem[] => {
   const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
@@ -200,13 +183,10 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
     )
   }
 
-  const updatedAt = issue.updated_at ?? issue.created_at
   const wasEdited = Boolean(issue.updated_at && issue.updated_at !== issue.created_at)
   const updatedDate = wasEdited && issue.updated_at ? issue.updated_at.slice(0, 10) : null
-  const { userName: updatedBy, userHomePage } = resolveUpdatedBy(issue)
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
-  const alertLabels = createAlertLabels(issue)
   const shareItems: ShareItem[] = [
     ...createShareItems(issue),
     {
@@ -282,39 +262,31 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
             </TocMobile>
           )}
 
-          <ArticleCard>
-            <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
-            {updatedDate && <UpdateDivider>更新于 {updatedDate}</UpdateDivider>}
-          </ArticleCard>
+          <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
+          {updatedDate && <UpdateDivider>更新于 {updatedDate}</UpdateDivider>}
 
           <RelatedPosts number={issue.number} labels={issue.labels.map((label) => label.name)} />
 
           <ImagePreview {...previewProps} />
 
-          <RedundantInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
-            <Alert
-              framed={false}
-              showHeader={false}
-              updatedAt={updatedAt}
-              updatedBy={updatedBy}
-              updatedByLink={userHomePage}
-              sourceLink={sourceLink}
-              projectLink={projectLink}
-              labels={alertLabels}
-              license={COPYRIGHT_TEXT}
-            />
-          </RedundantInfoCard>
-
-          <ShareInfoCard variant='outlined' elevation={0} fullWidth padding='md'>
-            <ShareCardInner>
+          <ArticleColophon>
+            <ColophonOrnament aria-hidden='true'>◇</ColophonOrnament>
+            <ColophonRule aria-hidden='true' />
+            <ColophonLicense>{COPYRIGHT_TEXT}</ColophonLicense>
+            <ColophonMeta>
+              <a href={sourceLink.href} target='_blank' rel='noopener noreferrer'>{sourceLink.label}</a>
+              {' · '}
+              <a href={projectLink.href} target='_blank' rel='noopener noreferrer'>{projectLink.label}</a>
+            </ColophonMeta>
+            <ColophonShareRow>
               <SharedLinkGroup items={shareItems} label='' />
-              <FloatingActions
-                issueNumber={issue.number}
-                initialLikeCount={issue.likeCount ?? 0}
-                initialLiked={issue.liked ?? false}
-              />
-            </ShareCardInner>
-          </ShareInfoCard>
+            </ColophonShareRow>
+            <FloatingActions
+              issueNumber={issue.number}
+              initialLikeCount={issue.likeCount ?? 0}
+              initialLiked={issue.liked ?? false}
+            />
+          </ArticleColophon>
 
           <ShareCard
             open={shareCardDialog.open}
@@ -335,10 +307,8 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
         {tocResult.toc.length > 0 && (
           <TocAside aria-label='文章目录'>
-            <TocCard>
-              <TocTitle>目录</TocTitle>
-              {renderToc()}
-            </TocCard>
+            <TocTitle>目录</TocTitle>
+            {renderToc()}
           </TocAside>
         )}
       </ContentGrid>
