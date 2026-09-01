@@ -10,8 +10,8 @@
   "files": [],
   "github": {
     "repository": "stack-wuh/x.wuh.site",
-    "issue": null,
-    "issueUrl": null,
+    "issue": 346,
+    "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/346",
     "pullRequest": null,
     "pullRequestUrl": null
   },
@@ -22,7 +22,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "issue:346",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
