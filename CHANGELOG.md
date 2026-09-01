@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.4](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.3...v1.4.4) (2026-09-01)
+
+
+### Features
+
+* **styles refactor:** refactor Page post's styles layout ([2242968](https://github.com/stack-wuh/x.wuh.site/commit/2242968f4eaa9eeb076998ef1e677b4da1022709))
+
 ## [1.4.0](https://github.com/stack-wuh/x.wuh.site/compare/v1.2.7...v1.4.0) (2026-08-30)
 
 
