@@ -21,7 +21,6 @@ import ArticleExporter from '../components/ArticleExporter'
 import { openSharePopup, openWechatShareWindow } from '../../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
-import { buildTopicUrl } from '@/app/lib/topic-url'
 import {
   Container,
   ContentGrid,
