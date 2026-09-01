@@ -2,8 +2,6 @@
 
 import message from '@wuh.site/components/message'
 import ImagePreview from '@wuh.site/components/image-preview'
-import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
-import { IconShare, IconArticle } from '@wuh.site/components/icons'
 import { useDialog } from '@wuh.site/hooks/useDialog'
 
 import type { Issue, PostViewProps } from '../PostView.types'
@@ -35,12 +33,20 @@ import {
   ColophonLicense,
   ColophonMeta,
   ColophonShareRow,
+  SharePill,
   TocAside,
   TocTitle,
   TocItemLink,
   TocList,
   TocMobile,
 } from '../styles'
+
+type ShareAction = {
+  key: string
+  label: string
+  href?: string
+  onClick?: () => void
+}
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
 const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'
@@ -89,7 +95,7 @@ const createSourceLink = (issue: Issue): { label: string; href: string } => ({
   href: issue.html_url,
 })
 
-const createShareItems = (issue: Issue): ShareItem[] => {
+const createShareItems = (issue: Issue): ShareAction[] => {
   const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
   const shareTitle = issue.title?.trim() || 'wuh.site 文章'
   const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
@@ -102,33 +108,33 @@ const createShareItems = (issue: Issue): ShareItem[] => {
 
   return [
     {
-      type: 'wechat',
-      title: '分享到微信',
+      key: 'wechat',
+      label: '微信',
       onClick: () => openWechatShareWindow(siteUrl, shareTitle),
     },
     {
-      type: 'qq',
-      title: '分享到QQ',
+      key: 'qq',
+      label: 'QQ',
       onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
     },
     {
-      type: 'weibo',
-      title: '分享到微博',
+      key: 'weibo',
+      label: '微博',
       onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
     },
     {
-      type: 'twitter',
-      title: '分享到Twitter',
+      key: 'twitter',
+      label: 'Twitter',
       onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
     },
     {
-      type: 'email',
+      key: 'email',
+      label: '邮件',
       href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${siteUrl}`)}`,
-      title: '邮件分享',
     },
     {
-      type: 'link',
-      title: '复制链接',
+      key: 'link',
+      label: '复制链接',
       onClick: async () => {
         const success = await copyToClipboard(siteUrl)
         if (success) {
@@ -187,18 +193,16 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const updatedDate = wasEdited && issue.updated_at ? issue.updated_at.slice(0, 10) : null
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
-  const shareItems: ShareItem[] = [
+  const shareItems: ShareAction[] = [
     ...createShareItems(issue),
     {
-      type: 'custom',
-      title: '分享图',
-      icon: <IconShare />,
+      key: 'share-card',
+      label: '分享图',
       onClick: shareCardDialog.openDialog,
     },
     {
-      type: 'custom',
-      title: '导出全文',
-      icon: <IconArticle />,
+      key: 'export',
+      label: '导出全文',
       onClick: articleExportDialog.openDialog,
     },
   ]
@@ -279,7 +283,17 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               <a href={projectLink.href} target='_blank' rel='noopener noreferrer'>{projectLink.label}</a>
             </ColophonMeta>
             <ColophonShareRow>
-              <SharedLinkGroup items={shareItems} label='' />
+              {shareItems.map((item) =>
+                item.href ? (
+                  <SharePill key={item.key} as='a' href={item.href} target='_blank' rel='noopener noreferrer'>
+                    {item.label}
+                  </SharePill>
+                ) : (
+                  <SharePill key={item.key} type='button' onClick={item.onClick}>
+                    {item.label}
+                  </SharePill>
+                )
+              )}
             </ColophonShareRow>
             <FloatingActions
               issueNumber={issue.number}

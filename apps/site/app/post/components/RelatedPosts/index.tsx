@@ -8,10 +8,12 @@ import { selectRelatedPosts, type RelatedPost } from '../../../lib/related-posts
 import { buildPostUrl } from '../../../lib/slug'
 import {
   RelatedPostsSection, RelatedPostsHeader, RelatedPostsHeading, RelatedPostsCount,
-  RelatedPostLink, RelatedPostContent, RelatedPostTitle,
-  RelatedPostSummary, RelatedPostLabels, RelatedPostArrow,
+  RelatedPostLink, RelatedPostRow, RelatedPostMarker, RelatedPostBody, RelatedPostTitle,
+  RelatedPostSummary, RelatedPostLabels, RelatedPostLeader, RelatedPostArrow,
 } from '../../styles'
 import type { RelatedPostsProps } from './specs'
+
+const ENTRY_MARKERS = ['一', '二', '三'] as const
 
 export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
   const [posts, setPosts] = useState<RelatedPost[]>([])
@@ -51,18 +53,22 @@ export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
       </RelatedPostsHeader>
       <p>读罢意犹未尽，可循此间数条小径，再行一程。</p>
       <ul>
-        {posts.map((post) => {
+        {posts.map((post, index) => {
           const summary = post.summary?.trim()
           const sharedLabels = post.sharedLabels.slice(0, 2).join(' / ')
           return (
             <li key={post.number}>
               <RelatedPostLink href={buildPostUrl(post.number)} aria-label={`继续阅读：${post.title}`}>
-                <RelatedPostContent>
-                  <RelatedPostTitle>{post.title}</RelatedPostTitle>
-                  {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
-                  {sharedLabels && <RelatedPostLabels>线索 / {sharedLabels}</RelatedPostLabels>}
-                </RelatedPostContent>
-                <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>
+                <RelatedPostRow>
+                  <RelatedPostMarker aria-hidden='true'>{ENTRY_MARKERS[index] ?? index + 1}</RelatedPostMarker>
+                  <RelatedPostBody>
+                    <RelatedPostTitle>{post.title}</RelatedPostTitle>
+                    {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
+                    {sharedLabels && <RelatedPostLabels>线索 / {sharedLabels}</RelatedPostLabels>}
+                  </RelatedPostBody>
+                  <RelatedPostLeader aria-hidden='true' />
+                  <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>
+                </RelatedPostRow>
               </RelatedPostLink>
             </li>
           )
