@@ -91,57 +91,47 @@ const createSourceLink = (issue: Issue): { label: string; href: string } => ({
 })
 
 const createShareItems = (issue: Issue): ShareItem[] => {
-  // 分享链接一律在点击时构造：不渲染 <a href>、不在 DOM 中预置站内 URL，避免微信爬虫抓取
-  const getSiteUrl = () => `https://wuh.site${buildPostUrl(issue.number)}`
-  const getTitle = () => issue.title?.trim() || 'wuh.site 文章'
-  const getIntro = () => `我在 wuh.site 看到《${getTitle()}》，推荐给你看看`
+  const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
+  const shareTitle = issue.title?.trim() || 'wuh.site 文章'
+  const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
+  const encodedUrl = encodeURIComponent(siteUrl)
+  const encodedTitle = encodeURIComponent(shareTitle)
+  const encodedIntro = encodeURIComponent(shareIntro)
+  const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}&desc=${encodedIntro}&summary=&site=wuh.site`
+  const weiboShareUrl = `https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedIntro}`
+  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedIntro}&url=${encodedUrl}`
 
   return [
     {
       type: 'wechat',
       title: '分享到微信',
-      onClick: () => openWechatShareWindow(getSiteUrl(), getTitle()),
+      onClick: () => openWechatShareWindow(siteUrl, shareTitle),
     },
     {
       type: 'qq',
       title: '分享到QQ',
-      onClick: () => {
-        const url = encodeURIComponent(getSiteUrl())
-        const title = encodeURIComponent(getTitle())
-        const intro = encodeURIComponent(getIntro())
-        openSharePopup(`https://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}&desc=${intro}&summary=&site=wuh.site`, 'share-qq')
-      },
+      onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
     },
     {
       type: 'weibo',
       title: '分享到微博',
-      onClick: () => {
-        const url = encodeURIComponent(getSiteUrl())
-        const intro = encodeURIComponent(getIntro())
-        openSharePopup(`https://service.weibo.com/share/share.php?url=${url}&title=${intro}`, 'share-weibo')
-      },
+      onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
     },
     {
       type: 'twitter',
       title: '分享到Twitter',
-      onClick: () => {
-        const url = encodeURIComponent(getSiteUrl())
-        const intro = encodeURIComponent(getIntro())
-        openSharePopup(`https://twitter.com/intent/tweet?text=${intro}&url=${url}`, 'share-twitter')
-      },
+      onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
     },
     {
       type: 'email',
+      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${siteUrl}`)}`,
       title: '邮件分享',
-      onClick: () => {
-        window.location.href = `mailto:?subject=${encodeURIComponent(getTitle())}&body=${encodeURIComponent(`查看这篇文章：${getSiteUrl()}`)}`
-      },
     },
     {
       type: 'link',
       title: '复制链接',
       onClick: async () => {
-        const success = await copyToClipboard(getSiteUrl())
+        const success = await copyToClipboard(siteUrl)
         if (success) {
           message.success('链接已复制到剪贴板')
         } else {

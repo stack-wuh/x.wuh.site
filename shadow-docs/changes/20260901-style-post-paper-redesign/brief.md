@@ -30,12 +30,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "21934f46b6aa87a86d08ee81774737d57abc1237",
-    "verifiedAt": "2026-09-01T12:23:27.475Z"
+    "verifiedCommit": "f33a51886558215dda989d9284e67cb54a771675",
+    "verifiedAt": "2026-09-01T12:29:28.486Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "21934f46b6aa87a86d08ee81774737d57abc1237",
+    "checkpoint": "f33a51886558215dda989d9284e67cb54a771675",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -71,7 +71,7 @@
 - **理由:** 与「拾遗」「落款」「线索小径」既有文气语汇一脉相承；封面杂志卡作为唯一卡片反而更突出；气质方向与三处关键模式均由用户逐轮选定（目录竖线式 / 页脚居中仪式式 / 前后篇对开式）
 - **设计师定稿细则:** 点赞反馈改心脏图标单次跳动 800ms（废除循环脉冲光环与 scale 1.08）；表单与分享图标按钮保留极细边框控件形态（控件不是卡片）；评论标题衬线化与「拾遗」同人格；移动端目录为上下发丝线折叠条；「所有博客」入口与「第 N/M 篇」计数保留；滚动进度条保留
 - **响应式细则（三档断点契约）:** 仅使用 BREAKPOINTS 三个语义常量——移动端 `mobile: 640`(max)、超窄屏细分 `small: 520`(max)、桌面 `tablet: 1024`(min)；平板端（641–1023）无专属媒体查询，继承基础样式（单栏 + 折叠目录 + 桌面式封面）；现有 `post-header.ts` 的裸断点 767 废除，归并到 mobile 640（641–767 区间的封面由移动端出血式改为桌面式，与平板段统一）；对开式前后篇在 ≤640 叠为上下单列；不新增任何中间断点值
-- **分享反爬细则（验收反馈）:** 分享组的站内 URL 一律点击时构造——不渲染 `<a href>`（邮箱改 `onClick` + `window.location.href = mailto:…`），QQ/微博/Twitter 的分享跳转 URL 在回调体内拼装；页面 DOM 初始渲染不出现任何 `wuh.site` 分享链接，规避微信爬虫抓取加剧域名拦截；页脚「原文/项目」链接指向 github.com 不受此约束
+- **分享样式细则（验收反馈）:** 分享按钮回归 SharedLinkGroup 原生按钮组样式，仅中和组件分区容器壳（上边距/内边距/上边框）。曾按验收要求实现「分享链接点击时动态构造、去 a 标签」的反爬处理，用户确认 wuh.site 为自有域名、无需规避爬虫抓取，该处理已回退：恢复渲染期预构链接，邮箱分享保留 `<a href="mailto:…">` 形态
 - **明确不动:** 正文排版规范（post-markdown.ts 的字号/行高/标题层级/引用/列表/表格/分割线——唯二例外：`pre` 与正文 `img` 的 box-shadow 按零投影章程移除）、封面两分支渲染逻辑、Alert 元信息的内容与链接规则（页脚沿用其链接构造函数，站外链接保留 target=_blank + noopener）
 
 ## 任务
@@ -100,7 +100,7 @@
 ### Phase 5 验收反馈修订
 
 - [x] 分享按钮回归 SharedLinkGroup 原生按钮组样式（移除 ColophonShareRow 的按钮级覆盖，仅中和组件分区容器壳）— apps/site/app/post/styles/post-article.ts — 改动
-- [x] 分享链接去 a 标签改为点击时动态构造（邮箱 share 改 onClick + window.location，全组无 <a href>，DOM 与初始渲染均不出现站内分享 URL，规避微信爬虫抓取）— apps/site/app/post/PostView/index.tsx — 改动
+- [x] 分享链接动态构造（反爬处理）实施后经用户确认回退：wuh.site 为自有域名，无需规避爬虫；恢复渲染期预构链接与邮箱 `<a href>` 形态 — apps/site/app/post/PostView/index.tsx — 回退
 
 ## 结果
 
