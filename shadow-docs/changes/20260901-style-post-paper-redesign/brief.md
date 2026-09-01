@@ -30,12 +30,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "f33a51886558215dda989d9284e67cb54a771675",
-    "verifiedAt": "2026-09-01T12:29:28.486Z"
+    "verifiedCommit": "d789f13aeb0113ffa5f85906793f2899fb990a24",
+    "verifiedAt": "2026-09-01T12:32:43.034Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "f33a51886558215dda989d9284e67cb54a771675",
+    "checkpoint": "d789f13aeb0113ffa5f85906793f2899fb990a24",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
