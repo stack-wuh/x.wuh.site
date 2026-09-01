@@ -1,9 +1,12 @@
 import styled from '@wuh.site/components/styled'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+
+const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 
 export const TocAside = styled.aside`
   display: none;
 
-  @media (min-width: 1024px) {
+  @media (min-width: ${BREAKPOINTS.tablet}px) {
     display: block;
     position: sticky;
     top: 88px;
@@ -11,94 +14,112 @@ export const TocAside = styled.aside`
   }
 `
 
-export const TocCard = styled.div`
-  border-radius: var(--radius-card);
-  border: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
-  background: color-mix(in oklab, var(--background-100) 78%, transparent);
-  box-shadow: var(--elevation-soft);
-  padding: 16px 16px 12px;
-
-  @media (prefers-color-scheme: dark) {
-    border-color: color-mix(in oklab, var(--normal-700) 55%, transparent);
-  }
-`
-
 export const TocTitle = styled.div`
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--text-primary) 75%, transparent);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--text-secondary);
+  padding-bottom: 10px;
   margin-bottom: 10px;
+  border-bottom: 1px solid ${hairline};
 `
 
 export const TocList = styled.ul`
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
   padding: 0;
   margin: 0;
 `
 
 export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
+  position: relative;
   display: block;
   text-decoration: none;
-  color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'color-mix(in oklab, var(--text-primary) 84%, transparent)')};
-  font-size: 13px;
-  line-height: 1.5;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  background: ${({ $active }) => ($active ? 'color-mix(in oklab, var(--primary-color) 12%, transparent)' : 'transparent')};
-  margin-left: ${({ $depth }) => `${Math.min(2, Math.max(0, ($depth ?? 2) - 2)) * 10}px`};
-  transition: background var(--transition-fast) ease, border-color var(--transition-fast) ease, color var(--transition-fast) ease;
+  font-size: var(--font-size-xs);
+  line-height: 1.6;
+  padding: 5px 4px 5px 14px;
+  margin-left: ${({ $depth }) => `${Math.max(0, ($depth ?? 2) - 2) * 12}px`};
+  color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-secondary)')};
+  transition: color 180ms ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+    transition: height 200ms ease;
+  }
+
+  ${({ $active }) => ($active ? '&::before { height: 14px; }' : '')}
 
   &:hover {
     color: var(--text-primary);
-    background: color-mix(in oklab, var(--background-200) 80%, transparent);
-    border-color: color-mix(in oklab, var(--primary-color) 18%, transparent);
   }
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
     outline-offset: 2px;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
 `
 
 export const TocMobile = styled.details`
   margin: 0 0 var(--space-md);
-  border-radius: var(--radius-card);
-  border: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
-  background: color-mix(in oklab, var(--background-100) 78%, transparent);
-  box-shadow: var(--elevation-soft);
-  overflow: hidden;
+  border-top: 1px solid ${hairline};
+  border-bottom: 1px solid ${hairline};
 
-  @media (min-width: 1024px) {
+  @media (min-width: ${BREAKPOINTS.tablet}px) {
     display: none;
   }
 
   summary {
     list-style: none;
     cursor: pointer;
-    padding: 14px 16px;
+    padding: 12px 2px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    color: var(--text-secondary);
   }
 
   summary::-webkit-details-marker {
     display: none;
   }
 
-  &[open] summary {
-    border-bottom: 1px solid color-mix(in oklab, rgba(0,0,0,0.06) 85%, transparent);
+  summary > span {
+    letter-spacing: 0;
+    transition: transform 200ms ease;
+  }
+
+  &[open] summary > span {
+    transform: rotate(180deg);
   }
 
   .toc-body {
-    padding: 10px 10px 12px;
+    padding: 4px 2px 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    summary > span {
+      transition: none;
+    }
   }
 `

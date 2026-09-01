@@ -1,4 +1,5 @@
 import styled, { css } from '@wuh.site/components/styled'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 export const Header = styled.header`
   display: flex;
@@ -7,7 +8,7 @@ export const Header = styled.header`
   margin-bottom: var(--space-xl);
   order: 1;
 
-  @media (max-width: 767px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     order: 2;
   }
 `
@@ -60,7 +61,7 @@ const coverShell = css`
     to { opacity: 1; transform: scale(1); }
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     --post-cover-radius: 0;
     width: calc(100% + 48px);
     height: clamp(220px, 60vw, 300px);

@@ -2,22 +2,28 @@
 
 import styled from '@wuh.site/components/styled'
 
+const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
+
 export const Wrapper = styled.div`
   margin-top: var(--space-xl);
 `
 
 export const CommentsHeader = styled.h3`
+  font-family: var(--font-serif);
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   color: var(--text-primary);
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-sm);
+  padding-bottom: 10px;
+  border-bottom: 1px solid ${hairline};
 `
 
 export const CommentItem = styled.div<{ $isGithub?: boolean }>`
   display: flex;
   gap: 12px;
   padding: 14px 0;
-  border-bottom: 1px solid color-mix(in oklab, var(--normal-300) 20%, transparent);
+  border-bottom: 1px solid ${hairline};
 
   &:last-child {
     border-bottom: none;
@@ -34,7 +40,7 @@ export const CommentAvatar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 700;
   color: var(--primary-color);
   border: 1px solid color-mix(in oklab, var(--primary-color) 18%, transparent);
@@ -80,7 +86,7 @@ export const CommentSource = styled.span`
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
   padding: 1px 6px;
   border-radius: 4px;
@@ -98,7 +104,7 @@ export const CommentText = styled.div`
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid ${hairline};
     background: var(--background-100);
   }
 `
@@ -107,7 +113,7 @@ export const CommentStatusBadge = styled.span<{ $status: string }>`
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   padding: 1px 6px;
   border-radius: 4px;
   color: ${({ $status }) =>
@@ -122,21 +128,17 @@ export const CommentStatusBadge = styled.span<{ $status: string }>`
 
 export const InputArea = styled.div`
   margin-top: var(--space-lg);
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 24%, transparent);
-  background: var(--background-100);
+  display: grid;
+  gap: 10px;
 `
 
-export const NicknameRow = styled.div`
-  margin-bottom: 10px;
-`
+export const NicknameRow = styled.div``
 
 export const NicknameInput = styled.input`
   width: 100%;
   max-width: 200px;
   padding: 8px 12px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 36%, transparent);
+  border: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
   border-radius: 8px;
   background: var(--background-200);
   color: var(--text-primary);
@@ -156,7 +158,7 @@ export const ContentTextarea = styled.textarea`
   width: 100%;
   min-height: 80px;
   padding: 10px 12px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 36%, transparent);
+  border: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
   border-radius: 8px;
   background: var(--background-200);
   color: var(--text-primary);

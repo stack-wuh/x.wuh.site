@@ -1,5 +1,6 @@
 import styled from '@wuh.site/components/styled'
 import Empty from '@wuh.site/components/empty'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 export { MarkdownBody, UpdateDivider } from './post-markdown'
 
@@ -72,7 +73,7 @@ export const RelatedPostsHeader = styled.div`
   align-items: baseline;
   gap: var(--space-sm);
 
-  @media (max-width: 640px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     grid-template-columns: 1fr;
     gap: 2px;
   }

@@ -9,11 +9,15 @@
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
     "apps/site/app/post/PostView/index.tsx",
+    "apps/site/app/post/components/FloatingActions/index.tsx",
     "apps/site/app/post/components/PostComments/styles/index.tsx",
     "apps/site/app/post/components/PostToolbar/index.tsx",
+    "apps/site/app/post/styles/index.ts",
     "apps/site/app/post/styles/post-article.ts",
     "apps/site/app/post/styles/post-floating.ts",
     "apps/site/app/post/styles/post-header.ts",
+    "apps/site/app/post/styles/post-layout.ts",
+    "apps/site/app/post/styles/post-markdown.ts",
     "apps/site/app/post/styles/post-toc.ts",
     "apps/site/app/post/styles/post-toolbar.ts"
   ],
@@ -67,30 +71,30 @@
 - **理由:** 与「拾遗」「落款」「线索小径」既有文气语汇一脉相承；封面杂志卡作为唯一卡片反而更突出；气质方向与三处关键模式均由用户逐轮选定（目录竖线式 / 页脚居中仪式式 / 前后篇对开式）
 - **设计师定稿细则:** 点赞反馈改心脏图标单次跳动 800ms（废除循环脉冲光环与 scale 1.08）；表单与分享图标按钮保留极细边框控件形态（控件不是卡片）；评论标题衬线化与「拾遗」同人格；移动端目录为上下发丝线折叠条；「所有博客」入口与「第 N/M 篇」计数保留；滚动进度条保留
 - **响应式细则（三档断点契约）:** 仅使用 BREAKPOINTS 三个语义常量——移动端 `mobile: 640`(max)、超窄屏细分 `small: 520`(max)、桌面 `tablet: 1024`(min)；平板端（641–1023）无专属媒体查询，继承基础样式（单栏 + 折叠目录 + 桌面式封面）；现有 `post-header.ts` 的裸断点 767 废除，归并到 mobile 640（641–767 区间的封面由移动端出血式改为桌面式，与平板段统一）；对开式前后篇在 ≤640 叠为上下单列；不新增任何中间断点值
-- **明确不动:** 正文排版规范（post-markdown.ts 的字号/行高/标题层级/引用/列表/表格/分割线）、封面两分支渲染逻辑、Alert 元信息的内容与链接规则
+- **明确不动:** 正文排版规范（post-markdown.ts 的字号/行高/标题层级/引用/列表/表格/分割线——唯二例外：`pre` 与正文 `img` 的 box-shadow 按零投影章程移除）、封面两分支渲染逻辑、Alert 元信息的内容与链接规则（页脚沿用其链接构造函数，站外链接保留 target=_blank + noopener）
 
 ## 任务
 
 ### Phase 1 主题适配修复（A 组）
 
-- [ ] 删除 4 处 prefers-color-scheme 暗色覆盖并 token 化，手动切主题即刻生效 — apps/site/app/post/styles/post-article.ts, post-toc.ts, post-toolbar.ts, post-floating.ts — 改动
+- [x] 删除 4 处 prefers-color-scheme 暗色覆盖并 token 化，手动切主题即刻生效 — apps/site/app/post/styles/post-article.ts, post-toc.ts, post-toolbar.ts, post-floating.ts — 改动
 
 ### Phase 2 纸面化（B/C/D 组）
 
-- [ ] 正文去卡：ArticleCard 删边框/底色/投影/hover，正文直接落纸面 — apps/site/app/post/styles/post-article.ts — 改动
-- [ ] 目录纸面化：侧栏去卡去投影、竖线式 active（3px 朱线 + 朱色文字）、移动端改上下发丝线折叠条 — apps/site/app/post/styles/post-toc.ts + PostView/index.tsx — 改动
-- [ ] 拾遗去渐变底与混色边框，保留线索小径竖线圆点，模块标题统一衬线字距 — apps/site/app/post/styles/post-article.ts — 改动
+- [x] 正文去卡：ArticleCard 删边框/底色/投影/hover，正文直接落纸面 — apps/site/app/post/styles/post-article.ts — 改动
+- [x] 目录纸面化：侧栏去卡去投影、竖线式 active（3px 朱线 + 朱色文字）、移动端改上下发丝线折叠条 — apps/site/app/post/styles/post-toc.ts + PostView/index.tsx — 改动
+- [x] 拾遗去渐变底与混色边框，保留线索小径竖线圆点，模块标题统一衬线字距 — apps/site/app/post/styles/post-article.ts — 改动
 
 ### Phase 3 结构合并（F 组）
 
-- [ ] 版权 + 分享 + 点赞三卡合并为居中仪式式文章页脚（圆环开场、双行居中：版权/原文/更新于 + 分享图标/点赞）— apps/site/app/post/PostView/index.tsx + styles/post-article.ts — 改动
-- [ ] 前后篇改对开式：两端对齐 + 中竖发丝线，删卡片/阴影/上浮/4px 竖线动画，保留所有博客入口与 N/M 计数 — apps/site/app/post/styles/post-toolbar.ts + components/PostToolbar/index.tsx — 改动
-- [ ] 评论区纸面化：标题衬线、条目发丝线分段、输入区去卡（控件细边框保留）— apps/site/app/post/components/PostComments/styles/index.tsx — 改动
+- [x] 版权 + 分享 + 点赞三卡合并为居中仪式式文章页脚（圆环开场、双行居中：版权/原文/更新于 + 分享图标/点赞）— apps/site/app/post/PostView/index.tsx + styles/post-article.ts — 改动
+- [x] 前后篇改对开式：两端对齐 + 中竖发丝线，删卡片/阴影/上浮/4px 竖线动画，保留所有博客入口与 N/M 计数 — apps/site/app/post/styles/post-toolbar.ts + components/PostToolbar/index.tsx — 改动
+- [x] 评论区纸面化：标题衬线、条目发丝线分段、输入区去卡（控件细边框保留）— apps/site/app/post/components/PostComments/styles/index.tsx — 改动
 
 ### Phase 4 节奏收敛与回归（E 组 + 验证）
 
-- [ ] 模块间距统一 space-xl 档、断点全部收敛到三档语义常量（520/640/1024，废除 post-header.ts 的裸断点 767）、裸字号 token 化 — apps/site/app/post/styles/* — 改动
-- [ ] 四主题 × 有无封面 × 移动端回归：手动切主题即时生效、h1 唯一、reduced-motion、TOC 锚点 — 验证
+- [x] 模块间距统一 space-xl 档、断点全部收敛到三档语义常量（520/640/1024，废除 post-header.ts 的裸断点 767）、裸字号 token 化 — apps/site/app/post/styles/* — 改动
+- [x] 四主题 × 有无封面 × 移动端回归：手动切主题即时生效、h1 唯一、reduced-motion、TOC 锚点 — 验证
 
 ## 结果
 
