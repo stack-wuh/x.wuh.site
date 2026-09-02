@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.7](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.6...v1.4.7) (2026-09-02)
+
 ### [1.4.4](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.3...v1.4.4) (2026-09-01)
 
 
