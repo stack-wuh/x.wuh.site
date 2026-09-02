@@ -1,24 +1,23 @@
-import styled, { keyframes } from '@wuh.site/components/styled'
+import styled from '@wuh.site/components/styled'
 import Button from '@wuh.site/components/button'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 /**
  * 返回首页/回到顶部/点赞 三钮组，两种形态：
- * - default：散点圆钮，与 SharedLinkGroup（SShareButton）同款组件语言——
- *   hover 上浮 1.08 + 脉冲光晕（文末）
- * - compact：连体分段紧凑组，段间发丝线，hover 只变色不位移（目录侧栏，
- *   位移会破坏连体形状）
- * 样式只经主题 token 适配明暗，禁止 prefers-color-scheme 直写（手动主题体系）。
+ * - default：散点圆钮（文末）
+ * - compact：连体分段紧凑组（目录侧栏工具列）
+ *
+ * 动画遵循站点动画规范（knowledge/animation-system.md）：hover 只做
+ * 颜色/背景过渡（--motion-dur-quick × --motion-ease-out-soft），组件内
+ * 不定义循环/闪烁关键帧；点赞 hover 用 filled 按钮同款 primary-600→800
+ * 主题渐变。明暗只用主题 token，禁止 prefers-color-scheme 直写。
  */
-const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 25%, transparent); }
-  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary-color) 12%, transparent); }
-  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 25%, transparent); }
-`
 
-const heartBeat = keyframes`
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+const hoverTransition = `
+  color var(--motion-dur-quick) var(--motion-ease-out-soft),
+  background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+  border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+  transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
@@ -32,7 +31,6 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  will-change: transform;
   outline: none;
 
   svg {
@@ -45,7 +43,6 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
     background: var(--background-300);
     border-color: var(--primary-color);
     color: var(--text-primary);
-    animation: ${pulse} 1s ease;
   }
 
   &:active:not(:disabled) {
@@ -56,9 +53,14 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
     box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
   }
 
+  transition: ${hoverTransition};
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-    animation: none;
+
+    &:hover:not(:disabled) {
+      transform: none;
+    }
   }
 
   ${({ $compact }) =>
@@ -76,7 +78,6 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
       background: var(--background-300);
       border: none;
       color: var(--primary-color);
-      animation: none;
     }
 
     &:active:not(:disabled) {
@@ -107,7 +108,7 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
   background: var(--background-200) !important;
   border-color: var(--primary-color) !important;
   color: var(--primary-color);
-  will-change: transform;
+  outline: none;
 
   svg {
     width: 1em;
@@ -126,20 +127,17 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     transform: translateY(0) scale(1.02);
   }
 
-  &:hover:not(:disabled) svg {
-    animation: ${heartBeat} 2s ease-in-out infinite;
-  }
-
   &:focus-visible {
     box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
   }
 
+  transition: ${hoverTransition}, box-shadow var(--motion-dur-quick) var(--motion-ease-out-soft);
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-    animation: none;
 
-    &:hover:not(:disabled) svg {
-      animation: none;
+    &:hover:not(:disabled) {
+      transform: none;
     }
   }
 
@@ -167,10 +165,6 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
       border: none;
       color: #fff;
       box-shadow: none;
-    }
-
-    &:hover:not(:disabled) svg {
-      animation: ${heartBeat} 2s ease-in-out infinite;
     }
 
     &:active:not(:disabled) {
