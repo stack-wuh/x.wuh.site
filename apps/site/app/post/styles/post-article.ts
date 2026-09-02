@@ -28,42 +28,9 @@ export const RelatedPostsSection = styled.section`
   }
 
   ul {
-    position: relative;
-    display: grid;
-    gap: var(--space-md);
     margin: 0;
-    padding: 0 0 0 var(--space-md);
+    padding: 0;
     list-style: none;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 4px;
-      top: 8px;
-      bottom: 18px;
-      width: 1px;
-      background: linear-gradient(
-        180deg,
-        color-mix(in oklab, var(--primary-color) 42%, transparent),
-        color-mix(in oklab, var(--accent-color) 24%, transparent)
-      );
-    }
-  }
-
-  li {
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: calc(0px - var(--space-md));
-      top: 9px;
-      width: 9px;
-      height: 9px;
-      border: 1px solid color-mix(in oklab, var(--primary-color) 55%, transparent);
-      border-radius: 50%;
-      background: var(--background-100);
-    }
   }
 `
 
@@ -94,53 +61,77 @@ export const RelatedPostsCount = styled.span`
   white-space: nowrap;
 `
 
-export const RelatedPostContent = styled.span`
-  display: grid;
+export const RelatedPostRow = styled.span`
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+`
+
+export const RelatedPostMarker = styled.span`
+  flex: none;
+  color: var(--accent-color);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+`
+
+export const RelatedPostBody = styled.span`
+  flex: 0 1 auto;
   min-width: 0;
-  gap: 5px;
 `
 
 export const RelatedPostTitle = styled.span`
+  display: -webkit-box;
   overflow: hidden;
   color: var(--text-primary);
   font-family: var(--font-serif);
   font-size: var(--font-size-base);
   font-weight: 500;
-  line-height: 1.55;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.7;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   transition: color 180ms ease;
 `
 
 export const RelatedPostSummary = styled.span`
   display: -webkit-box;
   overflow: hidden;
+  margin-top: 2px;
   color: var(--text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   line-height: 1.7;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 `
 
 export const RelatedPostLabels = styled.span`
+  display: block;
+  margin-top: 2px;
   color: var(--text-muted);
   font-size: var(--font-size-xs);
   line-height: 1.5;
 `
 
+export const RelatedPostLeader = styled.span`
+  flex: 1;
+  min-width: 28px;
+  align-self: baseline;
+  overflow: hidden;
+  border-bottom: 1px dotted color-mix(in oklab, var(--normal-400) 60%, transparent);
+  transform: translateY(-5px);
+  transition: border-color 180ms ease;
+`
+
 export const RelatedPostArrow = styled.span`
-  align-self: center;
+  flex: none;
   color: var(--text-muted);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   transition: color 180ms ease, transform 180ms ease;
 `
 
 export const RelatedPostLink = styled.a`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-sm);
-  min-height: 44px;
+  display: block;
+  padding: var(--space-xs) 0;
   color: var(--text-secondary);
   text-decoration: none;
 
@@ -153,6 +144,10 @@ export const RelatedPostLink = styled.a`
     transform: translateX(3px);
   }
 
+  &:hover ${RelatedPostLeader} {
+    border-bottom-color: color-mix(in oklab, var(--primary-color) 45%, transparent);
+  }
+
   &:focus-visible {
     outline: 2px solid color-mix(in srgb, var(--primary-color) 36%, transparent);
     outline-offset: 2px;
@@ -160,7 +155,8 @@ export const RelatedPostLink = styled.a`
 
   @media (prefers-reduced-motion: reduce) {
     ${RelatedPostTitle},
-    ${RelatedPostArrow} {
+    ${RelatedPostArrow},
+    ${RelatedPostLeader} {
       transition: none;
     }
 
@@ -223,3 +219,4 @@ export const ColophonMeta = styled.p`
     border-bottom-style: solid;
   }
 `
+
