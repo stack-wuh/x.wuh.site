@@ -4,7 +4,7 @@
   "name": "20260901-style-post-paper-redesign",
   "type": "style",
   "scope": "post",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
@@ -12,6 +12,8 @@
     "apps/site/app/post/components/FloatingActions/index.tsx",
     "apps/site/app/post/components/PostComments/styles/index.tsx",
     "apps/site/app/post/components/PostToolbar/index.tsx",
+    "apps/site/app/post/hooks/useToc.ts",
+    "apps/site/app/post/lib/articleTypography.ts",
     "apps/site/app/post/styles/index.ts",
     "apps/site/app/post/styles/post-article.ts",
     "apps/site/app/post/styles/post-floating.ts",
@@ -19,7 +21,8 @@
     "apps/site/app/post/styles/post-layout.ts",
     "apps/site/app/post/styles/post-markdown.ts",
     "apps/site/app/post/styles/post-toc.ts",
-    "apps/site/app/post/styles/post-toolbar.ts"
+    "apps/site/app/post/styles/post-toolbar.ts",
+    "shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html"
   ],
   "github": {
     "repository": "stack-wuh/x.wuh.site",
@@ -29,13 +32,13 @@
     "pullRequestUrl": null
   },
   "review": {
-    "conclusion": "passed",
-    "verifiedCommit": "d789f13aeb0113ffa5f85906793f2899fb990a24",
-    "verifiedAt": "2026-09-01T12:32:43.034Z"
+    "conclusion": "pending",
+    "verifiedCommit": null,
+    "verifiedAt": null
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "d789f13aeb0113ffa5f85906793f2899fb990a24",
+    "checkpoint": "9a8a617ca55e4920c2ca835ade17fc75ada62c46",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -74,6 +77,35 @@
 - **分享样式细则（验收反馈）:** 分享按钮回归 SharedLinkGroup 原生按钮组样式，仅中和组件分区容器壳（上边距/内边距/上边框）。曾按验收要求实现「分享链接点击时动态构造、去 a 标签」的反爬处理，用户确认 wuh.site 为自有域名、无需规避爬虫抓取，该处理已回退：恢复渲染期预构链接，邮箱分享保留 `<a href="mailto:…">` 形态
 - **明确不动:** 正文排版规范（post-markdown.ts 的字号/行高/标题层级/引用/列表/表格/分割线——唯二例外：`pre` 与正文 `img` 的 box-shadow 按零投影章程移除）、封面两分支渲染逻辑、Alert 元信息的内容与链接规则（页脚沿用其链接构造函数，站外链接保留 target=_blank + noopener）
 
+## 第二轮：铅字工坊（正文排印升级 · 20260902 追加）
+
+### 动机
+
+第一轮纸面化验收后用户对样式仍不满意，四项痛点经确认全部命中：①平淡无记忆点（奶油底+衬线+细线是最"默认"的极简配方，◇落款几乎不可见）；②正文缺排印工艺（正文仅 14px/1.55、章节标题仅 18px，除字体外与普通网页文章无异）；③头部构图弱；④页脚主次不清。经四方向提案（铅字工坊/藏书票与朱印/书页框架/静水深流）用户选定「铅字工坊」，高保真原型 `prototype-v2.html`（真实 post/92 内容、明暗双主题、三断点）已由用户确认「非常好，有了一点特色了」。本轮把功夫下在阅读本身；头部与页脚的签名系统（藏书票/扉页）留待下一轮叠加。
+
+### 引用规范（第二轮）
+
+- knowledge/blog-detail.md
+  - 当前结论: 正文 14px/1.55、h2 18px 左侧 3px 竖线、引用块 2px 左竖线、链接/列表序号/表头线用 accent 色、表格 13px——本轮将整体更新这些结论（预期影响：更新，ship 时改写该卡并顺带修正其 scope 路径 packages/wuh.site.next → apps/site）
+  - 适用 scope: apps/site/app/post
+  - 约束: 对比度红线遵守——正文主色与背景 ≥ 4.5:1；链接改为 primary 色后以虚线下划线作为第二重可供性
+- knowledge/design-system.md
+  - 当前结论: 字体只用三个语义 token；断点只用 BREAKPOINTS 三档语义常量；颜色必须走主题变量
+  - 适用 scope: apps/site, packages/components/themes
+  - 约束: 平板端（641–1023）无专属媒体查询、继承桌面值（三档契约），第一轮已确立；本轮全部选择器只用 token，不引入裸色值/裸断点
+
+### 决策（第二轮）
+
+- **选型:** 铅字工坊——字号/行距/栏宽重排 + 首字下沉 + 章节记号 + 引文式样 + 对比度修复
+- **对比方案:** ①藏书票与朱印（头尾签名系统）——记忆点强但不解决阅读本身，留作下一轮叠加；②书页框架（扉页头部+滚动页眉）——动头部结构，本轮不做；③静水深流（只打磨）——不产生质变
+- **排印细则:** 正文 16px/1.92（移动 640 max 收敛为 15px/1.85；平板继承桌面值）；正文栏宽 820→700px（每行约 43 字）；h2 章 23px / h3 节 20px 衬线 700；标题行高 1.3→1.4；pre 13.5px/1.7；表格 14px
+- **章节记号细则:** h2/h3 注入「第N节 ──」朱砂眉线（自动编号 壹贰叁…拾贰，超出转阿拉伯数字）；显示层剥离作者手写的「一、」/「1.」编号前缀（仅正文标题与目录文本，heading id 与 DOM 锚点不变）；右侧目录条目同步渲染「壹 」朱砂序号
+- **首字下沉细则:** 正文第一个"以文字开头"的段落首字包 `.dropcap`（朱砂 3.35em 下沉两行）；纯图片段落、以标签/HTML 实体/非文字字符开头的段落跳过——保证任意文章不破版
+- **引文细则:** 去左竖线改上下双发丝线（accent 42%）+ 首尾「」朱砂引号，无底色
+- **对比度修复（缺陷）:** 正文链接、ol 序号由 accent 金（纸面上约 1.9:1）改 primary 朱砂；表头金色粗线改发丝线；新增 `::selection` 朱砂底纸色字
+- **实现形态:** 章节注入与首字下沉为纯字符串变换（`lib/articleTypography.ts`，正则、无 DOM 依赖），在 `useToc` 内 useMemo 同步执行——SSR 与客户端输出确定一致，无 hydration 风险
+- **明确不动（本轮）:** 头部构图、页脚信息架构、印章/藏书票（下一轮）；pre/img/hr/kbd/details/task-list 结构样式（仅字号行距随体系微调）；标题 h1 唯一性逻辑
+
 ## 任务
 
 ### Phase 1 主题适配修复（A 组）
@@ -102,6 +134,22 @@
 - [x] 分享按钮回归 SharedLinkGroup 原生按钮组样式（移除 ColophonShareRow 的按钮级覆盖，仅中和组件分区容器壳）— apps/site/app/post/styles/post-article.ts — 改动
 - [x] 分享链接动态构造（反爬处理）实施后经用户确认回退：wuh.site 为自有域名，无需规避爬虫；恢复渲染期预构链接与邮箱 `<a href>` 形态 — apps/site/app/post/PostView/index.tsx — 回退
 
+### Phase 6 铅字基座（第二轮）
+
+- [x] 正文排印重排：MarkdownBody 基准 16px/1.92、标题层级 700/1.4、p 三档字号、链接与 ol 序号改 --primary-color、引用块双发丝线+「」、表头发丝线、pre 13.5px/1.7、::selection、旧 h2 竖线删除 — apps/site/app/post/styles/post-markdown.ts — 改动
+- [x] 正文栏宽收敛 820→700px、栏距 24→36px — apps/site/app/post/styles/post-layout.ts — 改动
+- [x] 章节眉线（.sec-eyebrow + .stub）与首字下沉（.dropcap）样式、标题锚点改右上角绝对定位 — apps/site/app/post/styles/post-markdown.ts — 改动
+
+### Phase 7 章节系统（第二轮）
+
+- [x] 新增纯字符串变换：h2/h3 章节记号注入（第N节自动编号）、显示层剥离「一、/1.」编号前缀、首段首字下沉注入（跳过图片段/标签开头/实体/非文字字符） — apps/site/app/post/lib/articleTypography.ts — 新增
+- [x] useToc 接入变换（useMemo 同步、去 DOMParser effect）、TocItem 增加 num/shortNum、目录条目渲染朱砂序号 — apps/site/app/post/hooks/useToc.ts + apps/site/app/post/PostView/index.tsx + apps/site/app/post/styles/post-toc.ts + apps/site/app/post/styles/index.ts — 改动
+
+### Phase 8 验证（第二轮）
+
+- [x] tsc --noEmit 通过；node --experimental-strip-types 跑变换纯函数断言（编号剥离/锚点保留/图片段跳过/实体跳过/目录 sections） — 验证
+- [x] 残留扫描：无裸色值/裸断点/prefers-color-scheme 新增；与 prototype-v2 明暗双主题比对排印参数一致 — 验证
+
 ## 结果
 
 - 实际耗时: —
@@ -110,5 +158,5 @@
 ## 知识评估
 
 - **预期影响:** 更新
-- **候选卡片:** knowledge/blog-detail.md（容器语言章节重写为纸面化结论）
-- **理由:** 该卡当前结论描述的旧容器处理（卡片边界、目录 uppercase 标题、工具栏阴影）将被本次整体替换；design-system.md 不变（本次是其约束的执行而非修订）
+- **候选卡片:** knowledge/blog-detail.md（正文排印结论整体改写：16px/1.92 体系、章节记号、首字下沉、引文双发丝线、链接 primary 化；并修正卡片 scope 路径 packages/wuh.site.next → apps/site）
+- **理由:** 第一轮替换该卡的容器语言结论，第二轮再替换其排印规范结论；design-system.md 不变（三档断点/字体 token/颜色变量均为其约束的执行）
