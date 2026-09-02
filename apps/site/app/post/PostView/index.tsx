@@ -320,6 +320,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           )}
           <TocTools>
             <FloatingActions
+              variant='compact'
               issueNumber={issue.number}
               initialLikeCount={issue.likeCount ?? 0}
               initialLiked={issue.liked ?? false}
