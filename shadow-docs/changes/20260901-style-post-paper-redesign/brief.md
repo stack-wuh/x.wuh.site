@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "863d50c7f574b0492c88ff5bb51d06fd20368f4a",
-    "verifiedAt": "2026-09-02T02:57:38.652Z"
+    "verifiedCommit": "5c06034dfcef8fc893839a9e1fef37ac8d96f5b2",
+    "verifiedAt": "2026-09-02T03:09:00.752Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "df2edbe2dd1a3b0bb75a4491e6efcd7faa500784",
+    "checkpoint": "071df1a267c356df78efc047614d9d9daff61c0c",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -164,6 +164,8 @@
 - [x] tsc 通过；DOM 断言（aside sticky、tools 在侧栏内、文末 trio 桌面隐藏、双实例） — 验证
 - [x] compact 连体分段变体：FloatingActions 新增 variant='compact'（32px 连体胶囊、SegmentDivider 发丝分隔、hover 只变色不位移以保形），侧栏实例启用，文末保持 default 散点圆钮 — apps/site/app/post/components/FloatingActions/specs.tsx + index.tsx + apps/site/app/post/styles/post-floating.ts + styles/index.ts + PostView/index.tsx — 改动
 - [x] 原型同步 compact 变体；tsc 通过；连体组 DOM 断言（999 圆角、无 gap、5 段 120×33） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 验证
+- [x] compact 二次调整（验收反馈：宽度太小、点赞不醒目）：整组撑满侧栏宽（260×39）、图标段定宽 44px、点赞段 flex:1 主色实底白字（约 170px，最醒目），点赞前分隔线取消（以色块分界）；原型同步 — apps/site/app/post/styles/post-floating.ts + components/FloatingActions/index.tsx + prototype-v2.html — 改动
+- [x] tsc 通过；DOM 断言（组 260×39/999 圆角、图标段 44×2、点赞段 ~170px 朱砂底白字） — 验证
 
 ## 结果
 
