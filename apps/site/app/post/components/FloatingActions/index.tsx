@@ -3,14 +3,14 @@
 import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
-import { FloatingButtonGroup, FloatingButton, LikeButton } from '../../styles'
+import { FloatingButtonGroup, FloatingButton, LikeButton, SegmentDivider } from '../../styles'
 import type { FloatingActionsProps } from './specs'
 
-export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false }: FloatingActionsProps) {
+export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false, variant = 'default' }: FloatingActionsProps) {
+  const compact = variant === 'compact'
   const [liked, setLiked] = useState(initialLiked)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [loading, setLoading] = useState(false)
-  const [beat, setBeat] = useState(false)
 
   useEffect(() => {
     setLiked(initialLiked)
@@ -19,12 +19,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
   useEffect(() => {
     setLikeCount(initialLikeCount)
   }, [initialLikeCount])
-
-  useEffect(() => {
-    if (!beat) return
-    const timer = setTimeout(() => setBeat(false), 800)
-    return () => clearTimeout(timer)
-  }, [beat])
 
   const handleLike = useCallback(async () => {
     if (loading) return
@@ -35,7 +29,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
       if (data.liked) {
         setLiked(true)
         setLikeCount((c) => c + 1)
-        setBeat(true)
       } else {
         setLiked(false)
         setLikeCount((c) => Math.max(0, c - 1))
@@ -48,8 +41,9 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
   }, [issueNumber, loading])
 
   return (
-    <FloatingButtonGroup>
+    <FloatingButtonGroup $compact={compact}>
       <FloatingButton
+        $compact={compact}
         variant="outlined"
         color="secondary"
         size="small"
@@ -61,7 +55,9 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
           window.location.href = '/'
         }}
       />
+      {compact && <SegmentDivider aria-hidden='true' />}
       <FloatingButton
+        $compact={compact}
         variant="outlined"
         color="secondary"
         size="small"
@@ -74,6 +70,7 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         }}
       />
       <LikeButton
+        $compact={compact}
         variant="outlined"
         color="primary"
         size="small"
@@ -83,10 +80,14 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         title={liked ? '取消点赞' : '点赞'}
         onClick={handleLike}
         disabled={loading}
-        $beat={beat}
         style={liked ? { opacity: 0.8 } : undefined}
       >
         {liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}
+        {compact && !liked && (
+          <span className='like-hint' aria-hidden='true'>
+            点赞吧~
+          </span>
+        )}
       </LikeButton>
     </FloatingButtonGroup>
   )

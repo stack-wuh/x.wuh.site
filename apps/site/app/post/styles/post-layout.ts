@@ -62,8 +62,8 @@ export const ContentGrid = styled.div`
   align-items: start;
 
   @media (min-width: ${BREAKPOINTS.tablet}px) {
-    grid-template-columns: minmax(0, 820px) 260px;
-    gap: 24px;
+    grid-template-columns: minmax(0, 700px) 260px;
+    gap: 36px;
     justify-content: center;
   }
 `

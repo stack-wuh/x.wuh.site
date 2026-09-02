@@ -72,6 +72,11 @@ export const Spread = styled.div`
   align-items: center;
   margin-top: 12px;
 
+  /* 桌面端前后篇已移入目录侧栏（TocPrevNext），文末仅移动/平板保留 */
+  @media (min-width: ${BREAKPOINTS.tablet}px) {
+    display: none;
+  }
+
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     grid-template-columns: 1fr;
     gap: 0;

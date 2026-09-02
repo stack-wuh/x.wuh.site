@@ -4,7 +4,7 @@
   "name": "20260901-style-post-paper-redesign",
   "type": "style",
   "scope": "post",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
@@ -12,6 +12,8 @@
     "apps/site/app/post/components/FloatingActions/index.tsx",
     "apps/site/app/post/components/PostComments/styles/index.tsx",
     "apps/site/app/post/components/PostToolbar/index.tsx",
+    "apps/site/app/post/hooks/useToc.ts",
+    "apps/site/app/post/lib/articleTypography.ts",
     "apps/site/app/post/styles/index.ts",
     "apps/site/app/post/styles/post-article.ts",
     "apps/site/app/post/styles/post-floating.ts",
@@ -19,23 +21,26 @@
     "apps/site/app/post/styles/post-layout.ts",
     "apps/site/app/post/styles/post-markdown.ts",
     "apps/site/app/post/styles/post-toc.ts",
-    "apps/site/app/post/styles/post-toolbar.ts"
+    "apps/site/app/post/styles/post-toolbar.ts",
+    "shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html",
+    "shadow-docs/changes/20260901-style-post-paper-redesign/header-lab.html",
+    "shadow-docs/changes/20260901-style-post-paper-redesign/header-lab-c.html"
   ],
   "github": {
     "repository": "stack-wuh/x.wuh.site",
     "issue": 347,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/347",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 350,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/350"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d789f13aeb0113ffa5f85906793f2899fb990a24",
-    "verifiedAt": "2026-09-01T12:32:43.034Z"
+    "verifiedCommit": "673467018c6fc6b724b008d2af3e6a87f3e57c7a",
+    "verifiedAt": "2026-09-02T07:33:38.555Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "d789f13aeb0113ffa5f85906793f2899fb990a24",
+    "checkpoint": "pr:349",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -74,6 +79,49 @@
 - **分享样式细则（验收反馈）:** 分享按钮回归 SharedLinkGroup 原生按钮组样式，仅中和组件分区容器壳（上边距/内边距/上边框）。曾按验收要求实现「分享链接点击时动态构造、去 a 标签」的反爬处理，用户确认 wuh.site 为自有域名、无需规避爬虫抓取，该处理已回退：恢复渲染期预构链接，邮箱分享保留 `<a href="mailto:…">` 形态
 - **明确不动:** 正文排版规范（post-markdown.ts 的字号/行高/标题层级/引用/列表/表格/分割线——唯二例外：`pre` 与正文 `img` 的 box-shadow 按零投影章程移除）、封面两分支渲染逻辑、Alert 元信息的内容与链接规则（页脚沿用其链接构造函数，站外链接保留 target=_blank + noopener）
 
+## 第二轮：铅字工坊（正文排印升级 · 20260902 追加）
+
+### 动机
+
+第一轮纸面化验收后用户对样式仍不满意，四项痛点经确认全部命中：①平淡无记忆点（奶油底+衬线+细线是最"默认"的极简配方，◇落款几乎不可见）；②正文缺排印工艺（正文仅 14px/1.55、章节标题仅 18px，除字体外与普通网页文章无异）；③头部构图弱；④页脚主次不清。经四方向提案（铅字工坊/藏书票与朱印/书页框架/静水深流）用户选定「铅字工坊」，高保真原型 `prototype-v2.html`（真实 post/92 内容、明暗双主题、三断点）已由用户确认「非常好，有了一点特色了」。本轮把功夫下在阅读本身；头部与页脚的签名系统（藏书票/扉页）留待下一轮叠加。
+
+### 引用规范（第二轮）
+
+- knowledge/blog-detail.md
+  - 当前结论: 正文 14px/1.55、h2 18px 左侧 3px 竖线、引用块 2px 左竖线、链接/列表序号/表头线用 accent 色、表格 13px——本轮将整体更新这些结论（预期影响：更新，ship 时改写该卡并顺带修正其 scope 路径 packages/wuh.site.next → apps/site）
+  - 适用 scope: apps/site/app/post
+  - 约束: 对比度红线遵守——正文主色与背景 ≥ 4.5:1；链接改为 primary 色后以虚线下划线作为第二重可供性
+- knowledge/design-system.md
+  - 当前结论: 字体只用三个语义 token；断点只用 BREAKPOINTS 三档语义常量；颜色必须走主题变量
+  - 适用 scope: apps/site, packages/components/themes
+  - 约束: 平板端（641–1023）无专属媒体查询、继承桌面值（三档契约），第一轮已确立；本轮全部选择器只用 token，不引入裸色值/裸断点
+
+### 决策（第二轮）
+
+- **选型:** 铅字工坊——字号/行距/栏宽重排 + 首字下沉 + 章节记号 + 引文式样 + 对比度修复
+- **对比方案:** ①藏书票与朱印（头尾签名系统）——记忆点强但不解决阅读本身，留作下一轮叠加；②书页框架（扉页头部+滚动页眉）——动头部结构，本轮不做；③静水深流（只打磨）——不产生质变
+- **排印细则:** 正文 16px/1.92（移动 640 max 收敛为 15px/1.85；平板继承桌面值）；正文栏宽 820→700px（每行约 43 字）；h2 章 23px / h3 节 20px 衬线 700；标题行高 1.3→1.4；pre 13.5px/1.7；表格 14px
+- **章节记号细则:** h2/h3 注入「第N节 ──」朱砂眉线（自动编号 壹贰叁…拾贰，超出转阿拉伯数字）；显示层剥离作者手写的「一、」/「1.」编号前缀（仅正文标题与目录文本，heading id 与 DOM 锚点不变）；右侧目录条目同步渲染「壹 」朱砂序号
+- **首字下沉细则:** 正文第一个"以文字开头"的段落首字包 `.dropcap`（朱砂 3.35em 下沉两行）；纯图片段落、以标签/HTML 实体/非文字字符开头的段落跳过——保证任意文章不破版
+- **引文细则:** 去左竖线改上下双发丝线（accent 42%）+ 首尾「」朱砂引号，无底色
+- **对比度修复（缺陷）:** 正文链接、ol 序号由 accent 金（纸面上约 1.9:1）改 primary 朱砂；表头金色粗线改发丝线；新增 `::selection` 朱砂底纸色字
+- **实现形态:** 章节注入与首字下沉为纯字符串变换（`lib/articleTypography.ts`，正则、无 DOM 依赖），在 `useToc` 内 useMemo 同步执行——SSR 与客户端输出确定一致，无 hydration 风险
+- **明确不动（本轮）:** 头部构图、页脚信息架构、印章/藏书票（下一轮）；pre/img/hr/kbd/details/task-list 结构样式（仅字号行距随体系微调）；标题 h1 唯一性逻辑
+- **验收裁定（组件语言优先 · 20260902 验收反馈）:** 第一轮把三钮组（返回首页/回到顶部/点赞）磨平为"只变色 hover"、并把分享组中和了 SharedLinkGroup 的容器壳，用户验收判定偏离站点组件语言（SShareButton 原生即"上浮 1.08 + 脉冲光晕"hover）。裁定：详情页按钮完全回归组件语言——三钮组恢复原始样式（上浮脉冲 hover、点赞胶囊实线朱砂边 + hover 心跳循环），分享组完全复用 SharedLinkGroup 默认形态（分区壳 + 「分享到」标签 + 圆形图标钮），不再中和其容器样式。「文气书卷」的 hover 只变色约束今后仅约束页面自定义元素，不约束组件复用。恢复时**不恢复** prefers-color-scheme 直写（第一轮 A 组主题修复保持有效），明暗适配走主题 token 自动切换
+
+## 第三轮：页头注记式重设计（20260902 追加）
+
+### 动机（第三轮）
+
+用户质疑页头设计「真的好吗」。诊断确认现行页头是整页唯一未跟上铅字工坊语言的区域，四缺陷：标题只是"大"没有卷首仪式（正文有章节记号，头部无开场符号）、meta 三种性质信息（人物/时间/统计）同样式等权排开无层级、标签 999px 圆角胶囊属 web 组件语言与排印语言冲突、头部与封面无构成关系无收尾符号。
+
+### 决策（第三轮）
+
+- **探索路径:** 先产出三方向对比原型 `header-lab.html`（A 题签页·居中卷首 / B 刊头·右缘竖排日期+粗细双规线 / C 注记式·meta 上移大字左对齐），用户选定 C；再产出 C 方向三延伸变体 `header-lab-c.html`（C1 眉批式·汉字日期+宽字距 / C2 篇号入规·收尾符嵌「第 92 篇」与正文「第壹节」编号呼应 / C3 双列单行·meta 左+方角签右），用户定稿 **C3**
+- **页头 C3 细则:** 辅助信息双列单行两端对齐（meta 行靠左：作者 500 字重·间隔点·日期·阅读数；标签组靠右）；标题 clamp(28px, 5.4vw, 40px) 衬线 700 做主角；朱砂短规 44×2px + 发丝线延伸收尾（头部收束符号，与正文章节 stub 同语言）；520 以下 toprow 折为上下两行
+- **书签标签细则（验收反馈）:** 标签由方角描边签改为书签样式——clip-path 底部燕尾缺口 `polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 6px), 0 100%)`、纸面底 background-200、顶部 2px 朱砂色带（::before）、padding 6/12/14 让文字避开缺口；hover 底色加深 background-300 + 字变朱砂 + translateY(2px)「抽书签」微暗示；过渡走 motion tokens，reduced-motion 降级
+- **明确不动（第三轮）:** 封面杂志卡（含无封面降级分支）、头部 order（移动端封面置顶）、篇号 eyebrow 方案（C2 落选未采用，篇号仍在侧栏 TocInfo 中呈现）
+
 ## 任务
 
 ### Phase 1 主题适配修复（A 组）
@@ -102,6 +150,66 @@
 - [x] 分享按钮回归 SharedLinkGroup 原生按钮组样式（移除 ColophonShareRow 的按钮级覆盖，仅中和组件分区容器壳）— apps/site/app/post/styles/post-article.ts — 改动
 - [x] 分享链接动态构造（反爬处理）实施后经用户确认回退：wuh.site 为自有域名，无需规避爬虫；恢复渲染期预构链接与邮箱 `<a href>` 形态 — apps/site/app/post/PostView/index.tsx — 回退
 
+### Phase 6 铅字基座（第二轮）
+
+- [x] 正文排印重排：MarkdownBody 基准 16px/1.92、标题层级 700/1.4、p 三档字号、链接与 ol 序号改 --primary-color、引用块双发丝线+「」、表头发丝线、pre 13.5px/1.7、::selection、旧 h2 竖线删除 — apps/site/app/post/styles/post-markdown.ts — 改动
+- [x] 正文栏宽收敛 820→700px、栏距 24→36px — apps/site/app/post/styles/post-layout.ts — 改动
+- [x] 章节眉线（.sec-eyebrow + .stub）与首字下沉（.dropcap）样式、标题锚点改右上角绝对定位 — apps/site/app/post/styles/post-markdown.ts — 改动
+
+### Phase 7 章节系统（第二轮）
+
+- [x] 新增纯字符串变换：h2/h3 章节记号注入（第N节自动编号）、显示层剥离「一、/1.」编号前缀、首段首字下沉注入（跳过图片段/标签开头/实体/非文字字符） — apps/site/app/post/lib/articleTypography.ts — 新增
+- [x] useToc 接入变换（useMemo 同步、去 DOMParser effect）、TocItem 增加 num/shortNum、目录条目渲染朱砂序号 — apps/site/app/post/hooks/useToc.ts + apps/site/app/post/PostView/index.tsx + apps/site/app/post/styles/post-toc.ts + apps/site/app/post/styles/index.ts — 改动
+
+### Phase 8 验证（第二轮）
+
+- [x] tsc --noEmit 通过；node --experimental-strip-types 跑变换纯函数断言（编号剥离/锚点保留/图片段跳过/实体跳过/目录 sections） — 验证
+- [x] 残留扫描：无裸色值/裸断点/prefers-color-scheme 新增；与 prototype-v2 明暗双主题比对排印参数一致 — 验证
+
+### Phase 9 验收反馈修订（第二轮 · 组件语言回归）
+
+- [x] 三钮组恢复站点组件语言：FloatingButton 恢复上浮 1.08 + 脉冲光晕 hover、LikeButton 恢复实线朱砂边胶囊 + hover 主色填充 + 心跳循环、FloatingActions 组件还原（去第一轮 $beat 单次心跳），保持 prefers-color-scheme 已移除状态，明暗走主题 token — apps/site/app/post/styles/post-floating.ts + apps/site/app/post/components/FloatingActions/index.tsx — 回退
+- [x] 分享组完全复用 SharedLinkGroup 组件默认形态：删除 ColophonShareRow 中和 hack 与导出，直接渲染组件（分区壳 + 「分享到」标签 + 圆形图标钮） — apps/site/app/post/PostView/index.tsx + apps/site/app/post/styles/post-article.ts + apps/site/app/post/styles/index.ts — 改动
+- [x] tsc 通过、残留扫描确认无 prefers-color-scheme 回归 — 验证
+
+### Phase 10 三钮组侧栏化（第二轮 · 验收讨论）
+
+- [x] 三钮组桌面端移入目录侧栏：TocAside 常驻渲染（无目录文章仅显示工具列，顺带解决其右侧全空）、目录与工具列之间发丝线分隔（TocTools）、TocAside 增加 max-height + overflow 防超长目录把工具列顶出视口；文末三钮包 ColophonTools 仅移动/平板显示（display:none 驱动，隐藏实例不进焦点树） — apps/site/app/post/styles/post-toc.ts + post-article.ts + styles/index.ts + PostView/index.tsx — 改动
+- [x] 原型同步：侧栏工具列 + 文末三钮桌面隐藏 + 点赞双实例绑定（.like-btn 类绑定，去重复 id） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] tsc 通过；DOM 断言（aside sticky、tools 在侧栏内、文末 trio 桌面隐藏、双实例） — 验证
+- [x] compact 连体分段变体：FloatingActions 新增 variant='compact'（32px 连体胶囊、SegmentDivider 发丝分隔、hover 只变色不位移以保形），侧栏实例启用，文末保持 default 散点圆钮 — apps/site/app/post/components/FloatingActions/specs.tsx + index.tsx + apps/site/app/post/styles/post-floating.ts + styles/index.ts + PostView/index.tsx — 改动
+- [x] 原型同步 compact 变体；tsc 通过；连体组 DOM 断言（999 圆角、无 gap、5 段 120×33） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 验证
+- [x] compact 二次调整（验收反馈：宽度太小、点赞不醒目）：整组撑满侧栏宽（260×39）、图标段定宽 44px、点赞段 flex:1 主色实底白字（约 170px，最醒目），点赞前分隔线取消（以色块分界）；原型同步 — apps/site/app/post/styles/post-floating.ts + components/FloatingActions/index.tsx + prototype-v2.html — 改动
+- [x] tsc 通过；DOM 断言（组 260×39/999 圆角、图标段 44×2、点赞段 ~170px 朱砂底白字） — 验证
+- [x] 验收反馈修正：点赞段内容居中——原型 .like-btn 补 justify-content:center（flex:1 撑开后内容靠左的根因），实现侧 LikeButton compact 显式声明；DOM 断言 leftGap=rightGap=70px 居中成立 — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
+- [x] 验收反馈：点赞 compact hover 不明显——改为 filter brightness(0.86) 加深（主题无关、不违token约束），保留心跳循环，去 opacity 发灰 — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
+- [x] 验收反馈：目录下方太空——侧栏补「前后篇迷你导航」（TocPrevNext，随时跳转不滚到文末，null 时显示已是最早/最新一篇）+「篇信息小注」（TocInfo：第 N/M 篇·发布·更新·约 N 分钟读完，正文长度/450 估算），发丝线分段与工具列同节奏；原型同步 — apps/site/app/post/styles/post-toc.ts + styles/index.ts + PostView/index.tsx + prototype-v2.html — 改动
+- [x] tsc 通过；原型 DOM 断言（aside 高 450px、pn 标题、info 3 行） — 验证
+- [x] 验收反馈二则修正：①点赞 compact hover 改为站点 filled hover 同款主题渐变 `linear-gradient(90deg, var(--primary-600), var(--primary-800))`（primary 尺度在 dark 主题方向反转，天然两主题成立；替换 brightness 方案），compact 基础态显式 background-color+background-image:none 压掉 Button 自带渐变，dark 下图标段 hover 换 normal-200（background-300 在暗色不可见）；②文末前后篇对开桌面端隐藏（Spread ≥tablet display:none——已在侧栏 TocPrevNext），移动/平板保留 — apps/site/app/post/styles/post-floating.ts + post-toolbar.ts + prototype-v2.html — 改动
+- [x] tsc 通过；DOM 断言（spread 桌面隐藏、primary-600 token 就位） — 验证
+- [x] 验收反馈：动画特效须符合站点动画规范（knowledge/animation-system.md）——删除三钮组组件内自定义关键帧 pulse（光晕）与 heartBeat（无限闪烁），hover 反馈只保留颜色/背景/边框过渡，时长缓动全部对齐 --motion-dur-quick × --motion-ease-out-soft，reduced-motion 降级补齐（hover 位移归零）；hover 上浮 1.08 位移保留（Phase 9 组件语言裁定，SharedLinkGroup SShareButton 同款，属共享组件自有节奏豁免） — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
+- [x] tsc 通过；残留扫描确认组件内无 @keyframes/无 infinite 循环 — 验证
+- [x] 验收反馈：侧栏前后篇重设计——文案换个性版「‹ 天才向左 / 疯子向右 ›」（箭头独立朱砂色，hover 按方向位移 2px）；标题从单行省略放开为两行封顶（line-clamp 2，侧栏为伴读信息不宜截断）；hover 过渡对齐 motion tokens — apps/site/app/post/PostView/index.tsx + styles/post-toc.ts + prototype-v2.html — 改动
+- [x] tsc 通过；原型 DOM 断言（label 文案、line-clamp 2、data-dir 方向） — 验证
+- [x] 验收反馈：compact 点赞 hover 增加「点赞吧~」文案，从右向左过渡展示、移出隐藏——hint span max-width 0→80px + translateX 8px→0 + opacity，过渡走 motion tokens（max-width 展开让计数自然让位）；仅 compact 侧栏形态、已赞状态不显示、aria-hidden 避免重复播报 — apps/site/app/post/components/FloatingActions/index.tsx + styles/post-floating.ts + prototype-v2.html — 改动
+- [x] tsc 通过；原型断言（hint 隐藏态 max-width 0/opacity 0/aria-hidden，hover 规则链同源） — 验证
+
+### Phase 11 页头注记式重设计（第三轮 · 原型层）
+
+- [x] 页头四缺陷诊断 + 三方向对比原型：A 题签页（居中卷首+菱界发丝线）/ B 刊头（右缘竖排日期+粗细双规线）/ C 注记式（meta 上移+大字左对齐+朱砂短规），共享排印修复（篇号 eyebrow/方角签/meta 间隔点层级），明暗双主题 + 375px 窄屏截图验证 — shadow-docs/changes/20260901-style-post-paper-redesign/header-lab.html — 新增
+- [x] 用户选定 C 后三延伸变体：C1 眉批式（汉字日期「二〇二四年四月十三日」+宽字距+行底发丝线）/ C2 篇号入规（朱砂短规+「第 92 篇」+发丝线，与正文「第壹节」编号呼应）/ C3 双列单行（meta 左+方角签右两端对齐，标题最大化），均含封面衔接演示；用户定稿 C3 — shadow-docs/changes/20260901-style-post-paper-redesign/header-lab-c.html — 新增
+- [x] C3 页头落地 prototype-v2：post-header 改双列单行 toprow（meta-line 间隔点层级 + tag-group 靠右）+ 标题 clamp(28,5.4vw,40) + headfoot 朱砂短规收尾；HTML 结构同步（去 meta-row）；520 以下 toprow 折行 — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] 验收反馈：类型标签书签化——clip-path 燕尾缺口 + 顶部 2px 朱砂色带 + 纸面底，hover 底色加深 + translateY(2px) 抽书签暗示，motion tokens + reduced-motion 降级 — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] 原型 body 补 overflow-x:clip（移动端封面出血 8px 横向微溢出；与线上动画规范 overflow-x:clip 约定同款；溢出源头为原型 cover-frame 出血，非页头引入） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] 布局断言：桌面 scrollWidth 1009≤1024 无溢出、双列两端对齐（meta 右缘 300 / 标签右缘 689 同抵主栏右缘）、书签 41.6px 高 clip-path 生效、dark 下书签黑底红条白字清晰；窄屏 toprow flex-direction column（meta bottom 441 < tags top 451 不重叠）、h1 28px 下限、书签 42px 近触控标准 — 验证
+
+### Phase 12 页头实现侧落地（第三轮 · 编码）
+
+- [x] post-header.ts 重构：Header 去 gap、新增 TopRow（双列单行 space-between，520 以下折行）/ MetaLine（间隔点层级 .author 500 字重 / .dot normal-400）/ HeadRule（朱砂短规 44×2 + 发丝线延伸，模块常量 hairline 与 post-toc 同源）；Title 改 clamp(28px, 5.4vw, 40px)/1.35/-0.01em；TagGroup 书签化（clip-path 燕尾缺口 + ::before 顶部 2px 朱砂色带 + hover background-300/朱砂字/translateY(2px)，motion tokens + reduced-motion 降级）；删除 MetaRow/AuthorRow/AuthorAvatarFrame/AuthorInfo/OrnamentDivider（仅 PostHeader 消费，已确认无其他引用），PostLead 保留；Summary 移入 Header 内 margin 归位 — apps/site/app/post/styles/post-header.ts — 改动
+- [x] PostHeader 组件重写：TopRow(MetaLine(作者·日期·阅读数) + TagGroup(labels 按 buildTopicUrl 渲染站内标签链接)) → Title → Summary(有则显示) → HeadRule；删除头像行与菱形装饰线（DiamondDivider import 同步清理）；write-fade 入场动画保留（TopRow 延迟 80ms） — apps/site/app/post/components/PostHeader/index.tsx — 改动
+- [x] styles/index.ts barrel 导出同步（删 MetaRow/AuthorRow/AuthorAvatarFrame/AuthorInfo/OrnamentDivider，增 TopRow/MetaLine/HeadRule） — apps/site/app/post/styles/index.ts — 改动
+- [x] tsc --noEmit 通过；残留扫描确认无已删导出引用（ArticleExporter/PostCover/loading 的同名类均为本地无关组件）；无封面分支（GeneratedCover 承载 header）不动，无封面文章不渲染标签（现状行为保持） — 验证
+
 ## 结果
 
 - 实际耗时: —
@@ -110,5 +218,5 @@
 ## 知识评估
 
 - **预期影响:** 更新
-- **候选卡片:** knowledge/blog-detail.md（容器语言章节重写为纸面化结论）
-- **理由:** 该卡当前结论描述的旧容器处理（卡片边界、目录 uppercase 标题、工具栏阴影）将被本次整体替换；design-system.md 不变（本次是其约束的执行而非修订）
+- **候选卡片:** knowledge/blog-detail.md（正文排印结论整体改写：16px/1.92 体系、章节记号、首字下沉、引文双发丝线、链接 primary 化；页头结论同步改写：注记式双列单行构图、书签样式标签、朱砂短规收尾符号；并修正卡片 scope 路径 packages/wuh.site.next → apps/site）
+- **理由:** 第一轮替换该卡的容器语言结论，第二轮再替换其排印规范结论，第三轮补页头构图结论；design-system.md 不变（三档断点/字体 token/颜色变量均为其约束的执行）
