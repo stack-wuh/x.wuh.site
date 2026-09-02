@@ -30,8 +30,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 347,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/347",
-    "pullRequest": 349,
-    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/349"
+    "pullRequest": 350,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/350"
   },
   "review": {
     "conclusion": "passed",
