@@ -22,7 +22,9 @@
     "apps/site/app/post/styles/post-markdown.ts",
     "apps/site/app/post/styles/post-toc.ts",
     "apps/site/app/post/styles/post-toolbar.ts",
-    "shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html"
+    "shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html",
+    "shadow-docs/changes/20260901-style-post-paper-redesign/header-lab.html",
+    "shadow-docs/changes/20260901-style-post-paper-redesign/header-lab-c.html"
   ],
   "github": {
     "repository": "stack-wuh/x.wuh.site",
@@ -107,6 +109,19 @@
 - **明确不动（本轮）:** 头部构图、页脚信息架构、印章/藏书票（下一轮）；pre/img/hr/kbd/details/task-list 结构样式（仅字号行距随体系微调）；标题 h1 唯一性逻辑
 - **验收裁定（组件语言优先 · 20260902 验收反馈）:** 第一轮把三钮组（返回首页/回到顶部/点赞）磨平为"只变色 hover"、并把分享组中和了 SharedLinkGroup 的容器壳，用户验收判定偏离站点组件语言（SShareButton 原生即"上浮 1.08 + 脉冲光晕"hover）。裁定：详情页按钮完全回归组件语言——三钮组恢复原始样式（上浮脉冲 hover、点赞胶囊实线朱砂边 + hover 心跳循环），分享组完全复用 SharedLinkGroup 默认形态（分区壳 + 「分享到」标签 + 圆形图标钮），不再中和其容器样式。「文气书卷」的 hover 只变色约束今后仅约束页面自定义元素，不约束组件复用。恢复时**不恢复** prefers-color-scheme 直写（第一轮 A 组主题修复保持有效），明暗适配走主题 token 自动切换
 
+## 第三轮：页头注记式重设计（20260902 追加）
+
+### 动机（第三轮）
+
+用户质疑页头设计「真的好吗」。诊断确认现行页头是整页唯一未跟上铅字工坊语言的区域，四缺陷：标题只是"大"没有卷首仪式（正文有章节记号，头部无开场符号）、meta 三种性质信息（人物/时间/统计）同样式等权排开无层级、标签 999px 圆角胶囊属 web 组件语言与排印语言冲突、头部与封面无构成关系无收尾符号。
+
+### 决策（第三轮）
+
+- **探索路径:** 先产出三方向对比原型 `header-lab.html`（A 题签页·居中卷首 / B 刊头·右缘竖排日期+粗细双规线 / C 注记式·meta 上移大字左对齐），用户选定 C；再产出 C 方向三延伸变体 `header-lab-c.html`（C1 眉批式·汉字日期+宽字距 / C2 篇号入规·收尾符嵌「第 92 篇」与正文「第壹节」编号呼应 / C3 双列单行·meta 左+方角签右），用户定稿 **C3**
+- **页头 C3 细则:** 辅助信息双列单行两端对齐（meta 行靠左：作者 500 字重·间隔点·日期·阅读数；标签组靠右）；标题 clamp(28px, 5.4vw, 40px) 衬线 700 做主角；朱砂短规 44×2px + 发丝线延伸收尾（头部收束符号，与正文章节 stub 同语言）；520 以下 toprow 折为上下两行
+- **书签标签细则（验收反馈）:** 标签由方角描边签改为书签样式——clip-path 底部燕尾缺口 `polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 6px), 0 100%)`、纸面底 background-200、顶部 2px 朱砂色带（::before）、padding 6/12/14 让文字避开缺口；hover 底色加深 background-300 + 字变朱砂 + translateY(2px)「抽书签」微暗示；过渡走 motion tokens，reduced-motion 降级
+- **明确不动（第三轮）:** 封面杂志卡（含无封面降级分支）、头部 order（移动端封面置顶）、篇号 eyebrow 方案（C2 落选未采用，篇号仍在侧栏 TocInfo 中呈现）
+
 ## 任务
 
 ### Phase 1 主题适配修复（A 组）
@@ -179,6 +194,15 @@
 - [x] 验收反馈：compact 点赞 hover 增加「点赞吧~」文案，从右向左过渡展示、移出隐藏——hint span max-width 0→80px + translateX 8px→0 + opacity，过渡走 motion tokens（max-width 展开让计数自然让位）；仅 compact 侧栏形态、已赞状态不显示、aria-hidden 避免重复播报 — apps/site/app/post/components/FloatingActions/index.tsx + styles/post-floating.ts + prototype-v2.html — 改动
 - [x] tsc 通过；原型断言（hint 隐藏态 max-width 0/opacity 0/aria-hidden，hover 规则链同源） — 验证
 
+### Phase 11 页头注记式重设计（第三轮 · 原型层）
+
+- [x] 页头四缺陷诊断 + 三方向对比原型：A 题签页（居中卷首+菱界发丝线）/ B 刊头（右缘竖排日期+粗细双规线）/ C 注记式（meta 上移+大字左对齐+朱砂短规），共享排印修复（篇号 eyebrow/方角签/meta 间隔点层级），明暗双主题 + 375px 窄屏截图验证 — shadow-docs/changes/20260901-style-post-paper-redesign/header-lab.html — 新增
+- [x] 用户选定 C 后三延伸变体：C1 眉批式（汉字日期「二〇二四年四月十三日」+宽字距+行底发丝线）/ C2 篇号入规（朱砂短规+「第 92 篇」+发丝线，与正文「第壹节」编号呼应）/ C3 双列单行（meta 左+方角签右两端对齐，标题最大化），均含封面衔接演示；用户定稿 C3 — shadow-docs/changes/20260901-style-post-paper-redesign/header-lab-c.html — 新增
+- [x] C3 页头落地 prototype-v2：post-header 改双列单行 toprow（meta-line 间隔点层级 + tag-group 靠右）+ 标题 clamp(28,5.4vw,40) + headfoot 朱砂短规收尾；HTML 结构同步（去 meta-row）；520 以下 toprow 折行 — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] 验收反馈：类型标签书签化——clip-path 燕尾缺口 + 顶部 2px 朱砂色带 + 纸面底，hover 底色加深 + translateY(2px) 抽书签暗示，motion tokens + reduced-motion 降级 — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] 原型 body 补 overflow-x:clip（移动端封面出血 8px 横向微溢出；与线上动画规范 overflow-x:clip 约定同款；溢出源头为原型 cover-frame 出血，非页头引入） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] 布局断言：桌面 scrollWidth 1009≤1024 无溢出、双列两端对齐（meta 右缘 300 / 标签右缘 689 同抵主栏右缘）、书签 41.6px 高 clip-path 生效、dark 下书签黑底红条白字清晰；窄屏 toprow flex-direction column（meta bottom 441 < tags top 451 不重叠）、h1 28px 下限、书签 42px 近触控标准 — 验证
+
 ## 结果
 
 - 实际耗时: —
@@ -187,5 +211,5 @@
 ## 知识评估
 
 - **预期影响:** 更新
-- **候选卡片:** knowledge/blog-detail.md（正文排印结论整体改写：16px/1.92 体系、章节记号、首字下沉、引文双发丝线、链接 primary 化；并修正卡片 scope 路径 packages/wuh.site.next → apps/site）
-- **理由:** 第一轮替换该卡的容器语言结论，第二轮再替换其排印规范结论；design-system.md 不变（三档断点/字体 token/颜色变量均为其约束的执行）
+- **候选卡片:** knowledge/blog-detail.md（正文排印结论整体改写：16px/1.92 体系、章节记号、首字下沉、引文双发丝线、链接 primary 化；页头结论同步改写：注记式双列单行构图、书签样式标签、朱砂短规收尾符号；并修正卡片 scope 路径 packages/wuh.site.next → apps/site）
+- **理由:** 第一轮替换该卡的容器语言结论，第二轮再替换其排印规范结论，第三轮补页头构图结论；design-system.md 不变（三档断点/字体 token/颜色变量均为其约束的执行）

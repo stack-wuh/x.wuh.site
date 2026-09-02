@@ -40,6 +40,7 @@ body {
   font-family:var(--font-sans); font-size:var(--font-size-base); line-height:1.8;
   animation:contentEnter .25s ease-out;
   transition:background-color .3s ease, color .3s ease;
+  overflow-x:clip;
 }
 @keyframes contentEnter { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 @media (prefers-reduced-motion:reduce){ body{animation:none;} html{scroll-behavior:auto;} }
@@ -94,21 +95,31 @@ body::before {
   .cover-frame { --r:0; border-radius:0; border-left:none; border-right:none; width:calc(100% + 48px); height:clamp(220px,60vw,300px); aspect-ratio:auto; max-height:none; margin:0 -24px var(--space-lg); order:1; }
 }
 
-/* ===== 文章头：标题在上、封面在下（桌面）；移动封面置顶 ===== */
-.post-header { display:flex; flex-direction:column; gap:var(--space-sm); margin-bottom:var(--space-xl); order:1; }
+/* ===== 文章头：C3 注记式——辅助信息双列单行，标题最大化，朱砂短规收尾 ===== */
+.post-header { display:flex; flex-direction:column; margin-bottom:var(--space-xl); order:1; }
 @media (max-width:640px) { .post-header{ order:2; } }
+.post-header .toprow { display:flex; align-items:center; justify-content:space-between; gap:var(--space-sm); flex-wrap:wrap; margin-bottom:14px; }
+.post-header .meta-line { font-size:var(--font-size-sm); color:color-mix(in oklab,var(--text-color) 76%,transparent); }
+.post-header .meta-line .dot { margin:0 8px; color:var(--normal-400); }
+.post-header .meta-line .author { color:var(--text-primary); font-weight:500; }
 .post-header h1 {
-  font-family:var(--font-serif); font-size:var(--font-size-2xl); font-weight:700;
-  letter-spacing:-0.02em; line-height:1.3; color:var(--text-primary);
+  font-family:var(--font-serif); font-size:clamp(28px,5.4vw,40px); font-weight:700;
+  letter-spacing:-0.01em; line-height:1.35; color:var(--text-primary); margin-bottom:18px;
 }
-.meta-row { display:flex; flex-wrap:wrap; gap:var(--space-sm); align-items:center; font-size:var(--font-size-sm); color:color-mix(in oklab,var(--text-color) 76%,transparent); }
-.tag-group { display:flex; flex-wrap:wrap; gap:6px; }
+.post-header .headfoot { display:flex; align-items:center; gap:var(--space-sm); }
+.post-header .headfoot::before { content:''; width:44px; height:2px; background:var(--primary-color); }
+.post-header .headfoot::after { content:''; flex:1; height:1px; background:var(--hairline); }
+@media (max-width:520px) { .post-header .toprow { flex-direction:column; align-items:flex-start; gap:10px; } }
+.tag-group { display:flex; flex-wrap:wrap; gap:10px; }
 .tag-group a {
-  font-size:var(--font-size-xs); text-decoration:none; color:var(--accent-color);
-  padding:1px 10px; border:1px solid color-mix(in oklab,var(--accent-color) 32%,transparent); border-radius:999px;
-  transition:color .2s ease, border-color .2s ease;
+  position:relative; font-size:var(--font-size-xs); text-decoration:none; color:var(--text-secondary);
+  padding:6px 12px 14px; background:var(--background-200);
+  clip-path:polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 6px), 0 100%);
+  transition:color var(--motion-dur-quick) var(--motion-ease-out-soft), background-color var(--motion-dur-quick) var(--motion-ease-out-soft), transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 }
-.tag-group a:hover { color:var(--primary-color); border-color:var(--primary-color); }
+.tag-group a::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--primary-color); }
+.tag-group a:hover { color:var(--primary-color); background:var(--background-300); transform:translateY(2px); }
+@media (prefers-reduced-motion:reduce) { .tag-group a { transition:none; } .tag-group a:hover { transform:none; } }
 
 /* ===== 目录：纸面竖线式（无卡、无投影、无 uppercase） ===== */
 .toc-aside { display:none; }
@@ -377,7 +388,7 @@ body::before {
 <body>
 
 <div class="proto-bar">
-  <span>原型 v2 · 铅字工坊（正文排印升级）· 内容取自线上 post/92 · 正文重复标题已移除（原文内容问题）· 文末附引文/表格演示 · 页脚按钮=组件语言示意（真实图标来自 iconfont）</span>
+  <span>原型 v2 · 铅字工坊（正文排印升级 + 页头注记式 C3）· 内容取自线上 post/92 · 正文重复标题已移除（原文内容问题）· 页头标签=书签样式 · 页脚按钮=组件语言示意（真实图标来自 iconfont）</span>
   <button id="themeToggle" type="button">切换 明 / 暗</button>
 </div>
 
@@ -387,9 +398,12 @@ body::before {
 
       <div class="post-lead">
         <header class="post-header">
+          <div class="toprow">
+            <p class="meta-line"><span class="author">stack-wuh</span><span class="dot">·</span>2024-04-13 18:04<span class="dot">·</span>762 次阅读</p>
+            <nav class="tag-group"><a href="#">Vue</a><a href="#">工具</a><a href="#">建站</a></nav>
+          </div>
           <h1>使用vitepress搭建wiki</h1>
-          <div class="meta-row"><span>stack-wuh</span><span>2024-04-13 18:04</span><span>762 次阅读</span></div>
-          <div class="tag-group"><a href="#">Vue</a><a href="#">工具</a><a href="#">建站</a></div>
+          <div class="headfoot" aria-hidden="true"></div>
         </header>
         <div class="cover-frame">
           <img src="https://wuh.site/_next/image?url=https%3A%2F%2Fsrc.wuh.site%2F2024-04%2F2024-04-13-073812.png&w=1920&q=75" alt="cover">

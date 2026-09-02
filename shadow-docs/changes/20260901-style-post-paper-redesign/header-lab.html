@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN" data-theme-family="wine" data-color-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>页头实验 · 三方向对比 · post/92</title>
+<style>
+/* ===== 字体：与 prototype-v2 相同的线上子集 ===== */
+@font-face { font-family:'Noto Serif SC'; src:url('https://wuh.site/_next/static/media/NotoSerifSC_400-s.p.1k6tloj0sujlw.woff2') format('woff2'); font-weight:400; font-display:swap; }
+@font-face { font-family:'Noto Serif SC'; src:url('https://wuh.site/_next/static/media/NotoSerifSC_700-s.p.18oqgakpkd_1n.woff2') format('woff2'); font-weight:700; font-display:swap; }
+@font-face { font-family:'Noto Sans SC'; src:url('https://wuh.site/_next/static/media/NotoSansSC_400-s.p.2utk8xhsb4fpt.woff2') format('woff2'); font-weight:400; font-display:swap; }
+@font-face { font-family:'Noto Sans SC'; src:url('https://wuh.site/_next/static/media/NotoSansSC_700-s.p.2r7y4u9icss1_.woff2') format('woff2'); font-weight:700; font-display:swap; }
+
+/* ===== 主题变量：与 prototype-v2 完全一致 ===== */
+:root {
+  --primary-color:#C94A44; --accent-color:#E3B567; --primary-300:#F2BEBB; --primary-600:#A13531; --primary-800:#6B1F1E;
+  --text-primary:#2A1E16; --text-secondary:#8A6E5C; --text-muted:#8A6E5C; --text-color:#2A1E16;
+  --background-100:#FFFBF8; --background-200:#FDF3EC; --background-300:#FAE5D8;
+  --normal-200:#F8F3EE; --normal-300:#EBE2D8; --normal-400:#D4C8B8; --normal-500:#B9A998; --normal-600:#A08878; --normal-700:#8A6E5C;
+  --font-serif:'Noto Serif SC',Georgia,serif; --font-sans:'Noto Sans SC',ui-sans-serif,system-ui,sans-serif;
+  --font-size-xs:12px; --font-size-sm:13px; --font-size-base:15px;
+  --space-xs:8px; --space-sm:16px; --space-md:clamp(20px,4vw,28px); --space-lg:clamp(24px,5vw,36px); --space-xl:clamp(32px,6vw,48px);
+  --motion-dur-quick:150ms; --motion-ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+  --hairline:color-mix(in oklab, var(--normal-400) 55%, transparent);
+}
+[data-color-scheme="dark"] {
+  --primary-color:#E36A64; --accent-color:#E3B567; --primary-300:#5B2223; --primary-600:#F07A73; --primary-800:#F9C5C1;
+  --text-primary:#adadad; --text-secondary:#dcdcdc; --text-muted:#e8e8e8; --text-color:#adadad;
+  --background-100:#111111; --background-200:#0f0f0f; --background-300:#110f0f;
+  --normal-200:#454545; --normal-300:#5b5b5b; --normal-400:#7e7e7e; --normal-500:#adadad; --normal-600:#dcdcdc; --normal-700:#e8e8e8;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  background:var(--background-100); color:var(--text-primary);
+  font-family:var(--font-sans); font-size:var(--font-size-base); line-height:1.8;
+  transition:background-color .3s ease, color .3s ease;
+}
+a { color:inherit; }
+
+.proto-bar {
+  display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:8px clamp(16px,4vw,24px); border-bottom:1px solid var(--hairline);
+  background:var(--background-200); font-size:var(--font-size-xs); color:var(--text-secondary);
+}
+.proto-bar button {
+  font:inherit; font-family:var(--font-sans); cursor:pointer;
+  padding:3px 12px; border:1px solid var(--normal-400); border-radius:999px; background:transparent; color:var(--text-secondary);
+  transition:color .2s ease, border-color .2s ease;
+}
+.proto-bar button:hover { color:var(--primary-color); border-color:var(--primary-color); }
+
+.page { max-width:720px; margin:0 auto; padding:clamp(20px,4vw,40px) clamp(16px,4vw,24px) 80px; }
+
+/* ===== 方向标尺（非设计一部分） ===== */
+.lab-tag {
+  display:flex; align-items:baseline; gap:12px; margin:56px 0 20px;
+  padding-bottom:10px; border-bottom:1px dashed var(--hairline);
+}
+.lab-tag:first-of-type { margin-top:8px; }
+.lab-tag .no { font-family:var(--font-serif); font-size:20px; font-weight:700; color:var(--primary-color); }
+.lab-tag .name { font-size:14px; font-weight:700; color:var(--text-primary); }
+.lab-tag .note { font-size:var(--font-size-xs); color:var(--text-secondary); }
+
+/* ===== 共享排印修复：篇号 eyebrow / 方角签 / meta 间隔点层级 ===== */
+.issue-eyebrow {
+  font-size:var(--font-size-xs); letter-spacing:.42em; text-indent:.42em; color:var(--primary-color); font-weight:500;
+}
+.plain-tags { display:flex; flex-wrap:wrap; gap:8px; }
+.plain-tags a {
+  font-size:var(--font-size-xs); text-decoration:none; color:var(--text-secondary);
+  padding:2px 9px; border:1px solid color-mix(in oklab, var(--normal-400) 70%, transparent);
+  border-radius:2px; letter-spacing:.08em; background:var(--background-200);
+  transition:color var(--motion-dur-quick) var(--motion-ease-out-soft), border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.plain-tags a:hover { color:var(--primary-color); border-color:var(--primary-color); }
+.meta-line { font-size:var(--font-size-sm); color:var(--text-secondary); }
+.meta-line .dot { margin:0 8px; color:var(--normal-400); }
+.meta-line .author { color:var(--text-primary); font-weight:500; }
+
+/* ===== 正文衔接示意（每个方向下方统一放置） ===== */
+.body-hint { margin-top:var(--space-lg); }
+.body-hint p { font-family:var(--font-serif); font-size:16px; line-height:1.92; color:var(--text-primary); }
+.body-hint .dropcap { float:left; font-size:3.35em; line-height:1.15; font-weight:700; color:var(--primary-color); margin:2px 10px 0 0; }
+.body-hint .fade { color:var(--text-secondary); }
+
+/* ============================================================
+   方向 A · 题签页（居中卷首）
+   ============================================================ */
+.hd-a { display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px; padding:var(--space-lg) 0 var(--space-md); }
+.hd-a h1 {
+  font-family:var(--font-serif); font-size:clamp(28px,5.4vw,38px); font-weight:700;
+  letter-spacing:.02em; line-height:1.35; color:var(--text-primary); max-width:20em;
+}
+.hd-a .seal {
+  display:flex; align-items:center; gap:10px; color:var(--primary-color);
+}
+.hd-a .seal::before, .hd-a .seal::after { content:''; width:56px; height:1px; background:var(--hairline); }
+.hd-a .seal i { width:6px; height:6px; background:var(--primary-color); display:block; }
+.hd-a .tags { margin-top:2px; justify-content:center; }
+
+/* ============================================================
+   方向 B · 刊头（左题右竖排日期 + 底部双规线）
+   ============================================================ */
+.hd-b { display:flex; flex-direction:column; }
+.hd-b .cols { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:var(--space-md); align-items:stretch; }
+.hd-b .left { display:flex; flex-direction:column; gap:12px; min-width:0; }
+.hd-b h1 {
+  font-family:var(--font-serif); font-size:clamp(26px,5vw,36px); font-weight:700;
+  letter-spacing:-0.01em; line-height:1.35; color:var(--text-primary);
+}
+.hd-b .meta-line { margin-top:auto; }
+.hd-b .date-spine {
+  writing-mode:vertical-rl; font-family:var(--font-serif); font-size:var(--font-size-sm);
+  letter-spacing:.35em; color:var(--text-secondary);
+  padding-left:var(--space-md); border-left:1px solid var(--hairline);
+  display:flex; align-items:center;
+}
+.hd-b .rule { margin-top:var(--space-md); }
+.hd-b .rule::before { content:''; display:block; height:3px; background:var(--primary-color); }
+.hd-b .rule::after { content:''; display:block; height:1px; background:var(--hairline); margin-top:3px; }
+@media (max-width:520px) {
+  .hd-b .cols { grid-template-columns:minmax(0,1fr); }
+  .hd-b .date-spine { display:none; }
+  .hd-b .rule::before { height:2px; }
+}
+
+/* ============================================================
+   方向 C · 注记式（meta 上移一行 + 大字左对齐 + 朱砂短规收尾）
+   ============================================================ */
+.hd-c { display:flex; flex-direction:column; gap:12px; }
+.hd-c .meta-line { letter-spacing:.02em; }
+.hd-c h1 {
+  font-family:var(--font-serif); font-size:clamp(28px,5.4vw,40px); font-weight:700;
+  letter-spacing:-0.01em; line-height:1.35; color:var(--text-primary);
+}
+.hd-c .foot { display:flex; align-items:center; gap:var(--space-sm); margin-top:4px; }
+.hd-c .foot::before { content:''; width:44px; height:2px; background:var(--primary-color); }
+.hd-c .foot::after { content:''; flex:1; height:1px; background:var(--hairline); }
+.hd-c .tags { margin-top:10px; }
+
+@media (prefers-reduced-motion:reduce) {
+  * { transition:none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <span>页头实验 · 三方向对比 · 内容取自线上 post/92 · 共享排印修复：篇号记号 / 方角标签 / meta 层级</span>
+  <button id="themeToggle" type="button">切换 明 / 暗</button>
+</div>
+
+<div class="page">
+
+  <!-- ============ 方向 A ============ -->
+  <div class="lab-tag"><span class="no">A</span><span class="name">题签页 · 居中卷首</span><span class="note">像书籍扉页：篇号 eyebrow → 居中大字 → 菱界发丝线 → 小注居中；仪式感最强，记忆点最高</span></div>
+  <header class="hd-a">
+    <span class="issue-eyebrow">第 92 篇</span>
+    <h1>使用 vitepress 搭建 wiki</h1>
+    <span class="seal" aria-hidden="true"><i></i></span>
+    <p class="meta-line"><span class="author">stack-wuh</span><span class="dot">·</span>2024-04-13 18:04<span class="dot">·</span>762 次阅读</p>
+    <nav class="plain-tags tags"><a href="#">Vue</a><a href="#">工具</a><a href="#">建站</a></nav>
+  </header>
+  <div class="body-hint">
+    <p><span class="dropcap">前</span>面几个月一直在学习 babel、eslint 这种 AST 相关的知识，一直没有时间去写一篇正儿八经的博客，刚好体验了一下 vitepress，在这里记录一下。<span class="fade">……（正文衔接示意）</span></p>
+  </div>
+
+  <!-- ============ 方向 B ============ -->
+  <div class="lab-tag"><span class="no">B</span><span class="name">刊头 · 左题右竖排日期</span><span class="note">像书籍版权页：右缘竖排「二〇二四年四月十三日」+ 底部粗细双规线；横竖对比有张力，保留左对齐</span></div>
+  <header class="hd-b">
+    <div class="cols">
+      <div class="left">
+        <span class="issue-eyebrow">第 92 篇</span>
+        <h1>使用 vitepress 搭建 wiki</h1>
+        <p class="meta-line"><span class="author">stack-wuh</span><span class="dot">·</span>762 次阅读</p>
+      </div>
+      <span class="date-spine" aria-hidden="true">二〇二四年四月十三日</span>
+    </div>
+    <div class="rule" aria-hidden="true"></div>
+  </header>
+  <div class="body-hint" style="margin-top:var(--space-md)">
+    <p><span class="dropcap">前</span>面几个月一直在学习 babel、eslint 这种 AST 相关的知识，一直没有时间去写一篇正儿八经的博客，刚好体验了一下 vitepress，在这里记录一下。<span class="fade">……（正文衔接示意）</span></p>
+  </div>
+
+  <!-- ============ 方向 C ============ -->
+  <div class="lab-tag"><span class="no">C</span><span class="name">注记式 · 大字左对齐（现状改良）</span><span class="note">把 meta 全部上移为一行注记，标题放大做主角，朱砂短规收尾；最贴近现状，改动最小</span></div>
+  <header class="hd-c">
+    <p class="meta-line"><span class="author">stack-wuh</span><span class="dot">·</span>2024-04-13 18:04<span class="dot">·</span>762 次阅读<span class="dot">·</span>第 92 篇</p>
+    <h1>使用 vitepress 搭建 wiki</h1>
+    <div class="foot" aria-hidden="true"></div>
+    <nav class="plain-tags tags"><a href="#">Vue</a><a href="#">工具</a><a href="#">建站</a></nav>
+  </header>
+  <div class="body-hint">
+    <p><span class="dropcap">前</span>面几个月一直在学习 babel、eslint 这种 AST 相关的知识，一直没有时间去写一篇正儿八经的博客，刚好体验了一下 vitepress，在这里记录一下。<span class="fade">……（正文衔接示意）</span></p>
+  </div>
+
+</div>
+
+<script>
+  var btn = document.getElementById('themeToggle');
+  btn.addEventListener('click', function () {
+    var el = document.documentElement;
+    el.setAttribute('data-color-scheme', el.getAttribute('data-color-scheme') === 'dark' ? 'light' : 'dark');
+  });
+</script>
+</body>
+</html>
