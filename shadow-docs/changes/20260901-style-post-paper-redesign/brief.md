@@ -4,7 +4,7 @@
   "name": "20260901-style-post-paper-redesign",
   "type": "style",
   "scope": "post",
-  "status": "committed",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "322fa7fceafbb67ab6ce87fb54da30b9ffc66fbe",
-    "verifiedAt": "2026-09-02T04:13:22.863Z"
+    "verifiedCommit": "28d10aaed42592d44d8b715fd072b469a766b04d",
+    "verifiedAt": "2026-09-02T04:22:22.014Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "ca3d097900c7af2429b775ba4c7826e31c977540",
+    "checkpoint": "28d10aaed42592d44d8b715fd072b469a766b04d",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
