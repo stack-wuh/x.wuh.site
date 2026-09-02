@@ -14,9 +14,7 @@ export const CommentsHeader = styled.h3`
   font-weight: 500;
   letter-spacing: 0.08em;
   color: var(--text-primary);
-  margin: 0 0 var(--space-sm);
-  padding-bottom: 10px;
-  border-bottom: 1px solid ${hairline};
+  margin: 0;
 `
 
 export const CommentItem = styled.div<{ $isGithub?: boolean }>`

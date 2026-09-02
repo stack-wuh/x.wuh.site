@@ -166,13 +166,10 @@ export const RelatedPostLink = styled.a`
   }
 `
 
-/** 文章页脚：版权 / 来源 / 分享 合一的居中仪式式收笔 */
+/** 文章页脚：版权 / 来源 / 分享 合一的居中仪式式收笔（上下结构线由 Divider 单点负责） */
 export const ArticleColophon = styled.footer`
-  margin-top: var(--space-xl);
   padding: var(--space-lg) 0;
   text-align: center;
-  border-top: 1px solid ${hairline};
-  border-bottom: 1px solid ${hairline};
 `
 
 /** 文末三钮组：仅移动/平板显示（桌面端同组移入目录侧栏 TocTools） */
@@ -217,6 +214,63 @@ export const ColophonMeta = styled.p`
 
   a:hover {
     border-bottom-style: solid;
+  }
+`
+
+/** 分享行：原型 cbtn 圆形图标钮，无标签；hover 上浮放大 + 描边消隐 + 朱砂图标，无循环关键帧 */
+export const ColophonShareRow = styled.div`
+  margin-top: var(--space-md);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+`
+
+export const ShareIconButton = styled.button`
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--background-200);
+  border: 1px solid var(--normal-300);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  transition:
+    transform var(--motion-dur-quick) var(--motion-ease-out-soft),
+    color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+
+  svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  &:hover {
+    transform: translateY(-2px) scale(1.08);
+    background: var(--background-300);
+    border-color: transparent;
+    color: var(--primary-color);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 `
 

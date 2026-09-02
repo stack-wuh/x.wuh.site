@@ -2,8 +2,18 @@
 
 import message from '@wuh.site/components/message'
 import ImagePreview from '@wuh.site/components/image-preview'
-import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
-import { IconShare, IconArticle } from '@wuh.site/components/icons'
+import Divider from '@wuh.site/components/divider'
+import type { ReactNode } from 'react'
+import {
+  IconShare,
+  IconArticle,
+  IconWechat,
+  IconQQ,
+  IconWeibo,
+  IconTwitter,
+  IconEmail,
+  IconLink,
+} from '@wuh.site/components/icons'
 import { useDialog } from '@wuh.site/hooks/useDialog'
 
 import type { Issue, PostViewProps } from '../PostView.types'
@@ -34,6 +44,8 @@ import {
   ColophonRule,
   ColophonLicense,
   ColophonMeta,
+  ColophonShareRow,
+  ShareIconButton,
   ColophonTools,
   TocAside,
   TocTitle,
@@ -93,7 +105,16 @@ const createSourceLink = (issue: Issue): { label: string; href: string } => ({
   href: issue.html_url,
 })
 
-const createShareItems = (issue: Issue): ShareItem[] => {
+/** 分享行数据：页面级渲染原型 cbtn 圆钮，不再经过 SharedLinkGroup */
+type ShareAction = {
+  key: string
+  label: string
+  icon: ReactNode
+  href?: string
+  onClick?: () => void
+}
+
+const createShareItems = (issue: Issue): ShareAction[] => {
   const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
   const shareTitle = issue.title?.trim() || 'wuh.site 文章'
   const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
@@ -106,33 +127,39 @@ const createShareItems = (issue: Issue): ShareItem[] => {
 
   return [
     {
-      type: 'wechat',
-      title: '分享到微信',
+      key: 'wechat',
+      label: '分享到微信',
+      icon: <IconWechat />,
       onClick: () => openWechatShareWindow(siteUrl, shareTitle),
     },
     {
-      type: 'qq',
-      title: '分享到QQ',
+      key: 'qq',
+      label: '分享到QQ',
+      icon: <IconQQ />,
       onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
     },
     {
-      type: 'weibo',
-      title: '分享到微博',
+      key: 'weibo',
+      label: '分享到微博',
+      icon: <IconWeibo />,
       onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
     },
     {
-      type: 'twitter',
-      title: '分享到Twitter',
+      key: 'twitter',
+      label: '分享到Twitter',
+      icon: <IconTwitter />,
       onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
     },
     {
-      type: 'email',
+      key: 'email',
+      icon: <IconEmail />,
       href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${siteUrl}`)}`,
-      title: '邮件分享',
+      label: '邮件分享',
     },
     {
-      type: 'link',
-      title: '复制链接',
+      key: 'link',
+      label: '复制链接',
+      icon: <IconLink />,
       onClick: async () => {
         const success = await copyToClipboard(siteUrl)
         if (success) {
@@ -194,17 +221,17 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const updatedDate = wasEdited && issue.updated_at ? issue.updated_at.slice(0, 10) : null
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
-  const shareItems: ShareItem[] = [
+  const shareItems: ShareAction[] = [
     ...createShareItems(issue),
     {
-      type: 'custom',
-      title: '分享图',
+      key: 'share-card',
+      label: '分享图',
       icon: <IconShare />,
       onClick: shareCardDialog.openDialog,
     },
     {
-      type: 'custom',
-      title: '导出全文',
+      key: 'article-export',
+      label: '导出全文',
       icon: <IconArticle />,
       onClick: articleExportDialog.openDialog,
     },
@@ -276,6 +303,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
           <ImagePreview {...previewProps} />
 
+          <Divider style={{ margin: 'var(--space-xl) 0 0' }} />
           <ArticleColophon>
             <ColophonOrnament aria-hidden='true'>◇</ColophonOrnament>
             <ColophonRule aria-hidden='true' />
@@ -285,7 +313,27 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               {' · '}
               <a href={projectLink.href} target='_blank' rel='noopener noreferrer'>{projectLink.label}</a>
             </ColophonMeta>
-            <SharedLinkGroup items={shareItems} />
+            <ColophonShareRow>
+              {shareItems.map((item) =>
+                item.href ? (
+                  <ShareIconButton
+                    key={item.key}
+                    as='a'
+                    href={item.href}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    title={item.label}
+                    aria-label={item.label}
+                  >
+                    {item.icon}
+                  </ShareIconButton>
+                ) : (
+                  <ShareIconButton key={item.key} type='button' title={item.label} aria-label={item.label} onClick={item.onClick}>
+                    {item.icon}
+                  </ShareIconButton>
+                ),
+              )}
+            </ColophonShareRow>
             <ColophonTools>
               <FloatingActions
                 issueNumber={issue.number}
@@ -294,6 +342,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               />
             </ColophonTools>
           </ArticleColophon>
+          <Divider />
 
           <ShareCard
             open={shareCardDialog.open}

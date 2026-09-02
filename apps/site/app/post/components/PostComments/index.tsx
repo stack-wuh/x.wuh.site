@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@wuh.site/components/button'
+import Divider from '@wuh.site/components/divider'
 import { IconGithub, IconTag } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import message from '@wuh.site/components/message'
@@ -133,6 +134,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
       <S.CommentsHeader>
         评论{totalCount > 0 ? ` (${totalCount})` : ''}
       </S.CommentsHeader>
+      <Divider style={{ margin: '10px 0 var(--space-sm)' }} />
 
       {loading ? (
         <S.LoadingState>加载中...</S.LoadingState>
