@@ -203,6 +203,13 @@
 - [x] 原型 body 补 overflow-x:clip（移动端封面出血 8px 横向微溢出；与线上动画规范 overflow-x:clip 约定同款；溢出源头为原型 cover-frame 出血，非页头引入） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
 - [x] 布局断言：桌面 scrollWidth 1009≤1024 无溢出、双列两端对齐（meta 右缘 300 / 标签右缘 689 同抵主栏右缘）、书签 41.6px 高 clip-path 生效、dark 下书签黑底红条白字清晰；窄屏 toprow flex-direction column（meta bottom 441 < tags top 451 不重叠）、h1 28px 下限、书签 42px 近触控标准 — 验证
 
+### Phase 12 页头实现侧落地（第三轮 · 编码）
+
+- [x] post-header.ts 重构：Header 去 gap、新增 TopRow（双列单行 space-between，520 以下折行）/ MetaLine（间隔点层级 .author 500 字重 / .dot normal-400）/ HeadRule（朱砂短规 44×2 + 发丝线延伸，模块常量 hairline 与 post-toc 同源）；Title 改 clamp(28px, 5.4vw, 40px)/1.35/-0.01em；TagGroup 书签化（clip-path 燕尾缺口 + ::before 顶部 2px 朱砂色带 + hover background-300/朱砂字/translateY(2px)，motion tokens + reduced-motion 降级）；删除 MetaRow/AuthorRow/AuthorAvatarFrame/AuthorInfo/OrnamentDivider（仅 PostHeader 消费，已确认无其他引用），PostLead 保留；Summary 移入 Header 内 margin 归位 — apps/site/app/post/styles/post-header.ts — 改动
+- [x] PostHeader 组件重写：TopRow(MetaLine(作者·日期·阅读数) + TagGroup(labels 按 buildTopicUrl 渲染站内标签链接)) → Title → Summary(有则显示) → HeadRule；删除头像行与菱形装饰线（DiamondDivider import 同步清理）；write-fade 入场动画保留（TopRow 延迟 80ms） — apps/site/app/post/components/PostHeader/index.tsx — 改动
+- [x] styles/index.ts barrel 导出同步（删 MetaRow/AuthorRow/AuthorAvatarFrame/AuthorInfo/OrnamentDivider，增 TopRow/MetaLine/HeadRule） — apps/site/app/post/styles/index.ts — 改动
+- [x] tsc --noEmit 通过；残留扫描确认无已删导出引用（ArticleExporter/PostCover/loading 的同名类均为本地无关组件）；无封面分支（GeneratedCover 承载 header）不动，无封面文章不渲染标签（现状行为保持） — 验证
+
 ## 结果
 
 - 实际耗时: —
