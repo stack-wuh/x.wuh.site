@@ -3,13 +3,13 @@ import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 /**
  * 正文排印体系「铅字工坊」：
- * - 基准 16px/1.92，移动端（max 640）收敛 15px/1.85，平板端继承桌面值（三档断点契约）
+ * - 基准 15.5px/1.85，移动端（max 640）收敛 15px/1.85，平板端继承桌面值（三档断点契约）
  * - 章节记号：.sec-eyebrow 眉线 + .sec-text 章节字号，由 lib/articleTypography 注入
  * - 首字下沉：.dropcap，正文首段首字
  * - 链接/列表序号用 --primary-color（accent 金在纸面上对比度不足），链接另有虚线下划线双重可供性
  */
 export const MarkdownBody = styled.article`
-  font-size: 16px;
+  font-size: 15.5px;
 
   --github-border: color-mix(in oklab, var(--accent-color) 18%, var(--normal-300));
   --github-muted: var(--text-secondary);
@@ -86,8 +86,8 @@ export const MarkdownBody = styled.article`
   p {
     margin: 1.15em 0;
     font-family: var(--font-serif);
-    font-size: 16px;
-    line-height: 1.92;
+    font-size: 15.5px;
+    line-height: 1.85;
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
