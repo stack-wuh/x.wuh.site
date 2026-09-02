@@ -2,12 +2,20 @@ import styled, { keyframes } from '@wuh.site/components/styled'
 import Button from '@wuh.site/components/button'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
-/** 点赞单次心跳：800ms 一次，不循环 */
-const beat = keyframes`
-  0% { transform: scale(1); }
-  30% { transform: scale(1.28); }
-  55% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+/**
+ * 返回首页/回到顶部/点赞 三钮组：与 SharedLinkGroup（SShareButton）同款组件语言——
+ * 圆形 outlined 钮 + hover 上浮 1.08 与脉冲光晕。样式只经主题 token 适配明暗，
+ * 禁止 prefers-color-scheme 直写（手动主题体系）。
+ */
+const pulse = keyframes`
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 25%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary-color) 12%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 25%, transparent); }
+`
+
+const heartBeat = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 `
 
 export const FloatingButton = styled(Button)`
@@ -21,6 +29,7 @@ export const FloatingButton = styled(Button)`
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  will-change: transform;
   outline: none;
 
   svg {
@@ -29,29 +38,38 @@ export const FloatingButton = styled(Button)`
   }
 
   &:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.08);
+    background: var(--background-300);
     border-color: var(--primary-color);
-    color: var(--primary-color);
+    color: var(--text-primary);
+    animation: ${pulse} 1s ease;
   }
 
   &:active:not(:disabled) {
-    transform: none;
+    transform: translateY(0) scale(1.02);
   }
 
   &:focus-visible {
     box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+  }
 `
 
-export const LikeButton = styled(Button)<{ $beat?: boolean }>`
+export const LikeButton = styled(Button)`
   --btn-px: 0;
   --btn-py: 0;
   width: auto;
-  padding: 0 20px;
+  padding: 0 24px;
   gap: 8px;
   border-radius: 999px;
-  background: var(--background-100) !important;
-  border-color: color-mix(in oklab, var(--primary-color) 40%, transparent) !important;
+  background: var(--background-200) !important;
+  border-color: var(--primary-color) !important;
   color: var(--primary-color);
+  will-change: transform;
 
   svg {
     width: 1em;
@@ -59,23 +77,32 @@ export const LikeButton = styled(Button)<{ $beat?: boolean }>`
   }
 
   &:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.08);
     background: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
+    border-color: transparent !important;
     color: #fff;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color) 35%, transparent);
   }
 
   &:active:not(:disabled) {
-    transform: none;
+    transform: translateY(0) scale(1.02);
+  }
+
+  &:hover:not(:disabled) svg {
+    animation: ${heartBeat} 2s ease-in-out infinite;
   }
 
   &:focus-visible {
     box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300);
   }
 
-  ${({ $beat }) => ($beat ? `svg { animation: ${beat} 800ms ease; }` : '')}
-
   @media (prefers-reduced-motion: reduce) {
-    ${({ $beat }) => ($beat ? `svg { animation: none; }` : '')}
+    transition: none;
+    animation: none;
+
+    &:hover:not(:disabled) svg {
+      animation: none;
+    }
   }
 `
 

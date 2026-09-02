@@ -35,7 +35,6 @@ import {
   ColophonRule,
   ColophonLicense,
   ColophonMeta,
-  ColophonShareRow,
   TocAside,
   TocTitle,
   TocItemLink,
@@ -283,9 +282,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               {' · '}
               <a href={projectLink.href} target='_blank' rel='noopener noreferrer'>{projectLink.label}</a>
             </ColophonMeta>
-            <ColophonShareRow>
-              <SharedLinkGroup items={shareItems} label='' />
-            </ColophonShareRow>
+            <SharedLinkGroup items={shareItems} />
             <FloatingActions
               issueNumber={issue.number}
               initialLikeCount={issue.likeCount ?? 0}

@@ -10,7 +10,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
   const [liked, setLiked] = useState(initialLiked)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [loading, setLoading] = useState(false)
-  const [beat, setBeat] = useState(false)
 
   useEffect(() => {
     setLiked(initialLiked)
@@ -19,12 +18,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
   useEffect(() => {
     setLikeCount(initialLikeCount)
   }, [initialLikeCount])
-
-  useEffect(() => {
-    if (!beat) return
-    const timer = setTimeout(() => setBeat(false), 800)
-    return () => clearTimeout(timer)
-  }, [beat])
 
   const handleLike = useCallback(async () => {
     if (loading) return
@@ -35,7 +28,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
       if (data.liked) {
         setLiked(true)
         setLikeCount((c) => c + 1)
-        setBeat(true)
       } else {
         setLiked(false)
         setLikeCount((c) => Math.max(0, c - 1))
@@ -83,7 +75,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         title={liked ? '取消点赞' : '点赞'}
         onClick={handleLike}
         disabled={loading}
-        $beat={beat}
         style={liked ? { opacity: 0.8 } : undefined}
       >
         {liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}

@@ -216,16 +216,3 @@ export const ColophonMeta = styled.p`
     border-bottom-style: solid;
   }
 `
-
-export const ColophonShareRow = styled.div`
-  margin-top: var(--space-md);
-  display: flex;
-  justify-content: center;
-
-  /* 仅中和 SharedLinkGroup 自带的分区容器壳（上边距/内边距/上边框），按钮保留组件原生按钮组样式 */
-  > div {
-    margin-top: 0 !important;
-    padding: 0 !important;
-    border-top: none !important;
-  }
-`
