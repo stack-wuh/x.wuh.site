@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "7a83cc9b936ce110b0b6ec394023483c7a0c1190",
-    "verifiedAt": "2026-09-02T03:30:49.355Z"
+    "verifiedCommit": "31569ffb8a7cf0ab68a746f1c1ff1975867751bc",
+    "verifiedAt": "2026-09-02T03:57:49.460Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "acc2f6b8f51b93fdbb1563ecc8650259df0f88ea",
+    "checkpoint": "1e211d8a4b27bb78868d7c10f879d9f291db3523",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -172,6 +172,8 @@
 - [x] tsc 通过；原型 DOM 断言（aside 高 450px、pn 标题、info 3 行） — 验证
 - [x] 验收反馈二则修正：①点赞 compact hover 改为站点 filled hover 同款主题渐变 `linear-gradient(90deg, var(--primary-600), var(--primary-800))`（primary 尺度在 dark 主题方向反转，天然两主题成立；替换 brightness 方案），compact 基础态显式 background-color+background-image:none 压掉 Button 自带渐变，dark 下图标段 hover 换 normal-200（background-300 在暗色不可见）；②文末前后篇对开桌面端隐藏（Spread ≥tablet display:none——已在侧栏 TocPrevNext），移动/平板保留 — apps/site/app/post/styles/post-floating.ts + post-toolbar.ts + prototype-v2.html — 改动
 - [x] tsc 通过；DOM 断言（spread 桌面隐藏、primary-600 token 就位） — 验证
+- [x] 验收反馈：动画特效须符合站点动画规范（knowledge/animation-system.md）——删除三钮组组件内自定义关键帧 pulse（光晕）与 heartBeat（无限闪烁），hover 反馈只保留颜色/背景/边框过渡，时长缓动全部对齐 --motion-dur-quick × --motion-ease-out-soft，reduced-motion 降级补齐（hover 位移归零）；hover 上浮 1.08 位移保留（Phase 9 组件语言裁定，SharedLinkGroup SShareButton 同款，属共享组件自有节奏豁免） — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
+- [x] tsc 通过；残留扫描确认组件内无 @keyframes/无 infinite 循环 — 验证
 
 ## 结果
 
