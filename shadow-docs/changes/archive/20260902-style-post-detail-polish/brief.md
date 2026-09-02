@@ -4,7 +4,7 @@
   "name": "20260902-style-post-detail-polish",
   "type": "style",
   "scope": "apps/site,packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260902-style-post-detail-polish",
   "files": [
@@ -23,20 +23,20 @@
     "packages/components/package.json"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 352,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/352"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c1538109809d533e0f6233ef55e5165b6a64c9c8",
+    "verifiedCommit": "691d08df2f961202db03ae4d34433ce8910c1fc4",
     "verifiedAt": "2026-09-02T11:00:23.055Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:352",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
