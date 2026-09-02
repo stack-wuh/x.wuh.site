@@ -115,6 +115,11 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     height: 1em;
   }
 
+  /* 「点赞吧~」提示：仅 compact hover 展开（从右向左落位），默认形态隐藏 */
+  & .like-hint {
+    display: none;
+  }
+
   &:hover:not(:disabled) {
     transform: translateY(-2px) scale(1.08);
     background: var(--primary-color) !important;
@@ -157,6 +162,25 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     border-color: transparent !important;
     color: #fff;
     font-size: var(--font-size-sm);
+
+    & .like-hint {
+      display: inline-block;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      transform: translateX(8px);
+      transition:
+        max-width var(--motion-dur-quick) var(--motion-ease-out-soft),
+        opacity var(--motion-dur-quick) var(--motion-ease-out-soft),
+        transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+    }
+
+    &:hover:not(:disabled) .like-hint {
+      max-width: 80px;
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     &:hover:not(:disabled) {
       transform: none;

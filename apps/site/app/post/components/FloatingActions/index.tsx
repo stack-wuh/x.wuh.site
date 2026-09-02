@@ -83,6 +83,11 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         style={liked ? { opacity: 0.8 } : undefined}
       >
         {liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}
+        {compact && !liked && (
+          <span className='like-hint' aria-hidden='true'>
+            点赞吧~
+          </span>
+        )}
       </LikeButton>
     </FloatingButtonGroup>
   )
