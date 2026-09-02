@@ -4,7 +4,7 @@
   "name": "20260901-style-post-paper-redesign",
   "type": "style",
   "scope": "post",
-  "status": "committed",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "5c06034dfcef8fc893839a9e1fef37ac8d96f5b2",
-    "verifiedAt": "2026-09-02T03:09:00.752Z"
+    "verifiedCommit": "7e1591284e610a7340bd2a34afd55f965a362acf",
+    "verifiedAt": "2026-09-02T03:17:01.270Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "071df1a267c356df78efc047614d9d9daff61c0c",
+    "checkpoint": "7e1591284e610a7340bd2a34afd55f965a362acf",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -166,6 +166,7 @@
 - [x] 原型同步 compact 变体；tsc 通过；连体组 DOM 断言（999 圆角、无 gap、5 段 120×33） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 验证
 - [x] compact 二次调整（验收反馈：宽度太小、点赞不醒目）：整组撑满侧栏宽（260×39）、图标段定宽 44px、点赞段 flex:1 主色实底白字（约 170px，最醒目），点赞前分隔线取消（以色块分界）；原型同步 — apps/site/app/post/styles/post-floating.ts + components/FloatingActions/index.tsx + prototype-v2.html — 改动
 - [x] tsc 通过；DOM 断言（组 260×39/999 圆角、图标段 44×2、点赞段 ~170px 朱砂底白字） — 验证
+- [x] 验收反馈修正：点赞段内容居中——原型 .like-btn 补 justify-content:center（flex:1 撑开后内容靠左的根因），实现侧 LikeButton compact 显式声明；DOM 断言 leftGap=rightGap=70px 居中成立 — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
 
 ## 结果
 

@@ -143,6 +143,7 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     height: 38px;
     padding: 0 12px;
     gap: 6px;
+    justify-content: center;
     border-radius: 0;
     border: none;
     background: var(--primary-color) !important;
