@@ -2,6 +2,8 @@
 
 import message from '@wuh.site/components/message'
 import ImagePreview from '@wuh.site/components/image-preview'
+import SharedLinkGroup, { type ShareItem } from '@wuh.site/components/shared-link-group'
+import { IconShare, IconArticle } from '@wuh.site/components/icons'
 import { useDialog } from '@wuh.site/hooks/useDialog'
 
 import type { Issue, PostViewProps } from '../PostView.types'
@@ -43,13 +45,6 @@ import {
   TocInfo,
   TocMobile,
 } from '../styles'
-
-type ShareAction = {
-  key: string
-  label: string
-  href?: string
-  onClick?: () => void
-}
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
 const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'
@@ -98,7 +93,7 @@ const createSourceLink = (issue: Issue): { label: string; href: string } => ({
   href: issue.html_url,
 })
 
-const createShareItems = (issue: Issue): ShareAction[] => {
+const createShareItems = (issue: Issue): ShareItem[] => {
   const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
   const shareTitle = issue.title?.trim() || 'wuh.site 文章'
   const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
@@ -111,33 +106,33 @@ const createShareItems = (issue: Issue): ShareAction[] => {
 
   return [
     {
-      key: 'wechat',
-      label: '微信',
+      type: 'wechat',
+      title: '分享到微信',
       onClick: () => openWechatShareWindow(siteUrl, shareTitle),
     },
     {
-      key: 'qq',
-      label: 'QQ',
+      type: 'qq',
+      title: '分享到QQ',
       onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
     },
     {
-      key: 'weibo',
-      label: '微博',
+      type: 'weibo',
+      title: '分享到微博',
       onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
     },
     {
-      key: 'twitter',
-      label: 'Twitter',
+      type: 'twitter',
+      title: '分享到Twitter',
       onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
     },
     {
-      key: 'email',
-      label: '邮件',
+      type: 'email',
       href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${siteUrl}`)}`,
+      title: '邮件分享',
     },
     {
-      key: 'link',
-      label: '复制链接',
+      type: 'link',
+      title: '复制链接',
       onClick: async () => {
         const success = await copyToClipboard(siteUrl)
         if (success) {
@@ -190,7 +185,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
     return (
       <Container>
         <StatusEmpty title='未找到文章' description='请检查链接是否正确，或稍后再试。' />
-        <PostToolbar prevIssue={null} nextIssue={null} currentNumber={issue?.number} total={total} position={position} />
+        <PostToolbar prevIssue={null} nextIssue={null} total={total} position={position} />
       </Container>
     )
   }
@@ -199,16 +194,18 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const updatedDate = wasEdited && issue.updated_at ? issue.updated_at.slice(0, 10) : null
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
-  const shareItems: ShareAction[] = [
+  const shareItems: ShareItem[] = [
     ...createShareItems(issue),
     {
-      key: 'share-card',
-      label: '分享图',
+      type: 'custom',
+      title: '分享图',
+      icon: <IconShare />,
       onClick: shareCardDialog.openDialog,
     },
     {
-      key: 'export',
-      label: '导出全文',
+      type: 'custom',
+      title: '导出全文',
+      icon: <IconArticle />,
       onClick: articleExportDialog.openDialog,
     },
   ]
