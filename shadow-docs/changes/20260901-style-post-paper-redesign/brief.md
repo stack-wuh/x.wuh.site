@@ -32,13 +32,13 @@
     "pullRequestUrl": null
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "9090290e4a4e07e391167a9841f08da63dfeaabe",
+    "verifiedAt": "2026-09-02T02:27:09.440Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "9a8a617ca55e4920c2ca835ade17fc75ada62c46",
+    "checkpoint": "c480734dc0b0e0d2e0a678c1b26024ed72bab84b",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -105,6 +105,7 @@
 - **对比度修复（缺陷）:** 正文链接、ol 序号由 accent 金（纸面上约 1.9:1）改 primary 朱砂；表头金色粗线改发丝线；新增 `::selection` 朱砂底纸色字
 - **实现形态:** 章节注入与首字下沉为纯字符串变换（`lib/articleTypography.ts`，正则、无 DOM 依赖），在 `useToc` 内 useMemo 同步执行——SSR 与客户端输出确定一致，无 hydration 风险
 - **明确不动（本轮）:** 头部构图、页脚信息架构、印章/藏书票（下一轮）；pre/img/hr/kbd/details/task-list 结构样式（仅字号行距随体系微调）；标题 h1 唯一性逻辑
+- **验收裁定（组件语言优先 · 20260902 验收反馈）:** 第一轮把三钮组（返回首页/回到顶部/点赞）磨平为"只变色 hover"、并把分享组中和了 SharedLinkGroup 的容器壳，用户验收判定偏离站点组件语言（SShareButton 原生即"上浮 1.08 + 脉冲光晕"hover）。裁定：详情页按钮完全回归组件语言——三钮组恢复原始样式（上浮脉冲 hover、点赞胶囊实线朱砂边 + hover 心跳循环），分享组完全复用 SharedLinkGroup 默认形态（分区壳 + 「分享到」标签 + 圆形图标钮），不再中和其容器样式。「文气书卷」的 hover 只变色约束今后仅约束页面自定义元素，不约束组件复用。恢复时**不恢复** prefers-color-scheme 直写（第一轮 A 组主题修复保持有效），明暗适配走主题 token 自动切换
 
 ## 任务
 
@@ -149,6 +150,12 @@
 
 - [x] tsc --noEmit 通过；node --experimental-strip-types 跑变换纯函数断言（编号剥离/锚点保留/图片段跳过/实体跳过/目录 sections） — 验证
 - [x] 残留扫描：无裸色值/裸断点/prefers-color-scheme 新增；与 prototype-v2 明暗双主题比对排印参数一致 — 验证
+
+### Phase 9 验收反馈修订（第二轮 · 组件语言回归）
+
+- [x] 三钮组恢复站点组件语言：FloatingButton 恢复上浮 1.08 + 脉冲光晕 hover、LikeButton 恢复实线朱砂边胶囊 + hover 主色填充 + 心跳循环、FloatingActions 组件还原（去第一轮 $beat 单次心跳），保持 prefers-color-scheme 已移除状态，明暗走主题 token — apps/site/app/post/styles/post-floating.ts + apps/site/app/post/components/FloatingActions/index.tsx — 回退
+- [x] 分享组完全复用 SharedLinkGroup 组件默认形态：删除 ColophonShareRow 中和 hack 与导出，直接渲染组件（分区壳 + 「分享到」标签 + 圆形图标钮） — apps/site/app/post/PostView/index.tsx + apps/site/app/post/styles/post-article.ts + apps/site/app/post/styles/index.ts — 改动
+- [x] tsc 通过、残留扫描确认无 prefers-color-scheme 回归 — 验证
 
 ## 结果
 
