@@ -40,6 +40,7 @@ import {
   TocTitle,
   TocItemLink,
   TocList,
+  TocNum,
   TocMobile,
 } from '../styles'
 
@@ -168,6 +169,9 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               onNavigate?.()
             }}
           >
+            {item.shortNum && (
+              <TocNum aria-hidden='true'>{item.shortNum}</TocNum>
+            )}
             {item.text}
           </TocItemLink>
         </li>

@@ -34,6 +34,13 @@ export const TocList = styled.ul`
   margin: 0;
 `
 
+export const TocNum = styled.span`
+  margin-right: 8px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--primary-color);
+`
+
 export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
   position: relative;
   display: block;

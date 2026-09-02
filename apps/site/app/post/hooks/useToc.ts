@@ -1,44 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
+import { transformArticleTypography, type ArticleSection } from '../lib/articleTypography'
 
-export type TocItem = {
-  id: string
-  text: string
-  depth: 1 | 2 | 3
-}
+export type TocItem = ArticleSection
 
 /**
- * 从 HTML 字符串解析标题生成目录（标题 id 和锚点由服务端 rehype-slug + rehype-autolink-headings 生成）
+ * 从正文 HTML 生成目录，并注入铅字排印变换（章节记号 + 首字下沉）。
+ * 变换为纯字符串运算且在渲染路径同步执行，SSR 与客户端输出确定一致。
  */
 export function useToc(html: string | null | undefined): { html: string; toc: TocItem[] } {
   const source = html ?? ''
-  const [toc, setToc] = useState<TocItem[]>([])
 
-  useEffect(() => {
-    if (!source) return
-    try {
-      const parser = new DOMParser()
-      const doc = parser.parseFromString(source, 'text/html')
-      const headings = Array.from(doc.querySelectorAll('h1, h2, h3'))
-
-      const items: TocItem[] = headings
-        .map((node) => {
-          const tag = node.tagName.toLowerCase()
-          const depth = (tag === 'h1' ? 1 : tag === 'h2' ? 2 : 3) as TocItem['depth']
-          const text = (node.textContent ?? '').trim()
-          const id = node.id
-          if (!text || !id) return null
-
-          return { id, text, depth }
-        })
-        .filter(Boolean) as TocItem[]
-
-      setToc(items)
-    } catch {
-      setToc([])
-    }
+  return useMemo(() => {
+    if (!source) return { html: '', toc: [] as TocItem[] }
+    const result = transformArticleTypography(source)
+    return { html: result.html, toc: result.sections }
   }, [source])
-
-  return { html: source, toc }
 }
