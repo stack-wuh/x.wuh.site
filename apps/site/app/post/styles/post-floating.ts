@@ -64,8 +64,9 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
   ${({ $compact }) =>
     $compact
       ? `
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 38px;
+    flex: none;
     border-radius: 0;
     border: none;
     background: transparent;
@@ -138,25 +139,28 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
   ${({ $compact }) =>
     $compact
       ? `
-    height: 32px;
+    flex: 1;
+    height: 38px;
     padding: 0 12px;
     gap: 6px;
     border-radius: 0;
     border: none;
-    background: transparent !important;
-    color: var(--primary-color);
-    font-size: var(--font-size-xs);
+    background: var(--primary-color) !important;
+    border-color: transparent !important;
+    color: #fff;
+    font-size: var(--font-size-sm);
 
     &:hover:not(:disabled) {
       transform: none;
-      background: var(--background-300) !important;
+      opacity: 0.9;
+      background: var(--primary-color) !important;
       border: none;
-      color: var(--primary-color);
+      color: #fff;
       box-shadow: none;
     }
 
     &:hover:not(:disabled) svg {
-      animation: none;
+      animation: ${heartBeat} 2s ease-in-out infinite;
     }
 
     &:active:not(:disabled) {
@@ -164,7 +168,7 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     }
 
     &:focus-visible {
-      box-shadow: inset 0 0 0 2px var(--primary-300);
+      box-shadow: inset 0 0 0 2px var(--background-100);
     }
   `
       : ''}
@@ -188,6 +192,7 @@ export const FloatingButtonGroup = styled.div<{ $compact?: boolean }>`
     gap: 0;
     margin-top: 0;
     flex-wrap: nowrap;
+    width: 100%;
     border: 1px solid var(--normal-300);
     border-radius: 999px;
     background: var(--background-200);

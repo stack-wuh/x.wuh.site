@@ -69,7 +69,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}
       />
-      {compact && <SegmentDivider aria-hidden='true' />}
       <LikeButton
         $compact={compact}
         variant="outlined"
