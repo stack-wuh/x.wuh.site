@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "71423eed1c0090ab9075502ac225255b2140a82a",
-    "verifiedAt": "2026-09-02T02:42:24.758Z"
+    "verifiedCommit": "863d50c7f574b0492c88ff5bb51d06fd20368f4a",
+    "verifiedAt": "2026-09-02T02:57:38.652Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "344a83744e9a0e73a76783e93911facb0b8032fb",
+    "checkpoint": "df2edbe2dd1a3b0bb75a4491e6efcd7faa500784",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -162,6 +162,8 @@
 - [x] 三钮组桌面端移入目录侧栏：TocAside 常驻渲染（无目录文章仅显示工具列，顺带解决其右侧全空）、目录与工具列之间发丝线分隔（TocTools）、TocAside 增加 max-height + overflow 防超长目录把工具列顶出视口；文末三钮包 ColophonTools 仅移动/平板显示（display:none 驱动，隐藏实例不进焦点树） — apps/site/app/post/styles/post-toc.ts + post-article.ts + styles/index.ts + PostView/index.tsx — 改动
 - [x] 原型同步：侧栏工具列 + 文末三钮桌面隐藏 + 点赞双实例绑定（.like-btn 类绑定，去重复 id） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
 - [x] tsc 通过；DOM 断言（aside sticky、tools 在侧栏内、文末 trio 桌面隐藏、双实例） — 验证
+- [x] compact 连体分段变体：FloatingActions 新增 variant='compact'（32px 连体胶囊、SegmentDivider 发丝分隔、hover 只变色不位移以保形），侧栏实例启用，文末保持 default 散点圆钮 — apps/site/app/post/components/FloatingActions/specs.tsx + index.tsx + apps/site/app/post/styles/post-floating.ts + styles/index.ts + PostView/index.tsx — 改动
+- [x] 原型同步 compact 变体；tsc 通过；连体组 DOM 断言（999 圆角、无 gap、5 段 120×33） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 验证
 
 ## 结果
 
