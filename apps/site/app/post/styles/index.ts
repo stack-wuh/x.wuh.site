@@ -1,5 +1,5 @@
 export { Container, ContentGrid, MainColumn } from './post-layout'
-export { TocAside, TocTitle, TocList, TocItemLink, TocNum, TocTools, TocMobile } from './post-toc'
+export { TocAside, TocTitle, TocList, TocItemLink, TocNum, TocTools, TocPrevNext, TocInfo, TocMobile } from './post-toc'
 export { MarkdownBody, UpdateDivider, StatusEmpty, CommentPlaceholder, RelatedPostsSection, RelatedPostsHeader, RelatedPostsHeading, RelatedPostsCount, RelatedPostLink, RelatedPostContent, RelatedPostTitle, RelatedPostSummary, RelatedPostLabels, RelatedPostArrow, ArticleColophon, ColophonOrnament, ColophonRule, ColophonLicense, ColophonMeta, ColophonTools } from './post-article'
 export { Toolbar, ToolbarMeta, Spread, SpreadDivider, SpreadSide, SpreadLabel, SpreadTitle, SpreadArrow } from './post-toolbar'
 export { FloatingButtonGroup, FloatingButton, LikeButton, SegmentDivider } from './post-floating'

@@ -150,10 +150,11 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     border-color: transparent !important;
     color: #fff;
     font-size: var(--font-size-sm);
+    transition: filter 0.2s ease;
 
     &:hover:not(:disabled) {
       transform: none;
-      opacity: 0.9;
+      filter: brightness(0.86);
       background: var(--primary-color) !important;
       border: none;
       color: #fff;

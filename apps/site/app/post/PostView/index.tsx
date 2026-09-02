@@ -42,6 +42,8 @@ import {
   TocList,
   TocNum,
   TocTools,
+  TocPrevNext,
+  TocInfo,
   TocMobile,
 } from '../styles'
 
@@ -326,6 +328,39 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               initialLiked={issue.liked ?? false}
             />
           </TocTools>
+
+          {(prevIssue || nextIssue) && (
+            <TocPrevNext aria-label='前后篇'>
+              {prevIssue ? (
+                <a href={buildPostUrl(prevIssue.number)}>
+                  <span className='toc-pn-label'>‹ 上一篇</span>
+                  <span className='toc-pn-title'>{prevIssue.title}</span>
+                </a>
+              ) : (
+                <span className='toc-pn-empty'>已是最早一篇</span>
+              )}
+              {nextIssue ? (
+                <a href={buildPostUrl(nextIssue.number)}>
+                  <span className='toc-pn-label'>下一篇 ›</span>
+                  <span className='toc-pn-title'>{nextIssue.title}</span>
+                </a>
+              ) : (
+                <span className='toc-pn-empty'>已是最新一篇</span>
+              )}
+            </TocPrevNext>
+          )}
+
+          <TocInfo>
+            <span>
+              第 {position ?? issue.number}
+              {typeof total === 'number' ? ` / ${total} 篇` : ' 篇'}
+            </span>
+            <span>发布于 {issue.created_at.slice(0, 10)}</span>
+            {updatedDate && <span>更新于 {updatedDate}</span>}
+            <span>
+              约 {Math.max(1, Math.round((issue.body_html ?? '').replace(/<[^>]+>/g, '').length / 450))} 分钟读完
+            </span>
+          </TocInfo>
         </TocAside>
       </ContentGrid>
     </Container>

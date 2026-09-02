@@ -50,6 +50,66 @@ export const TocTools = styled.div`
   border-top: 1px solid ${hairline};
 `
 
+/** 侧栏前后篇迷你导航：阅读中随时跳转，不必滚到文末 */
+export const TocPrevNext = styled.nav`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid ${hairline};
+  display: grid;
+  gap: 10px;
+
+  .toc-pn-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .toc-pn-title {
+    overflow: hidden;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 180ms ease;
+  }
+
+  a {
+    display: grid;
+    gap: 2px;
+    min-height: 32px;
+    color: var(--text-secondary);
+    text-decoration: none;
+
+    &:hover .toc-pn-title {
+      color: var(--primary-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
+      outline-offset: 2px;
+    }
+  }
+
+  .toc-pn-empty {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+`
+
+/** 侧栏篇信息小注：篇号进度 / 发布 / 更新 / 阅读时长 */
+export const TocInfo = styled.div`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid ${hairline};
+  display: grid;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+`
+
 export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
   position: relative;
   display: block;
