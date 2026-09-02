@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e106915a85ef55230b4d1a949113af6a7c49993e",
-    "verifiedAt": "2026-09-02T03:22:04.346Z"
+    "verifiedCommit": "7a83cc9b936ce110b0b6ec394023483c7a0c1190",
+    "verifiedAt": "2026-09-02T03:30:49.355Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "dd7b315193e76bb1ef3951917366e3121f0467ea",
+    "checkpoint": "acc2f6b8f51b93fdbb1563ecc8650259df0f88ea",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -170,6 +170,8 @@
 - [x] 验收反馈：点赞 compact hover 不明显——改为 filter brightness(0.86) 加深（主题无关、不违token约束），保留心跳循环，去 opacity 发灰 — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
 - [x] 验收反馈：目录下方太空——侧栏补「前后篇迷你导航」（TocPrevNext，随时跳转不滚到文末，null 时显示已是最早/最新一篇）+「篇信息小注」（TocInfo：第 N/M 篇·发布·更新·约 N 分钟读完，正文长度/450 估算），发丝线分段与工具列同节奏；原型同步 — apps/site/app/post/styles/post-toc.ts + styles/index.ts + PostView/index.tsx + prototype-v2.html — 改动
 - [x] tsc 通过；原型 DOM 断言（aside 高 450px、pn 标题、info 3 行） — 验证
+- [x] 验收反馈二则修正：①点赞 compact hover 改为站点 filled hover 同款主题渐变 `linear-gradient(90deg, var(--primary-600), var(--primary-800))`（primary 尺度在 dark 主题方向反转，天然两主题成立；替换 brightness 方案），compact 基础态显式 background-color+background-image:none 压掉 Button 自带渐变，dark 下图标段 hover 换 normal-200（background-300 在暗色不可见）；②文末前后篇对开桌面端隐藏（Spread ≥tablet display:none——已在侧栏 TocPrevNext），移动/平板保留 — apps/site/app/post/styles/post-floating.ts + post-toolbar.ts + prototype-v2.html — 改动
+- [x] tsc 通过；DOM 断言（spread 桌面隐藏、primary-600 token 就位） — 验证
 
 ## 结果
 
