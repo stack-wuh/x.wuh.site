@@ -11,6 +11,8 @@ export const TocAside = styled.aside`
     position: sticky;
     top: 88px;
     align-self: start;
+    max-height: calc(100vh - 112px);
+    overflow: auto;
   }
 `
 
@@ -39,6 +41,13 @@ export const TocNum = styled.span`
   font-family: var(--font-serif);
   font-weight: 600;
   color: var(--primary-color);
+`
+
+/** 侧栏工具列：目录下方的返回首页/回到顶部/点赞（仅桌面端随侧栏出现） */
+export const TocTools = styled.div`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid ${hairline};
 `
 
 export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`

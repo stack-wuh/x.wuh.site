@@ -35,11 +35,13 @@ import {
   ColophonRule,
   ColophonLicense,
   ColophonMeta,
+  ColophonTools,
   TocAside,
   TocTitle,
   TocItemLink,
   TocList,
   TocNum,
+  TocTools,
   TocMobile,
 } from '../styles'
 
@@ -283,11 +285,13 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               <a href={projectLink.href} target='_blank' rel='noopener noreferrer'>{projectLink.label}</a>
             </ColophonMeta>
             <SharedLinkGroup items={shareItems} />
-            <FloatingActions
-              issueNumber={issue.number}
-              initialLikeCount={issue.likeCount ?? 0}
-              initialLiked={issue.liked ?? false}
-            />
+            <ColophonTools>
+              <FloatingActions
+                issueNumber={issue.number}
+                initialLikeCount={issue.likeCount ?? 0}
+                initialLiked={issue.liked ?? false}
+              />
+            </ColophonTools>
           </ArticleColophon>
 
           <ShareCard
@@ -307,12 +311,21 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <PostToolbar prevIssue={prevIssue} nextIssue={nextIssue} currentNumber={issue.number} total={total} position={position} />
         </MainColumn>
 
-        {tocResult.toc.length > 0 && (
-          <TocAside aria-label='文章目录'>
-            <TocTitle>目录</TocTitle>
-            {renderToc()}
-          </TocAside>
-        )}
+        <TocAside aria-label='文章目录与操作'>
+          {tocResult.toc.length > 0 && (
+            <>
+              <TocTitle>目录</TocTitle>
+              {renderToc()}
+            </>
+          )}
+          <TocTools>
+            <FloatingActions
+              issueNumber={issue.number}
+              initialLikeCount={issue.likeCount ?? 0}
+              initialLiked={issue.liked ?? false}
+            />
+          </TocTools>
+        </TocAside>
       </ContentGrid>
     </Container>
   )

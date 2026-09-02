@@ -170,13 +170,20 @@ export const RelatedPostLink = styled.a`
   }
 `
 
-/** 文章页脚：版权 / 来源 / 分享 / 点赞 合一的居中仪式式收笔 */
+/** 文章页脚：版权 / 来源 / 分享 合一的居中仪式式收笔 */
 export const ArticleColophon = styled.footer`
   margin-top: var(--space-xl);
   padding: var(--space-lg) 0;
   text-align: center;
   border-top: 1px solid ${hairline};
   border-bottom: 1px solid ${hairline};
+`
+
+/** 文末三钮组：仅移动/平板显示（桌面端同组移入目录侧栏 TocTools） */
+export const ColophonTools = styled.div`
+  @media (min-width: ${BREAKPOINTS.tablet}px) {
+    display: none;
+  }
 `
 
 export const ColophonOrnament = styled.div`

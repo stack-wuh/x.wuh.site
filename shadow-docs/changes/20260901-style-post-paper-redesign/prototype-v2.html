@@ -111,7 +111,10 @@ body::before {
 
 /* ===== 目录：纸面竖线式（无卡、无投影、无 uppercase） ===== */
 .toc-aside { display:none; }
-@media (min-width:1024px) { .toc-aside{ display:block; position:sticky; top:88px; } }
+@media (min-width:1024px) { .toc-aside{ display:block; position:sticky; top:88px; max-height:calc(100vh - 112px); overflow:auto; } }
+.toc-tools { margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline); display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; }
+/* 三钮组：桌面端在侧栏工具列，移动/平板保留文末 */
+@media (min-width:1024px) { .colophon .trio-row{ display:none; } }
 .toc-title {
   font-family:var(--font-serif); font-weight:500; font-size:var(--font-size-sm);
   letter-spacing:.32em; color:var(--text-secondary); padding-bottom:10px; margin-bottom:10px;
@@ -685,7 +688,7 @@ body::before {
         <div class="trio-row">
           <button class="cbtn" type="button" title="返回首页" aria-label="返回首页"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
           <button class="cbtn" type="button" title="回到顶部" aria-label="回到顶部"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
-          <button class="like-btn" id="likeBtn" type="button"><span class="heart">♥</span> <span id="likeCount">12</span></button>
+          <button class="like-btn" type="button"><span class="heart">♥</span> <span class="like-count">12</span></button>
         </div>
       </footer>
 
@@ -724,9 +727,14 @@ body::before {
 
     </main>
 
-    <aside class="toc-aside" aria-label="文章目录">
+    <aside class="toc-aside" aria-label="文章目录与操作">
       <div class="toc-title">目 录</div>
       <ul class="toc-list" id="tocAside"></ul>
+      <div class="toc-tools">
+        <button class="cbtn" type="button" title="返回首页" aria-label="返回首页"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+        <button class="cbtn" type="button" title="回到顶部" aria-label="回到顶部"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+        <button class="like-btn" type="button"><span class="heart">♥</span> <span class="like-count">12</span></button>
+      </div>
     </aside>
   </div>
 </div>
@@ -809,16 +817,17 @@ var io = new IntersectionObserver(function (entries) {
 }, { rootMargin: '-80px 0px -70% 0px' });
 document.querySelectorAll('#article h2[id], #article h3[id]').forEach(function (h) { io.observe(h); });
 
-// 点赞：单次心跳（800ms），无循环脉冲、无 scale 位移残留
-var likeBtn = document.getElementById('likeBtn');
-var likeCount = document.getElementById('likeCount');
+// 点赞：双实例（侧栏工具列 / 文末），单次心跳（800ms）
 var liked = false;
-likeBtn.addEventListener('click', function () {
-  liked = !liked;
-  likeBtn.classList.remove('liked');
-  void likeBtn.offsetWidth;
-  if (liked) likeBtn.classList.add('liked');
-  likeCount.textContent = String(Number(likeCount.textContent) + (liked ? 1 : -1));
+document.querySelectorAll('.like-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    liked = !liked;
+    btn.classList.remove('liked');
+    void btn.offsetWidth;
+    if (liked) btn.classList.add('liked');
+    var count = btn.querySelector('.like-count');
+    if (count) count.textContent = String(Number(count.textContent) + (liked ? 1 : -1));
+  });
 });
 </script>
 </body>
