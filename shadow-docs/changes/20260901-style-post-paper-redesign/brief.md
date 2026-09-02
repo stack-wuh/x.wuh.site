@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d34612ac10aabdff68216d804c696a94ea2325cc",
-    "verifiedAt": "2026-09-02T04:07:45.270Z"
+    "verifiedCommit": "322fa7fceafbb67ab6ce87fb54da30b9ffc66fbe",
+    "verifiedAt": "2026-09-02T04:13:22.863Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "377187bad96f575ecb10f86aa02e0a60b83e9757",
+    "checkpoint": "ca3d097900c7af2429b775ba4c7826e31c977540",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -176,6 +176,8 @@
 - [x] tsc 通过；残留扫描确认组件内无 @keyframes/无 infinite 循环 — 验证
 - [x] 验收反馈：侧栏前后篇重设计——文案换个性版「‹ 天才向左 / 疯子向右 ›」（箭头独立朱砂色，hover 按方向位移 2px）；标题从单行省略放开为两行封顶（line-clamp 2，侧栏为伴读信息不宜截断）；hover 过渡对齐 motion tokens — apps/site/app/post/PostView/index.tsx + styles/post-toc.ts + prototype-v2.html — 改动
 - [x] tsc 通过；原型 DOM 断言（label 文案、line-clamp 2、data-dir 方向） — 验证
+- [x] 验收反馈：compact 点赞 hover 增加「点赞吧~」文案，从右向左过渡展示、移出隐藏——hint span max-width 0→80px + translateX 8px→0 + opacity，过渡走 motion tokens（max-width 展开让计数自然让位）；仅 compact 侧栏形态、已赞状态不显示、aria-hidden 避免重复播报 — apps/site/app/post/components/FloatingActions/index.tsx + styles/post-floating.ts + prototype-v2.html — 改动
+- [x] tsc 通过；原型断言（hint 隐藏态 max-width 0/opacity 0/aria-hidden，hover 规则链同源） — 验证
 
 ## 结果
 
