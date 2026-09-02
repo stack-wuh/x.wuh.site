@@ -5,7 +5,11 @@ import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 /**
  * 返回首页/回到顶部/点赞 三钮组，两种形态：
  * - default：散点圆钮（文末）
- * - compact：连体分段紧凑组（目录侧栏工具列）
+ * - compact：内衬分段紧凑组（目录侧栏工具列）
+ *
+ * compact 外框与分段之间必须保留 padding 内衬：分段填充一旦贴到外框
+ * 边线，两者会在亚像素取整下叠成一条脏线（不同页面/缩放下时隐时现），
+ * 分段自身做圆角让填充与边框彻底脱开。
  *
  * 动画遵循站点动画规范（knowledge/animation-system.md）：hover 只做
  * 颜色/背景过渡（--motion-dur-quick × --motion-ease-out-soft），组件内
@@ -66,10 +70,10 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
   ${({ $compact }) =>
     $compact
       ? `
-    width: 44px;
-    height: 38px;
+    width: 40px;
+    height: 32px;
     flex: none;
-    border-radius: 0;
+    border-radius: 999px;
     border: none;
     background: transparent;
 
@@ -150,11 +154,11 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     $compact
       ? `
     flex: 1;
-    height: 38px;
+    height: 32px;
     padding: 0 12px;
     gap: 6px;
     justify-content: center;
-    border-radius: 0;
+    border-radius: 999px;
     border: none;
     /* 清掉 Button filled 自带的渐变底，hover 时换成 primary-600→800 主题渐变 */
     background-color: var(--primary-color) !important;
@@ -217,22 +221,15 @@ export const FloatingButtonGroup = styled.div<{ $compact?: boolean }>`
   ${({ $compact }) =>
     $compact
       ? `
-    gap: 0;
+    gap: 3px;
     margin-top: 0;
     flex-wrap: nowrap;
     width: 100%;
+    padding: 3px;
     border: 1px solid var(--normal-300);
     border-radius: 999px;
     background: var(--background-200);
     overflow: hidden;
   `
       : ''}
-`
-
-/** compact 形态的段间发丝分隔线 */
-export const SegmentDivider = styled.span`
-  width: 1px;
-  height: 16px;
-  background: var(--normal-300);
-  flex: none;
 `

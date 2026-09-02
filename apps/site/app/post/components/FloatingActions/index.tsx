@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
-import { FloatingButtonGroup, FloatingButton, LikeButton, SegmentDivider } from '../../styles'
+import { FloatingButtonGroup, FloatingButton, LikeButton } from '../../styles'
 import type { FloatingActionsProps } from './specs'
 
 export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false, variant = 'default' }: FloatingActionsProps) {
@@ -55,7 +55,6 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
           window.location.href = '/'
         }}
       />
-      {compact && <SegmentDivider aria-hidden='true' />}
       <FloatingButton
         $compact={compact}
         variant="outlined"
