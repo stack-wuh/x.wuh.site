@@ -191,19 +191,39 @@ body::before {
 .colophon .srcline { margin-top:6px; font-size:var(--font-size-xs); color:var(--text-muted); }
 .colophon .srcline a { color:var(--accent-color); text-decoration:none; border-bottom:1px dashed color-mix(in oklab,var(--accent-color) 42%,transparent); }
 .colophon .srcline a:hover { border-bottom-style:solid; }
-.share-row { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-top:var(--space-md); }
-.share-row button, .like-btn {
-  font:inherit; font-family:var(--font-sans); font-size:var(--font-size-xs); cursor:pointer;
-  padding:4px 12px; border:1px solid var(--normal-400); border-radius:999px;
-  background:transparent; color:var(--text-secondary);
-  transition:color .2s ease, border-color .2s ease, background-color .2s ease;
+.share-row { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin-top:var(--space-md); }
+/* 组件语言：与 SharedLinkGroup SShareButton 同款圆形图标钮（上浮 1.08 + 脉冲光晕 hover） */
+.cbtn {
+  width:40px; height:40px; padding:0; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:999px; background:var(--background-200); border:1px solid var(--normal-300); color:var(--text-primary);
+  font:inherit; font-size:16px; cursor:pointer; will-change:transform; outline:none;
+  transition:transform .2s ease, color .2s ease, border-color .2s ease, background-color .2s ease;
 }
-.share-row button:hover { color:var(--primary-color); border-color:var(--primary-color); }
-.like-btn { display:inline-flex; align-items:center; gap:6px; margin-top:var(--space-sm); color:var(--primary-color); border-color:color-mix(in oklab,var(--primary-color) 40%,transparent); }
-.like-btn:hover { background:var(--primary-color); border-color:transparent; color:#fff; }
+.cbtn svg { width:1em; height:1em; }
+.cbtn:hover {
+  transform:translateY(-2px) scale(1.08);
+  background:var(--background-300); border-color:var(--primary-color); color:var(--text-primary);
+  animation:pulse 1s ease;
+}
+.cbtn:focus-visible, .like-btn:focus-visible { box-shadow:0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-300); }
+.trio-row { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:var(--space-sm); }
+.like-btn {
+  display:inline-flex; align-items:center; gap:8px; padding:0 24px; border-radius:999px;
+  font:inherit; font-size:var(--font-size-xs); cursor:pointer; will-change:transform; outline:none;
+  color:var(--primary-color); background:var(--background-200); border:1px solid var(--primary-color);
+  transition:transform .2s ease, color .2s ease, border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.like-btn:hover {
+  transform:translateY(-2px) scale(1.08);
+  background:var(--primary-color); border-color:transparent; color:#fff;
+  box-shadow:0 4px 16px color-mix(in srgb,var(--primary-color) 35%,transparent);
+}
+.like-btn:hover .heart { animation:heart 2s ease-in-out infinite; }
 .like-btn.liked .heart { animation:beat .8s ease; }
+@keyframes pulse { 0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--primary-color) 25%,transparent);} 50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--primary-color) 12%,transparent);} 100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--primary-color) 25%,transparent);} }
+@keyframes heart { 0%,100%{opacity:1;} 50%{opacity:.35;} }
 @keyframes beat { 0%,100%{transform:scale(1);} 30%{transform:scale(1.3);} 55%{transform:scale(1.08);} }
-@media (prefers-reduced-motion:reduce){ .like-btn.liked .heart{ animation:none; } }
+@media (prefers-reduced-motion:reduce){ .cbtn, .like-btn{ transition:none; animation:none; } .cbtn:hover, .like-btn:hover{ transform:none; } }
 
 /* ===== 评论区：标题衬线人格，条目发丝线，输入区无卡 ===== */
 .comments { margin-top:var(--space-xl); }
@@ -334,7 +354,7 @@ body::before {
 <body>
 
 <div class="proto-bar">
-  <span>原型 v2 · 铅字工坊（正文排印升级）· 内容取自线上 post/92 · 正文重复标题已移除（原文内容问题）· 文末附引文/表格演示</span>
+  <span>原型 v2 · 铅字工坊（正文排印升级）· 内容取自线上 post/92 · 正文重复标题已移除（原文内容问题）· 文末附引文/表格演示 · 页脚按钮=组件语言示意（真实图标来自 iconfont）</span>
   <button id="themeToggle" type="button">切换 明 / 暗</button>
 </div>
 
@@ -653,9 +673,20 @@ body::before {
         <p class="license">本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。</p>
         <p class="srcline"><a href="#">原文</a> · <a href="#">stack-wuh/blog</a> · <a href="#">#92</a> · 更新于 2024-04-13</p>
         <div class="share-row">
-          <button type="button">微信</button><button type="button">QQ</button><button type="button">微博</button><button type="button">✕</button><button type="button">✉</button><button type="button">复制链接</button><button type="button">分享图</button><button type="button">导出全文</button>
+          <button class="cbtn" type="button" title="分享到微信" aria-label="分享到微信"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/></svg></button>
+          <button class="cbtn" type="button" title="分享到QQ" aria-label="分享到QQ"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14" rx="8" ry="6"/><circle cx="12" cy="8" r="4"/><circle cx="9.5" cy="7.5" r="0.8" fill="currentColor" stroke="none"/><circle cx="14.5" cy="7.5" r="0.8" fill="currentColor" stroke="none"/><path d="M7 18c1 2 3 2.5 5 2.5s4-.5 5-2.5"/></svg></button>
+          <button class="cbtn" type="button" title="分享到微博" aria-label="分享到微博"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="8" ry="9"/><circle cx="12" cy="11" r="4"/><circle cx="12" cy="11" r="1.5" fill="currentColor" stroke="none"/><path d="M4 7c2-2 5-3 8-2"/><path d="M20 7c-2-2-5-3-8-2"/></svg></button>
+          <button class="cbtn" type="button" title="分享到Twitter" aria-label="分享到Twitter"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l6.5 7.5L4 20h2l5.5-7.5L17 20h4l-6.5-8.5L20 4h-2l-5 6.5L8 4H4z"/></svg></button>
+          <button class="cbtn" type="button" title="邮件分享" aria-label="邮件分享"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg></button>
+          <button class="cbtn" type="button" title="复制链接" aria-label="复制链接"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+          <button class="cbtn" type="button" title="分享图" aria-label="分享图"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+          <button class="cbtn" type="button" title="导出全文" aria-label="导出全文"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>
         </div>
-        <button class="like-btn" id="likeBtn" type="button"><span class="heart">♥</span> <span id="likeCount">12</span></button>
+        <div class="trio-row">
+          <button class="cbtn" type="button" title="返回首页" aria-label="返回首页"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+          <button class="cbtn" type="button" title="回到顶部" aria-label="回到顶部"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+          <button class="like-btn" id="likeBtn" type="button"><span class="heart">♥</span> <span id="likeCount">12</span></button>
+        </div>
       </footer>
 
       <section class="comments">
