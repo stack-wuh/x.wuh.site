@@ -332,16 +332,22 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           {(prevIssue || nextIssue) && (
             <TocPrevNext aria-label='前后篇'>
               {prevIssue ? (
-                <a href={buildPostUrl(prevIssue.number)}>
-                  <span className='toc-pn-label'>‹ 上一篇</span>
+                <a href={buildPostUrl(prevIssue.number)} data-dir='prev'>
+                  <span className='toc-pn-label'>
+                    <span className='toc-pn-arrow' aria-hidden='true'>‹</span>
+                    天才向左
+                  </span>
                   <span className='toc-pn-title'>{prevIssue.title}</span>
                 </a>
               ) : (
                 <span className='toc-pn-empty'>已是最早一篇</span>
               )}
               {nextIssue ? (
-                <a href={buildPostUrl(nextIssue.number)}>
-                  <span className='toc-pn-label'>下一篇 ›</span>
+                <a href={buildPostUrl(nextIssue.number)} data-dir='next'>
+                  <span className='toc-pn-label'>
+                    疯子向右
+                    <span className='toc-pn-arrow' aria-hidden='true'>›</span>
+                  </span>
                   <span className='toc-pn-title'>{nextIssue.title}</span>
                 </a>
               ) : (

@@ -126,11 +126,14 @@ body::before {
 .toc-tools .cbtn:focus-visible { box-shadow: inset 0 0 0 2px var(--primary-300); }
 .toc-tools .like-btn:focus-visible { box-shadow: inset 0 0 0 2px var(--background-100); }
 /* 前后篇迷你导航 + 篇信息小注 */
-.toc-pn { margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline); display:grid; gap:10px; }
-.toc-pn .pn-item { display:grid; gap:2px; min-height:32px; text-decoration:none; color:var(--text-secondary); }
-.toc-pn .lab { font-size:12px; color:var(--text-muted); letter-spacing:.08em; }
-.toc-pn .ttl { font-family:var(--font-serif); font-size:13px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color .18s ease; }
+.toc-pn { margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline); display:grid; gap:8px; }
+.toc-pn .pn-item { display:grid; gap:3px; min-height:40px; text-decoration:none; }
+.toc-pn .lab { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--text-muted); letter-spacing:.12em; }
+.toc-pn .arrow { color:var(--primary-color); transition:transform var(--motion-dur-quick) var(--motion-ease-out-soft); }
+.toc-pn .ttl { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; font-family:var(--font-serif); font-size:13px; font-weight:500; line-height:1.6; color:var(--text-secondary); transition:color var(--motion-dur-quick) var(--motion-ease-out-soft); }
 .toc-pn .pn-item:hover .ttl { color:var(--primary-color); }
+.toc-pn .pn-item[data-dir="prev"]:hover .arrow { transform:translateX(-2px); }
+.toc-pn .pn-item[data-dir="next"]:hover .arrow { transform:translateX(2px); }
 .toc-info { margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline); display:grid; gap:4px; font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums; }
 /* 三钮组：桌面端在侧栏工具列，移动/平板保留文末 */
 @media (min-width:1024px) { .colophon .trio-row{ display:none; } }
@@ -754,8 +757,8 @@ body::before {
         </div>
       </div>
       <nav class="toc-pn" aria-label="前后篇">
-        <a class="pn-item" href="#"><span class="lab">‹ 上一篇</span><span class="ttl">docker配置镜像源</span></a>
-        <a class="pn-item" href="#"><span class="lab">下一篇 ›</span><span class="ttl">如何使用zLibrary</span></a>
+        <a class="pn-item" data-dir="prev" href="#"><span class="lab"><span class="arrow" aria-hidden="true">‹</span>天才向左</span><span class="ttl">docker配置镜像源</span></a>
+        <a class="pn-item" data-dir="next" href="#"><span class="lab">疯子向右<span class="arrow" aria-hidden="true">›</span></span><span class="ttl">如何使用zLibrary</span></a>
       </nav>
       <div class="toc-info">
         <span>第 5 / 45 篇</span>

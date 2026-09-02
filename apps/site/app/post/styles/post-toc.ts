@@ -50,39 +50,57 @@ export const TocTools = styled.div`
   border-top: 1px solid ${hairline};
 `
 
-/** 侧栏前后篇迷你导航：阅读中随时跳转，不必滚到文末 */
+/** 侧栏前后篇迷你导航：阅读中随时跳转，不必滚到文末（「天才向左 / 疯子向右」为站点个性文案） */
 export const TocPrevNext = styled.nav`
   margin-top: var(--space-md);
   padding-top: var(--space-md);
   border-top: 1px solid ${hairline};
   display: grid;
-  gap: 10px;
+  gap: var(--space-xs);
 
   .toc-pn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: var(--font-size-xs);
     color: var(--text-muted);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
+  }
+
+  .toc-pn-arrow {
+    color: var(--primary-color);
+    transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   .toc-pn-title {
+    display: -webkit-box;
     overflow: hidden;
     font-family: var(--font-serif);
     font-size: var(--font-size-sm);
     font-weight: 500;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    transition: color 180ms ease;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   a {
     display: grid;
-    gap: 2px;
-    min-height: 32px;
-    color: var(--text-secondary);
+    gap: 3px;
+    min-height: 40px;
     text-decoration: none;
 
     &:hover .toc-pn-title {
       color: var(--primary-color);
+    }
+
+    &[data-dir='prev']:hover .toc-pn-arrow {
+      transform: translateX(-2px);
+    }
+
+    &[data-dir='next']:hover .toc-pn-arrow {
+      transform: translateX(2px);
     }
 
     &:focus-visible {
