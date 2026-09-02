@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "9090290e4a4e07e391167a9841f08da63dfeaabe",
-    "verifiedAt": "2026-09-02T02:27:09.440Z"
+    "verifiedCommit": "71423eed1c0090ab9075502ac225255b2140a82a",
+    "verifiedAt": "2026-09-02T02:42:24.758Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "c480734dc0b0e0d2e0a678c1b26024ed72bab84b",
+    "checkpoint": "344a83744e9a0e73a76783e93911facb0b8032fb",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -156,6 +156,12 @@
 - [x] 三钮组恢复站点组件语言：FloatingButton 恢复上浮 1.08 + 脉冲光晕 hover、LikeButton 恢复实线朱砂边胶囊 + hover 主色填充 + 心跳循环、FloatingActions 组件还原（去第一轮 $beat 单次心跳），保持 prefers-color-scheme 已移除状态，明暗走主题 token — apps/site/app/post/styles/post-floating.ts + apps/site/app/post/components/FloatingActions/index.tsx — 回退
 - [x] 分享组完全复用 SharedLinkGroup 组件默认形态：删除 ColophonShareRow 中和 hack 与导出，直接渲染组件（分区壳 + 「分享到」标签 + 圆形图标钮） — apps/site/app/post/PostView/index.tsx + apps/site/app/post/styles/post-article.ts + apps/site/app/post/styles/index.ts — 改动
 - [x] tsc 通过、残留扫描确认无 prefers-color-scheme 回归 — 验证
+
+### Phase 10 三钮组侧栏化（第二轮 · 验收讨论）
+
+- [x] 三钮组桌面端移入目录侧栏：TocAside 常驻渲染（无目录文章仅显示工具列，顺带解决其右侧全空）、目录与工具列之间发丝线分隔（TocTools）、TocAside 增加 max-height + overflow 防超长目录把工具列顶出视口；文末三钮包 ColophonTools 仅移动/平板显示（display:none 驱动，隐藏实例不进焦点树） — apps/site/app/post/styles/post-toc.ts + post-article.ts + styles/index.ts + PostView/index.tsx — 改动
+- [x] 原型同步：侧栏工具列 + 文末三钮桌面隐藏 + 点赞双实例绑定（.like-btn 类绑定，去重复 id） — shadow-docs/changes/20260901-style-post-paper-redesign/prototype-v2.html — 改动
+- [x] tsc 通过；DOM 断言（aside sticky、tools 在侧栏内、文末 trio 桌面隐藏、双实例） — 验证
 
 ## 结果
 
