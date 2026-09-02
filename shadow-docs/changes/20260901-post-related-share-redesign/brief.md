@@ -4,7 +4,7 @@
   "name": "20260901-post-related-share-redesign",
   "type": "style",
   "scope": "post",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -27,7 +27,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:349",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
