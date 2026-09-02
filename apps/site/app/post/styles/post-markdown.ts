@@ -1,6 +1,16 @@
 import styled from '@wuh.site/components/styled'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
+/**
+ * 正文排印体系「铅字工坊」：
+ * - 基准 16px/1.92，移动端（max 640）收敛 15px/1.85，平板端继承桌面值（三档断点契约）
+ * - 章节记号：.sec-eyebrow 眉线 + .sec-text 章节字号，由 lib/articleTypography 注入
+ * - 首字下沉：.dropcap，正文首段首字
+ * - 链接/列表序号用 --primary-color（accent 金在纸面上对比度不足），链接另有虚线下划线双重可供性
+ */
 export const MarkdownBody = styled.article`
+  font-size: 16px;
+
   --github-border: color-mix(in oklab, var(--accent-color) 18%, var(--normal-300));
   --github-muted: var(--text-secondary);
   --atom-inline-bg: color-mix(in oklab, var(--accent-color) 8%, transparent);
@@ -17,67 +27,101 @@ export const MarkdownBody = styled.article`
     --atom-pre-border: rgba(255, 255, 255, 0.06);
   }
 
+  & ::selection {
+    background: var(--primary-color);
+    color: var(--background-100);
+  }
+
   h1, h2, h3, h4, h5, h6 {
+    position: relative;
     font-family: var(--font-serif);
-    font-weight: 600;
-    line-height: 1.3;
-    margin: 28px 0 10px;
+    font-weight: 700;
+    line-height: 1.4;
     color: inherit;
     letter-spacing: 0.02em;
   }
 
-  h1 { font-size: 26px; }
-  h2 { font-size: 18px; }
-  h3 { font-size: 16px; }
-  h4 { font-size: 15px; }
-  h5 { font-size: 14px; }
-  h6 { font-size: 13px; color: var(--github-muted); }
+  h1 { font-size: 26px; margin: 2.2em 0 0.6em; }
 
-  h2 {
-    position: relative;
-    padding-left: 14px;
+  h2, h3 { margin: 2.6em 0 0.8em; }
+
+  h2 .sec-text {
+    display: block;
+    font-size: 23px;
   }
 
-  h2::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 20px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+  h3 .sec-text {
+    display: block;
+    font-size: 20px;
+  }
+
+  h4 { font-size: 17px; margin: 1.8em 0 0.6em; }
+  h5 { font-size: 16px; margin: 1.6em 0 0.6em; }
+  h6 { font-size: 15px; margin: 1.6em 0 0.6em; color: var(--github-muted); }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    h2 .sec-text { font-size: 20px; }
+    h3 .sec-text { font-size: 18px; }
+  }
+
+  .sec-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.42em;
+    color: var(--primary-color);
+  }
+
+  .sec-eyebrow .stub {
+    flex: none;
+    width: 44px;
+    height: 1px;
+    background: color-mix(in oklab, var(--primary-color) 38%, transparent);
   }
 
   p {
-    margin: 14px 0;
+    margin: 1.15em 0;
     font-family: var(--font-serif);
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 16px;
+    line-height: 1.92;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     p {
-      line-height: 1.5;
+      font-size: 15px;
+      line-height: 1.85;
     }
   }
 
+  .dropcap {
+    float: left;
+    margin: 0.05em 0.14em 0 0;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 3.35em;
+    line-height: 1.15;
+    color: var(--primary-color);
+  }
+
   a {
-    color: var(--accent-color);
+    color: var(--primary-color);
     text-decoration: none;
-    border-bottom: 1px dashed color-mix(in oklab, var(--accent-color) 42%, transparent);
+    border-bottom: 1px dashed color-mix(in oklab, var(--primary-color) 45%, transparent);
     transition: border-color 0.2s ease, color 0.2s ease;
   }
 
   a:hover {
     border-bottom-style: solid;
-    border-bottom-color: var(--accent-color);
+    border-bottom-color: var(--primary-color);
   }
 
   code {
     font-family: var(--font-mono);
-    font-size: 0.9em;
+    font-size: 0.88em;
     background: var(--atom-inline-bg);
     padding: 0.15em 0.45em;
     border-radius: 5px;
@@ -92,9 +136,10 @@ export const MarkdownBody = styled.article`
     border-radius: 10px;
     padding: 20px 22px;
     overflow: auto;
-    font-size: 0.9em;
+    font-size: 13.5px;
+    line-height: 1.7;
     position: relative;
-    margin: 24px 0;
+    margin: 1.8em 0;
   }
 
   pre code {
@@ -125,6 +170,9 @@ export const MarkdownBody = styled.article`
   }
 
   .anchor {
+    position: absolute;
+    right: 0;
+    top: 6px;
     margin-left: 6px;
     opacity: 0;
     text-decoration: none;
@@ -143,19 +191,34 @@ export const MarkdownBody = styled.article`
   }
 
   blockquote {
-    margin: 12px 0;
-    padding: 0 0 0 14px;
-    border-left: 2px solid var(--accent-color);
+    margin: 1.9em 0;
+    padding: 1.15em 4px;
+    border-top: 1px solid color-mix(in oklab, var(--accent-color) 42%, transparent);
+    border-bottom: 1px solid color-mix(in oklab, var(--accent-color) 42%, transparent);
     color: var(--text-secondary);
   }
 
   blockquote p {
-    margin: 6px 0;
+    margin: 0.35em 0;
+    font-size: 15.5px;
+    line-height: 1.9;
+  }
+
+  blockquote p:first-child::before {
+    content: '「';
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  blockquote p:last-child::after {
+    content: '」';
+    color: var(--primary-color);
+    font-weight: 700;
   }
 
   ul,
   ol {
-    margin: 14px 0 14px 1.6em;
+    margin: 1.15em 0 1.15em 1.7em;
   }
 
   ul {
@@ -164,14 +227,15 @@ export const MarkdownBody = styled.article`
 
   ul > li {
     position: relative;
-    padding-left: 16px;
+    padding-left: 18px;
+    line-height: 1.88;
   }
 
   ul > li::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.75em;
+    top: 0.78em;
     width: 5px;
     height: 5px;
     border-radius: 50%;
@@ -185,23 +249,24 @@ export const MarkdownBody = styled.article`
 
   ol > li {
     position: relative;
-    padding-left: 24px;
+    padding-left: 26px;
     counter-increment: li;
+    line-height: 1.88;
   }
 
   ol > li::before {
     content: counter(li);
     position: absolute;
     left: 0;
-    top: 0;
+    top: 0.08em;
     font-family: var(--font-serif);
     font-variant-numeric: tabular-nums;
-    color: var(--accent-color);
-    font-weight: 600;
+    color: var(--primary-color);
+    font-weight: 700;
   }
 
   li + li {
-    margin-top: 7px;
+    margin-top: 0.6em;
   }
 
   .task-list-item {
@@ -221,20 +286,21 @@ export const MarkdownBody = styled.article`
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 14px 0;
-    font-size: 13px;
+    margin: 1.6em 0;
+    font-size: 14px;
   }
 
   th,
   td {
-    padding: 8px 12px;
+    padding: 9px 12px;
     text-align: left;
   }
 
   th {
     font-family: var(--font-serif);
-    font-weight: 600;
-    border-bottom: 2px solid var(--accent-color);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid color-mix(in oklab, var(--normal-500) 70%, transparent);
     color: var(--text-primary);
   }
 

@@ -32,12 +32,15 @@ import {
   ColophonRule,
   ColophonLicense,
   ColophonMeta,
-  ColophonShareRow,
-  SharePill,
+  ColophonTools,
   TocAside,
   TocTitle,
   TocItemLink,
   TocList,
+  TocNum,
+  TocTools,
+  TocPrevNext,
+  TocInfo,
   TocMobile,
 } from '../styles'
 
@@ -173,6 +176,9 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               onNavigate?.()
             }}
           >
+            {item.shortNum && (
+              <TocNum aria-hidden='true'>{item.shortNum}</TocNum>
+            )}
             {item.text}
           </TocItemLink>
         </li>
@@ -282,24 +288,14 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               {' · '}
               <a href={projectLink.href} target='_blank' rel='noopener noreferrer'>{projectLink.label}</a>
             </ColophonMeta>
-            <ColophonShareRow>
-              {shareItems.map((item) =>
-                item.href ? (
-                  <SharePill key={item.key} as='a' href={item.href} target='_blank' rel='noopener noreferrer'>
-                    {item.label}
-                  </SharePill>
-                ) : (
-                  <SharePill key={item.key} type='button' onClick={item.onClick}>
-                    {item.label}
-                  </SharePill>
-                )
-              )}
-            </ColophonShareRow>
-            <FloatingActions
-              issueNumber={issue.number}
-              initialLikeCount={issue.likeCount ?? 0}
-              initialLiked={issue.liked ?? false}
-            />
+            <SharedLinkGroup items={shareItems} />
+            <ColophonTools>
+              <FloatingActions
+                issueNumber={issue.number}
+                initialLikeCount={issue.likeCount ?? 0}
+                initialLiked={issue.liked ?? false}
+              />
+            </ColophonTools>
           </ArticleColophon>
 
           <ShareCard
@@ -319,12 +315,61 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <PostToolbar prevIssue={prevIssue} nextIssue={nextIssue} currentNumber={issue.number} total={total} position={position} />
         </MainColumn>
 
-        {tocResult.toc.length > 0 && (
-          <TocAside aria-label='文章目录'>
-            <TocTitle>目录</TocTitle>
-            {renderToc()}
-          </TocAside>
-        )}
+        <TocAside aria-label='文章目录与操作'>
+          {tocResult.toc.length > 0 && (
+            <>
+              <TocTitle>目录</TocTitle>
+              {renderToc()}
+            </>
+          )}
+          <TocTools>
+            <FloatingActions
+              variant='compact'
+              issueNumber={issue.number}
+              initialLikeCount={issue.likeCount ?? 0}
+              initialLiked={issue.liked ?? false}
+            />
+          </TocTools>
+
+          {(prevIssue || nextIssue) && (
+            <TocPrevNext aria-label='前后篇'>
+              {prevIssue ? (
+                <a href={buildPostUrl(prevIssue.number)} data-dir='prev'>
+                  <span className='toc-pn-label'>
+                    <span className='toc-pn-arrow' aria-hidden='true'>‹</span>
+                    天才向左
+                  </span>
+                  <span className='toc-pn-title'>{prevIssue.title}</span>
+                </a>
+              ) : (
+                <span className='toc-pn-empty'>已是最早一篇</span>
+              )}
+              {nextIssue ? (
+                <a href={buildPostUrl(nextIssue.number)} data-dir='next'>
+                  <span className='toc-pn-label'>
+                    疯子向右
+                    <span className='toc-pn-arrow' aria-hidden='true'>›</span>
+                  </span>
+                  <span className='toc-pn-title'>{nextIssue.title}</span>
+                </a>
+              ) : (
+                <span className='toc-pn-empty'>已是最新一篇</span>
+              )}
+            </TocPrevNext>
+          )}
+
+          <TocInfo>
+            <span>
+              第 {position ?? issue.number}
+              {typeof total === 'number' ? ` / ${total} 篇` : ' 篇'}
+            </span>
+            <span>发布于 {issue.created_at.slice(0, 10)}</span>
+            {updatedDate && <span>更新于 {updatedDate}</span>}
+            <span>
+              约 {Math.max(1, Math.round((issue.body_html ?? '').replace(/<[^>]+>/g, '').length / 450))} 分钟读完
+            </span>
+          </TocInfo>
+        </TocAside>
       </ContentGrid>
     </Container>
   )

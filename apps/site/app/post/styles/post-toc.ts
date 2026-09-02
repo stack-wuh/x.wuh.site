@@ -11,6 +11,8 @@ export const TocAside = styled.aside`
     position: sticky;
     top: 88px;
     align-self: start;
+    max-height: calc(100vh - 112px);
+    overflow: auto;
   }
 `
 
@@ -32,6 +34,98 @@ export const TocList = styled.ul`
   gap: 2px;
   padding: 0;
   margin: 0;
+`
+
+export const TocNum = styled.span`
+  margin-right: 8px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--primary-color);
+`
+
+/** 侧栏工具列：目录下方的返回首页/回到顶部/点赞（仅桌面端随侧栏出现） */
+export const TocTools = styled.div`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid ${hairline};
+`
+
+/** 侧栏前后篇迷你导航：阅读中随时跳转，不必滚到文末（「天才向左 / 疯子向右」为站点个性文案） */
+export const TocPrevNext = styled.nav`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid ${hairline};
+  display: grid;
+  gap: var(--space-xs);
+
+  .toc-pn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+  }
+
+  .toc-pn-arrow {
+    color: var(--primary-color);
+    transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+  }
+
+  .toc-pn-title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  a {
+    display: grid;
+    gap: 3px;
+    min-height: 40px;
+    text-decoration: none;
+
+    &:hover .toc-pn-title {
+      color: var(--primary-color);
+    }
+
+    &[data-dir='prev']:hover .toc-pn-arrow {
+      transform: translateX(-2px);
+    }
+
+    &[data-dir='next']:hover .toc-pn-arrow {
+      transform: translateX(2px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
+      outline-offset: 2px;
+    }
+  }
+
+  .toc-pn-empty {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+`
+
+/** 侧栏篇信息小注：篇号进度 / 发布 / 更新 / 阅读时长 */
+export const TocInfo = styled.div`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid ${hairline};
+  display: grid;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
 `
 
 export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`

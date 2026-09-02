@@ -1,10 +1,11 @@
 import styled, { css } from '@wuh.site/components/styled'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
+const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
+
 export const Header = styled.header`
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
   margin-bottom: var(--space-xl);
   order: 1;
 
@@ -13,32 +14,119 @@ export const Header = styled.header`
   }
 `
 
+/** 注记式页头：辅助信息双列单行——meta 行靠左、书签标签靠右，520 以下折为上下 */
+export const TopRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  animation-delay: 80ms;
+
+  @media (max-width: ${BREAKPOINTS.small}px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+`
+
+export const MetaLine = styled.p`
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: color-mix(in oklab, var(--text-color) 76%, transparent);
+
+  .author {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .dot {
+    margin: 0 8px;
+    color: var(--normal-400);
+  }
+`
+
 export const Title = styled.h1`
   color: var(--text-primary);
   font-family: var(--font-serif);
-  font-size: var(--font-size-2xl);
+  font-size: clamp(28px, 5.4vw, 40px);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin: 0 0 18px;
   animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
 `
 
-export const MetaRow = styled.div`
+/** 头部收束符：朱砂短规 + 发丝线延伸，与正文章节 stub 同语言 */
+export const HeadRule = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  color: color-mix(in oklab, var(--text-color) 76%, transparent);
-  font-size: var(--font-size-sm);
   align-items: center;
-  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
-  animation-delay: 80ms;
+  gap: var(--space-sm);
+  margin-top: 18px;
+
+  &::before {
+    content: '';
+    width: 44px;
+    height: 2px;
+    background: var(--primary-color);
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: ${hairline};
+  }
 `
 
-export const TagGroup = styled.div`
+/** 书签样式标签：纸面底 + 顶部朱砂色带 + 底部燕尾缺口，hover 抽书签微暗示 */
+export const TagGroup = styled.nav`
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
-  animation-delay: 160ms;
+  gap: 10px;
+
+  a {
+    position: relative;
+    display: inline-block;
+    padding: 6px 12px 14px;
+    background: var(--background-200);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    text-decoration: none;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 6px), 0 100%);
+    transition:
+      color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+  }
+
+  a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-color);
+  }
+
+  a:hover {
+    color: var(--primary-color);
+    background: var(--background-300);
+    transform: translateY(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+
+    a:hover {
+      transform: none;
+    }
+  }
 `
 
 /** 封面公共外壳：尺寸、圆角、边框、动效、移动端出血 */
@@ -187,45 +275,8 @@ export const GeneratedColophon = styled.div`
   color: var(--text-muted);
 `
 
-export const PostLead = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-export const AuthorRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-`
-
-export const AuthorAvatarFrame = styled.span`
-  display: inline-flex;
-  width: 36px;
-  height: 36px;
-  padding: 2px;
-  border-radius: 50%;
-  border: 2px solid color-mix(in oklab, var(--accent-color) 30%, transparent);
-  flex-shrink: 0;
-
-  > * { width: 100%; height: 100%; }
-`
-
-export const AuthorInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-
-  strong {
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-`
-
 export const Summary = styled.blockquote`
-  margin: 0 0 var(--space-lg);
+  margin: 0 0 18px;
   padding: var(--space-sm) var(--space-md);
   border-left: 3px solid var(--accent-color);
   font-family: var(--font-serif);
@@ -236,26 +287,7 @@ export const Summary = styled.blockquote`
   border-radius: 0 8px 8px 0;
 `
 
-export const OrnamentDivider = styled.div`
+export const PostLead = styled.div`
   display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  max-width: 360px;
-  margin: var(--space-md) auto;
-  color: var(--text-muted);
-  opacity: 0.5;
-
-  .divider-line {
-    flex: 1;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.35;
-  }
-
-  .divider-diamond {
-    width: 10px;
-    height: 10px;
-    flex-shrink: 0;
-  }
+  flex-direction: column;
 `

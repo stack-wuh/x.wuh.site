@@ -166,13 +166,20 @@ export const RelatedPostLink = styled.a`
   }
 `
 
-/** 文章页脚：版权 / 来源 / 分享 / 点赞 合一的居中仪式式收笔 */
+/** 文章页脚：版权 / 来源 / 分享 合一的居中仪式式收笔 */
 export const ArticleColophon = styled.footer`
   margin-top: var(--space-xl);
   padding: var(--space-lg) 0;
   text-align: center;
   border-top: 1px solid ${hairline};
   border-bottom: 1px solid ${hairline};
+`
+
+/** 文末三钮组：仅移动/平板显示（桌面端同组移入目录侧栏 TocTools） */
+export const ColophonTools = styled.div`
+  @media (min-width: ${BREAKPOINTS.tablet}px) {
+    display: none;
+  }
 `
 
 export const ColophonOrnament = styled.div`
@@ -213,39 +220,3 @@ export const ColophonMeta = styled.p`
   }
 `
 
-export const ColophonShareRow = styled.div`
-  margin-top: var(--space-md);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-xs);
-`
-
-/** 分享药丸：文字描边形态，与点赞按钮同族；动效仅颜色过渡（链接态用 as='a'） */
-export const SharePill = styled.button`
-  padding: 3px var(--space-base);
-  font-family: inherit;
-  font-size: var(--font-size-xs);
-  line-height: 1.9;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid color-mix(in oklab, var(--normal-400) 70%, transparent);
-  border-radius: 999px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 200ms ease, border-color 200ms ease;
-
-  &:hover {
-    color: var(--primary-color);
-    border-color: color-mix(in oklab, var(--primary-color) 55%, transparent);
-  }
-
-  &:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--primary-color) 36%, transparent);
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`
