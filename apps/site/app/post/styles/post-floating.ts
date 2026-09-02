@@ -86,6 +86,13 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
     &:focus-visible {
       box-shadow: inset 0 0 0 2px var(--primary-300);
     }
+
+    /* dark 下 background-300 与纸面几乎同色，换用提亮一档的灰 */
+    [data-color-scheme="dark"] & {
+      &:hover:not(:disabled) {
+        background: var(--normal-200);
+      }
+    }
   `
       : ''}
 `
@@ -146,16 +153,17 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     justify-content: center;
     border-radius: 0;
     border: none;
-    background: var(--primary-color) !important;
+    /* 清掉 Button filled 自带的渐变底，hover 时换成 primary-600→800 主题渐变 */
+    background-color: var(--primary-color) !important;
+    background-image: none !important;
     border-color: transparent !important;
     color: #fff;
     font-size: var(--font-size-sm);
-    transition: filter 0.2s ease;
 
     &:hover:not(:disabled) {
       transform: none;
-      filter: brightness(0.86);
-      background: var(--primary-color) !important;
+      background-color: var(--primary-color) !important;
+      background-image: linear-gradient(90deg, var(--primary-600), var(--primary-800)) !important;
       border: none;
       color: #fff;
       box-shadow: none;
