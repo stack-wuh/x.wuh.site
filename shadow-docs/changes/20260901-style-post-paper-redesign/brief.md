@@ -4,7 +4,7 @@
   "name": "20260901-style-post-paper-redesign",
   "type": "style",
   "scope": "post",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
@@ -30,8 +30,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 347,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/347",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 349,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/349"
   },
   "review": {
     "conclusion": "passed",
@@ -40,7 +40,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "28d10aaed42592d44d8b715fd072b469a766b04d",
+    "checkpoint": "pr:349",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
