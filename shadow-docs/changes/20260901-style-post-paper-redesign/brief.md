@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "31569ffb8a7cf0ab68a746f1c1ff1975867751bc",
-    "verifiedAt": "2026-09-02T03:57:49.460Z"
+    "verifiedCommit": "d34612ac10aabdff68216d804c696a94ea2325cc",
+    "verifiedAt": "2026-09-02T04:07:45.270Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "1e211d8a4b27bb78868d7c10f879d9f291db3523",
+    "checkpoint": "377187bad96f575ecb10f86aa02e0a60b83e9757",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -174,6 +174,8 @@
 - [x] tsc 通过；DOM 断言（spread 桌面隐藏、primary-600 token 就位） — 验证
 - [x] 验收反馈：动画特效须符合站点动画规范（knowledge/animation-system.md）——删除三钮组组件内自定义关键帧 pulse（光晕）与 heartBeat（无限闪烁），hover 反馈只保留颜色/背景/边框过渡，时长缓动全部对齐 --motion-dur-quick × --motion-ease-out-soft，reduced-motion 降级补齐（hover 位移归零）；hover 上浮 1.08 位移保留（Phase 9 组件语言裁定，SharedLinkGroup SShareButton 同款，属共享组件自有节奏豁免） — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
 - [x] tsc 通过；残留扫描确认组件内无 @keyframes/无 infinite 循环 — 验证
+- [x] 验收反馈：侧栏前后篇重设计——文案换个性版「‹ 天才向左 / 疯子向右 ›」（箭头独立朱砂色，hover 按方向位移 2px）；标题从单行省略放开为两行封顶（line-clamp 2，侧栏为伴读信息不宜截断）；hover 过渡对齐 motion tokens — apps/site/app/post/PostView/index.tsx + styles/post-toc.ts + prototype-v2.html — 改动
+- [x] tsc 通过；原型 DOM 断言（label 文案、line-clamp 2、data-dir 方向） — 验证
 
 ## 结果
 
