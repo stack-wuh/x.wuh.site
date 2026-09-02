@@ -13,6 +13,7 @@ source:
   - changes/20260823-feature-post-cover-redesign/brief.md
   - changes/20260829-P-post-typography-design-language/brief.md
   - changes/20260901-style-post-paper-redesign/brief.md
+  - changes/20260901-post-related-share-redesign/brief.md
 verified: 2026-09-02
 ---
 
@@ -24,7 +25,7 @@ verified: 2026-09-02
 
 页头为注记式构图：辅助信息双列单行两端对齐——meta 行（作者 500 字重 · 日期 · 阅读数，间隔点分层）靠左、书签样式标签靠右；衬线大标题 clamp(28px, 5.4vw, 40px) 做主角；头部以朱砂短规（44×2px）+ 发丝线延伸收尾，与正文章节 stub 同语言。520 以下 toprow 折为上下两行。标签为书签样式：纸面底（background-200）+ 顶部 2px 朱砂色带 + clip-path 底部燕尾缺口，hover 底色加深、文字变朱砂并下移 2px（抽书签暗示），过渡走 motion tokens 并有 reduced-motion 降级。有封面图时标题区在上（order 控制）、封面杂志卡在下；无封面时生成式封面承载 header 信息（PostHeader 不渲染），无封面文章不显示书签标签。页头不渲染作者头像行。封面细节见 `post-cover.md`。
 
-相关文章基于标签与时间排序、去重且最多 3 篇：每个标签并发请求最多 10 篇候选，按共享标签数降序、更新时间降序、编号升序排序。「继续阅读」模块以线索小径 + 轻卡片结构呈现：模块有与详情页一致的卡片边界，内部用左侧竖向线索线 + 圆点节点串起推荐项；计数「拾遗 N 则」，引导语取传统文气；hover 仅改变标题与箭头颜色并使箭头轻微右移。窄屏下单向触达高度不低于 44px。
+相关文章基于标签与时间排序、去重且最多 3 篇：每个标签并发请求最多 10 篇候选，按共享标签数降序、更新时间降序、编号升序排序；推荐算法由 `lib/related-posts` 承担，与呈现层分离。「继续阅读」以书目条目式呈现：每条为单行条目——汉字序号（一/二/三，accent 金衬线）+ 条目主体（标题衬线 500 两行封顶、摘要两行、「线索 / 标签」小注）+ 点线 leader（dotted，baseline 对齐）+ `→` 箭头，整条单链接；引导语「读罢意犹未尽……」与「拾遗 N 则」计数保留；hover 时条目下划线转实线、leader 与箭头做颜色过渡。窄屏下单向触达高度不低于 44px。
 
 文章标签链接使用 `buildTopicUrl` 生成 `/topics/<encoded>` 站内链接，不构造 GitHub Issue label query URL。Alert 组件区分站内外链接：外部域名设 `target="_blank"` + `rel="noopener noreferrer"`，站内路径同窗口导航。
 
