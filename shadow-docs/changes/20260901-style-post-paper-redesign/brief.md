@@ -4,7 +4,7 @@
   "name": "20260901-style-post-paper-redesign",
   "type": "style",
   "scope": "post",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "style/20260901-style-post-paper-redesign",
   "files": [
@@ -33,12 +33,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "7e1591284e610a7340bd2a34afd55f965a362acf",
-    "verifiedAt": "2026-09-02T03:17:01.270Z"
+    "verifiedCommit": "e106915a85ef55230b4d1a949113af6a7c49993e",
+    "verifiedAt": "2026-09-02T03:22:04.346Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "7e1591284e610a7340bd2a34afd55f965a362acf",
+    "checkpoint": "dd7b315193e76bb1ef3951917366e3121f0467ea",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -167,6 +167,9 @@
 - [x] compact 二次调整（验收反馈：宽度太小、点赞不醒目）：整组撑满侧栏宽（260×39）、图标段定宽 44px、点赞段 flex:1 主色实底白字（约 170px，最醒目），点赞前分隔线取消（以色块分界）；原型同步 — apps/site/app/post/styles/post-floating.ts + components/FloatingActions/index.tsx + prototype-v2.html — 改动
 - [x] tsc 通过；DOM 断言（组 260×39/999 圆角、图标段 44×2、点赞段 ~170px 朱砂底白字） — 验证
 - [x] 验收反馈修正：点赞段内容居中——原型 .like-btn 补 justify-content:center（flex:1 撑开后内容靠左的根因），实现侧 LikeButton compact 显式声明；DOM 断言 leftGap=rightGap=70px 居中成立 — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
+- [x] 验收反馈：点赞 compact hover 不明显——改为 filter brightness(0.86) 加深（主题无关、不违token约束），保留心跳循环，去 opacity 发灰 — apps/site/app/post/styles/post-floating.ts + prototype-v2.html — 改动
+- [x] 验收反馈：目录下方太空——侧栏补「前后篇迷你导航」（TocPrevNext，随时跳转不滚到文末，null 时显示已是最早/最新一篇）+「篇信息小注」（TocInfo：第 N/M 篇·发布·更新·约 N 分钟读完，正文长度/450 估算），发丝线分段与工具列同节奏；原型同步 — apps/site/app/post/styles/post-toc.ts + styles/index.ts + PostView/index.tsx + prototype-v2.html — 改动
+- [x] tsc 通过；原型 DOM 断言（aside 高 450px、pn 标题、info 3 行） — 验证
 
 ## 结果
 
