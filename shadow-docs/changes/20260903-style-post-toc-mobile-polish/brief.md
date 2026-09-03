@@ -4,7 +4,7 @@
   "name": "20260903-style-post-toc-mobile-polish",
   "type": "style",
   "scope": "post",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260903-style-post-toc-mobile-polish",
   "files": [
@@ -23,8 +23,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 356,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/356",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 357,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/357"
   },
   "review": {
     "conclusion": "passed",
@@ -33,7 +33,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "c45809a11412386f545c105908f9387d5a23b1ac",
+    "checkpoint": "pr:357",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
