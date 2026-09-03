@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.9](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.8...v1.4.9) (2026-09-03)
+
+
+### Bug Fixes
+
+* **topics:** BackHomeLink href 兜底默认首页，修复标签页返回首页失效 ([#356](https://github.com/stack-wuh/x.wuh.site/issues/356)) ([c45809a](https://github.com/stack-wuh/x.wuh.site/commit/c45809a11412386f545c105908f9387d5a23b1ac))
+
 ### [1.4.8](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.7...v1.4.8) (2026-09-02)
 
 
