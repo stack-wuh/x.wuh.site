@@ -4,8 +4,6 @@ import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 export { MarkdownBody, UpdateDivider } from './post-markdown'
 
-const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
-
 export const StatusEmpty = styled(Empty)`
   margin-bottom: var(--space-lg);
   min-height: 220px;
@@ -177,20 +175,6 @@ export const ColophonTools = styled.div`
   @media (min-width: ${BREAKPOINTS.tablet}px) {
     display: none;
   }
-`
-
-export const ColophonOrnament = styled.div`
-  color: var(--accent-color);
-  font-size: var(--font-size-xs);
-  line-height: 1;
-  opacity: 0.85;
-`
-
-export const ColophonRule = styled.div`
-  width: 120px;
-  height: 1px;
-  margin: 10px auto 14px;
-  background: linear-gradient(90deg, transparent, ${hairline}, transparent);
 `
 
 export const ColophonLicense = styled.p`

@@ -1,2 +1,4 @@
 [tools]
-node = "24.19.0"
+# 22 与 CI (ci-cd.yml) 同版本；本机 24.19.0 / 20.20.2 触发 V8 CodeSerializer SIGSEGV，
+# 导致 next dev/build worker 静默崩溃（详情页请求挂死、构建 worker exited signal SIGSEGV）
+node = "22.23.2"

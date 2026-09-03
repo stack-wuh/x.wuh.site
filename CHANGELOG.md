@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.8](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.7...v1.4.8) (2026-09-02)
+
+
+### Bug Fixes
+
+* **post:** 侧栏工具组内衬分段 + 正文 hr 回归原生样式 ([#354](https://github.com/stack-wuh/x.wuh.site/issues/354)) ([692517a](https://github.com/stack-wuh/x.wuh.site/commit/692517ac3c201a8980dfebae5880a09de5aaf569)), closes [#347](https://github.com/stack-wuh/x.wuh.site/issues/347)
+* **post:** 正文 hr 回归原生样式，仅叠加主题背景色 ([35af74f](https://github.com/stack-wuh/x.wuh.site/commit/35af74f3114a514a9526a69f5fbabf237bb69dd8))
+* **post:** 牌记装饰换用基础组件 Divider ornament 变体 ([61f2c67](https://github.com/stack-wuh/x.wuh.site/commit/61f2c678e2a06e0fba77983b0a9199ceaec15618))
+* **post:** 牌记装饰换用基础组件 Divider ornament 变体 ([#355](https://github.com/stack-wuh/x.wuh.site/issues/355)) ([577be0e](https://github.com/stack-wuh/x.wuh.site/commit/577be0e5f2da2f638480ad336e0c56138d085bf8)), closes [#354](https://github.com/stack-wuh/x.wuh.site/issues/354)
+* **post:** 目录侧栏工具组内衬分段，消除按钮填充与外框边框重合 ([73fd051](https://github.com/stack-wuh/x.wuh.site/commit/73fd051b23009d8d0bfb912782278361f86ebe36))
+
+### [1.4.7](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.6...v1.4.7) (2026-09-02)
+
 ### [1.4.4](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.3...v1.4.4) (2026-09-01)
 
 

@@ -40,8 +40,6 @@ import {
   PostLead,
   StatusEmpty,
   ArticleColophon,
-  ColophonOrnament,
-  ColophonRule,
   ColophonLicense,
   ColophonMeta,
   ColophonShareRow,
@@ -305,8 +303,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
           <Divider style={{ margin: 'var(--space-xl) 0 0' }} />
           <ArticleColophon>
-            <ColophonOrnament aria-hidden='true'>◇</ColophonOrnament>
-            <ColophonRule aria-hidden='true' />
+            <Divider variant='ornament' aria-hidden='true' />
             <ColophonLicense>{COPYRIGHT_TEXT}</ColophonLicense>
             <ColophonMeta>
               <a href={sourceLink.href} target='_blank' rel='noopener noreferrer'>{sourceLink.label}</a>

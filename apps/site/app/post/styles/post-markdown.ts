@@ -331,27 +331,9 @@ export const MarkdownBody = styled.article`
     outline-offset: 2px;
   }
 
+  /* hr 保持浏览器原生样式，只叠加主题背景色（不加边框/宽度/装饰） */
   hr {
-    position: relative;
-    border: none;
-    width: 200px;
-    height: 1px;
-    margin: 32px auto;
-    background: color-mix(in oklab, var(--accent-color) 55%, transparent);
-  }
-
-  hr::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid var(--primary-color);
-    background: var(--background-100);
-    box-shadow: 0 0 0 4px var(--background-100);
+    background-color: color-mix(in oklab, var(--accent-color) 55%, transparent);
   }
 
   kbd {
