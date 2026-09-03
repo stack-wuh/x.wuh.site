@@ -190,11 +190,11 @@ export const MarkdownBody = styled.article`
     opacity: 1;
   }
 
+  /* blockquote 左侧朱砂竖线：与目录 active 竖线同语言，hr 一横一纵不混同 */
   blockquote {
     margin: 1.9em 0;
-    padding: 1.15em 4px;
-    border-top: 1px solid color-mix(in oklab, var(--accent-color) 42%, transparent);
-    border-bottom: 1px solid color-mix(in oklab, var(--accent-color) 42%, transparent);
+    padding: 0.35em 16px;
+    border-left: 2px solid var(--primary-color);
     color: var(--text-secondary);
   }
 
@@ -331,9 +331,17 @@ export const MarkdownBody = styled.article`
     outline-offset: 2px;
   }
 
-  /* hr 保持浏览器原生样式，只叠加主题背景色（不加边框/宽度/装饰） */
+  /* hr 渐隐朱砂线：与 Divider ornament / 牌记开线同语言（原生 border 线不吃 background，必须去边框自绘） */
   hr {
-    background-color: color-mix(in oklab, var(--accent-color) 55%, transparent);
+    border: none;
+    height: 1px;
+    margin: 2em 0;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--primary-color) 45%, transparent),
+      transparent
+    );
   }
 
   kbd {
