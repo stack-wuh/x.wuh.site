@@ -1,6 +1,6 @@
 'use client'
 
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 import Skeleton from '@wuh.site/components/skeleton'
 
 const Root = styled.div`

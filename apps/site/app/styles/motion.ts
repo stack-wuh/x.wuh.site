@@ -1,4 +1,4 @@
-import { createGlobalStyle } from '@wuh.site/components/styled'
+import { createGlobalStyle } from 'styled-components'
 
 /**
  * 全站动画规范（微光呼吸 × 书写显现）：

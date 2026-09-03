@@ -1,7 +1,7 @@
 import Button from '@wuh.site/components/button'
 import { MessageCard } from '@wuh.site/components/message-card'
 import ScrollArea from '@wuh.site/components/scroll-area'
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 
 /* ====== Trigger ====== */
 

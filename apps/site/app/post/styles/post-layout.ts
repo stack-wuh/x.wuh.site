@@ -1,4 +1,4 @@
-import styled, { keyframes } from '@wuh.site/components/styled'
+import styled, { keyframes } from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 const scrollProgress = keyframes`

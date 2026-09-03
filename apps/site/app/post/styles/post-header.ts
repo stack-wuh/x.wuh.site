@@ -1,4 +1,4 @@
-import styled, { css } from '@wuh.site/components/styled'
+import styled, { css } from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'

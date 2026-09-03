@@ -1,4 +1,4 @@
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 
 /* 信笺风留言组件：奶油纸底便笺卡片、衬线斜体昵称、琥珀时间戳。
    全部走主题 token，四主题（wine/plain × light/dark）自动适配。 */

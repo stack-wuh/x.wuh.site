@@ -1,4 +1,4 @@
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 import Link from 'next/link'
 
 const BREAKPOINT = '768px'

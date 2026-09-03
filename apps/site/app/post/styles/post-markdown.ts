@@ -1,4 +1,4 @@
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 /**

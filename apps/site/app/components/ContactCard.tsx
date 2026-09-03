@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 import Button from '@wuh.site/components/button'
 import Image from '@wuh.site/components/image'
 
