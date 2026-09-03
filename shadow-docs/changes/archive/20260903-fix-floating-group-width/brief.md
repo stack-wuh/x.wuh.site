@@ -4,7 +4,7 @@
   "name": "20260903-fix-floating-group-width",
   "type": "fix",
   "scope": "post",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260903-fix-floating-group-width",
   "files": [
@@ -14,17 +14,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 362,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/362",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 363,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/363"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d72a87a1441848f239c450b1c853a9bf1f5b74a9",
-    "verifiedAt": "2026-09-03T09:40:09.768Z"
+    "verifiedCommit": "cb18c1b9ef4083ea860b935cb1dcda6f791dc3b6",
+    "verifiedAt": "2026-09-03T10:31:43.060Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "aac9afcc9cfd18a914716322832de3903856a403",
+    "checkpoint": "merged-pr:363",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
