@@ -32,11 +32,16 @@ const lucideFallback = (Icon: React.FC<{ size?: number; className?: string }>): 
   return Wrapped
 }
 
-const makeIcon = (name: string, Fallback?: FallbackComponent) => {
+const makeIcon = (
+  name: string,
+  Fallback?: FallbackComponent,
+  /** outline：恒用描边 fallback，不被 iconfont 字体 glyph（实心风格）覆盖 */
+  options?: { outline?: boolean }
+) => {
   const Icon = ({ size = 16, color, className }: IconfontIconProps) => {
     const loadState = useIconfontLoadState()
 
-    if (loadState === 'loaded') {
+    if (loadState === 'loaded' && !options?.outline) {
       return (
         <i
           className={`iconfont-color ${name}${className ? ` ${className}` : ''}`}
@@ -56,16 +61,16 @@ const makeIcon = (name: string, Fallback?: FallbackComponent) => {
   return Icon
 }
 
-// 品牌/社交图标 — SVG fallback
-export const IconWechat = makeIcon('iconwechat-circle', WechatFallback)
-export const IconQQ = makeIcon('iconqq-circle', QQFallback)
-export const IconDouban = makeIcon('icondouban-circle', DoubanFallback)
-export const IconWeibo = makeIcon('iconsina-circle', WeiboFallback)
-export const IconMusic = makeIcon('iconwangyiyun', NeteaseMusicFallback)
-export const IconEmail = makeIcon('iconemail', EmailFallback)
-export const IconGithub = makeIcon('icongithub', GithubFallback)
-export const IconTwitter = makeIcon('icontwitter-circle-fill', TwitterFallback)
-export const IconDiscord = makeIcon('icondiscord', DiscordFallback)
+// 品牌/社交图标 — 恒用 SVG outline fallback（iconfont 中的品牌 glyph 为实心风格，与全站描边语言冲突）
+export const IconWechat = makeIcon('iconwechat-circle', WechatFallback, { outline: true })
+export const IconQQ = makeIcon('iconqq-circle', QQFallback, { outline: true })
+export const IconDouban = makeIcon('icondouban-circle', DoubanFallback, { outline: true })
+export const IconWeibo = makeIcon('iconsina-circle', WeiboFallback, { outline: true })
+export const IconMusic = makeIcon('iconwangyiyun', NeteaseMusicFallback, { outline: true })
+export const IconEmail = makeIcon('iconemail', EmailFallback, { outline: true })
+export const IconGithub = makeIcon('icongithub', GithubFallback, { outline: true })
+export const IconTwitter = makeIcon('icontwitter-circle-fill', TwitterFallback, { outline: true })
+export const IconDiscord = makeIcon('icondiscord', DiscordFallback, { outline: true })
 
 // UI/操作图标 — lucide-react fallback
 export const IconClose = makeIcon('iconclose', lucideFallback(X))
