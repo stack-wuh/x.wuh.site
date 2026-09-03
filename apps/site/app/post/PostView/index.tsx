@@ -13,6 +13,7 @@ import {
   IconTwitter,
   IconEmail,
   IconLink,
+  IconChevronDown,
 } from '@wuh.site/components/icons'
 import { useDialog } from '@wuh.site/hooks/useDialog'
 
@@ -175,10 +176,13 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
   const activeHeading = useHeadingObserver(tocResult.toc)
+  const activeTocItem = activeHeading
+    ? tocResult.toc.find((item) => item.id === activeHeading) ?? null
+    : null
   const shareCardDialog = useDialog()
   const articleExportDialog = useDialog()
 
-  const renderToc = (onNavigate?: () => void) => (
+  const renderToc = () => (
     <TocList>
       {tocResult.toc.map((item) => (
         <li key={item.id}>
@@ -193,7 +197,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 window.history.replaceState(null, '', `#${item.id}`)
               }
-              onNavigate?.()
+              e.currentTarget.closest('details')?.removeAttribute('open')
             }}
           >
             {item.shortNum && (
@@ -287,10 +291,27 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           {tocResult.toc.length > 0 && (
             <TocMobile>
               <summary>
-                目录
-                <span aria-hidden='true'>⌄</span>
+                <span className='toc-m-label'>
+                  <span className='toc-m-title'>
+                    目录
+                    <span className='toc-m-count'>共 {tocResult.toc.length} 节</span>
+                  </span>
+                  {activeTocItem && (
+                    <span className='toc-m-now'>
+                      读至 ·{activeTocItem.shortNum && (
+                        <span className='toc-m-now-num' aria-hidden='true'>{activeTocItem.shortNum}</span>
+                      )}
+                      {activeTocItem.text}
+                    </span>
+                  )}
+                </span>
+                <span className='toc-m-toggle' aria-hidden='true'>
+                  <IconChevronDown size={14} strokeWidth={2} />
+                </span>
               </summary>
-              <div className='toc-body'>{renderToc()}</div>
+              <div className='toc-body'>
+                {renderToc()}
+              </div>
             </TocMobile>
           )}
 
@@ -301,7 +322,6 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
           <ImagePreview {...previewProps} />
 
-          <Divider style={{ margin: 'var(--space-xl) 0 0' }} />
           <ArticleColophon>
             <Divider variant='ornament' aria-hidden='true' />
             <ColophonLicense>{COPYRIGHT_TEXT}</ColophonLicense>
@@ -339,7 +359,6 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               />
             </ColophonTools>
           </ArticleColophon>
-          <Divider />
 
           <ShareCard
             open={shareCardDialog.open}

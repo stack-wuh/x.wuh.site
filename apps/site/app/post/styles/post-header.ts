@@ -81,49 +81,61 @@ export const HeadRule = styled.div`
   }
 `
 
-/** 书签样式标签：纸面底 + 顶部朱砂色带 + 底部燕尾缺口，hover 抽书签微暗示 */
+/** 回形针书签标签：朱砂回形针别在纸片左上角（角度由 --tilt 传入），hover 只抽动纸片 */
 export const TagGroup = styled.nav`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  column-gap: 10px;
+  row-gap: 14px;
+  padding-top: 6px;
 
   a {
     position: relative;
     display: inline-block;
-    padding: 6px 12px 14px;
-    background: var(--background-200);
-    color: var(--text-secondary);
     font-size: var(--font-size-xs);
     text-decoration: none;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 6px), 0 100%);
+  }
+
+  .tag-paper {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--background-100);
+    border: 1px solid ${hairline};
+    border-radius: 2px;
+    color: var(--text-secondary);
     transition:
-      color var(--motion-dur-quick) var(--motion-ease-out-soft),
-      background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
-      transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+      transform var(--motion-dur-quick) var(--motion-ease-out-soft),
+      color var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
-  a::before {
-    content: '';
+  .tag-clip {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--primary-color);
+    top: -7px;
+    left: 10px;
+    display: inline-flex;
+    color: var(--primary-color);
+    transform: rotate(var(--tilt, 0deg));
+    transform-origin: 50% 80%;
   }
 
-  a:hover {
-    color: var(--primary-color);
-    background: var(--background-300);
+  a:hover .tag-paper,
+  a:focus-visible .tag-paper {
     transform: translateY(2px);
+    color: var(--primary-color);
+  }
+
+  a:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
+    outline-offset: 3px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    a {
+    .tag-paper {
       transition: none;
     }
 
-    a:hover {
+    a:hover .tag-paper,
+    a:focus-visible .tag-paper {
       transform: none;
     }
   }
