@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.12](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.11...v1.4.12) (2026-09-03)
+
+
+### Bug Fixes
+
+* **post:** 三钮组胶囊平板/桌面端不收缩，内容左偏留白 ([#363](https://github.com/stack-wuh/x.wuh.site/issues/363)) ([cb18c1b](https://github.com/stack-wuh/x.wuh.site/commit/cb18c1b9ef4083ea860b935cb1dcda6f791dc3b6)), closes [#361](https://github.com/stack-wuh/x.wuh.site/issues/361)
+
 ### [1.4.11](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.10...v1.4.11) (2026-09-03)
 
 ### [1.4.10](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.9...v1.4.10) (2026-09-03)
