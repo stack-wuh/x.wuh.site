@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.13](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.12...v1.4.13) (2026-09-03)
+
+
+### Bug Fixes
+
+* **site:** 启用 styledComponents SWC 转换，修复切换页面后样式漂移 ([7171d72](https://github.com/stack-wuh/x.wuh.site/commit/7171d72b8c34783a42a1057ade2296fe516e362b))
+* **site:** 启用 styledComponents SWC 转换，修复切换页面后样式漂移 ([#365](https://github.com/stack-wuh/x.wuh.site/issues/365)) ([dcfded2](https://github.com/stack-wuh/x.wuh.site/commit/dcfded225868eaaa07e21074e3dd89ed42c72228))
+
 ### [1.4.12](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.11...v1.4.12) (2026-09-03)
 
 
