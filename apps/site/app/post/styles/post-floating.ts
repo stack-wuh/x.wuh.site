@@ -1,14 +1,18 @@
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 import Button from '@wuh.site/components/button'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 /**
  * 返回首页/回到顶部/点赞 三钮组，全断点统一「连体分段胶囊」形态：
  * - default：文末响应式（<640 全宽 max 320px 三等分、触达 ≥44px；≥640 内容宽居中 36px）
- * - compact：目录侧栏工具列（定宽 32px，带「点赞吧~」hover 提示）
+ * - compact：目录侧栏工具列（定高 32px，带「点赞吧~」hover 提示）
  *
  * 分段之间保留 padding 内衬：分段填充一旦贴到外框边线，两者会在亚像素取整下
  * 叠成一条脏线（不同页面/缩放下时隐时现），分段自身做圆角让填充与边框彻底脱开。
+ *
+ * compact 差异一律写成「同一声明内的条件值」，不再用尾部插值块覆盖：
+ * styled-components 展平时会把 @media 块提升到普通规则之后，尾部插值的
+ * compact 声明被并入基础规则，永远输给媒体查询（32px 实际从未生效过）。
  *
  * 动画遵循站点动画规范（knowledge/animation-system.md）：hover 只做颜色/背景
  * 过渡（--motion-dur-quick × --motion-ease-out-soft），组件内不定义循环/闪烁
@@ -24,8 +28,9 @@ const hoverTransition = `
 export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
   --btn-px: 0;
   --btn-py: 0;
-  flex: 1 1 0;
-  height: 44px;
+  flex: ${({ $compact }) => ($compact ? '0 0 auto' : '1 1 0')};
+  width: ${({ $compact }) => ($compact ? '40px' : 'auto')};
+  height: ${({ $compact }) => ($compact ? '32px' : '44px')};
   padding: 0;
   border: none;
   /* 抗乱序加固（同 LikeButton）：即便 Button 变体规则晚于本组件注入，
@@ -59,7 +64,7 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
   @media (min-width: ${BREAKPOINTS.mobile}px) {
     flex: 0 0 auto;
     width: 40px;
-    height: 36px;
+    height: ${({ $compact }) => ($compact ? '32px' : '36px')};
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -72,23 +77,15 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
       background: var(--normal-200);
     }
   }
-
-  ${({ $compact }) =>
-    $compact
-      ? `
-    flex: 0 0 auto;
-    width: 40px;
-    height: 32px;
-  `
-      : ''}
 `
 
 export const LikeButton = styled(Button)<{ $compact?: boolean }>`
   --btn-px: 0;
   --btn-py: 0;
-  flex: 1.2 1 0;
-  height: 44px;
-  padding: 0 20px;
+  flex: ${({ $compact }) => ($compact ? '1' : '1.2 1 0')};
+  height: ${({ $compact }) => ($compact ? '32px' : '44px')};
+  padding: ${({ $compact }) => ($compact ? '0 12px' : '0 20px')};
+  ${({ $compact }) => ($compact ? 'font-size: var(--font-size-sm);' : '')}
   gap: 6px;
   justify-content: center;
   border: none;
@@ -105,13 +102,29 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
     height: 1em;
   }
 
-  /* 「点赞吧~」提示：仅 compact hover 展开（从右向左落位），default 隐藏 */
+  /* 「点赞吧~」提示：元素仅 compact 渲染，样式无条件声明（不含媒体查询，
+     不受展平提升影响）；hover 从右向左展开落位 */
   & .like-hint {
-    display: none;
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transform: translateX(8px);
+    transition:
+      max-width var(--motion-dur-quick) var(--motion-ease-out-soft),
+      opacity var(--motion-dur-quick) var(--motion-ease-out-soft),
+      transform var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   &:hover:not(:disabled) {
     background-image: linear-gradient(90deg, var(--primary-600), var(--primary-800)) !important;
+  }
+
+  &:hover:not(:disabled) .like-hint {
+    max-width: 80px;
+    opacity: 1;
+    transform: translateX(0);
   }
 
   &:focus-visible {
@@ -121,46 +134,13 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
   transition: ${hoverTransition};
 
   @media (min-width: ${BREAKPOINTS.mobile}px) {
-    flex: 0 0 auto;
-    height: 36px;
+    flex: ${({ $compact }) => ($compact ? '1' : '0 0 auto')};
+    height: ${({ $compact }) => ($compact ? '32px' : '36px')};
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
-
-  ${({ $compact }) =>
-    $compact
-      ? `
-    flex: 1;
-    height: 32px;
-    padding: 0 12px;
-    font-size: var(--font-size-sm);
-
-    & .like-hint {
-      display: inline-block;
-      max-width: 0;
-      opacity: 0;
-      overflow: hidden;
-      white-space: nowrap;
-      transform: translateX(8px);
-      transition:
-        max-width var(--motion-dur-quick) var(--motion-ease-out-soft),
-        opacity var(--motion-dur-quick) var(--motion-ease-out-soft),
-        transform var(--motion-dur-quick) var(--motion-ease-out-soft);
-    }
-
-    &:hover:not(:disabled) .like-hint {
-      max-width: 80px;
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    &:focus-visible {
-      box-shadow: inset 0 0 0 2px var(--background-100);
-    }
-  `
-      : ''}
 `
 
 export const FloatingButtonGroup = styled.div<{ $compact?: boolean }>`

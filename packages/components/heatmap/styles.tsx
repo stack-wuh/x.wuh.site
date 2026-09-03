@@ -1,4 +1,4 @@
-import { styled } from '@wuh.site/components/styled'
+import { styled } from 'styled-components'
 
 type TooltipVertical = 'up' | 'down'
 type TooltipHorizontal = 'left' | 'center' | 'right'

@@ -1,6 +1,6 @@
 'use client'
 
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 

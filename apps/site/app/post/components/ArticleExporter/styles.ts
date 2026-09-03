@@ -1,4 +1,4 @@
-import styled, { keyframes } from '@wuh.site/components/styled'
+import styled, { keyframes } from 'styled-components'
 import Button from '@wuh.site/components/button'
 import { MarkdownBody } from '../../styles'
 
