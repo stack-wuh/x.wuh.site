@@ -17,5 +17,6 @@
 | 20260901-fix-wechat-domain-block | proposed | shadow-docs/changes/20260901-fix-wechat-domain-block/brief.md |
 | 20260901-style-post-paper-redesign | ✅ 完成 | shadow-docs/changes/archive/20260901-style-post-paper-redesign/brief.md |
 | 20260902-style-post-detail-polish | ✅ 完成 | shadow-docs/changes/archive/20260902-style-post-detail-polish/brief.md |
+| 20260903-style-icon-actions-redesign | ✅ 完成 | shadow-docs/changes/archive/20260903-style-icon-actions-redesign/brief.md |
 | 20260903-style-post-hr-blockquote | ✅ 完成 | shadow-docs/changes/archive/20260903-style-post-hr-blockquote/brief.md |
 | 20260903-style-post-toc-mobile-polish | published | shadow-docs/changes/20260903-style-post-toc-mobile-polish/brief.md |

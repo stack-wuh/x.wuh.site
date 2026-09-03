@@ -4,7 +4,7 @@
   "name": "20260903-style-icon-actions-redesign",
   "type": "style",
   "scope": "post",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260903-style-icon-actions-redesign",
   "files": [
@@ -17,17 +17,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 360,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/360",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 361,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/361"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "fcb06dbaf489b167b157a9020b3529844284ceab",
-    "verifiedAt": "2026-09-03T09:00:53.274Z"
+    "verifiedCommit": "3c487bfb853d5b5717ab82a127f9f89636b21e50",
+    "verifiedAt": "2026-09-03T09:07:58.964Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "2a5d2322d2e56d8b27cb86c3a9ab6c01b88ad88d",
+    "checkpoint": "merged-pr:361",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
