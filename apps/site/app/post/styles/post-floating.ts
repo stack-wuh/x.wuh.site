@@ -173,7 +173,8 @@ export const FloatingButtonGroup = styled.div<{ $compact?: boolean }>`
   background: var(--background-200);
 
   @media (min-width: ${BREAKPOINTS.mobile}px) {
-    width: auto;
+    /* fit-content 而非 auto：flex 容器为块级盒，auto 会撑满整列导致分段左偏留白 */
+    width: fit-content;
   }
 
   ${({ $compact }) =>
