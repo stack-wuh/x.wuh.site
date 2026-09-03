@@ -22,7 +22,7 @@ Commands:
   run            Start all services (docker compose up -d)
   stop           Stop and remove all services
   push           Push images to registry (docker compose push)
-  clean          Remove dangling images + old build cache
+  clean          Free disk: prune build cache (keep 6GB) + dangling images + stopped containers + journal shrink
   disk-guard     Check free disk, auto-clean when low, abort when critical (build 前自动调用)
   install-cron   Install daily cleanup cron to /etc/cron.d (server 上执行一次)
   logs           Tail logs from all services
@@ -39,6 +39,16 @@ free_disk_gb() {
 # 构建缓存最多保留多少字节（6GiB）：磁盘吃紧时清旧留新，保住增量构建速度
 BUILDER_CACHE_KEEP_BYTES=6442450944
 
+# 无条件清理：构建缓存保留最近 6GB、悬空镜像、停止的容器、系统日志收缩。
+# 供 clean 命令（Actions 定时/手动）与 disk_guard 共用。
+disk_cleanup() {
+  docker builder prune -af --keep-storage "$BUILDER_CACHE_KEEP_BYTES" >/dev/null 2>&1 \
+    || docker builder prune -af >/dev/null 2>&1 || true
+  docker image prune -f >/dev/null 2>&1 || true
+  docker container prune -f >/dev/null 2>&1 || true
+  journalctl --vacuum-size=200m >/dev/null 2>&1 || true
+}
+
 # 磁盘守卫：可用 < 6G 自动清理；清理后仍 < 3G 则放弃构建。
 # 2026-09-03 事故：连发七个版本把 40G 盘堆满，同机 mongod 写不了文件崩溃，
 # 后端整体降级、发布卡死。构建前先守门，避免重演。
@@ -51,11 +61,7 @@ disk_guard() {
   fi
 
   echo "⚠️  磁盘仅剩 ${free}G（< ${DISK_SOFT_GB:-6}G），自动清理…"
-  docker builder prune -af --keep-storage "$BUILDER_CACHE_KEEP_BYTES" >/dev/null 2>&1 \
-    || docker builder prune -af >/dev/null 2>&1 || true
-  docker image prune -f >/dev/null 2>&1 || true
-  docker container prune -f >/dev/null 2>&1 || true
-  journalctl --vacuum-size=200m >/dev/null 2>&1 || true
+  disk_cleanup
 
   free=$(free_disk_gb)
   if [ "${free:-0}" -lt "${DISK_HARD_GB:-3}" ]; then
@@ -272,10 +278,9 @@ case "${1:-help}" in
     ;;
 
   clean)
-    echo "🧹 Cleaning Docker disk usage"
-    prune_old_images
-    prune_old_cache
-    echo "✅ Done"
+    echo "🧹 Cleaning Docker disk usage（构建缓存保留最近 6GB）"
+    disk_cleanup
+    echo "✅ Done — 磁盘可用 $(free_disk_gb)G"
     ;;
 
   disk-guard)
