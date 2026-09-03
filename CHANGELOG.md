@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.15](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.14...v1.4.15) (2026-09-03)
+
+
+### Bug Fixes
+
+* **site:** apps/site 显式声明 styled-components 依赖 ([820d9a4](https://github.com/stack-wuh/x.wuh.site/commit/820d9a4f115493578bd646b480fefc27168ff7e5))
+* **site:** apps/site 显式声明 styled-components 依赖 ([#368](https://github.com/stack-wuh/x.wuh.site/issues/368)) ([cddb703](https://github.com/stack-wuh/x.wuh.site/commit/cddb7032307cb19031a67b2bce9a04a019d5977f))
+
 ### [1.4.14](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.13...v1.4.14) (2026-09-03)
 
 
