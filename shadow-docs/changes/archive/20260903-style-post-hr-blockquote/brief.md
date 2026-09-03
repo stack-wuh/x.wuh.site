@@ -4,7 +4,7 @@
   "name": "20260903-style-post-hr-blockquote",
   "type": "style",
   "scope": "post",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260903-style-post-hr-blockquote",
   "files": [
@@ -14,17 +14,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 358,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/358",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 359,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/359"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "637a46c888923c43bd93247292f6885880250408",
-    "verifiedAt": "2026-09-03T06:50:35.324Z"
+    "verifiedCommit": "328162fef2a6a463bce99be3b8cde89b5766f315",
+    "verifiedAt": "2026-09-03T07:30:55.935Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "5fa09b49976feb080985f1c8b7eca2dc3d977f3a",
+    "checkpoint": "merged-pr:359",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
