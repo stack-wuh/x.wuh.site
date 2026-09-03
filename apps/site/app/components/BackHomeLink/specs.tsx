@@ -1,4 +1,4 @@
 export type BackHomeLinkProps = {
-  href: string
+  href?: string
   label?: string
 }
