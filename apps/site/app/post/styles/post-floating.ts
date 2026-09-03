@@ -28,7 +28,10 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
   height: 44px;
   padding: 0;
   border: none;
-  border-radius: 999px;
+  /* 抗乱序加固（同 LikeButton）：即便 Button 变体规则晚于本组件注入，
+     边框与圆角也不允许回退到 outlined 形态 */
+  border-color: transparent !important;
+  border-radius: 999px !important;
   background: transparent;
   color: var(--text-secondary);
   display: inline-flex;
@@ -90,7 +93,7 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
   justify-content: center;
   border: none;
   border-color: transparent !important;
-  border-radius: 999px;
+  border-radius: 999px !important;
   /* 清掉 Button filled 自带的渐变底，hover 换 primary-600→800 主题渐变 */
   background-color: var(--primary-color) !important;
   background-image: none !important;
