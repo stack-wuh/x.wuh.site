@@ -23,10 +23,47 @@ Commands:
   stop           Stop and remove all services
   push           Push images to registry (docker compose push)
   clean          Remove dangling images + old build cache
+  disk-guard     Check free disk, auto-clean when low, abort when critical (build 前自动调用)
+  install-cron   Install daily cleanup cron to /etc/cron.d (server 上执行一次)
   logs           Tail logs from all services
   shell          Launch an interactive shell inside a service
   help           Show this message
 USAGE
+}
+
+# 根分区可用空间（GB，整数）
+free_disk_gb() {
+  df -BG --output=avail / 2>/dev/null | tail -1 | tr -dc '0-9'
+}
+
+# 构建缓存最多保留多少字节（6GiB）：磁盘吃紧时清旧留新，保住增量构建速度
+BUILDER_CACHE_KEEP_BYTES=6442450944
+
+# 磁盘守卫：可用 < 6G 自动清理；清理后仍 < 3G 则放弃构建。
+# 2026-09-03 事故：连发七个版本把 40G 盘堆满，同机 mongod 写不了文件崩溃，
+# 后端整体降级、发布卡死。构建前先守门，避免重演。
+disk_guard() {
+  local free
+  free=$(free_disk_gb)
+  if [ "${free:-0}" -ge "${DISK_SOFT_GB:-6}" ]; then
+    echo "💾 磁盘可用 ${free}G，充足"
+    return 0
+  fi
+
+  echo "⚠️  磁盘仅剩 ${free}G（< ${DISK_SOFT_GB:-6}G），自动清理…"
+  docker builder prune -af --keep-storage "$BUILDER_CACHE_KEEP_BYTES" >/dev/null 2>&1 \
+    || docker builder prune -af >/dev/null 2>&1 || true
+  docker image prune -f >/dev/null 2>&1 || true
+  docker container prune -f >/dev/null 2>&1 || true
+  journalctl --vacuum-size=200m >/dev/null 2>&1 || true
+
+  free=$(free_disk_gb)
+  if [ "${free:-0}" -lt "${DISK_HARD_GB:-3}" ]; then
+    echo "❌ 清理后仍仅剩 ${free}G（< ${DISK_HARD_GB:-3}G），放弃构建以免拖垮同机服务（mongod 等）。"
+    echo "   请登录服务器排查占用：docker system df && du -xh --max-depth=1 / | sort -rh | head"
+    exit 1
+  fi
+  echo "✅ 清理完成，磁盘可用 ${free}G"
 }
 
 # Remove old images (not the ones currently referenced by containers)
@@ -186,12 +223,14 @@ cmd_cancel() {
 case "${1:-help}" in
   build)
     echo "🔧 Building all services"
+    disk_guard
     docker compose build --progress=plain
     prune_old_images
     ;;
 
   build-deps)
     echo "📦 Installing dependencies (cached layer)"
+    disk_guard
     docker build --target deps . 2>&1 | tee /tmp/deploy-deps.log
     if [ ${PIPESTATUS[0]} -ne 0 ]; then
       echo ""
@@ -239,6 +278,23 @@ case "${1:-help}" in
     echo "✅ Done"
     ;;
 
+  disk-guard)
+    disk_guard
+    ;;
+
+  install-cron)
+    echo "⏰ Installing daily cleanup cron → /etc/cron.d/xwuhsite-disk-clean"
+    cat > /etc/cron.d/xwuhsite-disk-clean <<'CRON'
+# x.wuh.site 每日磁盘自洁（2026-09-03 磁盘满导致 mongod 崩溃事故后加装）
+# 构建缓存保留最近 6GB，其余清掉；顺带清悬空镜像、停止的容器、收缩系统日志
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+25 4 * * * root docker builder prune -af --keep-storage 6442450944 >>/var/log/xwuhsite-clean.log 2>&1; docker image prune -f >>/var/log/xwuhsite-clean.log 2>&1; docker container prune -f >>/var/log/xwuhsite-clean.log 2>&1; journalctl --vacuum-size=200m >>/var/log/xwuhsite-clean.log 2>&1
+CRON
+    chmod 644 /etc/cron.d/xwuhsite-disk-clean
+    echo "✅ 已安装：每天 04:25 自动清理（构建缓存保留 6GB）。日志：/var/log/xwuhsite-clean.log"
+    ;;
+
   clean-all)
     echo "🧹 Aggressive Docker cleanup"
     docker compose down 2>/dev/null || true
@@ -264,6 +320,7 @@ case "${1:-help}" in
 
   build-next)
     echo "🔧 Building xwuhsite-next"
+    disk_guard
     docker compose build --progress=plain next 2>&1 | tee /tmp/deploy-build-next.log
     if [ ${PIPESTATUS[0]} -ne 0 ]; then
       echo ""
@@ -276,6 +333,7 @@ case "${1:-help}" in
 
   build-nest)
     echo "🔧 Building xwuhsite-nest"
+    disk_guard
     docker compose build --progress=plain nest 2>&1 | tee /tmp/deploy-build-nest.log
     if [ ${PIPESTATUS[0]} -ne 0 ]; then
       echo ""
