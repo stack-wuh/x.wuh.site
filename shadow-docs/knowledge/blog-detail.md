@@ -15,6 +15,7 @@ source:
   - changes/20260901-style-post-paper-redesign/brief.md
   - changes/20260902-style-post-detail-polish/brief.md
   - changes/20260903-style-post-toc-mobile-polish/brief.md
+  - changes/20260903-style-post-hr-blockquote/brief.md
 verified: 2026-09-03
 ---
 
@@ -22,7 +23,7 @@ verified: 2026-09-03
 
 ## 当前结论
 
-正文排版采用书页式设计语言（「铅字工坊」体系）：正文与标题衬线（`--font-serif` = Noto Serif SC）、辅助文字无衬线、代码等宽。正文 15.5px、行高 1.85（移动端 max-width 640 收敛为 15px/1.85，平板继承桌面值），正文栏宽 680px（约每行 43 字）。标题衬线 700、行高 1.4：h2 23px / h3 20px。h2/h3 由 `lib/articleTypography.ts` 注入「第N节 ──」朱砂眉线记号：自动编号（壹贰叁…拾贰，超出转阿拉伯数字），显示层剥离作者手写的「一、/1.」编号前缀（仅正文标题与目录文本，heading id 与 DOM 锚点不变），右侧目录条目同步渲染朱砂序号。正文首个"以文字开头"的段落首字下沉（`.dropcap` 朱砂 3.35em 下沉两行；纯图片段、以标签/HTML 实体/非文字字符开头的段落跳过）。引用块为上下双发丝线（accent 42%）+ 首尾「」朱砂引号，无底色。正文链接与 ol 序号用 `--primary-color` 朱砂并配虚线下划线双重可供性（对比度修复：accent 金在纸面仅约 1.9:1）；`::selection` 朱砂底纸色字。pre 13.5px/1.7；表格仅横向发丝线、表头无彩色粗线。排印变换为纯字符串正则（无 DOM 依赖），在 `useToc` 内 useMemo 同步执行，SSR 与客户端输出确定一致。文章末尾仅在文章真正编辑过（`updated_at` 存在且不等于 `created_at`）时显示「更新于 X」带字线。对比度约束保持：`--text-primary` 与背景 >= 4.5:1，`--text-secondary` >= 3:1，代码块 >= 4.5:1。素雅 dark 模式所有 `--normal-*` 和 `--background-*` 变量有专属值，不继承酒红 dark。
+正文排版采用书页式设计语言（「铅字工坊」体系）：正文与标题衬线（`--font-serif` = Noto Serif SC）、辅助文字无衬线、代码等宽。正文 15.5px、行高 1.85（移动端 max-width 640 收敛为 15px/1.85，平板继承桌面值），正文栏宽 680px（约每行 43 字）。标题衬线 700、行高 1.4：h2 23px / h3 20px。h2/h3 由 `lib/articleTypography.ts` 注入「第N节 ──」朱砂眉线记号：自动编号（壹贰叁…拾贰，超出转阿拉伯数字），显示层剥离作者手写的「一、/1.」编号前缀（仅正文标题与目录文本，heading id 与 DOM 锚点不变），右侧目录条目同步渲染朱砂序号。正文首个"以文字开头"的段落首字下沉（`.dropcap` 朱砂 3.35em 下沉两行；纯图片段、以标签/HTML 实体/非文字字符开头的段落跳过）。引用块为左侧 2px 朱砂竖线 + 16px 缩进 + 首尾「」朱砂引号，无底色（横线语言归 hr、竖线语言归引用块，二者不混同）。正文链接与 ol 序号用 `--primary-color` 朱砂并配虚线下划线双重可供性（对比度修复：accent 金在纸面仅约 1.9:1）；`::selection` 朱砂底纸色字。pre 13.5px/1.7；表格仅横向发丝线、表头无彩色粗线。排印变换为纯字符串正则（无 DOM 依赖），在 `useToc` 内 useMemo 同步执行，SSR 与客户端输出确定一致。正文 hr 为两侧渐隐朱砂细线（`border:none; height:1px; linear-gradient 两侧 transparent → 朱砂 45%`，与 Divider ornament 同语言；原生 hr 可见线由 border 绘制、background 不生效，必须去边框自绘）。文章末尾仅在文章真正编辑过（`updated_at` 存在且不等于 `created_at`）时显示「更新于 X」带字线。对比度约束保持：`--text-primary` 与背景 >= 4.5:1，`--text-secondary` >= 3:1，代码块 >= 4.5:1。素雅 dark 模式所有 `--normal-*` 和 `--background-*` 变量有专属值，不继承酒红 dark。
 
 页头为注记式构图：辅助信息双列单行两端对齐——meta 行（作者 500 字重 · 日期 · 阅读数，间隔点分层）靠左、回形针书签标签靠右；衬线大标题 clamp(28px, 5.4vw, 40px) 做主角；头部以朱砂短规（44×2px）+ 发丝线延伸收尾，与正文章节 stub 同语言。520 以下 toprow 折为上下两行。标签为回形针书签样式：纸片（background-100 + 发丝线描边 + 2px 圆角）左上角别朱砂回形针（IconPaperclip 15px，骑线探出纸外，角度由标签名哈希在 ±3° 五个离散档位确定性推导、禁用 Math.random 防 hydration mismatch），容器 column-gap 10 / row-gap 14 / 顶部 6px headroom；hover 只让纸片下移 2px、回形针纹丝不动（抽纸片暗示），文字变朱砂，过渡走 motion tokens 并有 reduced-motion 降级；不使用 clip-path 燕尾缺口与顶部色带。有封面图时标题区在上（order 控制）、封面杂志卡在下；无封面时生成式封面承载 header 信息（PostHeader 不渲染），无封面文章不显示回形针书签标签。页头不渲染作者头像行。封面细节见 `post-cover.md`。
 
