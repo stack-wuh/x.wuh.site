@@ -3,7 +3,7 @@
 import message from '@wuh.site/components/message'
 import ImagePreview from '@wuh.site/components/image-preview'
 import Divider from '@wuh.site/components/divider'
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import {
   IconShare,
   IconArticle,
@@ -48,6 +48,7 @@ import {
   ColophonTools,
   TocAside,
   TocTitle,
+  TocScroller,
   TocItemLink,
   TocList,
   TocNum,
@@ -176,6 +177,19 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
   const activeHeading = useHeadingObserver(tocResult.toc)
+  const tocScrollerRef = useRef<HTMLDivElement>(null)
+
+  // 阅读位置变化 → active 条目在纸卷内居中跟随。命令式滚动而非监听，
+  // 遵守「详情页禁止 scroll/resize 监听」约束；reduced-motion 直接跳转
+  useEffect(() => {
+    const scroller = tocScrollerRef.current
+    if (!scroller || !activeHeading) return
+    const active = scroller.querySelector<HTMLElement>('[data-active="true"]')
+    if (!active) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const target = active.offsetTop - scroller.clientHeight / 2 + active.offsetHeight / 2
+    scroller.scrollTo({ top: Math.max(0, target), behavior: reduce ? 'auto' : 'smooth' })
+  }, [activeHeading])
   const activeTocItem = activeHeading
     ? tocResult.toc.find((item) => item.id === activeHeading) ?? null
     : null
@@ -189,6 +203,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <TocItemLink
             href={`#${item.id}`}
             $active={activeHeading ? activeHeading === item.id : false}
+            data-active={activeHeading === item.id}
             $depth={item.depth}
             onClick={(e) => {
               e.preventDefault()
@@ -381,7 +396,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           {tocResult.toc.length > 0 && (
             <>
               <TocTitle>目录</TocTitle>
-              {renderToc()}
+              <TocScroller ref={tocScrollerRef}>{renderToc()}</TocScroller>
             </>
           )}
           <TocTools>
