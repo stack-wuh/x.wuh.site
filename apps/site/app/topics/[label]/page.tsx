@@ -99,7 +99,7 @@ export default async function TopicPage({
       <JsonLd data={collectionJsonLd} />
       <S.Root>
         <S.Main>
-          <BackHomeLink />
+          <BackHomeLink href='/' />
           <S.Header>
             <S.TitleGroup>
               <S.Title>#{label}</S.Title>

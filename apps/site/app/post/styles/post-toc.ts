@@ -170,10 +170,10 @@ export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
   }
 `
 
+/** 移动端目录折叠条：纸面折叠条语言——标题行 +「共 N 节」计数 +「读至 · 第N节」小注 + 圆形箭头钮（对齐 cbtn 圆钮视觉） */
 export const TocMobile = styled.details`
   margin: 0 0 var(--space-md);
   border-top: 1px solid ${hairline};
-  border-bottom: 1px solid ${hairline};
 
   @media (min-width: ${BREAKPOINTS.tablet}px) {
     display: none;
@@ -182,11 +182,30 @@ export const TocMobile = styled.details`
   summary {
     list-style: none;
     cursor: pointer;
-    padding: 12px 2px;
+    padding: 10px 2px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color) 35%, transparent);
+    outline-offset: 2px;
+  }
+
+  .toc-m-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .toc-m-title {
     font-family: var(--font-serif);
     font-size: var(--font-size-sm);
     font-weight: 500;
@@ -194,16 +213,45 @@ export const TocMobile = styled.details`
     color: var(--text-secondary);
   }
 
-  summary::-webkit-details-marker {
-    display: none;
+  .toc-m-count {
+    margin-left: 8px;
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
   }
 
-  summary > span {
-    letter-spacing: 0;
-    transition: transform 200ms ease;
+  .toc-m-now {
+    font-size: var(--font-size-xs);
+    color: var(--primary-color);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  &[open] summary > span {
+  .toc-m-now-num {
+    margin: 0 4px 0 6px;
+    font-family: var(--font-serif);
+    font-weight: 600;
+  }
+
+  .toc-m-toggle {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-200);
+    border: 1px solid var(--normal-300);
+    color: var(--text-secondary);
+    transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+  }
+
+  &[open] .toc-m-toggle {
     transform: rotate(180deg);
   }
 
@@ -212,7 +260,7 @@ export const TocMobile = styled.details`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    summary > span {
+    .toc-m-toggle {
       transition: none;
     }
   }

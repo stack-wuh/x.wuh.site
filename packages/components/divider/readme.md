@@ -22,5 +22,6 @@ import Divider from '@wuh.site/components/divider'
 
 ## 约束
 
-- 渲染为 `role='separator'` 的 `div`，颜色仅用主题语义 token（发丝线 = `color-mix(in oklab, var(--normal-400) 55%, transparent)`），不使用 `prefers-color-scheme`，暗色随站点 `data-color-scheme` 自动生效。
+- 渲染为 `role='separator'` 的 `div`，颜色仅用主题语义 token，不使用 `prefers-color-scheme`，暗色随站点 `data-color-scheme` 自动生效。
+- 用色分工：hairline 变体为灰发丝线（`color-mix(in oklab, var(--normal-400) 55%, transparent)`），承载页面结构性分段；ornament 变体为主题色点缀线——两侧线由 transparent 渐入朱砂（`linear-gradient` + `color-mix(in oklab, var(--primary-color) 45%, transparent)`，右线镜像），中置点缀字符同用 `var(--primary-color)`。
 - 正文章节记号、引用块双线等文章排版语言不属于结构分割线，不使用本组件替换。

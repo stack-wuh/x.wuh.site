@@ -38,7 +38,8 @@ export {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
   RotateCw as IconRotate,
-  EllipsisVertical as IconMore
+  EllipsisVertical as IconMore,
+  Paperclip as IconPaperclip
 } from 'lucide-react'
 
 // Custom icons
