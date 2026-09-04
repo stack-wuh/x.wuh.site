@@ -1,7 +1,7 @@
 ---
 title: 构建与部署配置
 domain: build
-keywords: [构建配置, Docker, NestJS, MongoDB, dotenv, 部署, Console, nginx, 健康检查, CI, release, 触发]
+keywords: [构建配置, Docker, NestJS, MongoDB, dotenv, 部署, Console, nginx, 健康检查, CI, release, 触发, styled-components, 磁盘, 清理, disk-guard]
 scope:
   - Dockerfile
   - docker-compose.yml
@@ -15,7 +15,9 @@ source:
   - changes/archive/20260822-build-release-trigger-deploy/brief.md
   - changes/archive/20260822-build-release-script/brief.md
   - changes/archive/20260823-feature-upgrade-next-16/brief.md
-verified: 2026-08-23
+  - changes/archive/20260903-fix-styled-stable-ids/brief.md
+  - changes/archive/20260904-build-disk-guard-cron/brief.md
+verified: 2026-09-04
 ---
 
 # 构建与部署配置
@@ -25,6 +27,10 @@ verified: 2026-08-23
 NestJS 通过 dotenv 自动加载项目根目录 `.env` 文件。MongooseModule 使用 `forRootAsync` + `useFactory` 从 ConfigService 获取 URI。`/health` 端点返回 MongoDB 连接状态（200 正常 / 503 异常）。sync 仅同步 `state: 'open'` 的 issues。
 
 生产环境 Next.js Server Component 请求 Nest API 的默认 base 为 `http://nest:3200/v2`（Docker 内部服务名）。
+
+styled-components 必须开启 `compiler.styledComponents`（SWC 转换，Next 16 Turbopack/webpack 共用），且所有样式文件必须从 `styled-components` **原包**导入：`@wuh.site/components/styled` 纯再导出不被 SWC 识别，组件 ID 会按各端 bundle 内组件创建顺序编号，SSR 与客户端分叉 → 水合后 DOM 重建、SSR 样式表被清空、级联随导航路径漂移。变体差异（如三钮组 compact 尺寸）必须写成「同一声明内的条件值」（媒体查询内直接输出 32/36px），禁止尾部插值覆盖块——styled-components 展平时 @media 被提升到普通规则之后，尾部覆盖永远失效。
+
+磁盘防线（2026-09-03 磁盘满拖垮同机 mongod 事故后建立）：`deploy-docker.sh` 的 disk_guard 在 build* 命令前检查根分区——可用 <6G 自动清理（builder prune 保留最近 6GB 增量缓存 + 悬空镜像 + 停止容器 + journal 收缩 200M），清理后仍 <3G 放弃构建；`disk-clean` workflow 每天北京时间 04:35 定时自洁（workflow_dispatch 可手动触发）。`clean` 命令与守卫共用同一清理策略。
 
 Docker 多阶段构建：deps、builder、runner。Console 使用 `nginx:alpine` 运行 Vite 构建产物，支持 SPA 路由 fallback（`try_files $uri $uri/ /index.html`）。端口规划：生产 next:3000、nest:3200、console:3300；staging 对应 3001、3201、3301。部署脚本提供 build、staging health、switch、diagnose、cancel 和 rollback 能力。
 

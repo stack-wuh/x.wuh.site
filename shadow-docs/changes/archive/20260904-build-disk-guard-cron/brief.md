@@ -4,27 +4,27 @@
   "name": "20260904-build-disk-guard-cron",
   "type": "build",
   "scope": "deploy",
-  "status": "proposed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
     "scripts/deploy-docker.sh"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 369,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/369"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "81017497036519b79dda678e6588c96abb5c343b",
+    "verifiedAt": "2026-09-04T02:24:28.445Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:369",
     "planHash": null,
     "updatedAt": null,
     "lastError": null

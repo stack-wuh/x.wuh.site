@@ -4,27 +4,27 @@
   "name": "20260903-fix-styled-stable-ids",
   "type": "fix",
   "scope": "site",
-  "status": "proposed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
     "apps/site/app/post/styles/post-floating.ts"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 367,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/367"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "81017497036519b79dda678e6588c96abb5c343b",
+    "verifiedAt": "2026-09-04T02:08:39.001Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:367",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
