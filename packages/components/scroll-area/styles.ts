@@ -1,5 +1,5 @@
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 
 /* shadcn ScrollArea 移植：10px 可点区域 + 透明 border + 1px padding，thumb 圆角胶囊。
    主题色联动：thumb 跟随 primary-color，hover 加深；data-state 控制 hover 浮现。 */

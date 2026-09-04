@@ -1,6 +1,6 @@
 'use client'
 
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 
 const BREAKPOINT_MOBILE = '768px'
 

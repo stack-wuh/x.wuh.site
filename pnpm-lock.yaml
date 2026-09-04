@@ -272,6 +272,9 @@ importers:
       remark-rehype:
         specifier: ^11.1.2
         version: 11.1.2
+      styled-components:
+        specifier: ^6.4.0
+        version: 6.4.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       unified:
         specifier: ^11.0.5
         version: 11.0.5

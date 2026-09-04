@@ -1,4 +1,4 @@
-import styled from '@wuh.site/components/styled'
+import styled from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
@@ -7,12 +7,36 @@ export const TocAside = styled.aside`
   display: none;
 
   @media (min-width: ${BREAKPOINTS.tablet}px) {
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: sticky;
     top: 88px;
     align-self: start;
     max-height: calc(100vh - 112px);
-    overflow: auto;
+  }
+`
+
+/**
+ * 目录纸卷：侧栏唯一的内部滚动区（不出滚动条）。
+ * - 滚动条全平台隐藏；overscroll-behavior 防止滚到边时连带页面滚动
+ * - padding-block 与渐隐遮罩等宽（20px）：静止时条目永不落入渐隐区，
+ *   只有滚动过程中条目才从纸卷边缘「收进去」，是纸卷收边而非窗口感
+ * - active 条目由 useHeadingObserver（IntersectionObserver）驱动、PostView
+ *   命令式居中跟随，遵守「详情页禁止 scroll/resize 监听」Knowledge
+ */
+export const TocScroller = styled.div`
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 20px 2px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 `
 

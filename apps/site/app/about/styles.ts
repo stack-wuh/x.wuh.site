@@ -1,5 +1,5 @@
 import Button from '@wuh.site/components/button'
-import { styled } from '@wuh.site/components/styled'
+import { styled } from 'styled-components'
 
 /* ====== Page Root ====== */
 

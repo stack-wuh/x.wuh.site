@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.16](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.15...v1.4.16) (2026-09-03)
+
+### [1.4.15](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.14...v1.4.15) (2026-09-03)
+
+
+### Bug Fixes
+
+* **site:** apps/site 显式声明 styled-components 依赖 ([820d9a4](https://github.com/stack-wuh/x.wuh.site/commit/820d9a4f115493578bd646b480fefc27168ff7e5))
+* **site:** apps/site 显式声明 styled-components 依赖 ([#368](https://github.com/stack-wuh/x.wuh.site/issues/368)) ([cddb703](https://github.com/stack-wuh/x.wuh.site/commit/cddb7032307cb19031a67b2bce9a04a019d5977f))
+
+### [1.4.14](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.13...v1.4.14) (2026-09-03)
+
+
+### Bug Fixes
+
+* **site:** styled-components 原包导入全覆盖 + 三钮组 compact 尺寸修复 ([#367](https://github.com/stack-wuh/x.wuh.site/issues/367)) ([4c2eafa](https://github.com/stack-wuh/x.wuh.site/commit/4c2eafadbae48d2b426ffd54578954d15f8aa5ba))
+* **site:** styled-components 原包导入全覆盖 + 三钮组 compact 尺寸条件值化 ([0196a17](https://github.com/stack-wuh/x.wuh.site/commit/0196a173ebc152976e310244381912adf606eabc))
+
+### [1.4.13](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.12...v1.4.13) (2026-09-03)
+
+
+### Bug Fixes
+
+* **site:** 启用 styledComponents SWC 转换，修复切换页面后样式漂移 ([7171d72](https://github.com/stack-wuh/x.wuh.site/commit/7171d72b8c34783a42a1057ade2296fe516e362b))
+* **site:** 启用 styledComponents SWC 转换，修复切换页面后样式漂移 ([#365](https://github.com/stack-wuh/x.wuh.site/issues/365)) ([dcfded2](https://github.com/stack-wuh/x.wuh.site/commit/dcfded225868eaaa07e21074e3dd89ed42c72228))
+
 ### [1.4.12](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.11...v1.4.12) (2026-09-03)
 
 
