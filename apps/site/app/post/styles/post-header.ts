@@ -81,47 +81,47 @@ export const HeadRule = styled.div`
   }
 `
 
-/** 回形针书签标签：朱砂回形针别在纸片左上角（角度由 --tilt 传入），hover 只抽动纸片 */
+/** 朱砂藏印标签：双框印边 + 印文疏排（角度由 --tilt 传入），hover 时印章"落正" */
 export const TagGroup = styled.nav`
   display: flex;
   flex-wrap: wrap;
-  column-gap: 10px;
-  row-gap: 14px;
-  padding-top: 6px;
+  gap: 8px;
+  padding-top: 2px;
 
   a {
-    position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    padding: 5px calc(10px - 0.14em) 5px 10px;
     font-size: var(--font-size-xs);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    color: color-mix(in oklab, var(--primary-color) 84%, var(--text-primary));
     text-decoration: none;
-  }
-
-  .tag-paper {
-    display: inline-block;
-    padding: 6px 12px;
-    background: var(--background-100);
-    border: 1px solid ${hairline};
-    border-radius: 2px;
-    color: var(--text-secondary);
+    border: 1px solid color-mix(in oklab, var(--primary-color) 48%, transparent);
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--primary-color) 5%, transparent);
+    box-shadow:
+      inset 0 0 0 1px var(--background-100),
+      inset 0 0 0 2px color-mix(in oklab, var(--primary-color) 20%, transparent);
+    transform: rotate(var(--tilt, 0deg));
     transition:
       transform var(--motion-dur-quick) var(--motion-ease-out-soft),
-      color var(--motion-dur-quick) var(--motion-ease-out-soft);
+      color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      box-shadow var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
-  .tag-clip {
-    position: absolute;
-    top: -7px;
-    left: 10px;
-    display: inline-flex;
+  a:hover,
+  a:focus-visible {
+    transform: rotate(0deg);
     color: var(--primary-color);
-    transform: rotate(var(--tilt, 0deg));
-    transform-origin: 50% 80%;
-  }
-
-  a:hover .tag-paper,
-  a:focus-visible .tag-paper {
-    transform: translateY(2px);
-    color: var(--primary-color);
+    border-color: color-mix(in oklab, var(--primary-color) 70%, transparent);
+    background: color-mix(in oklab, var(--primary-color) 9%, transparent);
+    box-shadow:
+      inset 0 0 0 1px var(--background-100),
+      inset 0 0 0 2px color-mix(in oklab, var(--primary-color) 32%, transparent);
   }
 
   a:focus-visible {
@@ -130,13 +130,13 @@ export const TagGroup = styled.nav`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .tag-paper {
+    a {
       transition: none;
     }
 
-    a:hover .tag-paper,
-    a:focus-visible .tag-paper {
-      transform: none;
+    a:hover,
+    a:focus-visible {
+      transform: rotate(var(--tilt, 0deg));
     }
   }
 `
