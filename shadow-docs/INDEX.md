@@ -17,6 +17,7 @@
 | 20260901-fix-wechat-domain-block | proposed | shadow-docs/changes/20260901-fix-wechat-domain-block/brief.md |
 | 20260901-style-post-paper-redesign | ✅ 完成 | shadow-docs/changes/archive/20260901-style-post-paper-redesign/brief.md |
 | 20260902-style-post-detail-polish | ✅ 完成 | shadow-docs/changes/archive/20260902-style-post-detail-polish/brief.md |
+| 20260903-feature-notion-publisher | proposed | shadow-docs/changes/20260903-feature-notion-publisher/brief.md |
 | 20260903-fix-floating-group-width | ✅ 完成 | shadow-docs/changes/archive/20260903-fix-floating-group-width/brief.md |
 | 20260903-fix-styled-stable-ids | ✅ 完成 | shadow-docs/changes/archive/20260903-fix-styled-stable-ids/brief.md |
 | 20260903-style-icon-actions-redesign | ✅ 完成 | shadow-docs/changes/archive/20260903-style-icon-actions-redesign/brief.md |
@@ -24,3 +25,5 @@
 | 20260903-style-post-toc-mobile-polish | published | shadow-docs/changes/20260903-style-post-toc-mobile-polish/brief.md |
 | 20260903-style-toc-sticky-follow | ✅ 完成 | shadow-docs/changes/archive/20260903-style-toc-sticky-follow/brief.md |
 | 20260904-build-disk-guard-cron | ✅ 完成 | shadow-docs/changes/archive/20260904-build-disk-guard-cron/brief.md |
+| 20260906-style-post-detail-skeleton-sync | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-detail-skeleton-sync/brief.md |
+| 20260906-style-post-header-seal-tag | applied | shadow-docs/changes/20260906-style-post-header-seal-tag/brief.md |

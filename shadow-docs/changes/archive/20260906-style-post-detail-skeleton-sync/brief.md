@@ -4,7 +4,7 @@
   "name": "20260906-style-post-detail-skeleton-sync",
   "type": "style",
   "scope": "site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260906-style-post-detail-skeleton-sync",
   "files": [
@@ -12,20 +12,20 @@
     "apps/site/test/post-skeleton-layout-sync.test.mjs"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 371,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/371"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "7a8c2bf9ebd733ea0fc06e07e4cf3425e0afb561",
-    "verifiedAt": "2026-09-06T07:04:34.092Z"
+    "verifiedCommit": "1bcf2f29e1aeea22d7b18b23848ffc1d1ab70004",
+    "verifiedAt": "2026-09-06T07:25:02.730Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:371",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
