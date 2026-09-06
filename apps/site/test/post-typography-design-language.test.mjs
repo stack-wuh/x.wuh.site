@@ -11,18 +11,18 @@ const postView = await readFile(resolve(appRoot, 'app/post/PostView/index.tsx'),
 
 const body = markdown.match(/export const MarkdownBody = styled\.article`([\s\S]*?)`/)?.[1] || ''
 
-test('正文使用衬线极紧凑排版', () => {
-  assert.match(body, /p \{\s*margin: 14px 0;\s*font-family: var\(--font-serif\);\s*font-size: 14px;\s*line-height: 1\.55/)
+test('正文使用衬线书页排版', () => {
+  assert.match(body, /p \{\s*margin: 1\.15em 0;\s*font-family: var\(--font-serif\);\s*font-size: 15\.5px;\s*line-height: 1\.85/)
 })
 
 test('标题层级统一衬线并去下划线', () => {
-  assert.match(body, /h1, h2, h3, h4, h5, h6 \{\s*font-family: var\(--font-serif\)/)
+  assert.match(body, /h1, h2, h3, h4, h5, h6 \{[\s\S]*?font-family: var\(--font-serif\)/)
   assert.doesNotMatch(body, /h1, h2 \{[\s\S]*?border-bottom/)
 })
 
-test('h2 使用左侧短竖线而非下划线', () => {
-  assert.match(body, /h2::before\s*\{/)
-  assert.match(body, /border-radius: 999px/)
+test('h2/h3 使用朱砂眉线记号而非下划线', () => {
+  assert.match(body, /\.sec-eyebrow \{/)
+  assert.match(body, /\.sec-eyebrow \.stub \{[\s\S]*?width: 44px/)
 })
 
 test('引用块去掉斜体与背景盒，只留左侧竖线', () => {
@@ -37,9 +37,10 @@ test('无序列表使用 accent 圆点 marker', () => {
   assert.match(body, /background: var\(--accent-color\)/)
 })
 
-test('分割线使用空心圆环', () => {
-  assert.match(body, /hr::after\s*\{[\s\S]*?border-radius: 50%/)
-  assert.match(body, /border: 2px solid var\(--primary-color\)/)
+test('分割线使用两侧渐隐朱砂细线', () => {
+  assert.match(body, /hr \{[\s\S]*?border: none/)
+  assert.match(body, /hr \{[\s\S]*?linear-gradient/)
+  assert.match(body, /color-mix\(in oklab, var\(--primary-color\) 45%, transparent\)/)
 })
 
 test('正文图片限高且保留既有内容视觉规范', () => {
