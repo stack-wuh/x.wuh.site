@@ -13,10 +13,10 @@ const [stylesIndex, postHeader, pageSource, postView] = await Promise.all([
   readFile(resolve(appRoot, 'app/post/PostView/index.tsx'), 'utf8'),
 ])
 
-test('文章样式桶导出 PostHeader 实际使用的 AuthorAvatarFrame', () => {
-  assert.match(postHeader, /AuthorAvatarFrame/)
-  assert.match(stylesIndex, /AuthorAvatarFrame/)
-  assert.doesNotMatch(stylesIndex, /\bAuthorAvatar\b/)
+test('文章样式桶导出 PostHeader 实际使用的 TagGroup', () => {
+  assert.match(postHeader, /TagGroup/)
+  assert.match(stylesIndex, /TagGroup/)
+  assert.doesNotMatch(postHeader, /AuthorAvatarFrame/)
 })
 
 test('文章详情使用统一函数保证 Markdown 正文存在', () => {
