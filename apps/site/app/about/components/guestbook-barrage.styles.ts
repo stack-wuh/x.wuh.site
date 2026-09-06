@@ -117,10 +117,6 @@ export const GuestbookTriggerAvatar = styled.span`
     background: color-mix(in oklab, var(--primary-color) 14%, var(--background-100));
     color: var(--primary-color);
   }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--background-100);
-  }
 `
 
 export const GuestbookTriggerCopy = styled.span`

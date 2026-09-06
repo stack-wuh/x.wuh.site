@@ -66,7 +66,8 @@ export const AlertContainer = styled.section<{ $variant: AlertVariant; $framed: 
       `)}
   color: var(--text-primary);
 
-  @media (prefers-color-scheme: dark) {
+  /* 深色适配跟随站点主题（data-color-scheme），不用 OS 级 media query */
+  html[data-color-scheme='dark'] & {
     ${({ $framed }) => ($framed
       ? css`
           background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 55%), var(--background-100);
@@ -292,7 +293,7 @@ export const ShareWrap = styled.div`
     border-color: var(--normal-300) !important;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     button {
       background: transparent !important;
       border-color: var(--normal-500) !important;

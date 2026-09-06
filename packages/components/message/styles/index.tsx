@@ -104,7 +104,7 @@ export const MessageItem = styled.div<{ $type: MessageType; $leaving: boolean }>
     animation: none;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-color: color-mix(in srgb, var(--text-color) 18%, transparent);
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
   }
@@ -197,7 +197,7 @@ export const MessageCloseButton = styled.button`
     outline-offset: 2px;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     &:hover {
       color: var(--text-color);
       background: color-mix(in srgb, var(--text-color) 16%, transparent);

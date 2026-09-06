@@ -171,7 +171,7 @@ export const PreviewImageWrap = styled.div`
     display: block;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-color: var(--normal-600);
   }
 `

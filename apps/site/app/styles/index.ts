@@ -135,7 +135,7 @@ export const YearLabel = styled.div`
   letter-spacing: 0.05em;
   border-bottom: 1px solid color-mix(in oklab, var(--text-muted) 25%, transparent);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-bottom-color: color-mix(in oklab, var(--text-muted) 20%, transparent);
   }
 `

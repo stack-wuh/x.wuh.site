@@ -81,7 +81,9 @@ const controlStyles = css<{ $size: LinkGroupSize }>`
     transform: translateY(-1px) scale(1.02);
   }
 
-  @media (prefers-color-scheme: dark) {
+  /* 深色适配跟随站点主题（data-color-scheme），不用 OS 级 media query：
+     后者在外观=浅色 + 系统深色时会错位生效 */
+  html[data-color-scheme='dark'] & {
     background: var(--normal-800);
 
     &:hover {
@@ -138,7 +140,7 @@ export const STitle = styled.span`
     transform: translateX(-50%) translateY(0);
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: var(--normal-900);
     color: var(--text-primary);
     border-color: var(--normal-600);
