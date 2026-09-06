@@ -67,11 +67,11 @@ const ActionArea = styled(Button).attrs({ variant: "outlined", color: "secondary
     outline-offset: 4px;
   }
 
-  @media (prefers-color-scheme: dark) {
+  /* 深色适配跟随站点主题（data-color-scheme），不用 OS 级 media query */
+  html[data-color-scheme='dark'] & {
     border-color: color-mix(in oklab, var(--normal-700) 40%, transparent);
   }
 `
-
 const QRImage = styled(Image)`
   width: 184px;
   height: 184px;
@@ -159,7 +159,7 @@ const Hints = styled.div`
   padding-top: var(--space-xs);
   border-top: 1px solid color-mix(in oklab, var(--normal-300) 25%, transparent);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-top-color: color-mix(in oklab, var(--normal-700) 25%, transparent);
   }
 

@@ -29,7 +29,7 @@ export const Card = styled.div`
     padding: 28px 24px;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: var(--normal-800);
     border-color: var(--normal-600);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
@@ -114,7 +114,7 @@ export const LinkItem = styled.a`
     background: color-mix(in srgb, var(--primary-color) 8%, transparent);
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-color: var(--normal-600);
   }
 `
@@ -126,7 +126,7 @@ export const LinkText = styled.span`
   font-size: var(--font-size-xs);
   color: var(--text-muted);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-color: var(--normal-600);
   }
 `

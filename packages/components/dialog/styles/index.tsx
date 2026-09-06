@@ -80,8 +80,9 @@ const dialogSurfaceBase = css<{
   overflow: ${({ $placement }) => ($placement === 'bottom' ? 'hidden auto' : 'hidden')};
   overscroll-behavior: ${({ $placement }) => ($placement === 'bottom' ? 'contain' : 'auto')};
 
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--background-100, #fff);
+  /* 深色适配跟随站点主题（data-color-scheme），不用 OS 级 media query：
+     后者在外观=浅色 + 系统深色时会错位生效 */
+  html[data-color-scheme='dark'] & {
     border-color: ${({ $fullScreen }) =>
       $fullScreen ? 'none' : 'color-mix(in oklab, var(--normal-700) 60%, transparent)'};
     box-shadow: ${({ $fullScreen, $placement }) => {
@@ -186,7 +187,7 @@ export const DialogHeader = styled.header`
   padding: 12px 22px;
   border-bottom: 1px solid color-mix(in oklab, var(--normal-200) 60%, transparent);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-bottom-color: color-mix(in oklab, var(--normal-700) 50%, transparent);
   }
 `
@@ -250,7 +251,7 @@ export const DialogFooter = styled.footer`
   border-top: 1px solid color-mix(in oklab, var(--normal-200) 40%, transparent);
   background: var(--background-100, #fff);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-top-color: color-mix(in oklab, var(--normal-700) 30%, transparent);
   }
 `

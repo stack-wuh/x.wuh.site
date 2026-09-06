@@ -30,7 +30,7 @@ export const SContainer = styled.div`
   border-top: 1px solid var(--normal-300);
   animation: ${fadeIn} 0.4s ease;
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-top-color: var(--normal-600);
   }
 `
@@ -41,7 +41,7 @@ export const SLabel = styled.p`
   margin: 0;
   font-weight: 500;
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     color: var(--text-primary);
     opacity: 0.8;
   }
@@ -96,7 +96,7 @@ export const SShareButton = styled.button<{ $size: SharedLinkGroupSize; $hasLink
     transform: translateY(0) scale(1.02);
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: var(--normal-700);
     border-color: var(--normal-500);
     color: var(--text-primary);
@@ -106,7 +106,7 @@ export const SShareButton = styled.button<{ $size: SharedLinkGroupSize; $hasLink
       border-color: var(--primary-color);
     }
     &:focus-visible {
-      box-shadow: 0 0 0 2px var(--background-dark-500), 0 0 0 4px var(--primary-400);
+      box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--primary-400);
     }
   }
 `
@@ -126,7 +126,7 @@ export const SIcon = styled.span`
     animation: ${iconBounce} 0.5s ease;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     color: var(--text-primary);
     opacity: 0.85;
   }
@@ -153,7 +153,7 @@ export const STitle = styled.span`
     transform: translateX(-50%) translateY(0);
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: var(--normal-800);
     color: var(--text-primary);
     border-color: var(--normal-500);

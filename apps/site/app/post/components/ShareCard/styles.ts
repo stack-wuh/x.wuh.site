@@ -20,7 +20,7 @@ export const CanvasPreview = styled.canvas<{ $hidden: boolean }>`
   border: 1px solid var(--normal-300);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-color: var(--normal-600);
   }
 `

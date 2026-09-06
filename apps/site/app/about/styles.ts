@@ -218,7 +218,8 @@ export const PlatformCard = styled.div`
     background: var(--background-200);
   }
 
-  @media (prefers-color-scheme: dark) {
+  /* 深色适配跟随站点主题（data-color-scheme），不用 OS 级 media query */
+  html[data-color-scheme='dark'] & {
     background: var(--background-200);
     border-color: rgba(255, 255, 255, 0.04);
     &:hover {
@@ -247,7 +248,7 @@ export const MetricRow = styled.div`
   padding-top: 8px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     border-top-color: rgba(255, 255, 255, 0.06);
   }
 `
@@ -360,7 +361,7 @@ export const GuestbookInput = styled.input`
     border-color: transparent;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: var(--normal-700);
     border-color: var(--normal-500);
   }
@@ -383,7 +384,7 @@ export const GuestbookTextarea = styled.textarea`
     border-color: transparent;
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: var(--normal-700);
     border-color: var(--normal-500);
   }
@@ -443,7 +444,7 @@ export const GuestbookCard = styled.div`
     border-color: color-mix(in oklab, var(--primary-color) 30%, var(--normal-300));
   }
 
-  @media (prefers-color-scheme: dark) {
+  html[data-color-scheme='dark'] & {
     background: color-mix(in oklab, var(--normal-700) 50%, transparent);
     border-color: var(--normal-600);
   }
