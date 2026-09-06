@@ -1,0 +1,34 @@
+/*
+ * CJK 正文字体（Noto Sans/Serif SC）。
+ * 经构建管线导入以获得内容哈希 + immutable 缓存——public/fonts 的
+ * max-age=0 会让每次回访都重新验证/下载整包字体，拖慢首屏换装。
+ * 仅 serif-400 为正文首屏必需，其余字重由 font-display: swap 渐进换装。
+ */
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./files/NotoSansSC-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./files/NotoSansSC-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./files/NotoSerifSC-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./files/NotoSerifSC-700.woff2') format('woff2');
+}

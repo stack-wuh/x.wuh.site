@@ -275,9 +275,9 @@ export const CssVariableStyles = createGlobalStyle`
   }
 
   :root {
-    --font-sans: 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Noto Sans SC', ui-sans-serif, system-ui, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
-    --font-serif: Georgia, serif;
+    --font-serif: 'Noto Serif SC', Georgia, 'Songti SC', 'SimSun', serif;
   }
 
   html[data-no-transition] *,

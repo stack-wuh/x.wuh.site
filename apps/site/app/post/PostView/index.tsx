@@ -3,7 +3,8 @@
 import message from '@wuh.site/components/message'
 import ImagePreview from '@wuh.site/components/image-preview'
 import Divider from '@wuh.site/components/divider'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import {
   IconShare,
   IconArticle,
@@ -27,8 +28,9 @@ import PostToolbar from '../components/PostToolbar'
 import PostComments from '../components/PostComments'
 import RelatedPosts from '../components/RelatedPosts'
 import FloatingActions from '../components/FloatingActions'
-import ShareCard from '../components/ShareCard'
-import ArticleExporter from '../components/ArticleExporter'
+// 分享图/导出全文依赖 html-to-image、qrcode 等重组件库，动态加载避免进首包
+const ShareCard = dynamic(() => import('../components/ShareCard'), { ssr: false })
+const ArticleExporter = dynamic(() => import('../components/ArticleExporter'), { ssr: false })
 import { openSharePopup, openWechatShareWindow } from '../../share-utils'
 
 import { buildPostUrl } from '@/app/lib/slug'
@@ -195,6 +197,15 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
     : null
   const shareCardDialog = useDialog()
   const articleExportDialog = useDialog()
+  // 重型弹窗只在首次打开时挂载（动态 chunk 按需加载），关闭后保留以支持收起动画
+  const [shareCardMounted, setShareCardMounted] = useState(false)
+  const [exporterMounted, setExporterMounted] = useState(false)
+  useEffect(() => {
+    if (shareCardDialog.open) setShareCardMounted(true)
+  }, [shareCardDialog.open])
+  useEffect(() => {
+    if (articleExportDialog.open) setExporterMounted(true)
+  }, [articleExportDialog.open])
 
   const renderToc = () => (
     <TocList>
@@ -375,17 +386,21 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
             </ColophonTools>
           </ArticleColophon>
 
-          <ShareCard
-            open={shareCardDialog.open}
-            onClose={shareCardDialog.closeDialog}
-            data={shareCardData}
-          />
+          {shareCardMounted && (
+            <ShareCard
+              open={shareCardDialog.open}
+              onClose={shareCardDialog.closeDialog}
+              data={shareCardData}
+            />
+          )}
 
-          <ArticleExporter
-            open={articleExportDialog.open}
-            onClose={articleExportDialog.closeDialog}
-            data={articleExportData}
-          />
+          {exporterMounted && (
+            <ArticleExporter
+              open={articleExportDialog.open}
+              onClose={articleExportDialog.closeDialog}
+              data={articleExportData}
+            />
+          )}
 
           <PostComments issueNumber={issue.number} />
 
