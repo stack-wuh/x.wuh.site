@@ -4,7 +4,7 @@
   "name": "20260906-fix-post-detail-stale-tests",
   "type": "fix",
   "scope": "site",
-  "status": "proposed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -12,20 +12,20 @@
     "apps/site/test/post-typography-design-language.test.mjs"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 372,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/372"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "82f873cab426c09a16b70009f3ecf1dc5319fd4a",
+    "verifiedAt": "2026-09-06T07:45:01.245Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:372",
     "planHash": null,
     "updatedAt": null,
     "lastError": null

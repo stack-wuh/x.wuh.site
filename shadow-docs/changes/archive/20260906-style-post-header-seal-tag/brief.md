@@ -4,21 +4,30 @@
   "name": "20260906-style-post-header-seal-tag",
   "type": "style",
   "scope": "site",
-  "status": "branched",
+  "status": "archived",
   "baseBranch": "main",
   "files": [
     "apps/site/app/post/components/PostHeader/index.tsx",
     "apps/site/app/post/styles/post-header.ts",
-    "apps/site/test/post-typography-design-language.test.mjs",
-    "apps/site/test/post-detail-runtime-regression.test.mjs",
-    "shadow-docs/knowledge/blog-detail.md",
     "shadow-docs/knowledge/icon-system.md"
   ],
+  "github": {
+    "repository": "stack-wuh/x.wuh.site",
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": 372,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/372"
+  },
   "workflow": {
-    "checkpoint": "applied",
+    "checkpoint": "merged-pr:372",
     "updatedAt": "2026-09-06"
   },
-  "branch": "style/20260906-style-post-header-seal-tag"
+  "branch": "style/20260906-style-post-header-seal-tag",
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "82f873cab426c09a16b70009f3ecf1dc5319fd4a",
+    "verifiedAt": "2026-09-06T07:45:02.116Z"
+  }
 }
 ---
 
