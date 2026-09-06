@@ -6,16 +6,10 @@ import AppProviders from './components/AppProviders'
 import FontPrefetch from './components/FontPrefetch'
 import JsonLd from './components/JsonLd'
 import { createSiteStructuredData } from './lib/structured-data'
+import './fonts/cjk.css'
 
-const notoSansSC = localFont({
-  src: [
-    { path: '../public/fonts/NotoSansSC-400.woff2', weight: '400' },
-    { path: '../public/fonts/NotoSansSC-700.woff2', weight: '700' },
-  ],
-  variable: '--font-sans',
-  display: 'fallback',
-})
-
+// CJK 字体（Noto Sans/Serif SC）改由 ./fonts/cjk.css 经构建管线接入
+// （哈希 + immutable 缓存）；next/font 仅保留等宽字体。
 const jetbrainsMono = localFont({
   src: [
     { path: '../public/fonts/JetBrainsMono-400.woff2', weight: '400' },
@@ -23,15 +17,6 @@ const jetbrainsMono = localFont({
   variable: '--font-mono',
   display: 'fallback',
   preload: false,
-})
-
-const notoSerifSC = localFont({
-  src: [
-    { path: '../public/fonts/NotoSerifSC-400.woff2', weight: '400' },
-    { path: '../public/fonts/NotoSerifSC-700.woff2', weight: '700' },
-  ],
-  variable: '--font-serif',
-  display: 'fallback',
 })
 
 export const metadata: Metadata = {
@@ -122,10 +107,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${notoSansSC.variable} ${notoSerifSC.variable} ${jetbrainsMono.variable}`}>
-        <JsonLd data={createSiteStructuredData()} />
-        <FontPrefetch sansFamily={notoSansSC.style.fontFamily} serifFamily={notoSerifSC.style.fontFamily} />
-        <AppProviders>{children}</AppProviders>
+      <body className={`${jetbrainsMono.variable}`}>
+      <JsonLd data={createSiteStructuredData()} />
+      <FontPrefetch />
+      <AppProviders>{children}</AppProviders>
       </body>
     </html>
   )

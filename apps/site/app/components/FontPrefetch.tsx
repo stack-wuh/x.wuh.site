@@ -2,28 +2,18 @@
 
 import { useEffect } from 'react'
 
-type FontPrefetchProps = {
-  /** next/font 返回的 family 名（含 Fallback 引用），来自 localFont 实例 */
-  sansFamily?: string
-  serifFamily?: string
-}
-
 /**
  * 空闲时预热非首屏字重，减少渲染时的 FOUT 阻塞。
+ * 字体族名与 app/fonts/cjk.css 中的 @font-face 保持一致。
  */
-export default function FontPrefetch({ sansFamily, serifFamily }: FontPrefetchProps) {
+const WARM_SPECS = ['700 16px Noto Sans SC', '400 16px Noto Serif SC', '700 16px Noto Serif SC']
+
+export default function FontPrefetch() {
   useEffect(() => {
     if (!('fonts' in document)) return
 
-    const firstFamily = (value?: string) => value?.split(',')[0].replace(/^["']|["']$/g, '')
-
     const warmUp = () => {
-      const sans = firstFamily(sansFamily)
-      const serif = firstFamily(serifFamily)
-      const specs: string[] = []
-      if (sans) specs.push(`700 16px ${sans}`)
-      if (serif) specs.push(`400 16px ${serif}`, `700 16px ${serif}`)
-      specs.forEach((spec) => {
+      WARM_SPECS.forEach((spec) => {
         document.fonts.load(spec).catch(() => {})
       })
     }
@@ -34,7 +24,7 @@ export default function FontPrefetch({ sansFamily, serifFamily }: FontPrefetchPr
     }
     const timer = window.setTimeout(warmUp, 3000)
     return () => window.clearTimeout(timer)
-  }, [sansFamily, serifFamily])
+  }, [])
 
   return null
 }
