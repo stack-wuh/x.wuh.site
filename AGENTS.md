@@ -8,7 +8,8 @@
 apps/
 ├── site               # 主站前端 (Next.js 15 App Router, port 3000)
 ├── server             # 后端 API (NestJS 10 + Mongoose 8, port 3200)
-└── console            # 管理后台 (Vite + React)
+├── console            # 管理后台 (Vite + React)
+└── blog               # 写作站 (git 子模块 stack-wuh/blog, VitePress)
 packages/
 ├── components         # UI 组件库 @wuh.site/components
 ├── hooks              # 共享 hooks @wuh.site/hooks (useTheme, useFetch, useDialog, etc.)
@@ -39,6 +40,13 @@ pnpm dev:nest        # NestJS 开发服务器 (port 3200, watch 模式)
 pnpm build:nest      # 构建 NestJS
 pnpm start:nest      # 生产启动 NestJS
 pnpm sync:init       # 从 GitHub Issues 全量同步数据到 MongoDB
+
+# 写作站 (apps/blog, git 子模块 stack-wuh/blog)
+pnpm dev:blog        # VitePress 开发服务器 (port 4000)
+pnpm build:blog      # 构建 VitePress
+# 首次 clone 需: git submodule update --init
+# 子模块不并入 pnpm workspace, 依赖需在 apps/blog 内 `pnpm install --ignore-workspace` 独立安装
+# 发布文章: 在 apps/blog 内 `pnpm post <markdown文件>` (走 GitHub Issues -> server 同步链路)
 
 # 全局
 pnpm install         # 安装所有依赖

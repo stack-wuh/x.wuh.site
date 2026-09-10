@@ -25,7 +25,9 @@
     "release": "bash scripts/release.sh",
     "dev:console": "pnpm --filter @wuh.site/console run dev",
     "build:console": "pnpm --filter @wuh.site/console run build",
-    "preview:console": "pnpm --filter @wuh.site/console run preview"
+    "preview:console": "pnpm --filter @wuh.site/console run preview",
+    "dev:blog": "pnpm --ignore-workspace -C apps/blog run docs:dev",
+    "build:blog": "pnpm --ignore-workspace -C apps/blog run docs:build"
   },
   "workspaces": [
     "packages/**",

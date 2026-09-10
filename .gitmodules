@@ -1,0 +1,3 @@
+[submodule "apps/blog"]
+	path = apps/blog
+	url = https://github.com/stack-wuh/blog.git
