@@ -3,3 +3,8 @@
   url = https://github.com/stack-wuh/blog.git
   branch = main
   ignore = all
+[submodule "apps/desktop"]
+	path = apps/desktop
+	url = git@github.com:stack-wuh/wuh.site.desktop.git
+	branch = main
+	ignore = all
