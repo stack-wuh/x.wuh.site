@@ -5,3 +5,6 @@ packages:
  # blog 为 git 子模块, 独立仓库独立依赖(自身锁文件钉版), 不并入根锁文件
  - '!apps/blog'
  - '!apps/blog/**'
+ # desktop 为 git 子模块 (stack-wuh/wuh.site.desktop), 同 blog 模式: 独立仓库独立依赖
+ - '!apps/desktop'
+ - '!apps/desktop/**'
