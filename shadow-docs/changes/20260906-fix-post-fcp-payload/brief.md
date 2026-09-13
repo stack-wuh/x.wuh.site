@@ -4,7 +4,7 @@
   "name": "20260906-fix-post-fcp-payload",
   "type": "fix",
   "scope": "apps/site/app/post",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20260906-fix-post-fcp-payload",
   "files": [
@@ -19,11 +19,11 @@
     "shadow-docs/knowledge/first-load-performance.md"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 374,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/374"
   },
   "review": {
     "conclusion": "passed",
@@ -32,7 +32,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:374",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
