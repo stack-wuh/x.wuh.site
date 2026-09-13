@@ -114,3 +114,9 @@
 - **预期影响:** 新增
 - **候选卡片:** shadow-docs/knowledge/desktop-app-architecture.md（候选，review 阶段定）
 - **理由:** Electron 桌面端为全新技术域，现有 knowledge 无覆盖；IPC 边界（fs/git/网络仅主进程）、safeStorage 凭证管理、revert-only 回退语义值得在实现验证后沉淀
+
+## 决策补充（2026-09-13, apply 执行中 2）
+
+**组件与主题策略（用户拍板）：保留 desktop 独立仓库拆分；组件与主题在 desktop 内部独立实现，不消费站点组件库。**
+
+依据：`@wuh.site/components` 为源码直出形态（无构建产物，跨仓库 npm 消费需先做发布化改造），且组件库与 web 站点场景耦合较深（@next/third-parties、maplibre-gl 等）；desktop 为 IDE 式深色密集界面，真实可复用组件仅约 5 个原语。执行：`renderer/src/components/ui/` 自持原语 + `renderer/src/theme/` token 化双主题；「组件库发布化」挂起为条件触发项（触发条件：出现真实的跨应用大面积共享诉求）。
