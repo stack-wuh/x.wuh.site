@@ -4,7 +4,7 @@
   "name": "20260914-style-footer-ornament",
   "type": "style",
   "scope": "components",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260914-style-footer-ornament",
   "files": [
@@ -26,12 +26,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "118ebb4fe7faf5be65511601c0382d4394cb1970",
-    "verifiedAt": "2026-09-14T07:27:27.869Z"
+    "verifiedCommit": "b0e46aa83a092280c8b2f5736e6e8b72b8c50905",
+    "verifiedAt": "2026-09-14T08:49:13.057Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:377",
+    "checkpoint": "merged-pr:377",
     "planHash": null,
     "updatedAt": null,
     "lastError": null

@@ -4,7 +4,7 @@
   "name": "20260914-style-footer-compact",
   "type": "style",
   "scope": "components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260914-style-footer-compact",
   "files": [
@@ -15,17 +15,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 378,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/378"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "5d048c43b000236aebab79c0816c854cfc59ef90",
-    "verifiedAt": "2026-09-14T08:28:34.761Z"
+    "verifiedCommit": "b0e46aa83a092280c8b2f5736e6e8b72b8c50905",
+    "verifiedAt": "2026-09-14T08:49:44.654Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:378",
     "planHash": null,
     "updatedAt": null,
     "lastError": null

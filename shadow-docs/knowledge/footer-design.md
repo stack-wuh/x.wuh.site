@@ -1,13 +1,14 @@
 ---
 title: Footer 设计规范
 domain: frontend
-keywords: [Footer, 页脚, ornament, 中轴布局, 站点数据, 站龄, 全站字数, siteBorn, 版权年份, tooltip]
+keywords: [Footer, 页脚, ornament, 中轴布局, 站点数据, 站龄, 全站字数, siteBorn, 版权年份, tooltip, 垂直节奏]
 scope:
   - packages/components/layout
   - packages/components/layout/styles
 status: active
 source:
   - changes/20260914-style-footer-ornament/brief.md
+  - changes/20260914-style-footer-compact/brief.md
 verified: 2026-09-14
 ---
 
@@ -15,7 +16,9 @@ verified: 2026-09-14
 
 ## 当前结论
 
-Footer 为「中轴 ornament 式」单列布局，内层 `max-width: 640px` 封顶并与站点 720-1200px 居中内容列同轴，超宽屏不随视口拉伸。层级自上而下：`Divider variant="ornament"`（`IconLogo` 作为 children 居中锚点，替代默认字符 ◇）→ serif slogan（`--font-serif`，17px，字距 0.25em）→ 导航行（博客 / 关于 / RSS）→ 备案链接行（可点击，外链配 `rel="noopener noreferrer"`）→ 版权注脚两行（`© {起始年}–{当前年} {author}. · CC BY-NC-SA 4.0` / 技术栈行，小屏 hidden）→ 站点数据行。
+Footer 为「中轴 ornament 式」单列布局，内层 `max-width: 640px` 封顶并与站点 720-1200px 居中内容列同轴，超宽屏不随视口拉伸。层级自上而下：`Divider variant="ornament"`（`IconLogo` 作为 children 居中锚点，替代默认字符 ◇）→ serif slogan（`--font-serif`，17px，字距 0.25em）→ 导航行（博客 / 关于 / RSS）→ 备案链接行（可点击，外链配 `rel="noopener noreferrer"`）→ 版权注脚单行 → 站点数据行。
+
+版权注脚为**一段 flex-wrap 行**，含三段 `white-space: nowrap` 内容：`© {起始年}–{当前年} {author}.` / 协议链接 / 技术栈。分隔符 `·` 由 `.footer-note > * + *::before` 附着在**后一段**上，因此换行永远发生在段边界——不会截断数字或协议名，也不会把分隔符孤立在上一行末尾；技术栈段 <520px 时整段隐藏（其前置分隔符属该段 `::before`，随之消失）。页脚垂直节奏刻意收紧：footer padding `--space-md`、区块间隙 `--space-sm/base`、`Divider ornament` 的默认 `--space-lg` margin 覆盖为 `--space-sm/base`、logo 64×32；整块高度约 288px（1280px 视口），避免作为每页固定收尾过高。
 
 末行「站点数据」为三项 lucide 图标（`calendar-days` = 站龄、`feather` = 全站字数、`eye` = 访问量），响应式标签：桌面 hover/focus 弹 tooltip（向上弹出，页底向下会被视口裁切），触屏（`hover: none` 或 `pointer: coarse`）显示常显短文字。访问量的「总/今日」两值合并于一枚图标内并列展示。
 
@@ -26,6 +29,8 @@ Footer 为「中轴 ornament 式」单列布局，内层 `max-width: 640px` 封�
 ## 执行约束
 
 - Footer 内层保持 640px 封顶，新增内容不得破坏中轴层级顺序；tooltip 必须向上弹出。
+- 保持收紧后的垂直节奏：区块间距用 `--space-sm/base` 一档，不要回退到 `--space-md`；窄屏需靠 `row-gap` 而非行高撑开。
+- 注脚内不要给子元素设 `display`：`.footer-note > span`（特异性 0,1,1）会压过 <520px 的 `.footer-note-tech { display: none }`（0,1,0）导致隐藏失效；同理，新增段的分隔符一律用 `::before` 附着于后段，不要写成独立分隔符元素。
 - 颜色、字体、断点只经语义 token；触屏标签靠 `(hover: none) / (pointer: coarse)` 媒体查询切换，不依赖宽度断点。
 - 图标数据项必须保留 `sr-only` 文案、`tabindex` 可聚焦与 focus-visible 描边。
 - 站龄/版权年份只从 `footerConf.siteBorn` 推导，禁止新增第二个日期常量；`packages/components` 不得 import `@wuh.site/core`。

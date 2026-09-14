@@ -26,5 +26,9 @@
 | 20260903-style-toc-sticky-follow | ✅ 完成 | shadow-docs/changes/archive/20260903-style-toc-sticky-follow/brief.md |
 | 20260904-build-disk-guard-cron | ✅ 完成 | shadow-docs/changes/archive/20260904-build-disk-guard-cron/brief.md |
 | 20260906-fix-post-detail-stale-tests | ✅ 完成 | shadow-docs/changes/archive/20260906-fix-post-detail-stale-tests/brief.md |
+| 20260906-fix-post-fcp-payload | published | shadow-docs/changes/20260906-fix-post-fcp-payload/brief.md |
 | 20260906-style-post-detail-skeleton-sync | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-detail-skeleton-sync/brief.md |
 | 20260906-style-post-header-seal-tag | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-header-seal-tag/brief.md |
+| 20260913-feature-desktop-markdown-editor | branched | shadow-docs/changes/20260913-feature-desktop-markdown-editor/brief.md |
+| 20260914-style-footer-compact | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-compact/brief.md |
+| 20260914-style-footer-ornament | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-ornament/brief.md |
