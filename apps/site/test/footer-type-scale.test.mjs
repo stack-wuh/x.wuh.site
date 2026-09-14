@@ -47,3 +47,12 @@ test('导航与注脚各行不再各自声明字号', () => {
     assert.doesNotMatch(block(selector), /font-size:/, `${selector} 应继承根层字号`)
   }
 })
+
+test('纵向节奏全部交给行高：页脚区块不带上下 margin', () => {
+  // 行与行的间距只能来自行盒 leading；间距 token 不得再出现在 margin 上
+  assert.doesNotMatch(footer, /margin-(top|bottom):\s*var\(--space/)
+  assert.doesNotMatch(footer, /margin:\s*var\(--space/)
+  for (const selector of ['\\.footer-ornament', '\\.footer-slogan', '\\.footer-nav,\\s*\\.footer-beian', '\\.footer-note', '\\.footer-data-line']) {
+    assert.doesNotMatch(block(selector), /margin-(top|bottom):/, `${selector} 不应带上下 margin`)
+  }
+})

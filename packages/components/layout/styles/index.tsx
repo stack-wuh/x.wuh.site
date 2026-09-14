@@ -53,9 +53,10 @@ export const StyledFooter = styled.div`
     margin: 0 auto;
   }
 
-  /* Divider ornament 默认 --space-lg 上下 margin，页脚收紧到 --space-sm/base */
+  /* 页脚纵向节奏全部交给行高：区块一律不带上下 margin，
+     Divider ornament 默认的 --space-lg 上下 margin 也在此归零 */
   .footer-ornament {
-    margin: var(--space-sm) 0 var(--space-base);
+    margin: 0;
   }
 
   .footer-logo {
@@ -64,7 +65,7 @@ export const StyledFooter = styled.div`
   }
 
   .footer-slogan {
-    margin: 0 0 var(--space-xs);
+    margin: 0;
     font-family: var(--font-serif);
     font-size: var(--font-size-base);
     line-height: var(--line-height-heading);
@@ -80,8 +81,6 @@ export const StyledFooter = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     column-gap: var(--space-sm);
-    row-gap: var(--space-xs);
-    margin-bottom: var(--space-sm);
   }
 
   .footer-nav a {
@@ -104,9 +103,7 @@ export const StyledFooter = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    row-gap: 3px;
     color: var(--text-muted);
-    margin-bottom: var(--space-sm);
   }
 
   .footer-note > * + *::before {
@@ -138,7 +135,6 @@ export const StyledFooter = styled.div`
     justify-content: center;
     align-items: center;
     column-gap: var(--space-sm);
-    row-gap: var(--space-xs);
   }
 
   .footer-data-item {
