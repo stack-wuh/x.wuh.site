@@ -26,3 +26,4 @@
 | 访问统计 | 访问量 统计 reporter | knowledge/visit-stats.md |
 | 后台管理 | Admin Console 权限 OAuth | knowledge/admin-console.md |
 | 错误页面 | error not-found 错误页 | knowledge/error-pages.md |
+| 桌面应用 | Electron desktop 子模块 桌面端 token 快照 图标 回退 | knowledge/desktop-app-architecture.md |
