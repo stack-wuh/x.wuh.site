@@ -4,7 +4,7 @@
   "name": "20260903-style-post-toc-mobile-polish",
   "type": "style",
   "scope": "post",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260903-style-post-toc-mobile-polish",
   "files": [
@@ -28,12 +28,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "171b1c81eb27dc286591cd6f6252bcf485598526",
-    "verifiedAt": "2026-09-03T04:05:41.987Z"
+    "verifiedCommit": "52285de141dd075540b920c53b3e1b3d3c4c1298",
+    "verifiedAt": "2026-09-14T08:53:06.245Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:357",
+    "checkpoint": "merged-pr:357",
     "planHash": null,
     "updatedAt": null,
     "lastError": null

@@ -4,7 +4,7 @@
   "name": "20260906-fix-post-fcp-payload",
   "type": "fix",
   "scope": "apps/site/app/post",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260906-fix-post-fcp-payload",
   "files": [
@@ -27,12 +27,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "f4b514d1d9628099498ef2a32e6033318c37bb57",
-    "verifiedAt": "2026-09-06T15:04:26.743Z"
+    "verifiedCommit": "52285de141dd075540b920c53b3e1b3d3c4c1298",
+    "verifiedAt": "2026-09-14T08:53:11.436Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:374",
+    "checkpoint": "merged-pr:374",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
