@@ -79,7 +79,7 @@ export const StyledFooter = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    column-gap: var(--space-lg);
+    column-gap: var(--space-sm);
     row-gap: var(--space-xs);
     margin-bottom: var(--space-sm);
   }
@@ -97,13 +97,13 @@ export const StyledFooter = styled.div`
     ${linkUnderline}
   }
 
-  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点 */
+  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点。
+     段间不设 flex 间距：CJK 全角「·」自带 1em 字宽（墨迹居中），它本身就是段间留白。 */
   .footer-note {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    column-gap: var(--space-xs);
     row-gap: 3px;
     color: var(--text-muted);
     margin-bottom: var(--space-sm);
@@ -111,7 +111,6 @@ export const StyledFooter = styled.div`
 
   .footer-note > * + *::before {
     content: '·';
-    margin-right: var(--space-xs);
     opacity: 0.6;
   }
 
@@ -138,7 +137,7 @@ export const StyledFooter = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    column-gap: var(--space-md);
+    column-gap: var(--space-sm);
     row-gap: var(--space-xs);
   }
 
@@ -222,7 +221,7 @@ export const StyledFooter = styled.div`
 
     .footer-nav,
     .footer-beian {
-      column-gap: var(--space-md);
+      column-gap: var(--space-xs);
     }
   }
 
