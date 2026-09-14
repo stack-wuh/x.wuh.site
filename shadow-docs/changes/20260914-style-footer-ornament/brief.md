@@ -4,7 +4,7 @@
   "name": "20260914-style-footer-ornament",
   "type": "style",
   "scope": "components",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260914-style-footer-ornament",
   "files": [
@@ -18,11 +18,11 @@
     "packages/core/src/visit-stats.dto.ts"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 377,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/377"
   },
   "review": {
     "conclusion": "passed",
@@ -31,7 +31,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:377",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
