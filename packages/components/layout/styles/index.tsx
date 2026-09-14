@@ -37,7 +37,7 @@ const linkUnderline = `
 `
 
 export const StyledFooter = styled.div`
-  padding: var(--space-lg) var(--space-xl);
+  padding: var(--space-md) var(--space-xl);
   background-color: var(--background-color);
   color: var(--text-color);
   font-size: var(--font-size-base);
@@ -50,13 +50,18 @@ export const StyledFooter = styled.div`
     margin: 0 auto;
   }
 
+  /* Divider ornament 默认 --space-lg 上下 margin，页脚收紧到 --space-sm/base */
+  .footer-ornament {
+    margin: var(--space-sm) 0 var(--space-base);
+  }
+
   .footer-logo {
     display: inline-flex;
     color: var(--text-color);
   }
 
   .footer-slogan {
-    margin: 0 0 var(--space-base);
+    margin: 0 0 var(--space-xs);
     font-family: var(--font-serif);
     font-size: var(--font-size-md);
     font-weight: 600;
@@ -72,7 +77,7 @@ export const StyledFooter = styled.div`
     justify-content: center;
     column-gap: var(--space-lg);
     row-gap: var(--space-xs);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
   }
 
   .footer-nav a {
@@ -90,13 +95,29 @@ export const StyledFooter = styled.div`
     ${linkUnderline}
   }
 
+  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点 */
   .footer-note {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: var(--space-xs);
+    row-gap: 3px;
     font-size: var(--font-size-sm);
     color: var(--text-muted);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-note > * + *::before {
+    content: '·';
+    margin-right: var(--space-xs);
+    opacity: 0.6;
+  }
+
+  /* 不加 display，避免特异性压过 <520px 隐藏技术栈段的规则 */
+  .footer-note > span,
+  .footer-note > a {
+    white-space: nowrap;
   }
 
   .footer-license {
@@ -105,7 +126,7 @@ export const StyledFooter = styled.div`
     ${linkUnderline}
   }
 
-  .footer-tech {
+  .footer-note-tech {
     font-size: var(--font-size-xs);
     opacity: 0.8;
   }
@@ -195,7 +216,8 @@ export const StyledFooter = styled.div`
   }
 
   @media (max-width: ${BREAKPOINTS.small}px) {
-    .footer-tech {
+    /* 技术栈段整体隐藏（其分隔符由 ::before 承担，随之消失，不留孤点） */
+    .footer-note-tech {
       display: none;
     }
 
