@@ -4,18 +4,18 @@
   "name": "20260913-feature-desktop-markdown-editor",
   "type": "feature",
   "scope": "apps/desktop",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20260913-feature-desktop-markdown-editor",
   "files": [
     "apps/desktop"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 380,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/380"
   },
   "review": {
     "conclusion": "passed",
@@ -24,7 +24,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:380",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
