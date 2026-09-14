@@ -18,7 +18,7 @@ const Footer = () => {
       <div className="footer-inner">
         <Divider variant="ornament" className="footer-ornament">
           <span className="footer-logo">
-            <IconLogo width={84} height={42} />
+            <IconLogo width={64} height={32} />
           </span>
         </Divider>
 
@@ -42,13 +42,11 @@ const Footer = () => {
         </div>
 
         <div className="footer-note">
-          <div>
-            © {copyrightYears()} {footerConf.author}. ·{' '}
-            <a className="footer-license" href={footerConf.licenseHref} target="_blank" rel="noopener noreferrer">
-              {footerConf.license}
-            </a>
-          </div>
-          <div className="footer-tech">由 {footerConf.techStack.join(' · ')} 强力驱动</div>
+          <span>© {copyrightYears()} {footerConf.author}.</span>
+          <a className="footer-license" href={footerConf.licenseHref} target="_blank" rel="noopener noreferrer">
+            {footerConf.license}
+          </a>
+          <span className="footer-note-tech">由 {footerConf.techStack.join(' · ')} 强力驱动</span>
         </div>
 
         <SiteStats />
