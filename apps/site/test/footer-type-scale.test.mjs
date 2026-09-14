@@ -76,3 +76,12 @@ test('间距与偏移不写死 px，全部经令牌', () => {
   const bare = new RegExp(`(?:^|\\s)(?:${spacingProps}):\\s*[^;]*?\\d+(\\.\\d+)?px`, 'g')
   assert.deepEqual(footer.match(bare) ?? [], [], '间距类属性只能引用 --space-* / --border-radius-* 令牌')
 })
+
+test('窄屏展示完整技术栈：≤520px 不再隐藏注脚段', () => {
+  const small = footer.match(new RegExp('@media \\(max-width: \\$\\{BREAKPOINTS\\.small\\}px\\) \\{([\\s\\S]*?)\\n  \\}'))?.[1] ?? ''
+  assert.ok(small, '未找到 ≤520px 媒体查询块')
+  // 只允许隐藏技术栈段的首分隔符，段本身不得被 display:none 掉
+  assert.doesNotMatch(small, /\.footer-note-tech\s*\{[^}]*display:\s*none/)
+  assert.match(small, /\.footer-note-tech::before\s*\{\s*\n\s*display: none;/)
+  assert.match(block('\\.footer-note-tech'), /opacity: 0\.8;/)
+})

@@ -105,8 +105,8 @@ export const StyledFooter = styled.div`
     ${linkUnderline}
   }
 
-  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点。
-     段间不设 flex 间距：CJK 全角「·」自带 1em 字宽（墨迹居中），它本身就是段间留白。 */
+  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点；
+     技术栈段在窄屏整段折到下一行展示，不再隐藏 */
   .footer-note {
     display: flex;
     flex-wrap: wrap;
@@ -122,7 +122,7 @@ export const StyledFooter = styled.div`
     opacity: 0.6;
   }
 
-  /* 不加 display，避免特异性压过 <520px 隐藏技术栈段的规则 */
+  /* 段内不换行：折行只能发生在段边界 */
   .footer-note > span,
   .footer-note > a {
     white-space: nowrap;
@@ -223,14 +223,15 @@ export const StyledFooter = styled.div`
   }
 
   @media (max-width: ${BREAKPOINTS.small}px) {
-    /* 技术栈段整体隐藏（其分隔符由 ::before 承担，随之消失，不留孤点） */
-    .footer-note-tech {
-      display: none;
-    }
-
+    /* 技术栈段不再隐藏：窄屏整段折到下一行（段内 nowrap，由 flex-wrap 在段边界换行） */
     .footer-nav,
     .footer-beian {
       column-gap: var(--space-xs);
+    }
+
+    /* 技术栈段此时独占一行，段首分隔符「·」不再需要 */
+    .footer-note-tech::before {
+      display: none;
     }
   }
 
