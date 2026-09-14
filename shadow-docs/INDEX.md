@@ -16,7 +16,7 @@
 | 20260829-feature-related-post-notes | ✅ 完成 | shadow-docs/changes/archive/20260829-feature-related-post-notes/brief.md |
 | 20260829-feature-responsive-spacing | ✅ 完成 | shadow-docs/changes/archive/20260829-feature-responsive-spacing/brief.md |
 | 20260829-fix-homepage-empty-data | ✅ 完成 | shadow-docs/changes/archive/20260829-fix-homepage-empty-data/brief.md |
-| 20260829-P-post-typography-design-language | applied | shadow-docs/changes/20260829-P-post-typography-design-language/brief.md |
+| 20260829-P-post-typography-design-language | ✅ 完成 | shadow-docs/changes/archive/20260829-P-post-typography-design-language/brief.md |
 | 20260830-P-article-export | ✅ 完成 | shadow-docs/changes/archive/20260830-P-article-export/brief.md |
 | 20260830-P-shiki-highlighting | proposed | shadow-docs/changes/20260830-P-shiki-highlighting/brief.md |
 | 20260901-fix-wechat-domain-block | proposed | shadow-docs/changes/20260901-fix-wechat-domain-block/brief.md |

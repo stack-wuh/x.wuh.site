@@ -4,7 +4,7 @@
   "name": "20260829-P-post-typography-design-language",
   "type": "feature",
   "scope": "site",
-  "status": "applied",
+  "status": "archived",
   "baseBranch": "main",
   "files": [
     "apps/site/app/post/styles/post-markdown.ts",
@@ -15,8 +15,25 @@
     "shadow-docs/knowledge/blog-detail.md"
   ],
   "workflow": {
-    "checkpoint": "applied",
-    "updatedAt": "2026-08-29"
+    "operation": null,
+    "checkpoint": "archived-by-evidence",
+    "planHash": null,
+    "updatedAt": "2026-09-14",
+    "lastError": null
+  },
+  "legacy": true,
+  "github": {
+    "repository": "stack-wuh/x.wuh.site",
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "f3731229904dea865efe39c5d32e5343ef823614",
+    "verifiedAt": null,
+    "note": "早期 v6 记录：实施提交已落地 main（post-markdown.ts 排版重写 + 测试 + 更新于 提示），归档时按落地证据核实，未走 CLI review/PR 门禁；本变更的排版规格后被 2026-09 迭代演进（见 blog-detail 卡片当前结论）"
   }
 }
 ---
@@ -70,10 +87,10 @@
 
 ## 任务
 
-- [ ] 实现 `post-markdown.ts` 排版样式（字体 / 字号 / 行高 / 标题 / 引用 / 列表 / 图片 / 表格 / 分割线）
-- [ ] 实现末尾「更新于 X」提示（数据源 `issue.updated_at`）
-- [ ] 回归：目录锚点、代码高亮、封面、工具栏、继续阅读不受影响
-- [ ] 验证 4 主题（wine/plain × light/dark）+ 移动端断点
+- [x] 实现 `post-markdown.ts` 排版样式（字体 / 字号 / 行高 / 标题 / 引用 / 列表 / 图片 / 表格 / 分割线）
+- [x] 实现末尾「更新于 X」提示（数据源 `issue.updated_at`）
+- [x] 回归：目录锚点、代码高亮、封面、工具栏、继续阅读不受影响
+- [x] 验证 4 主题（wine/plain × light/dark）+ 移动端断点
 
 ## 结果
 
