@@ -24,5 +24,6 @@
 | 性能与首页数据 | 首屏 加载 LCP 缓存 首页数据 | knowledge/first-load-performance.md, knowledge/homepage-data.md |
 | 构建与前端模块 | 构建 部署 Docker Next.js exports | knowledge/build-config.md, knowledge/next.md |
 | 访问统计 | 访问量 统计 reporter | knowledge/visit-stats.md |
+| 页脚 | Footer 页脚 站点数据 站龄 siteBorn 版权 | knowledge/footer-design.md, knowledge/visit-stats.md |
 | 后台管理 | Admin Console 权限 OAuth | knowledge/admin-console.md |
 | 错误页面 | error not-found 错误页 | knowledge/error-pages.md |

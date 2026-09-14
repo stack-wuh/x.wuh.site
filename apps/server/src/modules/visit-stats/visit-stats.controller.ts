@@ -29,8 +29,8 @@ export class VisitStatsController {
   }
 
   @Get('stats')
-  @ApiOperation({ summary: '获取访问统计' })
-  @ApiResponse({ status: 200, description: '访问统计数据' })
+  @ApiOperation({ summary: '获取访问统计与全站字数' })
+  @ApiResponse({ status: 200, description: '访问统计数据（总访问量 / 今日 / 全站字数）' })
   async getStats(): Promise<VisitStatsResponse> {
     return this.visitStatsService.getStats();
   }

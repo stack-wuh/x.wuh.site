@@ -61,6 +61,9 @@ export {
   Tag as IconTag,
   BookOpen as IconBookOpen,
   Calendar as IconCalendar,
+  CalendarDays as IconCalendarDays,
+  Feather as IconFeather,
+  Eye as IconEye,
   Library as IconLibrary,
   FolderGit2 as IconFolderGit2
 } from 'lucide-react'

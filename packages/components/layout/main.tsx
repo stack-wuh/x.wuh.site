@@ -5,7 +5,12 @@ import classnames from 'classnames'
 
 import Footer from './footer'
 import styles from '../themes/layout.module.scss'
-import type { MainProps } from './specs'
+
+export type MainProps = {
+  header?: React.ReactNode
+  children: React.ReactNode
+  footer?: React.ReactNode
+}
 
 const HeaderContent = () => {
   return (<div>Header</div>)

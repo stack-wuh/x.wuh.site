@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root { --font-sans:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif; --font-serif:'Noto Serif SC','Songti SC',serif; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#16130f; color:#d8d2c8; font-family:var(--font-sans); padding:36px 40px 56px; }
+  h1 { font-size:20px; color:#ece6da; margin-bottom:6px; }
+  .sub { font-size:13px; color:#8f887b; margin-bottom:30px; }
+  .frame-label { font-size:14px; color:#c9a86a; margin:0 0 10px 4px; font-weight:500; }
+  .frame-label small { color:#8f887b; font-weight:400; margin-left:10px; }
+
+  /* ===== 2560 视口框 ===== */
+  .vp {
+    width:100%; border:1px solid #35302a; border-radius:10px; overflow:hidden;
+    background:linear-gradient(180deg,#F5F0EC 55%, color-mix(in oklab,#F5F0EC 95%,#C94A44 5%) 100%);
+    margin-bottom:34px;
+  }
+  .vp .bar { height:30px; background:#201c17; display:flex; align-items:center; padding:0 14px; gap:6px; }
+  .vp .bar i { width:10px; height:10px; border-radius:50%; background:#3a342c; display:block; }
+  .vp .tag { margin-left:10px; font-size:11px; color:#8f887b; letter-spacing:.05em; }
+
+  /* 文章列 ghost（站点文章列 ~720px 居中） */
+  .article { width:720px; margin:0 auto; padding:34px 0 60px; }
+  .article .l { height:11px; border-radius:6px; background:#8A6E5C; opacity:.3; margin-bottom:12px; }
+  .article .l1{width:38%} .article .l2{width:100%} .article .l3{width:92%} .article .l4{width:100%} .article .l5{width:64%}
+  .axis { position:relative; }
+  .axis::after { content:'内容轴心'; position:absolute; left:50%; top:8px; transform:translateX(-50%);
+    font-size:11px; color:#C94A44; letter-spacing:.15em; opacity:.75; }
+
+  /* ===== 现状 Footer：两栏 SpaceBetween 全宽 ===== */
+  .f-old { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; padding:32px 40px; border-top:1px solid rgba(138,110,92,.18); font-size:15px; color:#2A1E16; line-height:1.6; }
+  .f-old svg { display:block; }
+  .f-old .col b { display:block; font-weight:400; }
+  .f-old .right { text-align:left; }
+
+  /* ===== 方案一 Footer：中轴 ===== */
+  .f-new { padding:36px 48px 30px; text-align:center; border-top:1px solid rgba(138,110,92,.0); }
+  .orn { display:flex; align-items:center; gap:24px; max-width:560px; margin:0 auto 22px; }
+  .orn::before,.orn::after { content:''; height:1px; flex:1; }
+  .orn::before { background:linear-gradient(to right,transparent,color-mix(in oklab,#C94A44 45%,transparent)); }
+  .orn::after  { background:linear-gradient(to left, transparent,color-mix(in oklab,#C94A44 45%,transparent)); }
+  .orn .logo { color:#2A1E16; flex-shrink:0; }
+  .slogan { font-family:var(--font-serif); font-size:17px; font-weight:600; color:#2A1E16; letter-spacing:.25em; text-indent:.25em; margin-bottom:12px; }
+  .meta { font-size:14px; color:#8A6E5C; margin-bottom:22px; }
+  .links { display:flex; justify-content:center; gap:28px; margin-bottom:16px; }
+  .links a { color:#8A6E5C; text-decoration:none; font-size:14px; }
+
+  /* 末行站点数据：桌面图标 + tooltip，触屏图标 + 文字 */
+  .data-line { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: 22px; row-gap: 9px; }
+  .data-item { position: relative; display: inline-flex; align-items: center; gap: 5px; color: color-mix(in oklab, var(--muted) 80%, transparent); border-radius: 4px; }
+  .data-item:hover { color: var(--muted); }
+  .data-item:focus-visible { outline: 1.5px solid var(--primary); outline-offset: 3px; }
+  .ico { width: 15px; height: 15px; display: block; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tip {
+    position: absolute; bottom: calc(100% + 9px); left: 50%;
+    transform: translate(-50%, 4px);
+    white-space: nowrap; padding: 5px 10px; border-radius: 6px;
+    background: color-mix(in oklab, var(--text) 94%, var(--bg)); color: var(--bg);
+    font-size: 12px; line-height: 1.4;
+    opacity: 0; visibility: hidden; pointer-events: none; z-index: 20;
+    transition: opacity 180ms ease-out, transform 180ms ease-out, visibility 180ms;
+  }
+  .data-item:hover .tip, .data-item:focus-visible .tip, .tip--demo { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+  .mlabel { display: none; font-size: 13px; }
+  @media (hover: none), (pointer: coarse) { .mlabel { display: inline; } }
+  /* 版权注脚：拆两行，技术栈行更小更淡 */
+  .note-stack { display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+  .note-stack .tech { font-size: 12px; opacity: .8; }
+  .stats { font-size:13px; color:color-mix(in oklab,#8A6E5C 62%,transparent); }
+
+  .verdict { border-top:1px solid #35302a; padding-top:22px; font-size:13px; color:#9a9284; line-height:2; }
+  .verdict b { color:#c9a86a; font-weight:500; }
+</style>
+</head>
+<body>
+  <h1>大屏（2560px）下的 Footer：现状 vs 方案一</h1>
+  <p class="sub">站点内容列为 720–1200px 居中窄柱（文章 720 / 部分列表 1100–1200），大屏上页面本身就是「居中一根轴」</p>
+
+  <p class="frame-label">① 现状：两栏 SpaceBetween 随视口拉满 <small>logo 顶到最左、备案号飘到最右，与 720px 文章列完全脱离</small></p>
+  <div class="vp">
+    <div class="bar"><i></i><i></i><i></i><span class="tag">viewport · 2560px</span></div>
+    <div class="axis">
+      <div class="article"><div class="l l1"></div><div class="l l2"></div><div class="l l3"></div><div class="l l4"></div><div class="l l5"></div></div>
+    </div>
+    <div class="f-old">
+      <div class="col">
+        <svg viewBox="0 0 120 60" width="100" height="60" fill="none"><path d="M14 16 L24 44 L34 16 L44 44 L54 16" stroke="#2A1E16" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="66" y="18" width="34" height="8" rx="4" fill="#C94A44"/><rect x="66" y="34" width="20" height="8" rx="4" fill="#2A1E16" opacity=".55"/></svg>
+      </div>
+      <div class="col">
+        <div>驿寄梅花, 鱼传尺素</div>
+        <div>Copyright©2024 Shadow.</div>
+        <div>总访问量: 123,456 | 今日: 789</div>
+      </div>
+      <div class="col right">
+        <div>你也想起舞吗</div>
+        <div>由next.js、mongodb和nest.js强力驱动</div>
+        <div><u>RSS 订阅</u></div>
+      </div>
+      <div class="col">
+        <div>鄂ICP备20001814号-1</div>
+        <div>粤公网安备44030002001803号</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="frame-label">② 方案一：中轴 colophon <small>ornament 线封顶 560px，与文章列同一轴心——大屏上留白是仪式感的一部分，不是失控</small></p>
+  <div class="vp">
+    <div class="bar"><i></i><i></i><i></i><span class="tag">viewport · 2560px</span></div>
+    <div class="axis">
+      <div class="article"><div class="l l1"></div><div class="l l2"></div><div class="l l3"></div><div class="l l4"></div><div class="l l5"></div></div>
+    </div>
+    <div class="f-new">
+      <div class="orn">
+        <svg class="logo" viewBox="0 0 120 60" width="84" height="42" fill="none"><path d="M14 16 L24 44 L34 16 L44 44 L54 16" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="66" y="18" width="34" height="8" rx="4" fill="#C94A44"/><rect x="66" y="34" width="20" height="8" rx="4" fill="currentColor" opacity=".55"/></svg>
+      </div>
+      <div class="slogan">驿寄梅花，鱼传尺素</div>
+      <div class="links"><a href="javascript:void(0)">博客</a><a href="javascript:void(0)">关于</a><a href="javascript:void(0)">RSS 订阅</a></div>
+      <div class="links"><a href="javascript:void(0)">鄂ICP备20001814号-1</a><a href="javascript:void(0)">粤公网安备44030002001803号</a></div>
+      <div class="note-stack">
+        <div>© 2021–2026 Shadow. · CC BY-NC-SA 4.0</div>
+        <div class="tech">由 Next.js · NestJS · MongoDB 强力驱动</div>
+      </div>
+      <div class="stats data-line">
+            <span class="data-item" tabindex="0">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+              <span class="sr-only">驿站已运行</span>
+              <span class="tip">驿站已运行 2017 天</span>
+            </span>
+            <span class="data-item" tabindex="0">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>
+              <span class="sr-only">全站字数</span>
+              <span class="tip">已写下 21.6 万字</span>
+            </span>
+            <span class="data-item" tabindex="0">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+              <span class="sr-only">访问量</span>
+              <span class="tip" data-demo="1">总访问量 123,456 · 今日 789</span>
+            </span>
+          </div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <b>结论：</b>大屏上「不好」的恰恰是现状——全宽两栏把 logo 和备案号甩到 2400px 宽的两端，跟 720px 的文章轴脱节。<br>
+    方案一所有元素共享文章列的居中轴心，ornament 线 560px 封顶、slogan/meta 天然窄行，大屏只是两侧留白变多，轴心秩序不变。<br>
+    <b>落地护栏：</b>footer 内层再加一道 max-width（≈640px）封顶，超宽屏下 ornament 线、链接行都不随视口拉伸。
+  </div>
+</body>
+</html>
