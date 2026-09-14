@@ -57,11 +57,12 @@ test('导航与注脚各行不再各自声明字号', () => {
   }
 })
 
-test('纵向节奏全部交给行高：页脚区块不带上下 margin', () => {
-  // 行与行的间距只能来自行盒 leading；间距 token 不得再出现在 margin 上
-  assert.doesNotMatch(footer, /margin-(top|bottom):\s*var\(--space/)
-  assert.doesNotMatch(footer, /margin:\s*var\(--space/)
-  for (const selector of ['\\.footer-ornament', '\\.footer-slogan', '\\.footer-nav,\\s*\\.footer-beian', '\\.footer-note', '\\.footer-data-line']) {
-    assert.doesNotMatch(block(selector), /margin-(top|bottom):/, `${selector} 不应带上下 margin`)
-  }
+test('区块间距由 margin 承担，行间不能只靠行高', () => {
+  // linkUnderline 的 ::after 挂在行盒底部再往下 4px：行间只靠行高时它会落进下一行的盒子里
+  const navRow = block('\\.footer-nav,\\s*\\.footer-beian')
+  assert.match(navRow, /margin-bottom: var\(--space-sm\);/)
+  assert.match(navRow, /row-gap: var\(--space-xs\);/)
+  assert.match(block('\\.footer-note'), /margin-bottom: var\(--space-sm\);/)
+  assert.match(block('\\.footer-ornament'), /margin: var\(--space-sm\) 0 var\(--space-base\);/)
+  assert.match(block('\\.footer-slogan'), /margin: 0 0 var\(--space-xs\);/)
 })

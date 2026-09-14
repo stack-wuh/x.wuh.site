@@ -23,7 +23,7 @@ Footer 为「中轴 ornament 式」单列布局，内层 `max-width: 640px` 封�
 
 版权注脚为**一段 flex-wrap 行**，含三段 `white-space: nowrap` 内容：`© {起始年}–{当前年} {author}.` / 协议链接 / 技术栈。分隔符 `·` 由 `.footer-note > * + *::before` 附着在**后一段**上，因此换行永远发生在段边界——不会截断数字或协议名，也不会把分隔符孤立在上一行末尾；技术栈段 <520px 时整段隐藏（其前置分隔符属该段 `::before`，随之消失）。段间不设 `column-gap`：CJK 全角「·」自带 1em 字宽（墨迹居中），它本身就是段间留白（实测可见间隔 12px）——字号降到 12px 后，原先 8px gap + 8px margin 的「双份留白」会让细字显得格外松散。导航行与备案行 `column-gap: var(--space-sm)`（≤520px 收 `--space-xs`），站点数据行同为 `--space-sm`；横向留白一律跟着字号档走，不沿用正文的 `--space-lg/md`。
 
-页脚纵向节奏**全部由行高承担**：区块一律不带上下 margin（`Divider ornament` 默认的 `--space-lg` margin 在此归零），相邻行之间的距离就是各自行盒的 leading——12px × `--footer-lh`（1.8 → 21.6px 行盒，墨迹间隔约 6–9px）；`row-gap` 一并去掉，换行后的行间距与正常行一致。footer 自身只保留 `padding: var(--space-md)`（外框）与 logo 64×32；整块高度约 192px（1280 视口）/ 176px（375 宽），避免作为每页固定收尾过高。
+页脚纵向节奏由**行高 + 区块 margin 共同**承担：行与行的距离来自行盒 leading（12px × `--footer-lh` 1.8 → 21.6px 行盒），区块之间则必须保留 margin——`Divider ornament` 默认的 `--space-lg` margin 收到 `--space-sm/base`，导航/备案/注脚行 `margin-bottom: var(--space-sm)` 且 `row-gap: var(--space-xs)`（注脚 `row-gap: 3px`）。**不能把 margin 全部归零只留行高**：链接下划线是挂在行盒底部再往下 4px 的绝对定位伪元素（`linkUnderline` 的 `bottom: -4px`），没有 margin 时它会落进下一行的盒子里——实测下划线到下一行墨迹的余量：有 margin 14px、无 margin 约 4px。footer 自身 `padding: var(--space-md)` 作为外框、logo 64×32；整块高度约 276px（1280 视口）/ 260px（375 宽）。
 
 末行「站点数据」为三项 lucide 图标（`calendar-days` = 站龄、`feather` = 全站字数、`eye` = 访问量），响应式标签：桌面 hover/focus 弹 tooltip（向上弹出，页底向下会被视口裁切），触屏（`hover: none` 或 `pointer: coarse`）显示常显短文字。访问量的「总/今日」两值合并于一枚图标内并列展示。
 
@@ -37,7 +37,7 @@ Footer 为「中轴 ornament 式」单列布局，内层 `max-width: 640px` 封�
 - 字号只用两档：辅助层 `--font-size-xs`（根层统一继承，行内不再单独声明）、slogan `--font-size-base`。**不得在页脚使用 `--font-size-sm`**——素雅主题把该 token 覆写为 15px，与 `base` 同值，分级在四主题下不可控。
 - 行高只有两个来源：`--footer-lh`（1.8，块级行）与 `--footer-lh-display`（1.5，slogan / tooltip），两者都必须落在 1.5–1.8 区间；禁止直接引用 `--line-height-body/heading`，也禁止在别处散写行高数值。
 - 页脚必须自持 `font-family: var(--font-sans)`：它挂在页面容器之外，页面级字体族覆盖不到，缺失即回落浏览器默认族。
-- 纵向节奏只由行高承担：页脚内**不得**给区块加 `margin-top/bottom` 或 `row-gap`（含 `Divider ornament` 默认的 `--space-lg` margin，必须在该处归零）。想调松紧就调 `--line-height-*` 或字号档，不要回退到间距 token。
+- 区块间距必须用 margin（`--space-sm` / `--space-base` 一档，≤520px 横向收 `--space-xs`），不能把 margin 归零只靠行高：链接下划线挂在行盒底部 −4px，行间没有 margin 时下划线会落进下一行的盒子。行高（`--footer-lh` 1.8 / `--footer-lh-display` 1.5）与 margin 叠加才是最终节奏，两者都要保留。
 - 横向留白跟着字号档走：导航行 / 备案行 / 站点数据行 `column-gap: var(--space-sm)`（≤520px 收 `--space-xs`），注脚段间**不设** `column-gap`（全角 `·` 自带 1em 字宽即段间留白）；禁止沿用正文口径的 `--space-lg/md`。
 - 注脚内不要给子元素设 `display`：`.footer-note > span`（特异性 0,1,1）会压过 <520px 的 `.footer-note-tech { display: none }`（0,1,0）导致隐藏失效；同理，新增段的分隔符一律用 `::before` 附着于后段，不要写成独立分隔符元素。
 - 颜色、字体、断点只经语义 token；触屏标签靠 `(hover: none) / (pointer: coarse)` 媒体查询切换，不依赖宽度断点。
@@ -52,7 +52,7 @@ Footer 为「中轴 ornament 式」单列布局，内层 `max-width: 640px` 封�
 
 检查 footer 结构顺序与 640px 护栏；四主题（wine/plain × light/dark）目测；tooltip 桌面出现/触屏不出现（走文字标签）；375px 下无横向滚动；`GET /api/visit-stats/stats` 返回 `totalWords` 且与 `getArticleWordCount` 口径一致。
 
-字号/行高用 `getComputedStyle` 复核（本地 dev，1280 宽）：根层与各行 12px、字体族 `Noto Sans SC`；行高四主题与 375/1280 一律 21.6px（`--footer-lh` 1.8，不再随主题/断点变化），slogan `Noto Serif SC` 15px / 22.5px，tooltip 12px / 18px 且向上弹出。纵向复核：五个区块相邻盒间距均为 0px（margin/row-gap 全部归零）；页脚高度 192px（1280 宽）、176px（375 宽）。横向留白复核：导航行 / 备案行 16px（≤520px 8px），注脚段间 12px（全角 `·` 自带字宽），数据行 16px。320–1280 宽均无横向溢出，注脚折行只发生在段边界、<520px 技术栈段整体隐藏。
+字号/行高用 `getComputedStyle` 复核（本地 dev，1280 宽）：根层与各行 12px、字体族 `Noto Sans SC`；行高四主题与 375/1280 一律 21.6px（`--footer-lh` 1.8，不再随主题/断点变化），slogan `Noto Serif SC` 15px / 22.5px，tooltip 12px / 18px 且向上弹出。纵向复核：区块相邻盒间距 12 / 8 / 16 / 16 / 16px；链接下划线（行盒底 +4px）到下一行墨迹余量 14px；页脚高度 276px（1280 宽）、260px（375 宽）、289px（320 宽，备案折两行）。横向留白复核：导航行 / 备案行 16px（≤520px 8px），注脚段间 12px（全角 `·` 自带字宽），数据行 16px。320–1280 宽均无横向溢出，注脚折行只发生在段边界、<520px 技术栈段整体隐藏。
 
 ## 关联知识
 

@@ -58,10 +58,9 @@ export const StyledFooter = styled.div`
     margin: 0 auto;
   }
 
-  /* 页脚纵向节奏全部交给行高：区块一律不带上下 margin，
-     Divider ornament 默认的 --space-lg 上下 margin 也在此归零 */
+  /* Divider ornament 默认 --space-lg 上下 margin，页脚收到 --space-sm/base */
   .footer-ornament {
-    margin: 0;
+    margin: var(--space-sm) 0 var(--space-base);
   }
 
   .footer-logo {
@@ -70,7 +69,7 @@ export const StyledFooter = styled.div`
   }
 
   .footer-slogan {
-    margin: 0;
+    margin: 0 0 var(--space-xs);
     font-family: var(--font-serif);
     font-size: var(--font-size-base);
     line-height: var(--footer-lh-display);
@@ -80,12 +79,16 @@ export const StyledFooter = styled.div`
     color: var(--text-primary);
   }
 
+  /* 区块间距必须用 margin，不能只靠行高：链接下划线是挂在行盒底部再往下 4px 的
+     绝对定位伪元素（见 linkUnderline），没有 margin 时它会落进下一行的盒子里 */
   .footer-nav,
   .footer-beian {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     column-gap: var(--space-sm);
+    row-gap: var(--space-xs);
+    margin-bottom: var(--space-sm);
   }
 
   .footer-nav a {
@@ -108,7 +111,9 @@ export const StyledFooter = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    row-gap: 3px;
     color: var(--text-muted);
+    margin-bottom: var(--space-sm);
   }
 
   .footer-note > * + *::before {
@@ -140,6 +145,7 @@ export const StyledFooter = styled.div`
     justify-content: center;
     align-items: center;
     column-gap: var(--space-sm);
+    row-gap: var(--space-xs);
   }
 
   .footer-data-item {
