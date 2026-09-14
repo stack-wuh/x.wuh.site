@@ -1,3 +1,39 @@
+---
+{
+  "schema": "shadow-dev/v1",
+  "name": "20260804-B-homepage-summary-invalid-date",
+  "type": "fix",
+  "scope": null,
+  "status": "archived",
+  "baseBranch": "main",
+  "branch": null,
+  "files": [
+    "packages/wuh.site.next/app/HomeView.tsx"
+  ],
+  "legacy": true,
+  "github": {
+    "repository": null,
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "522ff1fc17792f772021f67f4b58205056cd3860",
+    "verifiedAt": null,
+    "note": "v5/v6 早期遗留记录：归档时按落地证据核实（提交在 main 上且变更内容存在于代码），未走 CLI review/PR 门禁"
+  },
+  "workflow": {
+    "operation": null,
+    "checkpoint": null,
+    "planHash": null,
+    "updatedAt": null,
+    "lastError": null
+  }
+}
+---
+
 # 修复首页年度总结显示 Invalid Date
 
 > 类型：Bug

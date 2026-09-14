@@ -1,3 +1,37 @@
+---
+{
+  "schema": "shadow-dev/v1",
+  "name": "20260801-P-migrate-to-v6",
+  "type": "chore",
+  "scope": null,
+  "status": "archived",
+  "baseBranch": "main",
+  "branch": null,
+  "files": [],
+  "legacy": true,
+  "github": {
+    "repository": null,
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "a3898c61e4ae493d85959c165ee0d9967887c477",
+    "verifiedAt": null,
+    "note": "v5/v6 早期遗留记录：归档时按落地证据核实（提交在 main 上且变更内容存在于代码），未走 CLI review/PR 门禁"
+  },
+  "workflow": {
+    "operation": null,
+    "checkpoint": null,
+    "planHash": null,
+    "updatedAt": null,
+    "lastError": null
+  }
+}
+---
+
 # 从 OpenSpec/Superpowers 迁移到 shadow-dev-workflow v6
 
 > Issue: 无（内部工具迁移）

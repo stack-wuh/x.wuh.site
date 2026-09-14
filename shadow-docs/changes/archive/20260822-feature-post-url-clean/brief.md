@@ -1,3 +1,42 @@
+---
+{
+  "schema": "shadow-dev/v1",
+  "name": "20260822-feature-post-url-clean",
+  "type": "feature",
+  "scope": null,
+  "status": "archived",
+  "baseBranch": "main",
+  "branch": null,
+  "files": [
+    "apps/site/app/lib",
+    "apps/site/app/lib/slug.ts",
+    "apps/site/app/post",
+    "apps/site/app/post/"
+  ],
+  "legacy": true,
+  "github": {
+    "repository": null,
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "cff9b28e4bad336ce31ab052a3916e1ad7e08290",
+    "verifiedAt": null,
+    "note": "v5/v6 早期遗留记录：归档时按落地证据核实（提交在 main 上且变更内容存在于代码），未走 CLI review/PR 门禁"
+  },
+  "workflow": {
+    "operation": null,
+    "checkpoint": null,
+    "planHash": null,
+    "updatedAt": null,
+    "lastError": null
+  }
+}
+---
+
 # 文章 URL 只保留 id
 
 ## 动机

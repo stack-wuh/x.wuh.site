@@ -1,3 +1,42 @@
+---
+{
+  "schema": "shadow-dev/v1",
+  "name": "20260804-P-optimize-heatmap-popover",
+  "type": "style",
+  "scope": null,
+  "status": "archived",
+  "baseBranch": "main",
+  "branch": null,
+  "files": [
+    "packages/components/heatmap/heatmap-layout.test.mjs",
+    "packages/components/heatmap/index.tsx",
+    "packages/components/heatmap/styles.tsx",
+    "packages/wuh.site.next/app/about/AboutView.tsx"
+  ],
+  "legacy": true,
+  "github": {
+    "repository": null,
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "d313ff6c00ae9d29c00c9675b2fa074f2fdf79f3",
+    "verifiedAt": null,
+    "note": "v5/v6 早期遗留记录：归档时按落地证据核实（提交在 main 上且变更内容存在于代码），未走 CLI review/PR 门禁"
+  },
+  "workflow": {
+    "operation": null,
+    "checkpoint": null,
+    "planHash": null,
+    "updatedAt": null,
+    "lastError": null
+  }
+}
+---
+
 # 优化热力图 Popover 内部样式
 
 > 类型：需求

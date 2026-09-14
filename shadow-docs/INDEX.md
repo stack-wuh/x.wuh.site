@@ -2,6 +2,12 @@
 
 | 变更 | 状态 | 路径 |
 |------|------|------|
+| 2026-08-08-P-knowledge-system | ✅ 完成 | shadow-docs/changes/archive/2026-08-08-P-knowledge-system/brief.md |
+| 20260801-P-migrate-to-v6 | ✅ 完成 | shadow-docs/changes/archive/20260801-P-migrate-to-v6/brief.md |
+| 20260804-B-homepage-summary-invalid-date | ✅ 完成 | shadow-docs/changes/archive/20260804-B-homepage-summary-invalid-date/brief.md |
+| 20260804-P-optimize-heatmap-popover | ✅ 完成 | shadow-docs/changes/archive/20260804-P-optimize-heatmap-popover/brief.md |
+| 20260822-feature-post-url-clean | ✅ 完成 | shadow-docs/changes/archive/20260822-feature-post-url-clean/brief.md |
+| 20260822-fix-pravatar-image-host | ✅ 完成 | shadow-docs/changes/archive/20260822-fix-pravatar-image-host/brief.md |
 | 20260823-feature-post-cover-redesign | ✅ 完成 | shadow-docs/changes/archive/20260823-feature-post-cover-redesign/brief.md |
 | 20260824-P-homepage-hydration-slimming | ✅ 完成 | shadow-docs/changes/archive/20260824-P-homepage-hydration-slimming/brief.md |
 | 20260824-refactor-homepage-js-audit | ✅ 完成 | shadow-docs/changes/archive/20260824-refactor-homepage-js-audit/brief.md |
@@ -11,7 +17,7 @@
 | 20260829-feature-responsive-spacing | ✅ 完成 | shadow-docs/changes/archive/20260829-feature-responsive-spacing/brief.md |
 | 20260829-fix-homepage-empty-data | ✅ 完成 | shadow-docs/changes/archive/20260829-fix-homepage-empty-data/brief.md |
 | 20260829-P-post-typography-design-language | applied | shadow-docs/changes/20260829-P-post-typography-design-language/brief.md |
-| 20260830-P-article-export | completed | shadow-docs/changes/20260830-P-article-export/brief.md |
+| 20260830-P-article-export | ✅ 完成 | shadow-docs/changes/archive/20260830-P-article-export/brief.md |
 | 20260830-P-shiki-highlighting | proposed | shadow-docs/changes/20260830-P-shiki-highlighting/brief.md |
 | 20260901-fix-wechat-domain-block | proposed | shadow-docs/changes/20260901-fix-wechat-domain-block/brief.md |
 | 20260901-style-post-paper-redesign | ✅ 完成 | shadow-docs/changes/archive/20260901-style-post-paper-redesign/brief.md |

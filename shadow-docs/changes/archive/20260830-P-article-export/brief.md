@@ -4,7 +4,7 @@
   "name": "20260830-P-article-export",
   "type": "feature",
   "scope": "site",
-  "status": "completed",
+  "status": "archived",
   "baseBranch": "main",
   "files": [
     "apps/site/app/api/image-proxy/route.ts",
@@ -19,6 +19,13 @@
   "workflow": {
     "checkpoint": "completed",
     "updatedAt": "2026-08-30"
+  },
+  "legacy": true,
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "ee8c519386a1e56b82e38e016610931181104754",
+    "verifiedAt": null,
+    "note": "v5/v6 早期遗留记录：归档时按落地证据核实（提交在 main 上且变更内容存在于代码），未走 CLI review/PR 门禁"
   }
 }
 ---

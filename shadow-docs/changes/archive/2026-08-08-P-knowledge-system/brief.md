@@ -1,3 +1,39 @@
+---
+{
+  "schema": "shadow-dev/v1",
+  "name": "2026-08-08-P-knowledge-system",
+  "type": "docs",
+  "scope": null,
+  "status": "archived",
+  "baseBranch": "main",
+  "branch": null,
+  "files": [
+    "packages/wuh.site.next/app/post"
+  ],
+  "legacy": true,
+  "github": {
+    "repository": null,
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "8ac8314270670cd40e82e28f67f8562260f9a08b",
+    "verifiedAt": null,
+    "note": "v5/v6 早期遗留记录：归档时按落地证据核实（提交在 main 上且变更内容存在于代码），未走 CLI review/PR 门禁"
+  },
+  "workflow": {
+    "operation": null,
+    "checkpoint": null,
+    "planHash": null,
+    "updatedAt": null,
+    "lastError": null
+  }
+}
+---
+
 # Knowledge 知识沉淀体系
 
 > 状态：设计已确认，待实施
