@@ -14,7 +14,8 @@ const linkUnderline = `
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -4px;
+    /* 偏移取自间距令牌（响应式间距对象），不写死 px */
+    bottom: calc(var(--space-xs) / -2);
     height: 1px;
     background: linear-gradient(to right, transparent, ${hoverFade}, transparent);
     opacity: 0;
@@ -31,8 +32,8 @@ const linkUnderline = `
 
   &:focus-visible {
     outline: 1.5px solid var(--primary-color);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline-offset: calc(var(--space-xs) / 2);
+    border-radius: var(--border-radius-xs);
   }
 `
 
@@ -40,17 +41,25 @@ export const StyledFooter = styled.div`
   padding: var(--space-md) var(--space-xl);
   background-color: var(--background-color);
   color: var(--text-color);
-  font-size: var(--font-size-base);
-  line-height: 1.6;
+  /* 页脚挂在页面容器之外，页面级 font-family 覆盖不到它：字体族必须自持 */
+  font-family: var(--font-sans);
+  /* 整层为辅助信息，字号落站内辅助层（12px，四主题同值） */
+  font-size: var(--font-size-xs);
+  /* 行高自成一套：块级行 1.8、展示行与 tooltip 1.5。
+     全站令牌落不进这个区间——--line-height-body 素雅主题到 2.0（过松），
+     --line-height-heading 只有 1.35（过紧），故页脚不引用它们。 */
+  --footer-lh: 1.8;
+  --footer-lh-display: 1.5;
+  line-height: var(--footer-lh);
   border-top: 1px solid color-mix(in oklab, var(--text-muted) 18%, transparent);
   text-align: center;
 
   .footer-inner {
-    max-width: 640px;
+    max-width: ${BREAKPOINTS.mobile}px; /* 与站点窄屏断点同源，不写裸数值 */
     margin: 0 auto;
   }
 
-  /* Divider ornament 默认 --space-lg 上下 margin，页脚收紧到 --space-sm/base */
+  /* Divider ornament 默认 --space-lg 上下 margin，页脚收到 --space-sm/base */
   .footer-ornament {
     margin: var(--space-sm) 0 var(--space-base);
   }
@@ -63,58 +72,81 @@ export const StyledFooter = styled.div`
   .footer-slogan {
     margin: 0 0 var(--space-xs);
     font-family: var(--font-serif);
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-base);
+    line-height: var(--footer-lh-display);
     font-weight: 600;
     letter-spacing: 0.25em;
     text-indent: 0.25em; /* 抵消末字字距，保持视觉居中 */
     color: var(--text-primary);
   }
 
+  /* 区块间距必须用 margin，不能只靠行高：链接下划线是挂在行盒底部再往下 4px 的
+     绝对定位伪元素（见 linkUnderline），没有 margin 时它会落进下一行的盒子里 */
   .footer-nav,
   .footer-beian {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    column-gap: var(--space-lg);
     row-gap: var(--space-xs);
     margin-bottom: var(--space-sm);
+  }
+
+  /* 导航行间隙由变量承担：分隔线要按同一变量取间隙中点。
+     窄屏不再收窄——8px 间隙里夹一条发丝线时两侧只剩 3.5px，太挤 */
+  .footer-nav {
+    --footer-nav-gap: var(--space-sm);
+    column-gap: var(--footer-nav-gap);
+  }
+
+  .footer-beian {
+    column-gap: var(--space-sm);
   }
 
   .footer-nav a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: var(--font-size-base);
     ${linkUnderline}
+  }
+
+  /* 导航三项之间用竖向发丝线分隔（与 Divider ornament 的发丝线同语言）。
+     线绝对定位在前一项与自身的间隙中点：不进入链接盒，因此不会扩大 hover 下划线的范围；
+     由后一项承载，折行时跟着链接走，不会孤立在行尾 */
+  .footer-nav a + a::before {
+    content: '';
+    position: absolute;
+    right: calc(100% + var(--footer-nav-gap) / 2);
+    top: 50%;
+    width: 1px;
+    height: 1em;
+    transform: translateY(-50%);
+    background: color-mix(in oklab, var(--normal-400) 55%, transparent);
   }
 
   .footer-beian a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: var(--font-size-sm);
     opacity: 0.85;
     ${linkUnderline}
   }
 
-  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点 */
+  /* 版权注脚：三段 nowrap（© / 协议 / 技术栈），分隔符附着于后段，窄屏只在段边界换行且不留孤点；
+     技术栈段在窄屏整段折到下一行展示，不再隐藏 */
   .footer-note {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    column-gap: var(--space-xs);
-    row-gap: 3px;
-    font-size: var(--font-size-sm);
+    row-gap: calc(var(--space-xs) / 2);
     color: var(--text-muted);
     margin-bottom: var(--space-sm);
   }
 
   .footer-note > * + *::before {
     content: '·';
-    margin-right: var(--space-xs);
     opacity: 0.6;
   }
 
-  /* 不加 display，避免特异性压过 <520px 隐藏技术栈段的规则 */
+  /* 段内不换行：折行只能发生在段边界 */
   .footer-note > span,
   .footer-note > a {
     white-space: nowrap;
@@ -127,7 +159,6 @@ export const StyledFooter = styled.div`
   }
 
   .footer-note-tech {
-    font-size: var(--font-size-xs);
     opacity: 0.8;
   }
 
@@ -138,7 +169,7 @@ export const StyledFooter = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    column-gap: var(--space-md);
+    column-gap: var(--space-sm);
     row-gap: var(--space-xs);
   }
 
@@ -146,10 +177,9 @@ export const StyledFooter = styled.div`
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: var(--font-size-sm);
+    gap: var(--space-xs);
     color: color-mix(in oklab, var(--text-muted) 80%, transparent);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     cursor: default;
     transition: color var(--transition-fast, 180ms) ease-out;
   }
@@ -160,7 +190,7 @@ export const StyledFooter = styled.div`
 
   .footer-data-item:focus-visible {
     outline: 1.5px solid var(--primary-color);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
   }
 
   .footer-sr {
@@ -172,19 +202,20 @@ export const StyledFooter = styled.div`
     white-space: nowrap;
   }
 
-  /* tooltip 向上弹出：Footer 位于页面底部，向下会被视口裁切 */
+  /* tooltip 向上弹出：Footer 位于页面底部，向下会被视口裁切；
+     间距与圆角对齐 LinkGroup 的 tooltip（8px 偏移、4px 8px 内边距、8px 圆角）但走令牌 */
   .footer-tip {
     position: absolute;
-    bottom: calc(100% + 9px);
+    bottom: calc(100% + var(--space-xs));
     left: 50%;
-    transform: translate(-50%, 4px);
+    transform: translate(-50%, calc(var(--space-xs) / 2));
     white-space: nowrap;
-    padding: 5px 10px;
-    border-radius: 6px;
+    padding: calc(var(--space-xs) / 2) var(--space-xs);
+    border-radius: var(--border-radius-base);
     background: var(--text-color);
     color: var(--background-color);
     font-size: var(--font-size-xs);
-    line-height: 1.4;
+    line-height: var(--footer-lh-display);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -216,14 +247,15 @@ export const StyledFooter = styled.div`
   }
 
   @media (max-width: ${BREAKPOINTS.small}px) {
-    /* 技术栈段整体隐藏（其分隔符由 ::before 承担，随之消失，不留孤点） */
-    .footer-note-tech {
-      display: none;
+    /* 备案行窄屏收到 --space-xs：375 宽下两个备案号合计 292.9px，可用 301.3px，
+       再宽就会折成两行（导航行不受此限，见 .footer-nav 注释） */
+    .footer-beian {
+      column-gap: var(--space-xs);
     }
 
-    .footer-nav,
-    .footer-beian {
-      column-gap: var(--space-md);
+    /* 技术栈段在窄屏整段折到下一行，此时它独占一行，段首分隔符「·」不再需要 */
+    .footer-note-tech::before {
+      display: none;
     }
   }
 
