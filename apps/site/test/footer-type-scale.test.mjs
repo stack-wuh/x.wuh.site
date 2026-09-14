@@ -85,3 +85,18 @@ test('窄屏展示完整技术栈：≤520px 不再隐藏注脚段', () => {
   assert.match(small, /\.footer-note-tech::before\s*\{\s*\n\s*display: none;/)
   assert.match(block('\\.footer-note-tech'), /opacity: 0\.8;/)
 })
+
+test('导航三项之间由竖向发丝线分隔', () => {
+  const sep = block('\\.footer-nav a \\+ a::before')
+  assert.match(sep, /content: '';/)
+  assert.match(sep, /position: absolute;/)
+  assert.match(sep, /right: calc\(100% \+ var\(--footer-nav-gap\) \/ 2\);/)
+  assert.match(sep, /width: 1px;/)
+  assert.match(sep, /height: 1em;/)
+  assert.match(sep, /background: color-mix\(in oklab, var\(--normal-400\) 55%, transparent\);/)
+  // 间隙变量必须由导航行给出，且窄屏要跟着一起收，否则分隔线会偏离间隙中点
+  assert.match(block('\\.footer-nav'), /--footer-nav-gap: var\(--space-sm\);/)
+  assert.match(block('\\.footer-nav'), /column-gap: var\(--footer-nav-gap\);/)
+  const small = footer.match(new RegExp('@media \\(max-width: \\$\\{BREAKPOINTS\\.small\\}px\\) \\{([\\s\\S]*?)\\n  \\}'))?.[1] ?? ''
+  assert.match(small, /\.footer-nav \{\s*\n\s*--footer-nav-gap: var\(--space-xs\);/)
+})

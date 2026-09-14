@@ -87,15 +87,38 @@ export const StyledFooter = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    column-gap: var(--space-sm);
     row-gap: var(--space-xs);
     margin-bottom: var(--space-sm);
+  }
+
+  /* 导航行间隙由变量承担：分隔线要按同一变量取间隙中点，窄屏才跟着一起收 */
+  .footer-nav {
+    --footer-nav-gap: var(--space-sm);
+    column-gap: var(--footer-nav-gap);
+  }
+
+  .footer-beian {
+    column-gap: var(--space-sm);
   }
 
   .footer-nav a {
     color: var(--text-muted);
     text-decoration: none;
     ${linkUnderline}
+  }
+
+  /* 导航三项之间用竖向发丝线分隔（与 Divider ornament 的发丝线同语言）。
+     线绝对定位在前一项与自身的间隙中点：不进入链接盒，因此不会扩大 hover 下划线的范围；
+     由后一项承载，折行时跟着链接走，不会孤立在行尾 */
+  .footer-nav a + a::before {
+    content: '';
+    position: absolute;
+    right: calc(100% + var(--footer-nav-gap) / 2);
+    top: 50%;
+    width: 1px;
+    height: 1em;
+    transform: translateY(-50%);
+    background: color-mix(in oklab, var(--normal-400) 55%, transparent);
   }
 
   .footer-beian a {
@@ -223,8 +246,11 @@ export const StyledFooter = styled.div`
   }
 
   @media (max-width: ${BREAKPOINTS.small}px) {
-    /* 技术栈段不再隐藏：窄屏整段折到下一行（段内 nowrap，由 flex-wrap 在段边界换行） */
-    .footer-nav,
+    /* 窄屏收紧：技术栈段不再隐藏，整段折到下一行（段内 nowrap，由 flex-wrap 在段边界换行） */
+    .footer-nav {
+      --footer-nav-gap: var(--space-xs);
+    }
+
     .footer-beian {
       column-gap: var(--space-xs);
     }
