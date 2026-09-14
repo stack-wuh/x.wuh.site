@@ -19,7 +19,7 @@ verified: 2026-09-14
 
 Footer 为「中轴 ornament 式」单列布局，内层 `max-width: ${BREAKPOINTS.mobile}px` 封顶并与站点 720-1200px 居中内容列同轴，超宽屏不随视口拉伸。层级自上而下：`Divider variant="ornament"`（`IconLogo` 作为 children 居中锚点，替代默认字符 ◇）→ serif slogan（`--font-serif`，15px，字距 0.25em）→ 导航行（博客 / 关于 / RSS 订阅，**三项之间竖向发丝线分隔**）→ 备案链接行（可点击，外链配 `rel="noopener noreferrer"`）→ 版权注脚单行 → 站点数据行。
 
-导航分隔线由**后一项**的 `::before` 承载：`position: absolute` 挂在 `right: calc(100% + var(--space-sm) / 2)`，即两链接间隙的中点（实测 1280 宽下 1px × 12px、间隙 16px、线居中）；`height: 1em` 随字号缩放，颜色走 `color-mix(in oklab, var(--normal-400) 55%, transparent)`，与 `Divider` 的发丝线同语言。必须绝对定位而不能作为正常流内容——否则线会进入链接盒，hover 下划线会连分隔线一起划上（且折行时会退化）。备选方案是注脚同款「·」点分隔（与注脚行语言一致），未采用：导航是交互层，与下方注脚用不同分隔语言更容易分辨。
+导航分隔线由**后一项**的 `::before` 承载：`position: absolute` 挂在 `right: calc(100% + var(--footer-nav-gap) / 2)`，即两链接间隙的中点；`height: 1em` 随字号缩放，颜色走 `color-mix(in oklab, var(--normal-400) 55%, transparent)`，与 `Divider` 的发丝线同语言。**导航间隙全宽度统一 `--space-sm`（16px，实测线两侧各 7.5px），窄屏不再收窄**——收到 8px 时线与两侧文字只剩 3.5px，肉眼像黏在一起。间隙值由 `.footer-nav` 上的 `--footer-nav-gap` 承担，分隔线按同一变量取中点，改间隙只需动这一处。必须绝对定位而不能作为正常流内容——否则线会进入链接盒，hover 下划线会连分隔线一起划上（且折行时会退化）。备选方案是注脚同款「·」点分隔（与注脚行语言一致），未采用：导航是交互层，与下方注脚用不同分隔语言更容易分辨。
 
 **字号与行高**：页脚整层是辅助信息，根层 `font-size: var(--font-size-xs)`（12px，四主题同值——素雅主题的 `--font-size-sm` 被覆写为 15px，与 `base` 同值，故页脚不用 `sm` 档），导航/备案/注脚/站点数据各行不再单独声明字号；slogan 是唯一的展示行，`--font-size-base`（15px）serif 600。行高由页脚自有的两个变量承担：块级行 `--footer-lh: 1.8`、slogan 与 tooltip `--footer-lh-display: 1.5`，四主题与各断点取值一致（实测块级行 12px/21.6px、slogan 15px/22.5px、tooltip 12px/18px）。**不引用全站行高令牌**：`--line-height-body` 在素雅主题是 2.0（过松）、`--line-height-heading` 只有 1.35（过紧），两端都落不进页脚要的 1.5–1.8 区间。字体族由根层自持 `font-family: var(--font-sans)`——页脚挂在 `AppProviders`（页面容器之外），页面级 `font-family` 覆盖不到，缺失时全部文字会落到浏览器默认族（实测 `Microsoft YaHei`）。
 
@@ -41,7 +41,7 @@ Footer 为「中轴 ornament 式」单列布局，内层 `max-width: ${BREAKPOIN
 - 页脚必须自持 `font-family: var(--font-sans)`：它挂在页面容器之外，页面级字体族覆盖不到，缺失即回落浏览器默认族。
 - 区块间距必须用 margin（`--space-sm` / `--space-base` 一档，≤520px 横向收 `--space-xs`），不能把 margin 归零只靠行高：链接下划线挂在行盒底部 −4px，行间没有 margin 时下划线会落进下一行的盒子。行高（`--footer-lh` 1.8 / `--footer-lh-display` 1.5）与 margin 叠加才是最终节奏，两者都要保留。
 - 间距与偏移只经令牌，不得出现裸 px：下划线偏移 `calc(var(--space-xs) / -2)`、focus ring 偏移 `calc(var(--space-xs) / 2)`、tooltip 弹出距离 `calc(100% + var(--space-xs))`、tooltip 内边距 `calc(var(--space-xs) / 2) var(--space-xs)`、圆角 `--border-radius-xs/sm/base`、内层宽度 `${BREAKPOINTS.mobile}px`。描边与发丝线宽度（`1px`、`outline: 1.5px`）沿用仓库既有字面值写法，不在此约束内。
-- 横向留白跟着字号档走：导航行 / 备案行 / 站点数据行 `column-gap: var(--space-sm)`（≤520px 收 `--space-xs`），注脚段间**不设** `column-gap`（全角 `·` 自带 1em 字宽即段间留白）；禁止沿用正文口径的 `--space-lg/md`。
+- 横向留白跟着字号档走：导航行 / 备案行 / 站点数据行 `column-gap: var(--space-sm)`；**只有备案行在 ≤520px 收 `--space-xs`**（两个备案号在 375 宽下合计 292.9px、可用 301.3px，再宽就会折成两行），导航行不得收窄（线两侧会挤到 3.5px）；注脚段间**不设** `column-gap`（全角 `·` 自带 1em 字宽即段间留白）；禁止沿用正文口径的 `--space-lg/md`。
 - 导航项分隔线必须绝对定位在间隙中点、由后一项 `::before` 承载：作为正常流内容会让 hover 下划线把分隔线一起划上，折行时也会跟着跑。分隔线本身不是间距承担者（间距仍由 `column-gap` 给），改间隙只动 `column-gap`。
 - 注脚内不要给子元素设 `display` 参与布局（历史坑：`.footer-note > span` 特异性 0,1,1 压过 `.footer-note-tech` 的窄屏规则）；新增段的分隔符一律用 `::before` 附着于后段，不要写成独立分隔符元素。段间留白由分隔符承担，因此若要隐藏某段的分隔符，必须确认该段在同一行时仍有间隔可用。
 - 颜色、字体、断点只经语义 token；触屏标签靠 `(hover: none) / (pointer: coarse)` 媒体查询切换，不依赖宽度断点。
@@ -56,7 +56,7 @@ Footer 为「中轴 ornament 式」单列布局，内层 `max-width: ${BREAKPOIN
 
 检查 footer 结构顺序与 640px 护栏；四主题（wine/plain × light/dark）目测；tooltip 桌面出现/触屏不出现（走文字标签）；375px 下无横向滚动；`GET /api/visit-stats/stats` 返回 `totalWords` 且与 `getArticleWordCount` 口径一致。
 
-字号/行高用 `getComputedStyle` 复核（本地 dev，1280 宽）：根层与各行 12px、字体族 `Noto Sans SC`；行高四主题与 375/1280 一律 21.6px（`--footer-lh` 1.8，不再随主题/断点变化），slogan `Noto Serif SC` 15px / 22.5px，tooltip 12px / 18px 且向上弹出。纵向复核：区块相邻盒间距 12 / 8 / 16 / 16 / 16px；链接下划线（行盒底 +4px）到下一行墨迹余量 14px；页脚高度 276px（1280 宽）、285px（375 宽，注脚折两行）、315px（320 宽，备案与注脚各折两行）。横向留白复核：导航行 / 备案行 16px（≤520px 8px），注脚段间 12px（全角 `·` 自带字宽），数据行 16px。技术栈复核：640px 以上与前两段同行、640px 以下整段折到第二行，`≤520px` 时其段首分隔符 `display: none`。令牌复核：间距类属性（margin / padding / gap / bottom / outline-offset）扫描无裸 px，取值由 `--space-*`、`--border-radius-*`、`BREAKPOINTS.mobile` 承担。导航分隔线复核：`::before` 计算样式为 `position: absolute`、`1px × 12px`、`right: 32px`（间隙 16px 的中点）、背景为 `--normal-400 55%` mix；hover 时下划线只覆盖链接文字，不含分隔线位置。320–1280 宽均无横向溢出，注脚折行只发生在段边界。
+字号/行高用 `getComputedStyle` 复核（本地 dev，1280 宽）：根层与各行 12px、字体族 `Noto Sans SC`；行高四主题与 375/1280 一律 21.6px（`--footer-lh` 1.8，不再随主题/断点变化），slogan `Noto Serif SC` 15px / 22.5px，tooltip 12px / 18px 且向上弹出。纵向复核：区块相邻盒间距 12 / 8 / 16 / 16 / 16px；链接下划线（行盒底 +4px）到下一行墨迹余量 14px；页脚高度 276px（1280 宽）、285px（375 宽，注脚折两行）、315px（320 宽，备案与注脚各折两行）。横向留白复核：导航行 / 备案行 16px（≤520px 8px），注脚段间 12px（全角 `·` 自带字宽），数据行 16px。技术栈复核：640px 以上与前两段同行、640px 以下整段折到第二行，`≤520px` 时其段首分隔符 `display: none`。令牌复核：间距类属性（margin / padding / gap / bottom / outline-offset）扫描无裸 px，取值由 `--space-*`、`--border-radius-*`、`BREAKPOINTS.mobile` 承担。导航分隔线复核：`::before` 计算样式为 `position: absolute`、`1px × 12px`、`right: calc(100% + var(--footer-nav-gap) / 2)`；1280/520/414/375/320 五档间隙恒为 16px、线两侧各 7.5px、导航恒单行；hover 时下划线只覆盖链接文字，不含分隔线位置。备案行窄屏 `column-gap` 为 8px（375 宽仍单行）。320–1280 宽均无横向溢出，注脚折行只发生在段边界。
 
 ## 关联知识
 

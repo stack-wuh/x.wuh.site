@@ -94,9 +94,11 @@ test('导航三项之间由竖向发丝线分隔', () => {
   assert.match(sep, /width: 1px;/)
   assert.match(sep, /height: 1em;/)
   assert.match(sep, /background: color-mix\(in oklab, var\(--normal-400\) 55%, transparent\);/)
-  // 间隙变量必须由导航行给出，且窄屏要跟着一起收，否则分隔线会偏离间隙中点
+  // 间隙变量必须由导航行给出：分隔线按它取间隙中点，两者必须同源
   assert.match(block('\\.footer-nav'), /--footer-nav-gap: var\(--space-sm\);/)
   assert.match(block('\\.footer-nav'), /column-gap: var\(--footer-nav-gap\);/)
+  // 窄屏不得再收窄导航间隙（8px 间隙里夹发丝线，两侧只剩 3.5px）
   const small = footer.match(new RegExp('@media \\(max-width: \\$\\{BREAKPOINTS\\.small\\}px\\) \\{([\\s\\S]*?)\\n  \\}'))?.[1] ?? ''
-  assert.match(small, /\.footer-nav \{\s*\n\s*--footer-nav-gap: var\(--space-xs\);/)
+  assert.ok(small, '未找到 ≤520px 媒体查询块')
+  assert.doesNotMatch(small, /\.footer-nav\s*\{/)
 })

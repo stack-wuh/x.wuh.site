@@ -91,7 +91,8 @@ export const StyledFooter = styled.div`
     margin-bottom: var(--space-sm);
   }
 
-  /* 导航行间隙由变量承担：分隔线要按同一变量取间隙中点，窄屏才跟着一起收 */
+  /* 导航行间隙由变量承担：分隔线要按同一变量取间隙中点。
+     窄屏不再收窄——8px 间隙里夹一条发丝线时两侧只剩 3.5px，太挤 */
   .footer-nav {
     --footer-nav-gap: var(--space-sm);
     column-gap: var(--footer-nav-gap);
@@ -246,16 +247,13 @@ export const StyledFooter = styled.div`
   }
 
   @media (max-width: ${BREAKPOINTS.small}px) {
-    /* 窄屏收紧：技术栈段不再隐藏，整段折到下一行（段内 nowrap，由 flex-wrap 在段边界换行） */
-    .footer-nav {
-      --footer-nav-gap: var(--space-xs);
-    }
-
+    /* 备案行窄屏收到 --space-xs：375 宽下两个备案号合计 292.9px，可用 301.3px，
+       再宽就会折成两行（导航行不受此限，见 .footer-nav 注释） */
     .footer-beian {
       column-gap: var(--space-xs);
     }
 
-    /* 技术栈段此时独占一行，段首分隔符「·」不再需要 */
+    /* 技术栈段在窄屏整段折到下一行，此时它独占一行，段首分隔符「·」不再需要 */
     .footer-note-tech::before {
       display: none;
     }
