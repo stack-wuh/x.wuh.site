@@ -42,9 +42,14 @@ export const StyledFooter = styled.div`
   color: var(--text-color);
   /* 页脚挂在页面容器之外，页面级 font-family 覆盖不到它：字体族必须自持 */
   font-family: var(--font-sans);
-  /* 整层为辅助信息，字号落站内辅助层（12px，四主题同值）；行高走设计系统令牌 */
+  /* 整层为辅助信息，字号落站内辅助层（12px，四主题同值） */
   font-size: var(--font-size-xs);
-  line-height: var(--line-height-body);
+  /* 行高自成一套：块级行 1.8、展示行与 tooltip 1.5。
+     全站令牌落不进这个区间——--line-height-body 素雅主题到 2.0（过松），
+     --line-height-heading 只有 1.35（过紧），故页脚不引用它们。 */
+  --footer-lh: 1.8;
+  --footer-lh-display: 1.5;
+  line-height: var(--footer-lh);
   border-top: 1px solid color-mix(in oklab, var(--text-muted) 18%, transparent);
   text-align: center;
 
@@ -68,7 +73,7 @@ export const StyledFooter = styled.div`
     margin: 0;
     font-family: var(--font-serif);
     font-size: var(--font-size-base);
-    line-height: var(--line-height-heading);
+    line-height: var(--footer-lh-display);
     font-weight: 600;
     letter-spacing: 0.25em;
     text-indent: 0.25em; /* 抵消末字字距，保持视觉居中 */
@@ -178,7 +183,7 @@ export const StyledFooter = styled.div`
     background: var(--text-color);
     color: var(--background-color);
     font-size: var(--font-size-xs);
-    line-height: var(--line-height-heading);
+    line-height: var(--footer-lh-display);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;

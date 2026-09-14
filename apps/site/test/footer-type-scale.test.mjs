@@ -30,16 +30,25 @@ test('页脚整层落在辅助字号档', () => {
   )
 })
 
-test('行高只走设计系统令牌，不写死数值', () => {
-  assert.match(footer, /^\s*line-height: var\(--line-height-body\);$/m)
-  assert.doesNotMatch(footer, /line-height:\s*\d/)
+test('页脚行高固定 1.8 / 1.5，不引用全站行高令牌', () => {
+  // 全站令牌落不进 1.5–1.8：--line-height-body 素雅到 2.0、--line-height-heading 只有 1.35
+  assert.match(footer, /--footer-lh: 1\.8;/)
+  assert.match(footer, /--footer-lh-display: 1\.5;/)
+  assert.match(footer, /^\s*line-height: var\(--footer-lh\);$/m)
+  assert.doesNotMatch(footer, /line-height: var\(--line-height-(body|heading)\)/)
+  for (const m of footer.matchAll(/--footer-lh(?:-display)?:\s*([\d.]+)/g)) {
+    const value = Number(m[1])
+    assert.ok(value >= 1.5 && value <= 1.8, `行高 ${value} 超出 1.5–1.8 区间`)
+  }
+  const numeric = [...footer.matchAll(/line-height:\s*([\d.]+)/g)].map((m) => m[0])
+  assert.deepEqual(numeric, [], '行高数值只允许出现在 --footer-lh / --footer-lh-display 上')
 })
 
-test('slogan 是唯一展示行：base 档衬线 + heading 行高', () => {
+test('slogan 是唯一展示行：base 档衬线 + 展示行高', () => {
   const slogan = block('\\.footer-slogan')
   assert.match(slogan, /font-family: var\(--font-serif\);/)
   assert.match(slogan, /font-size: var\(--font-size-base\);/)
-  assert.match(slogan, /line-height: var\(--line-height-heading\);/)
+  assert.match(slogan, /line-height: var\(--footer-lh-display\);/)
 })
 
 test('导航与注脚各行不再各自声明字号', () => {
