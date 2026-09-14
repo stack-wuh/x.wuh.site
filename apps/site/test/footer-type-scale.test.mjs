@@ -66,3 +66,13 @@ test('区块间距由 margin 承担，行间不能只靠行高', () => {
   assert.match(block('\\.footer-ornament'), /margin: var\(--space-sm\) 0 var\(--space-base\);/)
   assert.match(block('\\.footer-slogan'), /margin: 0 0 var\(--space-xs\);/)
 })
+
+test('间距与偏移不写死 px，全部经令牌', () => {
+  assert.match(footer, /bottom: calc\(var\(--space-xs\) \/ -2\);/)
+  assert.match(footer, /bottom: calc\(100% \+ var\(--space-xs\)\);/)
+  assert.match(footer, /padding: calc\(var\(--space-xs\) \/ 2\) var\(--space-xs\);/)
+  assert.match(footer, /max-width: \$\{BREAKPOINTS\.mobile\}px;/)
+  const spacingProps = 'margin|margin-top|margin-bottom|padding|padding-inline|gap|row-gap|column-gap|outline-offset|bottom|top|left|right'
+  const bare = new RegExp(`(?:^|\\s)(?:${spacingProps}):\\s*[^;]*?\\d+(\\.\\d+)?px`, 'g')
+  assert.deepEqual(footer.match(bare) ?? [], [], '间距类属性只能引用 --space-* / --border-radius-* 令牌')
+})

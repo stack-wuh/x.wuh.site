@@ -14,7 +14,8 @@ const linkUnderline = `
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -4px;
+    /* 偏移取自间距令牌（响应式间距对象），不写死 px */
+    bottom: calc(var(--space-xs) / -2);
     height: 1px;
     background: linear-gradient(to right, transparent, ${hoverFade}, transparent);
     opacity: 0;
@@ -31,8 +32,8 @@ const linkUnderline = `
 
   &:focus-visible {
     outline: 1.5px solid var(--primary-color);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline-offset: calc(var(--space-xs) / 2);
+    border-radius: var(--border-radius-xs);
   }
 `
 
@@ -54,7 +55,7 @@ export const StyledFooter = styled.div`
   text-align: center;
 
   .footer-inner {
-    max-width: 640px;
+    max-width: ${BREAKPOINTS.mobile}px; /* 与站点窄屏断点同源，不写裸数值 */
     margin: 0 auto;
   }
 
@@ -111,7 +112,7 @@ export const StyledFooter = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    row-gap: 3px;
+    row-gap: calc(var(--space-xs) / 2);
     color: var(--text-muted);
     margin-bottom: var(--space-sm);
   }
@@ -152,9 +153,9 @@ export const StyledFooter = styled.div`
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-xs);
     color: color-mix(in oklab, var(--text-muted) 80%, transparent);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     cursor: default;
     transition: color var(--transition-fast, 180ms) ease-out;
   }
@@ -165,7 +166,7 @@ export const StyledFooter = styled.div`
 
   .footer-data-item:focus-visible {
     outline: 1.5px solid var(--primary-color);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
   }
 
   .footer-sr {
@@ -177,15 +178,16 @@ export const StyledFooter = styled.div`
     white-space: nowrap;
   }
 
-  /* tooltip 向上弹出：Footer 位于页面底部，向下会被视口裁切 */
+  /* tooltip 向上弹出：Footer 位于页面底部，向下会被视口裁切；
+     间距与圆角对齐 LinkGroup 的 tooltip（8px 偏移、4px 8px 内边距、8px 圆角）但走令牌 */
   .footer-tip {
     position: absolute;
-    bottom: calc(100% + 9px);
+    bottom: calc(100% + var(--space-xs));
     left: 50%;
-    transform: translate(-50%, 4px);
+    transform: translate(-50%, calc(var(--space-xs) / 2));
     white-space: nowrap;
-    padding: 5px 10px;
-    border-radius: 6px;
+    padding: calc(var(--space-xs) / 2) var(--space-xs);
+    border-radius: var(--border-radius-base);
     background: var(--text-color);
     color: var(--background-color);
     font-size: var(--font-size-xs);
