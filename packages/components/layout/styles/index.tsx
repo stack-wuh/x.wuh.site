@@ -40,8 +40,11 @@ export const StyledFooter = styled.div`
   padding: var(--space-md) var(--space-xl);
   background-color: var(--background-color);
   color: var(--text-color);
-  font-size: var(--font-size-base);
-  line-height: 1.6;
+  /* 页脚挂在页面容器之外，页面级 font-family 覆盖不到它：字体族必须自持 */
+  font-family: var(--font-sans);
+  /* 整层为辅助信息，字号落站内辅助层（12px，四主题同值）；行高走设计系统令牌 */
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
   border-top: 1px solid color-mix(in oklab, var(--text-muted) 18%, transparent);
   text-align: center;
 
@@ -63,7 +66,8 @@ export const StyledFooter = styled.div`
   .footer-slogan {
     margin: 0 0 var(--space-xs);
     font-family: var(--font-serif);
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-heading);
     font-weight: 600;
     letter-spacing: 0.25em;
     text-indent: 0.25em; /* 抵消末字字距，保持视觉居中 */
@@ -83,14 +87,12 @@ export const StyledFooter = styled.div`
   .footer-nav a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: var(--font-size-base);
     ${linkUnderline}
   }
 
   .footer-beian a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: var(--font-size-sm);
     opacity: 0.85;
     ${linkUnderline}
   }
@@ -103,7 +105,6 @@ export const StyledFooter = styled.div`
     align-items: center;
     column-gap: var(--space-xs);
     row-gap: 3px;
-    font-size: var(--font-size-sm);
     color: var(--text-muted);
     margin-bottom: var(--space-sm);
   }
@@ -127,7 +128,6 @@ export const StyledFooter = styled.div`
   }
 
   .footer-note-tech {
-    font-size: var(--font-size-xs);
     opacity: 0.8;
   }
 
@@ -147,7 +147,6 @@ export const StyledFooter = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: var(--font-size-sm);
     color: color-mix(in oklab, var(--text-muted) 80%, transparent);
     border-radius: 4px;
     cursor: default;
@@ -184,7 +183,7 @@ export const StyledFooter = styled.div`
     background: var(--text-color);
     color: var(--background-color);
     font-size: var(--font-size-xs);
-    line-height: 1.4;
+    line-height: var(--line-height-heading);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
