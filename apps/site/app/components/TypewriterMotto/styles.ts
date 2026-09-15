@@ -27,6 +27,33 @@ export const Container = styled.div`
   }
 `
 
+/*
+ * 布局稳定的核心：隐藏的「最长句」占位字在流内决定容器高度——
+ * 与当前打字进度无关（防换行跳动），并随断点/主题字号自动重排（无魔法行数）。
+ * 见 20260915-fix-motto-wrap-jitter/brief.md。
+ */
+export const Sizer = styled.span`
+  display: block;
+  visibility: hidden;
+  user-select: none;
+`
+
+/* 真实文字/光标的覆盖层：绝对定位、垂直居中，inset 与容器纵向 padding 同令牌 */
+export const Content = styled.span`
+  position: absolute;
+  inset: var(--space-md) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`
+
+/* 文字与光标必须是同一个文本流（否则 flex 会在两项之间折断换行），包一层行内元素 */
+export const Line = styled.span`
+  display: inline;
+  max-width: 100%;
+`
+
 export const TextWrap = styled.span`
   display: inline;
 `
