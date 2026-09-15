@@ -107,23 +107,13 @@ export default function SiteHeader() {
               aria-haspopup='dialog'
               aria-expanded={appearanceOpen}
               aria-controls={appearanceId}
+              title='外观设置'
             >
-              <S.ThemeIcon aria-hidden='true'>
-                <IconPalette size={16} strokeWidth={2} />
-              </S.ThemeIcon>
-              <span>外观</span>
-              <S.ThemeChevron $open={appearanceOpen} aria-hidden='true'>
-                <IconChevronDown size={14} strokeWidth={2} />
-              </S.ThemeChevron>
+              <S.ThemeSeal aria-hidden='true' $open={appearanceOpen}>墨</S.ThemeSeal>
             </S.AppearanceTrigger>
 
             {appearanceOpen && (
               <S.DesktopAppearancePopover id={appearanceId} role='dialog' aria-label='外观设置'>
-                <S.AppearanceHeading>
-                  <span>外观设置</span>
-                  <small>{THEME_LABELS[themeFamily]} · {SCHEME_LABELS[colorSchemeMode]}</small>
-                </S.AppearanceHeading>
-
                 <AppearanceOptions
                   themeFamily={themeFamily}
                   colorSchemeMode={colorSchemeMode}
