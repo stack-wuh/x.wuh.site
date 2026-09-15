@@ -57,14 +57,13 @@ test('渐隐下划线几何由令牌推导', () => {
   assert.match(link, /right: var\(--space-base\);/)
   assert.match(link, /bottom: calc\(var\(--space-base\) \/ 2\);/)
   assert.match(link, /padding: var\(--space-xs\) var\(--space-base\);/)
-  // 外观触发器与导航共用同一套下划线语言（图标化后仍在同一块内声明）
+  // 触发器与 NavLink 同一行盒高（行节奏不随入口形态变化）
   const trigger = block('export const AppearanceTrigger = styled\\.button')
-  assert.match(trigger, /bottom: calc\(var\(--space-base\) \/ 2\);/)
-  // 图标按钮与 NavLink 同一行盒高：hover/展开时下划线画在同一 y（图标几何居中之外的第二处对齐）
   assert.match(trigger, /font-size: var\(--header-fs\);/)
   assert.match(trigger, /min-height: calc\(1em \* var\(--header-lh\) \+ var\(--space-xs\) \* 2\);/)
   assert.ok(trigger.indexOf('font: inherit') < trigger.indexOf('font-size: var(--header-fs)'),
     'font 简写必须排在 font-size 之前，否则简写会把 font-size 重置回继承值')
+  assert.match(block('export const NavLink = styled\\(Link\\)'), /bottom: calc\(var\(--space-base\) \/ 2\);/)
   // logo 与导航同参照系：高 = --header-fs ×2，宽按 42:26 原比例，不新增断点
   const brand = block('export const Brand = styled\\.div')
   assert.match(brand, /height: calc\(var\(--header-fs\) \* 2\);/)
@@ -136,6 +135,28 @@ test('旧装饰件退场：标题行/角标/假色板不复存在', () => {
     assert.doesNotMatch(styles, new RegExp(`export const ${gone} =`), `${gone} 应已删除`)
   }
   assert.doesNotMatch(tsx, /AppearanceHeading/)
+})
+
+test('主题入口是朱砂印「墨」：钤印开弹层，印面即装饰', () => {
+  const seal = block('export const ThemeSeal = styled\\.span<\\{[^>]*\\}>')
+  // 状态直挂印面：开合走 transient prop（跨组件插值选择器在 SSR 双写 styleSheets 下不可靠）
+  // 边框拆长写（color-mix 进 border 简写时态切换覆盖不稳）
+  assert.match(seal, /border-width: 1px;/)
+  assert.match(seal, /border-style: solid;/)
+  assert.match(seal, /border-color: \$\{\(\{ \$open \}\) => \(\$open \? 'var\(--primary-color\)' : 'color-mix\(in oklab, var\(--primary-color\) 45%, transparent\)'\)\};/)
+  assert.match(seal, /&:hover \{ border-color: var\(--primary-color\); \}/)
+  assert.match(tsx, /<S\.ThemeSeal aria-hidden='true' \$open=\{appearanceOpen\}>墨<\/S\.ThemeSeal>/)
+  assert.match(seal, /border-radius: var\(--border-radius-xs\);/)
+  assert.match(seal, /font-family: var\(--font-serif\);/)
+  assert.match(seal, /font-size: var\(--font-size-xs\);/)
+  assert.match(seal, /color: var\(--primary-color\);/)
+  // 印面无渐隐下划线（弹层里墨字段才用下划线；再挂线就是双份装饰）
+  assert.doesNotMatch(block('export const AppearanceTrigger = styled\\.button'), /&::after/, '印钮不再需要下划线装饰')
+  const triggerEl = tsx.match(/<S\.AppearanceTrigger[\s\S]*?<\/S\.AppearanceTrigger>/)?.[0] ?? ''
+  assert.doesNotMatch(triggerEl, /IconPalette/, '桌面入口弃用通用调色盘图标')
+  assert.match(triggerEl, /title='外观设置'/, '原生悬停提示补可发现性')
+  // 移动端外观行是列表行不是印，保留调色盘图标+文字
+  assert.match(tsx, /IconPalette size=\{18\}/)
 })
 
 test('分组文案用用户视角：主题/明暗', () => {

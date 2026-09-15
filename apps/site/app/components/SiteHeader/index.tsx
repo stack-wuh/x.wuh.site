@@ -107,10 +107,9 @@ export default function SiteHeader() {
               aria-haspopup='dialog'
               aria-expanded={appearanceOpen}
               aria-controls={appearanceId}
+              title='外观设置'
             >
-              <S.ThemeIcon aria-hidden='true'>
-                <IconPalette size={18} strokeWidth={2} />
-              </S.ThemeIcon>
+              <S.ThemeSeal aria-hidden='true' $open={appearanceOpen}>墨</S.ThemeSeal>
             </S.AppearanceTrigger>
 
             {appearanceOpen && (

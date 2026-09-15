@@ -36,7 +36,7 @@ CSS 变量分三层：`:root` 注入 raw 调色板；4 个 selector 路由映射
 
 首页标语使用 TypewriterMotto 打字机效果逐字显示，两句循环："写作是抵抗遗忘的方式，代码是构建世界的语言。" / "不要停步不前，每一天都要做出改变。"
 
-桌面端 Header 是「静默条」：整层自持 `font-family: var(--font-sans)` 与局部行高 `--header-lh: 1.5`（挂在页面容器之外，页面级字体族覆盖不到）；导航行字号由局部变量 `--header-fs` 承担——平板带 13px（四主题无稳定 13px 令牌），`≥ BREAKPOINTS.tablet`(1024) PC 带升 `--font-size-base`(15px，四主题稳定)；`≤ BREAKPOINTS.mobile`(640) 收起汉堡，与内容断点同轴（旧野断点 768 已清除）。外观入口为纯调色板图标按钮（无文字/胶囊底），与导航共用渐隐下划线（`bottom: calc(var(--space-base) / 2)`）且行盒同高（`font-size: var(--header-fs)` + `min-height: calc(1em * var(--header-lh) + var(--space-xs) * 2)`，否则 hover 下划线与导航差 2px）；logo 高 = `--header-fs × 2`、宽按 42:26 比例随档缩放；底边框发丝线 `color-mix(--text-muted 18%)` 与页脚同档。导航悬停下划线语言不变：1px、两端透明、中段 `--primary-color`。
+桌面端 Header 是「静默条」：整层自持 `font-family: var(--font-sans)` 与局部行高 `--header-lh: 1.5`（挂在页面容器之外，页面级字体族覆盖不到）；导航行字号由局部变量 `--header-fs` 承担——平板带 13px（四主题无稳定 13px 令牌），`≥ BREAKPOINTS.tablet`(1024) PC 带升 `--font-size-base`(15px，四主题稳定)；`≤ BREAKPOINTS.mobile`(640) 收起汉堡，与内容断点同轴（旧野断点 768 已清除）。外观入口为朱砂印「墨」（18×18、印框 `color-mix(primary 45%, transparent)`、印面衬线「墨」`--font-size-xs`、`--border-radius-xs`——打开墨签弹层选墨，动作即钤印；印面自身即装饰，不挂渐隐下划线，下划线语言只留给导航与墨字段）；触发器与 NavLink 同行盒高（`font-size: var(--header-fs)` + `min-height: calc(1em * var(--header-lh) + var(--space-xs) * 2)`），行节奏不随入口形态变；印面状态用 transient prop（`$open`）+ 自身 `:hover` 转实边——跨组件插值选择器 `.trigger:hover .seal` 在 SSR 双写 styleSheets 下实测不可靠、已弃；可发现性由 aria-label（含当前主题态）+ 原生 `title` 承担；logo 高 = `--header-fs × 2`、宽按 42:26 比例随档缩放；底边框发丝线 `color-mix(--text-muted 18%)` 与页脚同档。导航悬停下划线语言不变：1px、两端透明、中段 `--primary-color`。
 
 主题选择弹层是纸卡语言：不透明 `--background-100` + 发丝线边框 + `--border-radius-base` + `--elevation-soft`（light 下 background-100 是纸白、暗色下是深面——它就是主题表面色）；无标题回显行。主题预览为「试笔墨签」：该主题的纸（background-900）打底、墨（normal-900）写衬线「朝」（字高 `--header-fs × 2`）、下压该主题主色的渐隐装饰线；**色值引用 Layer 1 原始调色板变量（`--_wl-*` / `--_pl-*`，恒挂 `:root` 不随当前主题路由）**——预览独立于当前主题的旧规「写死渐变色值」由此升级为零复制漂移。明暗三段是发丝线分隔的墨字段，选中态 = 与导航同源的渐隐下划线，不再用彩色胶囊。移动端外观设置在菜单内展开，不弹出独立 Bottom Sheet；移动菜单项字号 `--font-size-base`。
 
@@ -45,7 +45,7 @@ CSS 变量分三层：`:root` 注入 raw 调色板；4 个 selector 路由映射
 ## 执行约束
 
 - 颜色必须经主题变量暴露，不在业务组件硬编码；主题 family 与 color scheme 独立，SSR 初始化不得产生闪烁。
-- Header/弹层：字号禁引 `--font-size-sm`（素雅覆写为 15px）；淡化色禁引 `--text-secondary`（暗色反向），用 `--text-color` 72% mix；间距/圆角/偏移只经 `--space-*`/`--border-radius-*`；断点只用 `BREAKPOINTS` 语义常量；`font` 简写不得排在 `font-size` 之后。
+- Header/弹层：字号禁引 `--font-size-sm`（素雅覆写为 15px）；淡化色禁引 `--text-secondary`（暗色反向），用 `--text-color` 72% mix；间距/圆角/偏移只经 `--space-*`/`--border-radius-*`；断点只用 `BREAKPOINTS` 语义常量；`font` 简写不得排在 `font-size` 之后；动态状态禁用跨组件插值选择器（`&:hover ${Child}`），改由 transient prop 挂在子组件自身。
 - 主题预览类 UI 要显示"别的主题的样子"时，取 Layer 1 原始变量 `--_wl/--wd/_pl/--pd-*`，禁止复制十六进制色值或读当前路由变量。
 
 ## 适用边界

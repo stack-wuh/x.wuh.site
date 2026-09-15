@@ -166,59 +166,52 @@ export const AppearanceRoot = styled.div`
 `
 
 /*
- * 外观入口图标化：与导航同一套渐隐下划线语言，去胶囊底色、去文字与箭头；
- * 可访问名由按钮的 aria-label 承担（当前主题信息）。
+ * 主题入口 = 朱砂印「墨」：打开墨签弹层选墨，动作本就是"钤印"——印面即装饰，
+ * 不再挂渐隐下划线（弹层里墨字段才用下划线，印上加线是双份装饰）。
+ * 行盒仍与 NavLink 同高（--header-fs × --header-lh + 上下 padding），行的节奏不随入口形态变化。
+ * 可发现性：aria-label 含当前主题态 + 原生 title 悬停提示。
+ * 状态直挂印面（$open transient prop + 自身 :hover）——不用跨组件插值选择器
+ * （`.trigger:hover .seal` 在 SSR 双写 styleSheets 下实测不生效）。
  */
+export const ThemeSeal = styled.span<{ $open?: boolean }>`
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  /* 边框拆长写：color-mix 留在 border 简写里时，:hover/态切换的 border-color 长写在部分内核上覆盖不可靠 */
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${({ $open }) => ($open ? 'var(--primary-color)' : 'color-mix(in oklab, var(--primary-color) 45%, transparent)')};
+  border-radius: var(--border-radius-xs);
+  color: var(--primary-color);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  transition: border-color var(--transition-fast) ease;
+
+  &:hover { border-color: var(--primary-color); }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+`
+
 export const AppearanceTrigger = styled.button`
   appearance: none;
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-xs) var(--space-base);
-  /* font 简写必须排在 font-size 之前——同块内后写的简写会把先声明的 font-size 重置回继承值 */
+  /* font 简写必须排在 font-size 之前——同块内后写的简写会把先声明的字号重置回继承值 */
   font: inherit;
-  /* 与 NavLink 同一行盒高（字号档×行高 + 上下 padding）：图标几何居中之外，
-     hover/展开时下划线才能与导航行的画在同一 y 上（否则差 2px 看着不齐） */
   font-size: var(--header-fs);
   min-height: calc(1em * var(--header-lh) + var(--space-xs) * 2);
   border: 0;
-  border-radius: var(--border-radius-md);
   background: transparent;
-  color: color-mix(in oklab, var(--text-color) 78%, transparent);
   cursor: pointer;
-  transition: color var(--transition-fast) ease;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: var(--space-base);
-    right: var(--space-base);
-    bottom: calc(var(--space-base) / 2);
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
-    opacity: 0;
-  }
-
-  &:hover,
-  &[aria-expanded='true'] {
-    color: var(--text-color);
-
-    &::after {
-      opacity: 1;
-    }
-  }
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
     outline-offset: calc(var(--space-xs) / 2);
-
-    &::after {
-      opacity: 1;
-    }
   }
-
-  @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
 /* 纸卡容器：不透明纸面 + 发丝线 + 小圆角 + 轻投影；
