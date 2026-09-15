@@ -7,6 +7,9 @@ const PHRASES = [
   '不要停步不前，每一天都要做出改变。',
 ]
 
+// 布局稳定占位：容器高度由最长句在当前宽度下的行数锁定，与打字进度无关
+const SIZER_TEXT = PHRASES.reduce((longer, p) => (p.length > longer.length ? p : longer))
+
 const TYPING_MS = 100
 const DELETING_MS = 50
 const PAUSE_MS = 3500
@@ -103,8 +106,13 @@ export default function TypewriterMotto() {
   return (
     <>
       <S.Container ref={containerRef} aria-label={PHRASES[phraseIdx]}>
-        <S.TextWrap ref={textRef}>{text}</S.TextWrap>
-        <S.Cursor $blink={blink} />
+        <S.Sizer aria-hidden="true">{SIZER_TEXT}</S.Sizer>
+        <S.Content>
+          <S.Line>
+            <S.TextWrap ref={textRef}>{text}</S.TextWrap>
+            <S.Cursor $blink={blink} />
+          </S.Line>
+        </S.Content>
         {showGlow && <S.Glow style={{ left: glowX }} />}
         {particles.map((p) => (
           <S.ParticleDot

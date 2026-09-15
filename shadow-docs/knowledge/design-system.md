@@ -15,6 +15,7 @@ source:
   - changes/20260829-feature-custom-scrollbar/brief.md
   - changes/20260829-feature-responsive-spacing/brief.md
   - changes/20260915-style-quiet-header-bar/brief.md
+  - changes/20260915-fix-motto-wrap-jitter/brief.md
 verified: 2026-09-15
 ---
 
@@ -34,7 +35,7 @@ CSS 变量分三层：`:root` 注入 raw 调色板；4 个 selector 路由映射
 
 首屏主题无闪动：`<head>` 中的同步脚本在首次渲染前设置 `data-no-transition` 禁用过渡、强制重排、设置主题属性、再移除 `data-no-transition` 恢复过渡，整个过程在同一同步块完成。主题切换时所有元素的 background-color、color、border-color、box-shadow 以 0.3s ease 平滑过渡。
 
-首页标语使用 TypewriterMotto 打字机效果逐字显示，两句循环："写作是抵抗遗忘的方式，代码是构建世界的语言。" / "不要停步不前，每一天都要做出改变。"
+首页标语使用 TypewriterMotto 打字机效果逐字显示，两句循环："写作是抵抗遗忘的方式，代码是构建世界的语言。" / "不要停步不前，每一天都要做出改变。" 容器高度由隐藏「最长句占位字」（in-flow `visibility: hidden` 的 Sizer，文本取 `PHRASES.reduce` 推导、不复制第二份文案）锁定，真实文字与光标在绝对居中覆盖层内（inset 与容器纵向 padding 同令牌），且必须用行内 Line 包住"字+光标"保持同一文本流——flex 直挂两项会在两项之间折断换行。打字进度、窄屏折行与主题字号差（wine lg=22 / plain 19）都不再引发高度跳动；光晕/粒子以容器为参照测量，覆盖层化后坐标语义不变、y 天然恒定。布局稳定性与内容同源（ghost-sizing），优于写死行数（主题/断点下必跳）与 JS 测量（多一帧跳动）。
 
 桌面端 Header 是「静默条」：整层自持 `font-family: var(--font-sans)` 与局部行高 `--header-lh: 1.5`（挂在页面容器之外，页面级字体族覆盖不到）；导航行字号由局部变量 `--header-fs` 承担——平板带 13px（四主题无稳定 13px 令牌），`≥ BREAKPOINTS.tablet`(1024) PC 带升 `--font-size-base`(15px，四主题稳定)；`≤ BREAKPOINTS.mobile`(640) 收起汉堡，与内容断点同轴（旧野断点 768 已清除）。外观入口为朱砂印「墨」（18×18、印框 `color-mix(primary 45%, transparent)`、印面衬线「墨」`--font-size-xs`、`--border-radius-xs`——打开墨签弹层选墨，动作即钤印；印面自身即装饰，不挂渐隐下划线，下划线语言只留给导航与墨字段）；触发器与 NavLink 同行盒高（`font-size: var(--header-fs)` + `min-height: calc(1em * var(--header-lh) + var(--space-xs) * 2)`），行节奏不随入口形态变；印面状态用 transient prop（`$open`）+ 自身 `:hover` 转实边——跨组件插值选择器 `.trigger:hover .seal` 在 SSR 双写 styleSheets 下实测不可靠、已弃；可发现性由 aria-label（含当前主题态）+ 原生 `title` 承担；logo 高 = `--header-fs × 2`、宽按 42:26 比例随档缩放；底边框发丝线 `color-mix(--text-muted 18%)` 与页脚同档。导航悬停下划线语言不变：1px、两端透明、中段 `--primary-color`。
 
