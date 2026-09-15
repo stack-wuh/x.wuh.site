@@ -4,27 +4,27 @@
   "name": "20260913-feature-desktop-markdown-editor",
   "type": "feature",
   "scope": "apps/desktop",
-  "status": "branched",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20260913-feature-desktop-markdown-editor",
   "files": [
     "apps/desktop"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 380,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/380"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "ad965faec36886892fe934ce4ffc44386c1fced3",
+    "verifiedAt": "2026-09-14T16:04:36.372Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:380",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -71,38 +71,38 @@
 
 ### Phase 1 — 脚手架与主进程基座
 - [x] 初始化 apps/desktop：electron-vite + React 19 + TS，接入 pnpm workspace（name `@wuh.site/desktop`）— `apps/desktop/package.json`
-- [ ] main/preload/renderer 三层骨架 + contextBridge 类型安全 IPC 通道定义 — `apps/desktop/src/preload/index.ts`
-- [ ] 基础 UI 布局：侧栏文件树 + 编辑区 + 预览区分栏骨架 — `apps/desktop/src/renderer/App.tsx`
-- [ ] electron-builder 本地打包配置，mac dir 产物端到端跑通 — `apps/desktop/electron-builder.yml`
+- [x] main/preload/renderer 三层骨架 + contextBridge 类型安全 IPC 通道定义 — `apps/desktop/src/preload/index.ts`
+- [x] 基础 UI 布局：侧栏文件树 + 编辑区 + 预览区分栏骨架 — `apps/desktop/src/renderer/App.tsx`
+- [x] electron-builder 本地打包配置，mac dir 产物端到端跑通 — `apps/desktop/electron-builder.yml`
 
 ### Phase 2 — 工作区与编辑器核心
-- [ ] 打开文件夹（dialog）+ 工作区状态 + 文件树组件（过滤 `.assets`、`.git` 等规则）— `apps/desktop/src/main/workspace.ts`
-- [ ] CodeMirror 6 集成：markdown 高亮、YAML frontmatter 高亮、打开/保存（主进程 fs IPC）— `apps/desktop/src/renderer/editor/CodeMirrorEditor.tsx`
-- [ ] 预览渲染：markdown 渲染 + 本地图片相对路径解析显示 — `apps/desktop/src/renderer/preview/Preview.tsx`
-- [ ] 脏状态管理与切换/关闭防丢失确认 — `apps/desktop/src/renderer/editor/useDirtyState.ts`
+- [x] 打开文件夹（dialog）+ 工作区状态 + 文件树组件（过滤 `.assets`、`.git` 等规则）— `apps/desktop/src/main/workspace.ts`
+- [x] CodeMirror 6 集成：markdown 高亮、YAML frontmatter 高亮、打开/保存（主进程 fs IPC）— `apps/desktop/src/renderer/editor/CodeMirrorEditor.tsx`
+- [x] 预览渲染：markdown 渲染 + 本地图片相对路径解析显示 — `apps/desktop/src/renderer/preview/Preview.tsx`
+- [x] 脏状态管理与切换/关闭防丢失确认 — `apps/desktop/src/renderer/editor/useDirtyState.ts`
 
 ### Phase 3 — 图片与结构化识别
-- [ ] 粘贴/拖拽图片：写入当前文档同名 `.assets` 目录、插入相对路径链接 — `apps/desktop/src/main/images.ts`
-- [ ] frontmatter 结构化面板：gray-matter 解析、title/labels/summary/cover/keywords 表单化、写回保持原文格式 — `apps/desktop/src/renderer/frontmatter/FrontmatterPanel.tsx`
-- [ ] 目录约定规则引擎 + blog 内置预设（年月目录/$专题/同名 .assets）→ 结构化树视图 — `apps/desktop/src/main/structure.ts`
+- [x] 粘贴/拖拽图片：写入当前文档同名 `.assets` 目录、插入相对路径链接 — `apps/desktop/src/main/images.ts`
+- [x] frontmatter 结构化面板：gray-matter 解析、title/labels/summary/cover/keywords 表单化、写回保持原文格式 — `apps/desktop/src/renderer/frontmatter/FrontmatterPanel.tsx`
+- [x] 目录约定规则引擎 + blog 内置预设（年月目录/$专题/同名 .assets）→ 结构化树视图 — `apps/desktop/src/main/structure.ts`
 
 ### Phase 4 — git 历史与回退
-- [ ] git 服务层：status/stage/commit（手动 + 可选防抖自动开关）— `apps/desktop/src/main/git.ts`
-- [ ] push/pull + 远端/分支状态展示 — `apps/desktop/src/main/git.ts`
-- [ ] 历史面板：单文件/全仓 log + diff 查看 — `apps/desktop/src/renderer/history/HistoryPanel.tsx`
-- [ ] 回退动作：未 push 单文件 checkout 恢复；已 push 提交 revert（安全确认 UI）— `apps/desktop/src/main/gitRevert.ts`
+- [x] git 服务层：status/stage/commit（手动 + 可选防抖自动开关）— `apps/desktop/src/main/git.ts`
+- [x] push/pull + 远端/分支状态展示 — `apps/desktop/src/main/git.ts`
+- [x] 历史面板：单文件/全仓 log + diff 查看 — `apps/desktop/src/renderer/history/HistoryPanel.tsx`
+- [x] 回退动作：未 push 单文件 checkout 恢复；已 push 提交 revert（安全确认 UI）— `apps/desktop/src/main/gitRevert.ts`
 
 ### Phase 5 — GitHub 集成
-- [ ] PAT 凭证管理：safeStorage + 钥匙串存取、git push 凭证注入 — `apps/desktop/src/main/credentials.ts`
-- [ ] Issues 发布：frontmatter title/labels 驱动创建/更新当前仓库 Issue（含 blog 预设 metadata 尾注模板）— `apps/desktop/src/main/github/issues.ts`
-- [ ] 标签管理：当前仓库 labels 列表/创建/编辑 — `apps/desktop/src/renderer/labels/LabelsPanel.tsx`
-- [ ] 评论面板：issue 评论列表 + 发表回复 — `apps/desktop/src/renderer/comments/CommentsPanel.tsx`
+- [x] PAT 凭证管理：safeStorage + 钥匙串存取、git push 凭证注入 — `apps/desktop/src/main/credentials.ts`
+- [x] Issues 发布：frontmatter title/labels 驱动创建/更新当前仓库 Issue（含 blog 预设 metadata 尾注模板）— `apps/desktop/src/main/github/issues.ts`
+- [x] 标签管理：当前仓库 labels 列表/创建/编辑 — `apps/desktop/src/renderer/labels/LabelsPanel.tsx`
+- [x] 评论面板：issue 评论列表 + 发表回复 — `apps/desktop/src/renderer/comments/CommentsPanel.tsx`
 
 ### Phase 6 — 适配器预留与收尾
-- [ ] 图床上传适配器：自定义上传命令（shell → stdout URL → 替换正文链接）— `apps/desktop/src/main/uploader.ts`
-- [ ] publisher 适配器接口预留（GitHub Issues 为首个实现，多平台后置）— `apps/desktop/src/main/publishers/types.ts`
-- [ ] 设置页：PAT、git 身份、上传命令、目录约定规则、自动 commit 开关 — `apps/desktop/src/renderer/settings/SettingsPage.tsx`
-- [ ] 端到端验收：打开 blog 仓库副本 → 编辑/粘贴图 → commit/push → 发布 Issue → 历史回退全链路走通 — `apps/desktop`
+- [x] 图床上传适配器：自定义上传命令（shell → stdout URL → 替换正文链接）— `apps/desktop/src/main/uploader.ts`
+- [x] publisher 适配器接口预留（GitHub Issues 为首个实现，多平台后置）— `apps/desktop/src/main/publishers/types.ts`
+- [x] 设置页：PAT、git 身份、上传命令、目录约定规则、自动 commit 开关 — `apps/desktop/src/renderer/settings/SettingsPage.tsx`
+- [x] 端到端验收：打开 blog 仓库副本 → 编辑/粘贴图 → commit/push → 发布 Issue → 历史回退全链路走通 — `apps/desktop`
 
 ## 结果
 
