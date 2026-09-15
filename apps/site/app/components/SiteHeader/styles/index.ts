@@ -90,6 +90,8 @@ export const NavLink = styled(Link)`
   padding: var(--space-xs) var(--space-base);
   transition: color var(--transition-fast) ease;
 
+  /* 下划线是一支运笔：scaleX 从左行笔到右（一横的笔顺），不再是透明度淡入——
+     静态语言不变，但出现的方式有了方向和速度 */
   &::after {
     content: '';
     position: absolute;
@@ -98,27 +100,49 @@ export const NavLink = styled(Link)`
     bottom: calc(var(--space-base) / 2);
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
-    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--transition-fast) ease-out;
   }
 
   &:hover,
   &:focus-visible {
     text-decoration: none;
-  }
-
-  &:hover {
     color: var(--text-color);
   }
 
   &:hover::after,
   &:focus-visible::after {
-    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  /* 当前页常驻同一笔：与 hover 同语言、只差时长。样式直接挂在可访问语义
+     aria-current='page' 上（tsx 侧声明），不再另造视觉状态标记 */
+  &[aria-current='page'] {
+    color: var(--text-color);
+
+    &::after {
+      transform: scaleX(1);
+    }
   }
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
     outline-offset: calc(var(--space-xs) / 2);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &::after { transition: none; }
+  }
+`
+
+/* 外链标记：↗ 传达的是信息（点它会离开本站），不是装饰；淡化色与导航同一 mix 语言 */
+export const ExternalMark = styled.span`
+  margin-left: calc(var(--space-xs) / 4);
+  font-size: 0.85em;
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
 `
 
 export const MobileToggle = styled.button`
@@ -424,6 +448,13 @@ export const MobileItem = styled(Link)`
   &:hover {
     background: color-mix(in oklab, var(--background-200) 80%, transparent);
     border-color: color-mix(in oklab, var(--primary-color) 25%, var(--normal-300) 75%);
+  }
+
+  /* 当前页：菜单行没有下划线语言（行盒是卡片不是文字流），用与外观动作行
+     同一支语言的墨字 + 主色淡底；与桌面导航同一 aria-current 数据源 */
+  &[aria-current='page'] {
+    color: var(--primary-color);
+    background: color-mix(in oklab, var(--primary-color) 8%, var(--background-100) 92%);
   }
 
   &:focus-visible {
