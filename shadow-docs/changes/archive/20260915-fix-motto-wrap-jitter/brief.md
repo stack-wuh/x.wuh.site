@@ -4,7 +4,7 @@
   "name": "20260915-fix-motto-wrap-jitter",
   "type": "fix",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260915-fix-motto-wrap-jitter",
   "files": [
@@ -17,17 +17,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 385,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/385",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 386,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/386"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c3f4913a4a5783a164ab3d2bfe61e0a642f47f26",
-    "verifiedAt": "2026-09-15T10:30:48.432Z"
+    "verifiedCommit": "81029e9b5ecf13194cb9337bcc4bdabd8abc7d39",
+    "verifiedAt": "2026-09-15T11:49:36.097Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "c3f4913a4a5783a164ab3d2bfe61e0a642f47f26",
+    "checkpoint": "merged-pr:386",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
