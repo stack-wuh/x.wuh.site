@@ -4,7 +4,7 @@
   "name": "20260915-feature-desktop-plugin-system",
   "type": "feature",
   "scope": "apps/desktop",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20260915-feature-desktop-plugin-system",
   "files": [
@@ -52,8 +52,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 381,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/381",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 382,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/382"
   },
   "review": {
     "conclusion": "passed",
@@ -62,7 +62,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:381",
+    "checkpoint": "pr:382",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
