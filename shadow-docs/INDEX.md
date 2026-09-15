@@ -40,3 +40,4 @@
 | 20260914-style-footer-compact | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-compact/brief.md |
 | 20260914-style-footer-ornament | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-ornament/brief.md |
 | 20260915-feature-desktop-plugin-system | ✅ 完成 | shadow-docs/changes/archive/20260915-feature-desktop-plugin-system/brief.md |
+| 20260915-style-quiet-header-bar | ✅ 完成 | shadow-docs/changes/archive/20260915-style-quiet-header-bar/brief.md |
