@@ -4,7 +4,7 @@
   "name": "20260915-feature-desktop-plugin-system",
   "type": "feature",
   "scope": "apps/desktop",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260915-feature-desktop-plugin-system",
   "files": [
@@ -57,12 +57,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c1e224f9173896b9b4ba34b403d11fe139ee8e4d",
-    "verifiedAt": "2026-09-15T06:34:04.999Z"
+    "verifiedCommit": "37ccf643a40135890b7b9d33d2c120b9a53a13ae",
+    "verifiedAt": "2026-09-15T08:26:28.934Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:382",
+    "checkpoint": "merged-pr:382",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
