@@ -4,7 +4,7 @@
   "name": "20260915-style-quiet-header-bar",
   "type": "style",
   "scope": "apps/site",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "style/20260915-style-quiet-header-bar",
   "files": [
@@ -23,12 +23,12 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "889c981e444b357be856c1284f8d34b17ae5c4eb",
-    "verifiedAt": "2026-09-15T10:17:40.686Z"
+    "verifiedCommit": "332f4f8f7e99a0a3ac0d776b7a7dc76172ad998c",
+    "verifiedAt": "2026-09-15T11:06:01.351Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:384",
+    "checkpoint": "332f4f8f7e99a0a3ac0d776b7a7dc76172ad998c",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
