@@ -4,7 +4,7 @@
   "name": "20260915-fix-motto-wrap-jitter",
   "type": "fix",
   "scope": "apps/site",
-  "status": "branched",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "fix/20260915-fix-motto-wrap-jitter",
   "files": [
@@ -21,13 +21,13 @@
     "pullRequestUrl": null
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "c3f4913a4a5783a164ab3d2bfe61e0a642f47f26",
+    "verifiedAt": "2026-09-15T10:30:48.432Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:385",
+    "checkpoint": "c3f4913a4a5783a164ab3d2bfe61e0a642f47f26",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
