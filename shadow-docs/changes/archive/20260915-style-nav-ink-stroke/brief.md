@@ -4,7 +4,7 @@
   "name": "20260915-style-nav-ink-stroke",
   "type": "style",
   "scope": "apps/site",
-  "status": "applying",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260915-nav-ink-stroke",
   "files": [
@@ -27,7 +27,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "merged-pr:387",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
