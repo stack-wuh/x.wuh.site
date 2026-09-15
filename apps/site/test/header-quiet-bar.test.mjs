@@ -166,3 +166,39 @@ test('分组文案用用户视角：主题/明暗', () => {
   assert.match(opts, /aria-label='主题风格'/)
   assert.match(opts, /aria-label='显示模式'/)
 })
+
+// —— 导航运笔：下划线从「淡入」升级为「行笔」，当前页常驻，外链有标记 ——
+
+test('下划线是运笔动画：scaleX 从左行笔到右，弃用透明度显隐', () => {
+  const link = block('export const NavLink = styled\\(Link\\)')
+  assert.match(link, /transform: scaleX\(0\);/)
+  assert.match(link, /transform-origin: left center;/)
+  assert.match(link, /transition: transform var\(--transition-fast\) ease-out;/)
+  assert.match(link, /&:hover::after,[\s\S]*?&:focus-visible::after \{\s*transform: scaleX\(1\);\s*\}/)
+  // 整块不得再出现 opacity 显隐（渐变背景里的 stop 不算属性声明）
+  assert.doesNotMatch(link, /^\s*opacity:/m, '下划线显隐不得回退为 opacity 淡入')
+  // 减弱动效：运笔与色彩过渡同时停
+  assert.match(link, /@media \(prefers-reduced-motion: reduce\) \{\s*transition: none;\s*&::after \{ transition: none; \}/)
+})
+
+test('当前页同一支笔：样式挂在 aria-current 语义上，桌面与移动同源', () => {
+  const link = block('export const NavLink = styled\\(Link\\)')
+  assert.match(link, /&\[aria-current='page'\] \{\s*color: var\(--text-color\);\s*&::after \{\s*transform: scaleX\(1\);/)
+  const mobile = block('export const MobileItem = styled\\(Link\\)')
+  assert.match(mobile, /&\[aria-current='page'\] \{/)
+  // tsx 侧归段：博客详情页与列表页共享「博客」段；首页独立（移动菜单）
+  assert.match(tsx, /const isBlog = pathname === '\/blog' \|\| pathname\.startsWith\('\/post\/'\)/)
+  assert.match(tsx, /aria-current=\{isBlog \? 'page' : undefined\}/)
+  assert.match(tsx, /aria-current=\{isAbout \? 'page' : undefined\}/)
+  assert.match(tsx, /aria-current=\{isHome \? 'page' : undefined\}/)
+})
+
+test('外链标记 ↗：桌面+移动双处，装饰性隐藏、无障碍名交代去向', () => {
+  const ext = block('export const ExternalMark = styled\\.span')
+  // 信息不装饰：只用与导航同源的淡化色，无独立 hover/动画
+  assert.match(ext, /color: color-mix\(in oklab, var\(--text-color\) 72%, transparent\);/)
+  assert.doesNotMatch(ext, /transition|:hover/)
+  assert.equal((tsx.match(/<S\.ExternalMark aria-hidden='true'>↗<\/S\.ExternalMark>/g) ?? []).length, 2,
+    '知识库在桌面导航与移动菜单各出现一次')
+  assert.equal((tsx.match(/aria-label='知识库（在新窗口打开）'/g) ?? []).length, 2)
+})

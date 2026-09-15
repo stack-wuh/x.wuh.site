@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { IconBars, IconChevronDown, IconLogo, IconPalette } from '@wuh.site/components/icons'
 import { useThemeMode, type ColorSchemeMode } from '../theme/ThemeModeProvider'
 import type { ThemeFamily } from '@wuh.site/components/themes/tokens'
@@ -22,6 +23,11 @@ const SCHEME_LABELS: Record<ColorSchemeMode, string> = {
  * 站点顶部导航栏，支持桌面外观选择和移动端折叠菜单。
  */
 export default function SiteHeader() {
+  const pathname = usePathname()
+  // 当前页归段：博客详情页（/post/*）属于「博客」，与列表页共享常驻笔画
+  const isBlog = pathname === '/blog' || pathname.startsWith('/post/')
+  const isAbout = pathname === '/about'
+  const isHome = pathname === '/'
   const panelId = useId()
   const appearanceId = useId()
   const mobileAppearanceId = useId()
@@ -91,10 +97,15 @@ export default function SiteHeader() {
 
         <S.Right>
           <S.Nav aria-label='主导航'>
-            <S.NavLink href='/blog'>博客</S.NavLink>
-            <S.NavLink href='/about'>关于</S.NavLink>
-            <S.NavLink href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer'>
-              知识库
+            <S.NavLink href='/blog' aria-current={isBlog ? 'page' : undefined}>博客</S.NavLink>
+            <S.NavLink href='/about' aria-current={isAbout ? 'page' : undefined}>关于</S.NavLink>
+            <S.NavLink
+              href='https://stack-wuh.github.io/blog/'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='知识库（在新窗口打开）'
+            >
+              知识库<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
             </S.NavLink>
           </S.Nav>
 
@@ -138,11 +149,17 @@ export default function SiteHeader() {
 
       <S.MobilePanel id={panelId} $open={open}>
         <S.MobileNav aria-label='移动端导航'>
-          <S.MobileItem href='/' onClick={close}>首页</S.MobileItem>
-          <S.MobileItem href='/blog' onClick={close}>博客</S.MobileItem>
-          <S.MobileItem href='/about' onClick={close}>关于</S.MobileItem>
-          <S.MobileItem href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' onClick={close}>
-            知识库
+          <S.MobileItem href='/' aria-current={isHome ? 'page' : undefined} onClick={close}>首页</S.MobileItem>
+          <S.MobileItem href='/blog' aria-current={isBlog ? 'page' : undefined} onClick={close}>博客</S.MobileItem>
+          <S.MobileItem href='/about' aria-current={isAbout ? 'page' : undefined} onClick={close}>关于</S.MobileItem>
+          <S.MobileItem
+            href='https://stack-wuh.github.io/blog/'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='知识库（在新窗口打开）'
+            onClick={close}
+          >
+            知识库<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
           </S.MobileItem>
           <S.MobileActions>
             <S.MobileAppearanceAction
