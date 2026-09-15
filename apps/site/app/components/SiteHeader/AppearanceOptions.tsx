@@ -11,16 +11,25 @@ interface AppearanceOptionsProps {
   onColorSchemeModeChange: (mode: ColorSchemeMode) => void
 }
 
-const THEME_OPTIONS: Array<{ value: ThemeFamily; label: string; preview: string }> = [
+/**
+ * 主题选择控件（试笔墨签）。
+ * 样本色值引用 Layer 1 原始调色板变量（--_wl-* / --_pl-*）：它们恒定挂在 :root、
+ * 不随当前主题路由——预览展示的永远是样本自己的纸墨，与"当前生效的主题"无关。
+ */
+const THEME_OPTIONS: Array<{ value: ThemeFamily; label: string; paper: string; ink: string; line: string }> = [
   {
     value: 'wine',
     label: '酒红',
-    preview: 'linear-gradient(135deg, #C94A44 0 48%, #FFFBF8 48% 100%)',
+    paper: 'var(--_wl-background-900)',
+    ink: 'var(--_wl-normal-900)',
+    line: 'var(--_wl-primary-500)',
   },
   {
     value: 'plain',
     label: '素雅',
-    preview: 'linear-gradient(135deg, #C89060 0 48%, #FFFDF9 48% 100%)',
+    paper: 'var(--_pl-background-900)',
+    ink: 'var(--_pl-normal-900)',
+    line: 'var(--_pl-primary-600)',
   },
 ]
 
@@ -42,26 +51,27 @@ export default function AppearanceOptions({
   return (
     <>
       <S.AppearanceGroup aria-label='主题风格'>
-        <S.AppearanceLabel>主题风格</S.AppearanceLabel>
+        <S.AppearanceLabel>主题</S.AppearanceLabel>
         <S.ThemeSwatches>
           {THEME_OPTIONS.map((option) => (
             <S.ThemeSwatch
               key={option.value}
               type='button'
-              $family={option.value}
               aria-pressed={themeFamily === option.value}
               onClick={() => onThemeFamilyChange(option.value)}
             >
-              <S.SwatchPreview $background={option.preview} aria-hidden='true' />
-              <span>{option.label}</span>
-              <S.SelectionMark aria-hidden='true'>✓</S.SelectionMark>
+              <S.InkSample $paper={option.paper} $ink={option.ink} $line={option.line} aria-hidden='true'>
+                <span>念</span>
+                <span className='ink-rule' />
+              </S.InkSample>
+              <S.SwatchLabel>{option.label}</S.SwatchLabel>
             </S.ThemeSwatch>
           ))}
         </S.ThemeSwatches>
       </S.AppearanceGroup>
 
       <S.AppearanceGroup aria-label='显示模式'>
-        <S.AppearanceLabel>显示模式</S.AppearanceLabel>
+        <S.AppearanceLabel>明暗</S.AppearanceLabel>
         <S.SchemeOptions>
           {SCHEME_OPTIONS.map((option) => (
             <S.SchemeOption

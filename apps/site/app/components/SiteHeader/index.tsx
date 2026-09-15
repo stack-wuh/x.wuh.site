@@ -109,21 +109,12 @@ export default function SiteHeader() {
               aria-controls={appearanceId}
             >
               <S.ThemeIcon aria-hidden='true'>
-                <IconPalette size={16} strokeWidth={2} />
+                <IconPalette size={18} strokeWidth={2} />
               </S.ThemeIcon>
-              <span>外观</span>
-              <S.ThemeChevron $open={appearanceOpen} aria-hidden='true'>
-                <IconChevronDown size={14} strokeWidth={2} />
-              </S.ThemeChevron>
             </S.AppearanceTrigger>
 
             {appearanceOpen && (
               <S.DesktopAppearancePopover id={appearanceId} role='dialog' aria-label='外观设置'>
-                <S.AppearanceHeading>
-                  <span>外观设置</span>
-                  <small>{THEME_LABELS[themeFamily]} · {SCHEME_LABELS[colorSchemeMode]}</small>
-                </S.AppearanceHeading>
-
                 <AppearanceOptions
                   themeFamily={themeFamily}
                   colorSchemeMode={colorSchemeMode}

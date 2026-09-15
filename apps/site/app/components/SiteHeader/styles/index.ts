@@ -1,14 +1,20 @@
 import styled from 'styled-components'
 import Link from 'next/link'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
-const BREAKPOINT = '768px'
+/**
+ * 静默条：Header 只做导航与主题入口，视觉全部退后。
+ * 整层是辅助信息（与页脚同一档位）：根层自持字体族/字号/行高，行内不再各自声明；
+ * 挂在页面容器之外，页面级 font-family 覆盖不到，缺失即回落浏览器默认族。
+ * 间距/偏移/圆角只经 --space-* / --border-radius-* 令牌，断点只用 BREAKPOINTS 语义常量。
+ */
 
 export const HeaderRoot = styled.header`
   position: sticky;
   top: 0;
   z-index: 50;
   width: 100%;
-  border-bottom: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--text-muted) 18%, transparent);
   background:
     linear-gradient(
       180deg,
@@ -16,12 +22,25 @@ export const HeaderRoot = styled.header`
       color-mix(in oklab, var(--background-color) 84%, transparent)
     );
   backdrop-filter: blur(10px);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  /* 控件条的紧凑行高：不引全站 --line-height-body/heading，两端都落不进控件尺寸 */
+  --header-lh: 1.5;
+  line-height: var(--header-lh);
+  /* 导航行字号档：Header 导航是主动线入口，不落页脚那种 12px 辅助档。
+   * 640–1023 平板带用 13px（四主题无稳定 13px 令牌——--font-size-sm 素雅覆写为
+   * 15px，正是体检抓出的陷阱，故取局部字面量并注释豁免）；
+   * ≥1024 PC 带升到 base 档 15px：宽屏下 13px 视觉参照系偏小（用户实测反馈），
+   * 与正文同档的主导航在宽栏里才立得住。 */
+  --header-fs: 13px;
+
+  @media (min-width: ${BREAKPOINTS.tablet}px) { --header-fs: var(--font-size-base); }
 `
 
 export const HeaderInner = styled.div`
   width: min(1200px, 100%);
   margin: 0 auto;
-  padding: 14px clamp(16px, 4vw, 60px);
+  padding: var(--space-base) var(--space-md);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -31,46 +50,52 @@ export const HeaderInner = styled.div`
 export const Brand = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 0;
   color: var(--text-color);
   min-width: 0;
 
+  /* logo 与导航同参照系缩放：高 = 字号档 ×2（平板 13→26、PC 15→30），宽按 42:26 原比例。
+     不新增断点——分档变化由 --header-fs 单点承担 */
+  svg {
+    height: calc(var(--header-fs) * 2);
+    width: calc(var(--header-fs) * 2 / 26 * 42);
+  }
+
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
-    outline-offset: 3px;
-    border-radius: 10px;
+    outline-offset: calc(var(--space-xs) / 2);
+    border-radius: var(--border-radius-base);
   }
 `
 
 export const Nav = styled.nav`
   display: none;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 
-  @media (min-width: ${BREAKPOINT}) { display: flex; }
+  @media (min-width: ${BREAKPOINTS.mobile}px) { display: flex; }
 `
 
 export const Right = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-base);
 `
 
 export const NavLink = styled(Link)`
   position: relative;
   text-decoration: none;
   color: color-mix(in oklab, var(--text-color) 78%, transparent);
-  font-size: var(--font-size-sm);
-  padding: 10px 12px;
+  font-size: var(--header-fs);
+  padding: var(--space-xs) var(--space-base);
   transition: color var(--transition-fast) ease;
 
   &::after {
     content: '';
     position: absolute;
-    left: 12px;
-    right: 12px;
-    bottom: 6px;
+    left: var(--space-base);
+    right: var(--space-base);
+    bottom: calc(var(--space-base) / 2);
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
     opacity: 0;
@@ -92,7 +117,7 @@ export const NavLink = styled(Link)`
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
   }
 `
 
@@ -103,7 +128,7 @@ export const MobileToggle = styled.button`
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
   padding: 0;
   background: color-mix(in oklab, var(--background-100) 70%, transparent);
@@ -119,16 +144,15 @@ export const MobileToggle = styled.button`
     height: 20px;
   }
 
-  @media (min-width: ${BREAKPOINT}) { display: none; }
+  @media (min-width: ${BREAKPOINTS.mobile}px) { display: none; }
 
   &:hover {
-    transform: translateY(-1px);
     border-color: color-mix(in oklab, var(--primary-color) 35%, var(--normal-300) 65%);
   }
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
   }
 
   @media (prefers-reduced-motion: reduce) { transition: none; transform: none; }
@@ -138,52 +162,78 @@ export const AppearanceRoot = styled.div`
   position: relative;
   display: none;
 
-  @media (min-width: ${BREAKPOINT}) { display: block; }
+  @media (min-width: ${BREAKPOINTS.mobile}px) { display: block; }
 `
 
+/*
+ * 外观入口图标化：与导航同一套渐隐下划线语言，去胶囊底色、去文字与箭头；
+ * 可访问名由按钮的 aria-label 承担（当前主题信息）。
+ */
 export const AppearanceTrigger = styled.button`
   appearance: none;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 0;
-  border-radius: 12px;
-  background: color-mix(in oklab, var(--primary-color) 8%, transparent);
-  color: color-mix(in oklab, var(--text-color) 84%, transparent);
+  padding: var(--space-xs) var(--space-base);
+  /* font 简写必须排在 font-size 之前——同块内后写的简写会把先声明的 font-size 重置回继承值 */
   font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  /* 与 NavLink 同一行盒高（字号档×行高 + 上下 padding）：图标几何居中之外，
+     hover/展开时下划线才能与导航行的画在同一 y 上（否则差 2px 看着不齐） */
+  font-size: var(--header-fs);
+  min-height: calc(1em * var(--header-lh) + var(--space-xs) * 2);
+  border: 0;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: color-mix(in oklab, var(--text-color) 78%, transparent);
   cursor: pointer;
-  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+  transition: color var(--transition-fast) ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: var(--space-base);
+    right: var(--space-base);
+    bottom: calc(var(--space-base) / 2);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
+    opacity: 0;
+  }
 
   &:hover,
   &[aria-expanded='true'] {
     color: var(--text-color);
-    background: color-mix(in oklab, var(--primary-color) 14%, transparent);
+
+    &::after {
+      opacity: 1;
+    }
   }
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
+
+    &::after {
+      opacity: 1;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
+/* 纸卡容器：不透明纸面 + 发丝线 + 小圆角 + 轻投影；
+   去毛玻璃/inset 白高光——Header 已换纸墨语言，SaaS 玻璃卡不再搭配 */
 export const DesktopAppearancePopover = styled.div`
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + var(--space-base));
   right: 0;
   z-index: 70;
   width: 292px;
-  padding: 16px;
+  padding: var(--space-sm);
   border: 1px solid color-mix(in oklab, var(--normal-300) 58%, transparent);
-  border-radius: 20px;
-  background: color-mix(in oklab, var(--background-100) 97%, transparent);
-  box-shadow: 0 20px 45px color-mix(in oklab, var(--normal-900) 14%, transparent), inset 0 1px color-mix(in oklab, white 50%, transparent);
-  backdrop-filter: blur(18px);
+  border-radius: var(--border-radius-base);
+  background: var(--background-100);
+  box-shadow: var(--elevation-soft);
   animation: appearance-enter 200ms ease-out;
 
   @keyframes appearance-enter {
@@ -194,27 +244,13 @@ export const DesktopAppearancePopover = styled.div`
   @media (prefers-reduced-motion: reduce) { animation: none; }
 `
 
-export const AppearanceHeading = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 17px;
-  color: var(--text-primary);
-  font-family: var(--font-serif);
-  font-size: 17px;
-  font-weight: 700;
-
-  small { color: var(--text-secondary); font-family: var(--font-sans); font-size: 11px; font-weight: 500; }
-`
-
 export const AppearanceGroup = styled.div`
-  & + & { margin-top: 17px; padding-top: 16px; border-top: 1px solid color-mix(in oklab, var(--normal-300) 48%, transparent); }
+  & + & { margin-top: var(--space-base); padding-top: var(--space-base); border-top: 1px solid color-mix(in oklab, var(--normal-300) 48%, transparent); }
 `
 
 export const AppearanceLabel = styled.div`
-  margin-bottom: 9px;
-  color: var(--text-secondary);
-  font-size: 11px;
+  margin-bottom: var(--space-xs);
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
   font-weight: 700;
   letter-spacing: 0.08em;
 `
@@ -222,79 +258,117 @@ export const AppearanceLabel = styled.div`
 export const ThemeSwatches = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 9px;
+  gap: var(--space-base);
 `
 
-export const ThemeSwatch = styled.button<{ $family: 'wine' | 'plain' }>`
+export const ThemeSwatch = styled.button`
   appearance: none;
-  position: relative;
   display: grid;
-  gap: 7px;
-  min-height: 80px;
-  padding: 7px;
-  border: 1px solid ${({ $family }) => $family === 'wine' ? 'color-mix(in oklab, var(--primary-color) 22%, var(--normal-300) 78%)' : 'color-mix(in oklab, var(--normal-400) 45%, transparent)'};
-  border-radius: 13px;
-  background: color-mix(in oklab, var(--background-200) 78%, transparent);
+  gap: var(--space-xs);
+  justify-items: center;
+  padding: var(--space-xs);
+  border: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent);
+  border-radius: var(--border-radius-base);
+  background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 12px;
-  font-weight: 650;
-  text-align: left;
   cursor: pointer;
+  transition: border-color var(--transition-fast) ease;
 
-  &[aria-pressed='true'] { border-color: var(--primary-color); box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary-color) 14%, transparent); }
-  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
+  &:hover { border-color: color-mix(in oklab, var(--primary-color) 35%, var(--normal-300) 65%); }
+  &[aria-pressed='true'] { border-color: var(--primary-color); }
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: calc(var(--space-xs) / 2); }
 `
 
-export const SwatchPreview = styled.span<{ $background: string }>`
-  display: block;
-  height: 39px;
-  border-radius: 8px;
-  border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
-  background: ${({ $background }) => $background};
+/*
+ * 试笔墨签：每个主题的「真实样本」——该主题的纸色打底、墨色写一个「朝」、
+ * 下方压一根该主题的朱砂/赭线（Divider ornament 同语言）。
+ * 色值引用 Layer 1 原始调色板变量（--_wl-* / --_pl-* 恒定挂在 :root，
+ * 不随当前主题路由）：预览独立于当前主题，且零复制漂移。
+ * 字高 = 导航字号档 ×2（平板 26 / PC 30），与 logo 同一参照系。
+ */
+export const InkSample = styled.div<{ $paper: string; $ink: string; $line: string }>`
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  padding: var(--space-xs) var(--space-base) calc(var(--space-xs) / 2);
+  border-radius: var(--border-radius-sm);
+  background: ${({ $paper }) => $paper};
+  color: ${({ $ink }) => $ink};
+  font-family: var(--font-serif);
+  font-size: calc(var(--header-fs) * 2);
+  line-height: var(--header-lh);
+
+  .ink-rule {
+    width: 62%;
+    height: 1px;
+    margin-top: calc(var(--space-xs) / 2);
+    background: linear-gradient(90deg, transparent, ${({ $line }) => $line} 22%, ${({ $line }) => $line} 78%, transparent);
+  }
 `
 
-export const SelectionMark = styled.span`
-  position: absolute;
-  top: 11px;
-  right: 11px;
-  display: none;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--background-100);
-  color: var(--primary-color);
-  font-size: 11px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+/* 选中态：墨字转主题色 + 一枚朱砂点（label 承担状态，不再需要角标） */
+export const SwatchLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--space-xs) / 2);
+  /* 同 SchemeOption：避开暗色反向的 text-secondary，用 text-color 淡化表达未选中 */
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
 
-  [aria-pressed='true'] & { display: grid; }
+  &::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    opacity: 0;
+    transition: opacity var(--transition-fast) ease;
+  }
+
+  [aria-pressed='true'] & { color: var(--text-color); }
+  [aria-pressed='true'] &::after { opacity: 1; }
 `
 
+/* 明暗三段：发丝线分隔的墨字，选中项用与导航 hover 同源的渐隐下划线——
+   弹层里的「选中」第一次和整站交互语言同源，不再用彩色胶囊 */
 export const SchemeOptions = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 5px;
-  padding: 4px;
-  border-radius: 12px;
-  background: color-mix(in oklab, var(--background-200) 82%, transparent);
 `
 
 export const SchemeOption = styled.button`
   appearance: none;
-  min-height: 38px;
-  padding: 0 7px;
-  border: 1px solid transparent;
-  border-radius: 9px;
+  position: relative;
+  padding: var(--space-xs) var(--space-xs);
+  border: 0;
   background: transparent;
-  color: var(--text-secondary);
+  /* 不用 --text-secondary：暗色主题下调色板反向（600 比 500 亮），选中项会比未选中更暗。
+     与 NavLink 同语言：未选中=text-color 淡化 mix，选中=实色 + 下划线 */
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
   font: inherit;
-  font-size: 11px;
-  font-weight: 650;
   cursor: pointer;
+  transition: color var(--transition-fast) ease;
 
-  &[aria-pressed='true'] { border-color: color-mix(in oklab, var(--primary-color) 26%, transparent); background: var(--primary-color); color: var(--background-100); box-shadow: 0 4px 10px color-mix(in oklab, var(--primary-color) 20%, transparent); }
-  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: 2px; }
+  & + & { border-left: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent); }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: var(--space-base);
+    right: var(--space-base);
+    bottom: calc(var(--space-base) / 2);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
+    opacity: 0;
+  }
+
+  &:hover { color: var(--text-color); }
+  &[aria-pressed='true'] {
+    color: var(--text-color);
+
+    &::after { opacity: 1; }
+  }
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: calc(var(--space-xs) / 2); }
 `
 
 export const ThemeIcon = styled.span`
@@ -307,11 +381,6 @@ export const ThemeIcon = styled.span`
   color: var(--primary-color);
 `
 
-export const ThemeValue = styled.span`
-  min-width: 0;
-  white-space: nowrap;
-`
-
 export const ThemeChevron = styled.span<{ $open?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -319,24 +388,24 @@ export const ThemeChevron = styled.span<{ $open?: boolean }>`
   flex: 0 0 auto;
   width: 16px;
   height: 16px;
-  color: var(--text-secondary);
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
   transform: rotate(${({ $open }) => ($open ? '180deg' : '0')});
-  transition: transform 180ms ease-out;
+  transition: transform var(--transition-fast, 180ms) ease-out;
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `
 
 export const MobilePanel = styled.div<{ $open: boolean }>`
   display: ${({ $open }) => ($open ? 'block' : 'none')};
-  padding: 0 clamp(16px, 4vw, 60px) 14px;
+  padding: 0 var(--space-md) var(--space-base);
 
-  @media (min-width: ${BREAKPOINT}) { display: none; }
+  @media (min-width: ${BREAKPOINTS.mobile}px) { display: none; }
 `
 
 export const MobileNav = styled.nav`
   width: min(1200px, 100%);
   margin: 0 auto;
-  padding: 12px;
+  padding: var(--space-base);
   border-radius: var(--radius-card);
   border: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent);
   background: color-mix(in oklab, var(--background-100) 78%, transparent);
@@ -345,14 +414,16 @@ export const MobileNav = styled.nav`
   overflow-y: auto;
   overscroll-behavior: contain;
   display: grid;
-  gap: 10px;
+  gap: var(--space-base);
 `
 
+/* 菜单项是移动端的主操作，落 base 档（15px 四主题同值），不随根层辅助档缩 */
 export const MobileItem = styled(Link)`
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: var(--space-base) var(--space-sm);
+  border-radius: var(--border-radius-md);
   text-decoration: none;
   color: var(--text-primary);
+  font-size: var(--font-size-base);
   background: transparent;
   border: 1px solid transparent;
   transition: background var(--transition-fast) ease, border-color var(--transition-fast) ease;
@@ -364,13 +435,13 @@ export const MobileItem = styled(Link)`
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 65%, white);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
   }
 `
 
 export const MobileActions = styled.div`
   display: flex;
-  gap: 10px;
+  gap: var(--space-xs);
   align-items: center;
 `
 
@@ -379,13 +450,13 @@ export const MobileAppearanceAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-base);
   width: 100%;
   min-width: 44px;
   min-height: 48px;
-  padding: 8px 14px;
+  padding: var(--space-xs) var(--space-base);
   border: 1px solid color-mix(in oklab, var(--primary-color) 28%, var(--normal-300) 72%);
-  border-radius: 14px;
+  border-radius: var(--border-radius-md);
   background: color-mix(in oklab, var(--primary-color) 8%, var(--background-100) 92%);
   color: var(--text-primary);
   font: inherit;
@@ -393,9 +464,9 @@ export const MobileAppearanceAction = styled.button`
   cursor: pointer;
   touch-action: manipulation;
   transition:
-    background-color 180ms ease-out,
-    border-color 180ms ease-out,
-    box-shadow 180ms ease-out;
+    background-color var(--transition-fast, 180ms) ease-out,
+    border-color var(--transition-fast, 180ms) ease-out,
+    box-shadow var(--transition-fast, 180ms) ease-out;
 
   &:hover {
     border-color: color-mix(in oklab, var(--primary-color) 46%, var(--normal-300) 54%);
@@ -409,7 +480,7 @@ export const MobileAppearanceAction = styled.button`
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white);
-    outline-offset: 3px;
+    outline-offset: calc(var(--space-xs) / 2);
   }
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
@@ -427,31 +498,30 @@ export const MobileAppearanceOptions = styled.div<{ $expanded: boolean }>`
 export const MobileAppearanceOptionsInner = styled.div`
   min-height: 0;
   overflow: hidden;
-  padding: 0 2px;
+  padding: 0;
 
   ${AppearanceGroup}:first-child {
-    padding-top: 4px;
+    padding-top: calc(var(--space-xs) / 2);
   }
 `
 
 export const MobileThemeMain = styled.span`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-base);
   min-width: 0;
   flex: 1 1 auto;
 `
 
 export const MobileThemeCopy = styled.span`
   display: grid;
-  gap: 2px;
   min-width: 0;
 `
 
 export const MobileThemeTitle = styled.span`
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -459,8 +529,7 @@ export const MobileThemeTitle = styled.span`
 
 export const MobileThemeCurrent = styled.span`
   overflow: hidden;
-  color: var(--text-secondary);
-  font-size: 12px;
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
   text-overflow: ellipsis;
   white-space: nowrap;
 `
