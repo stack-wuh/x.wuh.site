@@ -4,7 +4,7 @@
   "name": "20260915-style-quiet-header-bar",
   "type": "style",
   "scope": "apps/site",
-  "status": "branched",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260915-style-quiet-header-bar",
   "files": [
@@ -18,17 +18,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 383,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/383",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 384,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/384"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "889c981e444b357be856c1284f8d34b17ae5c4eb",
+    "verifiedAt": "2026-09-15T10:17:40.686Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:383",
+    "checkpoint": "pr:384",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
