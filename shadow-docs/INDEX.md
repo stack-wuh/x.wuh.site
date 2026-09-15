@@ -34,7 +34,9 @@
 | 20260906-fix-post-fcp-payload | ✅ 完成 | shadow-docs/changes/archive/20260906-fix-post-fcp-payload/brief.md |
 | 20260906-style-post-detail-skeleton-sync | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-detail-skeleton-sync/brief.md |
 | 20260906-style-post-header-seal-tag | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-header-seal-tag/brief.md |
-| 20260913-feature-desktop-markdown-editor | branched | shadow-docs/changes/20260913-feature-desktop-markdown-editor/brief.md |
+| 20260913-feature-desktop-markdown-editor | published | shadow-docs/changes/20260913-feature-desktop-markdown-editor/brief.md |
 | 20260914-fix-footer-type-scale | ✅ 完成 | shadow-docs/changes/archive/20260914-fix-footer-type-scale/brief.md |
+| 20260914-style-desktop-ui-redesign | published | shadow-docs/changes/20260914-style-desktop-ui-redesign/brief.md |
 | 20260914-style-footer-compact | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-compact/brief.md |
 | 20260914-style-footer-ornament | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-ornament/brief.md |
+| 20260915-feature-desktop-plugin-system | reviewed | shadow-docs/changes/20260915-feature-desktop-plugin-system/brief.md |
