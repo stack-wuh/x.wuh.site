@@ -43,6 +43,7 @@ const dialogSurfaceBase = css<{
   $height?: number | string
   $disableAnimation: boolean
   $closing: boolean
+  $variant: 'default' | 'paper'
 }>`
   position: relative;
   display: flex;
@@ -62,17 +63,23 @@ const dialogSurfaceBase = css<{
     if ($placement === 'bottom') return '80vh'
     return 'calc(100vh - 80px)'
   }};
-  border-radius: ${({ $fullScreen, $placement }) => {
+  border-radius: ${({ $fullScreen, $placement, $variant }) => {
     if ($fullScreen) return '0'
     if ($placement === 'bottom') return '16px 16px 0 0'
+    if ($variant === 'paper') return 'var(--border-radius-base)'
     return '16px'
   }};
   background-color: var(--background-100, #fff);
   color: var(--text-primary, #0f172a);
-  border: ${({ $fullScreen }) => ($fullScreen ? 'none' : '1px solid rgba(0, 0, 0, 0.06)')};
-  box-shadow: ${({ $fullScreen, $placement }) => {
+  border: ${({ $fullScreen, $variant }) => {
+    if ($fullScreen) return 'none'
+    if ($variant === 'paper') return '1px solid color-mix(in oklab, var(--normal-300) 45%, transparent)'
+    return '1px solid rgba(0, 0, 0, 0.06)'
+  }};
+  box-shadow: ${({ $fullScreen, $placement, $variant }) => {
     if ($fullScreen) return 'none'
     if ($placement === 'bottom') return '0 -4px 30px rgba(15, 23, 42, 0.15)'
+    if ($variant === 'paper') return 'var(--elevation-soft)'
     return '0 12px 50px rgba(15, 23, 42, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
   }};
   outline: none;
@@ -83,11 +90,15 @@ const dialogSurfaceBase = css<{
   /* 深色适配跟随站点主题（data-color-scheme），不用 OS 级 media query：
      后者在外观=浅色 + 系统深色时会错位生效 */
   html[data-color-scheme='dark'] & {
-    border-color: ${({ $fullScreen }) =>
-      $fullScreen ? 'none' : 'color-mix(in oklab, var(--normal-700) 60%, transparent)'};
-    box-shadow: ${({ $fullScreen, $placement }) => {
+    border-color: ${({ $fullScreen, $variant }) => {
+      if ($fullScreen) return 'none'
+      if ($variant === 'paper') return 'color-mix(in oklab, var(--normal-300) 45%, transparent)'
+      return 'color-mix(in oklab, var(--normal-700) 60%, transparent)'
+    }};
+    box-shadow: ${({ $fullScreen, $placement, $variant }) => {
       if ($fullScreen) return 'none'
       if ($placement === 'bottom') return '0 -4px 30px rgba(0, 0, 0, 0.3)'
+      if ($variant === 'paper') return 'var(--elevation-soft)'
       return '0 12px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03)'
     }};
   }
@@ -150,6 +161,7 @@ export const DialogSurface = styled.div<{
   $height?: number | string
   $disableAnimation: boolean
   $closing: boolean
+  $variant: 'default' | 'paper'
 }>`
   ${dialogSurfaceBase}
 `
@@ -179,7 +191,7 @@ export const DragHandle = styled.div`
   flex-shrink: 0;
 `
 
-export const DialogHeader = styled.header`
+export const DialogHeader = styled.header<{ $variant: 'default' | 'paper' }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -190,6 +202,34 @@ export const DialogHeader = styled.header`
   html[data-color-scheme='dark'] & {
     border-bottom-color: color-mix(in oklab, var(--normal-700) 50%, transparent);
   }
+
+  /* paper：底部分割线换渐隐墨线——两端透明、中段主色，与导航运笔下划线同源 */
+  ${({ $variant }) =>
+    $variant === 'paper' &&
+    css`
+      position: relative;
+      border-bottom-color: transparent;
+
+      html[data-color-scheme='dark'] & {
+        border-bottom-color: transparent;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          color-mix(in oklab, var(--primary-color) 45%, var(--normal-300)) 18%,
+          color-mix(in oklab, var(--primary-color) 45%, var(--normal-300)) 82%,
+          transparent 100%
+        );
+      }
+    `}
 `
 
 export const DialogTitle = styled.h3`
@@ -228,7 +268,7 @@ export const CloseButton = styled.button`
   }
 `
 
-export const DialogBody = styled.div`
+export const DialogBody = styled.div<{ $variant: 'default' | 'paper' }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -240,6 +280,17 @@ export const DialogBody = styled.div`
   @media (max-width: 640px) {
     padding: 12px 16px 16px;
   }
+
+  /* paper：内容区留白与纸面呼吸感对齐 */
+  ${({ $variant }) =>
+    $variant === 'paper' &&
+    css`
+      padding: 20px 22px 22px;
+
+      @media (max-width: 640px) {
+        padding: 12px 16px 16px;
+      }
+    `}
 `
 
 export const DialogFooter = styled.footer`
