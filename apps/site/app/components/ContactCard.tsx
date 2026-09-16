@@ -270,8 +270,13 @@ const ContactCard = ({
   const [previewOpen, setPreviewOpen] = useState(false)
   const actionRef = useRef<HTMLButtonElement | HTMLAnchorElement>(null)
 
+  const hasQR = Boolean(qrSrc)
+  const hasLink = Boolean(linkUrl)
+
   // 3D 指针手势：CSS 变量直写 DOM（每帧不触发重渲）；
-  // 触屏设备不绑定监听，reduced-motion 停用倾斜（hover 上浮与光泽淡入保留）
+  // 触屏设备不绑定监听，reduced-motion 停用倾斜（hover 上浮与光泽淡入保留）；
+  // deps 含 hasLink：二维码/链接模式切换会重建 ActionArea 的 DOM 节点（button↔a），
+  // 需重新挂载监听器
   useEffect(() => {
     const el = actionRef.current
     if (!el) return
@@ -298,10 +303,7 @@ const ContactCard = ({
       el.removeEventListener('pointermove', handleMove)
       el.removeEventListener('pointerleave', handleLeave)
     }
-  }, [])
-
-  const hasQR = Boolean(qrSrc)
-  const hasLink = Boolean(linkUrl)
+  }, [hasLink])
 
   return (
     <>

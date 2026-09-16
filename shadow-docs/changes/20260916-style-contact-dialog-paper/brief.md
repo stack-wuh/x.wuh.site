@@ -31,7 +31,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "47e2e1878bae4b07223797c87269bb6f1e2b85cf",
+    "checkpoint": "3208cc333eb0b8936a3c79f4d600d927703bf88b",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
@@ -97,11 +97,12 @@
 
 - 实际耗时: 2026-09-16（propose→设计稿对齐→实施→验证同日完成）
 - 验证:
-  - 守卫测试：`packages/components/dialog/index.test.mjs` 8/8 绿（variant 契约 4 + 既有结构/行为约束 4）；`apps/site/test/contact-dialog-paper.test.mjs` 11/11 绿（paper 挂载/钤印/断点/rgba 禁令/错峰/3D 契约/降级/handle 等宽/hints 墨点）；`pnpm exec tsc --noEmit` 干净
+  - 守卫测试：`packages/components/dialog/index.test.mjs` 8/8 绿（variant 契约 4 + 既有结构/行为约束 4）；`apps/site/test/contact-dialog-paper.test.mjs` 12/12 绿（paper 挂载/钤印/断点/rgba 禁令/错峰/3D 契约/降级/渠道切换重挂/handle 等宽/hints 墨点）；`pnpm exec tsc --noEmit` 干净
   - 变异验证 3 轮全部「改坏必红」：TILT_DEG 12→6 →倾角守卫红；删 hover matchMedia 行 →降级守卫红；抽 Body `$variant` 透传 →index 透传守卫红；均恢复后全绿
   - 浏览器实测（IAB，dev server + Node v22，桌面 1280 / 移动 375）：paper 表面 computed 命中（宽 640、发丝线 `color-mix(normal-300 45%)`、`--elevation-soft`、圆角 8px）；header `::after` 渐隐墨线 1px linear-gradient 在位；钤印「微」22×22、印框 primary 45%、衬线、`aria-hidden`；七渠道钤印 微/Q/T/G/豆/云/D 与 title/aria/元素类型（BUTTON/A）逐一命中；错峰 animation-delay 80/160ms computed 确认；3D 手势真实鼠标轨迹探测——左上 rx +10.86°/ry −10.85°、右下反号、中心归零（±12° 上限）、裱框 translateZ 28px 与光层 34px matrix3d 在位、`--gx` 跟随；plain-dark 主题（localStorage 双键契约 `wuh.site.theme` + `wuh.site.color-scheme-mode`）表面/阴影/高光/钤印全部随 token 反转；移动 375 底部抽屉：拖拽条、radius 16/0、maxH 80vh、单列居中、hints 纵排；截图三张目验（wine-light 桌面、wine-light 移动、plain-dark 链接模式）与设计稿一致
   - 已知环境限制：IAB 后台标签页动画时钟冻结（enter/exit 动画 currentTime=0 不前进），animationend 永不触发导致卸载链在测量环境不可达；但 fiber 探测证实 closing state 提交正常、CSSOM 证实 enter(`jmMSuD`)→exit(`hNyUhb`) 动画名切换正确——关闭链路（Escape/遮罩/× 三路）状态机与样式完整，卸载依赖的 animationend 为 Dialog 既有行为、非本次改动面。触屏 `hover:none` 不绑监听分支与 reduced-motion 停用分支无法在 IAB 硬件态模拟（matchMedia 恒 fine），以源码守卫 + 站点 motion.ts 全局降级规则背书。二维码图在测量环境因 CDN 外链不可达显示 Skeleton，不影响布局验证
 - 实施偏差记录:
+  - **审查轮修复（第 1 轮发现的正确性缺陷）**：3D 监听 `useEffect` deps 原为 `[]`，渠道切换二维码↔链接会重建 ActionArea 的 DOM 节点（`<button>`↔`<a>`），监听器留在旧节点 → 切渠道后倾斜失效（apply 轮 7 渠道横扫只验 title/aria 漏检）。修复：deps → `[hasLink]`、`hasQR/hasLink` 前移；新增守卫「渠道切换后监听器重挂」（变异 `[]` 必红）；浏览器回归实证：微信开→切 GitHub→真实鼠标 rx +9.53°/ry −10.04°、gx 8.2%
   - 钤印 `Seal` 定义在 `ContactArea.tsx`（task-3 原文「由 ContactCard.tsx 导出」）：ContactCard 是 `dynamic(loading:null)`，印章进 Dialog title 槽、需在弹窗壳层立即可见，从动态 chunk 导出会随加载闪失；组件边界因此更合理（title 属弹窗壳=ContactArea 持有）
   - `$variant` 未透传 `DialogFooter`（task-1 原文含 Footer）：paper 语言无 footer 规则、联系弹窗无 footer 场景，按 code-style「不为未来场景提前加抽象」省略；守卫按「≥3 处透传」锚定
   - 传播事实（不扩面处理）：`AboutView/index.tsx` 复用同一 `ContactCard`（其 Dialog 壳保持 default 760px 无印）——卡片侧精修/3D/断点自然传导至 About 联系弹窗，壳层维持原样属渐进式治理边界；后续如统一 About 弹窗，单开变更复用 `variant='paper'` 即可（正是方案 B 选型的回报）

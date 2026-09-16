@@ -89,6 +89,15 @@ test('指针跟踪经 ref setProperty 直写 DOM，不经 React state', () => {
   assert.doesNotMatch(card, /setTilt|useState<.*tilt/i, '禁止 tilt 进 React state')
 })
 
+test('渠道切换（button↔a 元素类型变化）后监听器重挂：effect deps 含 hasLink', () => {
+  // 审查发现的真实缺陷守卫：ActionArea 在二维码/链接模式间换 DOM 节点，
+  // deps 为 [] 时旧节点监听器丢失，切渠道后 3D 倾斜失效
+  assert.match(card, /\},\s*\[hasLink\]\)/, 'effect deps 必须含 hasLink')
+  const order = card.search(/const hasLink = Boolean\(linkUrl\)/)
+  const effect = card.search(/\/\/ 3D 指针手势/)
+  assert.ok(order >= 0 && effect > order, 'hasLink 定义须先于 useEffect')
+})
+
 test('启用条件与降级在位：精确指针 + reduced-motion 停用 + 触屏不绑定', () => {
   assert.match(card, /matchMedia\('\(hover: hover\) and \(pointer: fine\)'\)/)
   assert.match(card, /matchMedia\('\(prefers-reduced-motion: reduce\)'\)/)
