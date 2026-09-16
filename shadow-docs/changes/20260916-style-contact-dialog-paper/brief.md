@@ -4,7 +4,7 @@
   "name": "20260916-style-contact-dialog-paper",
   "type": "style",
   "scope": "apps/site,packages/components",
-  "status": "branched",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "style/20260916-style-contact-dialog-paper",
   "files": [
@@ -31,7 +31,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:388",
+    "checkpoint": "47e2e1878bae4b07223797c87269bb6f1e2b85cf",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
