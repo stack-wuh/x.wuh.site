@@ -41,4 +41,6 @@
 | 20260914-style-footer-ornament | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-ornament/brief.md |
 | 20260915-feature-desktop-plugin-system | ✅ 完成 | shadow-docs/changes/archive/20260915-feature-desktop-plugin-system/brief.md |
 | 20260915-fix-motto-wrap-jitter | ✅ 完成 | shadow-docs/changes/archive/20260915-fix-motto-wrap-jitter/brief.md |
+| 20260915-style-nav-ink-stroke | ✅ 完成 | shadow-docs/changes/archive/20260915-style-nav-ink-stroke/brief.md |
 | 20260915-style-quiet-header-bar | ✅ 完成 | shadow-docs/changes/archive/20260915-style-quiet-header-bar/brief.md |
+| 20260916-style-contact-dialog-paper | ✅ 完成 | shadow-docs/changes/archive/20260916-style-contact-dialog-paper/brief.md |

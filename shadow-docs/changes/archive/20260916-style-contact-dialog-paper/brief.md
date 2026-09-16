@@ -4,7 +4,7 @@
   "name": "20260916-style-contact-dialog-paper",
   "type": "style",
   "scope": "apps/site,packages/components",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260916-style-contact-dialog-paper",
   "files": [
@@ -21,17 +21,17 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 388,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/388",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 389,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/389"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "fd740891c05a059ac7ac04cc8ece1cb4f68905ca",
-    "verifiedAt": "2026-09-16T12:04:05.940Z"
+    "verifiedCommit": "6f0a09cdee003e9d6bd67dc7b4bbc4ec1af878e4",
+    "verifiedAt": "2026-09-16T12:19:19.956Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "69b14e839cecbc602fc0f63646b614f2430de46a",
+    "checkpoint": "merged-pr:389",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
