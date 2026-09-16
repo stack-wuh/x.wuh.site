@@ -4,7 +4,7 @@
   "name": "20260916-style-contact-dialog-paper",
   "type": "style",
   "scope": "apps/site,packages/components",
-  "status": "committed",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "style/20260916-style-contact-dialog-paper",
   "files": [
@@ -25,13 +25,13 @@
     "pullRequestUrl": null
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "fd740891c05a059ac7ac04cc8ece1cb4f68905ca",
+    "verifiedAt": "2026-09-16T12:04:05.940Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "3208cc333eb0b8936a3c79f4d600d927703bf88b",
+    "checkpoint": "fd740891c05a059ac7ac04cc8ece1cb4f68905ca",
     "planHash": null,
     "updatedAt": null,
     "lastError": null
