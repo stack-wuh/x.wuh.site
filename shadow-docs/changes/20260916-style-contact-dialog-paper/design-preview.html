@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计稿 · 联系弹窗纸张风精修 · 20260916-style-contact-dialog-paper</title>
+<style>
+/* ============================================================
+   设计稿预览 —— 全部色值/字号/圆角/动效取自仓库真实 token：
+   packages/components/themes/{generator-color,index,cssVariableProvider}.ts
+   apps/site/app/styles/motion.ts
+   字体用系统衬线近似（站点为自托管 Noto Serif/Sans SC）
+   ============================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* 非颜色 token（themes/index.ts） */
+  --space-xs: 8px;  --space-sm: 16px; --space-base: 12px;
+  --space-md: 28px; --space-lg: 36px; --space-xl: 48px;
+  --font-size-xs: 12px;
+  --border-radius-xs: 2px; --border-radius-sm: 4px;
+  --border-radius-base: 8px; --border-radius-md: 12px;
+  --motion-ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-dur-write: 400ms;
+  --transition-fast: 180ms;
+  /* 3D 手势参数（滑杆实时调节，定稿值回填 brief） */
+  --tilt-deg: 12;
+  --lift-z: 28px;
+  --tilt-persp: 700px;
+  --font-sans: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-serif: Georgia, 'Songti SC', SimSun, serif;
+  --font-mono: Consolas, 'Courier New', monospace;
+}
+
+/* ---- 主题 wrapper：每节一套语义变量（与 cssVariableProvider 路由一致） ---- */
+.t-wl { /* wine light */
+  --primary-color: #C94A44; --accent-color: #E3B567;
+  --normal-300: #EBE2D8; --normal-700: #8A6E5C; --normal-900: #2A1E16;
+  --background-100: #FFFBF8; --background-200: #FDF3EC; --background-900: #F5F0EC;
+  --text-primary: #2A1E16; --text-secondary: #8A6E5C; --text-muted: #8A6E5C;
+  --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
+  --elevation-card: 0 20px 40px rgba(0,0,0,.08);
+  --font-size-sm: 13px; --font-size-base: 15px; --font-size-lg: 22px;
+}
+.t-wd { /* wine dark */
+  --primary-color: #E36A64; --accent-color: #E3B567;
+  --normal-300: #5b5b5b; --normal-700: #e8e8e8; --normal-900: #f8f8f8;
+  --background-100: #111111; --background-200: #0f0f0f; --background-900: #2f2a2a;
+  --text-primary: #adadad; --text-secondary: #dcdcdc; --text-muted: #e8e8e8;
+  --elevation-soft: 0 4px 14px rgba(0,0,0,.25);
+  --elevation-card: 0 18px 36px rgba(0,0,0,.45);
+  --font-size-sm: 13px; --font-size-base: 15px; --font-size-lg: 22px;
+}
+.t-pl { /* plain light */
+  --primary-color: #A87348; --accent-color: #C89060;
+  --normal-300: #E8E2D6; --normal-700: #6B5E4E; --normal-900: #2A2218;
+  --background-100: #FFFDF9; --background-200: #F8F3EC; --background-900: #F2EDE4;
+  --text-primary: #2A2218; --text-secondary: #6B5E4E; --text-muted: #9B8D78;
+  --elevation-soft: 0 2px 8px rgba(0,0,0,.04);
+  --elevation-card: 0 4px 16px rgba(0,0,0,.06);
+  --font-size-sm: 15px; --font-size-base: 15px; --font-size-lg: 19px; /* 素雅覆写 */
+}
+.t-pd { /* plain dark */
+  --primary-color: #D4A478; --accent-color: #C89060;
+  --normal-300: rgba(255,255,255,0.14); --normal-700: rgba(255,255,255,0.42); --normal-900: rgba(255,255,255,0.72);
+  --background-100: #1c1814; --background-200: #221c18; --background-900: #0b0908;
+  --text-primary: rgba(255,255,255,0.72);
+  --text-secondary: rgba(245,241,234,0.82);
+  --text-muted: rgba(245,241,234,0.68);
+  --elevation-soft: 0 2px 8px rgba(0,0,0,.22);
+  --elevation-card: 0 4px 16px rgba(0,0,0,.36);
+  --font-size-sm: 15px; --font-size-base: 15px; --font-size-lg: 19px;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #eceae7;
+  color: #2A2218;
+  padding: 40px 24px 80px;
+}
+
+.preview-header { max-width: 1280px; margin: 0 auto 32px; }
+.preview-header h1 { font-family: var(--font-serif); font-size: 26px; font-weight: 700; letter-spacing: 0.02em; }
+.preview-header p  { font-size: 13px; color: #6b5e4e; margin-top: 8px; line-height: 1.8; }
+.ctl-bar {
+  display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+  margin-top: 16px; padding: 14px 18px;
+  background: #fff; border: 1px solid #e5ded3; border-radius: 10px;
+  font-size: 13px; color: #4a3f32;
+}
+.ctl-bar label { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.ctl-bar input[type="range"] { width: 130px; accent-color: #C94A44; cursor: pointer; }
+.ctl-bar output { font-family: var(--font-mono); min-width: 42px; color: #A87348; font-weight: 700; }
+.ctl-hint { font-weight: 400; color: #9b8d78; }
+
+.section {
+  max-width: 1280px; margin: 0 auto 48px;
+  border-radius: 12px; padding: 28px 32px 36px;
+  background: var(--background-900);
+  background-image: linear-gradient(180deg, var(--background-900) 0%,
+    color-mix(in oklab, var(--background-900) 95%, var(--primary-color) 5%) 100%);
+  color: var(--text-primary);
+}
+.section-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.section-title h2 { font-family: var(--font-serif); font-size: 18px; font-weight: 700; }
+.section-title .tag { font-size: 12px; color: var(--text-muted); }
+.section-title .replay {
+  margin-left: auto; font-size: 12px; font-family: var(--font-sans);
+  border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
+  background: transparent; color: var(--text-secondary);
+  padding: 4px 12px; border-radius: 99px; cursor: pointer;
+}
+.section-title .replay:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+.row { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+.stage { display: flex; flex-direction: column; gap: 8px; }
+.stage-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; }
+.stage-label b { color: var(--primary-color); font-weight: 600; }
+
+/* ============ 弹窗 —— 现状（legacy，仅 wine light 展示对比） ============ */
+.dialog.legacy {
+  width: min(760px, 100%);
+  background: var(--background-100);
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 12px 50px rgba(15,23,42,0.2), inset 0 1px 0 rgba(255,255,255,0.5);
+  overflow: hidden;
+}
+.dialog.legacy .dheader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 22px;
+  border-bottom: 1px solid color-mix(in oklab, var(--normal-200, #F8F3EE) 60%, transparent);
+}
+.dialog.legacy .t { font-family: var(--font-serif); font-size: 18px; font-weight: 700; }
+
+/* ============ 弹窗 —— 提案（paper 变体） ============ */
+.dialog.paper {
+  width: min(640px, 100%);
+  background: var(--background-100);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-base);
+  border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
+  box-shadow: var(--elevation-soft);
+  overflow: hidden;
+  font-size: var(--font-size-base);
+}
+.dheader {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-base); padding: 12px 22px;
+}
+.dtitle { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.dtitle .t { font-family: var(--font-serif); font-size: var(--font-size-lg); font-weight: 700; line-height: 1.35; }
+
+/* 钤印：渠道名首字，参照外观入口「墨」印语言 */
+.seal {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
+  border-radius: var(--border-radius-xs);
+  color: var(--primary-color);
+  font-family: var(--font-serif); font-size: 13px; font-weight: 600; line-height: 1;
+}
+
+/* 渐隐墨线：两端透明、中段主色 —— 与导航运笔下划线同源 */
+.ink-divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--primary-color) 45%, var(--normal-300)) 18%,
+    color-mix(in oklab, var(--primary-color) 45%, var(--normal-300)) 82%,
+    transparent 100%);
+}
+
+.dclose {
+  min-width: 44px; min-height: 44px; margin: -6px -10px -6px 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; cursor: pointer;
+  color: var(--text-secondary); font-size: 20px; line-height: 1; border-radius: 8px;
+}
+.dclose:hover { background: var(--background-200); color: var(--text-primary); }
+
+.dbody { padding: 20px 22px 22px; }
+
+/* ---- ContactCard：两栏（左码右文） ---- */
+.ccard { display: flex; flex-direction: column; gap: var(--space-base); }
+.grid { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start; }
+
+.action {
+  position: relative;
+  width: 200px; height: 200px; flex-shrink: 0;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 35%, transparent);
+  background: var(--background-200);
+  border-radius: var(--border-radius-md);
+  cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  /* 3D 手势：CSS 变量驱动（--rx/--ry 由 JS 指针跟踪写入，--ty 由 hover 回退） */
+  transform: translateY(var(--ty, 0px)) perspective(var(--tilt-persp, 700px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 140ms ease-out, box-shadow var(--transition-fast) ease-out;
+  font-family: inherit;
+}
+.action:hover { --ty: -2px; box-shadow: var(--elevation-card); }
+.action:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 4px; }
+
+/* 指针高光：暖金光泽（--accent-color：wine #E3B567 / plain #C89060），
+   奶白纸面与深色纸面皆有对比；纯白光在 wine light 上不可见——已弃 */
+.action::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 38%),
+    color-mix(in oklab, var(--accent-color) 55%, transparent),
+    color-mix(in oklab, var(--accent-color) 18%, transparent) 42%,
+    transparent 62%);
+  opacity: 0; transition: opacity 160ms ease-out; pointer-events: none;
+  /* 高光越过裱框层深，罩全纸面（含浮起的码） */
+  transform: translateZ(calc(var(--lift-z, 28px) + 6px));
+}
+.action:hover::after { opacity: 0.85; }
+
+/* 二维码裱在白边纸上 —— 浮在纸面之上（translateZ 层深） */
+.qr-mat {
+  width: 176px; height: 176px; padding: 8px;
+  background: #fff; border-radius: var(--border-radius-sm);
+  display: flex;
+  transform: translateZ(var(--lift-z, 28px));
+}
+.action.link .ic, .action.link .lb { transform: translateZ(14px); }
+.qr-mat img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.qr-fallback {
+  width: 160px; height: 160px;
+  background:
+    repeating-conic-gradient(#2A1E16 0% 25%, #fff 0% 50%) 0 0/16px 16px;
+  border: 8px solid #fff; outline: 1px solid rgba(0,0,0,0.08);
+}
+
+/* 链接模式（GitHub 等） */
+.action.link { flex-direction: column; gap: var(--space-xs); color: var(--primary-color); text-decoration: none; }
+.action.link .ic { width: 40px; height: 40px; color: var(--primary-color); }
+.action.link .ic svg { width: 100%; height: 100%; }
+.action.link .lb { font-size: var(--font-size-base); font-weight: 600; color: var(--primary-color); }
+
+.info { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; min-width: 0; }
+.ihead { display: flex; align-items: center; gap: var(--space-xs); }
+.logo-mark {
+  width: 40px; height: 25px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid color-mix(in oklab, var(--normal-300) 60%, transparent);
+  border-radius: var(--border-radius-xs);
+  font-family: var(--font-serif); font-size: 11px; letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.nblock { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.name { font-size: var(--font-size-lg); font-weight: 700; line-height: 1.3; }
+.handle { font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--text-muted); letter-spacing: 0.04em; }
+.role { font-size: var(--font-size-base); color: var(--text-secondary); margin-top: 2px; }
+.tagline {
+  font-family: var(--font-serif); font-style: italic;
+  font-size: var(--font-size-base); color: var(--text-muted); line-height: 1.6;
+  margin-top: 2px;
+}
+
+.hints {
+  display: flex; gap: var(--space-base); padding-top: 10px;
+  border-top: 1px solid color-mix(in oklab, var(--normal-300) 25%, transparent);
+}
+.hint { font-size: var(--font-size-xs); color: var(--text-muted); line-height: 1.5; }
+.hint::before { content: '·'; margin-right: 6px; color: color-mix(in oklab, var(--primary-color) 60%, transparent); }
+
+/* ---- 入场动效：write-fade 错峰（0 / 80ms / 160ms） ---- */
+@keyframes write-fade { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0; } }
+.play .wf { animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both; }
+.play .d0 { animation-delay: 0ms; }
+.play .d1 { animation-delay: 80ms; }
+.play .d2 { animation-delay: 160ms; }
+
+/* 弹窗整体入场（沿用 Dialog 既有 spring） */
+@keyframes enter-center {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.enter { animation: enter-center 250ms cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* ---- 移动端 375 底部抽屉 ---- */
+.phone {
+  width: 375px; border-radius: 28px; padding: 10px;
+  background: #1b1917; box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+}
+.phone .screen {
+  border-radius: 20px; overflow: hidden; height: 560px; position: relative;
+  background: var(--background-900);
+  background-image: linear-gradient(180deg, var(--background-900) 0%,
+    color-mix(in oklab, var(--background-900) 95%, var(--primary-color) 5%) 100%);
+}
+.phone .dialog.paper {
+  position: absolute; left: 0; right: 0; bottom: 0; width: 100%;
+  border-radius: 16px 16px 0 0; border-left: none; border-right: none; border-bottom: none;
+}
+@keyframes enter-bottom { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.phone .enter { animation: enter-bottom 300ms cubic-bezier(0.32,0.72,0,1) both; }
+.drag { width: 36px; height: 4px; border-radius: 2px; background: var(--normal-300); margin: 8px auto 4px; flex-shrink: 0; }
+.phone .grid { grid-template-columns: 1fr; justify-items: center; gap: var(--space-xs); }
+.phone .info { align-items: center; text-align: center; padding-top: 0; }
+.phone .dbody { padding: 12px 16px 16px; }
+.phone .hints { flex-direction: column; gap: 4px; }
+.phone .action { width: 184px; height: 184px; }
+.phone .qr-mat { width: 160px; height: 160px; }
+
+/* ---- 钤印字符规则展示 ---- */
+.seal-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+.seal-row .item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+.seal-row .seal { width: 26px; height: 26px; font-size: 15px; }
+
+/* ---- 变更点清单 ---- */
+.deltas { max-width: 1280px; margin: 0 auto 48px; background: #fff; border-radius: 12px; padding: 24px 32px; }
+.deltas h3 { font-family: var(--font-serif); font-size: 16px; margin-bottom: 12px; }
+.deltas li { font-size: 13px; line-height: 2; color: #4a3f32; }
+.deltas code { font-family: var(--font-mono); font-size: 12px; background: #f4f1ec; padding: 1px 6px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; }
+  .action { transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="preview-header">
+  <h1>联系弹窗纸张风精修 · 设计稿预览</h1>
+  <p>
+    变更 <b>20260916-style-contact-dialog-paper</b>（issue #388）· 方案 B：Dialog 增加 paper 变体 + ContactCard 精修。<br>
+    所有颜色 / 字号 / 圆角 / 动效时长均取自仓库真实 token（wine·plain × 亮·暗 四主题）。字体为系统衬线近似，实际站点为自托管 Noto Serif SC。<br>
+    <b>本稿即视觉验收基准</b>：实施阶段以本文件渲染效果为准，滑杆调定的 3D 参数值即定稿值。<br>
+    弹窗行为层（遮罩关闭 / Escape / 44px 触达 / 底部滑入 / 滚动锁定）不变，本稿只呈现视觉层。二维码为大按钮 hover 可见上浮效果。
+  </p>
+  <div class="ctl-bar">
+    <label>最大倾角 <input type="range" id="ctl-tilt" min="0" max="20" step="1" value="12"><output id="out-tilt">12</output>°</label>
+    <label>码面浮起 <input type="range" id="ctl-lift" min="0" max="48" step="2" value="28"><output id="out-lift">28px</output></label>
+    <label>透视强度 <input type="range" id="ctl-persp" min="400" max="1200" step="50" value="700"><output id="out-persp">700px</output></label>
+    <span class="ctl-hint">← 拖动即时生效，把鼠标放到二维码上体验（透视值越小 3D 越强）</span>
+  </div>
+</div>
+
+<!-- ============ 1. Wine Light：现状 vs 提案 ============ -->
+<div class="section t-wl">
+  <div class="section-title">
+    <h2>Wine · Light</h2><span class="tag">主对比区：现状 → 提案（paper 变体）</span>
+    <button class="replay" onclick="replay(this)">↻ 重放入场</button>
+  </div>
+  <div class="row">
+    <div class="stage">
+      <div class="stage-label"><b>现状</b> · 通用 Dialog · 760px · rgba 边框 + 重阴影</div>
+      <div class="dialog legacy">
+        <div class="dheader">
+          <span class="t">WeChat 联系</span>
+          <button class="dclose">×</button>
+        </div>
+        <div class="dbody">
+          <div class="ccard">
+            <div class="grid" style="gap:48px">
+              <button class="action" style="border:1px solid rgba(0,0,0,0.06);border-radius:24px">
+                <span class="qr-mat"><img src="https://cdn.wuh.site/web/wechat.jpg" alt="微信二维码" onerror="qrFallback(this)"></span>
+              </button>
+              <div class="info">
+                <div class="ihead"><span class="logo-mark">wuh</span>
+                  <div class="nblock"><span class="name">stack-wuh</span><span class="handle">shadow_u</span></div>
+                </div>
+                <div class="role">工程化 &amp; 可视化</div>
+                <p class="tagline">代码写诗，工具作画</p>
+              </div>
+            </div>
+            <div class="hints">
+              <span class="hint">扫码即可开启一场 1:1 对话</span>
+              <span class="hint">备注「官网来访」我们会更快相遇</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label"><b>提案</b> · paper 变体 · 640px · 发丝线 + elevation-soft + 渐隐墨线 · <b>hover 二维码体验 3D 手势</b></div>
+      <div class="dialog paper enter">
+        <div class="dheader">
+          <div class="dtitle"><span class="seal" aria-hidden="true">微</span><span class="t">WeChat 联系</span></div>
+          <button class="dclose" aria-label="关闭">×</button>
+        </div>
+        <div class="ink-divider"></div>
+        <div class="dbody">
+          <div class="ccard play">
+            <div class="grid">
+              <button class="action wf d0" aria-label="查看 WeChat 二维码">
+                <span class="qr-mat"><img src="https://cdn.wuh.site/web/wechat.jpg" alt="微信二维码" onerror="qrFallback(this)"></span>
+              </button>
+              <div class="info wf d1">
+                <div class="ihead"><span class="logo-mark">wuh</span>
+                  <div class="nblock"><span class="name">stack-wuh</span><span class="handle">shadow_u</span></div>
+                </div>
+                <div class="role">工程化 &amp; 可视化</div>
+                <p class="tagline">代码写诗，工具作画</p>
+              </div>
+            </div>
+            <div class="hints wf d2">
+              <span class="hint">扫码即可开启一场 1:1 对话</span>
+              <span class="hint">备注「官网来访」我们会更快相遇</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label"><b>提案</b> · 链接模式（GitHub）· 钤印「G」</div>
+      <div class="dialog paper enter">
+        <div class="dheader">
+          <div class="dtitle"><span class="seal" aria-hidden="true">G</span><span class="t">GitHub 联系</span></div>
+          <button class="dclose" aria-label="关闭">×</button>
+        </div>
+        <div class="ink-divider"></div>
+        <div class="dbody">
+          <div class="ccard play">
+            <div class="grid">
+              <a class="action link wf d0" href="#" onclick="return false" aria-label="前往 GitHub 主页">
+                <span class="ic"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+                <span class="lb">前往 GitHub 主页</span>
+              </a>
+              <div class="info wf d1">
+                <div class="ihead"><span class="logo-mark">wuh</span>
+                  <div class="nblock"><span class="name">stack-wuh</span><span class="handle">@stack-wuh</span></div>
+                </div>
+                <div class="role">GitHub</div>
+                <p class="tagline">开源是一种信仰</p>
+              </div>
+            </div>
+            <div class="hints wf d2">
+              <span class="hint">你是什么样的人，就会看到什么样的代码</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:32px">
+    <h2 style="font-size:15px">钤印字符规则</h2>
+    <span class="tag">渠道有通用中文名取首字，纯拉丁名取首字母 · 装饰性（aria-hidden），印框 color-mix(primary 45%)</span>
+  </div>
+  <div class="seal-row">
+    <span class="item"><span class="seal" aria-hidden="true">微</span>WeChat</span>
+    <span class="item"><span class="seal" aria-hidden="true">Q</span>QQ</span>
+    <span class="item"><span class="seal" aria-hidden="true">T</span>Twitter</span>
+    <span class="item"><span class="seal" aria-hidden="true">G</span>GitHub</span>
+    <span class="item"><span class="seal" aria-hidden="true">豆</span>豆瓣</span>
+    <span class="item"><span class="seal" aria-hidden="true">云</span>网易云</span>
+    <span class="item"><span class="seal" aria-hidden="true">D</span>Discord</span>
+  </div>
+</div>
+
+<!-- ============ 2. Wine Dark：桌面 + 移动 ============ -->
+<div class="section t-wd">
+  <div class="section-title">
+    <h2>Wine · Dark</h2><span class="tag">暗色：表面 background-100（#111）· 发丝线 normal-300 反转适配</span>
+    <button class="replay" onclick="replay(this)">↻ 重放入场</button>
+  </div>
+  <div class="row">
+    <div class="stage">
+      <div class="stage-label"><b>提案</b> · 桌面 · paper 变体</div>
+      <div class="dialog paper enter" style="width:520px">
+        <div class="dheader">
+          <div class="dtitle"><span class="seal" aria-hidden="true">微</span><span class="t">WeChat 联系</span></div>
+          <button class="dclose" aria-label="关闭">×</button>
+        </div>
+        <div class="ink-divider"></div>
+        <div class="dbody">
+          <div class="ccard play">
+            <div class="grid" style="grid-template-columns:auto 1fr;gap:24px">
+              <button class="action wf d0" aria-label="查看 WeChat 二维码">
+                <span class="qr-mat"><img src="https://cdn.wuh.site/web/wechat.jpg" alt="微信二维码" onerror="qrFallback(this)"></span>
+              </button>
+              <div class="info wf d1">
+                <div class="ihead"><span class="logo-mark">wuh</span>
+                  <div class="nblock"><span class="name">stack-wuh</span><span class="handle">shadow_u</span></div>
+                </div>
+                <div class="role">工程化 &amp; 可视化</div>
+                <p class="tagline">代码写诗，工具作画</p>
+              </div>
+            </div>
+            <div class="hints wf d2">
+              <span class="hint">扫码即可开启一场 1:1 对话</span>
+              <span class="hint">备注「官网来访」我们会更快相遇</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label"><b>提案</b> · 移动 375 · 底部滑入（≤640 触发，卡片同轴堆叠）</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="dialog paper enter">
+            <div class="drag"></div>
+            <div class="dheader">
+              <div class="dtitle"><span class="seal" aria-hidden="true">微</span><span class="t">WeChat 联系</span></div>
+              <button class="dclose" aria-label="关闭">×</button>
+            </div>
+            <div class="ink-divider"></div>
+            <div class="dbody">
+              <div class="ccard play">
+                <div class="grid">
+                  <button class="action wf d0" aria-label="查看 WeChat 二维码">
+                    <span class="qr-mat"><img src="https://cdn.wuh.site/web/wechat.jpg" alt="微信二维码" onerror="qrFallback(this)"></span>
+                  </button>
+                  <div class="info wf d1">
+                    <div class="ihead"><span class="logo-mark">wuh</span>
+                      <div class="nblock"><span class="name">stack-wuh</span><span class="handle">shadow_u</span></div>
+                    </div>
+                    <div class="role">工程化 &amp; 可视化</div>
+                    <p class="tagline">代码写诗，工具作画</p>
+                  </div>
+                </div>
+                <div class="hints wf d2">
+                  <span class="hint">扫码即可开启一场 1:1 对话</span>
+                  <span class="hint">备注「官网来访」我们会更快相遇</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3 & 4. Plain Light / Plain Dark ============ -->
+<div class="row" style="max-width:1280px;margin:0 auto 48px;align-items:stretch">
+  <div class="section t-pl" style="margin:0;flex:1;min-width:480px">
+    <div class="section-title">
+      <h2>Plain · Light</h2><span class="tag">素雅：主色 primary-600 · 字号覆写 lg=19</span>
+      <button class="replay" onclick="replay(this)">↻ 重放</button>
+    </div>
+    <div class="dialog paper enter" style="width:100%;max-width:520px">
+      <div class="dheader">
+        <div class="dtitle"><span class="seal" aria-hidden="true">云</span><span class="t">网易云 联系</span></div>
+        <button class="dclose" aria-label="关闭">×</button>
+      </div>
+      <div class="ink-divider"></div>
+      <div class="dbody">
+        <div class="ccard play">
+          <div class="grid" style="gap:24px">
+            <a class="action link wf d0" href="#" onclick="return false" aria-label="前往网易云主页">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6Z"/></svg></span>
+              <span class="lb">前往网易云主页</span>
+            </a>
+            <div class="info wf d1">
+              <div class="ihead"><span class="logo-mark">wuh</span>
+                <div class="nblock"><span class="name">stack-wuh</span><span class="handle">wuh131420</span></div>
+              </div>
+              <div class="role">网易云音乐</div>
+              <p class="tagline">算法推荐不了一颗有趣的灵魂</p>
+            </div>
+          </div>
+          <div class="hints wf d2"><span class="hint">用耳朵投票，每一首都算数</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section t-pd" style="margin:0;flex:1;min-width:480px">
+    <div class="section-title">
+      <h2>Plain · Dark</h2><span class="tag">素雅暗：normal 系为 rgba 白阶 · 表面 #1c1814</span>
+      <button class="replay" onclick="replay(this)">↻ 重放</button>
+    </div>
+    <div class="dialog paper enter" style="width:100%;max-width:520px">
+      <div class="dheader">
+        <div class="dtitle"><span class="seal" aria-hidden="true">豆</span><span class="t">豆瓣 联系</span></div>
+        <button class="dclose" aria-label="关闭">×</button>
+      </div>
+      <div class="ink-divider"></div>
+      <div class="dbody">
+        <div class="ccard play">
+          <div class="grid" style="gap:24px">
+            <a class="action link wf d0" href="#" onclick="return false" aria-label="前往豆瓣主页">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h3.2l.7 3H16a4 4 0 0 1 0 8h-1.1l.5 2H20v3H4.9L4 4Zm4.4 6 1 4.9H16a1.85 1.85 0 0 0 0-3.7H9.4l-.5-1.2H8.4Z"/></svg></span>
+              <span class="lb">前往豆瓣主页</span>
+            </a>
+            <div class="info wf d1">
+              <div class="ihead"><span class="logo-mark">wuh</span>
+                <div class="nblock"><span class="name">wuh.site</span><span class="handle">wuh-site</span></div>
+              </div>
+              <div class="role">豆瓣</div>
+              <p class="tagline">书影音标记，精神自留地</p>
+            </div>
+          </div>
+          <div class="hints wf d2"><span class="hint">标记过的书影音，构成了一个人的轮廓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 变更点清单 ============ -->
+<div class="deltas">
+  <h3>提案相对现状的具体变更（视觉层）</h3>
+  <ol>
+    <li><b>表面</b>：圆角 16px 硬编码 → <code>--border-radius-base</code>(8px)；rgba 边框 → 发丝线 <code>color-mix(normal-300 45%)</code>；重阴影 <code>0 12px 50px</code> → <code>--elevation-soft</code>（与主题选择弹层同语言）</li>
+    <li><b>宽度</b>：760px → <code>min(640px, 100vw-32px)</code>，降低右栏空旷感；两栏 gap 48 → 28（md cap）</li>
+    <li><b>Header</b>：通用发丝分割线 → 渐隐墨线（两端透明、中段 <code>color-mix(primary 45%)</code>，与导航运笔下划线同源）；标题前加渠道钤印（22×22 印框、衬线首字、装饰性 aria-hidden）</li>
+    <li><b>大按钮</b>：圆角 24px → 12px（md）；二维码加白边裱框（8px paper mat）；hover 上浮保留，过渡统一 180ms ease-out</li>
+    <li><b>信息区</b>：handle 改等宽字体；层级间距收紧（6px 节奏）；logo 占位为示意（实际用站内 IconLogo）</li>
+    <li><b>Hints</b>：墨点用 <code>color-mix(primary 60%)</code>（现状为 40% 灰点）</li>
+    <li><b>动效</b>：内容三段 write-fade 错峰入场（大按钮 0ms → 信息 80ms → hints 160ms，400ms ease-out-soft）；<code>prefers-reduced-motion</code> 停用</li>
+    <li><b>响应式</b>：560px 裸断点 → <code>BREAKPOINTS.mobile</code>(640)，与弹窗底部滑入同轴；移动端单列居中、二维码 184、hints 纵排</li>
+    <li><b>3D 手势（本次追加）</b>：二维码大按钮指针跟踪倾斜——<code>perspective(700px)</code> + <code>rotateX/rotateY ±12°</code> 跟随指针（140ms ease-out 惯性跟手），<code>transform-style: preserve-3d</code> 下白边裱框 <code>translateZ(28px)</code> 浮于纸面、纸面泛<b>暖金（--accent-color）</b>径向高光随指针移动并越过裱框罩全纸面（纯白高光在 wine light 奶白纸面上不可见，已换 accent 光泽）；触屏（<code>hover: none</code>）与 <code>prefers-reduced-motion</code> 下完全停用，不影响点击语义（二维码仍进预览、链接仍跳转）；实现走 CSS 变量直写 DOM，避免 React 重渲。<b>倾角 / 浮起 / 透视三参数以顶栏滑杆定稿值为准（本稿即视觉验收基准）</b></li>
+  </ol>
+</div>
+
+<script>
+function replay(btn) {
+  var section = btn.closest('.section');
+  section.querySelectorAll('.play').forEach(function (el) {
+    el.classList.remove('play');
+    void el.offsetWidth; /* force reflow */
+    el.classList.add('play');
+  });
+  var dlg = section.querySelector('.dialog.enter');
+  if (dlg) {
+    dlg.classList.remove('enter'); void dlg.offsetWidth; dlg.classList.add('enter');
+  }
+}
+function qrFallback(img) {
+  var d = document.createElement('div');
+  d.className = 'qr-fallback';
+  img.replaceWith(d);
+}
+
+/* 3D 手势：指针跟踪倾斜——纸张随指尖轻抚而倾
+   参数（倾角/浮起/透视）由顶栏滑杆实时写入 :root CSS 变量
+   仅精确指针设备启用；touch 与 prefers-reduced-motion 完全停用 */
+(function () {
+  var root = document.documentElement;
+
+  /* 滑杆 ↔ CSS 变量绑定（localStorage 持久化，刷新不丢定稿值） */
+  function bind(id, varName, unit, outId) {
+    var el = document.getElementById(id);
+    var out = document.getElementById(outId);
+    var key = 'contact-3d-preview:' + varName;
+    try {
+      var saved = localStorage.getItem(key);
+      if (saved !== null) el.value = saved;
+    } catch (e) {}
+    function sync() {
+      root.style.setProperty(varName, el.value + (unit || ''));
+      if (out) out.textContent = el.value + (unit || '');
+      try { localStorage.setItem(key, el.value); } catch (e) {}
+    }
+    el.addEventListener('input', sync);
+    sync();
+  }
+  bind('ctl-tilt', '--tilt-deg', '', 'out-tilt');
+  bind('ctl-lift', '--lift-z', 'px', 'out-lift');
+  bind('ctl-persp', '--tilt-persp', 'px', 'out-persp');
+
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function tiltDeg() {
+    var v = parseFloat(getComputedStyle(root).getPropertyValue('--tilt-deg'));
+    return isNaN(v) ? 12 : v;
+  }
+  document.querySelectorAll('.action').forEach(function (el) {
+    el.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
+      var r = el.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width;
+      var py = (e.clientY - r.top) / r.height;
+      var max = tiltDeg();
+      var rx = (0.5 - py) * max * 2;
+      var ry = (px - 0.5) * max * 2;
+      el.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+      el.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      el.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+      el.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+    });
+    el.addEventListener('pointerleave', function () {
+      el.style.setProperty('--rx', '0deg');
+      el.style.setProperty('--ry', '0deg');
+    });
+  });
+})();
+</script>
+</body>
+</html>

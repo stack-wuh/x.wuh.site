@@ -26,4 +26,6 @@ export interface DialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   zIndex?: number
   hideCloseButton?: boolean
   disableAnimation?: boolean
+  /** 'paper' = 纸张风：发丝线边框 + soft 阴影 + base 圆角 + Header 渐隐墨线；默认 'default' 零变更 */
+  variant?: 'default' | 'paper'
 }

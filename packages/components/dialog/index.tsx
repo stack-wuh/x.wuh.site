@@ -45,6 +45,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     zIndex = 1200,
     hideCloseButton = false,
     disableAnimation = false,
+    variant = 'default',
     className,
     style,
     openDialog: _openDialog,
@@ -189,6 +190,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
         $height={height}
         $disableAnimation={disableAnimation}
         $closing={closing}
+        $variant={variant}
         className={className}
         style={style}
         onAnimationEnd={handleAnimationEnd}
@@ -196,7 +198,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
       >
         {derivedPlacement === 'bottom' && !fullScreen && <DragHandle />}
         {title && (
-          <DialogHeader>
+          <DialogHeader $variant={variant}>
             <DialogHeaderContent>
               <DialogTitle id={titleId}>{title}</DialogTitle>
               {subtitle && <DialogSubtitle>{subtitle}</DialogSubtitle>}
@@ -208,7 +210,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
             )}
           </DialogHeader>
         )}
-        <DialogBody id={descriptionId}>{children}</DialogBody>
+        <DialogBody id={descriptionId} $variant={variant}>{children}</DialogBody>
         {resolvedFooter && <DialogFooter>{resolvedFooter}</DialogFooter>}
       </DialogSurface>
     </Barrier>
