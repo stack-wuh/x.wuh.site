@@ -95,6 +95,7 @@
 
 ## 结果
 
+- 交付发布: PR #389 merged（`6f0a09c`）后发布 GitHub Release [v1.4.25](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.25) @ `3f9653e`（手动 `gh release create --title "v1.4.25 联系弹窗纸张风精修 + 二维码 3D 指针手势" --notes-file <结构化 changelog> --target <sha>`），CI-CD release run `35095829593` 全 7 jobs success（quality-gate → prepare → prepare-deps → build-next/build-nest → staging-test ✓48s → switch-traffic ✓1m3s）。**该步骤初版 shadow-dev 工作流未覆盖、由用户指出后补执行**；工作流已在源仓库为 release 技能补「交付发布（项目条件性）」步骤，本记录同时作为 build-config.md 发布段更新的 source 锚点
 - 实际耗时: 2026-09-16（propose→设计稿对齐→实施→验证同日完成）
 - 验证:
   - 守卫测试：`packages/components/dialog/index.test.mjs` 8/8 绿（variant 契约 4 + 既有结构/行为约束 4）；`apps/site/test/contact-dialog-paper.test.mjs` 12/12 绿（paper 挂载/钤印/断点/rgba 禁令/错峰/3D 契约/降级/渠道切换重挂/handle 等宽/hints 墨点）；`pnpm exec tsc --noEmit` 干净

@@ -81,6 +81,11 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 - 小步快跑，优先多次小 PR
 - 使用 conventional commits（commitlint 强制）
 
+### 发布与交付
+- **PR merged ≠ 已部署**：GitHub Actions 部署链由 GitHub Release 发布触发，push main 只跑 quality-gate
+- 每次 change 合并后必须按 `shadow-docs/knowledge/build-config.md`「发布流程」段发布 Release（手动 `gh release create v1.4.x`，patch 递增），并等待部署流水线全绿后才算交付
+- 走 shadow-dev 工作流时，发布属 release 阶段第 4 步「交付发布」，archive 之前部署必须已验证
+
 ## 组件库清单
 
 ### 已实现组件
