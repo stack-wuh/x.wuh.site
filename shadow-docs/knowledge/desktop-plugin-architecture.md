@@ -1,13 +1,14 @@
 ---
 title: 桌面端插件系统架构
 domain: desktop
-keywords: [插件系统, plugin, manifest, 沙箱 iframe, broker, session, 权限词表, 贡献点, 渲染管线, publisher 桥接, plugin-sdk]
+keywords: [插件系统, plugin, manifest, 沙箱 iframe, broker, session, 权限词表, 贡献点, 渲染管线, publisher 桥接, plugin-sdk, float 浮窗]
 scope:
   - apps/desktop
 status: active
 source:
-  - changes/20260915-feature-desktop-plugin-system/brief.md
-verified: 2026-09-15
+  - changes/archive/20260915-feature-desktop-plugin-system/brief.md
+  - apps/desktop/shadow-docs/changes/20260918-feature-shell-float-layer/brief.md
+verified: 2026-09-20
 ---
 
 # 桌面端插件系统架构
@@ -18,7 +19,7 @@ verified: 2026-09-15
 
 信任链：插件逻辑与 UI 一律运行在 `sandbox="allow-scripts"` 的 iframe（不透明源，无 preload/node/宿主 DOM 访问），资源经主进程 `plugin://<id>/` 协议下发（`@core/sdk.js`、`@core/logic-host.html` 为协议合成的虚拟文件，SDK 源码字符串编入主进程 bundle）。host（核心渲染层代码）逐帧建立 MessagePort 绑定身份，能力调用按 service 分流：`cap` → 主进程 broker（session→manifest 权限裁决后复用 `ipc.ts` 的 `implement()` 能力表），`doc`/`render`/`ui` → host 直服务（同样先查权限）。sessionId 由主进程签发、只在 host 内存流转，绝不下发给插件帧；`window.api`（完整 DesktopApi）降级为宿主自用。
 
-能力白名单 `CAPABILITY_METHODS` 默认拒绝：不在表内的方法（setGithubToken、uploadImage、openWorkspace 等）对插件永久不可见；broker 对能力实现的报错做 token 值兜底脱敏。贡献点首期收敛为四类：`views`（sidebar/preview 区域 + 图标白名单）、`renderRules`（异步 RPC middleware，单规则 2s 超时跳过）、`documentHooks`（store 的 open/save/changed/closed 事件广播）、`publishers`（manifest 声明 → 主进程注册表桥接 → 派发回插件逻辑帧执行）。渲染管线基础 markdown-it 实例保留在 host（可信核心代码），frontmatter 剥离与相对图片 → local-resource 重写由管线完成。
+能力白名单 `CAPABILITY_METHODS` 默认拒绝：不在表内的方法（setGithubToken、uploadImage、openWorkspace 等）对插件永久不可见；broker 对能力实现的报错做 token 值兜底脱敏。贡献点首期收敛为四类：`views`（sidebar/float 区域 + 图标白名单；preview 固定分栏已于 2026-09-20 泛化为 float 浮窗，经壳层 FloatLayer 按需唤起）、`renderRules`（异步 RPC middleware，单规则 2s 超时跳过）、`documentHooks`（store 的 open/save/changed/closed 事件广播）、`publishers`（manifest 声明 → 主进程注册表桥接 → 派发回插件逻辑帧执行）。渲染管线基础 markdown-it 实例保留在 host（可信核心代码），frontmatter 剥离与相对图片 → local-resource 重写由管线完成。
 
 官方参考插件（`plugins/` 下 preview-markdown、git-history、github-issues、frontmatter）与第三方同约束：纯静态资产、不消费宿主组件、样式仅用注入的主题 token 变量、第三方依赖自 vendor（js-yaml UMD）。
 
