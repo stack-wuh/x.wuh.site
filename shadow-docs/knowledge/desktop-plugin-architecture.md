@@ -1,14 +1,15 @@
 ---
 title: 桌面端插件系统架构
 domain: desktop
-keywords: [插件系统, plugin, manifest, 沙箱 iframe, broker, session, 权限词表, 贡献点, 渲染管线, publisher 桥接, plugin-sdk, float 浮窗]
+keywords: [插件系统, plugin, manifest, 沙箱 iframe, broker, session, 权限词表, 贡献点, 渲染管线, publisher 桥接, plugin-sdk, float 浮窗, 批准 approvals, 插件管理]
 scope:
   - apps/desktop
 status: active
 source:
   - changes/archive/20260915-feature-desktop-plugin-system/brief.md
-  - apps/desktop/shadow-docs/changes/20260918-feature-shell-float-layer/brief.md
-verified: 2026-09-20
+  - apps/desktop/shadow-docs/changes/archive/20260918-feature-shell-float-layer/brief.md
+  - apps/desktop/shadow-docs/changes/archive/20260920-feature-plugin-manager/brief.md
+verified: 2026-09-21
 ---
 
 # 桌面端插件系统架构
@@ -19,7 +20,9 @@ verified: 2026-09-20
 
 信任链：插件逻辑与 UI 一律运行在 `sandbox="allow-scripts"` 的 iframe（不透明源，无 preload/node/宿主 DOM 访问），资源经主进程 `plugin://<id>/` 协议下发（`@core/sdk.js`、`@core/logic-host.html` 为协议合成的虚拟文件，SDK 源码字符串编入主进程 bundle）。host（核心渲染层代码）逐帧建立 MessagePort 绑定身份，能力调用按 service 分流：`cap` → 主进程 broker（session→manifest 权限裁决后复用 `ipc.ts` 的 `implement()` 能力表），`doc`/`render`/`ui` → host 直服务（同样先查权限）。sessionId 由主进程签发、只在 host 内存流转，绝不下发给插件帧；`window.api`（完整 DesktopApi）降级为宿主自用。
 
-能力白名单 `CAPABILITY_METHODS` 默认拒绝：不在表内的方法（setGithubToken、uploadImage、openWorkspace 等）对插件永久不可见；broker 对能力实现的报错做 token 值兜底脱敏。贡献点首期收敛为四类：`views`（sidebar/float 区域 + 图标白名单；preview 固定分栏已于 2026-09-20 泛化为 float 浮窗，经壳层 FloatLayer 按需唤起）、`renderRules`（异步 RPC middleware，单规则 2s 超时跳过）、`documentHooks`（store 的 open/save/changed/closed 事件广播）、`publishers`（manifest 声明 → 主进程注册表桥接 → 派发回插件逻辑帧执行）。渲染管线基础 markdown-it 实例保留在 host（可信核心代码），frontmatter 剥离与相对图片 → local-resource 重写由管线完成。
+能力白名单 `CAPABILITY_METHODS` 默认拒绝：不在表内的方法（setGithubToken、uploadImage、openWorkspace 等）对插件永久不可见；broker 对能力实现的报错做 token 值兜底脱敏。贡献点首期收敛为四类：`views`（main/float 区域 + 图标白名单——双栏布局 2026-09-21 起 sidebar 废弃、插件 main 视图直进右栏路由，preview 固定分栏已于 2026-09-20 泛化为 float 浮窗经 FloatLayer 按需唤起）、`renderRules`（异步 RPC middleware，单规则 2s 超时跳过）、`documentHooks`（store 的 open/save/changed/closed 事件广播）、`publishers`（manifest 声明 → 主进程注册表桥接 → 派发回插件逻辑帧执行）。渲染管线基础 markdown-it 实例保留在 host（可信核心代码），frontmatter 剥离与相对图片 → local-resource 重写由管线完成。
+
+**权限批准模型（2026-09-21 落地）**：`plugin-state.json` 增 `approvals` 段（插件 id → 批准时 manifest 权限快照）；纯函数 `resolveApproval` 判定三态 `approved/pending/changed`（快照与当前 manifest 权限排序去重比较），**有效启用 = 用户未禁用 且 批准有效**——broker 会话、逻辑帧、publisher 桥接、渲染层视图列表全部自动继承该语义。启用 pending/changed 插件必须携带与 manifest 完全一致的权限数组（`plugin:setEnabled` 三参，主进程校验），批准时机由壳层管理入口（设置页插件区块）弹窗承载；manifest 权限变更自动落 `changed` 待重批；禁用不撤销批准记录。
 
 官方参考插件（`plugins/` 下 preview-markdown、git-history、github-issues、frontmatter）与第三方同约束：纯静态资产、不消费宿主组件、样式仅用注入的主题 token 变量、第三方依赖自 vendor（js-yaml UMD）。
 
@@ -33,7 +36,7 @@ verified: 2026-09-20
 
 ## 适用边界
 
-只约束 `apps/desktop` 的插件机制与其上的官方插件；站点 web 端与此无关。市场、签名、审核、分发链路尚未实现（非目标期），权限批准目前是 manifest 声明即生效（用户确认弹窗后置）。utilityProcess 双进程运行时（方案 C）是契约兼容的演进方向，届时只换运行时。
+只约束 `apps/desktop` 的插件机制与其上的官方插件；站点 web 端与此无关。市场、签名、审核、分发与本地插件安装/卸载链路尚未实现（非目标期）；权限批准已落地为快照模型（见上），管理入口为设置页插件区块。utilityProcess 双进程运行时（方案 C）是契约兼容的演进方向，届时只换运行时。
 
 ## 验证方式
 
