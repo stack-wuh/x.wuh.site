@@ -9,7 +9,8 @@ source:
   - changes/20260913-feature-desktop-markdown-editor/brief.md
   - changes/20260914-style-desktop-ui-redesign/brief.md
   - changes/20260915-feature-desktop-plugin-system/brief.md
-verified: 2026-09-15
+  - apps/desktop 仓库 shadow-docs/changes/20260922-feature-user-center-github-oauth/brief.md（desktop 已为独立子仓库，跨仓溯源）
+verified: 2026-09-22
 ---
 
 # Desktop 应用架构
@@ -18,7 +19,7 @@ verified: 2026-09-15
 
 `apps/desktop` 为独立仓库 `stack-wuh/wuh.site.desktop`（public, main），以 git 子模块嵌入父仓库，与 `apps/blog` 同模式：pnpm workspace 排除（`!apps/desktop`）、子仓库独立 lockfile（`pnpm install --ignore-workspace`）、父仓库仅维护子模块指针。
 
-进程安全边界：渲染进程 `contextIsolation` 开启、无 nodeIntegration；全部 fs/git/网络操作收敛主进程，经 `window.api`（shared/types.ts 的 DesktopApi 契约）类型安全 IPC 暴露——该全量面仅宿主自用，插件经主进程 broker 按 session+manifest 权限裁决的白名单能力访问（见插件系统架构卡片）。GitHub PAT 用 Electron safeStorage 加密存系统钥匙串；git push 凭证以 `https://x-access-token:<token>@...` 内存注入、报错脱敏，不落仓库配置。预览本地图片走自定义 `local-resource:` 协议（dev/prod 一致，不关 webSecurity；已注册 standard+secure+cors 以支持插件沙箱帧加载）。
+进程安全边界：渲染进程 `contextIsolation` 开启、无 nodeIntegration；全部 fs/git/网络操作收敛主进程，经 `window.api`（shared/types.ts 的 DesktopApi 契约）类型安全 IPC 暴露——该全量面仅宿主自用，插件经主进程 broker 按 session+manifest 权限裁决的白名单能力访问（见插件系统架构卡片）。GitHub 凭证（2026-09-22 起两种来源：OAuth **Device Flow** 授权 token 或手动粘贴 PAT）以 Electron safeStorage 加密存 `userData/gh-token.bin`，密文为 JSON `{kind: 'oauth'|'pat', token}`，旧版裸 token 密文兼容为 pat；Device Flow 主进程直连 `github.com/login/device/code` 与 access_token 轮询端点（内嵌公开 client_id、无 client_secret、无本地回调服务器，token 槽位同一份、git push 凭证注入链路不分叉）。git push 凭证以 `https://x-access-token:<token>@...` 内存注入、报错脱敏，不落仓库配置。预览本地图片走自定义 `local-resource:` 协议（dev/prod 一致，不关 webSecurity；已注册 standard+secure+cors 以支持插件沙箱帧加载）。
 
 回退语义（revert-only）：未 push 的单文件改动用 checkout 恢复（有上游时自 upstream，无上游仅清脏改动）；已 push 的提交一律 `git revert` 生成反向提交抵消，禁止改写远端历史；无上游且存在未推送提交时回退明确阻塞并引导历史面板。
 
