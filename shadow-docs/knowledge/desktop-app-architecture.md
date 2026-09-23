@@ -10,7 +10,8 @@ source:
   - changes/20260914-style-desktop-ui-redesign/brief.md
   - changes/20260915-feature-desktop-plugin-system/brief.md
   - apps/desktop 仓库 shadow-docs/changes/20260922-feature-user-center-github-oauth/brief.md（desktop 已为独立子仓库，跨仓溯源）
-verified: 2026-09-22
+  - apps/desktop/shadow-docs/changes/20260923-test-dom-render-guard/brief.md
+verified: 2026-09-23
 ---
 
 # Desktop 应用架构
@@ -37,7 +38,11 @@ verified: 2026-09-22
 
 ## 验证方式
 
-检查 apps/desktop 的 electron.vite/ipc/credentials/gitRevert/tokens 实现；运行 desktop 内 vitest 与双侧 tsc；electron-builder mac dir 打包并启动验证。
+检查 apps/desktop 的 electron.vite/ipc/credentials/gitRevert/tokens 实现；运行 desktop 内 vitest 与三套 tsc（`npm run typecheck` = node / next / tests）；electron-builder mac dir 打包并启动验证。
+
+**DOM 渲染测试（20260923-test-dom-render-guard 起）**：vitest 默认 node 环境（纯逻辑测试原速），DOM 渲染测试经文件头 `// @vitest-environment happy-dom` 按文件启用（happy-dom + @testing-library/react）；类型检查按环境分三套 tsconfig——`tsconfig.node.json`（主进程，**显式排除 DOM 测试以保住「主进程无 DOM」边界**）、`tsconfig.next.json`（渲染层）、`tsconfig.tests.json`（DOM + jsx，含 `lib/globals.d.ts` 的 window.api 声明）。渲染冒烟测试（`tests/capsule-render.test.tsx`）断言**渲染期零 React 告警**（非法 DOM 嵌套/无效 props/缺失 key 均经 console.error 报出——20260923-fix-capsule-doc-card-nesting 的 button 嵌套即此类）与 DOM 结构约束；渲染类缺陷的验收必须跑 DOM 用例，不能只看类型检查与源码扫描。
+
+另（styled-components 约束，20260923-test-dom-render-guard 实测）：keyframes 插值须经 `css\`\`` 包裹的块内使用；插进未 tag 的字符串会告警且样式注入不可靠，直接在 styled 模板内写 `animation: ${keyframes}` 才是合法用法。
 
 ## 关联知识
 
