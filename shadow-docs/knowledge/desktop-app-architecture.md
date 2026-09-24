@@ -1,7 +1,7 @@
 ---
 title: Desktop 应用架构
 domain: desktop
-keywords: [Electron, 桌面端, 子模块, 设计同源, token 快照, lucide, IPC, safeStorage, revert]
+keywords: [Electron, 桌面端, 子模块, 设计同源, token 快照, lucide, IPC, safeStorage, revert, 草稿箱]
 scope:
   - apps/desktop
 status: active
@@ -11,7 +11,8 @@ source:
   - changes/20260915-feature-desktop-plugin-system/brief.md
   - apps/desktop 仓库 shadow-docs/changes/20260922-feature-user-center-github-oauth/brief.md（desktop 已为独立子仓库，跨仓溯源）
   - apps/desktop/shadow-docs/changes/20260923-test-dom-render-guard/brief.md
-verified: 2026-09-23
+  - apps/desktop/shadow-docs/changes/20260924-feature-editor-simplify-draft-box/brief.md
+verified: 2026-09-24
 ---
 
 # Desktop 应用架构
@@ -43,6 +44,8 @@ verified: 2026-09-23
 **DOM 渲染测试（20260923-test-dom-render-guard 起）**：vitest 默认 node 环境（纯逻辑测试原速），DOM 渲染测试经文件头 `// @vitest-environment happy-dom` 按文件启用（happy-dom + @testing-library/react）；类型检查按环境分三套 tsconfig——`tsconfig.node.json`（主进程，**显式排除 DOM 测试以保住「主进程无 DOM」边界**）、`tsconfig.next.json`（渲染层）、`tsconfig.tests.json`（DOM + jsx，含 `lib/globals.d.ts` 的 window.api 声明）。渲染冒烟测试（`tests/capsule-render.test.tsx`）断言**渲染期零 React 告警**（非法 DOM 嵌套/无效 props/缺失 key 均经 console.error 报出——20260923-fix-capsule-doc-card-nesting 的 button 嵌套即此类）与 DOM 结构约束；渲染类缺陷的验收必须跑 DOM 用例，不能只看类型检查与源码扫描。
 
 另（styled-components 约束，20260923-test-dom-render-guard 实测）：keyframes 插值须经 `css\`\`` 包裹的块内使用；插进未 tag 的字符串会告警且样式注入不可靠，直接在 styled 模板内写 `animation: ${keyframes}` 才是合法用法。
+
+**草稿箱与「先写后存」（20260924-feature-editor-simplify-draft-box 起）**：草稿为文档级内容，落主进程仓 `userData/drafts/<id>.md` + `index.json` 元数据（标题/摘要为写盘时物化的派生结果，列表零正文读取），经 `DesktopApi` 的 `drafts.list/save/remove/read` 四通道访问，主进程模块 dir 注入式设计（node 测试指 tmp，不触碰 electron）。交互约束：草稿只覆盖 `activePath == null` 的新草稿会话（归属 activeDraftId 收敛在 workspaceStore，打开文档/新建/关闭/切工作区均清除）；输入经 doc.changed 事件 800ms 防抖暂存；「另存为」到工作区成功后消费对应草稿；首页面板撤除 Clone 表单与渲染模式分段控件（默认即时渲染）——`cloneWorkspace` IPC 全链保留仅 UI 暂不暴露，渲染模式切换仅存于胶囊高级入口。
 
 ## 关联知识
 
