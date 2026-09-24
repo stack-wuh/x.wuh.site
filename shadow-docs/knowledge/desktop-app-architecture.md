@@ -12,6 +12,7 @@ source:
   - apps/desktop 仓库 shadow-docs/changes/20260922-feature-user-center-github-oauth/brief.md（desktop 已为独立子仓库，跨仓溯源）
   - apps/desktop/shadow-docs/changes/20260923-test-dom-render-guard/brief.md
   - apps/desktop/shadow-docs/changes/20260924-feature-editor-simplify-draft-box/brief.md
+  - apps/desktop/shadow-docs/changes/20260924-fix-drafts-error-visibility/brief.md
 verified: 2026-09-24
 ---
 
@@ -46,6 +47,8 @@ verified: 2026-09-24
 另（styled-components 约束，20260923-test-dom-render-guard 实测）：keyframes 插值须经 `css\`\`` 包裹的块内使用；插进未 tag 的字符串会告警且样式注入不可靠，直接在 styled 模板内写 `animation: ${keyframes}` 才是合法用法。
 
 **草稿箱与「先写后存」（20260924-feature-editor-simplify-draft-box 起）**：草稿为文档级内容，落主进程仓 `userData/drafts/<id>.md` + `index.json` 元数据（标题/摘要为写盘时物化的派生结果，列表零正文读取），经 `DesktopApi` 的 `drafts.list/save/remove/read` 四通道访问，主进程模块 dir 注入式设计（node 测试指 tmp，不触碰 electron）。交互约束：草稿只覆盖 `activePath == null` 的新草稿会话（归属 activeDraftId 收敛在 workspaceStore，打开文档/新建/关闭/切工作区均清除）；输入经 doc.changed 事件 800ms 防抖暂存；「另存为」到工作区成功后消费对应草稿；首页面板撤除 Clone 表单与渲染模式分段控件（默认即时渲染）——`cloneWorkspace` IPC 全链保留仅 UI 暂不暴露，渲染模式切换仅存于胶囊高级入口。
+
+**dev 进程版本错位排障（20260924-fix-drafts-error-visibility 实测）**：electron-vite dev 的 main/preload 仅在启动时构建一次、渲染层（Next dev）按需热编译——跨进程新增 IPC 后不重启 dev 的实例会出现「渲染层新代码调用旧 preload 上不存在的方法」，同步 TypeError 逃逸 promise 链且无任何可见错误。处置：重启 dev 重建 main/preload；防御约定：渲染层新增 IPC 的调用方须经防御取用器检查方法存在性并 console.warn 一次性提示（见 lib/drafts.ts draftsApi），禁止静默降级。
 
 ## 关联知识
 
