@@ -4,7 +4,7 @@
   "name": "20260928-feature-music-player",
   "type": "feature",
   "scope": "apps/server,apps/site,packages/components",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "feature/20260928-feature-music-player",
   "files": [
@@ -37,8 +37,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "99ec60d99cb38178574fa068296056bf300401c3",
-    "planHash": "bc5d0e3b92f2c705f761a5add84304c29c00752ebf266ae2dcc2fe63c52e9afa",
+    "checkpoint": "041baa51b26416702050313551444e2bb3335cc7",
+    "planHash": "466feaf43eb1bf88593668ccd2d38035baf93017576c1a407bb343cf5f2229e2",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
