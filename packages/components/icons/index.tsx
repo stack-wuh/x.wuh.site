@@ -39,7 +39,17 @@ export {
   ChevronRight as IconChevronRight,
   RotateCw as IconRotate,
   EllipsisVertical as IconMore,
-  Paperclip as IconPaperclip
+  Paperclip as IconPaperclip,
+  Play as IconPlay,
+  Pause as IconPause,
+  SkipBack as IconSkipBack,
+  SkipForward as IconSkipForward,
+  Repeat as IconRepeat,
+  Repeat1 as IconRepeatOne,
+  Shuffle as IconShuffle,
+  ListMusic as IconListMusic,
+  Volume2 as IconVolume,
+  X as IconX
 } from 'lucide-react'
 
 // Custom icons

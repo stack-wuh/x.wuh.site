@@ -17,7 +17,9 @@ source:
   - changes/20260915-style-quiet-header-bar/brief.md
   - changes/20260915-fix-motto-wrap-jitter/brief.md
   - changes/20260915-style-nav-ink-stroke/brief.md
-verified: 2026-09-15
+  - changes/20260928-style-player-responsive-redesign/brief.md
+verified: 2026-09-29
+verified-depth: runtime
 ---
 
 # 设计系统
@@ -56,7 +58,7 @@ CSS 变量分三层：`:root` 注入 raw 调色板；4 个 selector 路由映射
 
 ## 验证方式
 
-检查主题变量生成、layout 初始化脚本和四种组合 selector；分别在 light/dark 与 wine/plain 下检查公开变量。
+检查主题变量生成、layout 初始化脚本和四种组合 selector；分别在 light/dark 与 wine/plain 下检查公开变量。主题切换目检必须改 localStorage（`wuh.site.theme` / `wuh.site.color-scheme-mode`）后整页刷新——直改 `data-*` 属性会被 ThemeModeProvider 状态回写与 HMR 覆盖，截图主题不可靠。
 
 ## 关联知识
 
