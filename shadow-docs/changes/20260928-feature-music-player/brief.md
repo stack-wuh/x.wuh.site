@@ -4,7 +4,7 @@
   "name": "20260928-feature-music-player",
   "type": "feature",
   "scope": "apps/server,apps/site,packages/components",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20260928-feature-music-player",
   "files": [
@@ -27,8 +27,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 393,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/393",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 394,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/394"
   },
   "review": {
     "conclusion": "passed",
@@ -37,8 +37,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "041baa51b26416702050313551444e2bb3335cc7",
-    "planHash": "466feaf43eb1bf88593668ccd2d38035baf93017576c1a407bb343cf5f2229e2",
+    "checkpoint": "pr:394",
+    "planHash": "3e90f82d6c3bf78082d32539ae30f73af09c19cfee8f83fbf4c55125d0de57e9",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {

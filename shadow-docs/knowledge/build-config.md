@@ -18,7 +18,8 @@ source:
   - changes/archive/20260903-fix-styled-stable-ids/brief.md
   - changes/archive/20260904-build-disk-guard-cron/brief.md
   - changes/archive/20260916-style-contact-dialog-paper/brief.md
-verified: 2026-09-16
+  - changes/20260928-feature-music-player/brief.md
+verified: 2026-09-28
 ---
 
 # 构建与部署配置
@@ -42,6 +43,8 @@ CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；G
 Next.js 16 起 `next build` 默认使用 Turbopack（原 webpack），构建产物工具链变化，Docker 构建需在 CI 验证。本机 `pnpm build:next`（脚本内置 `NODE_OPTIONS=--max-old-space-size=2048`）在高 swap 压力下会 SIGSEGV，去掉上限直跑 `apps/site/node_modules/.bin/next build` 稳定；CI/Docker 环境不受影响。
 
 类型检查按 workspace 分治：仓库根的 `pnpm exec tsc --noEmit` 使用根 `tsconfig.json`（include 仅 `packages/*/src`，面向 console），**不覆盖 `apps/site`**——检查站点必须用 `cd apps/site && pnpm exec tsc --noEmit`（或 `pnpm --filter @wuh.site/site exec tsc`）。2026-09 曾因根命令验证空转，导致合并引入的 `SharedLinkGroup is not defined`（TS2304）漏检直达生产；site 尚有约 43 个存量类型错误（FontPrefetch/GlobalAudioPlayer/TypewriterMotto 等），清理前 tsc 通过只能说明"未引入新错误"，需配合 grep 目标文件确认。
+
+本地 `next build` 的入口卫生（2026-09-28 实测）：Windows 下 `pnpm build:next` 的 `NODE_OPTIONS="--max-old-space-size=2048"` 是 POSIX 语法，cmd 直接报「不是内部或外部命令」，要跑生产构建就用 `cd apps/site && node ./node_modules/next/dist/bin/next build`；另外**新增 workspace 依赖（`pnpm add`）之后应先跑一次 `pnpm install` 再构建**，否则可能因 next 的幽灵依赖未就位而失败——症状是 `packages/components/footprint-map/index.tsx` 报 `Can't resolve 'styled-jsx/style'`（Turbopack），补跑 `pnpm install` 即恢复，与本仓库自身改动无关。
 
 ## 执行约束
 

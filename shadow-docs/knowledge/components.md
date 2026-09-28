@@ -13,7 +13,8 @@ source:
   - changes/20260829-feature-guestbook-letter-style/brief.md
   - changes/20260902-style-post-detail-polish/brief.md
   - changes/20260903-style-post-toc-mobile-polish/brief.md
-verified: 2026-09-03
+  - changes/20260928-feature-music-player/brief.md
+verified: 2026-09-28
 ---
 
 # 组件包
@@ -29,6 +30,8 @@ ImagePreview 图片切换有过渡动画（淡入淡出 + 方向滑动），缩�
 ScrollArea 为 shadcn ScrollArea 移植（`@radix-ui/react-scroll-area` 封装），滚动条独立 DOM 渲染、hover 浮现、不虚拟化；`viewportRef` prop 供消费方监听滚动与程序化滚动。MessageCard 组件集（message-card 包）为信笺风留言卡片：MessageCard / MessageAvatar / MessageMeta / MessageName / MessageTime / MessageStatus / MessageContent，只负责视觉（长什么样），布局（怎么摆）由消费方组合。
 
 Divider 组件（`@wuh.site/components/divider`）负责页面结构性分割线，用色分工：variant `hairline`（默认，灰发丝线 `color-mix(in oklab, var(--normal-400) 55%, transparent)`，承载结构性分段）/ `ornament`（中置朱砂点缀线——两侧线由 transparent 渐入 `var(--primary-color)` 45%、右线镜像，点缀字符同 `--primary-color`，children 可替换），渲染为 `role='separator'`；颜色仅语义 token、禁用 `prefers-color-scheme`，暗色随站点 `data-color-scheme` 自动生效。正文章节记号、列表条目分隔线等排版语言不使用 Divider。
+
+AudioPlayer（`@wuh.site/components/audio-player`）的降级语义：曲目拿不到播放地址（`TrackResolver` 返回空 `streamUrl`）或音频元素报错时**按队列顺序自动跳过**，整轮尝试不超过队列长度，提示 `已跳过 N 首不可播放的曲目` 占用迷你播放器歌手行（`role='status'`，卡片高度不变），且**只在用户操作播放器时清空**（自动起播不擦除）；整轮不可播则回落 `idle` 并给出结论文案。公开 API（`TrackSource`/`TrackResolver`/`AudioPlayerActions`/`AudioPlayerState`）保持兼容，跳过语义不新增 action。
 
 ## 执行约束
 
