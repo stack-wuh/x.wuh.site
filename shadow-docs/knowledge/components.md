@@ -14,7 +14,9 @@ source:
   - changes/20260902-style-post-detail-polish/brief.md
   - changes/20260903-style-post-toc-mobile-polish/brief.md
   - changes/20260928-feature-music-player/brief.md
-verified: 2026-09-28
+  - changes/20260928-style-player-responsive-redesign/brief.md
+verified: 2026-09-29
+verified-depth: runtime
 ---
 
 # 组件包
@@ -32,6 +34,8 @@ ScrollArea 为 shadcn ScrollArea 移植（`@radix-ui/react-scroll-area` 封装�
 Divider 组件（`@wuh.site/components/divider`）负责页面结构性分割线，用色分工：variant `hairline`（默认，灰发丝线 `color-mix(in oklab, var(--normal-400) 55%, transparent)`，承载结构性分段）/ `ornament`（中置朱砂点缀线——两侧线由 transparent 渐入 `var(--primary-color)` 45%、右线镜像，点缀字符同 `--primary-color`，children 可替换），渲染为 `role='separator'`；颜色仅语义 token、禁用 `prefers-color-scheme`，暗色随站点 `data-color-scheme` 自动生效。正文章节记号、列表条目分隔线等排版语言不使用 Divider。
 
 AudioPlayer（`@wuh.site/components/audio-player`）的降级语义：曲目拿不到播放地址（`TrackResolver` 返回空 `streamUrl`）或音频元素报错时**按队列顺序自动跳过**，整轮尝试不超过队列长度，提示 `已跳过 N 首不可播放的曲目` 占用迷你播放器歌手行（`role='status'`，卡片高度不变），且**只在用户操作播放器时清空**（自动起播不擦除）；整轮不可播则回落 `idle` 并给出结论文案。公开 API（`TrackSource`/`TrackResolver`/`AudioPlayerActions`/`AudioPlayerState`）保持兼容，跳过语义不新增 action。
+
+AudioPlayer 响应式与视觉（20260928-style-player-responsive-redesign 起）：全组件纸墨语言——颜色只走主题 token、断点只用 `BREAKPOINTS`、图标用 `@wuh.site/components/icons` 播放族具名导出（禁裸字符与散落 SVG）。MiniPlayer 桌面为纸卡 dock + 右缘收拢栏、移动端为全宽底栏（`safe-area-inset-bottom`、触摸目标 ≥44px），收起态为朱砂「音」印章钮，开合只做 opacity/transform/visibility 过渡；PlayerPanel 桌面为三栏纸卡弹层、移动端为全屏沉浸页 + 「歌词｜播放列表」分段切换，面板 z 层（backdrop 2600 / panel 2610）必须高于迷你条（2500）；面板背景是封面原图水印层（cover 铺满 + 主题纸色渐变罩 88%→74% 保证对比度，桌面取景下偏裁封面自带印刷字边、竖屏 `auto 130%` 同偏移），无封面回退素纸；Escape 关闭、焦点移入/移回、`prefers-reduced-motion` 降级、`role='dialog'` + `aria-modal`。以上纪律由同目录 `style.test.mjs` 门禁固化：禁裸十六进制色、禁裸断点数值、禁 `--text-secondary`、transition 禁布局属性、断言 aria-label / `prefers-reduced-motion` / `role='status'` / Escape / safe-area 在场——改播放器样式先保此测试绿。
 
 ## 执行约束
 
