@@ -4,7 +4,7 @@
   "name": "20260928-feature-music-annual-playlists",
   "type": "feature",
   "scope": "apps/server,apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260928-feature-music-annual-playlists",
   "files": [
@@ -24,18 +24,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 396,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/396",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 397,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/397"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "1e9bc1534223e7deb3515ca309f0500225aad60a",
-    "verifiedAt": "2026-09-28T15:16:58.371Z"
+    "verifiedCommit": "45ebeaa0d94b7b4a93d2025a1d366e7a2117676a",
+    "verifiedAt": "2026-09-28T15:58:48.114Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:396",
-    "planHash": "91148dba3b884ceedc25d4793eb0578fd85f48c39e24cc12d48735af6da4741d",
+    "checkpoint": "merged-pr:397",
+    "planHash": "1d4d0e67b0414d3b073e118200bde7e01d5ed78863718087b75d99596c80c40f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -73,7 +73,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "新增 GET /v2/music/user-playlists 端点契约与「我的年度歌单」选择语义（MUSIC_U 登录态边界、creator+年度过滤、年份倒序、单页 100 不翻页）属 music-player 卡片「接口契约」与「匿名态能力边界」段的自然扩展；ship 时按 norms/knowledge-cards.md 补 verified-depth（unit + runtime 匿名态实测；真实 MUSIC_U 正路径待部署环境 field 验证）与 verified-scope。另提案创建 shadow-docs/signals.md SGN-001：宿主机内存压力下 jest/tsc 间歇性 SIGSEGV(139, 空日志)，与代码无关，等待 20-45s 重试即恢复，验证结论只取成功输出。"
+    "reason": "main(45ebeaa) 与功能分支同内容合入，代码未变；补充 field 验证结论：Release v1.4.27 部署链全绿后，生产实测 /v2/music/user-playlists 返回 8 张年度歌单（2018-2025 年份倒序），正路径验证通过。卡片已在 ship 时完成原位更新（verified-depth: runtime，verified-scope 含生产实测），无新增知识动作。"
   }
 }
 ---
@@ -157,8 +157,10 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 2026-09-28 一个工作日内完成 propose→apply→review→release
+- 验证: 服务端 jest 30/30（含登录态边界、creator+年度过滤、同年份排序）；站点 wiring 7/7；双侧 tsc 无新增错误（music 模块 0）；本地 runtime 匿名态实测 200 空列表
+- 交付: PR #397 merged（squash 45ebeaa）；Release v1.4.27（2026-09-28）触发部署链全绿（quality-gate/prepare/build-nest/build-next/staging-test/switch-traffic 均 success）
+- 遗留（field）: 生产差分探测（VIP 曲目 186016 返回 streamUrl: null）表明部署主机 .env 未配置或已过期 NETEASE_MUSIC_U，生产当前为匿名态——年度歌单端点按设计返回空列表、/music 回落热歌榜。待所有者在部署主机配置有效 NETEASE_MUSIC_U 并重启 nest 容器后，/music 即自动出现账号下名字含「年度」的创建歌单
 
 ## 知识评估
 
