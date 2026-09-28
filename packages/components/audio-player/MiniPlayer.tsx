@@ -170,6 +170,14 @@ const Artist = styled.div`
   text-overflow: ellipsis;
 `
 
+const Notice = styled.div`
+  font-size: 12px;
+  color: rgba(255, 214, 221, 0.88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
 const ProgressBar = styled.div`
   width: 100%;
   height: 4px;
@@ -275,7 +283,12 @@ export const AudioMiniPlayer = () => {
                 <Title>{currentTrack?.name ?? '等待播放'}</Title>
                 <StatusBadge>{state.status === 'playing' ? 'ON AIR' : 'PLAYER'}</StatusBadge>
               </TitleRow>
-              <Artist>{currentTrack?.artist ?? '加载默认歌单...'}</Artist>
+              {/* 提示占用歌手行，卡片高度不变；下一首正常起播后错误位自动清空 */}
+              {state.error ? (
+                <Notice role='status'>{state.error}</Notice>
+              ) : (
+                <Artist>{currentTrack?.artist ?? '加载默认歌单...'}</Artist>
+              )}
               <ProgressBar aria-hidden='true'>
                 <ProgressValue $value={progressPercent} />
               </ProgressBar>

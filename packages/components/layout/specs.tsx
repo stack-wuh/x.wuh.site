@@ -13,6 +13,7 @@ export const footerConf = {
   siteBorn: new Date('2021-03-08T00:00:00+08:00'),
   navItems: [
     { label: '博客', href: '/blog' },
+    { label: '音乐', href: '/music' },
     { label: '关于', href: '/about' },
     { label: 'RSS 订阅', href: '/api/rss.xml' },
   ] as FooterNavItem[],
