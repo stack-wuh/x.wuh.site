@@ -17,6 +17,7 @@ import { WereadModule } from './modules/weread/weread.module';
 import { FootprintModule } from './modules/footprint/footprint.module';
 import { VisitStatsModule } from './modules/visit-stats/visit-stats.module';
 import { AboutActivityModule } from './modules/about-activity/about-activity.module';
+import { MusicModule } from './modules/music/music.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -67,6 +68,7 @@ import { AppService } from './app.service';
     FootprintModule,
     VisitStatsModule,
     AboutActivityModule,
+    MusicModule,
   ],
   controllers: [AppController],
   providers: [AppService],

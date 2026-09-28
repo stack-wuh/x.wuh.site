@@ -12,28 +12,30 @@ import React, {
 import type {
   AudioPlayerContextValue,
   AudioPlayerProviderProps,
+  AudioPlayerState,
   PlayerMode,
+  PlayerStatus,
   Track,
   TrackResolver
 } from './specs'
 
-const initialState = {
-  queue: [] as Track[],
+const initialState: AudioPlayerState = {
+  queue: [],
   currentIndex: -1,
   progress: 0,
   duration: 0,
   volume: 0.8,
-  mode: 'order' as PlayerMode,
-  status: 'idle' as const,
+  mode: 'order',
+  status: 'idle',
   isPanelOpen: false,
-  error: undefined as string | undefined
+  error: undefined
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextValue | null>(null)
 
 type Action =
   | { type: 'LOAD_QUEUE'; payload: { queue: Track[]; startIndex: number } }
-  | { type: 'SET_STATUS'; payload: { status: typeof initialState.status; error?: string } }
+  | { type: 'SET_STATUS'; payload: { status: PlayerStatus; error?: string } }
   | { type: 'SET_PROGRESS'; payload: number }
   | { type: 'SET_DURATION'; payload: number }
   | { type: 'SET_VOLUME'; payload: number }
@@ -42,7 +44,7 @@ type Action =
   | { type: 'SET_PANEL'; payload: boolean }
   | { type: 'UPDATE_TRACK'; payload: { trackId: number; data: Partial<Track> } }
 
-const reducer = (state: typeof initialState, action: Action): typeof initialState => {
+const reducer = (state: AudioPlayerState, action: Action): AudioPlayerState => {
   switch (action.type) {
     case 'LOAD_QUEUE':
       return {
@@ -55,7 +57,12 @@ const reducer = (state: typeof initialState, action: Action): typeof initialStat
         error: undefined
       }
     case 'SET_STATUS':
-      return { ...state, status: action.payload.status, error: action.payload.error }
+      return {
+        ...state,
+        status: action.payload.status,
+        // 只有显式带 error 字段才改写提示：自动起播不擦掉刚弹出的跳过提示，用户操作时才由 dismissNotice 清空
+        ...('error' in action.payload ? { error: action.payload.error } : {})
+      }
     case 'SET_PROGRESS':
       return { ...state, progress: action.payload }
     case 'SET_DURATION':
@@ -114,6 +121,14 @@ const getPreviousIndex = (mode: PlayerMode, currentIndex: number, queue: Track[]
   return prevIndex < 0 ? queue.length - 1 : prevIndex
 }
 
+// 跳过不可播曲目时按顺序推进（与播放模式无关）：一轮恰好覆盖队列每首一次，不会在随机模式下反复撞同一首
+const getSkipIndex = (currentIndex: number, queueLength: number) => {
+  if (queueLength <= 0) return -1
+  return (currentIndex + 1) % queueLength
+}
+
+const EMPTY_PLAYABLE_NOTICE = '这个歌单暂时没有可播放的曲目'
+
 export const AudioPlayerProvider = ({
   children,
   defaultVolume = 0.8,
@@ -127,6 +142,8 @@ export const AudioPlayerProvider = ({
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const stateRef = useRef(state)
   const resolverRef = useRef<TrackResolver | undefined>(trackResolver)
+  // 音频元素在挂载时创建一次，事件回调经 ref 取最新逻辑，避免重建播放器
+  const playTrackAtRef = useRef<(index: number, attempts?: number) => void>(() => {})
 
   useEffect(() => {
     stateRef.current = state
@@ -152,7 +169,10 @@ export const AudioPlayerProvider = ({
       handleTrackEnd()
     }
     const handleError = () => {
-      dispatch({ type: 'SET_STATUS', payload: { status: 'error', error: '无法播放音频' } })
+      const { currentIndex, status } = stateRef.current
+      // 起播失败已由 playTrackAt 的 catch 接管，这里只处理播放中的意外中断，避免同一首被跳两次
+      if (status !== 'playing') return
+      skipRef.current(currentIndex, 0)
     }
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
@@ -191,8 +211,31 @@ export const AudioPlayerProvider = ({
     return enrichedTrack
   }, [])
 
+  const skipToNextPlayable = useCallback((failedIndex: number, attempts: number) => {
+    const queue = stateRef.current.queue
+    const skipped = attempts + 1
+    const nextIndex = getSkipIndex(failedIndex, queue.length)
+
+    // 最多绕队列一轮：整轮都拿不到地址就停下并给出结论，不再空转
+    if (nextIndex === -1 || skipped >= queue.length) {
+      dispatch({ type: 'SET_STATUS', payload: { status: 'idle', error: EMPTY_PLAYABLE_NOTICE } })
+      return
+    }
+    dispatch({
+      type: 'SET_STATUS',
+      payload: { status: stateRef.current.status, error: `已跳过 ${skipped} 首不可播放的曲目` }
+    })
+    playTrackAtRef.current(nextIndex, skipped)
+  }, [])
+
+  const skipRef = useRef(skipToNextPlayable)
+
+  useEffect(() => {
+    skipRef.current = skipToNextPlayable
+  }, [skipToNextPlayable])
+
   const playTrackAt = useCallback(
-    async (index: number) => {
+    async (index: number, attempts = 0) => {
       const audio = audioRef.current
       if (!audio) return
       const queue = stateRef.current.queue
@@ -209,12 +252,17 @@ export const AudioPlayerProvider = ({
         const duration = playableTrack.duration ?? audio.duration ?? 0
         dispatch({ type: 'SET_DURATION', payload: duration })
       } catch (error) {
+        // 版权/VIP 曲目没有播放地址，这里按队列推进而不是把播放停在错误态
         console.error(error)
-        dispatch({ type: 'SET_STATUS', payload: { status: 'error', error: '播放失败' } })
+        skipToNextPlayable(index, attempts)
       }
     },
-    [ensureTrackSource]
+    [ensureTrackSource, skipToNextPlayable]
   )
+
+  useEffect(() => {
+    playTrackAtRef.current = playTrackAt
+  }, [playTrackAt])
 
   const handleTrackEnd = useCallback(() => {
     const nextIndex = getNextIndex(stateRef.current.mode, stateRef.current.currentIndex, stateRef.current.queue)
@@ -224,6 +272,11 @@ export const AudioPlayerProvider = ({
     }
     playTrackAt(nextIndex)
   }, [playTrackAt])
+
+  // 提示只在用户操作播放器时清空：跳过是自动行为，自动续播不该把刚弹出的原因擦掉
+  const dismissNotice = useCallback(() => {
+    dispatch({ type: 'SET_STATUS', payload: { status: stateRef.current.status, error: undefined } })
+  }, [])
 
   const loadQueue = useCallback(
     (tracks: Track[], options?: { startIndex?: number; autoPlay?: boolean }) => {
@@ -240,6 +293,7 @@ export const AudioPlayerProvider = ({
   const togglePlay = useCallback(() => {
     const audio = audioRef.current
     if (!audio) return
+    dismissNotice()
     if (stateRef.current.status === 'playing') {
       audio.pause()
       dispatch({ type: 'SET_STATUS', payload: { status: 'paused' } })
@@ -252,32 +306,43 @@ export const AudioPlayerProvider = ({
     }
     const index = stateRef.current.currentIndex >= 0 ? stateRef.current.currentIndex : 0
     playTrackAt(index)
-  }, [playTrackAt])
+  }, [dismissNotice, playTrackAt])
+
+  const playAt = useCallback(
+    (index: number) => {
+      dismissNotice()
+      playTrackAt(index)
+    },
+    [dismissNotice, playTrackAt]
+  )
 
   const playTrack = useCallback(
     (trackId: number) => {
       const queue = stateRef.current.queue
       const index = queue.findIndex((track) => track.id === trackId)
       if (index >= 0) {
+        dismissNotice()
         playTrackAt(index)
       }
     },
-    [playTrackAt]
+    [dismissNotice, playTrackAt]
   )
 
   const playNext = useCallback(() => {
     const nextIndex = getNextIndex(stateRef.current.mode, stateRef.current.currentIndex, stateRef.current.queue)
     if (nextIndex !== -1) {
+      dismissNotice()
       playTrackAt(nextIndex)
     }
-  }, [playTrackAt])
+  }, [dismissNotice, playTrackAt])
 
   const playPrevious = useCallback(() => {
     const prevIndex = getPreviousIndex(stateRef.current.mode, stateRef.current.currentIndex, stateRef.current.queue)
     if (prevIndex !== -1) {
+      dismissNotice()
       playTrackAt(prevIndex)
     }
-  }, [playTrackAt])
+  }, [dismissNotice, playTrackAt])
 
   const seek = useCallback((seconds: number) => {
     const audio = audioRef.current
@@ -319,7 +384,7 @@ export const AudioPlayerProvider = ({
       actions: {
         loadQueue,
         playTrack,
-        playAt: playTrackAt,
+        playAt,
         togglePlay,
         playNext,
         playPrevious,

@@ -27,6 +27,7 @@ export default function SiteHeader() {
   // 当前页归段：博客详情页（/post/*）属于「博客」，与列表页共享常驻笔画
   const isBlog = pathname === '/blog' || pathname.startsWith('/post/')
   const isAbout = pathname === '/about'
+  const isMusic = pathname === '/music'
   const isHome = pathname === '/'
   const panelId = useId()
   const appearanceId = useId()
@@ -98,6 +99,7 @@ export default function SiteHeader() {
         <S.Right>
           <S.Nav aria-label='主导航'>
             <S.NavLink href='/blog' aria-current={isBlog ? 'page' : undefined}>博客</S.NavLink>
+            <S.NavLink href='/music' aria-current={isMusic ? 'page' : undefined}>音乐</S.NavLink>
             <S.NavLink href='/about' aria-current={isAbout ? 'page' : undefined}>关于</S.NavLink>
             <S.NavLink
               href='https://stack-wuh.github.io/blog/'
@@ -151,6 +153,7 @@ export default function SiteHeader() {
         <S.MobileNav aria-label='移动端导航'>
           <S.MobileItem href='/' aria-current={isHome ? 'page' : undefined} onClick={close}>首页</S.MobileItem>
           <S.MobileItem href='/blog' aria-current={isBlog ? 'page' : undefined} onClick={close}>博客</S.MobileItem>
+          <S.MobileItem href='/music' aria-current={isMusic ? 'page' : undefined} onClick={close}>音乐</S.MobileItem>
           <S.MobileItem href='/about' aria-current={isAbout ? 'page' : undefined} onClick={close}>关于</S.MobileItem>
           <S.MobileItem
             href='https://stack-wuh.github.io/blog/'
