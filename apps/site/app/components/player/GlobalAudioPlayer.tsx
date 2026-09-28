@@ -96,7 +96,6 @@ export const GlobalAudioPlayer = () => {
       },
       onError: (error) => {
         if ((error as Error).name === 'AbortError') return
-        console.error(error)
         setPlaylistError('歌单加载失败，播放器暂时不可用')
       }
     }

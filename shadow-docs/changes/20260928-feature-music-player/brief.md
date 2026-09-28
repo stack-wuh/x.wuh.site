@@ -4,7 +4,7 @@
   "name": "20260928-feature-music-player",
   "type": "feature",
   "scope": "apps/server,apps/site,packages/components",
-  "status": "branched",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "feature/20260928-feature-music-player",
   "files": [
@@ -37,8 +37,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:393",
-    "planHash": "011fc55aea450d410206f41dfc5c30175043df43315c8edd2d182f6eb7a91b48",
+    "checkpoint": "411914c894a6126ba1a3999737a66b54753d1183",
+    "planHash": "6e6dc9ee65b4a332a34f37518032514317c0544100a2a53b125b9121a20d2b09",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -160,7 +160,7 @@
 
 ### Phase 4 — 桌面端（跨仓，另开变更）
 
-- [ ] task 20 — 在 `apps/desktop` 仓库内以独立变更落地内置播放器面板（scope `apps/desktop`）；本变更只交付 `/v2/music/*` 契约与设计结论，不在父仓库改 desktop 代码
+- [x] task 20 — 在 `apps/desktop` 仓库内以独立变更落地内置播放器面板（scope `apps/desktop`）；本变更只交付 `/v2/music/*` 契约与设计结论，不在父仓库改 desktop 代码
 
 ## 结果
 
