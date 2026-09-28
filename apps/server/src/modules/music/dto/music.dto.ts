@@ -112,3 +112,25 @@ export class SearchResultDto {
   @ApiProperty({ description: '匹配曲目', type: [MusicTrackDto] })
   tracks: MusicTrackDto[];
 }
+
+export class UserPlaylistSummaryDto {
+  @ApiProperty({ description: '歌单 id' })
+  id: number;
+
+  @ApiProperty({ description: '歌单名' })
+  name: string;
+
+  @ApiPropertyOptional({ description: '歌单封面（已改写为 https）' })
+  coverUrl?: string;
+
+  @ApiProperty({ description: '曲目数' })
+  trackCount: number;
+}
+
+export class UserPlaylistsResultDto {
+  @ApiProperty({
+    description: '我的年度歌单：名字含「年度」的创建歌单，按年份倒序（未配置登录态或登录失效为空列表）',
+    type: [UserPlaylistSummaryDto]
+  })
+  playlists: UserPlaylistSummaryDto[];
+}

@@ -9,11 +9,11 @@ import { useAudioPlayer, type Track } from '@wuh.site/components/audio-player'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import {
-  MUSIC_PLAYLIST_PRESETS,
   SEARCH_LIMIT,
   formatTrackDuration,
   type MusicPlaylist,
-  type MusicSearchResult
+  type MusicSearchResult,
+  type MusicUserPlaylistSummary
 } from './specs'
 
 const Section = styled.section`
@@ -224,9 +224,10 @@ const SectionTitle = styled.h2`
 type Props = {
   playlistId: string
   playlist: MusicPlaylist | null
+  annualPlaylists: MusicUserPlaylistSummary[]
 }
 
-export default function MusicView({ playlistId, playlist }: Props) {
+export default function MusicView({ playlistId, playlist, annualPlaylists }: Props) {
   const {
     currentTrack,
     actions: { loadQueue }
@@ -328,17 +329,19 @@ export default function MusicView({ playlistId, playlist }: Props) {
             </SearchForm>
           </Toolbar>
 
-          <PlaylistTabs aria-label='歌单切换'>
-            {MUSIC_PLAYLIST_PRESETS.map((preset) => (
-              <PlaylistTab
-                key={preset.id}
-                href={`/music?playlist=${preset.id}`}
-                aria-current={preset.id === playlistId ? 'page' : undefined}
-              >
-                {preset.label}
-              </PlaylistTab>
-            ))}
-          </PlaylistTabs>
+          {annualPlaylists.length ? (
+            <PlaylistTabs aria-label='年度歌单切换'>
+              {annualPlaylists.map((item) => (
+                <PlaylistTab
+                  key={item.id}
+                  href={`/music?playlist=${item.id}`}
+                  aria-current={item.id.toString() === playlistId ? 'page' : undefined}
+                >
+                  {item.name}
+                </PlaylistTab>
+              ))}
+            </PlaylistTabs>
+          ) : null}
 
           {searchError ? <StatusLine role='status'>{searchError}</StatusLine> : null}
           {searchResult ? (

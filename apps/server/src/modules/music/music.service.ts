@@ -9,10 +9,20 @@ import {
   type MusicTrackDto,
   type PlaylistResultDto,
   type SearchResultDto,
-  type TrackSourceResultDto
+  type TrackSourceResultDto,
+  type UserPlaylistSummaryDto,
+  type UserPlaylistsResultDto
 } from './dto/music.dto';
 
 const COVER_PARAM = 'param=600y600';
+
+/** 账号维度窄列表：创建歌单排在收藏前，单页 100 足够，不做翻页（超页记 warn 只处理首屏） */
+const USER_PLAYLIST_PAGE_LIMIT = 100;
+
+/** 年度歌单的命名约定：歌单名含「年度」即入选 */
+const ANNUAL_PLAYLIST_KEYWORD = '年度';
+
+const YEAR_PATTERN = /(?:19|20)\d{2}/;
 
 type NeteaseArtist = { name?: string };
 type NeteaseAlbum = { name?: string; picUrl?: string };
@@ -26,6 +36,45 @@ interface RawNeteaseTrack {
   album?: NeteaseAlbum;
   dt?: number;
 }
+
+interface RawNeteasePlaylist {
+  id?: number | string;
+  name?: string;
+  coverImgUrl?: string;
+  trackCount?: number;
+  userId?: number;
+  creator?: { userId?: number };
+}
+
+/** 歌单名中的 4 位年份；无年份返回 null（排序时放最后） */
+export const extractPlaylistYear = (name: string): number | null => {
+  const matched = name.match(YEAR_PATTERN);
+  return matched ? Number(matched[0]) : null;
+};
+
+/** 只保留我创建的、名字含「年度」的歌单，年份倒序、无年份按名称排最后 */
+export const selectAnnualPlaylists = (playlists: RawNeteasePlaylist[], uid: number): UserPlaylistSummaryDto[] =>
+  playlists
+    .filter((playlist) => (playlist?.creator?.userId ?? playlist?.userId) === uid)
+    .filter((playlist) => typeof playlist?.name === 'string' && playlist.name.includes(ANNUAL_PLAYLIST_KEYWORD))
+    .map((playlist) => {
+      const numericId = Number(playlist.id);
+      const trackCount = Number(playlist.trackCount);
+      return {
+        id: Number.isFinite(numericId) ? numericId : 0,
+        name: playlist.name ?? '',
+        coverUrl: withCoverSize(playlist.coverImgUrl),
+        trackCount: Number.isFinite(trackCount) ? trackCount : 0
+      };
+    })
+    .sort((a, b) => {
+      const yearA = extractPlaylistYear(a.name);
+      const yearB = extractPlaylistYear(b.name);
+      if (yearA !== null && yearB === null) return -1;
+      if (yearA === null && yearB !== null) return 1;
+      if (yearA !== null && yearB !== null && yearA !== yearB) return yearB - yearA;
+      return a.name.localeCompare(b.name, 'zh');
+    });
 
 /**
  * 播放地址与封面在网易云侧都是 http，站点是 https —— 不改写会被浏览器按混合内容拦掉。
@@ -144,5 +193,38 @@ export class MusicService {
       keywords,
       tracks: Array.isArray(songs) ? songs.map(normalizeTrack) : []
     };
+  }
+
+  /**
+   * 我的年度歌单。未配置登录态是正常业务态：直接返回空列表（不发上游请求），
+   * 消费方对空列表与失败一律隐藏年度分组。
+   */
+  async getUserPlaylists(): Promise<UserPlaylistsResultDto> {
+    if (!this.config.hasCredential) {
+      return { playlists: [] };
+    }
+
+    const accountResponse = await this.client.userAccount({ cookie: this.credential });
+    this.assertUpstream(accountResponse, 'user_account');
+
+    const uid = Number(accountResponse.body?.profile?.userId ?? accountResponse.body?.account?.id);
+    if (!Number.isFinite(uid)) {
+      this.logger.warn('网易云音乐登录态无法解析出账号 uid，年度歌单返回空列表');
+      return { playlists: [] };
+    }
+
+    const listResponse = await this.client.userPlaylist({
+      uid,
+      limit: USER_PLAYLIST_PAGE_LIMIT,
+      cookie: this.credential
+    });
+    this.assertUpstream(listResponse, 'user_playlist');
+
+    if (listResponse.body?.more) {
+      this.logger.warn(`网易云音乐创建歌单超过单页上限（${USER_PLAYLIST_PAGE_LIMIT}），年度歌单仅处理首屏`);
+    }
+
+    const rawPlaylists: RawNeteasePlaylist[] = Array.isArray(listResponse.body?.playlist) ? listResponse.body.playlist : [];
+    return { playlists: selectAnnualPlaylists(rawPlaylists, uid) };
   }
 }

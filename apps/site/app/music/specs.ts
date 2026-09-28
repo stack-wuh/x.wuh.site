@@ -1,12 +1,6 @@
 import type { Track } from '@wuh.site/components/audio-player'
 
-/** 歌单切换预设：切换走 URL 查询参数，由服务端重新取数 */
-export const MUSIC_PLAYLIST_PRESETS = [
-  { id: '3778678', label: '热歌榜' },
-  { id: '19723756', label: '飙升榜' },
-  { id: '3779629', label: '新歌榜' }
-] as const
-
+/** 兜底歌单：年度歌单拉取失败（未配置登录态、接口异常）时使用 */
 export const DEFAULT_PLAYLIST_ID = process.env.NEXT_PUBLIC_NETEASE_PLAYLIST_ID ?? '3778678'
 
 /** 与服务端默认音质保持一致：匿名态下会按可用档位回退 */
@@ -26,6 +20,18 @@ export type MusicPlaylist = {
 export type MusicSearchResult = {
   keywords: string
   tracks: Track[]
+}
+
+/** 年度歌单摘要与服务端 UserPlaylistsResultDto 对齐：名字含「年度」的创建歌单，年份倒序 */
+export type MusicUserPlaylistSummary = {
+  id: number
+  name: string
+  coverUrl?: string
+  trackCount: number
+}
+
+export type MusicUserPlaylists = {
+  playlists: MusicUserPlaylistSummary[]
 }
 
 export const formatTrackDuration = (seconds?: number): string => {

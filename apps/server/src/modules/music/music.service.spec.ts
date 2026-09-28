@@ -1,4 +1,4 @@
-import { BadGatewayException } from '@nestjs/common'
+import { BadGatewayException, ServiceUnavailableException } from '@nestjs/common'
 import { MusicService } from './music.service'
 import { MusicConfig } from './music.config'
 import type { NeteaseClient, NeteaseResponse } from './netease-client'
@@ -10,6 +10,8 @@ const createClient = (overrides: Partial<NeteaseClient> = {}): NeteaseClient => 
   songUrlV1: jest.fn().mockResolvedValue(ok({ data: [] })),
   lyric: jest.fn().mockResolvedValue(ok({ lrc: { lyric: '[00:00.00] 歌词' } })),
   cloudsearch: jest.fn().mockResolvedValue(ok({ result: { songs: [] } })),
+  userAccount: jest.fn().mockResolvedValue(ok({ profile: { userId: 123 }, account: { id: 123 } })),
+  userPlaylist: jest.fn().mockResolvedValue(ok({ more: false, playlist: [] })),
   ...overrides
 })
 
@@ -223,6 +225,102 @@ describe('MusicService', () => {
       const service = new MusicService(createClient({ cloudsearch: jest.fn().mockResolvedValue(ok({})) }), createConfig())
 
       await expect(service.search('nothing')).resolves.toEqual({ keywords: 'nothing', tracks: [] })
+    })
+  })
+
+  describe('getUserPlaylists', () => {
+    const uid = 123
+
+    const mine = (overrides: Record<string, unknown> = {}): Record<string, unknown> => ({
+      id: 100,
+      name: '2024年度歌单',
+      coverImgUrl: 'http://p1.music.126.net/m.jpg',
+      trackCount: 12,
+      userId: uid,
+      creator: { userId: uid },
+      ...overrides
+    })
+
+    const playlistBody = (playlists: Record<string, unknown>[], more = false) => ({ more, playlist: playlists })
+
+    const getLoggerWarn = (service: MusicService) =>
+      jest.spyOn((service as unknown as { logger: { warn: (message: string) => void } }).logger, 'warn')
+
+    it('returns an empty list without touching the upstream when no credential is configured', async () => {
+      const userAccount = jest.fn()
+      const userPlaylist = jest.fn()
+      const service = new MusicService(createClient({ userAccount, userPlaylist }), createConfig())
+
+      await expect(service.getUserPlaylists()).resolves.toEqual({ playlists: [] })
+      expect(userAccount).not.toHaveBeenCalled()
+      expect(userPlaylist).not.toHaveBeenCalled()
+    })
+
+    it('keeps only my created annual playlists sorted by year descending with yearless ones last', async () => {
+      const userPlaylist = jest.fn().mockResolvedValue(
+        ok(
+          playlistBody([
+            mine({ id: 300, name: '日常听' }),
+            mine({ id: 301, name: '私人珍藏' }),
+            mine({ id: 999, name: '别人分享的年度歌单', userId: 456, creator: { userId: 456 } }),
+            mine({ id: 101, name: '2024年度歌单' }),
+            mine({ id: 102, name: '2026年度歌单' }),
+            mine({ id: 105, name: '2024年度精选' }),
+            mine({ id: 104, name: '年度混剪' })
+          ])
+        )
+      )
+      const service = new MusicService(createClient({ userPlaylist }), createConfig('token-value'))
+
+      const result = await service.getUserPlaylists()
+
+      expect(userPlaylist).toHaveBeenCalledWith(expect.objectContaining({ uid, limit: 100, cookie: 'MUSIC_U=token-value' }))
+      expect(result.playlists.map((playlist) => playlist.id)).toEqual([102, 101, 105, 104])
+    })
+
+    it('maps summaries with https covers and track counts', async () => {
+      const userPlaylist = jest.fn().mockResolvedValue(ok(playlistBody([mine()])))
+      const service = new MusicService(createClient({ userPlaylist }), createConfig('token-value'))
+
+      const result = await service.getUserPlaylists()
+
+      expect(result.playlists).toEqual([
+        { id: 100, name: '2024年度歌单', coverUrl: 'https://p1.music.126.net/m.jpg?param=600y600', trackCount: 12 }
+      ])
+    })
+
+    it('returns an empty list when the login state no longer yields a uid', async () => {
+      const userAccount = jest.fn().mockResolvedValue(ok({}))
+      const userPlaylist = jest.fn()
+      const service = new MusicService(createClient({ userAccount, userPlaylist }), createConfig('token-value'))
+      const warn = getLoggerWarn(service)
+
+      await expect(service.getUserPlaylists()).resolves.toEqual({ playlists: [] })
+      expect(userPlaylist).not.toHaveBeenCalled()
+      expect(warn).toHaveBeenCalled()
+    })
+
+    it('warns and keeps the first page when the created playlists exceed the page limit', async () => {
+      const userPlaylist = jest.fn().mockResolvedValue(ok(playlistBody([mine()], true)))
+      const service = new MusicService(createClient({ userPlaylist }), createConfig('token-value'))
+      const warn = getLoggerWarn(service)
+
+      await expect(service.getUserPlaylists()).resolves.toMatchObject({ playlists: [{ id: 100 }] })
+      expect(warn).toHaveBeenCalled()
+    })
+
+    it('maps a non-2xx account response to BadGatewayException', async () => {
+      const userAccount = jest.fn().mockResolvedValue({ status: 502, body: {} })
+      const service = new MusicService(createClient({ userAccount }), createConfig('token-value'))
+
+      await expect(service.getUserPlaylists()).rejects.toBeInstanceOf(BadGatewayException)
+    })
+
+    it('propagates a playlist transport failure as ServiceUnavailableException', async () => {
+      const userPlaylist = jest.fn().mockRejectedValue(new ServiceUnavailableException('网易云音乐接口不可用：user_playlist'))
+      const service = new MusicService(createClient({ userPlaylist }), createConfig('token-value'))
+
+      await expect(service.getUserPlaylists()).rejects.toBeInstanceOf(ServiceUnavailableException)
     })
   })
 })
