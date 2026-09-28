@@ -18,7 +18,7 @@
 | About 数据 | About 热力图 活跃度 | knowledge/about-activity.md |
 | About 结构 | About 拆分 目录 组件边界 | knowledge/about-code-structure.md |
 | 微信读书 | 微信读书 书架 排序 分页 | knowledge/weread-shelf-order.md |
-| 音乐播放器 | 音乐 播放器 歌单 网易云 netease NeteaseCloudMusicApi 歌词 音频 不可播跳过 MUSIC_U /music | knowledge/music-player.md, knowledge/design-system.md |
+| 音乐播放器 | 音乐 播放器 歌单 年度歌单 网易云 netease NeteaseCloudMusicApi 歌词 音频 不可播跳过 MUSIC_U /music | knowledge/music-player.md, knowledge/design-system.md |
 | 留言板 | 留言 弹幕 群聊 | knowledge/guestbook-barrage.md, knowledge/guestbook-virtual-scroll.md |
 | 联系弹窗 | 联系 Dialog 弹窗 | knowledge/contact-dialog.md |
 | 分页 | 分页 Pagination pageSize | knowledge/pagination.md |

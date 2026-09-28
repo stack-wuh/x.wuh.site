@@ -6,6 +6,8 @@ const moduleMap = (overrides: Partial<NeteaseModuleMap> = {}): NeteaseModuleMap 
   song_url_v1: jest.fn().mockResolvedValue({ status: 200, body: { ok: true } }),
   lyric: jest.fn().mockResolvedValue({ status: 200, body: { ok: true } }),
   cloudsearch: jest.fn().mockResolvedValue({ status: 200, body: { ok: true } }),
+  user_account: jest.fn().mockResolvedValue({ status: 200, body: { profile: { userId: 1 } } }),
+  user_playlist: jest.fn().mockResolvedValue({ status: 200, body: { more: false, playlist: [] } }),
   ...overrides
 })
 
@@ -73,5 +75,19 @@ describe('NeteaseLibraryClient', () => {
     const client = new NeteaseLibraryClient(() => ({}) as NeteaseModuleMap)
 
     await expect(client.cloudsearch({ keywords: 'a' })).rejects.toBeInstanceOf(ServiceUnavailableException)
+    await expect(client.userAccount({})).rejects.toBeInstanceOf(ServiceUnavailableException)
+    await expect(client.userPlaylist({ uid: 1 })).rejects.toBeInstanceOf(ServiceUnavailableException)
+  })
+
+  it('routes user_account and user_playlist through the shared call path', async () => {
+    const loader = jest.fn(() => moduleMap())
+    const client = new NeteaseLibraryClient(loader)
+
+    const account = await client.userAccount({ cookie: 'MUSIC_U=token' })
+    const playlists = await client.userPlaylist({ uid: 1, limit: 100 })
+
+    expect(account).toEqual({ status: 200, body: { profile: { userId: 1 } } })
+    expect(playlists).toEqual({ status: 200, body: { more: false, playlist: [] } })
+    expect(loader).toHaveBeenCalledTimes(1)
   })
 })
