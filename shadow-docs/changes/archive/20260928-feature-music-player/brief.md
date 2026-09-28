@@ -4,7 +4,7 @@
   "name": "20260928-feature-music-player",
   "type": "feature",
   "scope": "apps/server,apps/site,packages/components",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260928-feature-music-player",
   "files": [
@@ -32,13 +32,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "99ec60d99cb38178574fa068296056bf300401c3",
-    "verifiedAt": "2026-09-28T12:40:18.493Z"
+    "verifiedCommit": "1e9bc1534223e7deb3515ca309f0500225aad60a",
+    "verifiedAt": "2026-09-28T13:20:46.858Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:394",
-    "planHash": "3e90f82d6c3bf78082d32539ae30f73af09c19cfee8f83fbf4c55125d0de57e9",
+    "checkpoint": "merged-pr:394",
+    "planHash": "804258a50a43b1d8ef70fa573e15f532d9ae2dc5fe6ff72b5fba8ad0f2ff534f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {

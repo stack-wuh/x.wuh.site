@@ -44,3 +44,4 @@
 | 20260915-style-nav-ink-stroke | ✅ 完成 | shadow-docs/changes/archive/20260915-style-nav-ink-stroke/brief.md |
 | 20260915-style-quiet-header-bar | ✅ 完成 | shadow-docs/changes/archive/20260915-style-quiet-header-bar/brief.md |
 | 20260916-style-contact-dialog-paper | ✅ 完成 | shadow-docs/changes/archive/20260916-style-contact-dialog-paper/brief.md |
+| 20260928-feature-music-player | ✅ 完成 | shadow-docs/changes/archive/20260928-feature-music-player/brief.md |
