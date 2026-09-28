@@ -4,7 +4,7 @@
   "name": "20260929-build-music-token-watch",
   "type": "build",
   "scope": ".github",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "build/20260929-build-music-token-watch",
   "files": [
@@ -14,18 +14,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 398,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/398",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 400,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/400"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "9c7c86dc720923d1f5bb459556342d1404a44fc0",
-    "verifiedAt": "2026-09-28T16:40:55.192Z"
+    "verifiedCommit": "71c00a4df84e712576a6ac3bc6a68f2b96e241c0",
+    "verifiedAt": "2026-09-28T23:44:07.494Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:398",
-    "planHash": "a1974a8777c119b99535362b0ebb3500afbb9905a2f93c834a786a88cbdbebdd",
+    "checkpoint": "merged-pr:400",
+    "planHash": "e1cc318143b77e3ca74b81f66e77810c42a3f46f7517cb1c2eba833ac9adaeba",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -46,12 +46,18 @@
       "message": "[build] MUSIC_U 失效探测：定时巡检 + 报警 issue 自动开关 (#398)\n\n- 新增 music-token-watch workflow：每日北京时间 10:00 SSH 探测 /v2/music/user-playlists，空列表判定登录态失效\n- 双通道判定：200+空列表开/保持报警 issue（恢复自动关闭）；SSH/网络/5xx 只让 run 失败不动 issue，避免误报\n- workflow_dispatch 支持 force_fail 演练告警分支\n- 更新 knowledge/music-player.md 失效探测机制段",
       "title": "[build] MUSIC_U 失效探测：定时巡检 + 报警 issue 自动开关",
       "body": "Closes #398\n\n完整 brief：shadow-docs/changes/20260929-build-music-token-watch/brief.md"
+    },
+    "commit": {
+      "files": [
+        ".github/workflows/music-token-watch.yml"
+      ],
+      "message": "fix(build): music-token-watch 显式指定 GH_REPO，修复无 checkout 时 gh 无法推断仓库"
     }
   },
   "knowledge": {
-    "action": "更新",
-    "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "失效探测机制（music-token-watch 每日巡检、issue 自动开关、empty/unknown 双通道区分 token 失效与服务故障）是年度歌单登录态语义的守护配套，纳入该卡片；ship 时原位更新并补 verified-depth（unit：语法与判定逻辑对生产端点干跑；runtime：merge 后 workflow_dispatch 正负两路径实测，交付阶段执行）。"
+    "action": "无需变更",
+    "target": null,
+    "reason": "main(71c00a4) 已含 #399+#400 全部内容与卡片失效探测机制段；交付三步 dispatch 实测已通过并记录于 brief 结果段。knowledge 结论由上一轮 review 定为更新并已在 ship 落实，本轮归档前复核无需再动卡片。"
   }
 }
 ---
@@ -105,8 +111,10 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 2026-09-29 半个工作日内完成 propose→apply→review→release→交付验证
+- 验证: YAML 结构解析、5 个 step 脚本 bash -n、判定逻辑对生产端点干跑（200+healthy 与空/非空边界）通过；merge 前在分支 ref 上完成 workflow_dispatch 三步实测——①正路径 run 绿且无报警 issue；②force_fail 负路径 run 按设计 failure、报警 issue #401 自动打开（music-token 标签）；③正路径收口 run 绿、#401 自动关闭并留恢复评论
+- 交付: PR #399（初始实现）已 merged（squash cd32682）；交付验证发现 runner 无 checkout 时 gh 无法推断仓库，修复（显式 GH_REPO）经 PR #400 提交；不发 Release，workflow 于 merge 后即刻生效，每日北京时间 10:00 自动巡检
+- 遗留: 无
 
 ## 知识评估
 
