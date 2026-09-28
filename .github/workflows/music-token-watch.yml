@@ -84,6 +84,7 @@ jobs:
         if: steps.probe.outputs.empty == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           gh label create music-token --color D93F0B \
             --description "MUSIC_U 登录态失效" --force
@@ -116,6 +117,7 @@ jobs:
         if: steps.probe.outputs.empty == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           open_numbers="$(gh issue list --label music-token --state open --json number --jq '.[].number')"
           if [ -z "$open_numbers" ]; then
