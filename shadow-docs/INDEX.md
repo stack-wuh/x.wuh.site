@@ -46,5 +46,5 @@
 | 20260916-style-contact-dialog-paper | ✅ 完成 | shadow-docs/changes/archive/20260916-style-contact-dialog-paper/brief.md |
 | 20260928-feature-music-annual-playlists | ✅ 完成 | shadow-docs/changes/archive/20260928-feature-music-annual-playlists/brief.md |
 | 20260928-feature-music-player | published | shadow-docs/changes/20260928-feature-music-player/brief.md |
-| 20260928-style-player-responsive-redesign | published | shadow-docs/changes/20260928-style-player-responsive-redesign/brief.md |
+| 20260928-style-player-responsive-redesign | ✅ 完成 | shadow-docs/changes/archive/20260928-style-player-responsive-redesign/brief.md |
 | 20260929-build-music-token-watch | ✅ 完成 | shadow-docs/changes/archive/20260929-build-music-token-watch/brief.md |
