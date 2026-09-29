@@ -85,27 +85,8 @@ const MiniCard = styled.div<{ $visible: boolean }>`
   }
 `
 
-/* 桌面收拢钮：贴在卡片右缘的窄栏 */
-const CollapseRail = styled.button<{ $visible: boolean }>`
-  position: fixed;
-  left: 464px;
-  bottom: 24px;
-  z-index: 2500;
-  width: 32px;
-  height: ${CARD_HEIGHT};
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--background-100);
-  color: ${INK_MUTED};
-  border: 1px solid ${HAIRLINE};
-  border-left: none;
-  border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
-  cursor: pointer;
-  font-family: var(--font-sans);
-
-  ${showHide('translateX(-8px)')}
-
+/* 耳页共享交互语言：墨转朱砂、纸面染淡朱砂 */
+const earHover = css`
   &:hover {
     color: var(--primary-color);
     background: color-mix(in oklab, var(--primary-color) 6%, var(--background-100));
@@ -115,17 +96,76 @@ const CollapseRail = styled.button<{ $visible: boolean }>`
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
   }
+`
+
+/* 桌面书耳：卡片子元素，从右缘长出、垂直居中；不透明纸面盖住身后那段发丝线（边框在耳后断开） */
+const EarTab = styled.button`
+  position: absolute;
+  left: calc(100% - 1px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--background-100);
+  color: ${INK_MUTED};
+  border: 1px solid ${HAIRLINE};
+  border-left: none;
+  border-radius: 0 var(--border-radius-base) var(--border-radius-base) 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+
+  /* 命中区外扩：视觉 24×44，可点约 32×52 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px 0 -4px -8px;
+  }
+
+  ${earHover}
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
   }
 `
 
-/* 收起态（桌面）：左缘窄栏 */
-const CollapsedRail = styled(CollapseRail)`
+/* 收起态小耳：耳页从卡片上脱落，贴屏幕左缘、与展开耳同一水平线 */
+const CollapsedEar = styled.button<{ $visible: boolean }>`
+  position: fixed;
   left: 0;
-  width: 36px;
-  border-left: 1px solid ${HAIRLINE};
+  bottom: 48px;
+  z-index: 2500;
+  width: 28px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--background-100);
+  color: ${INK_MUTED};
+  border: 1px solid ${HAIRLINE};
+  border-radius: 0 var(--border-radius-base) var(--border-radius-base) 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+
+  ${showHide('translateX(-8px)')}
+
+  /* 命中区外扩：视觉 28×48，可点 36×48 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 -8px 0 0;
+  }
+
+  ${earHover}
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
 `
 
 /* 收起态（移动端）：朱砂「音」印章钮 */
@@ -499,19 +539,20 @@ export const AudioMiniPlayer = () => {
           </ProgressTrack>
           <ProgressText>{progressText}</ProgressText>
         </ProgressRow>
+
+        {/* 桌面书耳：卡片子元素，随卡片开合动画一体移动；移动端隐藏（移动端走 chevron-down 收起） */}
+        <EarTab
+          type='button'
+          aria-label='收起播放器'
+          aria-expanded={!collapsed}
+          tabIndex={collapsed ? -1 : 0}
+          onClick={toggleCollapsed}
+        >
+          <IconChevronLeft size={16} />
+        </EarTab>
       </MiniCard>
 
-      <CollapseRail
-        type='button'
-        $visible={!collapsed}
-        aria-label='收起播放器'
-        aria-expanded={!collapsed}
-        onClick={toggleCollapsed}
-      >
-        <IconChevronLeft size={16} />
-      </CollapseRail>
-
-      <CollapsedRail
+      <CollapsedEar
         type='button'
         $visible={collapsed}
         aria-label='展开播放器'
@@ -519,7 +560,7 @@ export const AudioMiniPlayer = () => {
         onClick={toggleCollapsed}
       >
         <IconChevronRight size={16} />
-      </CollapsedRail>
+      </CollapsedEar>
 
       <SealButton type='button' $visible={collapsed} aria-label='展开播放器' onClick={toggleCollapsed}>
         音
