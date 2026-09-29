@@ -4,7 +4,7 @@
   "name": "20260929-feature-music-skeleton",
   "type": "feature",
   "scope": "apps/site/app/music",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260929-feature-music-skeleton",
   "files": [
@@ -14,18 +14,18 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 416,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/416"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "8fd57f428dc3be4f65a06a15640145b8dfcc32d1",
-    "verifiedAt": "2026-09-29T15:21:25.088Z"
+    "verifiedCommit": "2b0c6fb28bc991ca7a24805ef5e4cd0acb1d7699",
+    "verifiedAt": "2026-09-29T23:54:16.311Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
-    "planHash": "6de581b35d73b32c8b9ff78bd60c0b8e9e8c10556e91edec7a5879ed2316fa9b",
+    "checkpoint": "merged-pr:416",
+    "planHash": "418475517b1fba9be7ae7b77e71755342860f46fbc29a7ca7a142819b4de143a",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -52,7 +52,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "music-player.md「/music 页呈现」段补路由骨架边界事实：路由带 loading.tsx 年轮编年同构骨架（页头静态真容 + 数据区 54 个 Skeleton 块），并记录与 first-load-performance /post 结论的反向取舍（冷缓存秒级白屏骨架有真实反馈价值，实测骨架壳增量 +29.5KB 远低于 /post 181KB 事故量级）+ verified-depth: runtime（生产构建、体积对比、四主题×双端截图、换容目检）。另 SGN-001 命中 +1（2→3）：本次 3 次 139 含 next build worker 新场景，且单靠重试未恢复需清 .next，ship 时一并更新 signals.md 证据与陈述"
+    "reason": "路由骨架结论已随 PR #416 落入 music-player.md（与 /post 反向取舍 + 骨架轻量化 +29.5KB + 静态真容约束），PR merged + Release v1.4.35 部署链全绿；归档前按 main HEAD 重签（代码与 #416 合入内容一致）"
   }
 }
 ---
@@ -117,6 +117,7 @@
   - `prefers-reduced-motion`：组件库 `SkeletonRoot` 内建 `@media (prefers-reduced-motion: reduce) { animation: none }`（源码与 readme 双确认），未逐项目检
 - 实现备注（与「决策」的偏差）：页头「音乐」标题与副题为静态常量（不依赖数据），按 first-load-performance「骨架不应成为 FCP 元素」的教训直接渲染真容文本而非骨架条，换容时页头零跳变；数据未知区域（纵轨/身份栏/碟心/面板文案/简介/曲目行 ×8，共 54 个 Skeleton 块）照常使用骨架。`RailItem`/`TrackButton` 为 button（不可聚焦元素约束）不可复用，以局部非交互容器 `RailSlot`/`NameSlot`/`SkeletonRow`（`styled(TrackRow)` 去 pointer/hover）替代，间距/网格位镜像真容
 - 已知残留：MusicView 切年 `loading` 态无视觉反馈，留作后续独立 change（见「动机」）
+- 交付: PR #416 merged（2026-09-29 15:34 UTC，rebase 进 main，HEAD `b2c51f8`）；与 #415（播放面板晕染纸底）同车 [Release v1.4.35](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.35) 触发部署链，CI-CD release run 36593344114 全绿（quality-gate/prepare/prepare-deps/build-next/build-nest/staging-test/switch-traffic 全 success）——**已部署**。另：存续期间受托消解 #415 的 knowledge 冲突（merge commit `69dd01e`，source 清单并集）并回归 audio-player 测试 25/25
 
 ## 知识评估
 
