@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
@@ -22,10 +22,14 @@ import type { PlayerMode } from './specs'
 const HAIRLINE = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 const INK_MUTED = 'color-mix(in oklab, var(--text-color) 72%, transparent)'
 const INK_FAINT = 'color-mix(in oklab, var(--text-color) 56%, transparent)'
+const INK_GHOST = 'color-mix(in oklab, var(--text-color) 38%, transparent)'
 const EASE = 'var(--motion-ease-out-soft)'
 const QUICK = 'var(--motion-dur-quick)'
 // 面板开合 240ms：由 --motion-dur-quick(150ms) 派生，落在交互规范 150–300ms 区间
 const DUR_PANEL = 'calc(var(--motion-dur-quick) * 1.6)'
+// 纸纹：feTurbulence 噪点叠印，把晕染色场「印」进纸里而非悬浮
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")"
 
 const focusRing = css`
   &:focus-visible {
@@ -45,38 +49,38 @@ const reducedMotion = css`
   }
 `
 
-/* 封面背景：原图直接垫底（绢底印花式水印层），如墨在纸上洇开；无封面时退回素纸。
-   亮色主题微提亮、暗色主题压暗；上面的纸色罩负责对比度 */
-const CoverWash = styled.div<{ $src?: string }>`
+/* ===== 封面晕染纸底：照片 → 大模糊成色场 → 纸色罩压平 → 纸纹叠印 ===== */
+
+/* 封面色场：blur 64px 让照片失去可识别轮廓，只留色温；亮色提亮、暗色压暗 */
+const WashSrc = styled.div<{ $src?: string }>`
   position: absolute;
-  inset: 0;
+  inset: -12%;
   z-index: 0;
   pointer-events: none;
-  background: ${(p) => (p.$src ? `url(${p.$src}) center 75% / cover no-repeat` : 'none')};
-  filter: saturate(1.05) brightness(1.04);
+  background: ${(p) => (p.$src ? `url(${p.$src}) center 40% / cover no-repeat` : 'none')};
+  filter: blur(64px) saturate(0.92) brightness(1.18);
   opacity: ${(p) => (p.$src ? 1 : 0)};
 
   [data-color-scheme='dark'] & {
-    filter: saturate(1.05) brightness(0.88);
-  }
-
-  /* 竖屏下面 cover 会完整露出图片顶边（封面自带的印刷字），放大一档并下偏裁掉 */
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    background-size: auto 130%;
-    background-position: center 75%;
+    filter: blur(64px) saturate(0.92) brightness(0.62);
   }
 `
 
-/* 纸色罩：压住晕染保证文字对比度，颜色只走主题 token */
-const WashScrim = styled.div`
+/* 纸色罩：全幅压回纸的明度区间，晕染只提供温度不提供内容 */
+const PaperVeil = styled.div`
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  background: color-mix(in oklab, var(--background-100) 72%, transparent);
+`
+
+/* 文字列局部纸罩：正文对比度最稳的位置再加一道保险 */
+const sectionTint = css`
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--background-100) 88%, transparent),
-    color-mix(in oklab, var(--background-100) 74%, transparent)
+    color-mix(in oklab, var(--background-100) 40%, transparent),
+    color-mix(in oklab, var(--background-100) 26%, transparent)
   );
 `
 
@@ -97,9 +101,9 @@ const Panel = styled.div<{ $visible: boolean }>`
   max-width: 1160px;
   margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 0.85fr);
-  gap: var(--space-2xl);
-  padding: var(--space-2xl) var(--space-2xl);
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.1fr) minmax(0, 0.86fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: 'now lyrics queue' 'dock lyrics queue';
   background: var(--background-100);
   border: 1px solid ${HAIRLINE};
   border-radius: var(--radius-card);
@@ -113,27 +117,45 @@ const Panel = styled.div<{ $visible: boolean }>`
   transition: opacity ${DUR_PANEL} ${EASE}, transform ${DUR_PANEL} ${EASE}, visibility 0s linear ${(p) => (p.$visible ? '0s' : DUR_PANEL)};
   visibility: ${(p) => (p.$visible ? 'visible' : 'hidden')};
 
+  /* 纸纹叠印：multiply 让晕染色场成为纸的一部分 */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    border-radius: inherit;
+    background-image: ${GRAIN};
+    mix-blend-mode: multiply;
+    opacity: 0.06;
+  }
+
+  [data-color-scheme='dark'] &::after {
+    mix-blend-mode: soft-light;
+    opacity: 0.09;
+  }
+
   ${reducedMotion}
 
-  /* 移动端：全屏沉浸页，单列纵向排布（曲名区 / 分段切换 / 歌词或列表撑满余下高度） */
+  /* 移动端：全屏沉浸页 —— header / 分段切换 / 歌词或列表 / dock 吸底 */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     inset: 0;
     max-width: none;
+    padding: 0;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    gap: var(--space-sm);
-    padding: calc(var(--space-sm) + env(safe-area-inset-top, 0px)) var(--space-base)
-      calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: 'header' 'tabs' 'body' 'dock';
     border: none;
     border-radius: 0;
     box-shadow: none;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   @media (min-width: calc(${BREAKPOINTS.mobile}px + 1px)) and (max-width: ${BREAKPOINTS.tablet}px) {
     inset: 24px;
-    gap: var(--space-base);
-    padding: var(--space-base);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas: 'now lyrics' 'dock lyrics';
   }
 `
 
@@ -141,7 +163,7 @@ const CloseButton = styled.button`
   position: absolute;
   top: var(--space-base);
   right: var(--space-base);
-  z-index: 2;
+  z-index: 5;
   width: 44px;
   height: 44px;
   display: inline-flex;
@@ -163,8 +185,9 @@ const CloseButton = styled.button`
   ${focusRing}
 `
 
-/* ===== 左栏：装裱封面 + 曲目 + 控制 ===== */
-const NowPlaying = styled.div`
+/* ===== 左栏：装裱封面 + 题名（header）/ 进度 + 控制（dock 锚底） ===== */
+const NowHeader = styled.div`
+  grid-area: now;
   position: relative;
   z-index: 1;
   min-width: 0;
@@ -173,14 +196,33 @@ const NowPlaying = styled.div`
   flex-direction: column;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-area: header;
+    flex-direction: row;
     align-items: center;
-    text-align: center;
+    gap: var(--space-sm);
+    padding: calc(var(--space-sm) + env(safe-area-inset-top, 0px)) var(--space-base) var(--space-sm);
+    border-bottom: 1px solid ${HAIRLINE};
+  }
+`
+
+const NowDock = styled.div`
+  grid-area: dock;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-area: dock;
+    padding: var(--space-sm) var(--space-base) calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid ${HAIRLINE};
   }
 `
 
 /* 封面按面板可用高度与栏宽双重收缩，避免左栏总高撑出面板底边或横向压到歌词列 */
 const CoverHero = styled.div<{ $src?: string }>`
-  width: min(100%, 320px, 42vh);
+  width: min(100%, 300px, 40vh);
   aspect-ratio: 1;
   align-self: flex-start;
   border-radius: var(--border-radius-lg);
@@ -189,11 +231,14 @@ const CoverHero = styled.div<{ $src?: string }>`
 
   /* 矮视口（常见 800 高笔记本）：封面再收缩一档，保证音量行完整落在面板内 */
   @media (max-height: 840px) {
-    width: min(100%, 240px);
+    width: min(100%, 230px);
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: min(62vw, 240px);
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    border-radius: var(--border-radius-base);
     align-self: center;
   }
 `
@@ -208,8 +253,11 @@ const TrackHeading = styled.h2`
   overflow-wrap: anywhere;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    margin-top: var(--space-base);
-    font-size: var(--font-size-lg);
+    margin-top: 0;
+    font-size: var(--font-size-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `
 
@@ -217,6 +265,13 @@ const TrackArtist = styled.p`
   margin-top: var(--space-xs);
   font-size: var(--font-size-sm);
   color: ${INK_MUTED};
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
 
 const ProgressWrapper = styled.div`
@@ -225,6 +280,10 @@ const ProgressWrapper = styled.div`
   flex-direction: column;
   gap: var(--space-xs);
   width: 100%;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    margin-top: 0;
+  }
 `
 
 const Slider = styled.input`
@@ -254,6 +313,12 @@ const ControlRow = styled.div`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    margin-top: var(--space-sm);
+    justify-content: center;
+    gap: var(--space-lg);
+  }
 `
 
 const SkipButton = styled.button`
@@ -295,6 +360,11 @@ const PlayButton = styled(SkipButton)`
   &:active {
     transform: scale(0.96);
   }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    width: 52px;
+    height: 52px;
+  }
 `
 
 const ModeGroup = styled.div`
@@ -302,6 +372,11 @@ const ModeGroup = styled.div`
   display: flex;
   gap: var(--space-xs);
   flex-wrap: wrap;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    margin-top: var(--space-sm);
+    justify-content: center;
+  }
 `
 
 const ModeButton = styled.button<{ $active?: boolean }>`
@@ -328,6 +403,7 @@ const ModeButton = styled.button<{ $active?: boolean }>`
 
 const VolumeRow = styled.div`
   margin-top: var(--space-base);
+  margin-bottom: var(--space-xs);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -339,27 +415,54 @@ const VolumeRow = styled.div`
 `
 
 /* ===== 右侧：歌词 / 播放列表 ===== */
+
+/* 眉标：短朱砂 tick + 字距小标，不再通栏划线 */
 const SectionHeading = styled.h3`
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid ${HAIRLINE};
+  padding: var(--space-xs) 0 calc(var(--space-xs) + 6px);
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.22em;
   color: ${INK_MUTED};
+
+  &::before {
+    content: '';
+    width: 10px;
+    height: 2px;
+    background: var(--primary-color);
+  }
 `
 
-const DesktopSection = styled.section`
+const LyricsSection = styled.section`
+  grid-area: lyrics;
   position: relative;
   z-index: 1;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  padding: 0 var(--space-2xl) 0 var(--space-lg);
+  ${sectionTint}
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
+`
+
+const QueueSection = styled.section`
+  grid-area: queue;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--space-lg) 0 var(--space-lg);
+  border-left: 1px solid ${HAIRLINE};
+  ${sectionTint}
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
@@ -367,43 +470,135 @@ const DesktopSection = styled.section`
 `
 
 const LyricsScroll = styled.div`
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-right: var(--space-xs);
+  padding: 0 var(--space-sm) var(--space-lg) 0;
   scrollbar-gutter: stable;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${HAIRLINE};
+    border-radius: 999px;
+  }
 
   @media (pointer: coarse) {
     scrollbar-gutter: auto;
   }
 `
 
-const LyricLine = styled.p<{ $active?: boolean }>`
-  padding: var(--space-xs) 0;
+/* 墨随声走：一团软墨晕垫在当前句背后，随演唱进度在纸上洇移 */
+const LyricBloom = styled.div`
+  position: absolute;
+  left: 0;
+  right: var(--space-sm);
+  top: 0;
+  height: 74px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 16px;
+  background:
+    radial-gradient(60% 100% at 24% 50%, color-mix(in oklab, var(--primary-color) 9%, transparent), transparent 72%),
+    radial-gradient(80% 130% at 55% 50%, color-mix(in oklab, var(--text-color) 6%, transparent), transparent 75%);
+  filter: blur(10px);
+  opacity: 0;
+  transition: transform 0.7s ${EASE}, opacity 0.7s ${EASE};
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    height: 62px;
+  }
+`
+
+/* 书写显现：当前句落笔（audio-player 本地 keyframes，站点专属组件先例） */
+const writeIn = keyframes`
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+`
+
+const LyricLine = styled.p<{ $active?: boolean; $near?: boolean }>`
+  position: relative;
+  padding: var(--space-xs) 0 var(--space-xs) 16px;
   font-family: var(--font-serif);
   font-size: var(--font-size-base);
   line-height: var(--line-height-body);
-  color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_MUTED)};
-  font-weight: ${(p) => (p.$active ? 600 : 400)};
-  transition: color ${QUICK} ${EASE};
+  color: ${INK_GHOST};
+  transition: color ${QUICK} ${EASE}, font-size ${QUICK} ${EASE};
+
+  ${(p) => (p.$near ? css`color: ${INK_FAINT};` : null)}
+
+  ${(p) =>
+    p.$active
+      ? css`
+          color: var(--text-color);
+          font-size: var(--font-size-lg);
+          font-weight: 600;
+          animation: ${writeIn} calc(var(--motion-dur-quick) * 1.66) ${EASE} both;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 1.4em;
+            border-radius: 2px;
+            background: var(--primary-color);
+          }
+        `
+      : null}
 `
 
 const QueueList = styled.ul`
   flex: 1;
   min-height: 0;
   margin: 0;
-  padding: 0;
+  padding: 0 0 var(--space-lg);
   list-style: none;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
   scrollbar-gutter: stable;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${HAIRLINE};
+    border-radius: 999px;
+  }
 `
 
 const QueueItem = styled.li<{ $active?: boolean }>`
-  background: ${(p) => (p.$active ? 'color-mix(in oklab, var(--primary-color) 8%, transparent)' : 'transparent')};
+  position: relative;
+  background: ${(p) => (p.$active ? 'color-mix(in oklab, var(--primary-color) 7%, transparent)' : 'transparent')};
   border-radius: var(--border-radius-base);
+
+  /* 当前项：朱砂左标，替代原粉底 pill */
+  ${(p) =>
+    p.$active
+      ? css`
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2.5px;
+            height: 18px;
+            border-radius: 2px;
+            background: var(--primary-color);
+          }
+        `
+      : null}
 
   &:hover {
     background: color-mix(in oklab, var(--text-color) 5%, transparent);
@@ -414,8 +609,8 @@ const QueueButton = styled.button`
   width: 100%;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-sm);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm);
   background: none;
   border: none;
   border-radius: inherit;
@@ -425,6 +620,14 @@ const QueueButton = styled.button`
   text-align: left;
 
   ${focusRing}
+`
+
+const QueueNo = styled.span<{ $active?: boolean }>`
+  flex-shrink: 0;
+  width: 22px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_FAINT)};
 `
 
 const QueueName = styled.span<{$active?: boolean}>`
@@ -450,11 +653,13 @@ const QueueMeta = styled.span`
 const MobileTabs = styled.div`
   position: relative;
   z-index: 1;
+  grid-area: tabs;
   display: none;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: flex;
     gap: var(--space-xs);
+    padding: 0 var(--space-base);
     border-bottom: 1px solid ${HAIRLINE};
   }
 `
@@ -477,10 +682,12 @@ const MobileTab = styled.button<{ $active?: boolean }>`
 const MobileSection = styled.section<{ $active?: boolean }>`
   position: relative;
   z-index: 1;
+  grid-area: body;
   min-height: 0;
   display: none;
   flex-direction: column;
-  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-base) 0;
+  ${sectionTint}
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     ${(p) => (p.$active ? css`display: flex;` : css`display: none;`)}
@@ -508,6 +715,8 @@ export const AudioPlayerPanel = () => {
   } = useAudioPlayer()
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const mobileLyricsRef = useRef<HTMLDivElement | null>(null)
+  const lyricBloomRef = useRef<HTMLDivElement | null>(null)
+  const mobileBloomRef = useRef<HTMLDivElement | null>(null)
   const desktopQueueRef = useRef<HTMLUListElement | null>(null)
   const mobileQueueRef = useRef<HTMLUListElement | null>(null)
   const closeRef = useRef<HTMLButtonElement | null>(null)
@@ -545,15 +754,27 @@ export const AudioPlayerPanel = () => {
     }
   }, [state.isPanelOpen, state.currentIndex, mobileTab])
 
-  // 歌词跟随滚动（桌面与移动两份歌词容器都要跟随）；reduced-motion 下退化为瞬时定位
+  // 歌词跟随滚动 + 墨随声走（桌面与移动两份歌词容器都要跟随）；reduced-motion 下退化为瞬时定位
   useEffect(() => {
     if (!state.isPanelOpen) return
-    if (activeLyric < 0) return
+    const pairs = [
+      { container: scrollRef.current, bloom: lyricBloomRef.current },
+      { container: mobileLyricsRef.current, bloom: mobileBloomRef.current }
+    ]
+    if (activeLyric < 0) {
+      for (const { bloom } of pairs) bloom?.classList.remove('on')
+      return
+    }
     const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const behavior: ScrollBehavior = reduceMotion ? 'auto' : 'smooth'
-    for (const container of [scrollRef.current, mobileLyricsRef.current]) {
+    for (const { container, bloom } of pairs) {
       const el = container?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
-      el?.scrollIntoView({ behavior, block: 'center' })
+      if (!el) continue
+      el.scrollIntoView({ behavior, block: 'center' })
+      if (bloom) {
+        bloom.style.transform = `translateY(${el.offsetTop - 12}px)`
+        bloom.classList.add('on')
+      }
     }
   }, [activeLyric, state.isPanelOpen])
 
@@ -567,17 +788,19 @@ export const AudioPlayerPanel = () => {
         aria-label='播放器面板'
         aria-hidden={!state.isPanelOpen}
       >
-        <CoverWash $src={currentTrack?.coverUrl} aria-hidden='true' />
-        <WashScrim aria-hidden='true' />
+        <WashSrc $src={currentTrack?.coverUrl} aria-hidden='true' />
+        <PaperVeil aria-hidden='true' />
         <CloseButton ref={closeRef} type='button' aria-label='关闭播放面板' onClick={togglePanel} tabIndex={state.isPanelOpen ? 0 : -1}>
           <IconX size={20} />
         </CloseButton>
 
-        <NowPlaying>
+        <NowHeader>
           <CoverHero $src={currentTrack?.coverUrl} aria-hidden='true' />
           <TrackHeading>{currentTrack?.name ?? '等待播放'}</TrackHeading>
           <TrackArtist>{currentTrack?.artist ?? ' '}</TrackArtist>
+        </NowHeader>
 
+        <NowDock>
           <ProgressWrapper>
             <Slider
               type='range'
@@ -635,14 +858,20 @@ export const AudioPlayerPanel = () => {
               aria-label='音量'
             />
           </VolumeRow>
-        </NowPlaying>
+        </NowDock>
 
-        <DesktopSection aria-label='歌词'>
-          <SectionHeading>歌词</SectionHeading>
+        <LyricsSection aria-label='歌词'>
+          <SectionHeading>歌 词</SectionHeading>
           <LyricsScroll ref={scrollRef}>
+            <LyricBloom ref={lyricBloomRef} aria-hidden='true' />
             {lyrics.length ? (
               lyrics.map((line, index) => (
-                <LyricLine key={`${line.time}-${index}`} data-lyric-index={index} $active={index === activeLyric}>
+                <LyricLine
+                  key={`${line.time}-${index}`}
+                  data-lyric-index={index}
+                  $active={index === activeLyric}
+                  $near={Math.abs(index - activeLyric) === 1}
+                >
                   {line.text}
                 </LyricLine>
               ))
@@ -650,16 +879,17 @@ export const AudioPlayerPanel = () => {
               <LyricLine>暂无歌词</LyricLine>
             )}
           </LyricsScroll>
-        </DesktopSection>
+        </LyricsSection>
 
-        <DesktopSection aria-label='播放列表'>
+        <QueueSection aria-label='播放列表'>
           <SectionHeading>
             <IconListMusic size={13} aria-hidden='true' /> 播放列表
           </SectionHeading>
           <QueueList ref={desktopQueueRef}>
-            {queue.map((track) => (
+            {queue.map((track, index) => (
               <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
                 <QueueButton type='button' onClick={() => playTrack(track.id)}>
+                  <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
                   <QueueName $active={track.id === currentTrack?.id}>{track.name}</QueueName>
                   <QueueMeta>
                     <span>{track.artist}</span>
@@ -669,7 +899,7 @@ export const AudioPlayerPanel = () => {
               </QueueItem>
             ))}
           </QueueList>
-        </DesktopSection>
+        </QueueSection>
 
         <MobileTabs role='tablist' aria-label='歌词与播放列表切换'>
           <MobileTab
@@ -699,9 +929,15 @@ export const AudioPlayerPanel = () => {
           aria-hidden={mobileTab !== 'lyrics'}
         >
           <LyricsScroll ref={mobileLyricsRef}>
+            <LyricBloom ref={mobileBloomRef} aria-hidden='true' />
             {lyrics.length ? (
               lyrics.map((line, index) => (
-                <LyricLine key={`${line.time}-${index}`} data-lyric-index={index} $active={index === activeLyric}>
+                <LyricLine
+                  key={`${line.time}-${index}`}
+                  data-lyric-index={index}
+                  $active={index === activeLyric}
+                  $near={Math.abs(index - activeLyric) === 1}
+                >
                   {line.text}
                 </LyricLine>
               ))
@@ -718,9 +954,10 @@ export const AudioPlayerPanel = () => {
           aria-hidden={mobileTab !== 'queue'}
         >
           <QueueList ref={mobileQueueRef}>
-            {queue.map((track) => (
+            {queue.map((track, index) => (
               <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
                 <QueueButton type='button' onClick={() => playTrack(track.id)}>
+                  <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
                   <QueueName $active={track.id === currentTrack?.id}>{track.name}</QueueName>
                   <QueueMeta>
                     <span>{track.artist}</span>
