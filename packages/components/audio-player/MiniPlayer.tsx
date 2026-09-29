@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
@@ -19,6 +19,10 @@ import {
 
 const COLLAPSE_STORAGE_KEY = 'audio-mini-player-collapsed'
 const CARD_HEIGHT = '96px'
+
+/* 跑马灯：恒速换算时长（文本宽 + 间隔）/ 速度；首尾各留 10% 时长的停顿 */
+const MARQUEE_GAP_PX = 48
+const MARQUEE_SPEED_PX_PER_S = 30
 
 const HAIRLINE = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 const INK_MUTED = 'color-mix(in oklab, var(--text-color) 72%, transparent)'
@@ -39,6 +43,12 @@ const showHide = (hiddenTransform: string) => css<{ $visible: boolean }>`
 const equalize = keyframes`
   0%, 100% { transform: scaleY(0.35); }
   50% { transform: scaleY(1); }
+`
+
+/* 0→-50% 无缝循环：每份拷贝自带右侧间隔，平移半轨即回到视觉起点 */
+const marquee = keyframes`
+  0%, 10% { transform: translateX(0); }
+  90%, 100% { transform: translateX(-50%); }
 `
 
 /* ===== 展开态：桌面 dock 卡 / 移动端全宽底栏 ===== */
@@ -269,7 +279,8 @@ const TitleRow = styled.div`
   min-width: 0;
 `
 
-const Title = styled.span`
+const Title = styled.span<{ $marquee: boolean }>`
+  position: relative;
   min-width: 0;
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -277,7 +288,39 @@ const Title = styled.span`
   color: var(--text-color);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ${(p) => (p.$marquee ? 'clip' : 'ellipsis')};
+
+  @media (prefers-reduced-motion: reduce) {
+    text-overflow: ellipsis;
+  }
+`
+
+/* 隐形量尺：始终渲染单份文本，提供与滚动无关的自然宽度 */
+const TitleGhost = styled.span`
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+`
+
+/* 滚动轨道：双份拷贝 + 0→-50% 循环；暂停时停走，与 Equalizer 语义一致 */
+const TitleTrack = styled.span<{ $playing: boolean; $duration: string }>`
+  display: inline-flex;
+  min-width: 0;
+  white-space: nowrap;
+  will-change: transform;
+  animation: ${marquee} ${(p) => p.$duration} linear infinite;
+  animation-play-state: ${(p) => (p.$playing ? 'running' : 'paused')};
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`
+
+const TitleCopy = styled.span`
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding-right: ${MARQUEE_GAP_PX}px;
 `
 
 /* 播放态指示：三根跳动的墨柱，替代原霓虹徽标 */
@@ -461,6 +504,35 @@ const PanelButton = styled(IconButton)`
   }
 `
 
+/* 标题溢出测量：元素级 ResizeObserver（wrapper 视口宽 + ghost 自然宽），
+   曲目名变化即重测；不引入全局 scroll/resize 监听器 */
+const useTitleOverflow = (title: string) => {
+  const wrapperRef = useRef<HTMLSpanElement | null>(null)
+  const ghostRef = useRef<HTMLSpanElement | null>(null)
+  const [metrics, setMetrics] = useState({ text: 0, visible: 0 })
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current
+    const ghost = ghostRef.current
+    if (!wrapper || !ghost || typeof ResizeObserver === 'undefined') return
+
+    const measure = () => {
+      setMetrics((prev) => {
+        const next = { text: ghost.offsetWidth, visible: wrapper.clientWidth }
+        return prev.text === next.text && prev.visible === next.visible ? prev : next
+      })
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(wrapper)
+    observer.observe(ghost)
+    return () => observer.disconnect()
+  }, [title])
+
+  return { wrapperRef, ghostRef, metrics }
+}
+
 export const AudioMiniPlayer = () => {
   const {
     currentTrack,
@@ -477,6 +549,10 @@ export const AudioMiniPlayer = () => {
   }, [collapsed])
 
   const toggleCollapsed = () => setCollapsed((prev) => !prev)
+  const name = currentTrack?.name ?? '等待播放'
+  const { wrapperRef, ghostRef, metrics } = useTitleOverflow(name)
+  const marqueeActive = metrics.visible > 0 && metrics.text > metrics.visible
+  const marqueeDuration = `${(metrics.text + MARQUEE_GAP_PX) / MARQUEE_SPEED_PX_PER_S}s`
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0)
   const progressText =
     totalDuration > 0 ? `${formatDuration(state.progress)} / ${formatDuration(totalDuration)}` : '等待播放'
@@ -493,7 +569,17 @@ export const AudioMiniPlayer = () => {
           </Cover>
           <MetaCopy>
             <TitleRow>
-              <Title>{currentTrack?.name ?? '等待播放'}</Title>
+              <Title $marquee={marqueeActive} ref={wrapperRef}>
+                <TitleGhost ref={ghostRef} aria-hidden='true'>{name}</TitleGhost>
+                {marqueeActive ? (
+                  <TitleTrack $playing={playing} $duration={marqueeDuration}>
+                    <TitleCopy>{name}</TitleCopy>
+                    <TitleCopy aria-hidden='true'>{name}</TitleCopy>
+                  </TitleTrack>
+                ) : (
+                  name
+                )}
+              </Title>
               <Equalizer $playing={playing} aria-hidden='true'>
                 <span />
                 <span />
