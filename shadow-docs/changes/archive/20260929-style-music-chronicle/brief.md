@@ -4,7 +4,7 @@
   "name": "20260929-style-music-chronicle",
   "type": "style",
   "scope": "site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260929-style-music-chronicle",
   "files": [
@@ -20,13 +20,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e0759f1ccafe19165f0d04e98e41f969662659cb",
-    "verifiedAt": "2026-09-29T09:25:58.117Z"
+    "verifiedCommit": "facc4f71a0f73c1bfbcf1685d880ada1d46a230c",
+    "verifiedAt": "2026-09-29T10:03:12.450Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:411",
-    "planHash": "337d56a124a09a69e58c54c855c89807a4e12d69ad68ffeafb8a3a6dde426961",
+    "checkpoint": "merged-pr:411",
+    "planHash": "6f461b49c8d2b0831d726f963bba5601af14dc3a73fdc984aa5d1b67f233beca",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
