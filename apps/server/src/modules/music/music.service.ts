@@ -11,16 +11,23 @@ import {
   type SearchResultDto,
   type TrackSourceResultDto,
   type UserPlaylistSummaryDto,
-  type UserPlaylistsResultDto
+  type UserPlaylistsResultDto,
+  type UserProfileDto
 } from './dto/music.dto';
 
 const COVER_PARAM = 'param=600y600';
+
+/** 头像走小图：页头展示 34px，120 足够 */
+const AVATAR_PARAM = 'param=120y120';
 
 /** 账号维度窄列表：创建歌单排在收藏前，单页 100 足够，不做翻页（超页记 warn 只处理首屏） */
 const USER_PLAYLIST_PAGE_LIMIT = 100;
 
 /** 年度歌单的命名约定：歌单名含「年度」即入选 */
 const ANNUAL_PLAYLIST_KEYWORD = '年度';
+
+/** 听歌排行 type=0 为全期数据（top 1000），type=1 只有周榜 */
+const USER_RECORD_TYPE_ALL = 0;
 
 const YEAR_PATTERN = /(?:19|20)\d{2}/;
 
@@ -44,6 +51,12 @@ interface RawNeteasePlaylist {
   trackCount?: number;
   userId?: number;
   creator?: { userId?: number };
+}
+
+/** 听歌排行（user_record）返回的单条记录 */
+interface RawNeteaseRecordEntry {
+  playCount?: number | string;
+  song?: { id?: number | string };
 }
 
 /** 歌单名中的 4 位年份；无年份返回 null（排序时放最后） */
@@ -91,6 +104,23 @@ export const withCoverSize = (url?: string): string | undefined => {
   return secured.includes('param=') ? secured : `${secured}?${COVER_PARAM}`;
 };
 
+export const withAvatarSize = (url?: string): string | undefined => {
+  const secured = toHttps(url);
+  if (!secured) return undefined;
+  return secured.includes('param=') ? secured : `${secured}?${AVATAR_PARAM}`;
+};
+
+/** 听歌排行全期记录 → 曲目 id 到播放次数的映射；非法条目直接跳过 */
+export const buildPlayCountMap = (records: RawNeteaseRecordEntry[]): Map<number, number> => {
+  const map = new Map<number, number>();
+  for (const entry of records ?? []) {
+    const id = Number(entry?.song?.id);
+    const playCount = Number(entry?.playCount);
+    if (Number.isFinite(id) && Number.isFinite(playCount)) map.set(id, playCount);
+  }
+  return map;
+};
+
 /** 网易云同一资源在不同接口下有 ar/al/dt 与 artists/album 两套字段名，这里统一 */
 export const normalizeTrack = (track: RawNeteaseTrack): MusicTrackDto => {
   const artists = track?.ar ?? track?.artists ?? [];
@@ -130,6 +160,30 @@ export class MusicService {
     throw new BadGatewayException('网易云音乐接口响应异常');
   }
 
+  /**
+   * 听歌排行（全期）→ 曲目 id 到播放次数的映射。上游细节失败由调用方决定降级：
+   * 这里只负责拿到数据，不做兜底判断。
+   */
+  private async fetchPlayCountMap(): Promise<Map<number, number>> {
+    const accountResponse = await this.client.userAccount({ cookie: this.credential });
+    this.assertUpstream(accountResponse, 'user_account');
+
+    const uid = Number(accountResponse.body?.profile?.userId ?? accountResponse.body?.account?.id);
+    if (!Number.isFinite(uid)) return new Map();
+
+    const recordResponse = await this.client.userRecord({
+      id: uid,
+      type: USER_RECORD_TYPE_ALL,
+      cookie: this.credential
+    });
+    this.assertUpstream(recordResponse, 'user_record');
+
+    const records: RawNeteaseRecordEntry[] = Array.isArray(recordResponse.body?.allData)
+      ? recordResponse.body.allData
+      : [];
+    return buildPlayCountMap(records);
+  }
+
   async getPlaylist(playlistId?: string): Promise<PlaylistResultDto> {
     const id = playlistId?.trim() || this.config.defaultPlaylistId;
     const response = await this.client.playlistDetail({ id, cookie: this.credential });
@@ -138,13 +192,33 @@ export class MusicService {
     const playlist = response.body?.playlist ?? {};
     const rawTracks: RawNeteaseTrack[] = Array.isArray(playlist.tracks) ? playlist.tracks : [];
     const numericPlaylistId = Number(id);
+    const tracks = rawTracks.map(normalizeTrack);
+
+    if (!this.config.hasCredential) {
+      return {
+        playlistId: Number.isFinite(numericPlaylistId) ? numericPlaylistId : 0,
+        name: playlist.name,
+        description: playlist.description,
+        coverUrl: withCoverSize(playlist.coverImgUrl),
+        tracks
+      };
+    }
+
+    // 播放次数是增强信息：联表失败只记 warn 缺省字段，不拖垮歌单返回
+    const playCounts = await this.fetchPlayCountMap().catch((error: unknown) => {
+      const reason = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`听歌排行联表失败，曲目播放次数缺省: ${reason}`);
+      return new Map<number, number>();
+    });
 
     return {
       playlistId: Number.isFinite(numericPlaylistId) ? numericPlaylistId : 0,
       name: playlist.name,
       description: playlist.description,
       coverUrl: withCoverSize(playlist.coverImgUrl),
-      tracks: rawTracks.map(normalizeTrack)
+      tracks: tracks.map((track) =>
+        playCounts.has(track.id) ? { ...track, playCount: playCounts.get(track.id) } : track
+      )
     };
   }
 
@@ -197,7 +271,7 @@ export class MusicService {
 
   /**
    * 我的年度歌单。未配置登录态是正常业务态：直接返回空列表（不发上游请求），
-   * 消费方对空列表与失败一律隐藏年度分组。
+   * 消费方对空列表与失败一律隐藏年度分组。账号资料（昵称/头像/等级）与歌单一并返回。
    */
   async getUserPlaylists(): Promise<UserPlaylistsResultDto> {
     if (!this.config.hasCredential) {
@@ -225,6 +299,13 @@ export class MusicService {
     }
 
     const rawPlaylists: RawNeteasePlaylist[] = Array.isArray(listResponse.body?.playlist) ? listResponse.body.playlist : [];
-    return { playlists: selectAnnualPlaylists(rawPlaylists, uid) };
+    const profile = accountResponse.body?.profile ?? {};
+    const level = Number(profile.level);
+    const profileDto: UserProfileDto = {
+      nickname: typeof profile.nickname === 'string' ? profile.nickname : undefined,
+      avatarUrl: withAvatarSize(profile.avatarUrl),
+      level: Number.isFinite(level) ? level : undefined
+    };
+    return { playlists: selectAnnualPlaylists(rawPlaylists, uid), profile: profileDto };
   }
 }

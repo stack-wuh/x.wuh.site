@@ -72,6 +72,12 @@ export class MusicTrackDto {
 
   @ApiPropertyOptional({ description: '时长（秒）' })
   duration?: number;
+
+  @ApiPropertyOptional({
+    description: '播放次数（配置登录态时联表听歌排行全期数据；未上榜或匿名态缺省）',
+    nullable: true
+  })
+  playCount?: number;
 }
 
 export class PlaylistResultDto {
@@ -127,10 +133,27 @@ export class UserPlaylistSummaryDto {
   trackCount: number;
 }
 
+export class UserProfileDto {
+  @ApiPropertyOptional({ description: '网易云昵称' })
+  nickname?: string;
+
+  @ApiPropertyOptional({ description: '头像地址（已改写为 https）' })
+  avatarUrl?: string;
+
+  @ApiPropertyOptional({ description: '网易云等级' })
+  level?: number;
+}
+
 export class UserPlaylistsResultDto {
   @ApiProperty({
     description: '我的年度歌单：名字含「年度」的创建歌单，按年份倒序（未配置登录态或登录失效为空列表）',
     type: [UserPlaylistSummaryDto]
   })
   playlists: UserPlaylistSummaryDto[];
+
+  @ApiPropertyOptional({
+    description: '网易云账号资料（配置登录态时返回；uid 解析失败缺省）',
+    type: UserProfileDto
+  })
+  profile?: UserProfileDto;
 }

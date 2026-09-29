@@ -17,6 +17,7 @@ export interface NeteaseModuleMap {
   cloudsearch?: NeteaseModuleFn;
   user_account?: NeteaseModuleFn;
   user_playlist?: NeteaseModuleFn;
+  user_record?: NeteaseModuleFn;
   [key: string]: NeteaseModuleFn | undefined;
 }
 
@@ -29,6 +30,7 @@ export interface NeteaseClient {
   cloudsearch(query: NeteaseQuery): Promise<NeteaseResponse>;
   userAccount(query: NeteaseQuery): Promise<NeteaseResponse>;
   userPlaylist(query: NeteaseQuery): Promise<NeteaseResponse>;
+  userRecord(query: NeteaseQuery): Promise<NeteaseResponse>;
 }
 
 export const NETEASE_CLIENT = 'NETEASE_CLIENT';
@@ -72,6 +74,10 @@ export class NeteaseLibraryClient implements NeteaseClient {
 
   userPlaylist(query: NeteaseQuery): Promise<NeteaseResponse> {
     return this.call('user_playlist', query);
+  }
+
+  userRecord(query: NeteaseQuery): Promise<NeteaseResponse> {
+    return this.call('user_record', query);
   }
 
   private async call(moduleName: keyof NeteaseModuleMap & string, query: NeteaseQuery): Promise<NeteaseResponse> {

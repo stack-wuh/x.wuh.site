@@ -6,7 +6,15 @@ export const DEFAULT_PLAYLIST_ID = process.env.NEXT_PUBLIC_NETEASE_PLAYLIST_ID ?
 /** 与服务端默认音质保持一致：匿名态下会按可用档位回退 */
 export const TRACK_LEVEL = 'exhigh'
 
-export const SEARCH_LIMIT = 30
+/** 网易云账号资料：配置登录态时随 user-playlists 返回；缺省时页头不展示身份区 */
+export type MusicUserProfile = {
+  nickname?: string
+  avatarUrl?: string
+  level?: number
+}
+
+/** 曲目带播放次数（配置登录态时服务端联表听歌排行；未上榜/匿名态缺省） */
+export type MusicPlaylistTrack = Track & { playCount?: number }
 
 /** 歌单接口返回结构（与服务端 PlaylistResultDto 对齐） */
 export type MusicPlaylist = {
@@ -14,15 +22,9 @@ export type MusicPlaylist = {
   name?: string
   description?: string
   coverUrl?: string
-  tracks: Track[]
+  tracks: MusicPlaylistTrack[]
 }
 
-export type MusicSearchResult = {
-  keywords: string
-  tracks: Track[]
-}
-
-/** 年度歌单摘要与服务端 UserPlaylistsResultDto 对齐：名字含「年度」的创建歌单，年份倒序 */
 export type MusicUserPlaylistSummary = {
   id: number
   name: string
@@ -30,8 +32,10 @@ export type MusicUserPlaylistSummary = {
   trackCount: number
 }
 
+/** 年度歌单入口 + 账号资料（与服务端 UserPlaylistsResultDto 对齐） */
 export type MusicUserPlaylists = {
   playlists: MusicUserPlaylistSummary[]
+  profile?: MusicUserProfile
 }
 
 export const formatTrackDuration = (seconds?: number): string => {
