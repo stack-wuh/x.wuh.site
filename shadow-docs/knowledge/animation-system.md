@@ -10,7 +10,8 @@ scope:
 status: active
 source:
   - changes/archive/20260828-P-site-animation-system/brief.md
-verified: 2026-08-29
+  - changes/20260929-feature-mini-player-title-marquee/brief.md
+verified: 2026-09-29
 ---
 
 # 动画规范
@@ -28,7 +29,7 @@ verified: 2026-08-29
 - 新动画必须引用 `--motion-*` tokens；关键帧只在 MotionStyles 定义，组件内不重定义
 - html/body 的 overflow-x 必须保持 `clip`：`hidden` 会让 body 成为滚动容器，导致 view() 时间线永远判定元素已入视口、滚动渐入整体失效
 - 禁止为动画重新引入 JS scroll/resize 监听器
-- packages/components 共享组件不得引用 `--motion-*`（console 不注入主题变量，引用会坏）
+- packages/components 共享组件不得引用 `--motion-*`（console 不注入主题变量，引用会坏）；**例外：`packages/components/audio-player` 是站点专属组件（console 不消费，仅 site 注入主题变量），关键帧与 `--motion-*` 引用自持**（既有 `equalize` 先例，2026-09-29 跑马灯延续并经 grep 复核消费边界）
 - 正文阅读区与评论区不动画；reduced-motion 与 print 必须有降级
 
 ## 适用边界
