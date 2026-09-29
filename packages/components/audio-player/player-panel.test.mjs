@@ -65,3 +65,41 @@ test('既有交互保持：焦点管理 / Escape / 歌词跟随 / 弹层语义',
 test('reduced-motion 降级必须存在', () => {
   assert.match(src, /prefers-reduced-motion: reduce/)
 })
+
+test('控制甲板 gutter：桌面左栏获得装裱内距，甲板离开面板边缘', () => {
+  assert.match(src, /padding: var\(--space-xl\) 0 0 var\(--space-xl\)/)
+  assert.match(src, /padding: 0 var\(--space-lg\) var\(--space-xl\) var\(--space-xl\)/)
+})
+
+test('凹槽滑杆：定制 range 取代原生默认形态，进度与音量同几何', () => {
+  assert.match(src, /-webkit-appearance: none/)
+  assert.match(src, /::-webkit-slider-runnable-track/)
+  assert.match(src, /::-webkit-slider-thumb/)
+  assert.match(src, /::-moz-range-progress/)
+  assert.match(src, /\$fill/)
+  assert.match(src, /background: var\(--background-100\)/)
+})
+
+test('幽灵传输与碟面环：层级收敛到唯一实心盘', () => {
+  const skipBlock = src.slice(src.indexOf('const SkipButton'), src.indexOf('const PlayButton'))
+  assert.ok(skipBlock.length > 0)
+  assert.match(skipBlock, /border: none/)
+  assert.doesNotMatch(skipBlock, /border: 1px solid/)
+  assert.match(src, /inset: 9px/)
+})
+
+test('下划线模式带：文字带替代描边 pill，图标退场', () => {
+  const modeBlock = src.slice(src.indexOf('const ModeButton'), src.indexOf('const VolumeRow'))
+  assert.ok(modeBlock.length > 0)
+  assert.match(modeBlock, /border-bottom: 2px solid/)
+  assert.doesNotMatch(modeBlock, /border-radius: 999px/)
+  assert.doesNotMatch(src, /IconRepeat|IconShuffle/)
+  assert.match(src, /aria-pressed/)
+})
+
+test('弹层滚动锁：面板打开锁 body 滚动（Dialog lockScroll 配方），关闭还原滚动位置', () => {
+  assert.match(src, /document\.body\.style\.overflow = 'hidden'/)
+  assert.match(src, /document\.body\.style\.position = 'fixed'/)
+  assert.match(src, /top = `-\$\{scrollY\}px`/)
+  assert.match(src, /window\.scrollTo\(0, scrollY\)/)
+})
