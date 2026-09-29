@@ -172,7 +172,7 @@ export class MusicService {
     if (!Number.isFinite(uid)) return new Map();
 
     const recordResponse = await this.client.userRecord({
-      id: uid,
+      uid,
       type: USER_RECORD_TYPE_ALL,
       cookie: this.credential
     });
