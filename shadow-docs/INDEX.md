@@ -53,6 +53,6 @@
 | 20260929-feature-music-yearbook | ✅ 完成 | shadow-docs/changes/archive/20260929-feature-music-yearbook/brief.md |
 | 20260929-fix-music-user-record-uid | ✅ 完成 | shadow-docs/changes/archive/20260929-fix-music-user-record-uid/brief.md |
 | 20260929-style-music-chronicle | ✅ 完成 | shadow-docs/changes/archive/20260929-style-music-chronicle/brief.md |
-| 20260929-style-player-collapse-ear | reviewed | shadow-docs/changes/20260929-style-player-collapse-ear/brief.md |
+| 20260929-style-player-collapse-ear | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-collapse-ear/brief.md |
 | 20260929-style-player-panel-inkwash | reviewed | shadow-docs/changes/20260929-style-player-panel-inkwash/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |

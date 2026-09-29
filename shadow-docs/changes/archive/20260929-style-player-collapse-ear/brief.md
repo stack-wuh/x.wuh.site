@@ -4,28 +4,28 @@
   "name": "20260929-style-player-collapse-ear",
   "type": "style",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260929-style-player-collapse-ear",
   "files": [
     "packages/components/audio-player/MiniPlayer.tsx"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 403,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/403"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "a06bdcfafae8fa674b097772e07bdf66a198f45e",
-    "verifiedAt": "2026-09-29T00:26:32.598Z"
+    "verifiedCommit": "ee2bba005db8ed3ae7ef41d14893d0ce09a87c09",
+    "verifiedAt": "2026-09-29T23:54:35.345Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
-    "planHash": "50d77abbbe7d879860a7e3a27a8c5489813c8ec98cdf5bba5f222bcf0c528e11",
+    "checkpoint": "merged-pr:403",
+    "planHash": "afb3c6e09f02ab4c3286b53baa1cb30c2a2d4c52a6ff1a03144d14a2e07c02c1",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -43,7 +43,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/components.md",
-    "reason": "AudioPlayer 段落「右缘收拢栏」结论已过时：收起交互改为书耳（展开耳为 MiniCard 子元素 absolute right 缘垂直居中 24×44 三边发丝线、收起耳为左缘 fixed 小耳 28×48 同水平线），拼贴缝类缺陷随子元素化结构性消除；ship 时更新该句并补 verified-depth: runtime（四主题双态截图 + 门禁测试 + hover 计算样式）与 verified-scope: packages/components/audio-player"
+    "reason": "书耳结论已随 PR #403 落入 components.md（子元素化约束 + verified-scope），交付 PR #403 merged + Release v1.4.29 部署链全绿；归档前按 main HEAD 重签（MiniPlayer 代码与 #403 合入内容一致）"
   }
 }
 ---
@@ -103,8 +103,11 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: propose→archive 同日完成（2026-09-29）
+- 验证: `node --test style.test.mjs` 6/6 与 `provider.test.mjs` 6/6；`packages/components` tsc 干净（根 tsc 两次 139 为 SGN-001 环境问题）；wine/plain × light/dark 四主题展开/收起双态截图目检、往返交互与 `matches(':hover')` 计算样式验证通过
+- 交付: PR #403 merged（2026-09-29 08:32）；Release [v1.4.29 迷你播放器收起交互书耳重设计](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.29) 触发部署链，CI-CD run 36503704631 全绿（prepare → build → staging-test → switch-traffic，conclusion: success）；merge 后 main push quality-gate 与 CodeQL 均绿
+- 知识动作: components.md AudioPlayer 段落更新为书耳结论（含子元素化约束）+ verified-scope 补录；signals.md SGN-001 命中 1→2
+- 流程备注: propose 阶段的 GitHub Issue 未创建（唯一偏差，不影响交付）
 
 ## 知识评估
 
