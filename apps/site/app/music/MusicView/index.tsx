@@ -54,6 +54,7 @@ import {
   TrackName,
   TrackPlays,
   TrackRow,
+  TrackSide,
   TracksEmpty,
   Watermark
 } from '../styles'
@@ -80,6 +81,7 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
   const [discFading, setDiscFading] = useState(false)
   const lastSwitchRef = useRef(0)
   const discTimerRef = useRef<number | null>(null)
+  const railRef = useRef<HTMLDivElement | null>(null)
 
   const tracks = useMemo(() => selectedPlaylist?.tracks ?? [], [selectedPlaylist])
   const firstYear = useMemo(() => {
@@ -145,6 +147,14 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
       setSelectedId(id)
       setLoadError(false)
 
+      /* 移动端刻度带：把选中年份滚到居中（reduced-motion 下瞬移） */
+      requestAnimationFrame(() => {
+        const target = railRef.current?.querySelector<HTMLButtonElement>(`[data-year="${id}"]`)
+        const reduce =
+          typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        target?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' })
+      })
+
       /* 首屏 SSR 已带该卷数据时直接展示，否则按需取数并同步 URL */
       if (playlist && playlist.playlistId === id) return
 
@@ -185,6 +195,55 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
     [annualPlaylists, selectedId, selectYear]
   )
 
+  /* 移动刻度带在桌面鼠标下不可滚：pointer 拖拽横滑，拖动后拦截误触点击（触屏走原生滚动不介入） */
+  useEffect(() => {
+    const rail = railRef.current
+    if (!rail || typeof window === 'undefined') return
+    if (!window.matchMedia('(pointer: fine)').matches) return
+
+    let dragging = false
+    let moved = false
+    let startX = 0
+    let startLeft = 0
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return
+      dragging = true
+      moved = false
+      startX = event.clientX
+      startLeft = rail.scrollLeft
+    }
+    const onPointerMove = (event: PointerEvent) => {
+      if (!dragging) return
+      const dx = event.clientX - startX
+      if (Math.abs(dx) > 4) {
+        moved = true
+        rail.setPointerCapture(event.pointerId)
+        rail.scrollLeft = startLeft - dx
+      }
+    }
+    const onPointerUp = () => {
+      dragging = false
+    }
+    const onClickCapture = (event: MouseEvent) => {
+      if (!moved) return
+      event.preventDefault()
+      event.stopPropagation()
+      moved = false
+    }
+
+    rail.addEventListener('pointerdown', onPointerDown)
+    rail.addEventListener('pointermove', onPointerMove)
+    rail.addEventListener('pointerup', onPointerUp)
+    rail.addEventListener('click', onClickCapture, true)
+    return () => {
+      rail.removeEventListener('pointerdown', onPointerDown)
+      rail.removeEventListener('pointermove', onPointerMove)
+      rail.removeEventListener('pointerup', onPointerUp)
+      rail.removeEventListener('click', onClickCapture, true)
+    }
+  }, [])
+
   const playFrom = useCallback(
     (index: number) => {
       if (!tracks.length) return
@@ -219,18 +278,20 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
                 <TrackName className="track-name">{track.name}</TrackName>
                 <TrackArtist>{track.artist}</TrackArtist>
               </TrackButton>
-              <TrackPlays title={track.playCount != null ? `播放 ${track.playCount} 次` : '暂无播放记录'}>
-                {track.playCount != null ? (
-                  <>
-                    {track.playCount}
-                    <span className="unit">次</span>
-                  </>
-                ) : (
-                  '—'
-                )}
-              </TrackPlays>
-              <TrackDuration>{formatTrackDuration(track.duration)}</TrackDuration>
-              <FavSlot>{isFav ? <FavBadge title="该卷播放次数最高">最爱</FavBadge> : null}</FavSlot>
+              <TrackSide>
+                <TrackPlays title={track.playCount != null ? `播放 ${track.playCount} 次` : '暂无播放记录'}>
+                  {track.playCount != null ? (
+                    <>
+                      {track.playCount}
+                      <span className="unit">次</span>
+                    </>
+                  ) : (
+                    '—'
+                  )}
+                </TrackPlays>
+                <TrackDuration>{formatTrackDuration(track.duration)}</TrackDuration>
+                <FavSlot>{isFav ? <FavBadge title="该卷播放次数最高">最爱</FavBadge> : null}</FavSlot>
+              </TrackSide>
             </TrackRow>
           )
         })}
@@ -274,7 +335,13 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
 
       <Chronicle>
         {annualPlaylists.length ? (
-          <Rail role="tablist" aria-label="切换年度歌单" aria-orientation="vertical" onKeyDown={onRailKeyDown}>
+          <Rail
+            ref={railRef}
+            role="tablist"
+            aria-label="切换年度歌单"
+            aria-orientation="vertical"
+            onKeyDown={onRailKeyDown}
+          >
             {annualPlaylists.map((item, index) => (
               <RailItem
                 key={item.id}

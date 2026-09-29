@@ -6,12 +6,13 @@ import { dirname, resolve } from 'node:path'
 
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
-const [globalPlayer, appProviders, musicPage, musicView, musicSpecs] = await Promise.all([
+const [globalPlayer, appProviders, musicPage, musicView, musicSpecs, musicStyles] = await Promise.all([
   readFile(resolve(appRoot, 'app/components/player/GlobalAudioPlayer.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/components/AppProviders.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/music/page.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/music/MusicView/index.tsx'), 'utf8'),
-  readFile(resolve(appRoot, 'app/music/specs.ts'), 'utf8')
+  readFile(resolve(appRoot, 'app/music/specs.ts'), 'utf8'),
+  readFile(resolve(appRoot, 'app/music/styles.ts'), 'utf8')
 ])
 
 test('播放器数据来自 Nest /v2/music，站点不再自持代理 route', async () => {
@@ -59,4 +60,24 @@ test('迷你播放器默认队列跟随年度歌单，年度链路失败回落�
   assert.match(globalPlayer, /\/api\/music\/user-playlists/)
   assert.match(globalPlayer, /playlists\[0\]/)
   assert.match(globalPlayer, /FALLBACK_PLAYLIST_ID/)
+})
+
+test('移动端年谱刻度带：滚动条全隐藏、两端渐隐 mask、切年滚到居中', () => {
+  assert.match(musicStyles, /scrollbar-width: none/)
+  assert.match(musicStyles, /&::-webkit-scrollbar \{\s*display: none;/)
+  assert.match(musicStyles, /mask: linear-gradient\(90deg, transparent/)
+  assert.match(musicView, /scrollIntoView\(\{ behavior: reduce \? 'auto' : 'smooth', inline: 'center', block: 'nearest' \}\)/)
+})
+
+test('移动端刻度带桌面可拖拽横滑且不劫持触屏原生滚动', () => {
+  assert.match(musicView, /\(pointer: fine\)/)
+  assert.match(musicView, /pointerType !== 'mouse'/)
+  assert.match(musicView, /setPointerCapture/)
+})
+
+test('曲目行两行制：右列归组桌面溶入行布局、移动端竖排，触控目标 54px', () => {
+  assert.match(musicStyles, /export const TrackSide = styled\.span`\s*display: contents;/)
+  assert.match(musicStyles, /grid-template-columns: auto minmax\(0, 1fr\) auto/)
+  assert.match(musicStyles, /min-height: 54px/)
+  assert.match(musicView, /<TrackSide>/)
 })
