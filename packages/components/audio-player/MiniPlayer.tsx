@@ -1,252 +1,463 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import {
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconListMusic,
+  IconMusic,
+  IconPause,
+  IconPlay,
+  IconSkipBack,
+  IconSkipForward
+} from '@wuh.site/components/icons'
 
 const COLLAPSE_STORAGE_KEY = 'audio-mini-player-collapsed'
-const EXPANDED_CARD_WIDTH = 420
+const CARD_HEIGHT = '96px'
 
-const MiniPlayerDock = styled.div<{ $collapsed: boolean }>`
+const HAIRLINE = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
+const INK_MUTED = 'color-mix(in oklab, var(--text-color) 72%, transparent)'
+const INK_FAINT = 'color-mix(in oklab, var(--text-color) 56%, transparent)'
+const EASE = 'var(--motion-ease-out-soft)'
+const QUICK = 'var(--motion-dur-quick)'
+
+// 开合只做透明度/位移/可见性过渡；可见性延迟到过渡结束后再切换，避免 hidden 元素吃掉退场动画
+const showHide = (hiddenTransform: string) => css<{ $visible: boolean }>`
+  opacity: ${(p) => (p.$visible ? 1 : 0)};
+  visibility: ${(p) => (p.$visible ? 'visible' : 'hidden')};
+  pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
+  transform: ${(p) => (p.$visible ? 'none' : hiddenTransform)};
+  transition: opacity ${QUICK} ${EASE}, transform ${QUICK} ${EASE},
+    visibility 0s linear ${(p) => (p.$visible ? '0s' : QUICK)};
+`
+
+const equalize = keyframes`
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+`
+
+/* ===== 展开态：桌面 dock 卡 / 移动端全宽底栏 ===== */
+const MiniCard = styled.div<{ $visible: boolean }>`
   position: fixed;
-  left: ${(p) => (p.$collapsed ? '0px' : '24px')};
+  left: 24px;
   bottom: 24px;
-  display: flex;
-  align-items: stretch;
   z-index: 2500;
+  width: 440px;
+  height: ${CARD_HEIGHT};
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'open actions'
+    'progress progress';
+  align-items: center;
+  column-gap: var(--space-sm);
+  row-gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-base) var(--space-sm);
+  background: var(--background-100);
+  border: 1px solid ${HAIRLINE};
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--elevation-soft);
+  color: var(--text-color);
   font-family: var(--font-sans);
 
-  @media (max-width: 640px) {
-    left: ${(p) => (p.$collapsed ? '0px' : '12px')};
-    bottom: 12px;
+  ${showHide('translateY(14px)')}
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    grid-template-areas: 'open actions';
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    padding-bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
+    border: none;
+    border-top: 1px solid ${HAIRLINE};
+    border-radius: 0;
+    box-shadow: none;
   }
 `
 
-const ToggleRail = styled.button<{ $collapsed: boolean }>`
-  width: 56px;
-  min-width: 56px;
-  height: 92px;
-  border: none;
-  border-radius: 0 20px 20px 0;
-  background: linear-gradient(180deg, rgba(43, 11, 15, 0.98), rgba(23, 10, 12, 0.96));
-  color: #fff;
-  cursor: pointer;
+/* 耳页共享交互语言：墨转朱砂、纸面染淡朱砂 */
+const earHover = css`
+  &:hover {
+    color: var(--primary-color);
+    background: color-mix(in oklab, var(--primary-color) 6%, var(--background-100));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+`
+
+/* 桌面书耳：卡片子元素，从右缘长出、垂直居中；不透明纸面盖住身后那段发丝线（边框在耳后断开） */
+const EarTab = styled.button`
+  position: absolute;
+  left: calc(100% - 1px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0;
+  background: var(--background-100);
+  color: ${INK_MUTED};
+  border: 1px solid ${HAIRLINE};
   border-left: none;
+  border-radius: 0 var(--border-radius-base) var(--border-radius-base) 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+
+  /* 命中区外扩：视觉 24×44，可点约 32×52 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px 0 -4px -8px;
+  }
+
+  ${earHover}
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
+`
+
+/* 收起态小耳：耳页从卡片上脱落，贴屏幕左缘、与展开耳同一水平线 */
+const CollapsedEar = styled.button<{ $visible: boolean }>`
+  position: fixed;
+  left: 0;
+  bottom: 48px;
+  z-index: 2500;
+  width: 28px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--background-100);
+  color: ${INK_MUTED};
+  border: 1px solid ${HAIRLINE};
+  border-radius: 0 var(--border-radius-base) var(--border-radius-base) 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+
+  ${showHide('translateX(-8px)')}
+
+  /* 命中区外扩：视觉 28×48，可点 36×48 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 -8px 0 0;
+  }
+
+  ${earHover}
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
+`
+
+/* 收起态（移动端）：朱砂「音」印章钮 */
+const SealButton = styled.button<{ $visible: boolean }>`
+  position: fixed;
+  right: var(--space-base);
+  bottom: calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
+  z-index: 2500;
+  width: 48px;
+  height: 48px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-color);
+  color: var(--background-100);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  line-height: 1;
   box-shadow:
-    0 18px 44px rgba(0, 0, 0, 0.35),
-    inset 1px 0 0 rgba(255, 255, 255, 0.08);
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    0 0 0 2px var(--background-color),
+    0 0 0 3px color-mix(in oklab, var(--primary-color) 45%, transparent),
+    var(--elevation-soft);
+
+  ${showHide('scale(0.8)')}
 
   &:hover {
-    background: linear-gradient(180deg, rgba(74, 18, 26, 1), rgba(38, 11, 16, 0.98));
-    transform: translateX(1px);
-    box-shadow:
-      0 22px 48px rgba(0, 0, 0, 0.38),
-      inset 1px 0 0 rgba(255, 255, 255, 0.12);
+    background: var(--primary-600);
   }
 
-  @media (max-width: 640px) {
-    height: 84px;
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
   }
-`
 
-const ToggleGlyph = styled.span`
-  font-size: 18px;
-  line-height: 1;
-`
-
-const CardViewport = styled.div<{ $collapsed: boolean }>`
-  width: ${(p) => (p.$collapsed ? '0px' : `${EXPANDED_CARD_WIDTH}px`)};
-  height: 92px;
-  overflow: hidden;
-  transition: width 0.32s ease;
-
-  @media (max-width: 640px) {
-    width: ${(p) => (p.$collapsed ? '0px' : 'min(348px, calc(100vw - 80px))')};
-    height: 84px;
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: inline-flex;
   }
 `
 
-const CardShell = styled.div<{ $collapsed: boolean }>`
-  width: ${EXPANDED_CARD_WIDTH}px;
-  height: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 16px;
-  padding: 0 18px;
-  background:
-    radial-gradient(circle at top left, rgba(229, 45, 75, 0.24), transparent 36%),
-    linear-gradient(135deg, rgba(29, 12, 16, 0.96), rgba(14, 14, 18, 0.94) 58%, rgba(10, 10, 14, 0.96));
-  backdrop-filter: blur(16px);
-  color: var(--background-100, #f2f2f2);
-  border-radius: 20px 0 0 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-right: none;
-  box-shadow:
-    0 18px 44px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  opacity: ${(p) => (p.$collapsed ? 0 : 1)};
-  transform: translateX(${(p) => (p.$collapsed ? '18px' : '0px')});
-  transform-origin: right center;
-  transition: opacity 0.22s ease, transform 0.32s ease;
-
-  @media (max-width: 640px) {
-    width: min(348px, calc(100vw - 80px));
-    padding: 0 14px;
-    gap: 12px;
-  }
-`
-
-const Divider = styled.div`
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 77, 109, 0.4), rgba(255, 255, 255, 0.02));
-`
-
-const TrackMeta = styled.div`
+/* 封面 + 曲名区：整体可点开面板 */
+const OpenPanelButton = styled.button`
+  grid-area: open;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-sm);
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--border-radius-base);
+
+  &:hover {
+    background: color-mix(in oklab, var(--text-color) 5%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
 `
 
 const Cover = styled.div<{ $src?: string }>`
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  position: relative;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
-  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'rgba(255, 255, 255, 0.16)')};
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: var(--border-radius-base);
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
+  box-shadow: inset 0 0 0 1px ${HAIRLINE};
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    width: 44px;
+    height: 44px;
+  }
+`
+
+const CoverFallback = styled(IconMusic).attrs({ size: 18, 'aria-hidden': true })`
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: ${INK_FAINT};
 `
 
 const MetaCopy = styled.div`
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 `
 
 const TitleRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   min-width: 0;
 `
 
-const Title = styled.div`
+const Title = styled.span`
   min-width: 0;
-  font-size: 15px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  line-height: 1.2;
-  color: #fff;
+  line-height: 1.25;
+  color: var(--text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `
 
-const StatusBadge = styled.span`
+/* 播放态指示：三根跳动的墨柱，替代原霓虹徽标 */
+const Equalizer = styled.span<{ $playing: boolean }>`
   flex-shrink: 0;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(255, 77, 109, 0.14);
-  border: 1px solid rgba(255, 77, 109, 0.28);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 214, 221, 0.88);
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+
+  span {
+    width: 3px;
+    height: 100%;
+    border-radius: 1px;
+    background: var(--primary-color);
+    transform-origin: bottom;
+    animation: ${equalize} 0.9s ease-in-out infinite;
+  }
+
+  span:nth-child(2) {
+    animation-delay: 0.18s;
+  }
+
+  span:nth-child(3) {
+    animation-delay: 0.36s;
+  }
+
+  ${(p) => !p.$playing && css`
+    span {
+      animation-play-state: paused;
+      transform: scaleY(0.35);
+      opacity: 0.5;
+    }
+  `}
+
+  @media (prefers-reduced-motion: reduce) {
+    span {
+      animation: none;
+      transform: scaleY(0.6);
+    }
+  }
 `
 
-const Artist = styled.div`
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.64);
+const Artist = styled.span`
+  font-size: var(--font-size-xs);
+  color: ${INK_MUTED};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `
 
-const Notice = styled.div`
-  font-size: 12px;
-  color: rgba(255, 214, 221, 0.88);
+/* 跳过提示占用歌手行，卡片高度不变（music-player.md 降级语义） */
+const Notice = styled.span`
+  font-size: var(--font-size-xs);
+  color: var(--primary-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `
 
-const ProgressBar = styled.div`
-  width: 100%;
-  height: 4px;
+/* 桌面：进度与时间独占卡片底行；移动端：进度线吸附到栏顶 */
+const ProgressRow = styled.div`
+  grid-area: progress;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+`
+
+const ProgressTrack = styled.div`
+  position: relative;
+  flex: 1;
+  height: 2px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in oklab, var(--normal-400) 35%, transparent);
   overflow: hidden;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    border-radius: 0;
+  }
 `
 
 const ProgressValue = styled.div<{ $value: number }>`
-  width: ${(p) => `${p.$value}%`};
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #ff375f, #ff6a3d);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--primary-color), color-mix(in oklab, var(--primary-color) 65%, var(--accent-color)));
+  transform: scaleX(${(p) => p.$value});
+  transform-origin: left center;
+  transition: transform 0.25s linear;
 `
 
-const ProgressText = styled.div`
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+const ProgressText = styled.span`
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: ${INK_FAINT};
   white-space: nowrap;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
 `
 
 const ActionGroup = styled.div`
+  grid-area: actions;
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: var(--space-xs);
 
-  @media (max-width: 640px) {
-    gap: 6px;
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
   }
 `
 
-const IconButton = styled.button<{ $primary?: boolean }>`
-  width: ${(p) => (p.$primary ? '40px' : '34px')};
-  height: ${(p) => (p.$primary ? '40px' : '34px')};
-  border-radius: 50%;
-  border: none;
-  background: ${(p) =>
-    p.$primary ? 'linear-gradient(135deg, #ff375f, #ff6a3d)' : 'rgba(255, 255, 255, 0.08)'};
-  color: #fff;
-  cursor: pointer;
+const MobileActionGroup = styled.div`
+  grid-area: actions;
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+`
+
+const IconButton = styled.button`
+  width: 40px;
+  height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: ${(p) => (p.$primary ? '0 10px 24px rgba(255, 55, 95, 0.34)' : 'none')};
-  transition: background 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: ${INK_MUTED};
+  cursor: pointer;
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
 
   &:hover {
-    background: ${(p) =>
-      p.$primary ? 'linear-gradient(120deg, #ff637b, #ff9474)' : 'rgba(255, 255, 255, 0.16)'};
-    transform: translateY(-1px);
+    color: var(--primary-color);
+    background: color-mix(in oklab, var(--primary-color) 8%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    width: 44px;
+    height: 44px;
   }
 `
 
-const PanelTrigger = styled.button`
-  height: 34px;
-  padding: 0 12px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  cursor: pointer;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: background 0.2s ease;
+/* 朱砂印主播放钮 */
+const PlayButton = styled(IconButton)`
+  background: var(--primary-color);
+  color: var(--background-100);
+  box-shadow: var(--elevation-soft);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.16);
+    background: var(--primary-600);
+    color: var(--background-100);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+`
+
+const PanelButton = styled(IconButton)`
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
   }
 `
 
@@ -270,60 +481,90 @@ export const AudioMiniPlayer = () => {
   const progressText =
     totalDuration > 0 ? `${formatDuration(state.progress)} / ${formatDuration(totalDuration)}` : '等待播放'
   const progressPercent =
-    totalDuration > 0 ? Math.min(100, Math.max(0, (state.progress / totalDuration) * 100)) : 0
+    totalDuration > 0 ? Math.min(1, Math.max(0, state.progress / totalDuration)) : 0
+  const playing = state.status === 'playing'
 
   return (
-    <MiniPlayerDock $collapsed={collapsed}>
-      <CardViewport $collapsed={collapsed} aria-hidden={collapsed}>
-        <CardShell $collapsed={collapsed}>
-          <TrackMeta>
-            <Cover $src={currentTrack?.coverUrl} />
-            <MetaCopy>
-              <TitleRow>
-                <Title>{currentTrack?.name ?? '等待播放'}</Title>
-                <StatusBadge>{state.status === 'playing' ? 'ON AIR' : 'PLAYER'}</StatusBadge>
-              </TitleRow>
-              {/* 提示占用歌手行，卡片高度不变；下一首正常起播后错误位自动清空 */}
-              {state.error ? (
-                <Notice role='status'>{state.error}</Notice>
-              ) : (
-                <Artist>{currentTrack?.artist ?? '加载默认歌单...'}</Artist>
-              )}
-              <ProgressBar aria-hidden='true'>
-                <ProgressValue $value={progressPercent} />
-              </ProgressBar>
-              <ProgressText>{progressText}</ProgressText>
-            </MetaCopy>
-          </TrackMeta>
+    <>
+      <MiniCard $visible={!collapsed} aria-hidden={collapsed}>
+        <OpenPanelButton type='button' onClick={togglePanel} aria-label='打开播放面板' tabIndex={collapsed ? -1 : 0}>
+          <Cover $src={currentTrack?.coverUrl} aria-hidden='true'>
+            {!currentTrack?.coverUrl ? <CoverFallback /> : null}
+          </Cover>
+          <MetaCopy>
+            <TitleRow>
+              <Title>{currentTrack?.name ?? '等待播放'}</Title>
+              <Equalizer $playing={playing} aria-hidden='true'>
+                <span />
+                <span />
+                <span />
+              </Equalizer>
+            </TitleRow>
+            {/* 提示占用歌手行，卡片高度不变；下一首正常起播后错误位自动清空 */}
+            {state.error ? (
+              <Notice role='status'>{state.error}</Notice>
+            ) : (
+              <Artist>{currentTrack?.artist ?? '加载默认歌单...'}</Artist>
+            )}
+          </MetaCopy>
+        </OpenPanelButton>
 
-          <Divider />
+        <ActionGroup>
+          <IconButton type='button' aria-label='上一首' onClick={playPrevious}>
+            <IconSkipBack size={18} />
+          </IconButton>
+          <PlayButton type='button' aria-label={playing ? '暂停' : '播放'} onClick={togglePlay}>
+            {playing ? <IconPause size={20} /> : <IconPlay size={20} />}
+          </PlayButton>
+          <IconButton type='button' aria-label='下一首' onClick={playNext}>
+            <IconSkipForward size={18} />
+          </IconButton>
+          <PanelButton type='button' aria-label='打开播放面板' onClick={togglePanel}>
+            <IconListMusic size={18} />
+          </PanelButton>
+        </ActionGroup>
 
-          <ActionGroup>
-            <IconButton type='button' aria-label='上一首' onClick={playPrevious}>
-              ‹
-            </IconButton>
-            <IconButton type='button' $primary aria-label='播放/暂停' onClick={togglePlay}>
-              {state.status === 'playing' ? '⏸' : '▶'}
-            </IconButton>
-            <IconButton type='button' aria-label='下一首' onClick={playNext}>
-              ›
-            </IconButton>
-            <PanelTrigger type='button' onClick={togglePanel}>
-              面板
-            </PanelTrigger>
-          </ActionGroup>
-        </CardShell>
-      </CardViewport>
+        <MobileActionGroup>
+          <PlayButton type='button' aria-label={playing ? '暂停' : '播放'} onClick={togglePlay}>
+            {playing ? <IconPause size={20} /> : <IconPlay size={20} />}
+          </PlayButton>
+          <IconButton type='button' aria-label='收起播放器' onClick={toggleCollapsed}>
+            <IconChevronDown size={20} />
+          </IconButton>
+        </MobileActionGroup>
 
-      <ToggleRail
+        <ProgressRow>
+          <ProgressTrack aria-hidden='true'>
+            <ProgressValue $value={progressPercent} />
+          </ProgressTrack>
+          <ProgressText>{progressText}</ProgressText>
+        </ProgressRow>
+
+        {/* 桌面书耳：卡片子元素，随卡片开合动画一体移动；移动端隐藏（移动端走 chevron-down 收起） */}
+        <EarTab
+          type='button'
+          aria-label='收起播放器'
+          aria-expanded={!collapsed}
+          tabIndex={collapsed ? -1 : 0}
+          onClick={toggleCollapsed}
+        >
+          <IconChevronLeft size={16} />
+        </EarTab>
+      </MiniCard>
+
+      <CollapsedEar
         type='button'
-        $collapsed={collapsed}
-        aria-label={collapsed ? '展开播放器' : '收起播放器'}
+        $visible={collapsed}
+        aria-label='展开播放器'
         aria-expanded={!collapsed}
         onClick={toggleCollapsed}
       >
-        <ToggleGlyph>{collapsed ? '❯' : '❮'}</ToggleGlyph>
-      </ToggleRail>
-    </MiniPlayerDock>
+        <IconChevronRight size={16} />
+      </CollapsedEar>
+
+      <SealButton type='button' $visible={collapsed} aria-label='展开播放器' onClick={toggleCollapsed}>
+        音
+      </SealButton>
+    </>
   )
 }

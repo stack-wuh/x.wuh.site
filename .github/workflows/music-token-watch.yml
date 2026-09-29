@@ -1,0 +1,136 @@
+name: Music Token Watch
+
+# 年度歌单依赖部署主机 .env 的 NETEASE_MUSIC_U；该凭证失效的表现是
+# /v2/music/user-playlists 返回空列表并静默回落热歌榜。本工作流每日探测，
+# 空列表时自动开/保持报警 issue，恢复后自动关闭（issue 即状态机）。
+# 判定前提：生产已配置有效 MUSIC_U 且账号存在年度歌单。
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # UTC 02:00 = 北京 10:00
+  workflow_dispatch:
+    inputs:
+      force_fail:
+        description: '演练失效分支：跳过真实探测，直接走告警路径'
+        type: boolean
+        default: false
+
+concurrency:
+  group: music-token-watch
+  cancel-in-progress: false
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+
+      - name: Probe annual playlists
+        id: probe
+        env:
+          SSH_HOST: ${{ secrets.SERVER_HOST }}
+          SSH_USER: ${{ secrets.SERVER_USER }}
+          SSH_PASS: ${{ secrets.SERVER_PASSWORD }}
+          FORCE_FAIL: ${{ inputs.force_fail }}
+        run: |
+          set -euo pipefail
+
+          if [ "$FORCE_FAIL" = "true" ]; then
+            echo "演练模式：跳过真实探测，直接进入告警路径"
+            echo "empty=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          probe_once() {
+            sshpass -p "$SSH_PASS" ssh \
+              -o StrictHostKeyChecking=accept-new \
+              -o ConnectTimeout=10 \
+              "$SSH_USER@$SSH_HOST" \
+              "curl -s --max-time 15 -w '\n%{http_code}' http://localhost:3200/v2/music/user-playlists" \
+              || echo "__PROBE_FAILED__"
+          }
+
+          body="$(probe_once)"
+          # 网络层抖动重试一次
+          if [ -z "$body" ] || [ "$body" = "__PROBE_FAILED__" ]; then
+            sleep 20
+            body="$(probe_once)"
+          fi
+
+          if [ -z "$body" ] || [ "$body" = "__PROBE_FAILED__" ]; then
+            echo "empty=unknown" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          http_code="$(echo "$body" | tail -n 1)"
+          payload="$(echo "$body" | sed '$d')"
+
+          if [ "$http_code" != "200" ]; then
+            echo "上游响应异常 status=$http_code，视为传输层故障，不动报警 issue"
+            echo "empty=unknown" >> "$GITHUB_OUTPUT"
+          elif echo "$payload" | jq -e '(.playlists | length) > 0' > /dev/null 2>&1; then
+            echo "empty=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "empty=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open alarm issue on empty list
+        if: steps.probe.outputs.empty == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create music-token --color D93F0B \
+            --description "MUSIC_U 登录态失效" --force
+
+          open_count="$(gh issue list --label music-token --state open --json number --jq 'length')"
+          if [ "$open_count" -eq 0 ]; then
+            gh issue create \
+              --label music-token \
+              --title "MUSIC_U 已失效：年度歌单回落热歌榜" \
+              --body-file - <<'EOF'
+          每日探测（music-token-watch）发现 `GET /v2/music/user-playlists` 返回空列表——部署主机的 `NETEASE_MUSIC_U` 可能已失效（退出登录 / 改密码 / 网易风控 / 到期）。
+
+          修复步骤：
+
+          1. 浏览器登录 music.163.com → F12 → Application → Cookies → 复制 `MUSIC_U` 的 Value
+          2. SSH 到部署主机编辑站点目录 `.env`：`NETEASE_MUSIC_U=<新值>`
+          3. `docker compose up -d nest`
+          4. `curl http://localhost:3200/v2/music/user-playlists` 确认列表非空；下次巡检通过后本 issue 自动关闭
+
+          > 探测前提：账号下存在名字含「年度」的创建歌单。若你主动清空了年度歌单，本 issue 属预期误报，直接关闭即可。
+          > 本 issue 由工作流自动管理，恢复后自动关闭。
+          EOF
+          else
+            echo "报警 issue 已存在，保持打开"
+          fi
+
+          exit 1
+
+      - name: Close alarm issue on recovery
+        if: steps.probe.outputs.empty == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          open_numbers="$(gh issue list --label music-token --state open --json number --jq '.[].number')"
+          if [ -z "$open_numbers" ]; then
+            echo "探测健康，且无待关闭的报警 issue"
+            exit 0
+          fi
+          for number in $open_numbers; do
+            gh issue close "$number" \
+              --comment "探测恢复：年度歌单列表非空，MUSIC_U 有效。本 issue 由 music-token-watch 自动关闭。"
+          done
+
+      - name: Fail on probe error
+        if: steps.probe.outputs.empty == 'unknown'
+        run: |
+          echo "探测连续两次失败（SSH/网络/上游 5xx），无法判定登录态；不修改报警 issue，请人工检查服务可用性"
+          exit 1

@@ -7,7 +7,8 @@ import {
   SearchQueryDto,
   SearchResultDto,
   TrackQueryDto,
-  TrackSourceResultDto
+  TrackSourceResultDto,
+  UserPlaylistsResultDto
 } from './dto/music.dto';
 
 @ApiTags('Music')
@@ -20,6 +21,17 @@ export class MusicController {
   @ApiResponse({ status: 200, description: '歌单与曲目列表', type: PlaylistResultDto })
   async getPlaylist(@Query() query: PlaylistQueryDto): Promise<PlaylistResultDto> {
     return this.musicService.getPlaylist(query.playlistId);
+  }
+
+  @Get('user-playlists')
+  @ApiOperation({ summary: '获取我的年度歌单（名字含「年度」的创建歌单，年份倒序）' })
+  @ApiResponse({
+    status: 200,
+    description: '年度歌单列表；未配置登录态或登录失效为空列表',
+    type: UserPlaylistsResultDto
+  })
+  async getUserPlaylists(): Promise<UserPlaylistsResultDto> {
+    return this.musicService.getUserPlaylists();
   }
 
   @Get('track')
