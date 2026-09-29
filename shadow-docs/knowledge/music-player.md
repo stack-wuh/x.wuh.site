@@ -16,6 +16,7 @@ source:
   - changes/20260929-fix-music-user-record-uid/brief.md
   - changes/20260929-style-music-chronicle/brief.md
   - changes/20260929-style-music-mobile/brief.md
+  - changes/20260929-style-player-panel-inkwash/brief.md
 verified: 2026-09-29
 verified-depth: runtime
 verified-scope: 服务端 jest 35/35（登录态边界、creator+年度过滤、年份倒序、502/503 映射、听歌排行联表与降级、profile 暴露、user_record 入参 uid 断言）；生产实测 /v2/music/user-playlists 返回 8 张年度歌单（2018-2025 年份倒序）；上游干跑 user_record{uid:398326271,type:0} 匿名 200 + allData 100 条（uid 误传 id 为 502）；站点侧 wiring 7/7、oxlint 0/0、实现截图（桌面夜/移动 500px）与认可原型构图比对一致。失效探测：workflow YAML 结构解析、5 个 step 脚本 bash -n、判定逻辑对生产端点干跑（200+healthy；空/非空边界样例）通过；dispatch 正负路径实测见 changes/archive/20260929-build-music-token-watch 交付记录。
@@ -38,6 +39,8 @@ verified-scope: 服务端 jest 35/35（登录态边界、creator+年度过滤、
 **/music 页呈现**（2026-09-29 起，替代此前的书架书脊方案）：年度切换为「年轮编年·碟心封面」——左侧衬线年份纵轨（选中 `aria-current` 主色高亮，未选中按距选中距离淡化）+ 内容区右上超大水印年份（≤640px 隐藏）+ 面板头 64px 小黑胶碟（歌单封面做碟心圆标；切年淡出→轻转 120°（累计）→换面淡入，2 秒内连切自动收短；`status==='playing'` 且队列属当前卷时慢转；`prefers-reduced-motion` 下静止）+ 按语（本卷 `playCount` 最高曲目，缺省不展示）；歌单 `description` 渲染为描述位，`tags` 为服务端预留字段（前端已按 `tags?: string[]` 渲染 chips，服务端补字段即点亮）。曲目行语言（悬停编号翻播放键/次数/最爱徽标/时长）与书架期一致。
 
 **/music 移动端呈现**（2026-09-29 起，≤ `BREAKPOINTS.mobile`）：年度切换收成「年谱刻度带」——纯文字衬线年份沿基线排开（选中年 27px/600 主色 + 2px 下划标，其余按距离 16px 淡化，同一套 `$dist` 语言），两端渐隐 mask 提示横滑、滚动条全隐藏（`scrollbar-width: none` + `::-webkit-scrollbar`，组件级 specific 于全局滚动条）、切年后选中卷 `scrollIntoView` 居中（reduced-motion 瞬移）、桌面 `pointer: fine` 下鼠标可拖拽横滑（拖动后 click capture 拦截误触）。曲目行两行制：歌名独占一行省略、艺术家退第二行、次数/时长/最爱在右列竖排（`TrackSide` 桌面 `display: contents` 溶入单行布局与历史渲染一致，移动端网格两行右锚）；触屏无 hover——`:active` 翻出播放键、播放中歌名常驻主色；行 `min-height: 54px` 触控目标。碟心 56→72px；页头身份栏收进标题行（`TitleGroup` 移动端 `display: contents` + 页头网格模板区，头像 28px、昵称截断保护）。陷阱：两行制下 `TrackButton` 移动端必须 `align-items: stretch`（`flex-start` 会让 `TrackName` 保持内容宽不截断、溢出盖住右列——短名行看不出来，长名行必现）。
+
+**播放面板视觉语义**（2026-09-29 起，「封面晕染纸底」定稿，替代 #402 的原图 1:1 铺 + 渐变罩——旧法照片结构完整可辨、歌词列压脸，对比度失败）：面板背景是**五层配方**——① 封面图 `blur(64px) saturate(0.92)`，亮色 `brightness(1.18)`/暗色 `0.62`（照片失去轮廓退化成色场）→ ② 纸色罩 `color-mix(var(--background-100) 72%, transparent)` 全幅压平 → ③ feTurbulence 纸纹 `multiply 6%`（暗色 `soft-light 9%`）经 Panel::after 叠印 → ④ 歌词/列表栏局部纸罩 40%→26% 纵向渐变 → ⑤ 颜色只经主题变量。左栏拆 `NowHeader`（装裱封面+题名）与 `NowDock`（进度+控制+模式+音量）两个 grid 区：桌面 `grid-template-areas 'now lyrics queue' / 'dock lyrics queue'`（dock 锚面板底边），移动端 `'header' 'tabs' 'body' 'dock'`（dock 吸底 safe-area，header 收成小封面横排）。歌词是签名元素：当前句 serif `--font-size-lg` 实墨 + 3px 朱砂侧标 + `writeIn` 书写显现（audio-player 本地 keyframes），相邻句淡墨其余隐墨；「墨随声走」墨晕（朱砂 9% + 墨 6%，blur 10px）经读取当前句 `offsetTop` 设 transform 跟随（禁 scroll/resize 监听）。播放列表 01–10 序号（mono 淡墨）+ 当前项朱砂左标（非粉底 pill）；栏间通高发丝线、眉标短朱砂 tick。
 
 **失效探测**：`music-token-watch` workflow 每日北京时间 10:00（cron `0 2 * * *`）SSH 到部署主机探测 `GET /v2/music/user-playlists`。双通道判定：HTTP 200 + 空列表 = 登录态失效 → 自动开/保持 `music-token` 标签报警 issue（恢复后自动关闭，issue 即状态机），run 同时失败触发邮件；SSH/网络/上游 5xx = 传输层故障 → 只让 run 失败，**不修改**报警 issue（避免服务抖动误报 token 失效）。`workflow_dispatch` 支持 `force_fail` 演练告警分支。判定前提：账号存在名字含「年度」的创建歌单。
 
