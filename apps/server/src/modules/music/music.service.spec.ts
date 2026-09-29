@@ -12,6 +12,7 @@ const createClient = (overrides: Partial<NeteaseClient> = {}): NeteaseClient => 
   cloudsearch: jest.fn().mockResolvedValue(ok({ result: { songs: [] } })),
   userAccount: jest.fn().mockResolvedValue(ok({ profile: { userId: 123 }, account: { id: 123 } })),
   userPlaylist: jest.fn().mockResolvedValue(ok({ more: false, playlist: [] })),
+  userRecord: jest.fn().mockResolvedValue(ok({ allData: [] })),
   ...overrides
 })
 
@@ -116,6 +117,55 @@ describe('MusicService', () => {
       const authorized = jest.fn().mockResolvedValue(ok(playlistBody))
       await new MusicService(createClient({ playlistDetail: authorized }), createConfig('token-value')).getPlaylist()
       expect(authorized).toHaveBeenCalledWith(expect.objectContaining({ cookie: 'MUSIC_U=token-value' }))
+    })
+
+    it('joins play counts from the all-time user record when a credential is configured', async () => {
+      const userRecord = jest.fn().mockResolvedValue(
+        ok({
+          allData: [
+            { playCount: 88, song: { id: 1973665667 } },
+            { playCount: 7, song: { id: '999' } }
+          ]
+        })
+      )
+      const service = new MusicService(
+        createClient({ playlistDetail: jest.fn().mockResolvedValue(ok(playlistBody)), userRecord }),
+        createConfig('token-value')
+      )
+
+      const result = await service.getPlaylist()
+
+      expect(userRecord).toHaveBeenCalledWith(expect.objectContaining({ type: 0, cookie: 'MUSIC_U=token-value' }))
+      expect(result.tracks[0]).toMatchObject({ id: 1973665667, playCount: 88 })
+      expect(result.tracks[1]).not.toHaveProperty('playCount')
+    })
+
+    it('keeps the playlist usable without play counts when the user record join fails', async () => {
+      const service = new MusicService(
+        createClient({
+          playlistDetail: jest.fn().mockResolvedValue(ok(playlistBody)),
+          userRecord: jest.fn().mockRejectedValue(new ServiceUnavailableException('网易云音乐接口不可用：user_record'))
+        }),
+        createConfig('token-value')
+      )
+
+      const result = await service.getPlaylist()
+
+      expect(result.tracks).toHaveLength(2)
+      expect(result.tracks[0]).not.toHaveProperty('playCount')
+    })
+
+    it('skips the play-count join for anonymous requests', async () => {
+      const userRecord = jest.fn()
+      const service = new MusicService(
+        createClient({ playlistDetail: jest.fn().mockResolvedValue(ok(playlistBody)), userRecord }),
+        createConfig()
+      )
+
+      const result = await service.getPlaylist()
+
+      expect(userRecord).not.toHaveBeenCalled()
+      expect(result.tracks[0]).not.toHaveProperty('playCount')
     })
   })
 
@@ -245,6 +295,43 @@ describe('MusicService', () => {
 
     const getLoggerWarn = (service: MusicService) =>
       jest.spyOn((service as unknown as { logger: { warn: (message: string) => void } }).logger, 'warn')
+
+    it('exposes the netease profile with https avatar alongside the annual playlists', async () => {
+      const userAccount = jest.fn().mockResolvedValue(
+        ok({
+          profile: {
+            userId: uid,
+            nickname: '吴尒红',
+            avatarUrl: 'http://p1.music.126.net/avatar.jpg',
+            level: 9
+          },
+          account: { id: uid }
+        })
+      )
+      const service = new MusicService(
+        createClient({ userAccount, userPlaylist: jest.fn().mockResolvedValue(ok(playlistBody([mine()]))) }),
+        createConfig('token-value')
+      )
+
+      const result = await service.getUserPlaylists()
+
+      expect(result.profile).toEqual({
+        nickname: '吴尒红',
+        avatarUrl: 'https://p1.music.126.net/avatar.jpg?param=120y120',
+        level: 9
+      })
+    })
+
+    it('omits the profile when no credential is configured', async () => {
+      const userAccount = jest.fn()
+      const userPlaylist = jest.fn()
+      const service = new MusicService(createClient({ userAccount, userPlaylist }), createConfig())
+
+      const result = await service.getUserPlaylists()
+
+      expect(result.profile).toBeUndefined()
+      expect(userAccount).not.toHaveBeenCalled()
+    })
 
     it('returns an empty list without touching the upstream when no credential is configured', async () => {
       const userAccount = jest.fn()

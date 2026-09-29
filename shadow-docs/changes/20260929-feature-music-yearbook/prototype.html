@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme-family="wine" data-color-scheme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音乐 · 原型 — x.wuh.site/music</title>
+<style>
+/* ==========================================================================
+   /music 页面原型 — 歌单为主体 + 书架式年度切换（真实数据）
+   书架语言：架上正对人眼的是书脊；点选一本书 = 抽出并翻开，
+   封面（真实歌单封面）转向读者，丝带从书顶露出
+   主题 token 1:1 复刻 packages/components/themes（Layer1 + Layer2 路由 + Layer3 语义）
+   ========================================================================== */
+
+/* ===== Layer 1: 原始调色板（与 generator-color.ts 一致，恒挂 :root） ===== */
+:root {
+  --_wl-primary-100:#FCEDEC;--_wl-primary-200:#F8D8D6;--_wl-primary-300:#F2BEBB;--_wl-primary-400:#E2928D;--_wl-primary-500:#C94A44;--_wl-primary-600:#A13531;--_wl-primary-700:#8A2A26;--_wl-primary-800:#6B1F1E;--_wl-primary-900:#4D1515;
+  --_wl-normal-100:#FFFDFB;--_wl-normal-200:#F8F3EE;--_wl-normal-300:#EBE2D8;--_wl-normal-400:#D4C8B8;--_wl-normal-500:#B9A998;--_wl-normal-600:#A08878;--_wl-normal-700:#8A6E5C;--_wl-normal-800:#5A4438;--_wl-normal-900:#2A1E16;
+  --_wl-background-100:#FFFBF8;--_wl-background-200:#FDF3EC;--_wl-background-300:#FAE5D8;--_wl-background-400:#F5D0BC;--_wl-background-500:#EBB89E;--_wl-background-600:#DE9A7C;--_wl-background-700:#C88062;--_wl-background-800:#A86A50;--_wl-background-900:#F5F0EC;
+  --_wd-primary-100:#3A1516;--_wd-primary-200:#4A1B1C;--_wd-primary-300:#5B2223;--_wd-primary-400:#7A2F2F;--_wd-primary-500:#E36A64;--_wd-primary-600:#F07A73;--_wd-primary-700:#F6A09B;--_wd-primary-800:#F9C5C1;--_wd-primary-900:#FCE6E4;
+  --_wd-normal-100:#2c2c2c;--_wd-normal-200:#454545;--_wd-normal-300:#5b5b5b;--_wd-normal-400:#7e7e7e;--_wd-normal-500:#adadad;--_wd-normal-600:#dcdcdc;--_wd-normal-700:#e8e8e8;--_wd-normal-800:#f3f3f3;--_wd-normal-900:#f8f8f8;
+  --_wd-background-100:#111111;--_wd-background-200:#0f0f0f;--_wd-background-300:#110f0f;--_wd-background-400:#100d0d;--_wd-background-500:#0e0a0a;--_wd-background-600:#0c0606;--_wd-background-700:#170e0e;--_wd-background-800:#231a1a;--_wd-background-900:#2f2a2a;
+  --_pl-primary-100:#FBF4EE;--_pl-primary-200:#F5E4D6;--_pl-primary-300:#EBC9AE;--_pl-primary-400:#DBA87E;--_pl-primary-500:#C89060;--_pl-primary-600:#A87348;--_pl-primary-700:#8C5A35;--_pl-primary-800:#6B4325;--_pl-primary-900:#4A2C18;
+  --_pl-normal-100:#FDFCFA;--_pl-normal-200:#F5F1EA;--_pl-normal-300:#E8E2D6;--_pl-normal-400:#D4CBB8;--_pl-normal-500:#B8AC98;--_pl-normal-600:#9B8D78;--_pl-normal-700:#6B5E4E;--_pl-normal-800:#4A3F32;--_pl-normal-900:#2A2218;
+  --_pl-background-100:#FFFDF9;--_pl-background-200:#F8F3EC;--_pl-background-300:#F0E8DC;--_pl-background-400:#E5D8C4;--_pl-background-500:#D4C4AC;--_pl-background-600:#BFA88C;--_pl-background-700:#A68B6C;--_pl-background-800:#8B7052;--_pl-background-900:#F2EDE4;
+  --_pd-primary-100:#2a1a0c;--_pd-primary-200:#3a2412;--_pd-primary-300:#4e2e18;--_pd-primary-400:#6a3e20;--_pd-primary-500:#D4A478;--_pd-primary-600:#deb896;--_pd-primary-700:#e8ccb4;--_pd-primary-800:#f2e0d2;--_pd-primary-900:#faf0ea;
+  --_pd-normal-100:#201a14;--_pd-normal-200:#28221a;--_pd-normal-300:rgba(255,255,255,.10);--_pd-normal-400:rgba(255,255,255,.14);--_pd-normal-500:rgba(255,255,255,.20);--_pd-normal-600:rgba(255,255,255,.30);--_pd-normal-700:rgba(255,255,255,.42);--_pd-normal-800:rgba(255,255,255,.58);--_pd-normal-900:rgba(255,255,255,.72);
+  --_pd-background-100:#111111;--_pd-background-200:#0f0f0f;--_pd-background-300:#111110;--_pd-background-400:#100f0f;--_pd-background-500:#0e0d0c;--_pd-background-600:#0c0b0a;--_pd-background-700:#171514;--_pd-background-800:#232121;--_pd-background-900:#2f2e2d;
+}
+
+/* ===== Layer 2: 主题路由 ===== */
+:root {
+  --primary-100:var(--_wl-primary-100);--primary-200:var(--_wl-primary-200);--primary-300:var(--_wl-primary-300);--primary-400:var(--_wl-primary-400);--primary-500:var(--_wl-primary-500);--primary-600:var(--_wl-primary-600);--primary-700:var(--_wl-primary-700);--primary-800:var(--_wl-primary-800);--primary-900:var(--_wl-primary-900);
+  --normal-100:var(--_wl-normal-100);--normal-200:var(--_wl-normal-200);--normal-300:var(--_wl-normal-300);--normal-400:var(--_wl-normal-400);--normal-500:var(--_wl-normal-500);--normal-600:var(--_wl-normal-600);--normal-700:var(--_wl-normal-700);--normal-800:var(--_wl-normal-800);--normal-900:var(--_wl-normal-900);
+  --background-100:var(--_wl-background-100);--background-200:var(--_wl-background-200);--background-300:var(--_wl-background-300);--background-400:var(--_wl-background-400);--background-500:var(--_wl-background-500);--background-600:var(--_wl-background-600);--background-700:var(--_wl-background-700);--background-800:var(--_wl-background-800);--background-900:var(--_wl-background-900);
+}
+[data-theme-family="plain"] {
+  --primary-100:var(--_pl-primary-100);--primary-200:var(--_pl-primary-200);--primary-300:var(--_pl-primary-300);--primary-400:var(--_pl-primary-400);--primary-500:var(--_pl-primary-500);--primary-600:var(--_pl-primary-600);--primary-700:var(--_pl-primary-700);--primary-800:var(--_pl-primary-800);--primary-900:var(--_pl-primary-900);
+  --normal-100:var(--_pl-normal-100);--normal-200:var(--_pl-normal-200);--normal-300:var(--_pl-normal-300);--normal-400:var(--_pl-normal-400);--normal-500:var(--_pl-normal-500);--normal-600:var(--_pl-normal-600);--normal-700:var(--_pl-normal-700);--normal-800:var(--_pl-normal-800);--normal-900:var(--_pl-normal-900);
+  --background-100:var(--_pl-background-100);--background-200:var(--_pl-background-200);--background-300:var(--_pl-background-300);--background-400:var(--_pl-background-400);--background-500:var(--_pl-background-500);--background-600:var(--_pl-background-600);--background-700:var(--_pl-background-700);--background-800:var(--_pl-background-800);--background-900:var(--_pl-background-900);
+}
+[data-color-scheme="dark"] {
+  --primary-100:var(--_wd-primary-100);--primary-200:var(--_wd-primary-200);--primary-300:var(--_wd-primary-300);--primary-400:var(--_wd-primary-400);--primary-500:var(--_wd-primary-500);--primary-600:var(--_wd-primary-600);--primary-700:var(--_wd-primary-700);--primary-800:var(--_wd-primary-800);--primary-900:var(--_wd-primary-900);
+  --normal-100:var(--_wd-normal-100);--normal-200:var(--_wd-normal-200);--normal-300:var(--_wd-normal-300);--normal-400:var(--_wd-normal-400);--normal-500:var(--_wd-normal-500);--normal-600:var(--_wd-normal-600);--normal-700:var(--_wd-normal-700);--normal-800:var(--_wd-normal-800);--normal-900:var(--_wd-normal-900);
+  --background-100:var(--_wd-background-100);--background-200:var(--_wd-background-200);--background-300:var(--_wd-background-300);--background-400:var(--_wd-background-400);--background-500:var(--_wd-background-500);--background-600:var(--_wd-background-600);--background-700:var(--_wd-background-700);--background-800:var(--_wd-background-800);--background-900:var(--_wd-background-900);
+}
+[data-theme-family="plain"][data-color-scheme="dark"] {
+  --primary-100:var(--_pd-primary-100);--primary-200:var(--_pd-primary-200);--primary-300:var(--_pd-primary-300);--primary-400:var(--_pd-primary-400);--primary-500:var(--_pd-primary-500);--primary-600:var(--_pd-primary-600);--primary-700:var(--_pd-primary-700);--primary-800:var(--_pd-primary-800);--primary-900:var(--_pd-primary-900);
+  --normal-100:var(--_pd-normal-100);--normal-200:var(--_pd-normal-200);--normal-300:var(--_pd-normal-300);--normal-400:var(--_pd-normal-400);--normal-500:var(--_pd-normal-500);--normal-600:var(--_pd-normal-600);--normal-700:var(--_pd-normal-700);--normal-800:var(--_pd-normal-800);--normal-900:var(--_pd-normal-900);
+  --background-100:var(--_pd-background-100);--background-200:var(--_pd-background-200);--background-300:var(--_pd-background-300);--background-400:var(--_pd-background-400);--background-500:var(--_pd-background-500);--background-600:var(--_pd-background-600);--background-700:var(--_pd-background-700);--background-800:var(--_pd-background-800);--background-900:var(--_pd-background-900);
+}
+
+/* ===== Layer 3: 非颜色 token 与语义色（与站点一致） ===== */
+:root {
+  --space-none:0px;--space-xs:8px;--space-sm:16px;--space-base:12px;
+  --space-md:clamp(20px, 4vw, 28px);--space-lg:clamp(24px, 5vw, 36px);--space-xl:clamp(32px, 6vw, 48px);--space-2xl:clamp(48px, 8vw, 72px);--space-3xl:clamp(64px, 10vw, 96px);
+  --font-size-xs:12px;--font-size-sm:13px;--font-size-base:15px;--font-size-md:17px;--font-size-lg:22px;--font-size-xl:30px;--font-size-2xl:38px;--font-size-3xl:52px;
+  --border-radius-xs:2px;--border-radius-sm:4px;--border-radius-base:8px;--border-radius-md:12px;--border-radius-lg:16px;--border-radius-xl:20px;--border-radius-2xl:24px;--border-radius-3xl:28px;
+  --motion-ease-out-soft:cubic-bezier(0.22, 1, 0.36, 1);--motion-ease-in-out-soft:cubic-bezier(0.45, 0, 0.25, 1);
+  --motion-dur-quick:150ms;--motion-dur-reveal:600ms;--motion-dur-write:400ms;
+  --line-height-body:1.8;--line-height-heading:1.35;
+
+  --primary-color:var(--primary-500);
+  --text-color:var(--normal-900);
+  --background-color:var(--background-900);
+  --transition-fast:180ms;
+  --elevation-soft:0 4px 14px rgba(0,0,0,.06);
+  --elevation-card:0 20px 40px rgba(0,0,0,0.08);
+  --elevation-card-hover:0 30px 50px rgba(0,0,0,0.12);
+  --accent-color:#E3B567;
+  --page-bg:linear-gradient(180deg, var(--background-color) 0%, color-mix(in oklab, var(--background-color) 95%, var(--primary-color) 5%) 100%);
+  --font-sans:'Noto Sans SC', ui-sans-serif, system-ui, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono:'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  --font-serif:'Noto Serif SC', Georgia, 'Songti SC', 'SimSun', serif;
+}
+[data-color-scheme="dark"] {
+  --text-color:var(--normal-500);
+  --elevation-soft:0 4px 14px rgba(0,0,0,.25);
+  --elevation-card:0 18px 36px rgba(0,0,0,0.45);
+  --elevation-card-hover:0 26px 46px rgba(0,0,0,0.6);
+  --page-bg:
+    radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-color) 18%, transparent), transparent 55%),
+    radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 18%, transparent), transparent 52%),
+    linear-gradient(180deg, color-mix(in oklab, var(--background-color) 92%, var(--primary-color) 8%), var(--background-color));
+}
+[data-theme-family="plain"] {
+  --primary-color:var(--primary-600);
+  --text-color:var(--normal-900);
+  --accent-color:#C89060;
+  --font-size-sm:15px;--font-size-md:17px;--font-size-lg:19px;--font-size-xl:22px;--font-size-2xl:27px;
+  --line-height-body:2.0;--line-height-heading:1.4;
+  --elevation-soft:0 2px 8px rgba(0,0,0,.04);
+  --elevation-card:0 4px 16px rgba(0,0,0,.06);
+  --elevation-card-hover:0 8px 24px rgba(0,0,0,.09);
+  --page-bg:linear-gradient(180deg, var(--background-900) 0%, color-mix(in oklab, var(--background-900) 96%, var(--primary-600) 4%) 100%);
+}
+[data-theme-family="plain"][data-color-scheme="dark"] {
+  --text-color:var(--normal-900);
+  --page-bg:linear-gradient(180deg, var(--background-900), color-mix(in oklab, var(--background-900) 98%, var(--primary-color) 2%));
+}
+@media (max-width: 640px) {
+  :root { --line-height-body:1.7; --line-height-heading:1.3; }
+  [data-theme-family="plain"] { --line-height-body:1.8; --line-height-heading:1.35; }
+}
+
+/* ===== 基础 ===== */
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { max-width:100vw; overflow-x:clip; }
+body {
+  color:var(--text-color);
+  background:var(--page-bg, var(--background-color));
+  font-family:var(--font-sans);
+  font-size:var(--font-size-base);
+  line-height:var(--line-height-body);
+  font-synthesis:none;
+  transition:background-color .3s ease, color .3s ease;
+}
+button { font-family:inherit; cursor:pointer; }
+:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
+
+.page { width:min(960px, 100%); margin:0 auto; padding:var(--space-2xl) var(--space-base) var(--space-3xl); }
+
+/* ===== 入场动画：微光呼吸（对齐 MotionStyles 语言） ===== */
+@keyframes rise-fade { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+.anim-rise { animation:rise-fade var(--motion-dur-reveal) var(--motion-ease-out-soft) both; animation-delay:calc(var(--i, 0) * 60ms); }
+@media (prefers-reduced-motion: reduce) {
+  .anim-rise { animation:none; }
+  * { transition-duration:.01ms !important; }
+}
+
+/* ==========================================================================
+   一、页头（站点 PageHeader 语言：衬线标题 + 副标题，右侧放个人信息）
+   ========================================================================== */
+.page-header {
+  display:flex; align-items:flex-end; justify-content:space-between; gap:var(--space-lg);
+  flex-wrap:wrap;
+  padding-bottom:var(--space-md);
+  border-bottom:1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
+}
+.title-group { display:flex; flex-direction:column; gap:var(--space-xs); min-width:0; }
+.page-title {
+  font-family:var(--font-serif); font-size:var(--font-size-xl); font-weight:500;
+  line-height:1.3; letter-spacing:0.03em; color:var(--text-color);
+}
+.page-subtitle { font-size:var(--font-size-sm); line-height:1.7; color:color-mix(in oklab, var(--text-color) 72%, transparent); }
+.identity { display:flex; align-items:center; gap:var(--space-xs); flex-shrink:0; }
+.avatar {
+  width:34px; height:34px; flex-shrink:0;
+  border:1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
+  border-radius:50%;
+  object-fit:cover; display:block;
+}
+.identity .name { font-family:var(--font-serif); font-size:var(--font-size-base); }
+.identity .lv {
+  font-family:var(--font-mono); font-size:var(--font-size-xs);
+  padding:1px 6px; border-radius:var(--border-radius-xs);
+  border:1px solid color-mix(in oklab, var(--accent-color) 55%, transparent);
+  color:color-mix(in oklab, var(--accent-color) 78%, var(--text-color));
+}
+.identity .since { font-size:var(--font-size-xs); color:color-mix(in oklab, var(--text-color) 55%, transparent); }
+@media (max-width:640px) {
+  .page-header { flex-direction:column; align-items:flex-start; gap:var(--space-sm); }
+  .identity { align-self:flex-end; }
+  .identity .since { display:none; }
+}
+
+/* ==========================================================================
+   二、书架 —— 年度切换器（签名交互）
+   架上是书脊（厚度按曲目数变化）；点选一本书 = 抽出翻开：
+   整本书绕竖轴旋开，真实歌单封面转向读者，丝带从书顶露出
+   ========================================================================== */
+.shelf-wrap { padding:var(--space-lg) 0 var(--space-base); }
+.shelf-scroll { overflow-x:auto; padding-bottom:var(--space-xs); scrollbar-width:thin; }
+.shelf {
+  display:flex; align-items:flex-end; gap:9px;
+  min-width:min-content;
+  padding:var(--space-lg) 32px 0 var(--space-base);
+  border-bottom:2px solid color-mix(in oklab, var(--normal-800) 70%, transparent);
+}
+.volume {
+  position:relative; flex:0 0 auto; scroll-snap-align:start;
+  background:none; border:none; padding:0;
+  height:148px; width:var(--spine-w, 26px);
+  perspective:900px;
+  transition:transform 260ms var(--motion-ease-out-soft), margin-left 460ms var(--motion-ease-out-soft);
+}
+/* 书架物理学：抽出的书在原位旁让出缺口（margin 动画），翻开在缺口里进行，不盖任何邻居 */
+.volume[aria-current='true'] { margin-left:106px; transform:translateY(-14px); z-index:3; }
+/* 热区扩大：视觉 26px 书脊，命中区向两侧各扩 4px（间隙 9px 不重叠），竖向再扩 6px */
+.volume::before { content:''; position:absolute; top:-6px; bottom:-6px; left:-4px; right:-4px; }
+.volume:hover { transform:translateY(-6px); }
+/* 翻开的书：先抽起抬离架板并转向读者，封面随后从书脊展开 */
+.volume[aria-current='true'] { transform:translateY(-14px); z-index:3; }
+.book {
+  display:block; position:absolute; inset:0;
+  transform-style:preserve-3d;
+  transform:rotateY(0deg);
+  transition:transform 460ms var(--motion-ease-out-soft);
+}
+.volume[aria-current='true'] .book {
+  transform:rotateY(24deg) translateZ(30px);
+  transition:transform 460ms var(--motion-ease-out-soft) 60ms;
+}
+/* 连续快速切换（2 秒内再切）：整段编排收短、去延迟 */
+.shelf.is-fast .volume { transition-duration:120ms; }.shelf.is-fast .book { transition:transform 180ms var(--motion-ease-out-soft); }
+.shelf.is-fast .volume[aria-current='true'] .book { transition:transform 200ms var(--motion-ease-out-soft); }
+.shelf.is-fast .cover-face { transition:transform 160ms var(--motion-ease-out-soft); }
+.shelf.is-fast .volume[aria-current='true'] .cover-face { transition:transform 220ms var(--motion-ease-out-soft); }
+.shelf.is-fast .volume[aria-current='true'] .volume-ribbon {
+  transition:opacity 120ms ease 160ms, transform 140ms var(--motion-ease-out-soft) 160ms;
+}
+.spine {
+  display:block; position:absolute; inset:0;
+  border:1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
+  border-radius:2px 2px 0 0;
+  background:var(--spine-bg, var(--background-200));
+  box-shadow:inset 3px 0 6px -3px rgba(0,0,0,.28), inset -2px 0 4px -2px rgba(0,0,0,.16);
+  transition:background-color var(--motion-dur-quick) ease, border-color var(--motion-dur-quick) ease;
+}
+/* 精装书脊的上下捆线带 */
+.spine::before, .spine::after {
+  content:''; position:absolute; left:4px; right:4px; height:4px;
+  background:color-mix(in oklab, var(--primary-color) 28%, transparent);
+}
+.spine::before { top:10px; }
+.spine::after { bottom:10px; }
+.spine .yr {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  writing-mode:vertical-rl; text-orientation:mixed;
+  font-family:var(--font-serif); font-size:14px; letter-spacing:.18em;
+  color:color-mix(in oklab, var(--text-color) 72%, transparent);
+  transition:color var(--motion-dur-quick) ease;
+}
+.volume:hover .spine .yr { color:var(--text-color); }
+.volume[aria-current='true'] .spine {
+  background:color-mix(in oklab, var(--primary-color) 9%, var(--background-100));
+  border-color:color-mix(in oklab, var(--primary-color) 55%, transparent);
+}
+.volume[aria-current='true'] .spine .yr { color:var(--primary-color); font-weight:600; }
+/* 封面：真实歌单封面，折在书脊后侧；翻开时绕书脊展开、转向读者 */
+.cover-face {
+  display:block; position:absolute; top:0; right:100%;
+  width:108px; height:100%;
+  transform-origin:right center;
+  transform:rotateY(-90deg);
+  backface-visibility:hidden;
+  border:1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
+  border-radius:2px;
+  overflow:hidden;
+  background:var(--spine-bg, var(--background-200));
+  box-shadow:var(--elevation-card);
+  transition:transform 300ms var(--motion-ease-out-soft);
+}
+/* 展开：从贴脊（-90°）扇形开到近正面（-18°），回弹缓动带纸页柔韧感；
+   封面对点击穿透——被它盖住的左邻书脊始终可点 */
+.volume[aria-current='true'] .cover-face {
+  transform:rotateY(-18deg);
+  transition:transform 560ms cubic-bezier(0.34, 1.26, 0.64, 1) 150ms;
+  pointer-events:none;
+}
+.cover-face .face-year {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-serif); font-size:22px; font-weight:600;
+  color:color-mix(in oklab, var(--primary-color) 82%, var(--text-color));
+}
+.cover-face img { position:relative; width:100%; height:100%; object-fit:cover; display:block; }
+/* 朱砂书签丝带：从翻开的书顶露出 */
+.volume-ribbon {
+  display:block; position:absolute; top:-15px; left:55%; width:8px; height:28px;
+  background:linear-gradient(180deg, var(--primary-color), color-mix(in oklab, var(--primary-color) 70%, black));
+  clip-path:polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  opacity:0; transform:translateY(-4px);
+  transition:opacity var(--motion-dur-quick) ease, transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.volume[aria-current='true'] .volume-ribbon {
+  opacity:1; transform:none;
+  transition:opacity 220ms ease 560ms, transform 260ms var(--motion-ease-out-soft) 560ms;
+}
+
+/* ==========================================================================
+   三、当前歌单（标题行 + 曲目）
+   ========================================================================== */
+.volume-view { padding-top:0; }
+.volume-header {
+  display:flex; align-items:center; justify-content:space-between; gap:var(--space-md);
+  flex-wrap:wrap;
+  padding:var(--space-xs) 0 var(--space-sm);
+}
+/* 当前卷封面小图：与架上翻开的书同一张封面，把书与列表缝在一起 */
+.volume-left { display:flex; align-items:center; gap:var(--space-sm); min-width:0; }
+.volume-cover {
+  position:relative; width:56px; height:56px; flex-shrink:0;
+  border:1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
+  border-radius:var(--border-radius-sm);
+  overflow:hidden;
+  background:var(--background-200);
+  box-shadow:var(--elevation-soft);
+}
+.volume-cover img { width:100%; height:100%; object-fit:cover; display:block; }
+.volume-copy { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.volume-title { font-family:var(--font-serif); font-size:var(--font-size-lg); font-weight:500; line-height:1.4; }
+.volume-sub { font-size:var(--font-size-sm); color:color-mix(in oklab, var(--text-color) 72%, transparent); }
+
+/* 悬停行：编号翻出播放键，点击行即播 */
+.track .idx { position:relative; width:2.2em; height:20px; flex-shrink:0; font-family:var(--font-mono); font-size:var(--font-size-xs); color:color-mix(in oklab, var(--text-color) 55%, transparent); }
+.track .idx-num, .track .idx-glyph {
+  position:absolute; inset:0; display:flex; align-items:center;
+  transition:opacity var(--motion-dur-quick) ease;
+}
+.track .idx-glyph { opacity:0; color:var(--primary-color); }
+.track .idx-glyph svg { width:11px; height:11px; fill:currentColor; }
+.track:hover .idx-num { opacity:0; }
+.track:hover .idx-glyph { opacity:1; }
+
+/* 曲目（沿用现有页面行语言） */
+.track-list { list-style:none; }
+.track {
+  display:flex; align-items:center; gap:var(--space-sm);
+  padding:9px var(--space-xs);
+  border-bottom:1px solid color-mix(in oklab, var(--normal-400) 30%, transparent);
+  border-radius:var(--border-radius-sm);
+  transition:background-color var(--motion-dur-quick) ease;
+  animation:rise-fade var(--motion-dur-reveal) var(--motion-ease-out-soft) both;
+  animation-delay:calc(var(--i,0) * 35ms);
+}
+@media (prefers-reduced-motion: reduce) { .track { animation:none; } }
+.track:hover { background:color-mix(in oklab, var(--primary-color) 5%, transparent); }
+.track .dot { width:6px; height:6px; flex-shrink:0; border-radius:50%; background:var(--primary-color); opacity:0; }
+.track.is-playing .dot { opacity:1; animation:pulse 2.4s var(--motion-ease-in-out-soft) infinite; }
+@keyframes pulse { 0%,100% { transform:scale(1); opacity:.9; } 50% { transform:scale(.6); opacity:.45; } }
+.track-btn {
+  flex:1; min-width:0; display:flex; align-items:baseline; gap:var(--space-sm);
+  background:none; border:none; padding:0; text-align:left; color:inherit;
+}
+.track-btn .name { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:var(--font-size-sm); transition:color var(--motion-dur-quick) ease; }
+.track-btn .artist { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:var(--font-size-xs); color:color-mix(in oklab, var(--text-color) 72%, transparent); flex-shrink:1; }
+.track:hover .name, .track.is-playing .name { color:var(--primary-color); }
+/* 播放次数：mono 右对齐，次数字号更淡 */
+.track .plays { flex-shrink:0; font-family:var(--font-mono); font-size:var(--font-size-xs); color:color-mix(in oklab, var(--text-color) 72%, transparent); min-width:3.4em; text-align:right; font-variant-numeric:tabular-nums; }
+.track .plays .unit { margin-left:2px; color:color-mix(in oklab, var(--text-color) 45%, transparent); }
+/* 最爱：该卷播放次数最高的一首——固定在最右端槽位（每行等宽，时长列不位移） */
+.track .fav-slot { width:40px; flex-shrink:0; display:flex; justify-content:flex-end; }
+.track .fav {
+  padding:0 5px; white-space:nowrap;
+  font-size:var(--font-size-xs); line-height:1.6;
+  color:var(--primary-color);
+  border:1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
+  border-radius:var(--border-radius-xs);
+  background:color-mix(in oklab, var(--primary-color) 7%, var(--background-100));
+}
+.track .dur { flex-shrink:0; font-family:var(--font-mono); font-size:var(--font-size-xs); color:color-mix(in oklab, var(--text-color) 55%, transparent); }
+.tracks-empty { padding:var(--space-lg) 0; text-align:center; font-size:var(--font-size-sm); color:color-mix(in oklab, var(--text-color) 55%, transparent); }
+
+/* ==========================================================================
+   主题试墨签（原型专用，右下角浮动）
+   ========================================================================== */
+.theme-dock {
+  position:fixed; right:16px; bottom:16px; z-index:9;
+  display:flex; gap:6px; padding:8px;
+  background:var(--background-100);
+  border:1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
+  border-radius:var(--border-radius-base);
+  box-shadow:var(--elevation-soft);
+}
+.theme-chip {
+  height:26px; padding:0 10px;
+  border:1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
+  border-radius:var(--border-radius-sm); background:none;
+  font-size:var(--font-size-xs); color:color-mix(in oklab, var(--text-color) 72%, transparent);
+}
+.theme-chip[aria-pressed='true'] { border-color:var(--primary-color); color:var(--primary-color); }
+@media (max-width:640px) { .theme-dock { right:8px; bottom:8px; } .theme-chip { padding:0 7px; } }
+
+.proto-note {
+  margin-top:var(--space-2xl); padding-top:var(--space-sm);
+  border-top:1px solid color-mix(in oklab, var(--normal-400) 30%, transparent);
+  font-size:var(--font-size-xs); line-height:1.9;
+  color:color-mix(in oklab, var(--text-color) 45%, transparent);
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- 页头：站点 PageHeader 语言，右侧个人信息 -->
+  <header class="page-header anim-rise" style="--i:0">
+    <div class="title-group">
+      <h1 class="page-title">音乐</h1>
+      <p class="page-subtitle">网易云年度歌单 · 一年一卷，点选翻开</p>
+    </div>
+    <div class="identity">
+      <img class="avatar" src="https://p1.music.126.net/qQUzgemnpyk5fQBfVR9PAg==/109951165823411291.jpg?param=120y120" alt="网易云头像">
+      <span class="name">吴尒红</span>
+      <span class="lv">Lv.9</span>
+      <span class="since">自 2018 年记录</span>
+    </div>
+  </header>
+
+  <!-- 书架：年度切换器 -->
+  <section class="shelf-wrap anim-rise" style="--i:1" aria-label="年度歌单切换">
+    <div class="shelf-scroll">
+      <div class="shelf" id="shelf" role="tablist" aria-label="切换年度歌单"></div>
+    </div>
+  </section>
+
+  <!-- 当前歌单 -->
+  <section class="volume-view" id="volume-panel" role="tabpanel" aria-label="当前歌单曲目">
+    <div class="volume-header anim-rise" style="--i:2">
+      <div class="volume-left">
+        <span class="volume-cover"><img id="v-cover" src="" alt=""></span>
+        <div class="volume-copy">
+          <h2 class="volume-title" id="v-title">吴尒红的2025年度歌单</h2>
+          <p class="volume-sub" id="v-sub">共 10 首</p>
+        </div>
+      </div>
+    </div>
+    <ol class="track-list" id="tracks"></ol>
+    <p class="tracks-empty" id="tracks-empty" hidden>这一卷里没有匹配的曲目</p>
+  </section>
+
+  <p class="proto-note">
+    原型说明：书架数据与封面来自线上 API 实拍（网易云年度歌单 2018–2025，封面为 coverUrl 原图）；
+    点选一本书即翻开——书脊转向侧方、封面朝向读者；播放次数为示意假数据，实施经服务端听歌排行（user_record）联表，
+    未上榜显示「—」；「最爱」标记该卷播放次数最高的一首；头像/昵称为网易云真实资料（实施经服务端
+    user_account 随 user-playlists 暴露），Lv 为示意值。
+    书脊命中区大于视觉宽度；2 秒内连续切换自动收短编排；展开封面不拦截对被盖书脊的点击；
+    支持方向键左右切换。右下角可切换四套主题（酒红/素雅 × 明/暗）。
+  </p>
+</main>
+
+<!-- 主题试墨签 -->
+<div class="theme-dock" role="group" aria-label="切换主题">
+  <button class="theme-chip" type="button" data-family="wine" data-scheme="light" aria-pressed="true">酒红·纸</button>
+  <button class="theme-chip" type="button" data-family="wine" data-scheme="dark" aria-pressed="false">酒红·夜</button>
+  <button class="theme-chip" type="button" data-family="plain" data-scheme="light" aria-pressed="false">素雅·纸</button>
+  <button class="theme-chip" type="button" data-family="plain" data-scheme="dark" aria-pressed="false">素雅·夜</button>
+</div>
+
+<script>
+/* ===== 真实数据（2026-09-29 自线上 /api/music/user-playlists 与 /api/music/playlist 拉取） ===== */
+const SHELF = [
+  { year:2025, id:17605630069, name:'吴尒红的2025年度歌单', count:10,
+    cover:'https://p1.music.126.net/OPkewH9L-yw6KUAmhuHcZA==/109951169098406151.jpg?param=600y600',
+    tracks:[['风月缠绵（2017七夕节日音乐，金风玉露变奏）','陈致逸',202, 46],['燕无歇','蒋雪儿Snow.J',201, 61],['爱意 (金风玉露变奏)','陈致逸',139, 38],['座位','于冬然',209, 27],['素颜','许嵩 / 何曼婷',239, 84],['莫问归期','唐伯虎Annie',178, 33],['少年不凡','刘美麟',271, 19],['金风玉露 伴奏','陈致逸',271, 7],['流云赋','唐伯虎Annie',245, 22],['狂琴杀雪 (琴魔战斗音乐)','陈致逸',168, 12]] },
+  { year:2024, id:13050941306, name:'吴尒红的2024年度歌单', count:10,
+    cover:'https://p1.music.126.net/Mbb04q0Wo96q9y9zSNfmdg==/109951169021688943.jpg?param=600y600',
+    tracks:[['千里清光 (中秋夜晚)','陈致逸',104, 29],['金风玉露 伴奏','陈致逸',271, 7],['镜中花','任子墨 / HIGH5-马思涵SAI',211, 41],['浪迹天涯 (2015天刀宣传片配乐)','陈致逸',154, 18],['神刀再起 (2016天刀宣传片配乐)','陈致逸',93, 15],['爱意 (金风玉露变奏)','陈致逸',139, 36],['序曲','刀郎',281, 58],['燕子成对走 (伴奏)','木一树',158, 5],['我心已许 (七夕夜晚)','陈致逸',90, 9],['折枝花满衣','泽典',210, 31]] },
+  { year:2023, id:9084947765, name:'吴尒红的2023年度歌单', count:10,
+    cover:'https://p1.music.126.net/Mbb04q0Wo96q9y9zSNfmdg==/109951169021688943.jpg?param=600y600',
+    tracks:[['故人不散 (陌上节白昼)','陈致逸',143, 21],['燕无歇','蒋雪儿Snow.J',201, 66],['金风玉露·夜语迟','陈致逸',245, 44],['风月缠绵（2017七夕节日音乐，金风玉露变奏）','陈致逸',202, 39],['金风玉露·夜语迟 伴奏','陈致逸',188, 4],['爱意 (金风玉露变奏)','陈致逸',139, 52],['西厢寻他','伯爵Johnny / 唐伯虎Annie',224, 28],['折枝花满衣','泽典',210, 30],['金风玉露','流浪的蛙蛙 / 玄觞',270, 73],['狐言','河图 / 洛天依Official',211, 47]] },
+  { year:2022, id:7902650961, name:'吴尒红的2022年度歌单', count:10,
+    cover:'https://p1.music.126.net/RrMb72mgmd2-P4VI1JAhfA==/109951163115448360.jpg?param=600y600',
+    tracks:[['归期','钱润玉',280, 35],['逍遥','任舒瞳',193, 24],['夜照亮了夜','伍佰 & China Blue',238, 19],['金风玉露','流浪的蛙蛙 / 玄觞',270, 57],['归期 (伴奏)','钱润玉',280, 6],['凡人 (伴奏)','段奥娟',259, 8],['敕勒歌','福建门虫合唱团',316, 13],['上元诗酒游','Pig小优',120, 26],['一首想不通的古风','玄觞 / 蔡翊昇 / 织梦令',247, 31],['少年不凡 (伴奏)','刘美麟',271, 9]] },
+  { year:2021, id:7189581046, name:'吴尒红的2021年度歌单', count:10,
+    cover:'https://p1.music.126.net/a5NVmn_xa9QAoXE46n7SJw==/109951164137683050.jpg?param=600y600',
+    tracks:[['孽海记','黄诗扶',230, 71],['金风玉露 (七夕主题)','陈致逸',112, 33],['风月缠绵（2017七夕节日音乐，金风玉露变奏）','陈致逸',202, 39],['西楼别序','尹昔眠 / 小田音乐社',227, 45],['燕子成对走','木一树',158, 17],['狐言','河图 / 洛天依Official',211, 48],['人间不值得','黄诗扶',286, 62],['少年不凡','刘美麟',271, 28],['Rivers In the Desert -instrumental version-','アトラスサウンドチーム',315, 11],['伶人','排骨教主',227, 36]] },
+  { year:2020, id:5417278232, name:'吴尒红的2020年度歌单', count:10,
+    cover:'https://p1.music.126.net/a5NVmn_xa9QAoXE46n7SJw==/109951164137683050.jpg?param=600y600',
+    tracks:[['孽海记','黄诗扶',230, 64],['人间不值得','黄诗扶',286, 58],['少年不凡','刘美麟',271, 31],['Un Ange Frappe à Ma Porte','Natasha St-Pier',249, 22],['少年游','魏晨',195, 26],['象王行 (特别版)','关大洲',177, 14],['声声慢 (京韵版)','张一山 / 孙萍',265, 19],['上元诗酒游','Pig小优',120, 8],['Guitar Sound','Ronald Jenkees',421, 43],['Isla Blanca (Aerosoul Chillout Remix)','Aerosoul',303, 16]] },
+  { year:2019, id:3148309941, name:'吴尒红的2019年度歌单', count:10,
+    cover:'https://p1.music.126.net/MtofDr4IqworgZ7Ri3HY_g==/109951163064544587.jpg?param=600y600',
+    tracks:[['腻味','金玟岐',248, 37],['水龙吟','关大洲',197, 25],['Sirius','The Alan Parsons Project',113, 12],['辞九门回忆','解忧草 / 冰幽',242, 44],['作死修得共枕眠-抒情主题音乐','橙光音乐',68, 5],['Light Above The Sky','Delos',199, 18],['一瞬','An',340, 21],['哀と悲','六三四Musashi',180, 33],['你的酒馆对我打了烊','陈雪凝',251, 49],['蛻変~transformation~','采风乐坊',132, 15]] },
+  { year:2018, id:2588363682, name:'吴尒红的2018年度歌单', count:10,
+    cover:'https://p1.music.126.net/4TuBpyxVpbHnj2EMCSnW9w==/109951163176375492.jpg?param=600y600',
+    tracks:[['BINGBIAN病变 (女声版)','鞠文娴',247, 88],['舍得','王唯旖',262, 42],['神意の在り処は人の輪に','Foxtail-Grass Studio',197, 16],['いのちの祭','吉田潔',293, 27],['雫のおと','梶迫小道具店',229, 9],['冲动','范焰宁',190, 23],['白夜','尹姝贻',265, 34],['哀と愁','六三四Musashi',175, 19],['诱惑的街 (Live)','林志炫',286, 51],['越过山丘','杨宗纬',234, 61]] },
+];
+const SPINE_TINTS = [
+  'var(--background-200)',
+  'var(--background-300)',
+  'color-mix(in oklab, var(--primary-color) 8%, var(--background-100))',
+];
+
+/* ===== 渲染：书架（只构建一次；选中态仅切换 aria-current，CSS 过渡才会真实播放） ===== */
+function renderShelf() {
+  document.getElementById('shelf').innerHTML = SHELF.map((b, i) => {
+    const w = Math.max(26, 16 + b.count);
+    return `
+    <button class="volume" type="button" role="tab" data-year="${b.year}"
+      style="--spine-w:${w}px;--spine-bg:${SPINE_TINTS[i % SPINE_TINTS.length]}"
+      aria-current="false" aria-controls="volume-panel"
+      aria-label="${b.year} 年度歌单，共 ${b.count} 首">
+      <span class="book">
+        <span class="spine"><span class="yr">${b.year}</span></span>
+        <span class="cover-face">
+          <span class="face-year" aria-hidden="true">${b.year}</span>
+          <img src="${b.cover}" alt="" loading="lazy" referrerpolicy="no-referrer">
+        </span>
+      </span>
+      <span class="volume-ribbon" aria-hidden="true"></span>
+    </button>`;}).join('');
+}
+function updateShelfSelection() {
+  document.querySelectorAll('#shelf .volume').forEach((btn) => {
+    btn.setAttribute('aria-current', String(Number(btn.dataset.year) === currentYear));
+  });
+}
+
+/* ===== 渲染：当前歌单 ===== */
+function renderVolume() {
+  const b = SHELF.find((x) => x.year === currentYear);
+  document.getElementById('v-cover').src = b.cover;
+  document.getElementById('v-title').textContent = b.name;
+  document.getElementById('v-sub').textContent = `共 ${b.count} 首`;
+  renderTracks(b.tracks);
+}
+
+const dur = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+function renderTracks(list) {
+  const ol = document.getElementById('tracks');
+  const empty = document.getElementById('tracks-empty');
+  empty.hidden = list.length > 0;
+  const maxPlays = list.reduce((m, t) => Math.max(m, t[3] ?? 0), 0);
+  ol.innerHTML = list.map(([name, artist, seconds, plays], i) => {
+    const isFav = plays === maxPlays && maxPlays > 0;
+    return `
+    <li class="track${playingName === name ? ' is-playing' : ''}" style="--i:${i}">
+      <span class="idx"><span class="idx-num">${String(i + 1).padStart(2, '0')}</span><span class="idx-glyph" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 1.2v9.6L10.4 6z"/></svg></span></span>
+      <span class="dot" aria-hidden="true"></span>
+      <button class="track-btn" type="button" data-name="${name}"
+        aria-label="播放 ${name} - ${artist}">
+        <span class="name-wrap"><span class="name">${name}</span></span><span class="artist">${artist}</span>
+      </button>
+      <span class="plays" title="播放 ${plays ?? 0} 次">${plays ?? '—'}<span class="unit">次</span></span>
+      <span class="dur">${dur(seconds)}</span>
+      <span class="fav-slot">${isFav ? '<span class="fav" title="该卷播放次数最高">最爱</span>' : ''}</span>
+    </li>`;}).join('');
+}
+
+/* ===== 交互 ===== */
+let currentYear = 2025;
+let playingName = null;
+let lastSwitchAt = 0;
+
+function selectYear(y) {
+  if (y === currentYear) return;
+  const now = Date.now();
+  /* 2 秒内连续切换：书架进入快速档，编排收短 */
+  document.getElementById('shelf').classList.toggle('is-fast', now - lastSwitchAt < 2000);
+  lastSwitchAt = now;
+  currentYear = y;
+  playingName = null;
+  updateShelfSelection();
+  renderVolume();
+}
+
+document.getElementById('shelf').addEventListener('click', (e) => {
+  const btn = e.target.closest('.volume');
+  if (btn) selectYear(Number(btn.dataset.year));
+});
+
+/* 方向键左右切换卷册（roving focus 跟随选中书） */
+document.getElementById('shelf').addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  e.preventDefault();
+  const idx = SHELF.findIndex((b) => b.year === currentYear);
+  const next = e.key === 'ArrowRight'
+    ? Math.min(SHELF.length - 1, idx + 1)
+    : Math.max(0, idx - 1);
+  const target = SHELF[next];
+  if (target.year === currentYear) return;
+  selectYear(target.year);
+  document.querySelector(`#shelf .volume[data-year="${target.year}"]`)?.focus();
+});
+
+/* 点击行即播（悬停时编号翻出播放键） */
+document.getElementById('tracks').addEventListener('click', (e) => {
+  const li = e.target.closest('.track');
+  if (!li) return;
+  const btn = li.querySelector('.track-btn');
+  if (!btn) return;
+  playingName = playingName === btn.dataset.name ? null : btn.dataset.name;
+  renderTracks(SHELF.find((x) => x.year === currentYear).tracks);
+});
+
+/* 主题切换 */
+document.querySelectorAll('.theme-chip').forEach((chip) => {
+  chip.addEventListener('click', () => {
+    document.documentElement.dataset.themeFamily = chip.dataset.family;
+    document.documentElement.dataset.colorScheme = chip.dataset.scheme;
+    document.querySelectorAll('.theme-chip').forEach((c) =>
+      c.setAttribute('aria-pressed', String(c === chip)));
+  });
+});
+
+renderShelf();
+renderVolume();
+/* 首屏：书架落定后自动翻开当前一卷，把开书动画当作页面开场 */
+setTimeout(updateShelfSelection, 480);
+</script>
+</body>
+</html>

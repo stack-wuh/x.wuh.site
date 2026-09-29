@@ -65,5 +65,12 @@ export default async function Page({
   // 未指定歌单且最新年度不是兜底歌单时，按年度选中项补一次取数（与预取结果一样带缓存）
   const playlist = !requestedId && playlistId !== DEFAULT_PLAYLIST_ID ? await getPlaylist(playlistId) : fallbackPlaylist
 
-  return <MusicView playlistId={playlistId} playlist={playlist} annualPlaylists={mine?.playlists ?? []} />
+  return (
+    <MusicView
+      playlistId={playlistId}
+      playlist={playlist}
+      annualPlaylists={mine?.playlists ?? []}
+      profile={mine?.profile}
+    />
+  )
 }
