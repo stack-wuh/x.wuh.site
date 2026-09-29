@@ -4,7 +4,7 @@
   "name": "20260930-style-player-panel-deck",
   "type": "style",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260930-style-player-panel-deck",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 417,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/417",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 418,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/418"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "0d2fb8539808872dfaccf851e36ab51fbca834a5",
-    "verifiedAt": "2026-09-29T17:21:38.628Z"
+    "verifiedCommit": "f36f12dc5f14b5268795341b3a7122cc7541786d",
+    "verifiedAt": "2026-09-29T23:53:48.713Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:417",
-    "planHash": "75ed4cf99a9f31389fd5e9b70a4a34c6e0249c55ce6c8c94c0e0d192a2ec44bf",
+    "checkpoint": "merged-pr:418",
+    "planHash": "d6c7cb78462d7f0bfd4843fd243db8cc6b2ba28e694c5af6df112ec05439e4a0",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -53,7 +53,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "控制甲板（gutter 栅格/凹槽滑杆/幽灵传输+碟面环/下划线模式带）与弹层滚动锁是面板长期视觉与交互事实，已在 apply 阶段按 runtime verified-depth 落入 music-player.md 播放面板段并补 source 与 verified-scope；design-system/animation-system/icon-system/components 结论全部沿用无需改卡"
+    "reason": "控制甲板（gutter 栅格/凹槽滑杆/幽灵传输+碟面环/下划线模式带）与弹层滚动锁为面板长期视觉与交互事实，已按 runtime verified-depth 落入 music-player.md；归档前按合并后 HEAD 重签（代码与 PR #418 合入内容一致）"
   }
 }
 ---
@@ -133,6 +133,7 @@
 - 实际耗时: propose→release 同日完成（2026-09-30）；apply 含浏览器目检与 task 5 增补约半个工作日
 - 验证: `node --test packages/components/audio-player/*.test.mjs` 30/30（含 gutter/凹槽滑杆/幽灵钮/模式带/滚动锁 5 条新守卫）；根 `tsc --noEmit` exit 0；oxlint 0 警告 0 错误；浏览器真数据目检——素雅/酒红 × 明暗四主题桌面 1280、矮视口 1366×768（封面收缩档 220px 生效、无溢出）、移动 390（吸底 dock、模式带居中、音量隐藏）；播放态进度推进、模式带切换、focus-visible 走查通过；滚动锁实测开面板 body `fixed+top 补偿`、滚轮不动、Escape 关闭后 scrollY 精确还原
 - 知识动作: music-player.md 播放面板段补「控制甲板 + 弹层滚动锁」结论，source 追加本 brief，verified 2026-09-30（runtime）
+- 交付: PR #418 merged（merge commit f36f12d）；Release [v1.4.36 播放面板「控制甲板」重设计](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.36) 触发部署链，CI-CD run 36645827247 全绿（quality-gate → prepare → prepare-deps → build-next → build-nest → staging-test → switch-traffic，conclusion: success）；merge 后 main push quality-gate 同绿
 - 流程备注: task 5（弹层滚动锁）为用户验收反馈当日增补，走 TDD 全链路；reduced-motion 无新增动画（面板级 reducedMotion 块统一压制，代码层核验）
 
 ## 知识评估

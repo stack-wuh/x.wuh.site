@@ -49,7 +49,10 @@
 | 20260928-style-player-responsive-redesign | ✅ 完成 | shadow-docs/changes/archive/20260928-style-player-responsive-redesign/brief.md |
 | 20260929-build-music-token-watch | ✅ 完成 | shadow-docs/changes/archive/20260929-build-music-token-watch/brief.md |
 | 20260929-feature-mini-player-title-marquee | ✅ 完成 | shadow-docs/changes/archive/20260929-feature-mini-player-title-marquee/brief.md |
+| 20260929-feature-music-skeleton | published | shadow-docs/changes/20260929-feature-music-skeleton/brief.md |
 | 20260929-feature-music-yearbook | ✅ 完成 | shadow-docs/changes/archive/20260929-feature-music-yearbook/brief.md |
 | 20260929-fix-music-user-record-uid | ✅ 完成 | shadow-docs/changes/archive/20260929-fix-music-user-record-uid/brief.md |
 | 20260929-style-music-chronicle | ✅ 完成 | shadow-docs/changes/archive/20260929-style-music-chronicle/brief.md |
 | 20260929-style-player-collapse-ear | reviewed | shadow-docs/changes/20260929-style-player-collapse-ear/brief.md |
+| 20260929-style-player-panel-inkwash | reviewed | shadow-docs/changes/20260929-style-player-panel-inkwash/brief.md |
+| 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |
