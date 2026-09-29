@@ -16,11 +16,12 @@ export type MusicUserProfile = {
 /** 曲目带播放次数（配置登录态时服务端联表听歌排行；未上榜/匿名态缺省） */
 export type MusicPlaylistTrack = Track & { playCount?: number }
 
-/** 歌单接口返回结构（与服务端 PlaylistResultDto 对齐） */
+/** 歌单接口返回结构（与服务端 PlaylistResultDto 对齐）；tags 由服务端后续补充，前端已预留渲染 */
 export type MusicPlaylist = {
   playlistId: number
   name?: string
   description?: string
+  tags?: string[]
   coverUrl?: string
   tracks: MusicPlaylistTrack[]
 }
