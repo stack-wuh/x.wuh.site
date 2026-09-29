@@ -4,7 +4,7 @@
   "name": "20260929-feature-mini-player-title-marquee",
   "type": "feature",
   "scope": "music-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260929-feature-mini-player-title-marquee",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 404,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/404",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 405,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/405"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "66b317f164dd1c0eab0c7b0b4eecab63c9cc0975",
-    "verifiedAt": "2026-09-29T02:19:05.747Z"
+    "verifiedCommit": "d2209dc051e4ff04b7fa20e9d9a9a25b47342135",
+    "verifiedAt": "2026-09-29T02:51:58.949Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:404",
-    "planHash": "ad3625e44e04aab064614d7278fa71fe9b298c806ffe0eb2f3926fef5205c832",
+    "checkpoint": "merged-pr:405",
+    "planHash": "2f8878edc1c9123b3ef131a4bedda7f52c09e8f5500ba0a185216a0a630a95c9",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {

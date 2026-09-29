@@ -44,8 +44,9 @@
 | 20260915-style-nav-ink-stroke | ✅ 完成 | shadow-docs/changes/archive/20260915-style-nav-ink-stroke/brief.md |
 | 20260915-style-quiet-header-bar | ✅ 完成 | shadow-docs/changes/archive/20260915-style-quiet-header-bar/brief.md |
 | 20260916-style-contact-dialog-paper | ✅ 完成 | shadow-docs/changes/archive/20260916-style-contact-dialog-paper/brief.md |
-| 20260928-feature-music-player | ✅ 完成 | shadow-docs/changes/archive/20260928-feature-music-player/brief.md |
 | 20260928-feature-music-annual-playlists | ✅ 完成 | shadow-docs/changes/archive/20260928-feature-music-annual-playlists/brief.md |
-| 20260928-feature-music-player | published | shadow-docs/changes/20260928-feature-music-player/brief.md |
+| 20260928-feature-music-player | ✅ 完成 | shadow-docs/changes/archive/20260928-feature-music-player/brief.md |
 | 20260928-style-player-responsive-redesign | ✅ 完成 | shadow-docs/changes/archive/20260928-style-player-responsive-redesign/brief.md |
 | 20260929-build-music-token-watch | ✅ 完成 | shadow-docs/changes/archive/20260929-build-music-token-watch/brief.md |
+| 20260929-feature-mini-player-title-marquee | ✅ 完成 | shadow-docs/changes/archive/20260929-feature-mini-player-title-marquee/brief.md |
+| 20260929-style-player-collapse-ear | reviewed | shadow-docs/changes/20260929-style-player-collapse-ear/brief.md |
