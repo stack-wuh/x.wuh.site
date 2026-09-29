@@ -4,7 +4,7 @@
   "name": "20260929-fix-music-user-record-uid",
   "type": "fix",
   "scope": "server",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260929-fix-music-user-record-uid",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 408,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/408",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 409,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/409"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "16c4a78c76cbee43848612006e6c4afea2f79d79",
-    "verifiedAt": "2026-09-29T07:43:17.244Z"
+    "verifiedCommit": "8d872598d1834eca5dbb7ca67dfc76435f0ba1f1",
+    "verifiedAt": "2026-09-29T08:17:51.086Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:408",
-    "planHash": "a5c3ac6ca0f2cd1cdb4217cced7a2edd3d4d35c284ffd03c65c126eac27c2b53",
+    "checkpoint": "merged-pr:409",
+    "planHash": "66b4a6b9e35ac86f5cab94b941a2489202407eed84aa9faf50cfcc982c36cfb6",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
