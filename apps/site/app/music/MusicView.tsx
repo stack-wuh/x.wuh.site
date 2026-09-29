@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useMemo, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import styled, { css, keyframes } from 'styled-components'
 import Empty from '@wuh.site/components/empty'
 import { useAudioPlayer } from '@wuh.site/components/audio-player'
 import { SITE_NAME } from '@wuh.site/core'
@@ -123,64 +123,85 @@ const Since = styled.span`
   }
 `
 
-/* ===== 年鉴书架：书脊朝外，点选在原位让出的缺口里翻开 ===== */
+/* ==========================================================================
+   年轮编年：左侧衬线年份纵轨（距当前越远越淡），右侧内容压超大水印年份；
+   面板头是一张小黑胶——歌单封面做碟心圆标，切年轻转换面，播放时慢转。
+   ========================================================================== */
 
-const ShelfWrap = styled.section`
-  padding: var(--space-lg) 0 var(--space-base);
-`
+const Chronicle = styled.div`
+  position: relative;
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: var(--space-lg);
+  padding-top: var(--space-lg);
 
-const ShelfScroll = styled.div`
-  overflow-x: auto;
-  padding-bottom: var(--space-xs);
-  scrollbar-width: thin;
-`
-
-const Shelf = styled.div`
-  display: flex;
-  align-items: flex-end;
-  gap: 9px;
-  min-width: min-content;
-  padding: var(--space-lg) 32px 0 var(--space-base);
-  border-bottom: 2px solid color-mix(in oklab, var(--normal-800) 70%, transparent);
-
-  &:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
   }
 `
 
-const SPINE_TINTS = [
-  'var(--background-200)',
-  'var(--background-300)',
-  'color-mix(in oklab, var(--primary-color) 8%, var(--background-100))'
-] as const;
-
-const Volume = styled.button<{ $spineWidth: number; $tint: number; $fast: boolean }>`
+const Rail = styled.div`
   position: relative;
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  background: none;
-  border: none;
-  padding: 0;
-  height: 148px;
-  width: ${(p) => p.$spineWidth}px;
-  perspective: 900px;
-  transition:
-    transform var(--motion-dur-quick) var(--motion-ease-out-soft),
-    margin-left var(--motion-dur-write) var(--motion-ease-out-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 
-  /* 热区扩大：视觉 26px 书脊，命中区向两侧各扩 4px（间隙 9px 不重叠），竖向再扩 6px */
+  /* 纵轨基线 */
   &::before {
     content: '';
     position: absolute;
-    top: -6px;
-    bottom: -6px;
-    left: -4px;
-    right: -4px;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: color-mix(in oklab, var(--normal-400) 45%, transparent);
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    flex-direction: row;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+
+    &::before {
+      display: none;
+    }
+  }
+`
+
+const RailItem = styled.button`
+  position: relative;
+  z-index: 1;
+  display: block;
+  background: none;
+  border: none;
+  padding: 2px 0 2px 18px;
+  cursor: pointer;
+  text-align: left;
+
+  /* 轨上节点 */
+  &::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    margin-top: -3.5px;
+    border-radius: 50%;
+    background: var(--background-color);
+    border: 1px solid color-mix(in oklab, var(--normal-500) 60%, transparent);
+    transition:
+      background-color var(--motion-dur-quick) ease,
+      border-color var(--motion-dur-quick) ease,
+      box-shadow var(--motion-dur-quick) ease;
   }
 
   &:hover {
-    transform: translateY(-6px);
+    background: none;
   }
 
   &:focus-visible {
@@ -188,248 +209,199 @@ const Volume = styled.button<{ $spineWidth: number; $tint: number; $fast: boolea
     outline-offset: 2px;
   }
 
-  /* 书架物理学：抽出的书在原位旁让出缺口（margin 动画），翻开在缺口里进行，不盖任何邻居 */
-  &[aria-current='true'] {
-    margin-left: 106px;
-    transform: translateY(-14px);
-    z-index: 3;
+  &[aria-current='true']::before {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 18%, transparent);
   }
 
-  ${(p) =>
-    p.$fast
-      ? css`
-          transition:
-            transform var(--motion-dur-quick) var(--motion-ease-out-soft),
-            margin-left var(--motion-dur-quick) var(--motion-ease-out-soft);
-        `
-      : ''}
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    flex: 0 0 auto;
+    padding: 4px 10px;
+    border: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
+    border-radius: var(--border-radius-base);
 
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.01ms;
+    &::before {
+      display: none;
+    }
+
+    &[aria-current='true'] {
+      border-color: color-mix(in oklab, var(--primary-color) 60%, transparent);
+    }
   }
 `
 
-const Book = styled.span<{ $open: boolean; $fast: boolean }>`
+const RailYear = styled.span<{ $dist: number }>`
   display: block;
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateY(0deg);
-  transition: transform var(--motion-dur-write) var(--motion-ease-out-soft);
-
-  ${(p) =>
-    p.$open
-      ? css`
-          transform: rotateY(24deg) translateZ(30px);
-          transition: transform var(--motion-dur-write) var(--motion-ease-out-soft) 60ms;
-        `
-      : ''}
-  ${(p) =>
-    p.$fast
-      ? css`
-          transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
-        `
-      : ''}
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.01ms;
-  }
-`
-
-const Spine = styled.span<{ $tint: number }>`
-  display: block;
-  position: absolute;
-  inset: 0;
-  border: 1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
-  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
-  background: ${(p) => SPINE_TINTS[p.$tint % SPINE_TINTS.length]};
-  box-shadow:
-    inset 3px 0 6px -3px rgba(0, 0, 0, 0.28),
-    inset -2px 0 4px -2px rgba(0, 0, 0, 0.16);
-  transition:
-    background-color var(--motion-dur-quick) ease,
-    border-color var(--motion-dur-quick) ease;
-
-  /* 精装书脊的上下捆线带 */
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    right: 4px;
-    height: 4px;
-    background: color-mix(in oklab, var(--primary-color) 28%, transparent);
-  }
-
-  &::before {
-    top: 10px;
-  }
-
-  &::after {
-    bottom: 10px;
-  }
-`
-
-const SpineYear = styled.span`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
   font-family: var(--font-serif);
-  font-size: var(--font-size-sm);
-  letter-spacing: 0.18em;
-  color: color-mix(in oklab, var(--text-color) 72%, transparent);
-  transition: color var(--motion-dur-quick) ease;
+  font-weight: ${(p) => (p.$dist === 0 ? 600 : 500)};
+  letter-spacing: 0.04em;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: ${(p) =>
+    p.$dist === 0
+      ? 'var(--primary-color)'
+      : p.$dist === 1
+        ? 'color-mix(in oklab, var(--text-color) 44%, transparent)'
+        : 'color-mix(in oklab, var(--text-color) 26%, transparent)'};
+  transition: color 240ms var(--motion-ease-out-soft);
+
+  ${RailItem}:hover & {
+    color: color-mix(in oklab, var(--text-color) 70%, transparent);
+  }
+
+  ${RailItem}[aria-current='true'] & {
+    color: var(--primary-color);
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    font-size: var(--font-size-base);
+  }
 `
 
-const CoverFace = styled.span<{ $open: boolean; $fast: boolean }>`
+const RailCount = styled.span`
   display: block;
-  position: absolute;
-  top: 0;
-  right: 100%;
-  width: 108px;
-  height: 100%;
-  transform-origin: right center;
-  transform: rotateY(-90deg);
-  backface-visibility: hidden;
-  border: 1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
-  border-radius: var(--border-radius-sm);
-  overflow: hidden;
-  background: var(--background-200);
-  box-shadow: var(--elevation-card);
-  transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: color-mix(in oklab, var(--text-color) 45%, transparent);
+  padding-left: 2px;
 
-  img {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  ${RailItem}[aria-current='true'] & {
+    color: color-mix(in oklab, var(--primary-color) 75%, var(--text-color));
   }
 
-  ${(p) =>
-    p.$open
-      ? css`
-          /* 展开：从贴脊扇形开到近正面；对点击穿透，被盖书脊始终可点 */
-          transform: rotateY(-18deg);
-          transition: transform var(--motion-dur-reveal) var(--motion-ease-out-soft) 150ms;
-          pointer-events: none;
-        `
-      : ''}
-  ${(p) =>
-    p.$fast && p.$open
-      ? css`
-          transition: transform var(--motion-dur-write) var(--motion-ease-out-soft);
-        `
-      : ''}
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.01ms;
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
   }
 `
 
-const CoverYearFallback = styled.span`
+const Content = styled.div`
+  position: relative;
+  min-width: 0;
+`
+
+const Watermark = styled.span`
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: -30px;
+  right: -6px;
+  z-index: 0;
   font-family: var(--font-serif);
-  font-size: var(--font-size-md);
   font-weight: 600;
-  color: color-mix(in oklab, var(--primary-color) 82%, var(--text-color));
-`
+  font-size: clamp(120px, 22vw, 210px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: color-mix(in oklab, var(--text-color) 6%, transparent);
+  pointer-events: none;
+  user-select: none;
 
-const Ribbon = styled.span<{ $open: boolean; $fast: boolean }>`
-  display: block;
-  position: absolute;
-  top: -15px;
-  left: 55%;
-  width: 8px;
-  height: 28px;
-  background: linear-gradient(180deg, var(--primary-color), color-mix(in oklab, var(--primary-color) 70%, black));
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
-  opacity: 0;
-  transform: translateY(-4px);
-  transition:
-    opacity var(--motion-dur-quick) ease,
-    transform var(--motion-dur-quick) var(--motion-ease-out-soft);
-
-  ${(p) =>
-    p.$open
-      ? css`
-          opacity: 1;
-          transform: none;
-          transition:
-            opacity var(--motion-dur-quick) ease 600ms,
-            transform var(--motion-dur-quick) var(--motion-ease-out-soft) 600ms;
-        `
-      : ''}
-  ${(p) =>
-    p.$fast && p.$open
-      ? css`
-          transition:
-            opacity var(--motion-dur-quick) ease 120ms,
-            transform var(--motion-dur-quick) var(--motion-ease-out-soft) 120ms;
-        `
-      : ''}
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.01ms;
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
   }
 `
 
-/* ===== 当前卷册：封面小图与架上翻开的书同一张封面，缝住书与列表 ===== */
-
-const VolumeView = styled.section<{ $dim: boolean }>`
-  padding-top: 0;
-  opacity: ${(p) => (p.$dim ? 0.55 : 1)};
-  transition: opacity var(--motion-dur-quick) ease;
+const ContentInner = styled.div`
+  position: relative;
+  z-index: 1;
 `
 
-const VolumeHeader = styled.div`
+const PanelHead = styled.div`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-xs) 0 var(--space-sm);
 `
 
-const VolumeLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  min-width: 0;
-`
-
-const VolumeCover = styled.span`
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-  border: 1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
-  border-radius: var(--border-radius-sm);
-  overflow: hidden;
-  background: var(--background-200);
-  box-shadow: var(--elevation-soft);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+const discSpin = keyframes`
+  to {
+    transform: rotate(360deg);
   }
 `
 
-const VolumeCopy = styled.div`
-  min-width: 0;
+/* 碟心封面：小黑胶，歌单封面做圆标；切年淡出→轻转 120°→淡入，播放时慢转 */
+const CoverDisc = styled.span<{ $rotation: number; $fading: boolean; $spinning: boolean; $fast: boolean }>`
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    conic-gradient(
+        from 210deg,
+        rgba(255, 255, 255, 0.09),
+        transparent 26%,
+        rgba(255, 255, 255, 0.05) 48%,
+        transparent 62%,
+        rgba(255, 255, 255, 0.08) 82%,
+        transparent
+      ),
+    repeating-radial-gradient(circle at 50% 50%, #171310 0 1.5px, #221b15 1.5px 3px),
+    #14100c;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  opacity: ${(p) => (p.$fading ? 0 : 1)};
+  transform: rotate(${(p) => p.$rotation}deg);
+  transition:
+    transform ${(p) => (p.$fast ? 240 : 620)}ms var(--motion-ease-out-soft),
+    opacity ${(p) => (p.$fast ? 60 : 160)}ms ease;
+
+  /* 主轴孔 */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: #0e0b09;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  }
+
+  ${(p) =>
+    p.$spinning
+      ? css`
+          animation: ${discSpin} 5s linear infinite;
+        `
+      : ''}
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    width: 56px;
+    height: 56px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0.01ms;
+    animation: none;
+  }
+`
+
+const DiscLabel = styled.span`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.45);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    width: 26px;
+    height: 26px;
+  }
+`
+
+const PanelCopy = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 `
 
-const VolumeTitle = styled.h2`
+const PanelTitle = styled.h2`
   margin: 0;
   font-family: var(--font-serif);
   font-size: var(--font-size-lg);
@@ -437,10 +409,51 @@ const VolumeTitle = styled.h2`
   line-height: 1.4;
 `
 
-const VolumeSub = styled.p`
+const PanelSub = styled.p`
   margin: 0;
   font-size: var(--font-size-sm);
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
+`
+
+/* 歌单描述 + 标签：站长自留地（描述来自网易云歌单简介；标签服务端后续补字段即点亮） */
+const Intro = styled.p`
+  margin: 0 0 var(--space-xs);
+  max-width: 56ch;
+  font-size: var(--font-size-sm);
+  line-height: 1.9;
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
+`
+
+const IntroTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 var(--space-sm);
+`
+
+const TagChip = styled.span`
+  padding: 0 8px;
+  font-size: var(--font-size-xs);
+  line-height: 1.7;
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
+  border: 1px solid color-mix(in oklab, var(--normal-400) 70%, transparent);
+  border-radius: var(--border-radius-xs);
+  background: color-mix(in oklab, var(--normal-300) 28%, transparent);
+`
+
+/* 按语：本卷播放次数最高的一首，像志书页脚的纪年按语 */
+const Epigraph = styled.p`
+  margin: 0 0 var(--space-sm);
+  padding: 2px 0 2px var(--space-sm);
+  border-left: 2px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-sm);
+  line-height: 1.9;
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
+
+  .em {
+    color: var(--primary-color);
+  }
 `
 
 /* ===== 曲目列表 ===== */
@@ -620,33 +633,79 @@ type MusicViewProps = {
   profile?: MusicUserProfile
 }
 
-/** 歌单名里的 4 位年份；无年份回退歌单名（书脊/封面兜底文案） */
+/** 歌单名里的 4 位年份；无年份回退歌单名（纵轨/水印兜底文案） */
 const yearOf = (name: string): string => name.match(/(?:19|20)\d{2}/)?.[0] ?? name
 
 export default function MusicView({ playlistId, playlist, annualPlaylists, profile }: MusicViewProps) {
-  const { currentTrack, actions } = useAudioPlayer()
+  const { state, currentTrack, actions } = useAudioPlayer()
   const initialId = Number(playlistId)
   const [selectedId, setSelectedId] = useState<number | null>(Number.isFinite(initialId) ? initialId : null)
   const [selectedPlaylist, setSelectedPlaylist] = useState<MusicPlaylist | null>(playlist)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState(false)
   const [fastMode, setFastMode] = useState(false)
+  const [discRotation, setDiscRotation] = useState(0)
+  const [discFading, setDiscFading] = useState(false)
   const lastSwitchRef = useRef(0)
+  const discTimerRef = useRef<number | null>(null)
 
   const tracks = useMemo(() => selectedPlaylist?.tracks ?? [], [selectedPlaylist])
   const firstYear = useMemo(() => {
     const years = annualPlaylists
-      .map((book) => book.name.match(/(?:19|20)\d{2}/)?.[0])
+      .map((item) => item.name.match(/(?:19|20)\d{2}/)?.[0])
       .filter((year): year is string => Boolean(year))
       .sort()
     return years[0]
   }, [annualPlaylists])
 
+  const selectedYear = useMemo(
+    () => (selectedPlaylist?.name ? yearOf(selectedPlaylist.name) : ''),
+    [selectedPlaylist]
+  )
+
+  const selectedIndex = useMemo(
+    () => annualPlaylists.findIndex((item) => item.id === selectedId),
+    [annualPlaylists, selectedId]
+  )
+
+  /* 按语：本卷播放次数最高的一首（playCount 缺省时不展示） */
+  const favTrack = useMemo(() => {
+    const maxPlays = tracks.reduce((max, track) => Math.max(max, track.playCount ?? 0), 0)
+    if (maxPlays <= 0) return null
+    return tracks.find((track) => (track.playCount ?? 0) === maxPlays) ?? null
+  }, [tracks])
+
+  /* 碟心慢转：正在播放且播的是这一卷的曲目 */
+  const isQueuePlaying =
+    state.status === 'playing' && !!currentTrack && tracks.some((track) => track.id === currentTrack.id)
+
+  /* 切年换面：碟面淡出 → 轻转 120°（累计）→ 淡入；2 秒内连续切换自动收短 */
+  useEffect(() => {
+    if (discTimerRef.current) {
+      window.clearTimeout(discTimerRef.current)
+      discTimerRef.current = null
+    }
+    if (!selectedYear) return
+    setDiscFading(true)
+    discTimerRef.current = window.setTimeout(() => {
+      setDiscRotation((deg) => deg + 120)
+      setDiscFading(false)
+    }, fastMode ? 60 : 160)
+    return () => {
+      if (discTimerRef.current) {
+        window.clearTimeout(discTimerRef.current)
+        discTimerRef.current = null
+      }
+    }
+    // selectedPlaylist 变化即换面（首帧也走一次，把换面当作开场）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPlaylist?.playlistId])
+
   const selectYear = useCallback(
     async (id: number) => {
       if (id === selectedId || loading) return
       const now = Date.now()
-      /* 2 秒内连续切换：书架进入快速档，编排收短 */
+      /* 2 秒内连续切换：快速档，换面收短 */
       setFastMode(now - lastSwitchRef.current < 2000)
       lastSwitchRef.current = now
 
@@ -676,16 +735,14 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
     [selectedId, loading, playlist]
   )
 
-  const onShelfKeyDown = useCallback(
+  const onRailKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+      if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
       if (!annualPlaylists.length) return
       event.preventDefault()
-      const idx = annualPlaylists.findIndex((book) => book.id === selectedId)
-      const next =
-        event.key === 'ArrowRight'
-          ? Math.min(annualPlaylists.length - 1, idx + 1)
-          : Math.max(0, idx - 1)
+      const idx = annualPlaylists.findIndex((item) => item.id === selectedId)
+      const forward = event.key === 'ArrowDown' || event.key === 'ArrowRight'
+      const next = forward ? Math.min(annualPlaylists.length - 1, idx + 1) : Math.max(0, idx - 1)
       const target = annualPlaylists[next]
       if (!target || target.id === selectedId) return
       selectYear(target.id)
@@ -767,7 +824,7 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
       <PageHeader>
         <TitleGroup>
           <PageTitle>音乐</PageTitle>
-          <PageSubtitle>网易云年度歌单 · 一年一卷，点选翻开</PageSubtitle>
+          <PageSubtitle>网易云年度歌单 · 一年一卷编年</PageSubtitle>
         </TitleGroup>
         {profile && (profile.nickname || profile.avatarUrl) ? (
           <Identity>
@@ -783,67 +840,81 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
         ) : null}
       </PageHeader>
 
-      {annualPlaylists.length ? (
-        <ShelfWrap>
-          <ShelfScroll>
-            <Shelf role="tablist" aria-label="切换年度歌单" onKeyDown={onShelfKeyDown}>
-              {annualPlaylists.map((book, index) => (
-                <Volume
-                  key={book.id}
-                  type="button"
-                  role="tab"
-                  data-year={book.id}
-                  aria-current={book.id === selectedId}
-                  aria-controls="volume-panel"
-                  aria-label={`${book.name}，共 ${book.trackCount} 首`}
-                  $spineWidth={Math.max(26, 16 + book.trackCount)}
-                  $tint={index}
-                  $fast={fastMode}
-                  onClick={() => selectYear(book.id)}
-                >
-                  <Book $open={book.id === selectedId} $fast={fastMode}>
-                    <Spine $tint={index}>
-                      <SpineYear>{yearOf(book.name)}</SpineYear>
-                    </Spine>
-                    <CoverFace $open={book.id === selectedId} $fast={fastMode}>
-                      <CoverYearFallback aria-hidden="true">{yearOf(book.name)}</CoverYearFallback>
-                      {book.coverUrl ? <img src={book.coverUrl} alt="" loading="lazy" /> : null}
-                    </CoverFace>
-                  </Book>
-                  <Ribbon $open={book.id === selectedId} $fast={fastMode} aria-hidden="true" />
-                </Volume>
-              ))}
-            </Shelf>
-          </ShelfScroll>
-        </ShelfWrap>
-      ) : null}
+      <Chronicle>
+        {annualPlaylists.length ? (
+          <Rail role="tablist" aria-label="切换年度歌单" aria-orientation="vertical" onKeyDown={onRailKeyDown}>
+            {annualPlaylists.map((item, index) => (
+              <RailItem
+                key={item.id}
+                type="button"
+                role="tab"
+                data-year={item.id}
+                aria-current={item.id === selectedId}
+                aria-controls="volume-panel"
+                aria-label={`${item.name}，共 ${item.trackCount} 首`}
+                onClick={() => selectYear(item.id)}
+              >
+                <RailYear $dist={selectedIndex < 0 ? 2 : Math.abs(index - selectedIndex)}>
+                  {yearOf(item.name)}
+                </RailYear>
+                <RailCount>{item.trackCount} 首</RailCount>
+              </RailItem>
+            ))}
+          </Rail>
+        ) : null}
 
-      <VolumeView id="volume-panel" role="tabpanel" aria-label="当前歌单曲目" $dim={loading}>
-        <VolumeHeader>
-          <VolumeLeft>
-            {selectedPlaylist?.coverUrl ? (
-              <VolumeCover>
-                <img src={selectedPlaylist.coverUrl} alt="" />
-              </VolumeCover>
+        <Content id="volume-panel" role="tabpanel" aria-label="当前歌单曲目">
+          <Watermark aria-hidden="true">{selectedYear}</Watermark>
+          <ContentInner>
+            <PanelHead>
+              <CoverDisc
+                aria-hidden="true"
+                $rotation={discRotation}
+                $fading={discFading}
+                $spinning={isQueuePlaying}
+                $fast={fastMode}
+              >
+                <DiscLabel
+                  style={
+                    selectedPlaylist.coverUrl ? { backgroundImage: `url(${selectedPlaylist.coverUrl})` } : undefined
+                  }
+                />
+              </CoverDisc>
+              <PanelCopy>
+                <PanelTitle>{selectedPlaylist.name ?? '歌单'}</PanelTitle>
+                <PanelSub>
+                  共 {tracks.length} 首
+                  {selectedYear ? ` · ${selectedYear} 年度` : ''}
+                  {loadError ? ' · 这一卷暂时取不到，稍后再试' : ''}
+                </PanelSub>
+              </PanelCopy>
+            </PanelHead>
+
+            {selectedPlaylist.description ? <Intro>{selectedPlaylist.description}</Intro> : null}
+            {selectedPlaylist.tags?.length ? (
+              <IntroTags>
+                {selectedPlaylist.tags.map((tag) => (
+                  <TagChip key={tag}>{tag}</TagChip>
+                ))}
+              </IntroTags>
             ) : null}
-            <VolumeCopy>
-              <VolumeTitle>{selectedPlaylist?.name ?? '歌单'}</VolumeTitle>
-              <VolumeSub>
-                共 {tracks.length} 首
-                {loadError ? ' · 这一卷暂时取不到，稍后再试' : ''}
-              </VolumeSub>
-            </VolumeCopy>
-          </VolumeLeft>
-        </VolumeHeader>
+            {favTrack ? (
+              <Epigraph>
+                这一年循环最多的是<span className="em">《{favTrack.name}》</span>
+                ，听了 {favTrack.playCount} 遍。
+              </Epigraph>
+            ) : null}
 
-        {tracks.length ? (
-          renderTracks(tracks)
-        ) : (
-          <TracksEmpty role="status">
-            {loadError ? '这一卷暂时取不到，稍后再试' : '这个歌单暂时没有曲目'}
-          </TracksEmpty>
-        )}
-      </VolumeView>
+            {tracks.length ? (
+              renderTracks(tracks)
+            ) : (
+              <TracksEmpty role="status">
+                {loadError ? '这一卷暂时取不到，稍后再试' : '这个歌单暂时没有曲目'}
+              </TracksEmpty>
+            )}
+          </ContentInner>
+        </Content>
+      </Chronicle>
     </Section>
   )
 }
