@@ -4,7 +4,7 @@
   "name": "20260929-style-music-chronicle",
   "type": "style",
   "scope": "site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260929-style-music-chronicle",
   "files": [
@@ -15,8 +15,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 410,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/410",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 411,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/411"
   },
   "review": {
     "conclusion": "passed",
@@ -25,8 +25,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:410",
-    "planHash": "09d173d424684685511ee03679f6b5f9e7fbe961e94471cb5a0ee9a6f43828fb",
+    "checkpoint": "pr:411",
+    "planHash": "337d56a124a09a69e58c54c855c89807a4e12d69ad68ffeafb8a3a6dde426961",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -40,12 +40,13 @@
     },
     "commit": {
       "files": [
+        "apps/site/app/music/MusicView",
         "apps/site/app/music/MusicView.tsx",
-        "apps/site/app/music/specs.ts",
-        "shadow-docs/changes/20260929-style-music-chronicle",
-        "shadow-docs/knowledge/music-player.md"
+        "apps/site/app/music/styles.ts",
+        "apps/site/test/music-player-wiring.test.mjs",
+        "shadow-docs/changes/20260929-style-music-chronicle"
       ],
-      "message": "style(music): /music 年度切换重设计——书架换年轮编年·碟心封面"
+      "message": "refactor(music): 按组件规范拆分 MusicView——样式集中 styles.ts、逻辑归 MusicView/index"
     }
   },
   "knowledge": null

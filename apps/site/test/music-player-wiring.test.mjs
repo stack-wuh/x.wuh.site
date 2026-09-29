@@ -10,7 +10,7 @@ const [globalPlayer, appProviders, musicPage, musicView, musicSpecs] = await Pro
   readFile(resolve(appRoot, 'app/components/player/GlobalAudioPlayer.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/components/AppProviders.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/music/page.tsx'), 'utf8'),
-  readFile(resolve(appRoot, 'app/music/MusicView.tsx'), 'utf8'),
+  readFile(resolve(appRoot, 'app/music/MusicView/index.tsx'), 'utf8'),
   readFile(resolve(appRoot, 'app/music/specs.ts'), 'utf8')
 ])
 
