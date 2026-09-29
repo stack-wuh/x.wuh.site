@@ -27,9 +27,13 @@ export const PageHeader = styled.header`
   border-bottom: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-sm);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: var(--space-xs);
+    row-gap: 2px;
+    padding-bottom: var(--space-sm);
   }
 `
 
@@ -38,6 +42,11 @@ export const TitleGroup = styled.div`
   flex-direction: column;
   gap: var(--space-xs);
   min-width: 0;
+
+  /* 移动端把标题/副题提升为页头网格的直接参与项：标题与身份同行，副题独占下行 */
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: contents;
+  }
 `
 
 export const PageTitle = styled.h1`
@@ -47,6 +56,12 @@ export const PageTitle = styled.h1`
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0.03em;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 26px;
+  }
 `
 
 export const PageSubtitle = styled.p`
@@ -54,6 +69,13 @@ export const PageSubtitle = styled.p`
   font-size: var(--font-size-sm);
   line-height: 1.7;
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: var(--font-size-xs);
+    color: color-mix(in oklab, var(--text-color) 55%, transparent);
+  }
 `
 
 export const Identity = styled.div`
@@ -61,9 +83,11 @@ export const Identity = styled.div`
   align-items: center;
   gap: var(--space-xs);
   flex-shrink: 0;
+  min-width: 0;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    align-self: flex-end;
+    grid-column: 2;
+    grid-row: 1;
   }
 `
 
@@ -75,6 +99,11 @@ export const Avatar = styled.img`
   border-radius: 50%;
   object-fit: cover;
   display: block;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    width: 28px;
+    height: 28px;
+  }
 `
 
 export const SealAvatar = styled.span`
@@ -95,6 +124,15 @@ export const SealAvatar = styled.span`
 export const IdentityName = styled.span`
   font-family: var(--font-serif);
   font-size: var(--font-size-base);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    max-width: 5.5em;
+    font-size: var(--font-size-sm);
+  }
 `
 
 export const LvBadge = styled.span`
@@ -128,7 +166,8 @@ export const Chronicle = styled.div`
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-md);
+    gap: 0;
+    padding-top: var(--space-sm);
   }
 `
 
@@ -150,16 +189,25 @@ export const Rail = styled.div`
     background: color-mix(in oklab, var(--normal-400) 45%, transparent);
   }
 
+  /* 移动端：年谱刻度带——纯文字沿一条基线排开，两端渐隐提示横滑，
+     滚动条全隐藏（组件级 specific 于全局滚动条语言，留言板先例） */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     flex-direction: row;
-    gap: 4px;
+    align-items: baseline;
+    gap: 22px;
     overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: thin;
+    margin: 6px calc(-1 * var(--space-base)) 0;
+    padding: 8px var(--space-base) 8px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    cursor: grab;
 
-    &::before {
+    &::-webkit-scrollbar {
       display: none;
     }
+
+    -webkit-mask: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+    mask: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent);
   }
 `
 
@@ -208,16 +256,25 @@ export const RailItem = styled.button`
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     flex: 0 0 auto;
-    padding: 4px 10px;
-    border: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
-    border-radius: var(--border-radius-base);
+    position: relative;
+    padding: 4px 0 7px;
+    border: none;
+    scroll-snap-align: center;
 
     &::before {
       display: none;
     }
 
-    &[aria-current='true'] {
-      border-color: color-mix(in oklab, var(--primary-color) 60%, transparent);
+    /* 选中年份的刻度下划标（挂在自身属性选择器上，不跨组件插值） */
+    &[aria-current='true']::after {
+      content: '';
+      position: absolute;
+      left: 1px;
+      right: 1px;
+      bottom: 0;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--primary-color);
     }
   }
 `
@@ -235,7 +292,9 @@ export const RailYear = styled.span<{ $dist: number }>`
       : p.$dist === 1
         ? 'color-mix(in oklab, var(--text-color) 44%, transparent)'
         : 'color-mix(in oklab, var(--text-color) 26%, transparent)'};
-  transition: color 240ms var(--motion-ease-out-soft);
+  transition:
+    color 240ms var(--motion-ease-out-soft),
+    font-size 240ms var(--motion-ease-out-soft);
 
   ${RailItem}:hover & {
     color: color-mix(in oklab, var(--text-color) 70%, transparent);
@@ -245,8 +304,10 @@ export const RailYear = styled.span<{ $dist: number }>`
     color: var(--primary-color);
   }
 
+  /* 移动端：选中年放大成刻度主档，其余按距离缩小淡化（衬线数字本身当刻度） */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    font-size: var(--font-size-base);
+    font-size: ${(p) => (p.$dist === 0 ? '27px' : '16px')};
+    line-height: 1.3;
   }
 `
 
@@ -366,8 +427,8 @@ export const CoverDisc = styled.span<{
       : ''}
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -385,8 +446,8 @@ export const DiscLabel = styled.span`
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.45);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
   }
 `
 
@@ -486,6 +547,29 @@ export const TrackRow = styled.li`
   &:hover .track-name {
     color: var(--primary-color);
   }
+
+  /* 移动端两行制：编号跨两行、歌名独占一行、艺术家退第二行、次数/时长/最爱右列竖排 */
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2px 10px;
+    padding: 9px 4px;
+    min-height: 54px;
+
+    /* 触屏无 hover：按住即翻出播放键 */
+    &:active {
+      background: color-mix(in oklab, var(--primary-color) 8%, transparent);
+    }
+
+    &:active .track-idx-num {
+      opacity: 0;
+    }
+
+    &:active .track-idx-play {
+      opacity: 1;
+    }
+  }
 `
 
 export const TrackIndex = styled.span`
@@ -496,6 +580,14 @@ export const TrackIndex = styled.span`
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   color: color-mix(in oklab, var(--text-color) 55%, transparent);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: stretch;
+    height: auto;
+    min-height: 40px;
+  }
 `
 
 export const IndexNum = styled.span.attrs({ className: 'track-idx-num' })`
@@ -529,6 +621,11 @@ export const PlayingDot = styled.span<{ $playing: boolean }>`
   border-radius: 50%;
   background: var(--primary-color);
   opacity: ${(p) => (p.$playing ? 1 : 0)};
+
+  /* 移动端播放态由歌名主色 + 编号翻播放键表达，不再占横向空间 */
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
 `
 
 export const TrackButton = styled.button`
@@ -553,6 +650,19 @@ export const TrackButton = styled.button`
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
   }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1px;
+
+    /* 播放中的卷内曲目：歌名常驻主色（移动端无 dot，主色即状态） */
+    &[aria-current='true'] .track-name {
+      color: var(--primary-color);
+    }
+  }
 `
 
 export const TrackName = styled.span`
@@ -562,6 +672,11 @@ export const TrackName = styled.span`
   text-overflow: ellipsis;
   font-size: var(--font-size-sm);
   transition: color var(--motion-dur-quick) ease;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    font-size: var(--font-size-base);
+    line-height: 1.55;
+  }
 `
 
 export const TrackArtist = styled.span`
@@ -572,6 +687,10 @@ export const TrackArtist = styled.span`
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
   font-size: var(--font-size-xs);
   flex-shrink: 1;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    color: color-mix(in oklab, var(--text-color) 58%, transparent);
+  }
 `
 
 export const TrackPlays = styled.span`
@@ -587,6 +706,29 @@ export const TrackPlays = styled.span`
     margin-left: 2px;
     color: color-mix(in oklab, var(--text-color) 45%, transparent);
   }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-width: 0;
+  }
+`
+
+/* 次数/时长/最爱归组的右侧竖列：桌面 contents 溶入行布局（与历史渲染一致），移动端两行右锚 */
+export const TrackSide = styled.span`
+  display: contents;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: grid;
+    grid-column: 3;
+    grid-row: 1 / 3;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    justify-items: end;
+    column-gap: 6px;
+    row-gap: 3px;
+  }
 `
 
 export const FavSlot = styled.span`
@@ -594,6 +736,12 @@ export const FavSlot = styled.span`
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 2;
+    grid-row: 2;
+    width: auto;
+  }
 `
 
 export const FavBadge = styled.span`
@@ -605,6 +753,10 @@ export const FavBadge = styled.span`
   border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
   border-radius: var(--border-radius-xs);
   background: color-mix(in oklab, var(--primary-color) 7%, var(--background-100));
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    font-size: 10px;
+  }
 `
 
 export const TrackDuration = styled.span`
@@ -612,6 +764,11 @@ export const TrackDuration = styled.span`
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   color: color-mix(in oklab, var(--text-color) 55%, transparent);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-column: 1;
+    grid-row: 2;
+  }
 `
 
 export const TracksEmpty = styled.p`
