@@ -135,7 +135,9 @@ describe('MusicService', () => {
 
       const result = await service.getPlaylist()
 
-      expect(userRecord).toHaveBeenCalledWith(expect.objectContaining({ type: 0, cookie: 'MUSIC_U=token-value' }))
+      expect(userRecord).toHaveBeenCalledWith(
+        expect.objectContaining({ uid: 123, type: 0, cookie: 'MUSIC_U=token-value' })
+      )
       expect(result.tracks[0]).toMatchObject({ id: 1973665667, playCount: 88 })
       expect(result.tracks[1]).not.toHaveProperty('playCount')
     })
