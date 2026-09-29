@@ -49,4 +49,5 @@
 | 20260928-style-player-responsive-redesign | ✅ 完成 | shadow-docs/changes/archive/20260928-style-player-responsive-redesign/brief.md |
 | 20260929-build-music-token-watch | ✅ 完成 | shadow-docs/changes/archive/20260929-build-music-token-watch/brief.md |
 | 20260929-feature-mini-player-title-marquee | ✅ 完成 | shadow-docs/changes/archive/20260929-feature-mini-player-title-marquee/brief.md |
+| 20260929-feature-music-yearbook | ✅ 完成 | shadow-docs/changes/archive/20260929-feature-music-yearbook/brief.md |
 | 20260929-style-player-collapse-ear | reviewed | shadow-docs/changes/20260929-style-player-collapse-ear/brief.md |

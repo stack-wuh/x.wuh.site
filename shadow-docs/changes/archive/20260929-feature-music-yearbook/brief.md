@@ -4,7 +4,7 @@
   "name": "20260929-feature-music-yearbook",
   "type": "feature",
   "scope": "apps/site/app/music",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260929-feature-music-yearbook",
   "files": [
@@ -21,18 +21,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 406,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/406",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 407,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/407"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "1cae3090d5bc6b77482d3157e2ac97779a5549dd",
-    "verifiedAt": "2026-09-29T05:27:53.986Z"
+    "verifiedCommit": "b6c15c0787409ca20d4d86a54c75ee6adc431d26",
+    "verifiedAt": "2026-09-29T06:41:32.058Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:406",
-    "planHash": "7aedb561a5de578171b95034a18f1347c9be2fb2e730a99968a8f4e44683e625",
+    "checkpoint": "merged-pr:407",
+    "planHash": "1499aa9615a6c858fed232cd80d99170495edb39d8070f749c6a87c3b8d7cc1c",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
