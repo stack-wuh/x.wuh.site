@@ -15,8 +15,10 @@ source:
   - changes/20260903-style-post-toc-mobile-polish/brief.md
   - changes/20260928-feature-music-player/brief.md
   - changes/20260928-style-player-responsive-redesign/brief.md
+  - changes/20260929-style-player-collapse-ear/brief.md
 verified: 2026-09-29
 verified-depth: runtime
+verified-scope: AudioPlayer 书耳收起交互——四主题（wine/plain × light/dark）展开/收起双态截图、耳页接缝特写、往返点击与 `matches(':hover')` 计算样式（观察点见 change 交付记录）；其余段落沿承各自变更时的既有验证。
 ---
 
 # 组件包
@@ -35,7 +37,7 @@ Divider 组件（`@wuh.site/components/divider`）负责页面结构性分割线
 
 AudioPlayer（`@wuh.site/components/audio-player`）的降级语义：曲目拿不到播放地址（`TrackResolver` 返回空 `streamUrl`）或音频元素报错时**按队列顺序自动跳过**，整轮尝试不超过队列长度，提示 `已跳过 N 首不可播放的曲目` 占用迷你播放器歌手行（`role='status'`，卡片高度不变），且**只在用户操作播放器时清空**（自动起播不擦除）；整轮不可播则回落 `idle` 并给出结论文案。公开 API（`TrackSource`/`TrackResolver`/`AudioPlayerActions`/`AudioPlayerState`）保持兼容，跳过语义不新增 action。
 
-AudioPlayer 响应式与视觉（20260928-style-player-responsive-redesign 起）：全组件纸墨语言——颜色只走主题 token、断点只用 `BREAKPOINTS`、图标用 `@wuh.site/components/icons` 播放族具名导出（禁裸字符与散落 SVG）。MiniPlayer 桌面为纸卡 dock + 右缘收拢栏、移动端为全宽底栏（`safe-area-inset-bottom`、触摸目标 ≥44px），收起态为朱砂「音」印章钮，开合只做 opacity/transform/visibility 过渡；PlayerPanel 桌面为三栏纸卡弹层、移动端为全屏沉浸页 + 「歌词｜播放列表」分段切换，面板 z 层（backdrop 2600 / panel 2610）必须高于迷你条（2500）；面板背景是封面原图水印层（cover 铺满 + 主题纸色渐变罩 88%→74% 保证对比度，桌面取景下偏裁封面自带印刷字边、竖屏 `auto 130%` 同偏移），无封面回退素纸；Escape 关闭、焦点移入/移回、`prefers-reduced-motion` 降级、`role='dialog'` + `aria-modal`。以上纪律由同目录 `style.test.mjs` 门禁固化：禁裸十六进制色、禁裸断点数值、禁 `--text-secondary`、transition 禁布局属性、断言 aria-label / `prefers-reduced-motion` / `role='status'` / Escape / safe-area 在场——改播放器样式先保此测试绿。
+AudioPlayer 响应式与视觉（20260928-style-player-responsive-redesign 起）：全组件纸墨语言——颜色只走主题 token、断点只用 `BREAKPOINTS`、图标用 `@wuh.site/components/icons` 播放族具名导出（禁裸字符与散落 SVG）。MiniPlayer 桌面为纸卡 dock + 右缘书耳（20260929-style-player-collapse-ear 起：展开耳必须是 MiniCard **子元素**——absolute 右缘垂直居中 24×44、三边发丝线、左边借卡片边框并以不透明纸面盖住身后段，命中区经 `::before` 外扩；收起耳为屏幕左缘 fixed 小耳 28×48、与展开耳同一水平线；独立 fixed 元素靠坐标拼合必然产生「两张纸」拼贴缝，禁止回退）、移动端为全宽底栏（`safe-area-inset-bottom`、触摸目标 ≥44px），收起态桌面为左缘小耳、移动端为朱砂「音」印章钮，开合只做 opacity/transform/visibility 过渡；PlayerPanel 桌面为三栏纸卡弹层、移动端为全屏沉浸页 + 「歌词｜播放列表」分段切换，面板 z 层（backdrop 2600 / panel 2610）必须高于迷你条（2500）；面板背景是封面原图水印层（cover 铺满 + 主题纸色渐变罩 88%→74% 保证对比度，桌面取景下偏裁封面自带印刷字边、竖屏 `auto 130%` 同偏移），无封面回退素纸；Escape 关闭、焦点移入/移回、`prefers-reduced-motion` 降级、`role='dialog'` + `aria-modal`。以上纪律由同目录 `style.test.mjs` 门禁固化：禁裸十六进制色、禁裸断点数值、禁 `--text-secondary`、transition 禁布局属性、断言 aria-label / `prefers-reduced-motion` / `role='status'` / Escape / safe-area 在场——改播放器样式先保此测试绿。
 
 ## 执行约束
 
