@@ -9,9 +9,6 @@ import {
   IconListMusic,
   IconPause,
   IconPlay,
-  IconRepeat,
-  IconRepeatOne,
-  IconShuffle,
   IconSkipBack,
   IconSkipForward,
   IconVolume,
@@ -171,15 +168,16 @@ const CloseButton = styled.button`
   justify-content: center;
   padding: 0;
   background: none;
-  border: 1px solid ${HAIRLINE};
+  border: 1px solid transparent;
   border-radius: 50%;
   color: ${INK_MUTED};
   cursor: pointer;
-  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
 
   &:hover {
     color: var(--primary-color);
     background: color-mix(in oklab, var(--primary-color) 8%, transparent);
+    border-color: ${HAIRLINE};
   }
 
   ${focusRing}
@@ -194,6 +192,8 @@ const NowHeader = styled.div`
   min-height: 0;
   display: flex;
   flex-direction: column;
+  /* 桌面 gutter：封面装裱内距，与歌词列 padding-left 同韵 */
+  padding: var(--space-xl) 0 0 var(--space-xl);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     grid-area: header;
@@ -212,6 +212,8 @@ const NowDock = styled.div`
   min-width: 0;
   display: flex;
   flex-direction: column;
+  /* 甲板 gutter：右缘离开列罩边界，底缘离开面板圆角 */
+  padding: 0 var(--space-lg) var(--space-xl) var(--space-xl);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     grid-area: dock;
@@ -229,9 +231,9 @@ const CoverHero = styled.div<{ $src?: string }>`
   background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
   box-shadow: inset 0 0 0 1px ${HAIRLINE}, var(--elevation-soft);
 
-  /* 矮视口（常见 800 高笔记本）：封面再收缩一档，保证音量行完整落在面板内 */
+  /* 矮视口（常见 800 高笔记本）：封面再收缩一档，抵偿 gutter 占用的纵向空间 */
   @media (max-height: 840px) {
-    width: min(100%, 230px);
+    width: min(100%, 220px);
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
@@ -244,7 +246,7 @@ const CoverHero = styled.div<{ $src?: string }>`
 `
 
 const TrackHeading = styled.h2`
-  margin-top: var(--space-lg);
+  margin-top: var(--space-base);
   font-family: var(--font-serif);
   font-size: var(--font-size-xl);
   font-weight: 600;
@@ -286,18 +288,79 @@ const ProgressWrapper = styled.div`
   }
 `
 
-const Slider = styled.input`
+/* 凹槽滑杆（签名元素）：4px 发丝轨道 + 主色已播段 + 纸色圆点滑块，进度与音量共用同一几何 */
+const GrooveSlider = styled.input<{ $fill?: number }>`
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 28px;
   margin: 0;
-  accent-color: var(--primary-color);
+  background: transparent;
   cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background:
+      linear-gradient(var(--primary-color), var(--primary-color)) 0 / ${(p) => p.$fill ?? 0}% 100% no-repeat,
+      ${HAIRLINE};
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    margin-top: -4px;
+    border-radius: 50%;
+    background: var(--background-100);
+    border: 1px solid ${HAIRLINE};
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary-color) 28%, transparent);
+    transition: transform ${QUICK} ${EASE}, box-shadow ${QUICK} ${EASE};
+  }
+
+  &:hover::-webkit-slider-thumb,
+  &:active::-webkit-slider-thumb {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary-color) 28%, transparent);
+  }
+
+  &::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: ${HAIRLINE};
+  }
+
+  &::-moz-range-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--primary-color);
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--background-100);
+    border: 1px solid ${HAIRLINE};
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary-color) 28%, transparent);
+    transition: transform ${QUICK} ${EASE}, box-shadow ${QUICK} ${EASE};
+  }
+
+  &:hover::-moz-range-thumb,
+  &:active::-moz-range-thumb {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary-color) 28%, transparent);
+  }
 
   @media (pointer: coarse) {
     height: 44px;
   }
 
   ${focusRing}
+`
+
+const VolumeSlider = styled(GrooveSlider)`
+  width: 120px;
 `
 
 const TimeRow = styled.div`
@@ -321,6 +384,7 @@ const ControlRow = styled.div`
   }
 `
 
+/* 幽灵传输钮：去常驻描边，纸面安静，hover 才显性（与 CloseButton 同语言） */
 const SkipButton = styled.button`
   width: 44px;
   height: 44px;
@@ -329,7 +393,7 @@ const SkipButton = styled.button`
   justify-content: center;
   padding: 0;
   background: none;
-  border: 1px solid ${HAIRLINE};
+  border: none;
   border-radius: 50%;
   color: ${INK_MUTED};
   cursor: pointer;
@@ -343,17 +407,26 @@ const SkipButton = styled.button`
   ${focusRing}
 `
 
+/* 实心盘：面板唯一饱和元素；::after 内缩环作碟面标签环，唱片语言点到即止 */
 const PlayButton = styled(SkipButton)`
+  position: relative;
   width: 60px;
   height: 60px;
   background: var(--primary-color);
-  border-color: var(--primary-color);
   color: var(--background-100);
   box-shadow: var(--elevation-soft);
 
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in oklab, var(--background-100) 35%, transparent);
+    pointer-events: none;
+  }
+
   &:hover {
     background: var(--primary-600);
-    border-color: var(--primary-600);
     color: var(--background-100);
   }
 
@@ -367,11 +440,13 @@ const PlayButton = styled(SkipButton)`
   }
 `
 
-const ModeGroup = styled.div`
+/* 甲板末行：模式带居左、音量居右；移动端音量隐去、模式居中 */
+const DeckRow = styled.div`
   margin-top: var(--space-base);
   display: flex;
-  gap: var(--space-xs);
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-base);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     margin-top: var(--space-sm);
@@ -379,31 +454,32 @@ const ModeGroup = styled.div`
   }
 `
 
-const ModeButton = styled.button<{ $active?: boolean }>`
-  display: inline-flex;
+const ModeGroup = styled.div`
+  display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  background: ${(p) => (p.$active ? 'color-mix(in oklab, var(--primary-color) 8%, transparent)' : 'transparent')};
-  border: 1px solid ${(p) => (p.$active ? 'color-mix(in oklab, var(--primary-color) 45%, transparent)' : HAIRLINE)};
-  border-radius: 999px;
+  gap: var(--space-sm);
+`
+
+/* 下划线模式带：复用 MobileTab/年谱刻度带的选中语言，替代描边 pill */
+const ModeButton = styled.button<{ $active?: boolean }>`
+  padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
+  background: none;
+  border: none;
+  border-bottom: 2px solid ${(p) => (p.$active ? 'var(--primary-color)' : 'transparent')};
   color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_MUTED)};
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
-  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
+  transition: color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
 
   &:hover {
     color: var(--primary-color);
-    border-color: color-mix(in oklab, var(--primary-color) 45%, transparent);
   }
 
   ${focusRing}
 `
 
 const VolumeRow = styled.div`
-  margin-top: var(--space-base);
-  margin-bottom: var(--space-xs);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -700,12 +776,6 @@ const MODE_LABELS: Record<PlayerMode, string> = {
   shuffle: '随机'
 }
 
-const MODE_ICONS: Record<PlayerMode, typeof IconRepeat> = {
-  order: IconRepeat,
-  'repeat-one': IconRepeatOne,
-  shuffle: IconShuffle
-}
-
 export const AudioPlayerPanel = () => {
   const {
     currentTrack,
@@ -745,6 +815,29 @@ export const AudioPlayerPanel = () => {
       restoreFocusRef.current = null
     }
   }, [state.isPanelOpen, togglePanel])
+
+  // 弹层滚动锁：面板打开期间锁 body 滚动（复用 Dialog 的 lockScroll 配方，position:fixed 兼顾 iOS），关闭还原滚动位置
+  useEffect(() => {
+    if (!state.isPanelOpen || typeof document === 'undefined') return
+    const scrollY = window.scrollY
+    const originalOverflow = document.body.style.overflow
+    const originalPosition = document.body.style.position
+    const originalTop = document.body.style.top
+    const originalWidth = document.body.style.width
+
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+
+    return () => {
+      document.body.style.overflow = originalOverflow
+      document.body.style.position = originalPosition
+      document.body.style.top = originalTop
+      document.body.style.width = originalWidth
+      window.scrollTo(0, scrollY)
+    }
+  }, [state.isPanelOpen])
 
   // 播放列表定位到当前曲：面板打开或切歌时滚动到高亮项
   useEffect(() => {
@@ -802,12 +895,13 @@ export const AudioPlayerPanel = () => {
 
         <NowDock>
           <ProgressWrapper>
-            <Slider
+            <GrooveSlider
               type='range'
               min={0}
               max={totalDuration}
               step={0.1}
               value={Math.min(state.progress, totalDuration)}
+              $fill={(Math.min(state.progress, totalDuration) / totalDuration) * 100}
               onChange={(e) => seek(Number(e.target.value))}
               aria-label='播放进度'
             />
@@ -829,10 +923,9 @@ export const AudioPlayerPanel = () => {
             </SkipButton>
           </ControlRow>
 
-          <ModeGroup role='group' aria-label='播放模式'>
-            {(Object.keys(MODE_LABELS) as PlayerMode[]).map((mode) => {
-              const ModeGlyph = MODE_ICONS[mode]
-              return (
+          <DeckRow>
+            <ModeGroup role='group' aria-label='播放模式'>
+              {(Object.keys(MODE_LABELS) as PlayerMode[]).map((mode) => (
                 <ModeButton
                   key={mode}
                   type='button'
@@ -840,24 +933,25 @@ export const AudioPlayerPanel = () => {
                   aria-pressed={state.mode === mode}
                   onClick={() => setMode(mode)}
                 >
-                  <ModeGlyph size={13} /> {MODE_LABELS[mode]}
+                  {MODE_LABELS[mode]}
                 </ModeButton>
-              )
-            })}
-          </ModeGroup>
+              ))}
+            </ModeGroup>
 
-          <VolumeRow>
-            <IconVolume size={16} aria-hidden='true' />
-            <Slider
-              type='range'
-              min={0}
-              max={1}
-              step={0.01}
-              value={state.volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              aria-label='音量'
-            />
-          </VolumeRow>
+            <VolumeRow>
+              <IconVolume size={16} aria-hidden='true' />
+              <VolumeSlider
+                type='range'
+                min={0}
+                max={1}
+                step={0.01}
+                value={state.volume}
+                $fill={state.volume * 100}
+                onChange={(e) => setVolume(Number(e.target.value))}
+                aria-label='音量'
+              />
+            </VolumeRow>
+          </DeckRow>
         </NowDock>
 
         <LyricsSection aria-label='歌词'>
