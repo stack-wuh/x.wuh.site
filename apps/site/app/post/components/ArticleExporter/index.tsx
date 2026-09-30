@@ -6,6 +6,7 @@ import { toBlob } from 'html-to-image'
 import QRCode from 'qrcode'
 import Dialog from '@wuh.site/components/dialog'
 import message from '@wuh.site/components/message'
+import { useLocale } from '@wuh.site/components/locales'
 import { IconDownload } from '@wuh.site/components/icons'
 import type { ArticleExporterProps } from './specs'
 import * as S from './styles'
@@ -24,6 +25,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function ArticleExporter({ open, onClose, data }: ArticleExporterProps) {
+  const { t } = useLocale()
   const exportRef = React.useRef<HTMLDivElement>(null)
   const dataRef = React.useRef(data)
   dataRef.current = data
@@ -104,7 +106,7 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
 
         if (cancelled) return
         if (!blob) {
-          setErrorMsg('canvas.toBlob 返回空值，可能画布过大')
+          setErrorMsg(t('post.exporter.emptyBlob'))
           setStatus('error')
           return
         }
@@ -136,7 +138,7 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
       cancelled = true
       clearTimeout(timer)
     }
-  }, [open, retryKey])
+  }, [open, retryKey, t])
 
   React.useEffect(() => {
     return () => {
@@ -156,7 +158,7 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    message.success('长图已保存到下载文件夹')
+    message.success(t('post.exporter.saved'))
   }
 
   const handleRetry = () => setRetryKey((k) => k + 1)
@@ -166,15 +168,15 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
     <Dialog
       open={open}
       onClose={onClose}
-      title='导出全文长图'
-      subtitle='将整篇文章保存为一张长图'
+      title={t('post.exporter.title')}
+      subtitle={t('post.exporter.subtitle')}
       width='min(520px, calc(100vw - 32px))'
       closeOnEsc
       closeOnOverlay
       footer={({ close }) => (
         <S.ActionGroup>
           <S.ActionButton variant='text' color='secondary' size='small' onClick={close}>
-            取消
+            {t('post.exporter.cancel')}
           </S.ActionButton>
           {status === 'ready' && (
             <S.ActionButton
@@ -184,7 +186,7 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
               icon={<IconDownload size={16} />}
               onClick={handleDownload}
             >
-              保存图片
+              {t('post.exporter.save')}
             </S.ActionButton>
           )}
         </S.ActionGroup>
@@ -195,27 +197,27 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
           <S.LoadingWrap>
             <S.Spinner />
             <span>
-              {status === 'preparing' ? '正在准备文章内容…' : '正在生成长图，文章较长可能需要数秒…'}
+              {status === 'preparing' ? t('post.exporter.preparing') : t('post.exporter.generating')}
             </span>
           </S.LoadingWrap>
         )}
         {status === 'error' && (
           <S.ErrorWrap>
-            <span>生成失败</span>
+            <span>{t('post.exporter.failed')}</span>
             {errorMsg && (
               <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', wordBreak: 'break-all' }}>
                 {errorMsg}
               </span>
             )}
             <S.RetryButton variant='outlined' color='primary' size='small' onClick={handleRetry}>
-              重试
+              {t('post.exporter.retry')}
             </S.RetryButton>
           </S.ErrorWrap>
         )}
         {status === 'ready' && previewUrl && (
           <>
             <S.PreviewImageWrap>
-              <img src={previewUrl} alt='文章长图预览' />
+              <img src={previewUrl} alt={t('post.exporter.previewAlt')} />
             </S.PreviewImageWrap>
             {imageSize && (
               <S.ImageInfo>
@@ -260,7 +262,7 @@ export default function ArticleExporter({ open, onClose, data }: ArticleExporter
           />
         </S.ExportBodyWrap>
         <S.ExportFooter>
-          {qrDataUrl && <img className='export-qr' src={qrDataUrl} alt='扫码阅读' />}
+          {qrDataUrl && <img className='export-qr' src={qrDataUrl} alt={t('post.exporter.qrAlt')} />}
           <div className='export-footer-info'>
             <div className='export-url'>{data.url}</div>
             <div className='export-colophon'>wuh.site</div>

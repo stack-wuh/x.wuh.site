@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import {
   Barrier,
   DialogSurface,
@@ -59,6 +60,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
   void _toggleDialog
   void _bind
 
+  const { t } = useLocale()
   const titleId = React.useId()
   const descriptionId = React.useId()
   const internalRef = React.useRef<HTMLDivElement>(null)
@@ -204,7 +206,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
               {subtitle && <DialogSubtitle>{subtitle}</DialogSubtitle>}
             </DialogHeaderContent>
             {!hideCloseButton && (
-              <CloseButton type="button" aria-label="关闭" onClick={handleClose}>
+              <CloseButton type="button" aria-label={t('components.dialog.close')} onClick={handleClose}>
                 ×
               </CloseButton>
             )}

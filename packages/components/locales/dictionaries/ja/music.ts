@@ -1,0 +1,30 @@
+import type { DeepPartial, Dict } from '../zh'
+
+export const music: DeepPartial<Dict['music']> = {
+  page: {
+    title: '音楽',
+    subtitle: '網易雲音楽 年間プレイリスト ・ 一年一巻のクロニクル',
+    railAria: '年間プレイリストを切り替え',
+    railItemAria: '{name}、全 {count} 曲',
+    railCount: '{count} 曲',
+    panelAria: '現在のプレイリストの曲目',
+    playlistFallback: 'プレイリスト',
+    panelSubCount: '全 {count} 曲',
+    panelYearSuffix: ' ・ {year} 年版',
+    panelErrorSuffix: ' ・ この巻は現在取得できません。後でお試しください',
+    volumeError: 'この巻は現在取得できません。後でお試しください',
+    noTracks: 'このプレイリストにはまだ曲がありません',
+    epigraphPrefix: '今年最もリピートしたのは',
+    epigraphSuffix: '、再生回数 {count} 回。',
+    playTrackAria: '{name} を再生',
+    playTrackArtistAria: '{name} - {artist} を再生',
+    playsTitle: '{count} 回再生',
+    playsTitleEmpty: '再生記録はまだありません',
+    playsUnit: '回',
+    favBadge: '最愛',
+    favBadgeTitle: 'この巻で再生回数が最も多い曲',
+    loadFailedTitle: 'プレイリストの読み込みに失敗しました',
+    loadFailedDesc: '網易雲音楽のプレイリストを現在取得できません。後で更新して再試行してください。',
+    retry: '更新して再試行',
+  },
+}

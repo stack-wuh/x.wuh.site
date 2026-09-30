@@ -2,11 +2,13 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import message from '@wuh.site/components/message'
+import { useLocale } from '@wuh.site/components/locales'
 import { IconHome, IconArrowUp, IconThumbUp } from '@wuh.site/components/icons'
 import { FloatingButtonGroup, FloatingButton, LikeButton } from '../../styles'
 import type { FloatingActionsProps } from './specs'
 
 export default function FloatingActions({ issueNumber, initialLikeCount = 0, initialLiked = false, variant = 'default' }: FloatingActionsProps) {
+  const { t } = useLocale()
   const compact = variant === 'compact'
   const [liked, setLiked] = useState(initialLiked)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
@@ -34,11 +36,11 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         setLikeCount((c) => Math.max(0, c - 1))
       }
     } catch {
-      message.error('点赞失败，请稍后再试')
+      message.error(t('post.floating.likeFailed'))
     } finally {
       setLoading(false)
     }
-  }, [issueNumber, loading])
+  }, [issueNumber, loading, t])
 
   return (
     <FloatingButtonGroup $compact={compact}>
@@ -49,8 +51,8 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         size="small"
         icon={<IconHome />}
         type='button'
-        aria-label='返回首页'
-        title='返回首页'
+        aria-label={t('post.floating.home')}
+        title={t('post.floating.home')}
         onClick={() => {
           window.location.href = '/'
         }}
@@ -62,8 +64,8 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         size="small"
         icon={<IconArrowUp />}
         type='button'
-        aria-label='回到顶部'
-        title='回到顶部'
+        aria-label={t('post.floating.top')}
+        title={t('post.floating.top')}
         onClick={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
         }}
@@ -75,16 +77,20 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
         size="small"
         icon={<IconThumbUp />}
         type='button'
-        aria-label={liked ? '取消点赞' : '点赞'}
-        title={liked ? '取消点赞' : '点赞'}
+        aria-label={liked ? t('post.floating.unlike') : t('post.floating.like')}
+        title={liked ? t('post.floating.unlike') : t('post.floating.like')}
         onClick={handleLike}
         disabled={loading}
         style={liked ? { opacity: 0.8 } : undefined}
       >
-        {liked ? `已赞 ${likeCount}` : likeCount > 0 ? `赞 ${likeCount}` : '点赞'}
+        {liked
+          ? t('post.floating.liked', { n: likeCount })
+          : likeCount > 0
+            ? t('post.floating.likeCount', { n: likeCount })
+            : t('post.floating.like')}
         {compact && !liked && (
           <span className='like-hint' aria-hidden='true'>
-            点赞吧~
+            {t('post.floating.likeHint')}
           </span>
         )}
       </LikeButton>

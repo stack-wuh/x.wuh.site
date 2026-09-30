@@ -2,10 +2,12 @@
 
 import Button from '@wuh.site/components/button'
 import { IconChevronLeft } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import * as S from './styles'
 import type { BackHomeLinkProps } from './specs'
 
-export default function BackHomeLink({ href = '/', label = '返回首页' }: BackHomeLinkProps) {
+export default function BackHomeLink({ href = '/', label }: BackHomeLinkProps) {
+  const { t } = useLocale()
   return (
     <S.Wrapper>
       <Button
@@ -16,7 +18,7 @@ export default function BackHomeLink({ href = '/', label = '返回首页' }: Bac
         icon={<IconChevronLeft />}
         iconPosition='left'
       >
-        {label}
+        {label ?? t('site.backHome')}
       </Button>
     </S.Wrapper>
   )

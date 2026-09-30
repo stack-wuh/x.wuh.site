@@ -7,6 +7,7 @@ import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
+import { useLocale, type Locale } from '@wuh.site/components/locales'
 import type { UnifiedActivityHeatmap } from '@wuh.site/core'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
@@ -27,12 +28,15 @@ import {
   TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
 } from '../styles'
 import {
-  blogTags, personalBio, timelineFilters,
+  blogTags, timelineFilters,
   timelineLogs, formatMonthDay,
 } from '../data'
 import { CONTACT_CONFIG, type ContactType } from '../../components/ContactConfig'
 import GuestbookBarrageDialog from '../components/GuestbookBarrageDialog'
 import type { AboutViewProps } from './specs'
+
+/** locale → Intl 地区码（zh 需显式 zh-CN） */
+const INTL_LOCALE: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
 
 const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | undefined): HeatmapData | null => {
   if (!activityData || activityData.days.length === 0) return null
@@ -59,6 +63,7 @@ const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | undefin
 }
 
 const AboutView = ({ profile }: AboutViewProps) => {
+  const { t, locale } = useLocale()
   const githubLogin = profile?.login || 'stack-wuh'
   const githubUrl = `https://github.com/${githubLogin}`
   const name = githubLogin
@@ -94,14 +99,14 @@ const AboutView = ({ profile }: AboutViewProps) => {
       {/* 1. Hero */}
       <Hero>
         <HeroLabel>About · 吴尒红</HeroLabel>
-        <HeroTitle>输出节奏总览</HeroTitle>
-        <HeroSub>不断创新, 无限进步</HeroSub>
+        <HeroTitle>{t('about.hero.title')}</HeroTitle>
+        <HeroSub>{t('about.hero.sub')}</HeroSub>
       </Hero>
 
       {/* 2. 关于我 */}
       <section>
         <SectionHeader className='reveal'>
-          <SectionLabel>关于我</SectionLabel>
+          <SectionLabel>{t('about.profile.section')}</SectionLabel>
         </SectionHeader>
         <AboutTimeline>
           <TimelineTrack>
@@ -151,7 +156,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
                 </ProfileInfo>
               </ProfileRow>
               <Bio style={{ marginTop: 12 }}>
-                {personalBio}
+                {t('about.profile.bio')}
               </Bio>
               <TagRow style={{ marginTop: 10 }}>
                 {blogTags.map((tag) => (
@@ -162,7 +167,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
             {/* Platforms */}
             <div>
-              <SectionLabel style={{ marginBottom: 16 }}>输出平台</SectionLabel>
+              <SectionLabel style={{ marginBottom: 16 }}>{t('about.platforms.section')}</SectionLabel>
               <PlatformList>
                 <PlatformCard className='reveal'>
                   <div>
@@ -170,20 +175,20 @@ const AboutView = ({ profile }: AboutViewProps) => {
                     <PlatformDesc style={{ marginLeft: 8 }}>
                       {profile
                         ? `${profile.public_repos} repos · ${profile.followers} followers`
-                        : '开源项目 & 代码笔记'}
+                        : t('about.platforms.githubFallback')}
                     </PlatformDesc>
                   </div>
                 </PlatformCard>
                 <PlatformCard className='reveal'>
                   <div>
-                    <PlatformName>语雀</PlatformName>
-                    <PlatformDesc style={{ marginLeft: 8 }}>长篇技术文章，文档持续更新</PlatformDesc>
+                    <PlatformName>{t('about.platforms.yuque')}</PlatformName>
+                    <PlatformDesc style={{ marginLeft: 8 }}>{t('about.platforms.yuqueDesc')}</PlatformDesc>
                   </div>
                 </PlatformCard>
                 <PlatformCard className='reveal'>
                   <div>
-                    <PlatformName>微信公众号</PlatformName>
-                    <PlatformDesc style={{ marginLeft: 8 }}>碎片思考 & 周报，侧重经验总结与工具推荐</PlatformDesc>
+                    <PlatformName>{t('about.platforms.wechat')}</PlatformName>
+                    <PlatformDesc style={{ marginLeft: 8 }}>{t('about.platforms.wechatDesc')}</PlatformDesc>
                   </div>
                 </PlatformCard>
               </PlatformList>
@@ -191,16 +196,16 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
             {/* Contact */}
             <div>
-              <SectionLabel style={{ marginBottom: 16 }}>联系方式</SectionLabel>
+              <SectionLabel style={{ marginBottom: 16 }}>{t('about.contact.section')}</SectionLabel>
               <LinkGroup
                 items={[
-                  { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
+                  { type: 'wechat', title: t('about.contact.wechat'), onClick: () => openContact('wechat') },
                   { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
                   { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
-                  { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱', hideOnMobile: true },
+                  { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: t('about.contact.email'), hideOnMobile: true },
                   { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
-                  { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
-                  { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
+                  { type: 'douban', title: t('about.contact.douban'), onClick: () => openContact('douban') },
+                  { type: 'custom', title: t('about.contact.netease'), icon: <IconMusic />, onClick: () => openContact('netease') },
                   { type: 'custom', title: 'Discord', icon: <IconDiscord />, onClick: () => openContact('discord') },
                 ]}
                 size='small'
@@ -213,34 +218,34 @@ const AboutView = ({ profile }: AboutViewProps) => {
       {/* 3. Heatmap */}
       <section>
         <SectionHeader className='reveal'>
-          <SectionLabel>综合活动热力图</SectionLabel>
+          <SectionLabel>{t('about.heatmap.section')}</SectionLabel>
         </SectionHeader>
         <Heatmap
           data={buildActivityHeatmapData(activityData)}
           loading={activityLoading}
           error={activityError}
-          errorLabel='综合活动加载失败，请稍后重试'
+          errorLabel={t('about.heatmap.error')}
           colorScheme='warm'
-          activityLabel='活动'
-          emptyLabel='暂无活动数据'
+          activityLabel={t('about.heatmap.activity')}
+          emptyLabel={t('about.heatmap.empty')}
         />
       </section>
 
       {/* 4. Timeline */}
       <section>
         <SectionHeader className='reveal'>
-          <SectionLabel>最近日志</SectionLabel>
-          <TimelineSelect defaultValue={timelineFilters[0]}>
-            {timelineFilters.map((f) => (
-              <option key={f} value={f}>{f}</option>
+          <SectionLabel>{t('about.timeline.section')}</SectionLabel>
+          <TimelineSelect defaultValue={t(timelineFilters[0])}>
+            {timelineFilters.map((key) => (
+              <option key={key} value={t(key)}>{t(key)}</option>
             ))}
           </TimelineSelect>
         </SectionHeader>
         <TimelineList>
           {timelineLogs.map((log) => (
             <TimelineRow key={log.date} className='reveal'>
-              <TimelineDate>{formatMonthDay(log.date)}</TimelineDate>
-              <TimelineTitle>{log.summary}</TimelineTitle>
+              <TimelineDate>{formatMonthDay(log.date, INTL_LOCALE[locale])}</TimelineDate>
+              <TimelineTitle>{t(log.summaryKey)}</TimelineTitle>
             </TimelineRow>
           ))}
         </TimelineList>
@@ -248,7 +253,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
       <section>
         <SectionHeader className='reveal'>
-          <SectionLabel>足迹</SectionLabel>
+          <SectionLabel>{t('about.footprint.section')}</SectionLabel>
         </SectionHeader>
         <div style={{ height: '380px', borderRadius: 'var(--radius-card, 12px)', overflow: 'hidden' }}>
           <FootprintMap footprints={footprints || []} variant="compact" />
@@ -257,7 +262,7 @@ const AboutView = ({ profile }: AboutViewProps) => {
 
       <section>
         <SectionHeader className='reveal'>
-          <SectionLabel>留言板</SectionLabel>
+          <SectionLabel>{t('about.guestbook.section')}</SectionLabel>
         </SectionHeader>
         <GuestbookBarrageDialog />
       </section>
@@ -265,7 +270,9 @@ const AboutView = ({ profile }: AboutViewProps) => {
       <Dialog
         open={Boolean(activeContactConfig)}
         onClose={closeContact}
-        title={activeContactConfig ? `${activeContactConfig.badge} 联系` : '联系'}
+        title={activeContactConfig
+          ? t('about.contact.dialogTitle', { name: activeContactConfig.badge })
+          : t('about.contact.dialogTitleFallback')}
         fullScreen={false}
         width='min(760px, calc(100vw - 32px))'
       >

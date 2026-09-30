@@ -1,4 +1,7 @@
+'use client'
+
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import { IconEmpty } from '../icons'
 import Button from '../button'
 import * as S from './styles'
@@ -8,7 +11,7 @@ export type { ActionItem, EmptyProps } from './specs'
 
 const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, ref) {
   const {
-    title = '空空如也',
+    title,
     description,
     icon,
     actions,
@@ -18,12 +21,14 @@ const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, re
     ...rest
   } = props
 
+  const { t } = useLocale()
+  const resolvedTitle = title ?? t('components.empty.title')
   const resolvedDescription = description ?? children
 
   return (
     <S.EmptyRoot ref={ref} role={role} aria-live={ariaLive} {...rest}>
       <S.EmptyIcon aria-hidden='true'>{icon ?? <IconEmpty />}</S.EmptyIcon>
-      {title ? <S.EmptyTitle>{title}</S.EmptyTitle> : null}
+      {resolvedTitle ? <S.EmptyTitle>{resolvedTitle}</S.EmptyTitle> : null}
       {resolvedDescription ? <S.EmptyDescription>{resolvedDescription}</S.EmptyDescription> : null}
       {actions && actions.length > 0 && (
         <S.EmptyActions>

@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import Dialog from '@wuh.site/components/dialog'
 import { IconArrowRight } from '@wuh.site/components/icons'
+import { useLocale, type Locale } from '@wuh.site/components/locales'
 import {
   MessageAvatar,
   MessageContent,
@@ -70,13 +71,16 @@ type ChatMessage = {
 }
 
 const sampleMessages = [
-  { id: 'sample-1', nickname: '吴尒红', content: '来这里打个招呼，顺便看看最近在折腾什么。', time: '刚刚' },
-  { id: 'sample-3', nickname: '远方的朋友', content: '这个聊天式留言板比弹幕更容易回看。', time: '5 分钟前' },
+  { id: 'sample-1', nickname: '吴尒红', contentKey: 'about.barrage.sampleHello', timeKey: 'about.barrage.timeJustNow' },
+  { id: 'sample-3', nickname: '远方的朋友', contentKey: 'about.barrage.sampleLookBack', timeKey: 'about.barrage.timeMinutesAgo' },
 ] as const
 
+/** locale → Intl 地区码（zh 需显式 zh-CN） */
+const INTL_LOCALE: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
+
 const getAvatarText = (nickname: string) => nickname.trim().charAt(0).toUpperCase() || '?'
-const formatDraftTime = (createdAt: string) =>
-  new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(createdAt))
+const formatDraftTime = (createdAt: string, locale: string) =>
+  new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(createdAt))
 const createFootprint = () => {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
@@ -85,6 +89,7 @@ const createFootprint = () => {
 }
 
 export default function GuestbookBarrageDialog() {
+  const { t, locale } = useLocale()
   const [open, setOpen] = useState(false)
   const [content, setContent] = useState('')
   const [nickname, setNickname] = useState('')
@@ -107,7 +112,13 @@ export default function GuestbookBarrageDialog() {
   const failedCount = localMessages.filter((item) => item.status === 'failed').length
   const canSubmit = trimmedNickname.length >= MIN_NICKNAME_LENGTH && trimmedContent.length >= MIN_CONTENT_LENGTH
   const chatMessages = useMemo<ChatMessage[]>(() => {
-    const samples = sampleMessages.map((item) => ({ ...item, mine: item.nickname === '吴尒红' }))
+    const samples = sampleMessages.map((item) => ({
+      id: item.id,
+      nickname: item.nickname,
+      content: t(item.contentKey),
+      time: t(item.timeKey),
+      mine: item.nickname === '吴尒红',
+    }))
     const persistedIds = new Set(persistedMessages.map((item) => item.id))
     const messages = [...persistedMessages, ...localMessages.filter((item) => !persistedIds.has(item.id))].map((item) => {
       const mine = localMessages.some((local) => local.id === item.id)
@@ -115,7 +126,7 @@ export default function GuestbookBarrageDialog() {
         id: item.id,
         content: item.content,
         nickname: item.nickname,
-        time: formatDraftTime(item.createdAt),
+        time: formatDraftTime(item.createdAt, INTL_LOCALE[locale]),
         mine: mine || Boolean(item.mine),
         status: mine ? item.status : undefined,
         error: item.error,
@@ -123,7 +134,7 @@ export default function GuestbookBarrageDialog() {
     })
 
     return [...samples, ...messages]
-  }, [localMessages, persistedMessages])
+  }, [localMessages, persistedMessages, t, locale])
 
   useEffect(() => {
     try {
@@ -200,7 +211,7 @@ export default function GuestbookBarrageDialog() {
         if (!res.ok) {
           const message =
             (data && typeof data === 'object' && 'message' in data && String(data.message)) ||
-            `留言加载失败 (${res.status})`
+            t('about.barrage.loadFailedStatus', { status: res.status })
           throw new Error(message)
         }
 
@@ -214,7 +225,7 @@ export default function GuestbookBarrageDialog() {
         }
       } catch (error) {
         if (!cancelled) {
-          setListError(error instanceof Error ? error.message : '留言加载失败')
+          setListError(error instanceof Error ? error.message : t('about.barrage.loadFailed'))
         }
       } finally {
         if (!cancelled) setLoadingMessages(false)
@@ -226,7 +237,7 @@ export default function GuestbookBarrageDialog() {
     return () => {
       cancelled = true
     }
-  }, [footprint, open])
+  }, [footprint, open, t])
 
   useEffect(() => {
     if (open && inputRef.current) {
@@ -284,7 +295,7 @@ export default function GuestbookBarrageDialog() {
       if (!res.ok) {
         const message =
           (data && typeof data === 'object' && 'message' in data && String(data.message)) ||
-          `留言提交失败 (${res.status})`
+          t('about.barrage.submitFailedStatus', { status: res.status })
         throw new Error(message)
       }
       const savedComment =
@@ -305,7 +316,7 @@ export default function GuestbookBarrageDialog() {
         )
       )
     } catch (error) {
-      const message = error instanceof Error ? error.message : '留言提交失败'
+      const message = error instanceof Error ? error.message : t('about.barrage.submitFailed')
       setLocalMessages((prev) =>
         prev.map((item) => (item.id === currentMessage.id ? { ...item, status: 'failed', error: message } : item))
       )
@@ -332,15 +343,15 @@ export default function GuestbookBarrageDialog() {
       <GuestbookTrigger type='button' onClick={() => setOpen(true)}>
         <GuestbookTriggerAvatars aria-hidden='true'>
           <GuestbookTriggerAvatar>W</GuestbookTriggerAvatar>
-          <GuestbookTriggerAvatar>你</GuestbookTriggerAvatar>
+          <GuestbookTriggerAvatar>{t('about.barrage.triggerAvatarYou')}</GuestbookTriggerAvatar>
         </GuestbookTriggerAvatars>
         <GuestbookTriggerCopy>
           <GuestbookTriggerLabel>Guestbook</GuestbookTriggerLabel>
-          <GuestbookTriggerTitle>潘江陆海，各洒云尔~</GuestbookTriggerTitle>
-          <GuestbookTriggerPreview>最近看到的想法、建议或者招呼，都可以放在这里。</GuestbookTriggerPreview>
+          <GuestbookTriggerTitle>{t('about.barrage.triggerTitle')}</GuestbookTriggerTitle>
+          <GuestbookTriggerPreview>{t('about.barrage.triggerPreview')}</GuestbookTriggerPreview>
         </GuestbookTriggerCopy>
         <GuestbookTriggerCta>
-          <span>见字如面</span>
+          <span>{t('about.barrage.triggerCta')}</span>
           <IconArrowRight />
         </GuestbookTriggerCta>
       </GuestbookTrigger>
@@ -348,14 +359,14 @@ export default function GuestbookBarrageDialog() {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
-        title='留言板'
-        subtitle='声无哀乐 · 萍水楚客，路远情长'
+        title={t('about.barrage.dialogTitle')}
+        subtitle={t('about.barrage.dialogSubtitle')}
         width='min(1120px, calc(100vw - 32px))'
         height='min(720px, calc(100vh - 80px))'
       >
         <GuestbookWrapper>
           <GuestbookStage>
-            <GuestbookFeed viewportRef={viewportRef} aria-label='留言列表'>
+            <GuestbookFeed viewportRef={viewportRef} aria-label={t('about.barrage.listAria')}>
               {listError && (
                 <div role='alert' style={{ padding: '8px 18px', fontSize: '0.78rem', color: 'var(--primary-color)' }}>
                   {listError}
@@ -363,7 +374,7 @@ export default function GuestbookBarrageDialog() {
               )}
               {loadingMessages ? (
                 <div style={{ color: 'var(--text-muted)', padding: '24px 18px', textAlign: 'center', fontSize: '0.82rem' }}>
-                  留言加载中...
+                  {t('about.barrage.loading')}
                 </div>
               ) : (
                 chatMessages.map((item) => (
@@ -373,10 +384,10 @@ export default function GuestbookBarrageDialog() {
                       <MessageMeta align={item.mine ? 'end' : 'start'}>
                         <MessageName>{item.nickname}</MessageName>
                         <MessageTime>{item.time}</MessageTime>
-                        {item.status === 'sending' && <MessageStatus>发送中...</MessageStatus>}
-                        {item.status === 'sent' && <MessageStatus>已发送</MessageStatus>}
+                        {item.status === 'sending' && <MessageStatus>{t('about.barrage.statusSending')}</MessageStatus>}
+                        {item.status === 'sent' && <MessageStatus>{t('about.barrage.statusSent')}</MessageStatus>}
                         {item.status === 'failed' && (
-                          <MessageStatus $tone='error'>{item.error || '发送失败'}</MessageStatus>
+                          <MessageStatus $tone='error'>{item.error || t('about.barrage.statusFailed')}</MessageStatus>
                         )}
                       </MessageMeta>
                       <MessageContent>{item.content}</MessageContent>
@@ -388,10 +399,10 @@ export default function GuestbookBarrageDialog() {
             {hasNewWhileAway && (
               <NewMessageBanner
                 type='button'
-                aria-label='有新留言，跳到最新'
+                aria-label={t('about.barrage.newBannerAria')}
                 onClick={handleScrollToBottom}
               >
-                有新留言 ↓
+                {t('about.barrage.newBanner')}
               </NewMessageBanner>
             )}
           </GuestbookStage>
@@ -400,20 +411,20 @@ export default function GuestbookBarrageDialog() {
             <GuestbookFooterLink
               as={Link}
               href='/guestbook'
-              title='查看全部留言历史'
+              title={t('about.barrage.historyTitle')}
             >
-              {totalCount != null ? `查看全部 ${totalCount} 条留言 →` : '—'}
+              {totalCount != null ? t('about.barrage.historyLink', { count: totalCount }) : '—'}
             </GuestbookFooterLink>
           </GuestbookFooter>
 
           <Composer onSubmit={handleSubmit}>
-            <ComposerBadge type='button' onClick={() => setEditingNickname(!editingNickname)} title='点击修改昵称'>
+            <ComposerBadge type='button' onClick={() => setEditingNickname(!editingNickname)} title={t('about.barrage.editNickname')}>
               {getAvatarText(trimmedNickname)}
             </ComposerBadge>
             {editingNickname ? (
               <ComposerNicknameInput
                 value={nickname}
-                placeholder='你的昵称'
+                placeholder={t('about.barrage.nicknamePlaceholder')}
                 maxLength={20}
                 onChange={(event) => handleNicknameChange(event.target.value)}
                 onBlur={() => setEditingNickname(false)}
@@ -424,7 +435,9 @@ export default function GuestbookBarrageDialog() {
               <ComposerInput
                 ref={inputRef}
                 value={content}
-                placeholder={trimmedNickname ? `作为 ${trimmedNickname}，说点什么...` : '说点什么...'}
+                placeholder={trimmedNickname
+                  ? t('about.barrage.placeholderAs', { name: trimmedNickname })
+                  : t('about.barrage.placeholder')}
                 onChange={(event) => handleChange(event.target.value)}
                 onKeyDown={handleKeyDown}
                 maxLength={MAX_LENGTH}
@@ -437,7 +450,7 @@ export default function GuestbookBarrageDialog() {
 
           {failedCount > 0 && (
             <div style={{ textAlign: 'center', fontSize: '0.72rem', color: 'var(--primary-color)' }}>
-              {failedCount} 条发送失败
+              {t('about.barrage.failedCount', { count: failedCount })}
             </div>
           )}
         </GuestbookWrapper>

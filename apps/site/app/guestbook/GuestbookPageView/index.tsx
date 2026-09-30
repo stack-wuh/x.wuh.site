@@ -9,18 +9,22 @@ import {
   MessageName,
   MessageTime,
 } from '@wuh.site/components/message-card'
+import { useLocale, type Locale } from '@wuh.site/components/locales'
 import * as S from './styles'
 import type { GuestbookPageViewProps } from './specs'
 
-function formatTime(createdAt: string): string {
-  return new Intl.DateTimeFormat('zh-CN', {
+/** locale → Intl 地区码（zh 需显式 zh-CN） */
+const INTL_LOCALE: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
+
+function formatTime(createdAt: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(createdAt))
 }
 
-function formatDate(createdAt: string): string {
-  return new Intl.DateTimeFormat('zh-CN', {
+function formatDate(createdAt: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -32,17 +36,17 @@ function formatDateKey(createdAt: string): string {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
 }
 
-function formatRelativeDate(createdAt: string): string {
+function formatRelativeDate(createdAt: string, locale: string, t: (key: string) => string): string {
   const now = new Date()
   const date = new Date(createdAt)
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
   const diff = Math.floor((today.getTime() - target.getTime()) / (1000 * 60 * 60 * 24))
 
-  if (diff === 0) return '今天'
-  if (diff === 1) return '昨天'
-  if (diff === 2) return '前天'
-  return formatDate(createdAt)
+  if (diff === 0) return t('guestbook.page.today')
+  if (diff === 1) return t('guestbook.page.yesterday')
+  if (diff === 2) return t('guestbook.page.beforeYesterday')
+  return formatDate(createdAt, locale)
 }
 
 export default function GuestbookPageView({
@@ -50,6 +54,8 @@ export default function GuestbookPageView({
   pagination,
   currentPage,
 }: GuestbookPageViewProps) {
+  const { t, locale } = useLocale()
+  const intlLocale = INTL_LOCALE[locale]
   const grouped = comments.reduce<
     { date: string; dateLabel: string; items: typeof comments }[]
   >((acc, comment) => {
@@ -60,7 +66,7 @@ export default function GuestbookPageView({
     } else {
       acc.push({
         date: key,
-        dateLabel: formatRelativeDate(comment.createdAt),
+        dateLabel: formatRelativeDate(comment.createdAt, intlLocale, t),
         items: [comment],
       })
     }
@@ -70,21 +76,25 @@ export default function GuestbookPageView({
   return (
     <S.PageWrapper>
       <S.PageHeader>
-        <S.PageTitle>留言板</S.PageTitle>
+        <S.PageTitle>{t('guestbook.page.title')}</S.PageTitle>
         <S.PageSubtitle>
-          共 {pagination.total} 条留言 · 第 {currentPage} / {pagination.totalPages} 页
+          {t('guestbook.page.subtitle', {
+            total: pagination.total,
+            current: currentPage,
+            totalPages: pagination.totalPages,
+          })}
         </S.PageSubtitle>
       </S.PageHeader>
 
       {comments.length === 0 ? (
         <S.EmptyState>
-          <S.EmptyText>暂时没有留言，快去打个招呼吧。</S.EmptyText>
+          <S.EmptyText>{t('guestbook.page.empty')}</S.EmptyText>
           <S.BackLink as={Link} href='/about'>
-            前往留言板 →
+            {t('guestbook.page.backLink')}
           </S.BackLink>
         </S.EmptyState>
       ) : (
-        <S.CommentList aria-label='留言列表'>
+        <S.CommentList aria-label={t('guestbook.page.listAria')}>
           <S.Timeline>
             {grouped.map((group) => (
               <S.TimelineItem key={group.date}>
@@ -100,7 +110,7 @@ export default function GuestbookPageView({
                       <MessageMeta>
                         <MessageName>{comment.nickname}</MessageName>
                         <MessageTime dateTime={comment.createdAt}>
-                          {formatTime(comment.createdAt)}
+                          {formatTime(comment.createdAt, intlLocale)}
                         </MessageTime>
                       </MessageMeta>
                       <MessageContent>{comment.content}</MessageContent>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { API_BASE } from '@wuh.site/hooks/useFetch/apiBase'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
+import { useLocale, type Locale } from '@wuh.site/components/locales'
 import type { ContentItem } from '@wuh.site/core'
 import { selectRelatedPosts, type RelatedPost } from '../../../lib/related-posts'
 import { buildPostUrl } from '../../../lib/slug'
@@ -13,9 +14,15 @@ import {
 } from '../../styles'
 import type { RelatedPostsProps } from './specs'
 
-const ENTRY_MARKERS = ['一', '二', '三'] as const
+/** 条目装饰序号（跨语言的排印选择，不进词典）：zh/ja 用汉字，en 用罗马数字 */
+const ENTRY_MARKERS: Record<Locale, readonly string[]> = {
+  zh: ['一', '二', '三'],
+  en: ['I', 'II', 'III'],
+  ja: ['一', '二', '三'],
+}
 
 export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
+  const { locale, t } = useLocale()
   const [posts, setPosts] = useState<RelatedPost[]>([])
 
   useEffect(() => {
@@ -48,23 +55,23 @@ export default function RelatedPosts({ number, labels }: RelatedPostsProps) {
   return (
     <RelatedPostsSection aria-labelledby='related-posts-title'>
       <RelatedPostsHeader>
-        <RelatedPostsHeading id='related-posts-title'>继续阅读</RelatedPostsHeading>
-        <RelatedPostsCount>拾遗 {posts.length} 则</RelatedPostsCount>
+        <RelatedPostsHeading id='related-posts-title'>{t('post.related.heading')}</RelatedPostsHeading>
+        <RelatedPostsCount>{t('post.related.count', { n: posts.length })}</RelatedPostsCount>
       </RelatedPostsHeader>
-      <p>读罢意犹未尽，可循此间数条小径，再行一程。</p>
+      <p>{t('post.related.intro')}</p>
       <ul>
         {posts.map((post, index) => {
           const summary = post.summary?.trim()
           const sharedLabels = post.sharedLabels.slice(0, 2).join(' / ')
           return (
             <li key={post.number}>
-              <RelatedPostLink href={buildPostUrl(post.number)} aria-label={`继续阅读：${post.title}`}>
+              <RelatedPostLink href={buildPostUrl(post.number)} aria-label={t('post.related.itemAria', { title: post.title })}>
                 <RelatedPostRow>
-                  <RelatedPostMarker aria-hidden='true'>{ENTRY_MARKERS[index] ?? index + 1}</RelatedPostMarker>
+                  <RelatedPostMarker aria-hidden='true'>{ENTRY_MARKERS[locale][index] ?? index + 1}</RelatedPostMarker>
                   <RelatedPostBody>
                     <RelatedPostTitle>{post.title}</RelatedPostTitle>
                     {summary && <RelatedPostSummary>{summary}</RelatedPostSummary>}
-                    {sharedLabels && <RelatedPostLabels>线索 / {sharedLabels}</RelatedPostLabels>}
+                    {sharedLabels && <RelatedPostLabels>{t('post.related.clues', { labels: sharedLabels })}</RelatedPostLabels>}
                   </RelatedPostBody>
                   <RelatedPostLeader aria-hidden='true' />
                   <RelatedPostArrow aria-hidden='true'>→</RelatedPostArrow>

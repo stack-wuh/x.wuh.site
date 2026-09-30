@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRequest } from 'ahooks'
 import styled from 'styled-components'
+import { useLocale } from '@wuh.site/components/locales'
 import {
   AudioMiniPlayer,
   AudioPlayerPanel,
@@ -89,6 +90,7 @@ const RetryButton = styled.button`
 `
 
 export const GlobalAudioPlayer = () => {
+  const { t } = useLocale()
   const {
     queue,
     actions: { loadQueue }
@@ -107,11 +109,11 @@ export const GlobalAudioPlayer = () => {
         setPlaylistError(null)
         return
       }
-      setPlaylistError('歌单里暂时没有可播放的曲目')
+      setPlaylistError(t('player.playlist.empty'))
     },
     onError: (error) => {
       if ((error as Error).name === 'AbortError') return
-      setPlaylistError('歌单加载失败，播放器暂时不可用')
+      setPlaylistError(t('player.playlist.loadFailed'))
     }
   })
 
@@ -134,7 +136,7 @@ export const GlobalAudioPlayer = () => {
         <PlaylistNotice role='status'>
           <span>{playlistError}</span>
           <RetryButton type='button' onClick={retryPlaylist}>
-            重试
+            {t('player.playlist.retry')}
           </RetryButton>
         </PlaylistNotice>
       ) : null}

@@ -1,28 +1,30 @@
 'use client'
 
 import Button from '@wuh.site/components/button'
+import { useLocale } from '@wuh.site/components/locales'
 import ErrorPage from './components/ErrorPage'
 
 const links = [
-  { label: 'GitHub 项目', href: 'https://github.com/stack-wuh/x.wuh.site', target: '_blank' },
-  { label: '语雀文档', href: 'https://www.yuque.com/shadow.wu/gb3x29', target: '_blank' },
-  { label: '微信公众号：进阶的前端工程师' }
+  { labelKey: 'site.error.githubProject', href: 'https://github.com/stack-wuh/x.wuh.site', target: '_blank' },
+  { labelKey: 'site.error.yuqueDocs', href: 'https://www.yuque.com/shadow.wu/gb3x29', target: '_blank' },
+  { labelKey: 'site.notFound.wechatAccount' }
 ]
 
 export default function NotFound() {
+  const { t } = useLocale()
   return (
     <ErrorPage
       code='404'
-      title='空空如也~~'
-      description={<>你访问的页面可能已被移动或删除，<br />建议前往以下入口继续阅读。</>}
+      title={t('site.notFound.title')}
+      description={<>{t('site.notFound.desc1')}<br />{t('site.notFound.desc2')}</>}
     >
-      <Button href='/' variant='filled' color='primary'>返回首页</Button>
-      <Button href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' variant='outlined'>知识库</Button>
+      <Button href='/' variant='filled' color='primary'>{t('site.backHome')}</Button>
+      <Button href='https://stack-wuh.github.io/blog/' target='_blank' rel='noopener noreferrer' variant='outlined'>{t('site.nav.knowledge')}</Button>
       {links.map((link) =>
         link.href ? (
-          <Button key={link.label} href={link.href} target={link.target} rel='noopener noreferrer' variant='text'>{link.label}</Button>
+          <Button key={link.labelKey} href={link.href} target={link.target} rel='noopener noreferrer' variant='text'>{t(link.labelKey)}</Button>
         ) : (
-          <Button key={link.label} disabled variant='text'>{link.label}</Button>
+          <Button key={link.labelKey} disabled variant='text'>{t(link.labelKey)}</Button>
         )
       )}
     </ErrorPage>

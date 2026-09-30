@@ -1,4 +1,7 @@
+'use client'
+
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import type { ImagePreviewItem, ThumbnailRenderProps } from './specs'
 import { ThumbnailRail, ThumbnailButton, ThumbLabel } from './styles'
 
@@ -12,6 +15,7 @@ type Props = {
 export const ImagePreviewThumbnails: React.FC<Props> = ({
   items, currentIndex, goTo, renderThumbnail,
 }) => {
+  const { t } = useLocale()
   if (!items.length) return null
 
   return (
@@ -19,14 +23,23 @@ export const ImagePreviewThumbnails: React.FC<Props> = ({
       {items.map((item, index) => {
         if (renderThumbnail) {
           return (
-            <div key={item.id ?? item.src} onClick={() => goTo(index)} role='button' aria-label={`预览第 ${index + 1} 张`}>
+            <div
+              key={item.id ?? item.src}
+              onClick={() => goTo(index)}
+              role='button'
+              aria-label={t('components.preview.thumbnailAria', { index: index + 1 })}
+            >
               {renderThumbnail({ item, index, active: index === currentIndex })}
             </div>
           )
         }
         return (
           <ThumbnailButton key={item.id ?? item.src ?? index} type='button' $active={index === currentIndex} onClick={() => goTo(index)}>
-            <img src={item.thumbnailSrc ?? item.src} alt={item.alt ?? `预览 ${index + 1}`} loading='lazy' />
+            <img
+              src={item.thumbnailSrc ?? item.src}
+              alt={item.alt ?? t('components.preview.thumbnailAlt', { index: index + 1 })}
+              loading='lazy'
+            />
             {item.title && <ThumbLabel>{item.title}</ThumbLabel>}
           </ThumbnailButton>
         )

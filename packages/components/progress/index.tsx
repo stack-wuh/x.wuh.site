@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import * as S from './styles'
 import type { ProgressProps } from './specs'
 
@@ -20,6 +21,7 @@ const Progress: React.FC<ProgressProps> = ({
   label,
   ...rest
 }) => {
+  const { t } = useLocale()
   const indeterminate = value == null
   const interactive = typeof onChange === 'function'
   // 非有限值（如消费方 0/0 的时长换算）落 0，不把 NaN 灌进受控 range
@@ -51,7 +53,7 @@ const Progress: React.FC<ProgressProps> = ({
           step={1}
           value={clamped}
           onChange={(e) => onChange?.(Number(e.target.value))}
-          aria-label={label ?? '进度'}
+          aria-label={label ?? t('components.progress.defaultLabel')}
         />
       )}
     </S.SBar>
@@ -69,7 +71,7 @@ const Progress: React.FC<ProgressProps> = ({
   return (
     <S.SRoot
       role='progressbar'
-      aria-label={label ?? '进度'}
+      aria-label={label ?? t('components.progress.defaultLabel')}
       {...(indeterminate ? {} : { 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': Math.round(clamped) })}
       {...rest}
     >

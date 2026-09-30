@@ -3,15 +3,15 @@
 import Link from 'next/link'
 import type { AdjacentIssue } from '../../PostView.types'
 import { IconBars } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import { buildPostUrl } from '../../../lib/slug'
 import { Toolbar, ToolbarMeta, Spread, SpreadDivider, SpreadSide, SpreadLabel, SpreadTitle, SpreadArrow } from '../../styles'
 import type { PostToolbarProps } from './specs'
 
-const EMPTY_TEXT = '空空如也'
-
 function SpreadSideLink({ direction, targetIssue }: { direction: 'prev' | 'next'; targetIssue: AdjacentIssue | null }) {
-  const label = direction === 'prev' ? '上一篇' : '下一篇'
-  const title = targetIssue?.title?.trim() || EMPTY_TEXT
+  const { t } = useLocale()
+  const label = direction === 'prev' ? t('post.toolbar.prev') : t('post.toolbar.next')
+  const title = targetIssue?.title?.trim() || t('post.toolbar.empty')
 
   const content =
     direction === 'prev' ? (
@@ -44,15 +44,16 @@ function SpreadSideLink({ direction, targetIssue }: { direction: 'prev' | 'next'
 }
 
 export default function PostToolbar({ prevIssue, nextIssue, total, position, currentNumber: _ }: PostToolbarProps) {
+  const { t } = useLocale()
   const showPosition = position != null && total != null && total > 0
 
   return (
-    <Toolbar aria-label='文章导航'>
+    <Toolbar aria-label={t('post.toolbar.aria')}>
       <ToolbarMeta>
-        {showPosition && <span>第 {position} / {total} 篇</span>}
-        <Link href='/blog' title='所有博客'>
+        {showPosition && <span>{t('post.view.positionWithTotal', { position, total })}</span>}
+        <Link href='/blog' title={t('post.toolbar.allPosts')}>
           <IconBars />
-          <span>所有博客</span>
+          <span>{t('post.toolbar.allPosts')}</span>
         </Link>
       </ToolbarMeta>
       <Spread>

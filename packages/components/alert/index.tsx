@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 
 import SharedLinkGroup from '../shared-link-group'
 import Tag from '../tag'
@@ -46,8 +47,8 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
     variant = 'info',
     framed = true,
     showHeader = true,
-    title = '冗余信息',
-    summary = '以下为文章补充说明，便于转载与继续阅读。',
+    title,
+    summary,
     icon,
     updatedAt,
     updatedBy,
@@ -58,7 +59,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
     license,
     copyright,
     shareItems,
-    shareLabel = '分享文章',
+    shareLabel,
     closable = false,
     onClose,
     role,
@@ -68,15 +69,20 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
     ...rest
   } = props
 
+  const { t } = useLocale()
+  const resolvedTitle = title ?? t('components.alert.defaultTitle')
+  const resolvedSummary = summary ?? t('components.alert.defaultSummary')
+  const resolvedShareLabel = shareLabel ?? t('components.alert.shareLabel')
+
   const resolvedRole = role ?? (variant === 'warning' || variant === 'error' ? 'alert' : 'status')
   const resolvedAriaLive = ariaLiveProp ?? (resolvedRole === 'alert' ? 'assertive' : 'polite')
   const formattedUpdatedAt = formatDateTimeToSecond(updatedAt)
-  const shouldRenderHeader = showHeader && (title || summary || icon || closable)
+  const shouldRenderHeader = showHeader && (resolvedTitle || resolvedSummary || icon || closable)
   const resolvedLicense = license ?? copyright
   const updatedMessageTitle = formattedUpdatedAt
     ? updatedBy
-      ? `由 ${updatedBy} 于 ${formattedUpdatedAt} 更新`
-      : `于 ${formattedUpdatedAt} 更新`
+      ? t('components.alert.updatedByTitle', { by: updatedBy, time: formattedUpdatedAt })
+      : t('components.alert.updatedAtTitle', { time: formattedUpdatedAt })
     : null
 
   return (
@@ -94,12 +100,12 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
           <HeadContent>
             <IconBadge aria-hidden='true'>{icon ?? 'i'}</IconBadge>
             <TitleWrap>
-              {title ? <Title>{title}</Title> : null}
-              {summary ? <Summary>{summary}</Summary> : null}
+              {resolvedTitle ? <Title>{resolvedTitle}</Title> : null}
+              {resolvedSummary ? <Summary>{resolvedSummary}</Summary> : null}
             </TitleWrap>
           </HeadContent>
           {closable ? (
-            <CloseButton type='button' onClick={onClose} aria-label='关闭提示'>
+            <CloseButton type='button' onClick={onClose} aria-label={t('components.alert.closeNotice')}>
               ×
             </CloseButton>
           ) : null}
@@ -113,28 +119,27 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
               <MetaLabelIcon>
                 <IconClock />
               </MetaLabelIcon>
-              更新时间:
+              {t('components.alert.updatedAtLabel')}
             </MetaLabel>
             <MetaValue as='div' title={updatedMessageTitle ?? undefined}>
               {updatedBy ? (
                 <>
-                  由{' '}
                   {updatedByLink ? (
                     <LabelLink
                       href={updatedByLink}
                       target='_blank'
                       rel='noopener noreferrer'
-                      title={`访问 ${updatedBy} 的 GitHub 主页`}
+                      title={t('components.alert.githubProfileTitle', { by: updatedBy })}
                     >
                       <Tag label={updatedBy} />
                     </LabelLink>
                   ) : (
                     <Tag label={updatedBy} />
                   )}
-                  {' '}于 {formattedUpdatedAt} 更新
+                  {' '}{t('components.alert.updatedAt', { time: formattedUpdatedAt })}
                 </>
               ) : (
-                `于 ${formattedUpdatedAt} 更新`
+                t('components.alert.updatedAt', { time: formattedUpdatedAt })
               )}
             </MetaValue>
           </MetaItem>
@@ -146,7 +151,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
               <MetaLabelIcon>
                 <IconLink />
               </MetaLabelIcon>
-              原文链接:
+              {t('components.alert.sourceLinkLabel')}
             </MetaLabel>
             <MetaLink href={sourceLink.href} target='_blank' rel='noopener noreferrer' title={sourceLink.label}>
               {sourceLink.label}
@@ -160,7 +165,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
               <MetaLabelIcon>
                 <IconFolder />
               </MetaLabelIcon>
-              所属项目:
+              {t('components.alert.projectLabel')}
             </MetaLabel>
             <MetaLink href={projectLink.href} target='_blank' rel='noopener noreferrer' title={projectLink.label}>
               {projectLink.label}
@@ -174,7 +179,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
               <MetaLabelIcon>
                 <IconShield />
               </MetaLabelIcon>
-              开源许可:
+              {t('components.alert.licenseLabel')}
             </MetaLabel>
             <MetaValue $wrap title={typeof resolvedLicense === 'string' ? resolvedLicense : undefined}>{resolvedLicense}</MetaValue>
           </MetaItem>
@@ -186,9 +191,9 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
               <MetaLabelIcon>
                 <IconTag />
               </MetaLabelIcon>
-              所属标签:
+              {t('components.alert.labelsLabel')}
             </MetaLabel>
-            <LabelList aria-label='文档标签'>
+            <LabelList aria-label={t('components.alert.labelsAria')}>
               {labels.map((label) => (
                 <LabelLink key={`${label.name}-${label.href}`} href={label.href} target={isExternalHref(label.href) ? '_blank' : undefined} rel={isExternalHref(label.href) ? 'noopener noreferrer' : undefined} title={label.name}>
                   <Tag label={label.name} color={label.color} />
@@ -201,7 +206,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
 
       {shareItems?.length ? (
         <ShareWrap>
-          <SharedLinkGroup items={shareItems} label={shareLabel} />
+          <SharedLinkGroup items={shareItems} label={resolvedShareLabel} />
         </ShareWrap>
       ) : null}
 

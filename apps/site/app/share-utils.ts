@@ -10,7 +10,8 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
 
-export const openSharePopup = (url: string, name: string) => {
+/** 弹窗被浏览器拦截时的提示文案，由调用方翻译后传入 */
+export const openSharePopup = (url: string, name: string, popupBlockedText: string) => {
   if (typeof window === 'undefined') return
   const width = 640
   const height = 520
@@ -35,18 +36,36 @@ export const openSharePopup = (url: string, name: string) => {
 
   const popup = window.open(url, name, features)
   if (!popup) {
-    message.error('浏览器已阻止分享窗口，请允许弹窗后再试')
+    message.error(popupBlockedText)
     return
   }
 
   popup.focus()
 }
 
-export const openWechatShareWindow = (url: string, title: string) => {
+/** 微信分享弹窗 HTML 模板内的界面文案，由调用方翻译后传入 */
+export interface WechatShareTexts {
+  /** 弹窗 <title>，如「微信扫码分享」 */
+  popupTitle: string
+  /** 弹窗大标题，如「微信扫一扫」 */
+  heading: string
+  /** 扫码引导语 */
+  instruction: string
+  /** 二维码图片 alt */
+  qrAlt: string
+  /** 文章标题前缀，如「文章：」 */
+  articleLabel: string
+  /** 关闭窗口提示 */
+  closeHint: string
+  /** 弹窗被浏览器拦截时的提示 */
+  popupBlocked: string
+}
+
+export const openWechatShareWindow = (url: string, title: string, texts: WechatShareTexts) => {
   if (typeof window === 'undefined') return
   const shareWindow = window.open('', 'share-wechat', 'width=360,height=420,toolbar=0,location=0,menubar=0,scrollbars=0,resizable=0')
   if (!shareWindow) {
-    message.error('浏览器已阻止分享窗口，请允许弹窗后再试')
+    message.error(texts.popupBlocked)
     return
   }
 
@@ -56,7 +75,7 @@ export const openWechatShareWindow = (url: string, title: string) => {
 <html lang="zh">
 <head>
   <meta charset="utf-8" />
-  <title>微信扫码分享</title>
+  <title>${escapeHtml(texts.popupTitle)}</title>
   <style>
     body {
       margin: 0;
@@ -92,11 +111,11 @@ export const openWechatShareWindow = (url: string, title: string) => {
 </head>
 <body>
   <div class="wrapper">
-    <h2>微信扫一扫</h2>
-    <p>请在微信中使用“扫一扫”扫描下方二维码</p>
-    <img src="${qrSrc}" alt="微信扫码分享" />
-    <p>文章：${safeTitle}</p>
-    <p style="font-size:12px;color:#888;margin-top:12px;">关闭窗口以返回页面</p>
+    <h2>${escapeHtml(texts.heading)}</h2>
+    <p>${escapeHtml(texts.instruction)}</p>
+    <img src="${qrSrc}" alt="${escapeHtml(texts.qrAlt)}" />
+    <p>${escapeHtml(texts.articleLabel)}${safeTitle}</p>
+    <p style="font-size:12px;color:#888;margin-top:12px;">${escapeHtml(texts.closeHint)}</p>
   </div>
 </body>
 </html>`

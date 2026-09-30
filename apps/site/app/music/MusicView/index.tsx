@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Empty from '@wuh.site/components/empty'
 import { useAudioPlayer } from '@wuh.site/components/audio-player'
+import { useLocale } from '@wuh.site/components/locales'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import {
   formatTrackDuration,
@@ -61,6 +62,7 @@ type MusicViewProps = {
 const yearOf = (name: string): string => name.match(/(?:19|20)\d{2}/)?.[0] ?? name
 
 export default function MusicView({ playlistId, playlist, annualPlaylists }: MusicViewProps) {
+  const { t } = useLocale()
   const { state, currentTrack, actions } = useAudioPlayer()
   const initialId = Number(playlistId)
   const [selectedId, setSelectedId] = useState<number | null>(Number.isFinite(initialId) ? initialId : null)
@@ -256,25 +258,35 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
               <PlayingDot $playing={isPlaying} aria-hidden="true" />
               <TrackButton
                 type="button"
-                aria-label={`播放 ${track.name}${track.artist ? ` - ${track.artist}` : ''}`}
+                aria-label={track.artist
+                  ? t('music.page.playTrackArtistAria', { name: track.name, artist: track.artist })
+                  : t('music.page.playTrackAria', { name: track.name })}
                 aria-current={isPlaying ? 'true' : undefined}
               >
                 <TrackName className="track-name">{track.name}</TrackName>
                 <TrackArtist>{track.artist}</TrackArtist>
               </TrackButton>
               <TrackSide>
-                <TrackPlays title={track.playCount != null ? `播放 ${track.playCount} 次` : '暂无播放记录'}>
+                <TrackPlays
+                  title={track.playCount != null
+                    ? t('music.page.playsTitle', { count: track.playCount })
+                    : t('music.page.playsTitleEmpty')}
+                >
                   {track.playCount != null ? (
                     <>
                       {track.playCount}
-                      <span className="unit">次</span>
+                      <span className="unit">{t('music.page.playsUnit')}</span>
                     </>
                   ) : (
                     '—'
                   )}
                 </TrackPlays>
                 <TrackDuration>{formatTrackDuration(track.duration)}</TrackDuration>
-                <FavSlot>{isFav ? <FavBadge title="该卷播放次数最高">最爱</FavBadge> : null}</FavSlot>
+                <FavSlot>
+                  {isFav ? (
+                    <FavBadge title={t('music.page.favBadgeTitle')}>{t('music.page.favBadge')}</FavBadge>
+                  ) : null}
+                </FavSlot>
               </TrackSide>
             </TrackRow>
           )
@@ -288,9 +300,9 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
     return (
       <Section>
         <Empty
-          title="歌单加载失败"
-          description="网易云歌单暂时取不到，可以稍后刷新重试。"
-          actions={[{ label: '刷新重试', href: `/music?playlist=${playlistId}` }]}
+          title={t('music.page.loadFailedTitle')}
+          description={t('music.page.loadFailedDesc')}
+          actions={[{ label: t('music.page.retry'), href: `/music?playlist=${playlistId}` }]}
         />
       </Section>
     )
@@ -300,8 +312,8 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
     <Section>
       <PageHeader>
         <TitleGroup>
-          <PageTitle>音乐</PageTitle>
-          <PageSubtitle>网易云年度歌单 · 一年一卷编年</PageSubtitle>
+          <PageTitle>{t('music.page.title')}</PageTitle>
+          <PageSubtitle>{t('music.page.subtitle')}</PageSubtitle>
         </TitleGroup>
       </PageHeader>
 
@@ -310,7 +322,7 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
           <Rail
             ref={railRef}
             role="tablist"
-            aria-label="切换年度歌单"
+            aria-label={t('music.page.railAria')}
             aria-orientation="vertical"
             onKeyDown={onRailKeyDown}
           >
@@ -322,19 +334,19 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
                 data-year={item.id}
                 aria-current={item.id === selectedId}
                 aria-controls="volume-panel"
-                aria-label={`${item.name}，共 ${item.trackCount} 首`}
+                aria-label={t('music.page.railItemAria', { name: item.name, count: item.trackCount })}
                 onClick={() => selectYear(item.id)}
               >
                 <RailYear $dist={selectedIndex < 0 ? 2 : Math.abs(index - selectedIndex)}>
                   {yearOf(item.name)}
                 </RailYear>
-                <RailCount>{item.trackCount} 首</RailCount>
+                <RailCount>{t('music.page.railCount', { count: item.trackCount })}</RailCount>
               </RailItem>
             ))}
           </Rail>
         ) : null}
 
-        <Content id="volume-panel" role="tabpanel" aria-label="当前歌单曲目">
+        <Content id="volume-panel" role="tabpanel" aria-label={t('music.page.panelAria')}>
           <Watermark aria-hidden="true">{selectedYear}</Watermark>
           <ContentInner>
             <PanelHead>
@@ -352,11 +364,11 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
                 />
               </CoverDisc>
               <PanelCopy>
-                <PanelTitle>{selectedPlaylist.name ?? '歌单'}</PanelTitle>
+                <PanelTitle>{selectedPlaylist.name ?? t('music.page.playlistFallback')}</PanelTitle>
                 <PanelSub>
-                  共 {tracks.length} 首
-                  {selectedYear ? ` · ${selectedYear} 年度` : ''}
-                  {loadError ? ' · 这一卷暂时取不到，稍后再试' : ''}
+                  {t('music.page.panelSubCount', { count: tracks.length })}
+                  {selectedYear ? t('music.page.panelYearSuffix', { year: selectedYear }) : ''}
+                  {loadError ? t('music.page.panelErrorSuffix') : ''}
                 </PanelSub>
               </PanelCopy>
             </PanelHead>
@@ -371,8 +383,9 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
             ) : null}
             {favTrack ? (
               <Epigraph>
-                这一年循环最多的是<span className="em">《{favTrack.name}》</span>
-                ，听了 {favTrack.playCount} 遍。
+                {t('music.page.epigraphPrefix')}
+                <span className="em">{favTrack.name}</span>
+                {t('music.page.epigraphSuffix', { count: favTrack.playCount ?? 0 })}
               </Epigraph>
             ) : null}
 
@@ -380,7 +393,7 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
               renderTracks(tracks)
             ) : (
               <TracksEmpty role="status">
-                {loadError ? '这一卷暂时取不到，稍后再试' : '这个歌单暂时没有曲目'}
+                {loadError ? t('music.page.volumeError') : t('music.page.noTracks')}
               </TracksEmpty>
             )}
           </ContentInner>

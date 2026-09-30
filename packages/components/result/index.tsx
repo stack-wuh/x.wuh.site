@@ -1,18 +1,21 @@
 'use client'
 
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import { IconWarning } from '../icons'
 import * as S from './styles'
 import { DEFAULT_CONTENT, type ResultProps, type ResultStatus } from './specs'
 
 export type { ResultLink, ResultProps, ResultStatus } from './specs'
 
-const resolveContent = (status?: ResultStatus) => {
+type TranslateFn = (key: string, params?: Record<string, string | number>) => string
+
+const resolveContent = (status: ResultStatus | undefined, t: TranslateFn) => {
   if (status === '404') return DEFAULT_CONTENT['404']
   if (status === '500') return DEFAULT_CONTENT['500']
   return {
-    title: status === 'error' ? '发生错误' : '提示',
-    description: '页面暂时不可用，请稍后再试。',
+    title: status === 'error' ? t('components.result.errorTitle') : t('components.result.infoTitle'),
+    description: t('components.result.unavailable'),
     icon: <IconWarning />
   }
 }
@@ -29,7 +32,8 @@ const Result = React.forwardRef<HTMLElement, ResultProps>(function Result(props,
     ...rest
   } = props
 
-  const resolved = resolveContent(status)
+  const { t } = useLocale()
+  const resolved = resolveContent(status, t)
 
   return (
     <S.Root ref={ref} {...rest}>

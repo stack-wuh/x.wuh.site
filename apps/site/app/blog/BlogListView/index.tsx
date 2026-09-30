@@ -5,6 +5,7 @@ import Tag from '@wuh.site/components/tag'
 import Pagination from '@wuh.site/components/pagination'
 import Empty from '@wuh.site/components/empty'
 import { IconBookOpen } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import TitleWithTooltip from '../components/TitleWithTooltip'
 import BackHomeLink from '@/app/components/BackHomeLink'
 import type { ContentLabelSummary, PostListItem } from '@wuh.site/core'
@@ -31,6 +32,7 @@ const groupByYear = (posts: PostListItem[]) => {
 }
 
 export default function BlogListView({ posts, pagination, activeLabels, availableLabels }: BlogListViewProps) {
+  const { t } = useLocale()
   const [loadedLabels, setLoadedLabels] = useState<ContentLabelSummary[]>(availableLabels)
   const { data: labelsData } = contentService.getLabels.use({ query: { state: 'open' } })
   useEffect(() => {
@@ -46,15 +48,15 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
       <S.Main>
         <S.Header>
           <S.TitleGroup>
-            <S.Title>全部博客</S.Title>
-            <S.Subtitle>收录 GitHub Issues 中的全部博客文章</S.Subtitle>
+            <S.Title>{t('blog.listTitle')}</S.Title>
+            <S.Subtitle>{t('blog.listSubtitle')}</S.Subtitle>
           </S.TitleGroup>
           <S.HeaderActions>
             <BackHomeLink href='/' />
           </S.HeaderActions>
         </S.Header>
 
-        <S.FilterBar aria-label='博客分类过滤'>
+        <S.FilterBar aria-label={t('blog.filterAria')}>
           <S.FilterToolbar>
             <S.FilterMenu>
               <S.FilterSummary>{getFilterSummaryLabel(loadedLabels, activeLabels, filteredTotal)}</S.FilterSummary>
@@ -70,7 +72,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
                     </S.FilterOption>
                   ))
                 ) : (
-                  <S.FilterEmpty>暂无分类</S.FilterEmpty>
+                  <S.FilterEmpty>{t('blog.filterEmpty')}</S.FilterEmpty>
                 )}
               </S.FilterMenuList>
             </S.FilterMenu>
@@ -78,7 +80,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
               <S.FilterToken
                 key={label}
                 href={buildBlogUrl(1, activeLabels.filter((item) => item !== label))}
-                aria-label={`清除 ${label} 分类筛选`}
+                aria-label={t('blog.clearFilterAria', { label })}
               >
                 {label}
                 <span aria-hidden='true'>×</span>
@@ -88,7 +90,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
         </S.FilterBar>
 
         {posts.length === 0 ? (
-          <Empty icon={<IconBookOpen />} title='暂无内容' description='暂时没有可展示的博客' actions={[{ label: '返回首页', href: '/' }]} />
+          <Empty icon={<IconBookOpen />} title={t('blog.empty.title')} description={t('blog.empty.description')} actions={[{ label: t('site.backHome'), href: '/' }]} />
         ) : (
           <S.Timeline>
             {yearGroups.map(([year, yearPosts]) => (
@@ -104,7 +106,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
                     {post.labels?.length > 0 && (
                       <S.PostTags>
                         {post.labels.slice(0, TAG_DISPLAY_LIMIT).map(label => (
-                          <S.PostTagLink key={`${post.id}-${label.name}`} href={buildTopicUrl(label.name)} aria-label={`查看 ${label.name} 主题文章`}>
+                          <S.PostTagLink key={`${post.id}-${label.name}`} href={buildTopicUrl(label.name)} aria-label={t('blog.topicViewAria', { label: label.name })}>
                             <Tag label={label.name} color={label.color} />
                           </S.PostTagLink>
                         ))}
@@ -113,7 +115,7 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
                     <S.PostMeta>
                       <span>{formatShortDate(post.created_at)}</span>
                       <S.MetaDot />
-                      <span>{post.views} 浏览</span>
+                      <span>{t('blog.views', { count: post.views })}</span>
                     </S.PostMeta>
                   </S.PostRow>
                 ))}

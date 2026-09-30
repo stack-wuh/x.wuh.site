@@ -25,8 +25,8 @@ test('Progress is dual-mode: display progressbar plus native range interactive',
   assert.match(indexSource, /aria-valuenow/)
   assert.match(indexSource, /type='range'/)
   assert.match(indexSource, /onChange/)
-  // 交互态必须有无障碍名（原生 slider 语义零降级）
-  assert.match(indexSource, /aria-label=\{label \?\? '进度'\}/)
+  // 交互态必须有无障碍名（原生 slider 语义零降级）；默认 label 已迁 i18n 词典，守卫改断言 t() 兜底形状
+  assert.match(indexSource, /aria-label=\{label \?\? t\('components\.progress\.defaultLabel'\)\}/)
 })
 
 test('Progress renders the intaglio seal thumb with glyph and breathing props', () => {
