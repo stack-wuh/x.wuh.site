@@ -76,8 +76,9 @@ test('控制甲板 gutter：桌面左栏获得装裱内距，甲板离开面板�
 test('进度/音量接入共享 Progress 交互态（度曲尺与凹槽私有实现已退役）', () => {
   assert.doesNotMatch(src, /RulerLayer|RulerNeedle|RulerRange|GrooveSlider|VolumeSlider|TICK_MINOR|TICK_MAJOR/)
   assert.match(src, /import Progress from '@wuh\.site\/components\/progress'/)
-  // 进度：百分比换算（progressPct*100 进、seek 回写秒），印光标 + 播放态呼吸晕接真实 playing
-  assert.match(src, /<Progress\s+value=\{progressPct \* 100\}/)
+  // 进度：progressPct 已是 0–100 百分数，value 直传——二次 ×100 灌 0–10000 被钳 100，光标钉死末端（回归根因）
+  assert.match(src, /<Progress\s+value=\{progressPct\}/)
+  assert.doesNotMatch(src, /value=\{progressPct \* 100\}/)
   assert.match(src, /onChange=\{\(pct\) => seek\(\(pct \/ 100\) \* totalDuration\)\}/)
   assert.match(src, /breathing=\{playing\}/)
   // 音量：120px 原位窄条，0-100 换算
