@@ -153,6 +153,11 @@ test('册页横翻：MobileTabs/MobileSection 退役，scroll-snap 对页 + 页�
   const tickBlock = src.slice(src.indexOf('const PageTicks ='), src.indexOf('const MODE_LABELS'))
   assert.ok(tickBlock.length > 0, 'PageTicks 定义缺失')
   assert.match(tickBlock, /scaleX\(/)
+  const tickButtonBlock = src.slice(src.indexOf('const PageTick ='), src.indexOf('/* ===== 右侧：歌词 / 播放列表 ===== */'))
+  assert.ok(tickButtonBlock.length > 0, 'PageTick 定义缺失')
+  // 选中态必须挂 aria-current 属性选择器（静态 CSS），禁 transient 三元插值（动态类规则删除竞态）
+  assert.match(tickButtonBlock, /&\[aria-current='true'\]/)
+  assert.doesNotMatch(tickButtonBlock, /\$active/)
   assert.match(src, /aria-current=/)
   assert.match(src, /onScroll=\{/)
 })

@@ -4,7 +4,7 @@
   "name": "20260930-style-player-mobile-album-leaf",
   "type": "style",
   "scope": "player",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20260930-style-player-mobile-album-leaf",
   "files": [
@@ -16,8 +16,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 424,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/424",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 425,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/425"
   },
   "review": {
     "conclusion": "passed",
@@ -26,8 +26,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:424",
-    "planHash": "3151eee0e7f4a1543de9864406d9faf8da077dbd19f33d9f13af4d2f160f42ba",
+    "checkpoint": "pr:425",
+    "planHash": "c50b700f9d8b2713c1c3f63632de4055aa44881ef109c5d0b3460d70dd2ee63e",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -43,10 +43,9 @@
       "files": [
         "packages/components/audio-player/PlayerPanel.tsx",
         "packages/components/audio-player/player-panel.test.mjs",
-        "shadow-docs/changes/20260930-style-player-mobile-album-leaf/brief.md",
-        "shadow-docs/knowledge/music-player.md"
+        "shadow-docs/changes/20260930-style-player-mobile-album-leaf/brief.md"
       ],
-      "message": "style(player): 移动端播放面板重设计——册页：装裱图版、短词窗与目次横翻"
+      "message": "style(player): 页缘钮选中态改 aria-current 属性选择器——与模式带同一竞态修复"
     }
   },
   "knowledge": null
@@ -103,6 +102,7 @@
   - **发现并修复一个实现缺陷**：面板打开时对队列高亮项的 `scrollIntoView({block:'nearest'})` 会把外层横翻容器一并横向滚走（实测面板被带去目次页、页缘钮失同步）——移动列表与词窗改手动垂直 `scrollTop`（只动纵向），桌面容器无包裹保持 scrollIntoView；QueueList 补 `position: relative` 供 offsetTop 定位
   - 已知测试环境限制：IAB 对程序化滚动抑制 scroll 事件（对照实验：临时 div 同样 0 事件），onScroll→页缘钮同步链路为标准 API 用法、由源码守卫固化，真机滑动路径留待生产回归复核
   - reduced-motion：面板级降级块覆盖新增过渡；翻页 scrollTo 与关闭阈值逻辑均走 prefersReducedMotion() 分支
+  - 补充提交（动态类规则删除竞态修复，机制与取证见 20260930-fix-mode-band-underline-inversion）：PageTick 选中态从 `$active` 三元插值改 `&[aria-current='true']` 属性选择器——两钮共享同一静态类、属性规则恒在，点击翻转不再有动态类增删；页缘钮与模式带修齐后该竞态在播放器内无宿主
 
 ## 知识评估
 - **预期影响:** 更新

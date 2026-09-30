@@ -733,7 +733,8 @@ const WordEmpty = styled.div`
   }
 `
 
-/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中条宽度切换走 scaleX，不碰布局属性 */
+/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走 aria-current 属性选择器（静态 CSS，
+   规避动态类规则删除竞态——见 ModeButton 注释），选中条宽度切换走 scaleX 不碰布局属性 */
 const PageTicks = styled.div`
   display: none;
 
@@ -749,7 +750,7 @@ const PageTicks = styled.div`
   }
 `
 
-const PageTick = styled.button<{ $active?: boolean }>`
+const PageTick = styled.button`
   padding: 10px 8px;
   display: inline-flex;
   align-items: center;
@@ -762,10 +763,16 @@ const PageTick = styled.button<{ $active?: boolean }>`
     width: 18px;
     height: 2px;
     border-radius: 2px;
-    background: ${(p) => (p.$active ? 'var(--primary-color)' : HAIRLINE)};
-    transform: scaleX(${(p) => (p.$active ? 1 : 0.44)});
-    opacity: ${(p) => (p.$active ? 1 : 0.6)};
+    background: ${HAIRLINE};
+    transform: scaleX(0.44);
+    opacity: 0.6;
     transition: transform ${QUICK} ${EASE}, opacity ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+  }
+
+  &[aria-current='true']::before {
+    background: var(--primary-color);
+    transform: scaleX(1);
+    opacity: 1;
   }
 
   ${focusRing}
@@ -1370,14 +1377,12 @@ export const AudioPlayerPanel = () => {
         <PageTicks role='group' aria-label='册页翻页'>
           <PageTick
             type='button'
-            $active={mobilePage === 'words'}
             aria-current={mobilePage === 'words' ? 'true' : undefined}
             aria-label='歌词页'
             onClick={() => gotoPage('words')}
           />
           <PageTick
             type='button'
-            $active={mobilePage === 'queue'}
             aria-current={mobilePage === 'queue' ? 'true' : undefined}
             aria-label='播放列表页'
             onClick={() => gotoPage('queue')}
