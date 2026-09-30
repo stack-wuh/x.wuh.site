@@ -4,7 +4,7 @@
   "name": "20260930-fix-panel-lyric-scroll-bleed",
   "type": "fix",
   "scope": "player",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20260930-fix-panel-lyric-scroll-bleed",
   "files": [
@@ -15,8 +15,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 441,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/441",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 445,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/445"
   },
   "review": {
     "conclusion": "passed",
@@ -25,8 +25,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:441",
-    "planHash": "59105bb02a99560f7ffaa49657e86417bb27dc8b6df528e4d6cb43723cf56449",
+    "checkpoint": "pr:445",
+    "planHash": "ea36342f0d1d00423f211fe1d30d4eb99792c2336b0d34620eb595a3cac550da",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -49,6 +49,12 @@
       "message": "fix(player): 播放面板定位只滚目标容器、壳 overflow clip——scrollIntoView 祖先链连带滚动绝根 (#441)",
       "title": "fix(player): 播放面板弹层滚动连带修复——眉标裁切与底边色带绝根 (#441)",
       "body": "Closes #441\n\n完整 brief：shadow-docs/changes/20260930-fix-panel-lyric-scroll-bleed/brief.md"
+    },
+    "commit": {
+      "files": [
+        "shadow-docs/changes/20260930-fix-panel-lyric-scroll-bleed/brief.md"
+      ],
+      "message": "docs(shadow): #441 brief 回写 PR #445 链接"
     }
   },
   "knowledge": {
