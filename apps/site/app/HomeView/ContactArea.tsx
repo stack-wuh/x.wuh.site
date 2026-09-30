@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import styled from 'styled-components'
 import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import * as S from '../styles'
 import { CONTACT_CONFIG, type ContactType } from '../components/ContactConfig'
 
@@ -44,6 +45,7 @@ const Seal = styled.span`
 
 /** 社交链接 + 联系弹窗：唯一持有联系状态的客户端叶子 */
 export default function ContactArea() {
+  const { t } = useLocale()
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
   const openContact = useCallback((type: ContactType) => setActiveContact(type), [])
   const closeContact = useCallback(() => setActiveContact(null), [])
@@ -57,7 +59,7 @@ export default function ContactArea() {
             { type: 'wechat', title: '微信', onClick: () => openContact('wechat') },
             { type: 'qq', title: 'QQ', onClick: () => openContact('qq') },
             { type: 'twitter', title: 'Twitter', onClick: () => openContact('twitter') },
-            { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: '邮箱', hideOnMobile: true },
+            { type: 'email', href: 'mailto:wuh131420@foxmail.com', title: t('site.contact.email'), hideOnMobile: true },
             { type: 'github', title: 'GitHub', onClick: () => openContact('github') },
             { type: 'douban', title: '豆瓣', onClick: () => openContact('douban') },
             { type: 'custom', title: '网易云', icon: <IconMusic />, onClick: () => openContact('netease') },
@@ -76,10 +78,10 @@ export default function ContactArea() {
           activeContact && activeContactConfig ? (
             <>
               <Seal aria-hidden="true">{SEAL_CHARS[activeContact]}</Seal>
-              {`${activeContactConfig.badge} 联系`}
+              {t('site.contact.dialogTitle', { badge: activeContactConfig.badge })}
             </>
           ) : (
-            '联系'
+            t('site.contact.dialogFallback')
           )
         }
         fullScreen={false}

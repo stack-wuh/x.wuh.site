@@ -3,20 +3,21 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { IconBars, IconChevronDown, IconLogo, IconPalette } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import { useThemeMode, type ColorSchemeMode } from '../theme/ThemeModeProvider'
 import type { ThemeFamily } from '@wuh.site/components/themes/tokens'
 import AppearanceOptions from './AppearanceOptions'
 import * as S from './styles'
 
-const THEME_LABELS: Record<ThemeFamily, string> = {
-  wine: '酒红',
-  plain: '素雅',
+const THEME_LABEL_KEYS: Record<ThemeFamily, string> = {
+  wine: 'site.appearance.wine',
+  plain: 'site.appearance.plain',
 }
 
-const SCHEME_LABELS: Record<ColorSchemeMode, string> = {
-  system: '跟随系统',
-  light: '浅色',
-  dark: '深色',
+const SCHEME_LABEL_KEYS: Record<ColorSchemeMode, string> = {
+  system: 'site.appearance.system',
+  light: 'site.appearance.light',
+  dark: 'site.appearance.dark',
 }
 
 /**
@@ -24,6 +25,7 @@ const SCHEME_LABELS: Record<ColorSchemeMode, string> = {
  */
 export default function SiteHeader() {
   const pathname = usePathname()
+  const { t } = useLocale()
   // 当前页归段：博客详情页（/post/*）属于「博客」，与列表页共享常驻笔画
   const isBlog = pathname === '/blog' || pathname.startsWith('/post/')
   const isAbout = pathname === '/about'
@@ -43,6 +45,9 @@ export default function SiteHeader() {
     setThemeFamily,
     setColorSchemeMode,
   } = useThemeMode()
+  const themeLabel = t(THEME_LABEL_KEYS[themeFamily])
+  const schemeLabel = t(SCHEME_LABEL_KEYS[colorSchemeMode])
+  const appearanceTriggerAria = t('site.appearance.triggerAria', { theme: themeLabel, scheme: schemeLabel })
 
   const close = useCallback(() => {
     setMobileAppearanceExpanded(false)
@@ -92,22 +97,22 @@ export default function SiteHeader() {
   return (
     <S.HeaderRoot>
       <S.HeaderInner>
-        <S.Brand aria-label='站点标识'>
+        <S.Brand aria-label={t('common.brand')}>
           <IconLogo width={42} height={26} />
         </S.Brand>
 
         <S.Right>
-          <S.Nav aria-label='主导航'>
-            <S.NavLink href='/blog' aria-current={isBlog ? 'page' : undefined}>博客</S.NavLink>
-            <S.NavLink href='/music' aria-current={isMusic ? 'page' : undefined}>音乐</S.NavLink>
-            <S.NavLink href='/about' aria-current={isAbout ? 'page' : undefined}>关于</S.NavLink>
+          <S.Nav aria-label={t('common.mainNav')}>
+            <S.NavLink href='/blog' aria-current={isBlog ? 'page' : undefined}>{t('site.nav.blog')}</S.NavLink>
+            <S.NavLink href='/music' aria-current={isMusic ? 'page' : undefined}>{t('site.nav.music')}</S.NavLink>
+            <S.NavLink href='/about' aria-current={isAbout ? 'page' : undefined}>{t('site.nav.about')}</S.NavLink>
             <S.NavLink
               href='https://stack-wuh.github.io/blog/'
               target='_blank'
               rel='noopener noreferrer'
-              aria-label='知识库（在新窗口打开）'
+              aria-label={t('site.nav.knowledgeAria')}
             >
-              知识库<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
+              {t('site.nav.knowledge')}<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
             </S.NavLink>
           </S.Nav>
 
@@ -116,17 +121,17 @@ export default function SiteHeader() {
               ref={appearanceTriggerRef}
               type='button'
               onClick={() => setAppearanceOpen((value) => !value)}
-              aria-label={`外观设置，当前${THEME_LABELS[themeFamily]}、${SCHEME_LABELS[colorSchemeMode]}`}
+              aria-label={appearanceTriggerAria}
               aria-haspopup='dialog'
               aria-expanded={appearanceOpen}
               aria-controls={appearanceId}
-              title='外观设置'
+              title={t('site.appearance.group')}
             >
               <S.ThemeSeal aria-hidden='true' $open={appearanceOpen}>墨</S.ThemeSeal>
             </S.AppearanceTrigger>
 
             {appearanceOpen && (
-              <S.DesktopAppearancePopover id={appearanceId} role='dialog' aria-label='外观设置'>
+              <S.DesktopAppearancePopover id={appearanceId} role='dialog' aria-label={t('site.appearance.group')}>
                 <AppearanceOptions
                   themeFamily={themeFamily}
                   colorSchemeMode={colorSchemeMode}
@@ -139,7 +144,7 @@ export default function SiteHeader() {
 
           <S.MobileToggle
             type='button'
-            aria-label={open ? '关闭菜单' : '打开菜单'}
+            aria-label={open ? t('site.menu.close') : t('site.menu.open')}
             aria-expanded={open}
             aria-controls={panelId}
             onClick={toggle}
@@ -150,19 +155,19 @@ export default function SiteHeader() {
       </S.HeaderInner>
 
       <S.MobilePanel id={panelId} $open={open}>
-        <S.MobileNav aria-label='移动端导航'>
-          <S.MobileItem href='/' aria-current={isHome ? 'page' : undefined} onClick={close}>首页</S.MobileItem>
-          <S.MobileItem href='/blog' aria-current={isBlog ? 'page' : undefined} onClick={close}>博客</S.MobileItem>
-          <S.MobileItem href='/music' aria-current={isMusic ? 'page' : undefined} onClick={close}>音乐</S.MobileItem>
-          <S.MobileItem href='/about' aria-current={isAbout ? 'page' : undefined} onClick={close}>关于</S.MobileItem>
+        <S.MobileNav aria-label={t('common.mobileNav')}>
+          <S.MobileItem href='/' aria-current={isHome ? 'page' : undefined} onClick={close}>{t('site.nav.home')}</S.MobileItem>
+          <S.MobileItem href='/blog' aria-current={isBlog ? 'page' : undefined} onClick={close}>{t('site.nav.blog')}</S.MobileItem>
+          <S.MobileItem href='/music' aria-current={isMusic ? 'page' : undefined} onClick={close}>{t('site.nav.music')}</S.MobileItem>
+          <S.MobileItem href='/about' aria-current={isAbout ? 'page' : undefined} onClick={close}>{t('site.nav.about')}</S.MobileItem>
           <S.MobileItem
             href='https://stack-wuh.github.io/blog/'
             target='_blank'
             rel='noopener noreferrer'
-            aria-label='知识库（在新窗口打开）'
+            aria-label={t('site.nav.knowledgeAria')}
             onClick={close}
           >
-            知识库<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
+            {t('site.nav.knowledge')}<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
           </S.MobileItem>
           <S.MobileActions>
             <S.MobileAppearanceAction
@@ -176,8 +181,8 @@ export default function SiteHeader() {
                   <IconPalette size={18} strokeWidth={2} />
                 </S.ThemeIcon>
                 <S.MobileThemeCopy>
-                  <S.MobileThemeTitle>外观设置</S.MobileThemeTitle>
-                  <S.MobileThemeCurrent>{THEME_LABELS[themeFamily]} · {SCHEME_LABELS[colorSchemeMode]}</S.MobileThemeCurrent>
+                  <S.MobileThemeTitle>{t('site.appearance.group')}</S.MobileThemeTitle>
+                  <S.MobileThemeCurrent>{themeLabel} · {schemeLabel}</S.MobileThemeCurrent>
                 </S.MobileThemeCopy>
               </S.MobileThemeMain>
               <S.ThemeChevron $open={mobileAppearanceExpanded} aria-hidden='true'>

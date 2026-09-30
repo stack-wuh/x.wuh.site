@@ -3,29 +3,35 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@wuh.site/components/button'
 import Divider from '@wuh.site/components/divider'
+import { useLocale, type Locale, type TranslateParams } from '@wuh.site/components/locales'
 import { IconGithub, IconTag } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import message from '@wuh.site/components/message'
 import * as S from './styles'
 import { NICKNAME_STORAGE_KEY, type PostComment, type PostCommentsProps } from './specs'
 
-function formatTime(dateStr?: string): string {
+type TranslateFn = (key: string, params?: TranslateParams) => string
+
+/** toLocaleDateString 的 locale 参数随界面语言切换 */
+const DATE_LOCALES: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
+
+function formatTime(dateStr: string | undefined, t: TranslateFn, dateLocale: string): string {
   if (!dateStr) return ''
   const date = new Date(dateStr)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
   const diffMin = Math.floor(diffMs / 60000)
 
-  if (diffMin < 1) return '刚刚'
-  if (diffMin < 60) return `${diffMin} 分钟前`
+  if (diffMin < 1) return t('post.comments.justNow')
+  if (diffMin < 60) return t('post.comments.minutesAgo', { n: diffMin })
 
   const diffHour = Math.floor(diffMin / 60)
-  if (diffHour < 24) return `${diffHour} 小时前`
+  if (diffHour < 24) return t('post.comments.hoursAgo', { n: diffHour })
 
   const diffDay = Math.floor(diffHour / 24)
-  if (diffDay < 7) return `${diffDay} 天前`
+  if (diffDay < 7) return t('post.comments.daysAgo', { n: diffDay })
 
-  return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })
+  return date.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function getAvatarInitial(name: string): string {
@@ -38,9 +44,9 @@ function getAvatarUrl(comment: PostComment): string | null {
   return null
 }
 
-function getDisplayName(comment: PostComment): string {
+function getDisplayName(comment: PostComment, anonymousText: string): string {
   if (comment.user?.login) return comment.user.login
-  return comment.nickname || '匿名'
+  return comment.nickname || anonymousText
 }
 
 function isGithubComment(comment: PostComment): boolean {
@@ -48,9 +54,10 @@ function isGithubComment(comment: PostComment): boolean {
 }
 
 export default function PostComments({ issueNumber }: PostCommentsProps) {
+  const { locale, t } = useLocale()
   const [comments, setComments] = useState<PostComment[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [loadFailed, setLoadFailed] = useState(false)
   const [nickname, setNickname] = useState('')
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -58,7 +65,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
 
   const fetchComments = useCallback(async () => {
     setLoading(true)
-    setError(null)
+    setLoadFailed(false)
     try {
       const res = await fetch(`/api/comments?issueNumber=${issueNumber}&limit=50`, { cache: 'no-store' })
       if (!res.ok) throw new Error('评论加载失败')
@@ -67,7 +74,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
       if (!Array.isArray(list)) throw new Error('数据格式异常')
       setComments(list.filter((c: PostComment) => c.status !== 'rejected'))
     } catch {
-      setError('评论加载失败')
+      setLoadFailed(true)
     } finally {
       setLoading(false)
     }
@@ -102,7 +109,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.message || '评论提交失败')
+        throw new Error(data.message || t('post.comments.submitFailed'))
       }
 
       try { window.localStorage.setItem(NICKNAME_STORAGE_KEY, trimmedNickname) } catch { /* noop */ }
@@ -118,28 +125,28 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
       }
       setComments((prev) => [...prev, optimistic])
       setContent('')
-      message.success('评论已提交，等待审核')
+      message.success(t('post.comments.submitted'))
     } catch (error) {
-      const msg = error instanceof Error ? error.message : '评论提交失败'
+      const msg = error instanceof Error ? error.message : t('post.comments.submitFailed')
       message.error(msg)
     } finally {
       setSubmitting(false)
     }
-  }, [canSubmit, submitting, trimmedNickname, trimmedContent, issueNumber])
+  }, [canSubmit, submitting, trimmedNickname, trimmedContent, issueNumber, t])
 
   const totalCount = comments.length
 
   return (
     <S.Wrapper>
       <S.CommentsHeader>
-        评论{totalCount > 0 ? ` (${totalCount})` : ''}
+        {t('post.comments.title')}{totalCount > 0 ? ` (${totalCount})` : ''}
       </S.CommentsHeader>
       <Divider style={{ margin: '10px 0 var(--space-sm)' }} />
 
       {loading ? (
-        <S.LoadingState>加载中...</S.LoadingState>
+        <S.LoadingState>{t('post.comments.loading')}</S.LoadingState>
       ) : comments.length === 0 ? (
-        error ? <S.EmptyState>{error}</S.EmptyState> : <S.EmptyState>还没有评论，来发表第一条吧。</S.EmptyState>
+        loadFailed ? <S.EmptyState>{t('post.comments.loadFailed')}</S.EmptyState> : <S.EmptyState>{t('post.comments.empty')}</S.EmptyState>
       ) : (
         comments.map((comment) => (
           <S.CommentItem key={comment._id || comment.externalId} $isGithub={isGithubComment(comment)}>
@@ -148,29 +155,29 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
                 <Image
                   role='avatar'
                   src={getAvatarUrl(comment)!}
-                  alt={getDisplayName(comment)}
+                  alt={getDisplayName(comment, t('post.comments.anonymous'))}
                   width={36}
                   height={36}
-                  errorFallback={<S.AvatarFallback>{getAvatarInitial(getDisplayName(comment))}</S.AvatarFallback>}
+                  errorFallback={<S.AvatarFallback>{getAvatarInitial(getDisplayName(comment, t('post.comments.anonymous')))}</S.AvatarFallback>}
                 />
               ) : (
-                getAvatarInitial(getDisplayName(comment))
+                getAvatarInitial(getDisplayName(comment, t('post.comments.anonymous')))
               )}
             </S.CommentAvatar>
             <S.CommentBody>
               <S.CommentMeta>
-                <S.CommentAuthor>{getDisplayName(comment)}</S.CommentAuthor>
-                <S.CommentTime>{formatTime(comment.createdAtGitHub || comment.createdAt)}</S.CommentTime>
+                <S.CommentAuthor>{getDisplayName(comment, t('post.comments.anonymous'))}</S.CommentAuthor>
+                <S.CommentTime>{formatTime(comment.createdAtGitHub || comment.createdAt, t, DATE_LOCALES[locale])}</S.CommentTime>
                 {isGithubComment(comment) ? (
                   <S.CommentSource><IconGithub /> GitHub</S.CommentSource>
                 ) : (
-                  <S.CommentSource><IconTag /> 网站</S.CommentSource>
+                  <S.CommentSource><IconTag /> {t('post.comments.sourceSite')}</S.CommentSource>
                 )}
                 {comment.status === 'pending' && (
-                  <S.CommentStatusBadge $status='pending'>审核中</S.CommentStatusBadge>
+                  <S.CommentStatusBadge $status='pending'>{t('post.comments.statusPending')}</S.CommentStatusBadge>
                 )}
                 {comment.status === 'approved' && (
-                  <S.CommentStatusBadge $status='approved'>已同步到 Issue</S.CommentStatusBadge>
+                  <S.CommentStatusBadge $status='approved'>{t('post.comments.statusApproved')}</S.CommentStatusBadge>
                 )}
               </S.CommentMeta>
               <S.CommentText>
@@ -190,7 +197,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
           <S.NicknameInput
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
-            placeholder='你的昵称'
+            placeholder={t('post.comments.nicknamePlaceholder')}
             maxLength={20}
           />
         </S.NicknameRow>
@@ -198,7 +205,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
           ref={inputRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder='说点什么...'
+          placeholder={t('post.comments.contentPlaceholder')}
           maxLength={500}
         />
         <S.SubmitRow>
@@ -209,7 +216,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
             disabled={!canSubmit || submitting}
             onClick={handleSubmit}
           >
-            {submitting ? '提交中...' : '发表评论'}
+            {submitting ? t('post.comments.submitting') : t('post.comments.submit')}
           </Button>
         </S.SubmitRow>
       </S.InputArea>

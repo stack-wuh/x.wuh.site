@@ -25,7 +25,8 @@ test('播放器数据来自 Nest /v2/music，站点不再自持代理 route', as
 test('歌单加载失败不再静默吞掉，给出可见失败态与重试入口', () => {
   assert.match(globalPlayer, /setPlaylistError\(/)
   assert.match(globalPlayer, /role='status'/)
-  assert.match(globalPlayer, /重试/)
+  // 文案已迁 i18n 词典（player.playlist.retry），守卫改为断言 t() 调用形状
+  assert.match(globalPlayer, /t\('player\.playlist\.retry'\)/)
   assert.match(globalPlayer, /onClick=\{retryPlaylist\}/)
 })
 

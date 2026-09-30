@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { createRoot, type Root } from 'react-dom/client'
+import { LocaleProvider, useLocale } from '@wuh.site/components/locales'
 
 import {
   MessageCloseButton,
@@ -257,7 +258,13 @@ const ensureHolder = () => {
     container.setAttribute('data-message-root', 'true')
     document.body.appendChild(container)
     const root = createRoot(container)
-    root.render(<MessagePortal />)
+    // MessagePortal 挂在独立 React root 上，主树 LocaleProvider 的 context 不可达，
+    // 自带一个 Provider（持久化 locale 循主题先例，动态词典按模块缓存不重复拉取）
+    root.render(
+      <LocaleProvider>
+        <MessagePortal />
+      </LocaleProvider>
+    )
     holder = { root, container }
   }
   return holder
@@ -273,6 +280,7 @@ const renderIcon = (type: MessageType, icon?: React.ReactNode) => {
 }
 
 const MessagePortal = () => {
+  const { t } = useLocale()
   const [snapshot, setSnapshot] = React.useState(manager.getSnapshot())
 
   React.useEffect(() => manager.subscribe(setSnapshot), [])
@@ -304,7 +312,7 @@ const MessagePortal = () => {
                 {item.closable && (
                   <MessageCloseButton
                     type='button'
-                    aria-label='关闭提示'
+                    aria-label={t('components.message.closeNotice')}
                     onClick={() => {
                       manager.close(item.id)
                     }}

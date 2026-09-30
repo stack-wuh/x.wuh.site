@@ -1,4 +1,7 @@
+'use client'
+
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import {
   IconZoomIn,
   IconZoomOut,
@@ -32,6 +35,7 @@ export const MoreMenu: React.FC<Props> = ({
   zoomIn, zoomOut, resetZoom, rotate, download, toggleFullscreen,
   onClose,
 }) => {
+  const { t } = useLocale()
   if (!open) return null
 
   const select = (action: () => void) => {
@@ -45,30 +49,30 @@ export const MoreMenu: React.FC<Props> = ({
         {allowZoom && (
           <>
             <MoreMenuItem onClick={() => select(zoomIn)}>
-              <IconZoomIn /> 放大
+              <IconZoomIn /> {t('components.preview.zoomIn')}
             </MoreMenuItem>
             <MoreMenuItem onClick={() => select(zoomOut)}>
-              <IconZoomOut /> 缩小
+              <IconZoomOut /> {t('components.preview.zoomOut')}
             </MoreMenuItem>
             <MoreMenuItem onClick={() => select(resetZoom)}>
-              <IconReset /> 重置缩放
+              <IconReset /> {t('components.preview.resetZoom')}
             </MoreMenuItem>
           </>
         )}
         {allowRotate && (
           <MoreMenuItem onClick={() => select(rotate)}>
-            <IconRotate /> 旋转
+            <IconRotate /> {t('components.preview.rotateShort')}
           </MoreMenuItem>
         )}
         {allowDownload && (
           <MoreMenuItem onClick={() => select(download)}>
-            <IconDownload /> 下载
+            <IconDownload /> {t('components.preview.downloadShort')}
           </MoreMenuItem>
         )}
         {allowFullscreen && (
           <MoreMenuItem onClick={() => select(toggleFullscreen)}>
             {isNativeFullscreen ? <IconExitFullscreen /> : <IconFullscreen />}
-            {isNativeFullscreen ? '退出全屏' : '全屏'}
+            {isNativeFullscreen ? t('components.preview.exitFullscreen') : t('components.preview.fullscreen')}
           </MoreMenuItem>
         )}
       </MoreMenuContainer>

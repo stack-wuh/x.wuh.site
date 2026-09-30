@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import NextImage from 'next/image'
+import { useLocale } from '@wuh.site/components/locales'
 import {
   Wrapper,
   ImgWrapper,
@@ -33,12 +34,15 @@ function parseRatio(ratio?: AspectRatio): number | undefined {
   return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined
 }
 
-const DefaultFallback = ({ compact, appearance }: { compact: boolean; appearance: ImageAppearance }) => (
-  <Fallback role='alert' aria-live='polite' $compactFallback={compact} $appearance={appearance}>
-    <IconFallbackImage />
-    {!compact && <span>图片加载失败</span>}
-  </Fallback>
-)
+const DefaultFallback = ({ compact, appearance }: { compact: boolean; appearance: ImageAppearance }) => {
+  const { t } = useLocale()
+  return (
+    <Fallback role='alert' aria-live='polite' $compactFallback={compact} $appearance={appearance}>
+      <IconFallbackImage />
+      {!compact && <span>{t('components.image.loadFailed')}</span>}
+    </Fallback>
+  )
+}
 
 const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const {

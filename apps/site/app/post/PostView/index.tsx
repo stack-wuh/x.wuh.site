@@ -17,6 +17,7 @@ import {
   IconChevronDown,
 } from '@wuh.site/components/icons'
 import { useDialog } from '@wuh.site/hooks/useDialog'
+import { useLocale, type TranslateParams } from '@wuh.site/components/locales'
 
 import type { Issue, PostViewProps } from '../PostView.types'
 import { usePostImagePreview } from '../usePostImagePreview'
@@ -61,7 +62,8 @@ import {
 } from '../styles'
 
 const BLOG_PROJECT_URL = 'https://github.com/stack-wuh/blog'
-const COPYRIGHT_TEXT = '本文内容遵循 CC BY-NC-SA 4.0 协议，转载请注明文章出处与原文链接。'
+
+type TranslateFn = (key: string, params?: TranslateParams) => string
 
 const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
@@ -116,58 +118,67 @@ type ShareAction = {
   onClick?: () => void
 }
 
-const createShareItems = (issue: Issue): ShareAction[] => {
+const createShareItems = (issue: Issue, t: TranslateFn): ShareAction[] => {
   const siteUrl = `https://wuh.site${buildPostUrl(issue.number)}`
-  const shareTitle = issue.title?.trim() || 'wuh.site 文章'
-  const shareIntro = `我在 wuh.site 看到《${shareTitle}》，推荐给你看看`
+  const shareTitle = issue.title?.trim() || t('post.share.fallbackTitle')
+  const shareIntro = t('post.share.intro', { title: shareTitle })
   const encodedUrl = encodeURIComponent(siteUrl)
   const encodedTitle = encodeURIComponent(shareTitle)
   const encodedIntro = encodeURIComponent(shareIntro)
   const qqShareUrl = `https://connect.qq.com/widget/shareqq/index.html?url=${encodedUrl}&title=${encodedTitle}&desc=${encodedIntro}&summary=&site=wuh.site`
   const weiboShareUrl = `https://service.weibo.com/share/share.php?url=${encodedUrl}&title=${encodedIntro}`
   const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedIntro}&url=${encodedUrl}`
+  const wechatTexts = {
+    popupTitle: t('post.share.wechatPopupTitle'),
+    heading: t('post.share.wechatHeading'),
+    instruction: t('post.share.wechatInstruction'),
+    qrAlt: t('post.share.wechatQrAlt'),
+    articleLabel: t('post.share.articleLabel'),
+    closeHint: t('post.share.closeHint'),
+    popupBlocked: t('post.share.popupBlocked'),
+  }
 
   return [
     {
       key: 'wechat',
-      label: '分享到微信',
+      label: t('post.share.wechat'),
       icon: <IconWechat />,
-      onClick: () => openWechatShareWindow(siteUrl, shareTitle),
+      onClick: () => openWechatShareWindow(siteUrl, shareTitle, wechatTexts),
     },
     {
       key: 'qq',
-      label: '分享到QQ',
+      label: t('post.share.qq'),
       icon: <IconQQ />,
-      onClick: () => openSharePopup(qqShareUrl, 'share-qq'),
+      onClick: () => openSharePopup(qqShareUrl, 'share-qq', t('post.share.popupBlocked')),
     },
     {
       key: 'weibo',
-      label: '分享到微博',
+      label: t('post.share.weibo'),
       icon: <IconWeibo />,
-      onClick: () => openSharePopup(weiboShareUrl, 'share-weibo'),
+      onClick: () => openSharePopup(weiboShareUrl, 'share-weibo', t('post.share.popupBlocked')),
     },
     {
       key: 'twitter',
-      label: '分享到Twitter',
+      label: t('post.share.twitter'),
       icon: <IconTwitter />,
-      onClick: () => openSharePopup(twitterShareUrl, 'share-twitter'),
+      onClick: () => openSharePopup(twitterShareUrl, 'share-twitter', t('post.share.popupBlocked')),
     },
     {
       key: 'email',
       icon: <IconEmail />,
-      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`查看这篇文章：${siteUrl}`)}`,
-      label: '邮件分享',
+      href: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(t('post.share.emailBody', { url: siteUrl }))}`,
+      label: t('post.share.email'),
     },
     {
       key: 'link',
-      label: '复制链接',
+      label: t('post.share.copyLink'),
       icon: <IconLink />,
       onClick: async () => {
         const success = await copyToClipboard(siteUrl)
         if (success) {
-          message.success('链接已复制到剪贴板')
+          message.success(t('post.share.linkCopied'))
         } else {
-          message.error('复制失败，请手动复制')
+          message.error(t('post.share.copyFailed'))
         }
       },
     },
@@ -175,6 +186,7 @@ const createShareItems = (issue: Issue): ShareAction[] => {
 }
 
 export default function PostView({ issue, prevIssue, nextIssue, total, position }: PostViewProps) {
+  const { t } = useLocale()
   const renderedHtml = issue?.body_html
   const { containerRef, previewProps } = usePostImagePreview(renderedHtml)
   const tocResult = useToc(renderedHtml)
@@ -239,7 +251,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   if (!issue) {
     return (
       <Container>
-        <StatusEmpty title='未找到文章' description='请检查链接是否正确，或稍后再试。' />
+        <StatusEmpty title={t('post.view.notFoundTitle')} description={t('post.view.notFoundDescription')} />
         <PostToolbar prevIssue={null} nextIssue={null} total={total} position={position} />
       </Container>
     )
@@ -250,16 +262,16 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
   const sourceLink = createSourceLink(issue)
   const projectLink = createProjectLink(issue)
   const shareItems: ShareAction[] = [
-    ...createShareItems(issue),
+    ...createShareItems(issue, t),
     {
       key: 'share-card',
-      label: '分享图',
+      label: t('post.share.shareCard'),
       icon: <IconShare />,
       onClick: shareCardDialog.openDialog,
     },
     {
       key: 'article-export',
-      label: '导出全文',
+      label: t('post.share.exportArticle'),
       icon: <IconArticle />,
       onClick: articleExportDialog.openDialog,
     },
@@ -319,12 +331,12 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
               <summary>
                 <span className='toc-m-label'>
                   <span className='toc-m-title'>
-                    目录
-                    <span className='toc-m-count'>共 {tocResult.toc.length} 节</span>
+                    {t('post.view.tocTitle')}
+                    <span className='toc-m-count'>{t('post.view.tocCount', { n: tocResult.toc.length })}</span>
                   </span>
                   {activeTocItem && (
                     <span className='toc-m-now'>
-                      读至 ·{activeTocItem.shortNum && (
+                      {t('post.view.tocReadTo')} ·{activeTocItem.shortNum && (
                         <span className='toc-m-now-num' aria-hidden='true'>{activeTocItem.shortNum}</span>
                       )}
                       {activeTocItem.text}
@@ -342,7 +354,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           )}
 
           <MarkdownBody className='markdown-body' dangerouslySetInnerHTML={{ __html: tocResult.html }} />
-          {updatedDate && <UpdateDivider>更新于 {updatedDate}</UpdateDivider>}
+          {updatedDate && <UpdateDivider>{t('post.view.updatedAt', { date: updatedDate })}</UpdateDivider>}
 
           <RelatedPosts number={issue.number} labels={issue.labels.map((label) => label.name)} />
 
@@ -350,7 +362,7 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
           <ArticleColophon>
             <Divider variant='ornament' aria-hidden='true' />
-            <ColophonLicense>{COPYRIGHT_TEXT}</ColophonLicense>
+            <ColophonLicense>{t('post.view.copyright')}</ColophonLicense>
             <ColophonMeta>
               <a href={sourceLink.href} target='_blank' rel='noopener noreferrer'>{sourceLink.label}</a>
               {' · '}
@@ -407,10 +419,10 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           <PostToolbar prevIssue={prevIssue} nextIssue={nextIssue} currentNumber={issue.number} total={total} position={position} />
         </MainColumn>
 
-        <TocAside aria-label='文章目录与操作'>
+        <TocAside aria-label={t('post.view.tocAria')}>
           {tocResult.toc.length > 0 && (
             <>
-              <TocTitle>目录</TocTitle>
+              <TocTitle>{t('post.view.tocTitle')}</TocTitle>
               <TocScroller ref={tocScrollerRef}>{renderToc()}</TocScroller>
             </>
           )}
@@ -424,41 +436,44 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           </TocTools>
 
           {(prevIssue || nextIssue) && (
-            <TocPrevNext aria-label='前后篇'>
+            <TocPrevNext aria-label={t('post.view.prevNextAria')}>
               {prevIssue ? (
                 <a href={buildPostUrl(prevIssue.number)} data-dir='prev'>
                   <span className='toc-pn-label'>
                     <span className='toc-pn-arrow' aria-hidden='true'>‹</span>
-                    天才向左
+                    {t('post.view.prevLabel')}
                   </span>
                   <span className='toc-pn-title'>{prevIssue.title}</span>
                 </a>
               ) : (
-                <span className='toc-pn-empty'>已是最早一篇</span>
+                <span className='toc-pn-empty'>{t('post.view.earliest')}</span>
               )}
               {nextIssue ? (
                 <a href={buildPostUrl(nextIssue.number)} data-dir='next'>
                   <span className='toc-pn-label'>
-                    疯子向右
+                    {t('post.view.nextLabel')}
                     <span className='toc-pn-arrow' aria-hidden='true'>›</span>
                   </span>
                   <span className='toc-pn-title'>{nextIssue.title}</span>
                 </a>
               ) : (
-                <span className='toc-pn-empty'>已是最新一篇</span>
+                <span className='toc-pn-empty'>{t('post.view.latest')}</span>
               )}
             </TocPrevNext>
           )}
 
           <TocInfo>
             <span>
-              第 {position ?? issue.number}
-              {typeof total === 'number' ? ` / ${total} 篇` : ' 篇'}
+              {typeof total === 'number'
+                ? t('post.view.positionWithTotal', { position: position ?? issue.number, total })
+                : t('post.view.position', { position: position ?? issue.number })}
             </span>
-            <span>发布于 {issue.created_at.slice(0, 10)}</span>
-            {updatedDate && <span>更新于 {updatedDate}</span>}
+            <span>{t('post.view.publishedAt', { date: issue.created_at.slice(0, 10) })}</span>
+            {updatedDate && <span>{t('post.view.updatedAt', { date: updatedDate })}</span>}
             <span>
-              约 {Math.max(1, Math.round((issue.body_html ?? '').replace(/<[^>]+>/g, '').length / 450))} 分钟读完
+              {t('post.view.readTime', {
+                n: Math.max(1, Math.round((issue.body_html ?? '').replace(/<[^>]+>/g, '').length / 450)),
+              })}
             </span>
           </TocInfo>
         </TocAside>

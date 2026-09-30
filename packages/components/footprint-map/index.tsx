@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
+import { useLocale, type Locale } from '@wuh.site/components/locales'
 import type { FootprintData, FootprintMapProps } from './specs'
 
 export type { FootprintData, FootprintMapProps } from './specs'
@@ -8,6 +9,13 @@ export type { FootprintData, FootprintMapProps } from './specs'
 const STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/liberty'
 const STYLE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
 const DEFAULT_CENTER: [number, number] = [113.81, 22.69]
+
+/** toLocaleDateString 随界面语言走（与 LocaleProvider 的 html lang 映射同源）。 */
+const DATE_LOCALE_BY_LANG: Record<Locale, string> = {
+  zh: 'zh-CN',
+  en: 'en-US',
+  ja: 'ja-JP',
+}
 
 function getColorScheme(): 'light' | 'dark' {
   if (typeof document === 'undefined') return 'light'
@@ -32,6 +40,7 @@ export function FootprintMap({
   variant = 'compact',
   onMarkerClick,
 }: FootprintMapProps) {
+  const { locale, t } = useLocale()
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
   const markersRef = useRef<any[]>([])
@@ -42,6 +51,8 @@ export function FootprintMap({
     markersRef.current = []
 
     const color = markerColor(getThemeFamily())
+    const hereLabel = t('components.footprintMap.here')
+    const homeAddress = t('components.footprintMap.homeAddress')
 
     // Home marker — always visible with CSS animation
     const homeEl = document.createElement('div')
@@ -54,11 +65,11 @@ export function FootprintMap({
             <circle cx="14" cy="13" r="4" fill="#fff"/>
           </svg>
         </div>
-        <span style="font-size:12px;font-weight:600;color:var(--text-primary,#333);margin-top:-8px;white-space:nowrap;text-shadow:0 1px 3px rgba(255,255,255,0.8);">我在这里</span>
+        <span style="font-size:12px;font-weight:600;color:var(--text-primary,#333);margin-top:-8px;white-space:nowrap;text-shadow:0 1px 3px rgba(255,255,255,0.8);">${hereLabel}</span>
       </div>`
     homeEl.style.cursor = 'default'
 
-    const homePopup = new maplibregl.Popup({ offset: 28 }).setHTML('<strong>我在这里</strong><br><span style="font-size:12px;color:#666">深圳市宝安区 · 立新湖创意园</span>')
+    const homePopup = new maplibregl.Popup({ offset: 28 }).setHTML(`<strong>${hereLabel}</strong><br><span style="font-size:12px;color:#666">${homeAddress}</span>`)
     const homeMarker = new maplibregl.Marker({ element: homeEl, anchor: 'bottom' })
       .setLngLat(DEFAULT_CENTER)
       .addTo(map)
@@ -73,8 +84,9 @@ export function FootprintMap({
 
     // Footprint markers
     footprints.forEach((fp) => {
+      const dateLabel = new Date(fp.date).toLocaleDateString(DATE_LOCALE_BY_LANG[locale])
       const popup = new maplibregl.Popup({ offset: 25 }).setHTML(
-        `<strong>${fp.name}</strong><br><span style="font-size:12px;color:#666">${new Date(fp.date).toLocaleDateString('zh-CN')}</span>`
+        `<strong>${fp.name}</strong><br><span style="font-size:12px;color:#666">${dateLabel}</span>`
       )
 
        const el = document.createElement('div')
@@ -106,7 +118,7 @@ export function FootprintMap({
       footprints.forEach((fp) => bounds.extend([fp.lng, fp.lat]))
       map.fitBounds(bounds, { padding: 60, maxZoom: 12 })
     }
-  }, [footprints, variant, onMarkerClick])
+  }, [footprints, variant, onMarkerClick, locale, t])
 
   useEffect(() => {
     const el = containerRef.current
@@ -234,7 +246,7 @@ export function FootprintMap({
             <line x1="50%" y1="57%" x2="50%" y2="85%" stroke="var(--accent-color, #C89060)" strokeWidth="1.5" opacity="0.25" strokeDasharray="3,4" />
             {/* Center label */}
             <text x="50%" y="93%" textAnchor="middle" fontSize="13" fill="var(--text-secondary, #666)" fontWeight="500" style={{ animation: 'fp-fadeIn 0.6s ease-out' }}>
-              我在这里
+              {t('components.footprintMap.here')}
             </text>
           </svg>
           {/* Text overlay */}
@@ -243,10 +255,10 @@ export function FootprintMap({
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
           }}>
             <span style={{ fontSize: 14, color: 'var(--text-secondary, #666)', fontWeight: 500 }}>
-              地图加载中
+              {t('components.footprintMap.loading')}
             </span>
             <span style={{ fontSize: 12, color: 'var(--text-muted, #999)' }}>
-              正在绘制足迹
+              {t('components.footprintMap.loadingDetail')}
             </span>
           </div>
         </div>

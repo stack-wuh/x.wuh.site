@@ -1,6 +1,14 @@
 import QRCode from 'qrcode'
 import type { ShareCardData } from './specs'
 
+/** 绘制文案由组件层按 locale 翻译后传入，canvas 函数本身不感知词典 */
+export interface ShareCardTexts {
+  /** 二维码下方提示语，如「扫码阅读全文」 */
+  scanToRead: string
+  /** 阅读量后缀文案，如「123 次阅读」；空串表示不展示 */
+  viewsMeta: string
+}
+
 const CARD_WIDTH = 1080
 const CARD_HEIGHT = 1440
 const PADDING = 72
@@ -259,6 +267,7 @@ function drawTextWithEllipsis(
 export async function drawShareCard(
   canvas: HTMLCanvasElement,
   data: ShareCardData,
+  texts: ShareCardTexts,
 ): Promise<void> {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
@@ -424,8 +433,8 @@ export async function drawShareCard(
   drawTextWithEllipsis(ctx, data.authorName, textX, avatarCy - avatarRadius, CARD_WIDTH - PADDING - qrSize - 60 - textX)
 
   let metaText = formatDate(data.createdAt)
-  if (data.viewCount !== undefined && data.viewCount > 0) {
-    metaText += ` · ${data.viewCount} 次阅读`
+  if (texts.viewsMeta) {
+    metaText += ` · ${texts.viewsMeta}`
   }
   ctx.fillStyle = COLORS.textSecondary
   ctx.font = '400 26px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
@@ -442,7 +451,7 @@ export async function drawShareCard(
     ctx.font = '400 20px "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
-    ctx.fillText('扫码阅读全文', qrX + qrSize / 2, qrY + qrSize + 12)
+    ctx.fillText(texts.scanToRead, qrX + qrSize / 2, qrY + qrSize + 12)
   }
 
   ctx.fillStyle = COLORS.textMuted

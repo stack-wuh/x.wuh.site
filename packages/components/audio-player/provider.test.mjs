@@ -24,7 +24,8 @@ test('不可播曲目按队列顺序推进且整轮尝试不超过队列长度',
   assert.match(providerSource, /const skipped = attempts \+ 1/)
   assert.match(providerSource, /if \(nextIndex === -1 \|\| skipped >= queue\.length\)/)
   assert.match(providerSource, /playTrackAtRef\.current\(nextIndex, skipped\)/)
-  assert.match(providerSource, /已跳过 \$\{skipped\} 首不可播放的曲目/)
+  // 文案已迁 i18n 词典（player.skippedNotice），守卫改为断言带 count 插值的 t() 调用形状
+  assert.match(providerSource, /t\('player\.skippedNotice', \{ count: skipped \}\)/)
   assert.match(providerSource, /status: 'idle', error: /)
 })
 

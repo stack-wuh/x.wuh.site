@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { BilibiliPlayer } from "@wuh.site/components/footprint-map/bilibili";
+import { useLocale, type Locale } from "@wuh.site/components/locales";
 import type { FootprintData } from "@wuh.site/components/footprint-map";
 
 const FootprintMap = dynamic(
@@ -24,7 +25,11 @@ import {
 } from "@wuh.site/components/footprint-map/styles";
 import * as S from "./styles";
 
+/** locale → Intl 地区码（zh 需显式 zh-CN） */
+const INTL_LOCALE: Record<Locale, string> = { zh: "zh-CN", en: "en", ja: "ja" };
+
 export default function FootprintPage() {
+  const { t, locale } = useLocale();
   const [footprints, setFootprints] = useState<FootprintData[]>([]);
   const [selected, setSelected] = useState<FootprintData | null>(null);
   const imagePreview = useImagePreview();
@@ -45,12 +50,12 @@ export default function FootprintPage() {
   };
 
   const handlePhotoClick = (index: number) => {
-    imagePreview.open(index);
+    imagePreview.openPreview(index);
   };
 
   return (
     <S.Root>
-      <S.Title>足迹</S.Title>
+      <S.Title>{t("footprint.page.title")}</S.Title>
       <FullLayout>
         <MapPanel>
           <FootprintMap
@@ -65,7 +70,7 @@ export default function FootprintPage() {
               <div>
                 <PlaceName>{selected.name}</PlaceName>
                 <PlaceDate>
-                  {new Date(selected.date).toLocaleDateString("zh-CN", {
+                  {new Date(selected.date).toLocaleDateString(INTL_LOCALE[locale], {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -115,7 +120,7 @@ export default function FootprintPage() {
               )}
             </>
           ) : (
-            <EmptyPanel>请在地图上选择一个地点</EmptyPanel>
+            <EmptyPanel>{t("footprint.page.emptyPanel")}</EmptyPanel>
           )}
         </ContentPanel>
       </FullLayout>

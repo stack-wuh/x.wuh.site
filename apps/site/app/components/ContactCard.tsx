@@ -7,9 +7,13 @@ import Image from '@wuh.site/components/image'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
+import { useLocale } from '@wuh.site/components/locales'
 import { IconGithub, IconTwitter, IconDouban, IconMusic, IconDiscord, IconLogo } from '@wuh.site/components/icons'
+import type { ContactType } from './ContactConfig'
 
 export type ContactCardProps = {
+  /** 渠道类型：存在时 title/tagline/hints/linkLabel 随 locale 走词典（site.contact.<type>.*） */
+  id?: ContactType
   badge: string
   name: string
   handle: string
@@ -244,7 +248,19 @@ const linkIconMap: Record<string, React.ReactNode> = {
 
 /* ====== Component ====== */
 
+/** 各渠道的提示语 key 数（wechat/qq 两条，其余一条），句数不写死在渲染里 */
+const HINT_KEYS: Record<ContactType, string[]> = {
+  wechat: ['hint1', 'hint2'],
+  qq: ['hint1', 'hint2'],
+  twitter: ['hint1'],
+  github: ['hint1'],
+  douban: ['hint1'],
+  netease: ['hint1'],
+  discord: ['hint1'],
+}
+
 const ContactCard = ({
+  id,
   badge,
   name,
   handle,
@@ -255,23 +271,34 @@ const ContactCard = ({
   linkUrl,
   linkLabel,
 }: ContactCardProps) => {
+  const { t } = useLocale()
+  const hasQR = Boolean(qrSrc)
+  const hasLink = Boolean(linkUrl)
+
+  // 内容文案：渠道 id 存在时随 locale 取词典（zh 缺 key 回落 props 兜底），
+  // 平台品牌名（badge/name）不经词典
+  const displayTitle = id ? t(`site.contact.${id}.title`) : title
+  const displayTagline = id ? t(`site.contact.${id}.tagline`) : tagline
+  const displayHints = useMemo(
+    () => (id ? HINT_KEYS[id].map((key) => t(`site.contact.${id}.${key}`)) : hints),
+    [id, hints, t]
+  )
+  const displayLinkLabel = id && hasLink ? t(`site.contact.${id}.linkLabel`) : linkLabel
+
   const previewItems = useMemo<ImagePreviewItem[]>(() => {
     if (!qrSrc) return []
     return [
       {
         src: qrSrc,
-        alt: `${name} 的 ${badge} 二维码`,
-        title: `${name} · ${badge} 二维码`,
-        description: tagline,
+        alt: t('site.contact.qrAlt', { name, badge }),
+        title: t('site.contact.qrTitle', { name, badge }),
+        description: displayTagline,
       },
     ]
-  }, [qrSrc, name, badge, tagline])
+  }, [qrSrc, name, badge, displayTagline, t])
 
   const [previewOpen, setPreviewOpen] = useState(false)
   const actionRef = useRef<HTMLButtonElement | HTMLAnchorElement>(null)
-
-  const hasQR = Boolean(qrSrc)
-  const hasLink = Boolean(linkUrl)
 
   // 3D 指针手势：CSS 变量直写 DOM（每帧不触发重渲）；
   // 触屏设备不绑定监听，reduced-motion 停用倾斜（hover 上浮与光泽淡入保留）；
@@ -316,18 +343,18 @@ const ContactCard = ({
             href={hasLink ? linkUrl : undefined}
             target={hasLink ? '_blank' : undefined}
             rel={hasLink ? 'noopener noreferrer' : undefined}
-            aria-label={hasLink ? `前往 ${badge}` : `查看 ${badge} 二维码`}
+            aria-label={hasLink ? t('site.contact.goTo', { badge }) : t('site.contact.viewQr', { badge })}
             onClick={hasQR ? () => setPreviewOpen(true) : undefined}
           >
             {hasQR && (
               <QrMat>
-                <QRImage role='qr' src={qrSrc} alt={`${name} 的 ${badge} 二维码`} width={160} height={160} />
+                <QRImage role='qr' src={qrSrc} alt={t('site.contact.qrAlt', { name, badge })} width={160} height={160} />
               </QrMat>
             )}
             {hasLink && (
               <LinkButton as='span'>
                 <LinkIcon>{linkIconMap[badge]}</LinkIcon>
-                {linkLabel}
+                {displayLinkLabel}
               </LinkButton>
             )}
           </ActionArea>
@@ -339,13 +366,13 @@ const ContactCard = ({
                 <Handle>{handle}</Handle>
               </NameBlock>
             </Header>
-            <Role>{title}</Role>
-            <Tagline>{tagline}</Tagline>
+            <Role>{displayTitle}</Role>
+            <Tagline>{displayTagline}</Tagline>
           </Info>
         </Body>
-        {hints.length > 0 && (
+        {displayHints.length > 0 && (
           <Hints>
-            {hints.map((hint, i) => (
+            {displayHints.map((hint, i) => (
               <Hint key={i}>
                 <HintDot>·</HintDot>
                 {hint}

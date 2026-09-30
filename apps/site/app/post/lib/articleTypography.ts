@@ -18,7 +18,25 @@ export type ArticleSection = {
   shortNum: string | null
 }
 
+/** 排印本地化文案：由调用方按当前 locale 提供（纯 lib 层不接 React） */
+export interface TypographyTexts {
+  /** 目录短序号序列（壹/贰/叁… 或 I/II/III…），超出长度回退阿拉伯数字 */
+  numerals: readonly string[]
+  /** 章节记号格式化，入参为短序号，如 (n) => `第${n}节` */
+  formatSection: (numeral: string) => string
+}
+
 const CN_NUMERALS = ['壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾', '拾壹', '拾贰']
+const EN_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+const JA_NUMERALS = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
+
+/** 各 locale 的目录短序号序列（排印选择，不进词典） */
+export const SECTION_NUMERALS: Record<'zh' | 'en' | 'ja', readonly string[]> = {
+  zh: CN_NUMERALS,
+  en: EN_NUMERALS,
+  ja: JA_NUMERALS,
+}
+
 // 作者手写编号前缀：中文数字（一、十二、）或阿拉伯数字（1. 2、）
 const NUMERAL_PREFIX = /(?:[一二三四五六七八九十百]+|\d+)[、.．]\s*/
 const ANCHOR_RE = /<a[^>]*class="anchor"[^>]*>[\s\S]*?<\/a>/
@@ -45,7 +63,7 @@ function injectDropCap(html: string): string {
   })
 }
 
-export function transformArticleTypography(html: string): { html: string; sections: ArticleSection[] } {
+export function transformArticleTypography(html: string, texts: TypographyTexts): { html: string; sections: ArticleSection[] } {
   if (!html) return { html: '', sections: [] }
 
   const sections: ArticleSection[] = []
@@ -69,8 +87,8 @@ export function transformArticleTypography(html: string): { html: string; sectio
       }
 
       sectionIndex += 1
-      const shortNum = sectionIndex <= CN_NUMERALS.length ? CN_NUMERALS[sectionIndex - 1] : String(sectionIndex)
-      const num = `第${shortNum}节`
+      const shortNum = sectionIndex <= texts.numerals.length ? texts.numerals[sectionIndex - 1] : String(sectionIndex)
+      const num = texts.formatSection(shortNum)
       // 仅当标题以文字（而非行内标签）开头时才安全剥离手写编号
       const lead = LEADING_WHITESPACE.exec(content)?.[0] ?? ''
       const body = content.slice(lead.length)

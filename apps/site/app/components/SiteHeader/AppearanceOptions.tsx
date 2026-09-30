@@ -1,6 +1,7 @@
 'use client'
 
 import type { ThemeFamily } from '@wuh.site/components/themes/tokens'
+import { useLocale, type Locale } from '@wuh.site/components/locales'
 import type { ColorSchemeMode } from '../theme/ThemeModeProvider'
 import * as S from './styles'
 
@@ -15,29 +16,34 @@ interface AppearanceOptionsProps {
  * 主题选择控件（试笔墨签）。
  * 样本色值引用 Layer 1 原始调色板变量（--_wl-* / --_pl-*）：它们恒定挂在 :root、
  * 不随当前主题路由——预览展示的永远是样本自己的纸墨，与"当前生效的主题"无关。
+ * label 不进静态表：渲染时随 locale 从词典取（site.appearance.*）。
  */
-const THEME_OPTIONS: Array<{ value: ThemeFamily; label: string; paper: string; ink: string; line: string }> = [
+const THEME_OPTIONS: Array<{ value: ThemeFamily; labelKey: string; paper: string; ink: string; line: string }> = [
   {
     value: 'wine',
-    label: '酒红',
+    labelKey: 'site.appearance.wine',
     paper: 'var(--_wl-background-900)',
     ink: 'var(--_wl-normal-900)',
     line: 'var(--_wl-primary-500)',
   },
   {
     value: 'plain',
-    label: '素雅',
+    labelKey: 'site.appearance.plain',
     paper: 'var(--_pl-background-900)',
     ink: 'var(--_pl-normal-900)',
     line: 'var(--_pl-primary-600)',
   },
 ]
 
-const SCHEME_OPTIONS: Array<{ value: ColorSchemeMode; label: string }> = [
-  { value: 'system', label: '跟随系统' },
-  { value: 'light', label: '浅色' },
-  { value: 'dark', label: '深色' },
+const SCHEME_OPTIONS: Array<{ value: ColorSchemeMode; labelKey: string }> = [
+  { value: 'system', labelKey: 'site.appearance.system' },
+  { value: 'light', labelKey: 'site.appearance.light' },
+  { value: 'dark', labelKey: 'site.appearance.dark' },
 ]
+
+/** 界面语言循环顺序（中→EN→日）与各语言自称名（跨语言不变量，不进词典）。 */
+const LOCALE_CYCLE: Locale[] = ['zh', 'en', 'ja']
+const LOCALE_SELF_NAMES: Record<Locale, string> = { zh: '中', en: 'EN', ja: '日' }
 
 /**
  * 共享桌面与移动端的主题风格和显示模式选择控件。
@@ -48,10 +54,14 @@ export default function AppearanceOptions({
   onThemeFamilyChange,
   onColorSchemeModeChange,
 }: AppearanceOptionsProps) {
+  const { locale, setLocale, t } = useLocale()
+  const nextLocale = LOCALE_CYCLE[(LOCALE_CYCLE.indexOf(locale) + 1) % LOCALE_CYCLE.length]
+  const languageAria = t('site.appearance.languageAria', { locale: LOCALE_SELF_NAMES[locale] })
+
   return (
     <>
-      <S.AppearanceGroup aria-label='主题风格'>
-        <S.AppearanceLabel>主题</S.AppearanceLabel>
+      <S.AppearanceGroup aria-label={t('site.appearance.themeGroup')}>
+        <S.AppearanceLabel>{t('site.appearance.themeLabel')}</S.AppearanceLabel>
         <S.ThemeSwatches>
           {THEME_OPTIONS.map((option) => (
             <S.ThemeSwatch
@@ -64,14 +74,14 @@ export default function AppearanceOptions({
                 <span>念</span>
                 <span className='ink-rule' />
               </S.InkSample>
-              <S.SwatchLabel>{option.label}</S.SwatchLabel>
+              <S.SwatchLabel>{t(option.labelKey)}</S.SwatchLabel>
             </S.ThemeSwatch>
           ))}
         </S.ThemeSwatches>
       </S.AppearanceGroup>
 
-      <S.AppearanceGroup aria-label='显示模式'>
-        <S.AppearanceLabel>明暗</S.AppearanceLabel>
+      <S.AppearanceGroup aria-label={t('site.appearance.schemeGroup')}>
+        <S.AppearanceLabel>{t('site.appearance.schemeLabel')}</S.AppearanceLabel>
         <S.SchemeOptions>
           {SCHEME_OPTIONS.map((option) => (
             <S.SchemeOption
@@ -80,10 +90,24 @@ export default function AppearanceOptions({
               aria-pressed={colorSchemeMode === option.value}
               onClick={() => onColorSchemeModeChange(option.value)}
             >
-              {option.label}
+              {t(option.labelKey)}
             </S.SchemeOption>
           ))}
         </S.SchemeOptions>
+      </S.AppearanceGroup>
+
+      <S.AppearanceGroup aria-label={t('site.appearance.languageGroup')}>
+        <S.AppearanceLabel>{t('site.appearance.languageLabel')}</S.AppearanceLabel>
+        <S.LanguageCycleRow>
+          <S.LanguageCycle
+            type='button'
+            aria-label={languageAria}
+            title={languageAria}
+            onClick={() => setLocale(nextLocale)}
+          >
+            {LOCALE_SELF_NAMES[locale]}
+          </S.LanguageCycle>
+        </S.LanguageCycleRow>
       </S.AppearanceGroup>
     </>
   )

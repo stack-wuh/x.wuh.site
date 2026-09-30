@@ -1,14 +1,10 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import * as S from './styles'
 
-const PHRASES = [
-  '写作是抵抗遗忘的方式，代码是构建世界的语言。',
-  '不要停步不前，每一天都要做出改变。',
-]
-
-// 布局稳定占位：容器高度由最长句在当前宽度下的行数锁定，与打字进度无关
-const SIZER_TEXT = PHRASES.reduce((longer, p) => (p.length > longer.length ? p : longer))
+// 标语随 locale 派生（site.motto.*），容器高度锁定逻辑不写死句数
+const MOTTO_KEYS = ['site.motto.phrase1', 'site.motto.phrase2']
 
 const TYPING_MS = 100
 const DELETING_MS = 50
@@ -26,6 +22,13 @@ interface Particle {
 let pid = 0
 
 export default function TypewriterMotto() {
+  const { t } = useLocale()
+  // 当前 locale 的标语数组：句数由词典派生，Sizer 占位取最长句
+  const phrases = useMemo(() => MOTTO_KEYS.map((key) => t(key)), [t])
+  const sizerText = useMemo(
+    () => phrases.reduce((longer, p) => (p.length > longer.length ? p : longer)),
+    [phrases]
+  )
   const [text, setText] = useState('')
   const [phase, setPhase] = useState<'typing' | 'pausing' | 'deleting' | 'switching'>('typing')
   const [phraseIdx, setPhraseIdx] = useState(0)
@@ -36,7 +39,7 @@ export default function TypewriterMotto() {
 
   // Typing state machine
   useEffect(() => {
-    const target = PHRASES[phraseIdx]
+    const target = phrases[phraseIdx]
 
     if (phase === 'typing') {
       if (text === target) {
@@ -64,12 +67,12 @@ export default function TypewriterMotto() {
 
     if (phase === 'switching') {
       const timer = setTimeout(() => {
-        setPhraseIdx((i) => (i + 1) % PHRASES.length)
+        setPhraseIdx((i) => (i + 1) % phrases.length)
         setPhase('typing')
       }, SWITCH_MS)
       return () => clearTimeout(timer)
     }
-  }, [text, phase, phraseIdx])
+  }, [text, phase, phraseIdx, phrases])
 
   // Measure cursor position for glow
   useEffect(() => {
@@ -105,8 +108,8 @@ export default function TypewriterMotto() {
 
   return (
     <>
-      <S.Container ref={containerRef} aria-label={PHRASES[phraseIdx]}>
-        <S.Sizer aria-hidden="true">{SIZER_TEXT}</S.Sizer>
+      <S.Container ref={containerRef} aria-label={phrases[phraseIdx]}>
+        <S.Sizer aria-hidden="true">{sizerText}</S.Sizer>
         <S.Content>
           <S.Line>
             <S.TextWrap ref={textRef}>{text}</S.TextWrap>

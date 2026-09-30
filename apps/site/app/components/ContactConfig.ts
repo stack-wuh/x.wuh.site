@@ -1,75 +1,90 @@
 import type { ContactCardProps } from './ContactCard'
+import { site } from '@wuh.site/components/locales/dictionaries/zh/site'
+
+const contact = site.contact
 
 export type ContactType = 'wechat' | 'qq' | 'twitter' | 'github' | 'douban' | 'netease' | 'discord'
 export type ContactDialogConfig = ContactCardProps
 
+/**
+ * 渠道静态配置：二维码/链接/账号等结构数据在此；
+ * 内容文案（title/tagline/hints/linkLabel）引用 zh 词典兜底，
+ * 渲染时 ContactCard 按 id 取当前 locale 词典；平台品牌名不译。
+ */
 export const CONTACT_CONFIG: Record<ContactType, ContactDialogConfig> = {
   wechat: {
+    id: 'wechat',
     badge: 'WeChat',
     qrSrc: 'https://cdn.wuh.site/web/wechat.jpg',
     name: 'stack-wuh',
     handle: 'shadow_u',
-    title: '工程化 & 可视化',
-    tagline: '代码写诗，工具作画',
-    hints: ['扫码即可开启一场 1:1 对话', '备注「官网来访」我们会更快相遇'],
+    title: contact.wechat.title,
+    tagline: contact.wechat.tagline,
+    hints: [contact.wechat.hint1, contact.wechat.hint2],
   },
   qq: {
+    id: 'qq',
     badge: 'QQ',
     qrSrc: 'https://cdn.wuh.site/web/qq.jpg',
     name: 'stack-wuh',
     handle: 'shadow_u',
-    title: '实时沟通',
-    tagline: '山海皆可平，何况是聊个天',
-    hints: ['扫码即刻语音或文字交流', '备注「官网来访」我们会更快相遇'],
+    title: contact.qq.title,
+    tagline: contact.qq.tagline,
+    hints: [contact.qq.hint1, contact.qq.hint2],
   },
   twitter: {
+    id: 'twitter',
     badge: 'Twitter',
     linkUrl: 'https://x.com/wuh131420',
-    linkLabel: '前往 Twitter 主页',
+    linkLabel: contact.twitter.linkLabel,
     name: 'wuh131420',
     handle: '@wuh131420',
-    title: 'Twitter',
-    tagline: '碎片灵感，即时分享',
-    hints: ['技术观察 & 灵感速写 & 碎碎念'],
+    title: contact.twitter.title,
+    tagline: contact.twitter.tagline,
+    hints: [contact.twitter.hint1],
   },
   github: {
+    id: 'github',
     badge: 'GitHub',
     linkUrl: 'https://github.com/stack-wuh',
-    linkLabel: '前往 GitHub 主页',
+    linkLabel: contact.github.linkLabel,
     name: 'stack-wuh',
     handle: '@stack-wuh',
-    title: 'GitHub',
-    tagline: '开源是一种信仰',
-    hints: ['你是什么样的人，就会看到什么样的代码'],
+    title: contact.github.title,
+    tagline: contact.github.tagline,
+    hints: [contact.github.hint1],
   },
   douban: {
+    id: 'douban',
     badge: '豆瓣',
     linkUrl: 'https://www.douban.com/people/wuh-site/?_i=6001540Kgx5FFN',
-    linkLabel: '前往豆瓣主页',
+    linkLabel: contact.douban.linkLabel,
     name: 'wuh.site',
     handle: 'wuh-site',
-    title: '豆瓣',
-    tagline: '书影音标记，精神自留地',
-    hints: ['标记过的书影音，构成了一个人的轮廓'],
+    title: contact.douban.title,
+    tagline: contact.douban.tagline,
+    hints: [contact.douban.hint1],
   },
   netease: {
+    id: 'netease',
     badge: '网易云',
     linkUrl: 'https://music.163.com/#/user/home?id=398326271',
-    linkLabel: '前往网易云主页',
+    linkLabel: contact.netease.linkLabel,
     name: 'stack-wuh',
     handle: 'wuh131420',
-    title: '网易云音乐',
-    tagline: '算法推荐不了一颗有趣的灵魂',
-    hints: ['用耳朵投票，每一首都算数'],
+    title: contact.netease.title,
+    tagline: contact.netease.tagline,
+    hints: [contact.netease.hint1],
   },
   discord: {
+    id: 'discord',
     badge: 'Discord',
     linkUrl: 'https://discord.com/users/shadowoo1995',
-    linkLabel: '前往 Discord',
+    linkLabel: contact.discord.linkLabel,
     name: 'shadowoo1995',
     handle: '@shadowoo1995',
-    title: 'Discord',
-    tagline: '语音频道见，比 issue 更快',
-    hints: ['技术闲聊 & 问题讨论 & 摸鱼胜地'],
+    title: contact.discord.title,
+    tagline: contact.discord.tagline,
+    hints: [contact.discord.hint1],
   },
 }

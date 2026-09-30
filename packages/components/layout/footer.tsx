@@ -1,6 +1,9 @@
+'use client'
+
 import * as React from 'react'
 import Divider from '@wuh.site/components/divider'
 import { IconLogo } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import { SiteStats } from './site-stats'
 import { StyledFooter } from './styles'
 import { footerConf } from './specs'
@@ -13,6 +16,7 @@ function copyrightYears(): string {
 }
 
 const Footer = () => {
+  const { t } = useLocale()
   return (
     <StyledFooter>
       <div className="footer-inner">
@@ -24,7 +28,7 @@ const Footer = () => {
 
         <p className="footer-slogan">{footerConf.slogan}</p>
 
-        <nav className="footer-nav" aria-label="页脚导航">
+        <nav className="footer-nav" aria-label={t('site.footer.navAria')}>
           {footerConf.navItems.map((item) => (
             <a key={item.href} href={item.href}>
               {item.label}
@@ -46,7 +50,7 @@ const Footer = () => {
           <a className="footer-license" href={footerConf.licenseHref} target="_blank" rel="noopener noreferrer">
             {footerConf.license}
           </a>
-          <span className="footer-note-tech">由 {footerConf.techStack.join(' · ')} 强力驱动</span>
+          <span className="footer-note-tech">{t('site.footer.poweredBy', { stack: footerConf.techStack.join(' · ') })}</span>
         </div>
 
         <SiteStats />

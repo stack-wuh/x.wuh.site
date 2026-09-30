@@ -3,17 +3,24 @@
 import * as React from 'react'
 import Dialog from '@wuh.site/components/dialog'
 import message from '@wuh.site/components/message'
+import { useLocale } from '@wuh.site/components/locales'
 import { IconDownload } from '@wuh.site/components/icons'
-import { drawShareCard } from './canvas'
+import { drawShareCard, type ShareCardTexts } from './canvas'
 import type { ShareCardProps } from './specs'
 import * as S from './styles'
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
 export default function ShareCard({ open, onClose, data }: ShareCardProps) {
+  const { t } = useLocale()
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const dataRef = React.useRef(data)
   dataRef.current = data
+  const textsRef = React.useRef<ShareCardTexts>({ scanToRead: '', viewsMeta: '' })
+  textsRef.current = {
+    scanToRead: t('post.shareCard.scanToRead'),
+    viewsMeta: (data.viewCount ?? 0) > 0 ? t('post.shareCard.views', { n: data.viewCount as number }) : '',
+  }
   const [status, setStatus] = React.useState<Status>('idle')
   const [errorMsg, setErrorMsg] = React.useState('')
   const blobUrlRef = React.useRef<string | null>(null)
@@ -30,12 +37,12 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
       const canvas = canvasRef.current
       if (!canvas || cancelled) return
       try {
-        await drawShareCard(canvas, dataRef.current)
+        await drawShareCard(canvas, dataRef.current, textsRef.current)
         if (cancelled) return
         canvas.toBlob((blob) => {
           if (cancelled) return
           if (!blob) {
-            setErrorMsg('画布可能被跨域图片污染 (tainted canvas)')
+            setErrorMsg(t('post.shareCard.taintedCanvas'))
             setStatus('error')
             return
           }
@@ -56,7 +63,7 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
       cancelled = true
       clearTimeout(timer)
     }
-  }, [open, retryKey])
+  }, [open, retryKey, t])
 
   React.useEffect(() => {
     return () => {
@@ -76,7 +83,7 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    message.success('图片已保存到下载文件夹')
+    message.success(t('post.shareCard.saved'))
   }
 
   const handleShare = async () => {
@@ -106,15 +113,15 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
     <Dialog
       open={open}
       onClose={onClose}
-      title='生成分享图'
-      subtitle='保存图片或直接分享到社交平台'
+      title={t('post.shareCard.title')}
+      subtitle={t('post.shareCard.subtitle')}
       width='min(380px, calc(100vw - 32px))'
       closeOnEsc
       closeOnOverlay
       footer={({ close }) => (
         <S.ActionGroup>
           <S.ActionButton variant='text' color='secondary' size='small' onClick={close}>
-            取消
+            {t('post.shareCard.cancel')}
           </S.ActionButton>
           {status === 'ready' && (
             <>
@@ -124,7 +131,7 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
                 size='small'
                 onClick={handleShare}
               >
-                分享
+                {t('post.shareCard.share')}
               </S.ActionButton>
               <S.ActionButton
                 variant='filled'
@@ -133,7 +140,7 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
                 icon={<IconDownload size={16} />}
                 onClick={handleDownload}
               >
-                保存图片
+                {t('post.shareCard.save')}
               </S.ActionButton>
             </>
           )}
@@ -144,19 +151,19 @@ export default function ShareCard({ open, onClose, data }: ShareCardProps) {
         {status === 'loading' && (
           <S.LoadingWrap>
             <S.Spinner />
-            <span>正在生成分享图…</span>
+            <span>{t('post.shareCard.generating')}</span>
           </S.LoadingWrap>
         )}
         {status === 'error' && (
           <S.ErrorWrap>
-            <span>生成失败</span>
+            <span>{t('post.shareCard.failed')}</span>
             {errorMsg && (
               <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', wordBreak: 'break-all' }}>
                 {errorMsg}
               </span>
             )}
             <S.RetryButton variant='outlined' color='primary' size='small' onClick={handleRetry}>
-              重试
+              {t('post.shareCard.retry')}
             </S.RetryButton>
           </S.ErrorWrap>
         )}

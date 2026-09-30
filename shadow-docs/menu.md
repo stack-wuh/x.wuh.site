@@ -30,3 +30,4 @@
 | 错误页面 | error not-found 错误页 | knowledge/error-pages.md |
 | 桌面应用 | Electron desktop 子模块 桌面端 token 快照 图标 回退 | knowledge/desktop-app-architecture.md |
 | 桌面端插件系统 | 插件 plugin manifest broker 沙箱 iframe session 权限词表 贡献点 渲染管线 publisher 桥接 plugin-sdk | knowledge/desktop-plugin-architecture.md, knowledge/desktop-app-architecture.md |
+| 多语言 i18n | i18n 多语言 locale 语言切换 词典 翻译 LocaleProvider useLocale | knowledge/i18n-locale.md |
