@@ -22,8 +22,8 @@ source:
   - changes/archive/20260929-style-music-interaction-polish/brief.md
   - changes/20260930-style-player-dock-ruler/brief.md
   - changes/20260930-feature-player-dock-progress-seal/brief.md
-  - changes/20260930-fix-mode-band-underline-inversion/brief.md
-  - changes/20260930-fix-player-active-state-recalc/brief.md
+  - changes/archive/20260930-fix-mode-band-underline-inversion/brief.md
+  - changes/archive/20260930-fix-player-active-state-recalc/brief.md
   - changes/archive/20260930-style-player-mobile-album-leaf/brief.md
 verified: 2026-09-30
 verified-depth: runtime
