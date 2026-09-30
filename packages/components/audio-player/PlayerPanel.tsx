@@ -1052,8 +1052,9 @@ export const AudioPlayerPanel = () => {
           <ProgressWrapper>
             <ProgressRow>
               <TimeCode $now>{formatDuration(state.progress)}</TimeCode>
+              {/* progressPct 已是 0–100 百分数，直传即可——二次 ×100 会被钳到 100、光标钉死末端 */}
               <Progress
-                value={progressPct * 100}
+                value={progressPct}
                 onChange={(pct) => seek((pct / 100) * totalDuration)}
                 thumb
                 breathing={playing}
