@@ -4,7 +4,7 @@
   "name": "20260930-style-player-dock-ruler",
   "type": "style",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260930-style-player-dock-ruler",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 420,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/420",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 422,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/422"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "5363be3e7aad8a241ae70cda8e128cee3fec3b83",
-    "verifiedAt": "2026-09-30T02:54:30.832Z"
+    "verifiedCommit": "fb386a26cb2c7b1d0f25d509094ef6d6af08260b",
+    "verifiedAt": "2026-09-30T04:12:41.972Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:420",
-    "planHash": "93e45ae4ec87518a76ddec6732ccc4059a74e6631b5d5559912354db9bd0e471",
+    "checkpoint": "merged-pr:422",
+    "planHash": "64176e2210352a061a59c9fbb2cad093fb6b4bea41d4f7add82b9bffb42c7a11",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
