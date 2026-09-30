@@ -45,6 +45,12 @@ const equalize = keyframes`
   50% { transform: scaleY(1); }
 `
 
+/* 印章涟漪：朱砂环自印缘扩散消散，只在播放态运行（收起态声源指示） */
+const ripple = keyframes`
+  from { transform: scale(1); opacity: 0.55; }
+  to { transform: scale(1.55); opacity: 0; }
+`
+
 /* 0→-50% 无缝循环：每份拷贝自带右侧间隔，平移半轨即回到视觉起点 */
 const marquee = keyframes`
   0%, 10% { transform: translateX(0); }
@@ -143,8 +149,8 @@ const EarTab = styled.button`
   }
 `
 
-/* 收起态小耳：耳页从卡片上脱落，贴屏幕左缘、与展开耳同一水平线 */
-const CollapsedEar = styled.button<{ $visible: boolean }>`
+/* 收起态小耳：耳页从卡片上脱落，贴屏幕左缘、与展开耳同一水平线；播放中换装墨柱等化器指示声源 */
+const CollapsedEar = styled.button<{ $visible: boolean; $playing: boolean }>`
   position: fixed;
   left: 0;
   bottom: 48px;
@@ -178,8 +184,8 @@ const CollapsedEar = styled.button<{ $visible: boolean }>`
   }
 `
 
-/* 收起态（移动端）：朱砂「音」印章钮 */
-const SealButton = styled.button<{ $visible: boolean }>`
+/* 收起态（移动端）：朱砂「音」印章钮；播放中外圈泛涟漪环提示声源 */
+const SealButton = styled.button<{ $visible: boolean; $playing: boolean }>`
   position: fixed;
   right: var(--space-base);
   bottom: calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
@@ -211,6 +217,23 @@ const SealButton = styled.button<{ $visible: boolean }>`
   &:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 3px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    opacity: 0;
+    pointer-events: none;
+    animation: ${(p) => (p.$playing ? css`${ripple} 2.2s var(--motion-ease-out-soft) infinite` : 'none')};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+    }
   }
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
@@ -641,14 +664,24 @@ export const AudioMiniPlayer = () => {
       <CollapsedEar
         type='button'
         $visible={collapsed}
+        $playing={playing}
         aria-label='展开播放器'
         aria-expanded={!collapsed}
         onClick={toggleCollapsed}
       >
-        <IconChevronRight size={16} />
+        {/* 播放中换装展开卡同款墨柱等化器指示声源，暂停/空闲回落展开箭头 */}
+        {playing ? (
+          <Equalizer $playing={playing} aria-hidden='true'>
+            <span />
+            <span />
+            <span />
+          </Equalizer>
+        ) : (
+          <IconChevronRight size={16} />
+        )}
       </CollapsedEar>
 
-      <SealButton type='button' $visible={collapsed} aria-label='展开播放器' onClick={toggleCollapsed}>
+      <SealButton type='button' $visible={collapsed} $playing={playing} aria-label='展开播放器' onClick={toggleCollapsed}>
         音
       </SealButton>
     </>
