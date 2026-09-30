@@ -173,7 +173,7 @@ test('装裱图版：纸框发丝线 + 纸边 + 内发丝线 + mono 朱砂题签
   assert.doesNotMatch(titleBlock, /text-overflow: ellipsis/)
 })
 
-test('短词窗：mask 渐隐 + 点按跳播 + 「词未录」印章空态', () => {
+test('短词窗：mask 渐隐 + 点按跳播 + 「全体欣赏音乐」印章空态', () => {
   const winBlock = src.slice(src.indexOf('const WordWindow ='), src.indexOf('const WordLine ='))
   assert.ok(winBlock.length > 0, 'WordWindow 定义缺失')
   assert.match(winBlock, /mask-image: linear-gradient/)
@@ -186,7 +186,7 @@ test('短词窗：mask 渐隐 + 点按跳播 + 「词未录」印章空态', () 
   const emptyBlock = src.slice(src.indexOf('const WordEmpty ='), src.indexOf('const PageTicks ='))
   assert.ok(emptyBlock.length > 0, 'WordEmpty 定义缺失')
   assert.match(emptyBlock, /var\(--primary-color\)/)
-  assert.match(src, /词未录/)
+  assert.match(src, /全体欣赏音乐/)
 })
 
 test('下滑关闭手柄：横杆手柄 + 拖拽跟手（$drag 位移）+ 阈值关闭', () => {
