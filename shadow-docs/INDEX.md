@@ -56,6 +56,8 @@
 | 20260929-style-music-interaction-polish | ✅ 完成 | shadow-docs/changes/archive/20260929-style-music-interaction-polish/brief.md |
 | 20260929-style-player-collapse-ear | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-collapse-ear/brief.md |
 | 20260929-style-player-panel-inkwash | reviewed | shadow-docs/changes/20260929-style-player-panel-inkwash/brief.md |
+| 20260930-feature-player-dock-progress-seal | published | shadow-docs/changes/20260930-feature-player-dock-progress-seal/brief.md |
 | 20260930-feature-progress-component | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-progress-component/brief.md |
 | 20260930-style-player-dock-ruler | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-dock-ruler/brief.md |
+| 20260930-style-player-mobile-album-leaf | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-mobile-album-leaf/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |
