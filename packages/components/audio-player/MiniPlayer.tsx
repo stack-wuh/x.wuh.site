@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
+import { useLocale } from '@wuh.site/components/locales'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 import Progress from '@wuh.site/components/progress'
 import {
@@ -538,6 +539,7 @@ const useTitleOverflow = (title: string) => {
 }
 
 export const AudioMiniPlayer = () => {
+  const { t } = useLocale()
   const {
     currentTrack,
     state,
@@ -553,13 +555,13 @@ export const AudioMiniPlayer = () => {
   }, [collapsed])
 
   const toggleCollapsed = () => setCollapsed((prev) => !prev)
-  const name = currentTrack?.name ?? '等待播放'
+  const name = currentTrack?.name ?? t('player.mini.waiting')
   const { wrapperRef, ghostRef, metrics } = useTitleOverflow(name)
   const marqueeActive = metrics.visible > 0 && metrics.text > metrics.visible
   const marqueeDuration = `${(metrics.text + MARQUEE_GAP_PX) / MARQUEE_SPEED_PX_PER_S}s`
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0)
   const progressText =
-    totalDuration > 0 ? `${formatDuration(state.progress)} / ${formatDuration(totalDuration)}` : '等待播放'
+    totalDuration > 0 ? `${formatDuration(state.progress)} / ${formatDuration(totalDuration)}` : t('player.mini.waiting')
   const progressPercent =
     totalDuration > 0 ? Math.min(1, Math.max(0, state.progress / totalDuration)) : 0
   const playing = state.status === 'playing'
@@ -567,7 +569,7 @@ export const AudioMiniPlayer = () => {
   return (
     <>
       <MiniCard $visible={!collapsed} aria-hidden={collapsed}>
-        <OpenPanelButton type='button' onClick={togglePanel} aria-label='打开播放面板' tabIndex={collapsed ? -1 : 0}>
+        <OpenPanelButton type='button' onClick={togglePanel} aria-label={t('player.mini.openPanel')} tabIndex={collapsed ? -1 : 0}>
           <Cover $src={currentTrack?.coverUrl} aria-hidden='true'>
             {!currentTrack?.coverUrl ? <CoverFallback /> : null}
           </Cover>
@@ -594,44 +596,44 @@ export const AudioMiniPlayer = () => {
             {state.error ? (
               <Notice role='status'>{state.error}</Notice>
             ) : (
-              <Artist>{currentTrack?.artist ?? '加载默认歌单...'}</Artist>
+              <Artist>{currentTrack?.artist ?? t('player.mini.loadingDefault')}</Artist>
             )}
           </MetaCopy>
         </OpenPanelButton>
 
         <ActionGroup>
-          <IconButton type='button' aria-label='上一首' onClick={playPrevious}>
+          <IconButton type='button' aria-label={t('player.mini.previous')} onClick={playPrevious}>
             <IconSkipBack size={18} />
           </IconButton>
-          <PlayButton type='button' aria-label={playing ? '暂停' : '播放'} onClick={togglePlay}>
+          <PlayButton type='button' aria-label={playing ? t('player.mini.pause') : t('player.mini.play')} onClick={togglePlay}>
             {playing ? <IconPause size={20} /> : <IconPlay size={20} />}
           </PlayButton>
-          <IconButton type='button' aria-label='下一首' onClick={playNext}>
+          <IconButton type='button' aria-label={t('player.mini.next')} onClick={playNext}>
             <IconSkipForward size={18} />
           </IconButton>
-          <PanelButton type='button' aria-label='打开播放面板' onClick={togglePanel}>
+          <PanelButton type='button' aria-label={t('player.mini.openPanel')} onClick={togglePanel}>
             <IconListMusic size={18} />
           </PanelButton>
         </ActionGroup>
 
         <MobileActionGroup>
-          <PlayButton type='button' aria-label={playing ? '暂停' : '播放'} onClick={togglePlay}>
+          <PlayButton type='button' aria-label={playing ? t('player.mini.pause') : t('player.mini.play')} onClick={togglePlay}>
             {playing ? <IconPause size={20} /> : <IconPlay size={20} />}
           </PlayButton>
-          <IconButton type='button' aria-label='收起播放器' onClick={toggleCollapsed}>
+          <IconButton type='button' aria-label={t('player.mini.collapse')} onClick={toggleCollapsed}>
             <IconChevronDown size={20} />
           </IconButton>
         </MobileActionGroup>
 
         <ProgressRow>
-          <Progress size='sm' value={progressPercent * 100} label='播放进度' />
+          <Progress size='sm' value={progressPercent * 100} label={t('player.mini.progressLabel')} />
           <ProgressText>{progressText}</ProgressText>
         </ProgressRow>
 
         {/* 桌面书耳：卡片子元素，随卡片开合动画一体移动；移动端隐藏（移动端走 chevron-down 收起） */}
         <EarTab
           type='button'
-          aria-label='收起播放器'
+          aria-label={t('player.mini.collapse')}
           aria-expanded={!collapsed}
           tabIndex={collapsed ? -1 : 0}
           onClick={toggleCollapsed}
@@ -644,7 +646,7 @@ export const AudioMiniPlayer = () => {
         type='button'
         $visible={collapsed}
         $playing={playing}
-        aria-label='展开播放器'
+        aria-label={t('player.mini.expand')}
         aria-expanded={!collapsed}
         onClick={toggleCollapsed}
       >
@@ -660,7 +662,7 @@ export const AudioMiniPlayer = () => {
         )}
       </CollapsedEar>
 
-      <SealButton type='button' $visible={collapsed} $playing={playing} aria-label='展开播放器' onClick={toggleCollapsed}>
+      <SealButton type='button' $visible={collapsed} $playing={playing} aria-label={t('player.mini.expand')} onClick={toggleCollapsed}>
         音
       </SealButton>
     </>

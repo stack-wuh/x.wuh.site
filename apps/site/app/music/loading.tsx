@@ -2,6 +2,7 @@
 
 import styled from 'styled-components'
 import Skeleton from '@wuh.site/components/skeleton'
+import { useLocale } from '@wuh.site/components/locales'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 import {
   Chronicle,
@@ -73,13 +74,15 @@ const RAIL_WIDTHS = [52, 44, 58, 48, 46, 50]
 const NAME_WIDTHS = ['46%', '58%', '38%', '52%', '44%', '61%', '40%', '55%']
 
 export default function Loading() {
+  const { t } = useLocale()
+
   return (
     <Section aria-busy="true">
       {/* 标题/副题是静态常量直接出真容，骨架只盖数据未知区域 */}
       <PageHeader>
         <TitleGroup>
-          <PageTitle>音乐</PageTitle>
-          <PageSubtitle>网易云年度歌单 · 一年一卷编年</PageSubtitle>
+          <PageTitle>{t('music.page.title')}</PageTitle>
+          <PageSubtitle>{t('music.page.subtitle')}</PageSubtitle>
         </TitleGroup>
       </PageHeader>
 

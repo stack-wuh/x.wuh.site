@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type ImagePreviewItem, type ImagePreviewProps } from '@wuh.site/components/image-preview'
 import { useImagePreview } from '@wuh.site/hooks/useImagePreview'
+import { useLocale } from '@wuh.site/components/locales'
 
 type PreviewProps = Pick<
   ImagePreviewProps,
@@ -17,6 +18,7 @@ type PreviewProps = Pick<
 >
 
 export const usePostImagePreview = (bodyHtml?: string) => {
+  const { t } = useLocale()
   const containerRef = useRef<HTMLDivElement>(null)
   const [previewItems, setPreviewItems] = useState<ImagePreviewItem[]>([])
   const preview = useImagePreview({
@@ -39,6 +41,7 @@ export const usePostImagePreview = (bodyHtml?: string) => {
       const alt = image.getAttribute('alt')?.trim() || undefined
       const title = image.getAttribute('title')?.trim() || undefined
       const nextIndex = collected.length
+      const fallbackAria = t('post.preview.imageAria', { n: nextIndex + 1 })
 
       collected.push({
         id: image.getAttribute('data-sourcepos') ?? `${src}-${nextIndex}`,
@@ -51,12 +54,12 @@ export const usePostImagePreview = (bodyHtml?: string) => {
       image.dataset.previewIndex = String(nextIndex)
       image.setAttribute('tabindex', '0')
       image.setAttribute('role', 'button')
-      image.setAttribute('aria-label', title ?? alt ?? `预览第 ${nextIndex + 1} 张图片`)
+      image.setAttribute('aria-label', title ?? alt ?? fallbackAria)
 
       const wrapperLink = image.closest('a')
       if (wrapperLink) {
         wrapperLink.dataset.previewIndex = String(nextIndex)
-        wrapperLink.setAttribute('aria-label', title ?? alt ?? `预览第 ${nextIndex + 1} 张图片`)
+        wrapperLink.setAttribute('aria-label', title ?? alt ?? fallbackAria)
         const currentHref = wrapperLink.getAttribute('href')
         if (currentHref && !wrapperLink.dataset.originalHref) {
           wrapperLink.dataset.originalHref = currentHref
@@ -70,7 +73,7 @@ export const usePostImagePreview = (bodyHtml?: string) => {
     })
 
     return collected
-  }, [])
+  }, [t])
 
   const openPreviewByTarget = useCallback(
     (target: EventTarget | null) => {
@@ -105,33 +108,40 @@ export const usePostImagePreview = (bodyHtml?: string) => {
     const root = containerRef.current
     if (!root) return
 
+    const copyLabel = t('post.preview.copy')
+    const copiedLabel = t('post.preview.copied')
+    const failedLabel = t('post.preview.copyFailed')
+
     const pres = root.querySelectorAll('article pre')
     pres.forEach((pre) => {
-      if (pre.querySelector('.copy-btn')) return
-      const btn = document.createElement('button')
-      btn.className = 'copy-btn'
-      btn.textContent = '复制'
-      btn.setAttribute('type', 'button')
-      btn.onclick = async () => {
+      let btn = pre.querySelector<HTMLButtonElement>('.copy-btn')
+      if (!btn) {
+        btn = document.createElement('button')
+        btn.className = 'copy-btn'
+        btn.setAttribute('type', 'button')
+        pre.appendChild(btn)
+      }
+      const button = btn
+      button.textContent = copyLabel
+      button.onclick = async () => {
         const code = pre.querySelector('code')?.textContent || ''
         try {
           await navigator.clipboard.writeText(code)
-          btn.textContent = '已复制'
+          button.textContent = copiedLabel
           setTimeout(() => {
-            btn.textContent = '复制'
+            button.textContent = copyLabel
           }, 1500)
         } catch {
-          btn.textContent = '失败'
+          button.textContent = failedLabel
           setTimeout(() => {
-            btn.textContent = '复制'
+            button.textContent = copyLabel
           }, 1500)
         }
       }
-      pre.appendChild(btn)
     })
 
     setPreviewItems(decorateAndCollectImages())
-  }, [bodyHtml, decorateAndCollectImages])
+  }, [bodyHtml, decorateAndCollectImages, t])
 
   useEffect(() => {
     const root = containerRef.current
@@ -178,9 +188,9 @@ export const usePostImagePreview = (bodyHtml?: string) => {
       showThumbnails: previewItems.length > 1,
       enableLoop: previewItems.length > 1,
       allowDownload: false,
-      hint: '博客图片预览',
+      hint: t('post.preview.hint'),
     }),
-    [closePreview, openPreview, previewIndex, previewItems, previewOpen, setIndex]
+    [closePreview, openPreview, previewIndex, previewItems, previewOpen, setIndex, t]
   )
 
   return {

@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@wuh.site/components/locales'
 
 import {
   Backdrop,
@@ -85,6 +86,8 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
     style,
     ...rest
   } = props
+
+  const { t } = useLocale()
 
   const sanitizedZoomSteps = React.useMemo(() => {
     const filtered = zoomSteps.filter((value) => Number.isFinite(value) && value > 0)
@@ -355,16 +358,16 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   }
 
   const captionContent = currentItem ? (
-    renderCaption?.(currentItem, currentIndex) ?? currentItem.description ?? currentItem.title ?? currentItem.alt ?? '图片预览'
+    renderCaption?.(currentItem, currentIndex) ?? currentItem.description ?? currentItem.title ?? currentItem.alt ?? t('components.preview.title')
   ) : (
-    '无可预览图片'
+    t('components.preview.emptyCaption')
   )
 
   const metaAuthor = (() => {
     const candidate = (currentItem?.meta as { author?: string } | undefined)?.author
     return typeof candidate === 'string' ? candidate : undefined
   })()
-  const subtitleText = metaAuthor ?? '按 ←/→ 切换 · ESC 关闭'
+  const subtitleText = metaAuthor ?? t('components.preview.subtitleHint')
 
   return createPortal(
     <>
@@ -386,7 +389,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
           <PreviewSurface $disableMotion={disableAnimation}>
             <Header>
               <Title>
-                <TitleLabel>{currentItem?.title ?? '图片预览'}</TitleLabel>
+                <TitleLabel>{currentItem?.title ?? t('components.preview.title')}</TitleLabel>
                 <Subtitle>{subtitleText}</Subtitle>
               </Title>
               {renderToolbar ? (
@@ -423,7 +426,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
                         <motion.img
                           key={currentItem?.src ?? 'empty'}
                           src={currentItem?.src}
-                          alt={currentItem?.alt ?? currentItem?.title ?? '图片预览'}
+                          alt={currentItem?.alt ?? currentItem?.title ?? t('components.preview.title')}
                           draggable={false}
                           initial={{ opacity: 0, x: swipeDirection.current * 40 }}
                           animate={{
@@ -452,10 +455,10 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
                     </ImageStage>
                     {isMobile && hasItems && total > 1 && (
                       <>
-                        <MobileNavArrow $side='left' onClick={goPrevious} aria-label='上一张'>
+                        <MobileNavArrow $side='left' onClick={goPrevious} aria-label={t('components.preview.previous')}>
                           <IconArrowLeft />
                         </MobileNavArrow>
-                        <MobileNavArrow $side='right' onClick={goNext} aria-label='下一张'>
+                        <MobileNavArrow $side='right' onClick={goNext} aria-label={t('components.preview.next')}>
                           <IconArrowRight />
                         </MobileNavArrow>
                       </>
@@ -463,7 +466,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
                   </>
                 ) : (
                   <EmptyState>
-                    <p>暂无可预览图片</p>
+                    <p>{t('components.preview.emptyState')}</p>
                   </EmptyState>
                 )}
               </Viewport>
@@ -481,7 +484,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
                   renderThumbnail={renderThumbnail}
                 />
               )}
-              {allowKeyboard && !isMobile && <KeyboardLegend>←/→ 导航 · 空格下一张 · ESC 关闭</KeyboardLegend>}
+              {allowKeyboard && !isMobile && <KeyboardLegend>{t('components.preview.legend')}</KeyboardLegend>}
             </Footer>
           </PreviewSurface>
         </PreviewContainer>

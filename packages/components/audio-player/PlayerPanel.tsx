@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
+import { useLocale } from '@wuh.site/components/locales'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 import Progress from '@wuh.site/components/progress'
 import {
@@ -867,13 +868,14 @@ const QueueMeta = styled.span`
   color: ${INK_FAINT};
 `
 
-const MODE_LABELS: Record<PlayerMode, string> = {
-  order: '顺序',
-  'repeat-one': '单曲',
-  shuffle: '随机'
+const MODE_LABEL_KEYS: Record<PlayerMode, string> = {
+  order: 'player.panel.modeOrder',
+  'repeat-one': 'player.panel.modeRepeatOne',
+  shuffle: 'player.panel.modeShuffle'
 }
 
 export const AudioPlayerPanel = () => {
+  const { t } = useLocale()
   const {
     currentTrack,
     queue,
@@ -1033,18 +1035,18 @@ export const AudioPlayerPanel = () => {
         $drag={dragY}
         role='dialog'
         aria-modal='true'
-        aria-label='播放器面板'
+        aria-label={t('player.panel.title')}
         aria-hidden={!state.isPanelOpen}
       >
         <WashSrc $src={currentTrack?.coverUrl} aria-hidden='true' />
         <PaperVeil aria-hidden='true' />
-        <CloseButton ref={closeRef} type='button' aria-label='关闭播放面板' onClick={togglePanel} tabIndex={state.isPanelOpen ? 0 : -1}>
+        <CloseButton ref={closeRef} type='button' aria-label={t('player.panel.close')} onClick={togglePanel} tabIndex={state.isPanelOpen ? 0 : -1}>
           <IconX size={20} />
         </CloseButton>
 
         <NowHeader>
           <CoverHero $src={currentTrack?.coverUrl} aria-hidden='true' />
-          <TrackHeading>{currentTrack?.name ?? '等待播放'}</TrackHeading>
+          <TrackHeading>{currentTrack?.name ?? t('player.panel.waiting')}</TrackHeading>
           <TrackArtist>{currentTrack?.artist ?? ' '}</TrackArtist>
         </NowHeader>
 
@@ -1058,27 +1060,27 @@ export const AudioPlayerPanel = () => {
                 onChange={(pct) => seek((pct / 100) * totalDuration)}
                 thumb
                 breathing={playing}
-                label='播放进度'
+                label={t('player.panel.progressLabel')}
               />
               <TimeCode>{formatDuration(totalDuration)}</TimeCode>
             </ProgressRow>
           </ProgressWrapper>
 
           <ControlRow>
-            <SkipButton type='button' aria-label='上一首' onClick={playPrevious}>
+            <SkipButton type='button' aria-label={t('player.panel.previous')} onClick={playPrevious}>
               <IconSkipBack size={20} />
             </SkipButton>
-            <PlayButton type='button' aria-label={playing ? '暂停' : '播放'} onClick={togglePlay}>
+            <PlayButton type='button' aria-label={playing ? t('player.panel.pause') : t('player.panel.play')} onClick={togglePlay}>
               {playing ? <IconPause size={24} /> : <IconPlay size={24} />}
             </PlayButton>
-            <SkipButton type='button' aria-label='下一首' onClick={playNext}>
+            <SkipButton type='button' aria-label={t('player.panel.next')} onClick={playNext}>
               <IconSkipForward size={20} />
             </SkipButton>
           </ControlRow>
 
           <DeckRow>
-            <ModeGroup role='group' aria-label='播放模式'>
-              {(Object.keys(MODE_LABELS) as PlayerMode[]).map((mode) => (
+            <ModeGroup role='group' aria-label={t('player.panel.modeGroup')}>
+              {(Object.keys(MODE_LABEL_KEYS) as PlayerMode[]).map((mode) => (
                 <ModeButton
                   key={mode}
                   type='button'
@@ -1090,7 +1092,7 @@ export const AudioPlayerPanel = () => {
                   aria-pressed={state.mode === mode}
                   onClick={() => setMode(mode)}
                 >
-                  {MODE_LABELS[mode]}
+                  {t(MODE_LABEL_KEYS[mode])}
                 </ModeButton>
               ))}
             </ModeGroup>
@@ -1102,15 +1104,15 @@ export const AudioPlayerPanel = () => {
                   value={state.volume * 100}
                   onChange={(v) => setVolume(v / 100)}
                   thumb
-                  label='音量'
+                  label={t('player.panel.volumeLabel')}
                 />
               </VolumeBox>
             </VolumeRow>
           </DeckRow>
         </NowDock>
 
-        <LyricsSection aria-label='歌词'>
-          <SectionHeading>歌 词</SectionHeading>
+        <LyricsSection aria-label={t('player.panel.lyrics')}>
+          <SectionHeading>{t('player.panel.lyricsHeading')}</SectionHeading>
           <LyricsScroll ref={scrollRef}>
             <LyricBloom ref={lyricBloomRef} aria-hidden='true' />
             {lyrics.length ? (
@@ -1125,14 +1127,14 @@ export const AudioPlayerPanel = () => {
                 </LyricLine>
               ))
             ) : (
-              <LyricLine>暂无歌词</LyricLine>
+              <LyricLine>{t('player.panel.noLyrics')}</LyricLine>
             )}
           </LyricsScroll>
         </LyricsSection>
 
-        <QueueSection aria-label='播放列表'>
+        <QueueSection aria-label={t('player.panel.queue')}>
           <SectionHeading>
-            <IconListMusic size={13} aria-hidden='true' /> 播放列表
+            <IconListMusic size={13} aria-hidden='true' /> {t('player.panel.queue')}
           </SectionHeading>
           <QueueList ref={desktopQueueRef}>
             {queue.map((track, index) => (
@@ -1158,8 +1160,8 @@ export const AudioPlayerPanel = () => {
           onTouchMove={onDragTouchMove}
           onTouchEnd={onDragTouchEnd}
         />
-        <LeafPages ref={pagesRef} onScroll={handlePagesScroll} aria-label='歌词与播放列表'>
-          <LeafPage aria-label='歌词页' aria-hidden={mobilePage !== 'words'} inert={mobilePage !== 'words'}>
+        <LeafPages ref={pagesRef} onScroll={handlePagesScroll} aria-label={t('player.panel.pagesAria')}>
+          <LeafPage aria-label={t('player.panel.wordsPage')} aria-hidden={mobilePage !== 'words'} inert={mobilePage !== 'words'}>
             <Plate
               data-testid='panel-plate'
               onTouchStart={onDragTouchStart}
@@ -1168,10 +1170,13 @@ export const AudioPlayerPanel = () => {
             >
               <PlateArt $src={currentTrack?.coverUrl} aria-hidden='true' />
               <PlateNo>
-                曲 · {String((state.currentIndex ?? 0) + 1).padStart(2, '0')} / {String(queue.length).padStart(2, '0')}
+                {t('player.panel.plateNo', {
+                  index: String((state.currentIndex ?? 0) + 1).padStart(2, '0'),
+                  total: String(queue.length).padStart(2, '0')
+                })}
               </PlateNo>
             </Plate>
-            <LeafTitle>{currentTrack?.name ?? '等待播放'}</LeafTitle>
+            <LeafTitle>{currentTrack?.name ?? t('player.panel.waiting')}</LeafTitle>
             <LeafArtist>{currentTrack?.artist ?? ' '}</LeafArtist>
             <WordWindow ref={mobileLyricsRef}>
               <WordBloom ref={mobileBloomRef} aria-hidden='true' />
@@ -1190,13 +1195,13 @@ export const AudioPlayerPanel = () => {
                 ))
               ) : (
                 <WordEmpty>
-                  <span>全体欣赏音乐</span>
+                  <span>{t('player.panel.wordEmpty')}</span>
                 </WordEmpty>
               )}
             </WordWindow>
           </LeafPage>
-          <LeafPage aria-label='播放列表页' aria-hidden={mobilePage !== 'queue'} inert={mobilePage !== 'queue'}>
-            <SectionHeading>目 次</SectionHeading>
+          <LeafPage aria-label={t('player.panel.queuePage')} aria-hidden={mobilePage !== 'queue'} inert={mobilePage !== 'queue'}>
+            <SectionHeading>{t('player.panel.queueHeadingMobile')}</SectionHeading>
             <QueueList ref={mobileQueueRef}>
               {queue.map((track, index) => (
                 <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
@@ -1214,7 +1219,7 @@ export const AudioPlayerPanel = () => {
           </LeafPage>
         </LeafPages>
 
-        <PageTicks role='group' aria-label='册页翻页'>
+        <PageTicks role='group' aria-label={t('player.panel.ticksAria')}>
           <PageTick
             type='button'
             style={
@@ -1223,7 +1228,7 @@ export const AudioPlayerPanel = () => {
                 : undefined
             }
             aria-current={mobilePage === 'words' ? 'true' : undefined}
-            aria-label='歌词页'
+            aria-label={t('player.panel.wordsPage')}
             onClick={() => gotoPage('words')}
           />
           <PageTick
@@ -1234,7 +1239,7 @@ export const AudioPlayerPanel = () => {
                 : undefined
             }
             aria-current={mobilePage === 'queue' ? 'true' : undefined}
-            aria-label='播放列表页'
+            aria-label={t('player.panel.queuePage')}
             onClick={() => gotoPage('queue')}
           />
         </PageTicks>

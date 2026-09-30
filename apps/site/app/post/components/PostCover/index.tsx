@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from '@wuh.site/components/image'
+import { useLocale } from '@wuh.site/components/locales'
 import { formatFullDate } from '@/app/lib/date'
 import {
   CoverFrame,
@@ -39,6 +40,7 @@ export default function PostCover({
   viewCount,
   summary,
 }: PostCoverProps) {
+  const { t } = useLocale()
   const [failed, setFailed] = useState(false)
 
   // 加载失败：隐藏封面，不保留破图区域（PostHeader 正常展示）
@@ -59,7 +61,7 @@ export default function PostCover({
               <strong>{authorName}</strong>
               <span>
                 {createdAt ? formatFullDate(createdAt) : ''}
-                {typeof viewCount === 'number' ? ` · ${viewCount} 次阅读` : ''}
+                {typeof viewCount === 'number' ? ` · ${t('post.cover.views', { n: viewCount })}` : ''}
               </span>
             </GeneratedAuthorInfo>
           </GeneratedAuthorRow>

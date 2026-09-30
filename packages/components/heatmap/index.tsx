@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import type { HeatmapData, ColorScheme } from './specs'
 import { GITHUB_COLORS, WARM_COLORS, DAY_LABELS, MONTH_LABELS } from './specs'
 import * as S from './styles'
@@ -41,8 +42,9 @@ function TooltipCell({
   horizontal: 'left' | 'center' | 'right'
 }) {
   const [visible, setVisible] = useState(false)
+  const { t } = useLocale()
   const d = new Date(date + 'T00:00:00')
-  const dateLabel = `${d.getMonth() + 1} 月 ${d.getDate()} 日`
+  const dateLabel = t('components.heatmap.date', { m: d.getMonth() + 1, d: d.getDate() })
   const details = breakdown
     ? Object.entries(breakdown).filter(([, value]) => value > 0)
     : []
@@ -81,6 +83,7 @@ function TooltipCell({
 }
 
 export function Heatmap({ data, loading = false, error = null, colorScheme = 'github', activityLabel = '贡献', emptyLabel = '暂无贡献数据', errorLabel = '加载失败' }: HeatmapProps) {
+  const { t } = useLocale()
   const colors = colorScheme === 'warm' ? [...WARM_COLORS] : [...GITHUB_COLORS]
 
   const monthPositions = useMemo(() => {
@@ -117,11 +120,11 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
           ))}
         </S.Grid>
         <S.Legend>
-          <span>Less</span>
+          <span>{t('components.heatmap.less')}</span>
           {colors.map((c, i) => (
             <S.LegendCell key={i} $color={c} />
           ))}
-          <span>More</span>
+          <span>{t('components.heatmap.more')}</span>
         </S.Legend>
       </S.Wrapper>
     )
@@ -178,11 +181,11 @@ export function Heatmap({ data, loading = false, error = null, colorScheme = 'gi
         ))}
       </S.Grid>
       <S.Legend>
-        <span>Less</span>
+        <span>{t('components.heatmap.less')}</span>
         {colors.map((c, i) => (
           <S.LegendCell key={i} $color={c} />
         ))}
-        <span>More</span>
+        <span>{t('components.heatmap.more')}</span>
       </S.Legend>
     </S.Wrapper>
   )

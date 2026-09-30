@@ -1,0 +1,30 @@
+import type { DeepPartial, Dict } from '../zh'
+
+export const music: DeepPartial<Dict['music']> = {
+  page: {
+    title: 'Music',
+    subtitle: 'NetEase Cloud annual playlists · one volume per year',
+    railAria: 'Switch annual playlist',
+    railItemAria: '{name}, {count} tracks',
+    railCount: '{count} tracks',
+    panelAria: 'Tracks of the current playlist',
+    playlistFallback: 'Playlist',
+    panelSubCount: '{count} tracks',
+    panelYearSuffix: ' · {year} edition',
+    panelErrorSuffix: ' · This volume is unavailable for now, try again later',
+    volumeError: 'This volume is unavailable for now, try again later',
+    noTracks: 'No tracks in this playlist yet',
+    epigraphPrefix: 'The most replayed track this year is ',
+    epigraphSuffix: ', played {count} times.',
+    playTrackAria: 'Play {name}',
+    playTrackArtistAria: 'Play {name} - {artist}',
+    playsTitle: 'Played {count} times',
+    playsTitleEmpty: 'No play records yet',
+    playsUnit: ' plays',
+    favBadge: 'Top',
+    favBadgeTitle: 'Most played track of this volume',
+    loadFailedTitle: 'Failed to load playlist',
+    loadFailedDesc: 'The NetEase Cloud playlist is temporarily unavailable. Refresh and retry later.',
+    retry: 'Refresh & retry',
+  },
+}

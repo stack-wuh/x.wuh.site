@@ -1,6 +1,7 @@
 'use client'
 
 import type { CSSProperties } from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import { formatFullDate } from '@/app/lib/date'
 import { buildTopicUrl } from '@/app/lib/topic-url'
 import { Header, TopRow, MetaLine, TagGroup, Title, Summary, HeadRule } from '../../styles'
@@ -18,8 +19,9 @@ const sealTilt = (name: string): CSSProperties => {
 }
 
 export default function PostHeader({ issue }: PostHeaderProps) {
+  const { t } = useLocale()
   const date = formatFullDate(issue.created_at)
-  const userName = issue.user?.userName?.trim() || issue.user?.login?.trim() || '匿名作者'
+  const userName = issue.user?.userName?.trim() || issue.user?.login?.trim() || t('post.header.anonymousAuthor')
 
   return (
     <Header>
@@ -29,11 +31,11 @@ export default function PostHeader({ issue }: PostHeaderProps) {
           <span className='dot' aria-hidden='true'>·</span>
           <span>{date}</span>
           <span className='dot' aria-hidden='true'>·</span>
-          <span>{issue.viewCount ?? 0} 次阅读</span>
+          <span>{t('post.header.views', { n: issue.viewCount ?? 0 })}</span>
         </MetaLine>
 
         {issue.labels.length > 0 && (
-          <TagGroup aria-label='文章标签'>
+          <TagGroup aria-label={t('post.header.labelsAria')}>
             {issue.labels.map((label) => (
               <a key={label.name} href={buildTopicUrl(label.name)} style={sealTilt(label.name)}>
                 {label.name}

@@ -4,6 +4,7 @@ import Button from '@wuh.site/components/button'
 import dynamic from 'next/dynamic'
 import Tag from '@wuh.site/components/tag'
 import { IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconChevronRight } from '@wuh.site/components/icons'
+import { useLocale } from '@wuh.site/components/locales'
 import { buildPostUrl } from '../lib/slug'
 import { formatShortDate } from '../lib/date'
 import * as S from '../styles'
@@ -49,6 +50,7 @@ function OrnamentDivider() {
  * 交互部分（社交链接/联系弹窗/书架/项目刷新/打字机）为独立客户端叶子。
  */
 export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, hero }: HomeViewProps) {
+  const { locale, t } = useLocale()
   const yearGroups = groupByYear(posts)
   return (
     <S.Root>
@@ -56,16 +58,16 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
         {hero ?? (
           <S.Hero>
             <IconLogo width={64} height={38.4} />
-            <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;朝朝如念</S.SiteTitle>
-            <S.SiteTagline>雾失楼台，月迷津渡</S.SiteTagline>
+            <S.SiteTitle>wuh.site&nbsp;&middot;&nbsp;{t('home.heroTitle')}</S.SiteTitle>
+            <S.SiteTagline>{t('home.heroTagline')}</S.SiteTagline>
           </S.Hero>
         )}
 
         <TypewriterMotto />
 
         <S.Ctas>
-          <Button href='/blog' variant='outlined' color='primary' size='small'>查看博客</Button>
-          <Button href='/about' variant='outlined' color='secondary' size='small'>关于我</Button>
+          <Button href='/blog' variant='outlined' color='primary' size='small'>{t('home.viewBlog')}</Button>
+          <Button href='/about' variant='outlined' color='secondary' size='small'>{t('home.aboutMe')}</Button>
         </S.Ctas>
 
         <ContactArea />
@@ -74,11 +76,11 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
 
         <S.Section>
           <S.SectionHeader className='reveal'>
-            <S.SectionTitle>精选博客</S.SectionTitle>
-            <Button href='/blog' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>全部博客</Button>
+            <S.SectionTitle>{t('home.featured')}</S.SectionTitle>
+            <Button href='/blog' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>{t('home.allPosts')}</Button>
           </S.SectionHeader>
           {posts.length === 0 ? (
-            <Empty icon={<IconBookOpen />} title="暂无博客" description="获取 Issues 数据失败，请稍后重试" />
+            <Empty icon={<IconBookOpen />} title={t('home.empty.posts')} description={t('home.empty.postsDesc')} />
           ) : (
             <S.Timeline>
               {yearGroups.map(([year, yearPosts]) => (
@@ -98,7 +100,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
                       <S.PostMeta>
                         <span>{formatShortDate(post.created_at)}</span>
                         <S.MetaDot />
-                        <span>{post.views} 浏览</span>
+                        <span>{t('home.views', { count: post.views })}</span>
                       </S.PostMeta>
                     </S.PostRow>
                   ))}
@@ -112,10 +114,10 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
 
         <S.Section>
           <S.SectionHeader className='reveal'>
-            <S.SectionTitle>年度总结</S.SectionTitle>
+            <S.SectionTitle>{t('home.yearly')}</S.SectionTitle>
           </S.SectionHeader>
           {yearlySummaries.length === 0 ? (
-            <Empty icon={<IconCalendar />} title="暂无年度总结" description="还没有年度回顾文章" />
+            <Empty icon={<IconCalendar />} title={t('home.empty.yearly')} description={t('home.empty.yearlyDesc')} />
           ) : (
             <S.ProjectList>
               {yearlySummaries.map(item => (
@@ -123,7 +125,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
                   <S.PostMeta>
-                    <span>{new Date(item.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</span>
+                    <span>{new Date(item.created_at).toLocaleDateString(locale === 'zh' ? 'zh-CN' : locale, { month: 'short', day: 'numeric' })}</span>
                   </S.PostMeta>
                 </S.PostRow>
               ))}

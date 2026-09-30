@@ -143,7 +143,7 @@ test('册页横翻：MobileTabs/MobileSection 退役，scroll-snap 对页 + 页�
   assert.match(pagesBlock, /scroll-snap-type/)
   assert.match(pagesBlock, /scrollbar-width: none/)
   assert.match(src, /scroll-snap-align: start/)
-  const tickBlock = src.slice(src.indexOf('const PageTicks ='), src.indexOf('const MODE_LABELS'))
+  const tickBlock = src.slice(src.indexOf('const PageTicks ='), src.indexOf('const MODE_LABEL_KEYS'))
   assert.ok(tickBlock.length > 0, 'PageTicks 定义缺失')
   assert.match(tickBlock, /scaleX\(/)
   const tickButtonBlock = src.slice(src.indexOf('const PageTick ='), src.indexOf('/* ===== 右侧：歌词 / 播放列表 ===== */'))
@@ -187,7 +187,8 @@ test('短词窗：mask 渐隐 + 点按跳播 + 「全体欣赏音乐」印章空
   const emptyBlock = src.slice(src.indexOf('const WordEmpty ='), src.indexOf('const PageTicks ='))
   assert.ok(emptyBlock.length > 0, 'WordEmpty 定义缺失')
   assert.match(emptyBlock, /var\(--primary-color\)/)
-  assert.match(src, /全体欣赏音乐/)
+  // 印章空态文案已迁 i18n 词典（zh 仍为「全体欣赏音乐」），守卫改为断言 t() 调用形状
+  assert.match(src, /t\('player\.panel\.wordEmpty'\)/)
 })
 
 test('下滑关闭手柄：横杆手柄 + 拖拽跟手（$drag 位移）+ 阈值关闭', () => {

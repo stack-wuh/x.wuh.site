@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from '@wuh.site/components/locales'
 import * as S from './styles'
 import type { PageItem, PaginationProps } from './specs'
 
@@ -85,6 +86,7 @@ const iconMap: Record<string, () => React.ReactElement> = {
 }
 
 export default function Pagination({ currentPage, totalPages, getPageUrl }: PaginationProps) {
+  const { t } = useLocale()
   if (totalPages <= 1) return null
 
   const items = getPageItems(currentPage, totalPages)
@@ -92,13 +94,13 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
   const hasNext = currentPage < totalPages
 
   return (
-    <S.Nav aria-label='分页导航'>
+    <S.Nav aria-label={t('common.pagination.navAria')}>
       <S.NavLink
         $disabled={!hasPrev}
         href={hasPrev ? getPageUrl(currentPage - 1) : undefined}
-        aria-label='上一页'
+        aria-label={t('common.pagination.prev')}
         aria-disabled={!hasPrev}
-      ><S.NavLabelPrev>上一页</S.NavLabelPrev><ArrowLeftIcon /></S.NavLink>
+      ><S.NavLabelPrev>{t('common.pagination.prev')}</S.NavLabelPrev><ArrowLeftIcon /></S.NavLink>
 
       <S.LetterGroup>
         {items.map((item) => {
@@ -125,9 +127,9 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
       <S.NavLink
         $disabled={!hasNext}
         href={hasNext ? getPageUrl(currentPage + 1) : undefined}
-        aria-label='下一页'
+        aria-label={t('common.pagination.next')}
         aria-disabled={!hasNext}
-      ><ArrowRightIcon /><S.NavLabelNext>下一页</S.NavLabelNext></S.NavLink>
+      ><ArrowRightIcon /><S.NavLabelNext>{t('common.pagination.next')}</S.NavLabelNext></S.NavLink>
     </S.Nav>
   )
 }

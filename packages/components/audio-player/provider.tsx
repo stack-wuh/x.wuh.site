@@ -9,6 +9,7 @@ import React, {
   useReducer,
   useRef
 } from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import type {
   AudioPlayerContextValue,
   AudioPlayerProviderProps,
@@ -127,13 +128,12 @@ const getSkipIndex = (currentIndex: number, queueLength: number) => {
   return (currentIndex + 1) % queueLength
 }
 
-const EMPTY_PLAYABLE_NOTICE = '这个歌单暂时没有可播放的曲目'
-
 export const AudioPlayerProvider = ({
   children,
   defaultVolume = 0.8,
   trackResolver
 }: AudioPlayerProviderProps) => {
+  const { t } = useLocale()
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     volume: defaultVolume
@@ -195,11 +195,11 @@ export const AudioPlayerProvider = ({
       return track
     }
     if (!resolverRef.current) {
-      throw new Error('缺少 trackResolver，无法解析音频资源')
+      throw new Error(t('player.missingResolver'))
     }
     const result = await resolverRef.current(track.id)
     if (!result?.streamUrl) {
-      throw new Error('未获取到音频地址')
+      throw new Error(t('player.noStreamUrl'))
     }
     const enrichedTrack = {
       ...track,
@@ -209,7 +209,7 @@ export const AudioPlayerProvider = ({
     }
     dispatch({ type: 'UPDATE_TRACK', payload: { trackId: track.id, data: enrichedTrack } })
     return enrichedTrack
-  }, [])
+  }, [t])
 
   const skipToNextPlayable = useCallback((failedIndex: number, attempts: number) => {
     const queue = stateRef.current.queue
@@ -218,15 +218,15 @@ export const AudioPlayerProvider = ({
 
     // 最多绕队列一轮：整轮都拿不到地址就停下并给出结论，不再空转
     if (nextIndex === -1 || skipped >= queue.length) {
-      dispatch({ type: 'SET_STATUS', payload: { status: 'idle', error: EMPTY_PLAYABLE_NOTICE } })
+      dispatch({ type: 'SET_STATUS', payload: { status: 'idle', error: t('player.noPlayableTracks') } })
       return
     }
     dispatch({
       type: 'SET_STATUS',
-      payload: { status: stateRef.current.status, error: `已跳过 ${skipped} 首不可播放的曲目` }
+      payload: { status: stateRef.current.status, error: t('player.skippedNotice', { count: skipped }) }
     })
     playTrackAtRef.current(nextIndex, skipped)
-  }, [])
+  }, [t])
 
   const skipRef = useRef(skipToNextPlayable)
 

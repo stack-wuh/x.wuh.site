@@ -398,6 +398,41 @@ export const ThemeIcon = styled.span`
   color: var(--primary-color);
 `
 
+/* 语言循环切换：单枚墨字钮，语言自称名（中/EN/日）即印面。
+   与 SchemeOption 同一淡墨→实色 hover 语言；常显渐隐下划线（它永远「选中」） */
+export const LanguageCycleRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+`
+
+export const LanguageCycle = styled.button`
+  appearance: none;
+  position: relative;
+  grid-column: 1 / -1;
+  padding: var(--space-xs) var(--space-xs);
+  border: 0;
+  background: transparent;
+  color: color-mix(in oklab, var(--text-color) 72%, transparent);
+  font: inherit;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color var(--transition-fast) ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: var(--space-base);
+    right: var(--space-base);
+    bottom: calc(var(--space-base) / 2);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
+    opacity: 1;
+  }
+
+  &:hover { color: var(--text-color); }
+  &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: calc(var(--space-xs) / 2); }
+`
+
 export const ThemeChevron = styled.span<{ $open?: boolean }>`
   display: inline-flex;
   align-items: center;

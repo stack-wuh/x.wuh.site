@@ -1,4 +1,7 @@
+'use client'
+
 import * as React from 'react'
+import { useLocale } from '@wuh.site/components/locales'
 import type { ToolbarRenderProps } from './specs'
 import {
   IconClose,
@@ -21,6 +24,7 @@ type Props = ToolbarRenderProps & {
 }
 
 export const ImagePreviewToolbar: React.FC<Props> = (props) => {
+  const { t } = useLocale()
   const {
     close, next, previous, zoomIn, zoomOut, resetZoom, rotate,
     toggleFullscreen, download,
@@ -36,16 +40,16 @@ export const ImagePreviewToolbar: React.FC<Props> = (props) => {
   if (isMobile) {
     return (
       <Toolbar>
-        <IconButton type='button' aria-label='关闭预览' onClick={close}>
+        <IconButton type='button' aria-label={t('components.preview.close')} onClick={close}>
           <IconClose />
         </IconButton>
-        <IconButton type='button' aria-label='上一张' onClick={previous}>
+        <IconButton type='button' aria-label={t('components.preview.previous')} onClick={previous}>
           <IconArrowLeft />
         </IconButton>
-        <IconButton type='button' aria-label='下一张' onClick={next}>
+        <IconButton type='button' aria-label={t('components.preview.next')} onClick={next}>
           <IconArrowRight />
         </IconButton>
-        <IconButton type='button' aria-label='更多操作' onClick={onMoreClick}>
+        <IconButton type='button' aria-label={t('components.preview.more')} onClick={onMoreClick}>
           <IconMore />
         </IconButton>
       </Toolbar>
@@ -54,40 +58,44 @@ export const ImagePreviewToolbar: React.FC<Props> = (props) => {
 
   return (
     <Toolbar>
-      <IconButton type='button' aria-label='关闭预览' onClick={close}>
+      <IconButton type='button' aria-label={t('components.preview.close')} onClick={close}>
         <IconClose />
       </IconButton>
-      <IconButton type='button' aria-label='上一张' onClick={previous}>
+      <IconButton type='button' aria-label={t('components.preview.previous')} onClick={previous}>
         <IconArrowLeft />
       </IconButton>
-      <IconButton type='button' aria-label='下一张' onClick={next}>
+      <IconButton type='button' aria-label={t('components.preview.next')} onClick={next}>
         <IconArrowRight />
       </IconButton>
       {allowZoom && (
         <>
-          <IconButton type='button' aria-label='放大' onClick={zoomIn} disabled={!canZoomIn}>
+          <IconButton type='button' aria-label={t('components.preview.zoomIn')} onClick={zoomIn} disabled={!canZoomIn}>
             <IconZoomIn />
           </IconButton>
-          <IconButton type='button' aria-label='缩小' onClick={zoomOut} disabled={!canZoomOut}>
+          <IconButton type='button' aria-label={t('components.preview.zoomOut')} onClick={zoomOut} disabled={!canZoomOut}>
             <IconZoomOut />
           </IconButton>
-          <IconButton type='button' aria-label='重置缩放' onClick={resetZoom}>
+          <IconButton type='button' aria-label={t('components.preview.resetZoom')} onClick={resetZoom}>
             <IconReset />
           </IconButton>
         </>
       )}
       {allowRotate && (
-        <IconButton type='button' aria-label='旋转图片' onClick={rotate}>
+        <IconButton type='button' aria-label={t('components.preview.rotate')} onClick={rotate}>
           <IconRotateRight />
         </IconButton>
       )}
       {allowDownload && (
-        <IconButton type='button' aria-label='下载图片' onClick={download}>
+        <IconButton type='button' aria-label={t('components.preview.download')} onClick={download}>
           <IconDownload />
         </IconButton>
       )}
       {allowFullscreen && (
-        <IconButton type='button' aria-label={isFullscreen ? '退出全屏' : '进入全屏'} onClick={toggleFullscreen}>
+        <IconButton
+          type='button'
+          aria-label={isFullscreen ? t('components.preview.exitFullscreen') : t('components.preview.enterFullscreen')}
+          onClick={toggleFullscreen}
+        >
           {isFullscreen ? <IconExitFullscreen /> : <IconFullscreen />}
         </IconButton>
       )}
