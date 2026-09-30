@@ -124,3 +124,26 @@ export const Label = styled.span`
   font-size: var(--font-size-xs);
   color: var(--text-muted);
 `;
+
+export const ProgressStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 520px;
+`;
+
+export const ProgressItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const ProgressCaption = styled.span`
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+`;
+
+export const NarrowBox = styled.div`
+  width: 120px;
+`;

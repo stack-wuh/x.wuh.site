@@ -16,9 +16,10 @@ source:
   - changes/20260928-feature-music-player/brief.md
   - changes/20260928-style-player-responsive-redesign/brief.md
   - changes/20260929-style-player-collapse-ear/brief.md
-verified: 2026-09-29
+  - changes/20260930-feature-progress-component/brief.md
+verified: 2026-09-30
 verified-depth: runtime
-verified-scope: AudioPlayer 书耳收起交互——四主题（wine/plain × light/dark）展开/收起双态截图、耳页接缝特写、往返点击与 `matches(':hover')` 计算样式（观察点见 change 交付记录）；其余段落沿承各自变更时的既有验证。
+verified-scope: AudioPlayer 书耳收起交互——四主题（wine/plain × light/dark）展开/收起双态截图、耳页接缝特写、往返点击与 `matches(':hover')` 计算样式（观察点见 change 交付记录）；20260930-feature-progress-component：Progress 守卫 7/7 + audio-player 全门禁 36/36 + tsc/oxlint 干净 + 四主题试墨截图（wine/plain × light/dark 全态）+ 交互链路原生步进 47→55（填充 matrix 与印面 left 同步跟随）+ a11y 快照（slider×2 / progressbar）+ MiniPlayer sm 上屏实证；其余段落沿承各自变更时的既有验证。
 ---
 
 # 组件包
@@ -34,6 +35,8 @@ ImagePreview 图片切换有过渡动画（淡入淡出 + 方向滑动），缩�
 ScrollArea 为 shadcn ScrollArea 移植（`@radix-ui/react-scroll-area` 封装），滚动条独立 DOM 渲染、hover 浮现、不虚拟化；`viewportRef` prop 供消费方监听滚动与程序化滚动。MessageCard 组件集（message-card 包）为信笺风留言卡片：MessageCard / MessageAvatar / MessageMeta / MessageName / MessageTime / MessageStatus / MessageContent，只负责视觉（长什么样），布局（怎么摆）由消费方组合。
 
 Divider 组件（`@wuh.site/components/divider`）负责页面结构性分割线，用色分工：variant `hairline`（默认，灰发丝线 `color-mix(in oklab, var(--normal-400) 55%, transparent)`，承载结构性分段）/ `ornament`（中置朱砂点缀线——两侧线由 transparent 渐入 `var(--primary-color)` 45%、右线镜像，点缀字符同 `--primary-color`，children 可替换），渲染为 `role='separator'`；颜色仅语义 token、禁用 `prefers-color-scheme`，暗色随站点 `data-color-scheme` 自动生效。正文章节记号、列表条目分隔线等排版语言不使用 Divider。
+
+Progress 组件（`@wuh.site/components/progress`，20260930-feature-progress-component 起）是纸墨「运笔」双模态进度条：发丝轨道（Divider 同款 color-mix；md 3px / sm 2px 档）+ 朱砂 `scaleX` 自左铺墨（导航下划线同款笔顺，合成器动画不触布局属性）。传 `onChange` 即交互态——原生 range 透明覆盖整条（拖拽/键盘/读屏零降级，GrooveSlider 同技术），缺 `value` 进不确定态（两端渐隐墨迹行笔 1.9s：72% 行笔 + 空轨半拍）。印光标 = 白文方印「樂」（15×15 实心印面 radius 3px + 纸色阴文衬线，字面比 10/15 与 Header「墨」印同比例），悬停 `scale(1.12)` + 主色软晕、拖拽按印入泥（brightness 0.92）。**态语义形动正交**：`glyph="愛"` = 最爱（形）、`breathing={playing}` = 播放态微光呼吸晕（2.4s，reduced-motion 静态晕）——组件不含「最爱/播放」领域知识，两信号由消费方组合。客制化经 `--progress-thumb-size/-thumb-color/-thumb-glyph-size`、`--progress-height/-fill-color`；`glyph=""` 落无字阴线框回退；`showLabel` 为 mono 淡墨百分比。纪律由同目录 index.test.mjs 守卫固化：禁裸十六进制、keyframes 必须 `css` 包裹（MiniPlayer 涟漪崩溃陷阱同源）、reduced-motion 块在场、aria 在场、禁 `--motion-*` 与滚动监听。印面 hover/按压经 SBar 静态类 `.wuh-progress-thumb` 下探（跨组件插值选择器 SSR 不可靠同规避）。MiniPlayer 底行已接入 `size="sm"` 读态；PlayerPanel 进度/音量替换等 dock-ruler 系落地后另起 change。
 
 AudioPlayer（`@wuh.site/components/audio-player`）的降级语义：曲目拿不到播放地址（`TrackResolver` 返回空 `streamUrl`）或音频元素报错时**按队列顺序自动跳过**，整轮尝试不超过队列长度，提示 `已跳过 N 首不可播放的曲目` 占用迷你播放器歌手行（`role='status'`，卡片高度不变），且**只在用户操作播放器时清空**（自动起播不擦除）；整轮不可播则回落 `idle` 并给出结论文案。公开 API（`TrackSource`/`TrackResolver`/`AudioPlayerActions`/`AudioPlayerState`）保持兼容，跳过语义不新增 action。
 
