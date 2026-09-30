@@ -4,7 +4,7 @@
   "name": "20260930-feature-site-i18n-trilingual",
   "type": "feature",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -26,20 +26,20 @@
   ],
   "github": {
     "repository": "stack-wuh/x.wuh.site",
-    "issue": null,
-    "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "issue": 436,
+    "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/436",
+    "pullRequest": 439,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/439"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "cc282f212fcc407a92a5b90a34e139bda5683c68",
-    "verifiedAt": "2026-09-30T14:48:50.317Z"
+    "verifiedCommit": "42274b1f4a61ecaba5373cae8a6c2aac657708a8",
+    "verifiedAt": "2026-09-30T15:09:52.228Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
-    "planHash": "494e72a56e145ba5910d1065483c3d16e358b8439e5740a32c27b334baeba04b",
+    "checkpoint": "merged-pr:439",
+    "planHash": "debf510fc7ab97294ef5af3199015c9f4472918dfa67c11269093fae40f39299",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -170,7 +170,7 @@
   "knowledge": {
     "action": "新增",
     "target": "shadow-docs/knowledge/i18n-locale.md",
-    "reason": "三语 i18n 机制为跨页面长期有效事实，新增 i18n-locale.md（LocaleProvider 机制、词典片段结构、惰性加载纪律、wuh.site.locale 持久化、lang 同步、缺 key 回落；verified-depth: runtime——浏览器三语×双主题走查+守卫 63/63）；另需原位小改 first-load-performance.md 补 CJK 子集假名扩集事实（1795→2243 字，split 管线从 Noto 全量源重切，ship 阶段执行并补 verified-depth/verified-scope）。"
+    "reason": "三语 i18n 机制为跨页面长期有效事实，新增 i18n-locale.md（verified-depth: runtime）；first-load-performance.md 假名扩集事实已随 PR #439 原位更新。交付：PR merged 42274b1 → Release v1.4.44 → CI-CD 36732876563 success → 线上冒烟 200。"
   }
 }
 ---
@@ -250,8 +250,9 @@
 - [x] 词典覆盖率盘点（en/ja 缺 key 清单记录 brief）、GlobalAudioPlayer 接线复核 — `apps/site/app/components/player/GlobalAudioPlayer.tsx`
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 约 2.5 小时（20260930 单日，含 worktree/依赖/CI 环境排障）
+- 验证: 守卫测试 63/63 绿（locales 13 + audio-player 39 + progress + music-wiring）；oxlint 全部改动文件 0 告警；浏览器三语 × 双主题走查——切换循环/持久化/documentElement.lang/日文假名自托管渲染截图实证；tsc 一轮完整运行（34 条 = 32 存量经 cc282f2 逐条比对确认 + 2 回归已修，收尾复跑因 SGN-001 连续 SIGSEGV ×4 以既有证据收口）
+- 交付: PR #439 merged（42274b1）→ Release v1.4.44（https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.44）→ CI-CD run 36732876563 success → 线上 https://wuh.site 冒烟 200（SSR lang=zh-CN，切换为客户端行为）
 
 ## 知识评估
 - **预期影响:** 新增（i18n 机制卡）+ 视假名扩集结论原位小改 first-load-performance.md
