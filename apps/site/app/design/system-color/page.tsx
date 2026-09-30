@@ -6,6 +6,7 @@ import {
   type Theme,
 } from "@/app/components/theme/ThemeModeProvider";
 import * as S from "./styles";
+import Progress from "@wuh.site/components/progress";
 import {
   COLOR_NAMES,
   SCALE_LABELS,
@@ -13,6 +14,16 @@ import {
   THEME_LABELS,
   THEME_OPTIONS,
 } from "./specs";
+
+function SeekDemo() {
+  const [value, setValue] = React.useState(47);
+  return <Progress value={value} onChange={setValue} thumb label="试墨拖拽" />;
+}
+
+function VolumeDemo() {
+  const [volume, setVolume] = React.useState(65);
+  return <Progress value={volume} onChange={setVolume} thumb label="音量示例" />;
+}
 
 function readPalette(name: string): string[] {
   if (typeof window === "undefined") return [];
@@ -150,6 +161,37 @@ export default function DesignTokenPage() {
           </S.LabelRow>
         </React.Fragment>
       ))}
+
+      <S.H2>Progress 试墨</S.H2>
+      <S.ProgressStack>
+        <S.ProgressItem>
+          <S.ProgressCaption>&lt;Progress size=&quot;sm&quot; value={38} /&gt; — MiniPlayer 细线</S.ProgressCaption>
+          <Progress size="sm" value={38} label="细线示例" />
+        </S.ProgressItem>
+        <S.ProgressItem>
+          <S.ProgressCaption>&lt;Progress value={62} thumb showLabel /&gt; — 显示态 + 印光标</S.ProgressCaption>
+          <Progress value={62} thumb showLabel label="显示示例" />
+        </S.ProgressItem>
+        <S.ProgressItem>
+          <S.ProgressCaption>&lt;Progress onChange thumb /&gt; — 交互态（可拖，键盘可达）</S.ProgressCaption>
+          <SeekDemo />
+        </S.ProgressItem>
+        <S.ProgressItem>
+          <S.ProgressCaption>交互态 · 音量窄条 120px</S.ProgressCaption>
+          <S.NarrowBox>
+            <VolumeDemo />
+          </S.NarrowBox>
+        </S.ProgressItem>
+        <S.ProgressItem>
+          <S.ProgressCaption>印光标 · 播放呼吸（breathing：樂 / 愛）</S.ProgressCaption>
+          <Progress value={62} thumb breathing label="呼吸示例" />
+          <Progress value={62} thumb glyph="愛" breathing label="最爱呼吸示例" />
+        </S.ProgressItem>
+        <S.ProgressItem>
+          <S.ProgressCaption>&lt;Progress /&gt; — 不确定 · 行笔</S.ProgressCaption>
+          <Progress label="加载中" />
+        </S.ProgressItem>
+      </S.ProgressStack>
     </S.Root>
   );
 }

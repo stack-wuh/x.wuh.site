@@ -5,6 +5,7 @@ import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import Progress from '@wuh.site/components/progress'
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -419,27 +420,7 @@ const ProgressRow = styled.div`
   }
 `
 
-const ProgressTrack = styled.div`
-  position: relative;
-  flex: 1;
-  height: 2px;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--normal-400) 35%, transparent);
-  overflow: hidden;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    border-radius: 0;
-  }
-`
-
-const ProgressValue = styled.div<{ $value: number }>`
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, var(--primary-color), color-mix(in oklab, var(--primary-color) 65%, var(--accent-color)));
-  transform: scaleX(${(p) => p.$value});
-  transform-origin: left center;
-  transition: transform 0.25s linear;
-`
+/* 进度线由共享 Progress size="sm" 承担（@wuh.site/components/progress），此处只保留布局行与时间文案 */
 
 const ProgressText = styled.span`
   flex-shrink: 0;
@@ -643,9 +624,7 @@ export const AudioMiniPlayer = () => {
         </MobileActionGroup>
 
         <ProgressRow>
-          <ProgressTrack aria-hidden='true'>
-            <ProgressValue $value={progressPercent} />
-          </ProgressTrack>
+          <Progress size='sm' value={progressPercent * 100} label='播放进度' />
           <ProgressText>{progressText}</ProgressText>
         </ProgressRow>
 
