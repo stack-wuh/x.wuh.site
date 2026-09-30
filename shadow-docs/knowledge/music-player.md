@@ -19,7 +19,7 @@ source:
   - changes/20260929-style-player-panel-inkwash/brief.md
   - changes/20260929-feature-music-skeleton/brief.md
   - changes/20260930-style-player-panel-deck/brief.md
-  - changes/20260929-style-music-interaction-polish/brief.md
+  - changes/archive/20260929-style-music-interaction-polish/brief.md
   - changes/20260930-style-player-dock-ruler/brief.md
 verified: 2026-09-30
 verified-depth: runtime
