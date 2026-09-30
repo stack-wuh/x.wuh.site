@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import type { ThemeFamily } from '@wuh.site/components/themes/tokens'
-import { useLocale, type Locale } from '@wuh.site/components/locales'
+import { preloadDictionaries, useLocale, type Locale } from '@wuh.site/components/locales'
 import type { ColorSchemeMode } from '../theme/ThemeModeProvider'
 import * as S from './styles'
 
@@ -41,9 +42,12 @@ const SCHEME_OPTIONS: Array<{ value: ColorSchemeMode; labelKey: string }> = [
   { value: 'dark', labelKey: 'site.appearance.dark' },
 ]
 
-/** 界面语言循环顺序（中→EN→日）与各语言自称名（跨语言不变量，不进词典）。 */
-const LOCALE_CYCLE: Locale[] = ['zh', 'en', 'ja']
-const LOCALE_SELF_NAMES: Record<Locale, string> = { zh: '中', en: 'EN', ja: '日' }
+/** 界面语言三选平铺（中｜英｜日直选）；自称名为跨语言不变量，不进词典。 */
+const LANGUAGE_OPTIONS: Array<{ value: Locale; label: string }> = [
+  { value: 'zh', label: '中' },
+  { value: 'en', label: '英' },
+  { value: 'ja', label: '日' },
+]
 
 /**
  * 共享桌面与移动端的主题风格和显示模式选择控件。
@@ -55,8 +59,11 @@ export default function AppearanceOptions({
   onColorSchemeModeChange,
 }: AppearanceOptionsProps) {
   const { locale, setLocale, t } = useLocale()
-  const nextLocale = LOCALE_CYCLE[(LOCALE_CYCLE.indexOf(locale) + 1) % LOCALE_CYCLE.length]
-  const languageAria = t('site.appearance.languageAria', { locale: LOCALE_SELF_NAMES[locale] })
+
+  // 弹层打开 = 用户已表达语言/主题意图：兜底预取词典 chunk，切语言近乎即时
+  useEffect(() => {
+    preloadDictionaries()
+  }, [])
 
   return (
     <>
@@ -98,16 +105,18 @@ export default function AppearanceOptions({
 
       <S.AppearanceGroup aria-label={t('site.appearance.languageGroup')}>
         <S.AppearanceLabel>{t('site.appearance.languageLabel')}</S.AppearanceLabel>
-        <S.LanguageCycleRow>
-          <S.LanguageCycle
-            type='button'
-            aria-label={languageAria}
-            title={languageAria}
-            onClick={() => setLocale(nextLocale)}
-          >
-            {LOCALE_SELF_NAMES[locale]}
-          </S.LanguageCycle>
-        </S.LanguageCycleRow>
+        <S.LanguageOptions>
+          {LANGUAGE_OPTIONS.map((option) => (
+            <S.LanguageOption
+              key={option.value}
+              type='button'
+              aria-pressed={locale === option.value}
+              onClick={() => setLocale(option.value)}
+            >
+              {option.label}
+            </S.LanguageOption>
+          ))}
+        </S.LanguageOptions>
       </S.AppearanceGroup>
     </>
   )

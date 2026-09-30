@@ -109,7 +109,9 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
   box-shadow: var(--elevation-card);
   color: var(--text-color);
   font-family: var(--font-sans);
-  overflow: hidden;
+  /* clip（而非 hidden）：面板壳必须不是滚动容器——它是可滚容器时，子元素滚动定位 API
+     会沿祖先链把它连带滚走（生产实测内容整体上移、眉标被裁、底边露出未罩纸底的晕染色带） */
+  overflow: clip;
   opacity: ${(p) => (p.$visible ? 1 : 0)};
   transform: translateY(${(p) => (p.$drag != null ? `${Math.min(p.$drag, 320)}px` : p.$visible ? '0' : '16px')});
   pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
@@ -150,7 +152,7 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
     border: none;
     border-radius: 0;
     box-shadow: none;
-    overflow: hidden;
+    overflow: clip;
   }
 
   @media (min-width: calc(${BREAKPOINTS.mobile}px + 1px)) and (max-width: ${BREAKPOINTS.tablet}px) {
@@ -901,6 +903,11 @@ export const AudioPlayerPanel = () => {
   const lyrics = useMemo(() => parseLyrics(currentTrack?.lyrics), [currentTrack?.lyrics])
   const activeLyric = useMemo(() => findActiveLyricIndex(lyrics, state.progress), [lyrics, state.progress])
   const playing = state.status === 'playing'
+  // 最爱印：本卷播放次数最高曲目播放时进度印换「愛」——口径与 /music 最爱徽标同源（含并列）
+  const favorite = useMemo(() => {
+    const maxPlays = queue.reduce((max, track) => Math.max(max, track.playCount ?? 0), 0)
+    return maxPlays > 0 && currentTrack?.playCount === maxPlays
+  }, [queue, currentTrack])
 
   // 弹层交互：打开时焦点移入关闭钮，Escape 关闭，关闭后焦点移回触发元素
   useEffect(() => {
@@ -944,12 +951,22 @@ export const AudioPlayerPanel = () => {
   }, [state.isPanelOpen])
 
   // 播放列表定位到当前曲：面板打开或切歌时滚动到高亮项。
-  // 桌面容器无横翻包裹，scrollIntoView 安全；移动列表在 snap 页内，手动 scrollTop 只动纵向，
-  // 否则 scrollIntoView 会把外层横翻容器一并滚走（实测面板被带去目次页、页缘钮失同步）
+  // 定位一律手动只滚目标容器，禁用原生滚动定位 API（scroll-into-view 类）——它沿祖先链滚动所有可滚容器：
+  // 桌面会连带滚走 overflow 壳的面板（生产实证眉标被裁、底边露晕染色带），
+  // 移动列表在 snap 页内会横滚带跑面板（实测页缘钮失同步）。nearest 语义：可见不动，越界才对齐
   useEffect(() => {
     if (!state.isPanelOpen) return
-    const dItem = desktopQueueRef.current?.querySelector<HTMLLIElement>('[data-active="true"]')
-    dItem?.scrollIntoView({ block: 'nearest' })
+    const dList = desktopQueueRef.current
+    const dItem = dList?.querySelector<HTMLLIElement>('[data-active="true"]')
+    if (dList && dItem) {
+      const itemTop = dItem.offsetTop
+      const itemBottom = itemTop + dItem.offsetHeight
+      if (itemTop < dList.scrollTop) {
+        dList.scrollTop = itemTop
+      } else if (itemBottom > dList.scrollTop + dList.clientHeight) {
+        dList.scrollTop = itemBottom - dList.clientHeight
+      }
+    }
     const mList = mobileQueueRef.current
     const mItem = mList?.querySelector<HTMLLIElement>('[data-active="true"]')
     if (mList && mItem) {
@@ -996,8 +1013,8 @@ export const AudioPlayerPanel = () => {
     setDragY(null)
   }
 
-  // 歌词跟随滚动 + 墨随声走：桌面 scrollIntoView 居中；移动词窗手动垂直 scrollTop（理由同上），
-  // reduced-motion 退化为瞬时定位
+  // 歌词跟随滚动 + 墨随声走：桌面手动 scrollTo 只滚 LyricsScroll（公式与移动词窗一致，
+  // 禁用原生滚动定位 API——理由见队列定位注释）；移动词窗手动垂直 scrollTop；reduced-motion 退化为瞬时定位
   useEffect(() => {
     if (!state.isPanelOpen) return
     if (activeLyric < 0) {
@@ -1005,9 +1022,13 @@ export const AudioPlayerPanel = () => {
       return
     }
     const behavior = prefersReducedMotion() ? 'auto' : 'smooth'
-    const dEl = scrollRef.current?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
-    if (dEl && scrollRef.current) {
-      dEl.scrollIntoView({ behavior, block: 'center' })
+    const container = scrollRef.current
+    const dEl = container?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
+    if (dEl && container) {
+      container.scrollTo({
+        top: dEl.offsetTop - container.clientHeight / 2 + dEl.offsetHeight / 2,
+        behavior,
+      })
       if (lyricBloomRef.current) {
         lyricBloomRef.current.style.transform = `translateY(${dEl.offsetTop - 12}px)`
         lyricBloomRef.current.classList.add('on')
@@ -1059,6 +1080,7 @@ export const AudioPlayerPanel = () => {
                 value={progressPct}
                 onChange={(pct) => seek((pct / 100) * totalDuration)}
                 thumb
+                glyph={favorite ? '愛' : '樂'}
                 breathing={playing}
                 label={t('player.panel.progressLabel')}
               />
