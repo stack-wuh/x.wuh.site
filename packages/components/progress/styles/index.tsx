@@ -173,6 +173,11 @@ export const SRange = styled.input`
   &::-moz-range-track {
     background: transparent;
   }
+
+  /* 触屏目标 ≥44px：细条上命中区纵向居中扩展（GrooveSlider 同要求迁移） */
+  @media (pointer: coarse) {
+    inset: calc(50% - 22px) 0;
+  }
 `
 
 export const SRoot = styled.div`
