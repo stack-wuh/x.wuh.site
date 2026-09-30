@@ -4,7 +4,7 @@
   "name": "20260930-style-player-mobile-album-leaf",
   "type": "style",
   "scope": "player",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260930-style-player-mobile-album-leaf",
   "files": [
@@ -21,13 +21,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d9e1ff634760a2ab512c65f90ed64bef76a9428f",
-    "verifiedAt": "2026-09-30T04:38:20.976Z"
+    "verifiedCommit": "02ab5386da8b1d857c00b514aac9b49d673172d4",
+    "verifiedAt": "2026-09-30T07:48:51.697Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:425",
-    "planHash": "c50b700f9d8b2713c1c3f63632de4055aa44881ef109c5d0b3460d70dd2ee63e",
+    "checkpoint": "merged-pr:425",
+    "planHash": "b8e5af5b1b55c4d93d3a0a2ac8677877fd903fe4e289c3937b6c38467fcff8ba",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
