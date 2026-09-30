@@ -566,7 +566,7 @@ const WordLine = styled.button<{ $active?: boolean; $near?: boolean }>`
   ${focusRing}
 `
 
-/* 无词空态：印章式「词未录」替代死黑——印框朱砂 45%、印面衬线字 */
+/* 无词空态：印章式「全体欣赏音乐」替代死黑——印框朱砂 45%、印面衬线字 */
 const WordEmpty = styled.div`
   height: 100%;
   display: flex;
@@ -1189,7 +1189,7 @@ export const AudioPlayerPanel = () => {
                 ))
               ) : (
                 <WordEmpty>
-                  <span>词未录</span>
+                  <span>全体欣赏音乐</span>
                 </WordEmpty>
               )}
             </WordWindow>
