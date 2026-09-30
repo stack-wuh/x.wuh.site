@@ -59,9 +59,23 @@ test('播放列表序号与朱砂左标', () => {
 test('既有交互保持：焦点管理 / Escape / 歌词跟随 / 弹层语义', () => {
   assert.match(src, /'Escape'/)
   assert.match(src, /restoreFocusRef/)
-  assert.match(src, /scrollIntoView/)
   assert.match(src, /role='dialog'/)
   assert.match(src, /aria-modal='true'/)
+})
+
+test('弹层定位纪律：禁 scrollIntoView，桌面定位手动只滚目标容器，面板壳 overflow 用 clip', () => {
+  // 生产实证（v1.4.44 验收）：scrollIntoView 沿祖先链滚动所有可滚容器——overflow:hidden 的面板壳
+  // 被连带滚走 20–30px+（WashSrc inset:-12% 撑出 118px 纵向 / 139px 横向隐藏可滚溢出），
+  // 顶部眉标被裁、底边露出未罩纸底的晕染色带。整文件禁入，含注释外的任何调用形态
+  assert.doesNotMatch(src, /scrollIntoView/)
+  // 桌面歌词居中镜像移动端词窗公式：手动 scrollTo 只滚 LyricsScroll（offsetParent 需 position: relative）
+  assert.match(src, /top: dEl\.offsetTop - container\.clientHeight \/ 2 \+ dEl\.offsetHeight \/ 2/)
+  // 队列 nearest 语义：高亮项可见不动、越界才对齐；移动端手动 scrollTop 保持
+  assert.match(src, /dList\.scrollTop = /)
+  assert.match(src, /mList\.scrollTop = /)
+  // 面板壳 clip 使其彻底不是滚动容器（基础 + 移动两处）；WordWindow/QueueName 的 overflow: hidden 不受影响
+  const clipCount = (src.match(/overflow: clip/g) ?? []).length
+  assert.ok(clipCount >= 2, 'Panel 壳基础规则与移动媒体查询都必须 overflow: clip')
 })
 
 test('reduced-motion 降级必须存在', () => {

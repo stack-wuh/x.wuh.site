@@ -4,7 +4,7 @@
   "name": "20260930-fix-seo-indexing-p0",
   "type": "fix",
   "scope": "apps/site",
-  "status": "archived",
+  "status": "branched",
   "baseBranch": "main",
   "branch": "fix/20260930-fix-seo-indexing-p0",
   "files": [
@@ -18,18 +18,18 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": 440,
-    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/440"
+    "pullRequest": null,
+    "pullRequestUrl": null
   },
   "review": {
-    "conclusion": "passed",
-    "verifiedCommit": "c28d750a29df0c127d97207d5beefa55ea0d4db9",
-    "verifiedAt": "2026-09-30T15:51:19.546Z"
+    "conclusion": "pending",
+    "verifiedCommit": null,
+    "verifiedAt": null
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "merged-pr:440",
-    "planHash": "c2d3157ffe7b71e867a4bbd98d4cb597c030614aaca067426c0d7ad1d4efc190",
+    "checkpoint": null,
+    "planHash": "044092d19aaa6fb0237fd68db008b35366ccb2194ffd18f7e563996bac2e54af",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -45,17 +45,8 @@
       "message": "fix(seo): 收录正确性三连——缺失文章与双空记录收敛 404、sitemap 运行时生成",
       "title": "fix(seo): 收录正确性三连——文章页 soft 404、缺失 ID 偶发 500、sitemap 构建期烘焙成 4 条",
       "body": "Closes #438（收录正确性三连；关联总任务 #233 的 P0「索引与规范化」线）\n\n## 变更\n- `/post/[number]`：`Page` 与 `generateMetadata` 的 `!issue` 分支改为 `notFound()`——不存在的文章从 200（soft 404）收敛为真 404，触达既有 not-found.tsx（editorial 空空如也）\n- `getIssue`：body 与 body_html 双空的陈旧同步记录（已删除/已关闭 Issue）收敛为 `notFound()`，不再经 `ensureRenderedBody` 抛错演变成 500；上游非 404 异常（网络/5xx/空响应）保留真实 500 交路由级 error.tsx，不做无差别兜底\n- `specs.tsx`：删除全仓无引用的 `FALLBACK_METADATA`\n- `sitemap.ts`：`export const dynamic = 'force-dynamic'` 根治构建期烘焙 + 上游失败记日志后整体抛错（任一页失败 → `/sitemap.xml` 返回 500，而非静默输出只剩 4 条静态路由的残缺文件）\n\n## 根因诊断（生产库只读实证）\n- 500 ID（50/80/100/110/130）在生产 `blogs` 集合全部 `state:'closed'` 且 body/bodyHtml 双空；对照 165 号 `open`、bodyLen 1687。全集合 142 条中 **94 条双空**\n- 确切抛出点 = `ensureRenderedBody`（双空 throw 且 `getIssue` 不捕获）；其余候选代码证伪：nest 对不存在记录返回 404（NotFoundException）；schema `labels` 有 `default: []`\n\n## 验证\n- TDD：7 条新契约测试先红后绿（seo-p0 / seo-p14），更新 1 条断言旧静默降级行为的 seo-source-contract 契约测试；三文件 **25/25 绿**\n- `pnpm exec tsc --noEmit` 0 错；oxlint 0 错\n- 全量 165 测试 156 绿 / 9 挂——9 个经 base main 同组复跑证实为存量失败（desktop header ×5 等），与本 PR 无关\n- 无 nest 构建：`/sitemap.xml` 输出为 `ƒ (Dynamic)`，不再烘焙 4 条静态产物，构建不失败\n- runtime 验收（生产模式 next start + 本地隔离栈）：① 坏 ID → 404；② 双空记录 ID → 404（原 500）；③ `/post/165` → 200 无回归；④ sitemap **64 `<loc>` / 45 `<lastmod>`**（原 4 条）；⑤ 上游停机 → 抛错路径 500 生效（有 ISR last-good 缓存时返回上次完整结果，属 `revalidate:3600` 韧性）\n\n## 部署后复测清单（https://wuh.site）\n`/post/999` → 404；`/post/50` → 404；`/post/165` → 200；`/sitemap.xml` ≥46 loc 且含 lastmod"
-    },
-    "commit": {
-      "files": [
-        "shadow-docs/knowledge/homepage-data.md",
-        "shadow-docs/knowledge/seo.md",
-        "shadow-docs/signals.md"
-      ],
-      "message": "docs(shadow): seo/homepage-data 卡片落定 sitemap 运行时生成语义，SGN-001 命中更新至 8"
     }
-  },
-  "knowledge": null
+  }
 }
 ---
 
@@ -121,7 +112,7 @@
 - [x] 无 nest 环境 `pnpm build:next`：/sitemap.xml 不再被静态烘焙（构建输出为动态路由）、构建不失败（139 按 SGN-001 处理） — `apps/site`
 ### Phase 4 回填与交付
 - [x] 诊断结论与验收输出回填 issue #438（CLI 无 issue 评论能力，如需 gh 写操作在 brief 记录偏差） — issue #438
-- [x] release 流程（commit → PR → 合并后 Release 触发部署）
+- [ ] release 流程（commit → PR → 合并后 Release 触发部署）
 
 ## 结果
 - 实际耗时: 约 3.5h（本地环境故障排查占大头）
@@ -132,10 +123,6 @@
   - **静态检查**: `pnpm exec tsc --noEmit` 0 错；oxlint 0 错（2 条 warning 位于存量失败测试文件，非本次文件）
   - **runtime 验收（生产模式 next start 实测）**: ① `/post/999` → **404**；② `/post/50`（本地库仿生产形态 closed+双空记录）→ **404**；③ `/post/165` → 200 + `<title>再读《坐忘歌》 · wuh.site</title>`；④ `/sitemap.xml` → **64 条 `<loc>`、45 条 `<lastmod>`**（原 4 条）；⑤ 上游故障：post 路由冷缓存 + nest 停机 → **500**（抛错路径实测生效）；sitemap 观测到 ISR last-good（有缓存时上游短停仍返回上次**完整**结果，属 `revalidate:3600` 韧性，非「静默残缺」——硬故障冷启动才 500，与「不完整结果」禁令一致）
   - **无 nest 构建**: 杀 nest 后 `pnpm build:next` 成功，构建输出 `/sitemap.xml` 为 `ƒ (Dynamic)`——不再被静态烘焙
-- 交付发布:
-  - PR #440 已合并 main（merge commit `c28d750`，双亲 6a7b3b1 + 分支侧 d62619e，review verifiedCommit 243860f 在 main ancestry）；合并前按 merge-base 法消解与 i18n PR #439 在 signals.md 的 SGN-001 冲突（语义合并：证据都留、scope 并集、命中 8+4→12）
-  - GitHub Release **[v1.4.45](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.45)** 触发 CI-CD run 36736012151 **全绿**（quality-gate → build-next/build-nest → staging-test → switch-traffic），新代码已切生产流量
-  - **生产复测（https://wuh.site，部署后实测）**: ① `/post/999` → **404**（RSC payload 含 `NEXT_HTTP_ERROR_FALLBACK;404`，真 404 非 soft 404）；② `/post/50` → **404**；③ `/post/165` → **200** + `<title>再读《坐忘歌》 · wuh.site</title>`；④ `/sitemap.xml` → **63 条 `<loc>` / 45 条 `<lastmod>`**、45 条文章路由——运行时生成的直接证据（构建容器无 nest，静态烘焙只可能产出静态路由）；⑤ 上游故障 → 500 为本地 runtime 实证（生产无法安全复现停 nest），④ 的 63 loc 本身即为动态生成佐证
 - 流程备注/偏差:
   - worktree 双检出瞬态：CLI `branch execute` 要求当前分支=基线，main 被主 worktree 占用 → `git switch --ignore-other-worktrees main` 瞬时检出后立即建分支（本地 main == origin/main，未动任何 ref），建完即恢复正常单检出
   - **生产 viewCount 轻微污染**：早期本地诊断时 3200 端口被另一会话的残留 nest（连生产 Mongo）占用，两次 curl 误达 → 生产 165/50 号 viewCount 可能 +1~2；后续发现后已切 3201 隔离
