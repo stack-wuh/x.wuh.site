@@ -6,6 +6,7 @@ import { dirname, resolve } from 'node:path'
 
 const componentDir = dirname(fileURLToPath(import.meta.url))
 const src = await readFile(resolve(componentDir, 'PlayerPanel.tsx'), 'utf8')
+const specsSrc = await readFile(resolve(componentDir, 'specs.tsx'), 'utf8')
 
 test('晕染纸底配方：模糊色场 + 纸色罩 + 文字列局部纸罩 + 暗色反转', () => {
   assert.match(src, /blur\(64px\)/)
@@ -203,6 +204,18 @@ test('短词窗：mask 渐隐 + 点按跳播 + 「全体欣赏音乐」印章空
   assert.match(emptyBlock, /var\(--primary-color\)/)
   // 印章空态文案已迁 i18n 词典（zh 仍为「全体欣赏音乐」），守卫改为断言 t() 调用形状
   assert.match(src, /t\('player\.panel\.wordEmpty'\)/)
+})
+
+test('最爱印：本卷 playCount 最高曲目播放时进度印为「愛」，其余「樂」，音量印恒「樂」', () => {
+  // 口径与 /music 最爱徽标同源：maxPlays>0 且 currentTrack.playCount === maxPlays（含并列全标）
+  assert.match(src, /maxPlays > 0 && currentTrack\?\.playCount === maxPlays/)
+  assert.match(src, /glyph=\{favorite \? '愛' : '樂'\}/)
+  // 音量 Progress 不传 glyph（维持默认「樂」）
+  const volumeBlock = src.slice(src.indexOf('<VolumeRow>'), src.indexOf('</VolumeRow>'))
+  assert.ok(volumeBlock.length > 0, 'VolumeRow 缺失')
+  assert.doesNotMatch(volumeBlock, /glyph=/)
+  // Track 契约镜像服务端 /v2/music 联表 playCount（可选字段）
+  assert.match(specsSrc, /playCount\?: number/)
 })
 
 test('下滑关闭手柄：横杆手柄 + 拖拽跟手（$drag 位移）+ 阈值关闭', () => {

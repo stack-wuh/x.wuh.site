@@ -14,10 +14,11 @@ source:
   - changes/20260824-P-homepage-hydration-slimming/brief.md
   - changes/20260906-fix-post-fcp-payload/brief.md
   - changes/20260930-feature-site-i18n-trilingual/brief.md
+  - changes/20260930-style-player-favorite-ai-seal/brief.md
 status: active
-verified: 2026-09-30
+verified: 2026-10-01
 verified-depth: runtime
-verified-scope: CJK 子集假名扩集——四款 woff2 从 Noto CJK 全量源重切（fonttools desubroutinize + 去 hinting）后 fontTools cmap 校验 平92/片90 全覆盖，浏览器日文界面目检假名自托管渲染无回退；其余段落沿承各自变更时的既有验证
+verified-scope: CJK 子集假名扩集——四款 woff2 从 Noto CJK 全量源重切（fonttools desubroutinize + 去 hinting）后 fontTools cmap 校验 平92/片90 全覆盖，浏览器日文界面目检假名自托管渲染无回退；20260930-style-player-favorite-ai-seal：印章字形扩列（2243→2257 码点，樂/墨补齐、五印 cmap 全 True）后 build:next 绿、面板印面 fontFamily 实测 Noto Serif SC；其余段落沿承各自变更时的既有验证
 ---
 
 # 首屏加载性能
@@ -36,7 +37,7 @@ verified-scope: CJK 子集假名扩集——四款 woff2 从 Noto CJK 全量源�
 
 详情页首屏载荷边界（2026-09-06）：`/post/[number]` 为动态路由（数据 fetch 有 revalidate 缓存），**不得加 loading.tsx 骨架**——loading 边界使路由进入流式形态，缓存命中也先 flush 灰骨架再由脚本交换真容，HTML 涨至 181KB 且骨架成为 FCP 元素；撤销后单帧 70KB、内联 CSS 39KB。CJK 字体（Noto Sans/Serif SC，1795 字子集）必须经 `app/fonts/cjk.css` 构建管线接入以获得 `/_next/static/media` 哈希 + immutable 缓存；public/fonts 直引会继承 `max-age=0`，回访每次重新验证/下载 634KB 衬线字体。分享图/导出全文组件（依赖 html-to-image、qrcode）用 next/dynamic + 首次打开才挂载，不进首包。对已在千字级的子集字体做 unicode-range 切片是负优化（woff2 跨字形压缩优势丢失，总量 2.2 倍）；切片仅对全量字形大字体有意义（管线脚本留档 `apps/site/scripts/split_cjk_fonts.py`）。
 
-CJK 子集假名扩集（20260930-feature-site-i18n-trilingual）：多语言日文界面需要假名与日文汉字，原 1795 字子集假名覆盖为零且全量源字体不在仓库。扩集做法：下载 Noto CJK 官方 SubsetOTF 全量源，以「现有子集 cmap ∪ 五十音/CJK 标点/半角片假名区间 ∪ ja 词典全量字符」为目标重新子集化（2243 码点；`hinting=False` + `desubroutinize=True` + `layout_features=['ccmp']` 压回 Sans 406KB / Serif 574KB 单字重——保留全部 layout 表会让体积翻倍），文件名不变、cjk.css 哈希自动更新。假名类增量约 +130KB/字重，是日文界面的一次性固定成本。
+CJK 子集假名扩集（20260930-feature-site-i18n-trilingual）：多语言日文界面需要假名与日文汉字，原 1795 字子集假名覆盖为零且全量源字体不在仓库。扩集做法：下载 Noto CJK 官方 SubsetOTF 全量源，以「现有子集 cmap ∪ 五十音/CJK 标点/半角片假名区间 ∪ ja 词典全量字符」为目标重新子集化（2243 码点；`hinting=False` + `desubroutinize=True` + `layout_features=['ccmp']` 压回 Sans 406KB / Serif 574KB 单字重——保留全部 layout 表会让体积翻倍），文件名不变、cjk.css 哈希自动更新。假名类增量约 +130KB/字重，是日文界面的一次性固定成本。20260930-style-player-favorite-ai-seal 起扩集管线落档 `apps/site/scripts/expand_cjk_fonts.py`（`NOTO_SRC_DIR` 指源字体目录），并集加入品牌印章字形：**樂 U+6A02 / 墨 U+58A8 此前不在子集、一直由系统回退字体渲染**，补齐后五印（樂/愛/念/音/墨）全 webfont（2257 码点，Sans 408KB / Serif 578KB，增量可忽略）——后续任何印面/品牌字形变更必须过此脚本重切，禁止裸打不在子集里的字形。
 
 ## 执行约束
 
