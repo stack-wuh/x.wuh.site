@@ -288,7 +288,7 @@ const ProgressWrapper = styled.div`
   }
 `
 
-/* 凹槽滑杆（签名元素）：4px 发丝轨道 + 主色已播段 + 纸色圆点滑块，进度与音量共用同一几何 */
+/* 凹槽滑杆（音量）：4px 发丝轨道 + 主色已播段 + 纸色圆点滑块；进度自「度曲尺」起改行刻度尺，凹槽几何归音量 */
 const GrooveSlider = styled.input<{ $fill?: number }>`
   -webkit-appearance: none;
   appearance: none;
@@ -363,18 +363,111 @@ const VolumeSlider = styled(GrooveSlider)`
   width: 120px;
 `
 
-const TimeRow = styled.div`
+/* 度曲尺（签名元素）：双层刻度 + 朱砂指针的进度尺；交互保持原生 range（透明覆盖整把尺），
+   拖拽/键盘/读屏 slider 语义零降级。刻度与 /music 年谱刻度带同一血统。 */
+const TICK_MINOR = 'color-mix(in oklab, var(--text-color) 26%, transparent)'
+const TICK_MAJOR = 'color-mix(in oklab, var(--text-color) 42%, transparent)'
+
+const RulerRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+`
+
+const TimeCode = styled.span<{ $now?: boolean }>`
+  flex-shrink: 0;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
-  color: ${INK_FAINT};
+  line-height: 1;
+  color: ${(p) => (p.$now ? INK_MUTED : INK_FAINT)};
+`
+
+const Ruler = styled.div`
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  cursor: pointer;
+
+  @media (pointer: coarse) {
+    height: 44px;
+  }
+`
+
+/* 刻度层：细刻约 2.5% 间距、主刻 30 秒一道（1.5px）；已播层整宽 clip-path 裁切——
+   窄条宽度会让 repeating 周期随宽度收缩、与余段刻度错位 */
+const RulerLayer = styled.i<{ $major?: boolean; $on?: boolean; $fill?: number }>`
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    ${(p) => (p.$on ? 'var(--primary-color)' : p.$major ? TICK_MAJOR : TICK_MINOR)} 0
+      ${(p) => (p.$major ? '1.5px' : '1px')},
+    transparent ${(p) => (p.$major ? '1.5px' : '1px')} ${(p) => (p.$major ? '14.925%' : '2.5%')}
+  );
+  background-size: 100% ${(p) => (p.$major ? '15px' : '8px')};
+  background-position: center;
+  background-repeat: no-repeat;
+
+  ${(p) => (p.$on ? css`clip-path: inset(0 ${100 - (p.$fill ?? 0)}% 0 0);` : null)}
+`
+
+const RulerNeedle = styled.i<{ $fill?: number }>`
+  position: absolute;
+  top: 50%;
+  left: ${(p) => p.$fill ?? 0}%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 22px;
+  border-radius: 1px;
+  background: var(--primary-color);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 14%, transparent);
+  pointer-events: none;
+`
+
+/* 原生 range 透明覆盖：视觉在刻度层，交互语义全在 input 上 */
+const RulerRange = styled.input`
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    background: transparent;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 30px;
+    background: transparent;
+    border: none;
+  }
+
+  &::-moz-range-track {
+    background: transparent;
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 30px;
+    background: transparent;
+    border: none;
+  }
+
+  ${focusRing}
 `
 
 const ControlRow = styled.div`
   margin-top: var(--space-base);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-sm);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
@@ -410,8 +503,8 @@ const SkipButton = styled.button`
 /* 实心盘：面板唯一饱和元素；::after 内缩环作碟面标签环，唱片语言点到即止 */
 const PlayButton = styled(SkipButton)`
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   background: var(--primary-color);
   color: var(--background-100);
   box-shadow: var(--elevation-soft);
@@ -793,6 +886,7 @@ export const AudioPlayerPanel = () => {
   const restoreFocusRef = useRef<HTMLElement | null>(null)
   const [mobileTab, setMobileTab] = useState<'lyrics' | 'queue'>('lyrics')
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0.01)
+  const progressPct = (Math.min(state.progress, totalDuration) / totalDuration) * 100
 
   const lyrics = useMemo(() => parseLyrics(currentTrack?.lyrics), [currentTrack?.lyrics])
   const activeLyric = useMemo(() => findActiveLyricIndex(lyrics, state.progress), [lyrics, state.progress])
@@ -895,20 +989,26 @@ export const AudioPlayerPanel = () => {
 
         <NowDock>
           <ProgressWrapper>
-            <GrooveSlider
-              type='range'
-              min={0}
-              max={totalDuration}
-              step={0.1}
-              value={Math.min(state.progress, totalDuration)}
-              $fill={(Math.min(state.progress, totalDuration) / totalDuration) * 100}
-              onChange={(e) => seek(Number(e.target.value))}
-              aria-label='播放进度'
-            />
-            <TimeRow>
-              <span>{formatDuration(state.progress)}</span>
-              <span>{formatDuration(totalDuration)}</span>
-            </TimeRow>
+            <RulerRow>
+              <TimeCode $now>{formatDuration(state.progress)}</TimeCode>
+              <Ruler>
+                <RulerLayer aria-hidden='true' />
+                <RulerLayer aria-hidden='true' $on $fill={progressPct} />
+                <RulerLayer aria-hidden='true' $major />
+                <RulerLayer aria-hidden='true' $major $on $fill={progressPct} />
+                <RulerNeedle aria-hidden='true' $fill={progressPct} />
+                <RulerRange
+                  type='range'
+                  min={0}
+                  max={totalDuration}
+                  step={0.1}
+                  value={Math.min(state.progress, totalDuration)}
+                  onChange={(e) => seek(Number(e.target.value))}
+                  aria-label='播放进度'
+                />
+              </Ruler>
+              <TimeCode>{formatDuration(totalDuration)}</TimeCode>
+            </RulerRow>
           </ProgressWrapper>
 
           <ControlRow>
