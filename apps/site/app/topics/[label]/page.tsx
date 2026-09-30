@@ -5,8 +5,9 @@ import type { ContentItem, PostListItem } from "@wuh.site/core";
 import { buildPostUrl } from "@/app/lib/slug";
 import { buildTopicUrl, decodeTopicParam } from "@/app/lib/topic-url";
 import { createCollectionPageStructuredData } from "@/app/lib/structured-data";
+import { buildSectionMetadata } from "@/app/lib/seo";
 import TopicListView from "./TopicListView";
-import { PER_PAGE, SITE_URL, SITE_NAME, type TopicPageParams } from "./specs";
+import { PER_PAGE, SITE_URL, type TopicPageParams } from "./specs";
 
 const mapContentToPost = (item: ContentItem): PostListItem => ({
   id: item.externalId,
@@ -55,18 +56,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: SITE_NAME,
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-    },
+    ...buildSectionMetadata({ title, description, url }),
   };
 }
 
