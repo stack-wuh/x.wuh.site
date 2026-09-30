@@ -903,6 +903,11 @@ export const AudioPlayerPanel = () => {
   const lyrics = useMemo(() => parseLyrics(currentTrack?.lyrics), [currentTrack?.lyrics])
   const activeLyric = useMemo(() => findActiveLyricIndex(lyrics, state.progress), [lyrics, state.progress])
   const playing = state.status === 'playing'
+  // 最爱印：本卷播放次数最高曲目播放时进度印换「愛」——口径与 /music 最爱徽标同源（含并列）
+  const favorite = useMemo(() => {
+    const maxPlays = queue.reduce((max, track) => Math.max(max, track.playCount ?? 0), 0)
+    return maxPlays > 0 && currentTrack?.playCount === maxPlays
+  }, [queue, currentTrack])
 
   // 弹层交互：打开时焦点移入关闭钮，Escape 关闭，关闭后焦点移回触发元素
   useEffect(() => {
@@ -1075,6 +1080,7 @@ export const AudioPlayerPanel = () => {
                 value={progressPct}
                 onChange={(pct) => seek((pct / 100) * totalDuration)}
                 thumb
+                glyph={favorite ? '愛' : '樂'}
                 breathing={playing}
                 label={t('player.panel.progressLabel')}
               />

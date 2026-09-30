@@ -12,6 +12,8 @@ export interface Track {
   duration?: number
   streamUrl?: string
   lyrics?: string
+  /** 镜像 /v2/music 联表字段：MUSIC_U 登录态下的本卷播放次数（缺省=无登录态或未上榜） */
+  playCount?: number
 }
 
 export interface TrackSource {
