@@ -553,17 +553,24 @@ const ModeGroup = styled.div`
   gap: var(--space-sm);
 `
 
-/* 下划线模式带：复用 MobileTab/年谱刻度带的选中语言，替代描边 pill */
-const ModeButton = styled.button<{ $active?: boolean }>`
+/* 下划线模式带：复用 MobileTab/年谱刻度带的选中语言，替代描边 pill。
+   激活态走 aria-pressed 属性选择器（静态 CSS）——函数插值的动态类有规则删除竞态，
+   生产实测点击后 0.5–1s 内激活变体规则被清、下划线短暂挂在旧钮（音频暂停时持续整段会话） */
+const ModeButton = styled.button`
   padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
   background: none;
   border: none;
-  border-bottom: 2px solid ${(p) => (p.$active ? 'var(--primary-color)' : 'transparent')};
-  color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_MUTED)};
+  border-bottom: 2px solid transparent;
+  color: ${INK_MUTED};
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
   transition: color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
+
+  &[aria-pressed='true'] {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+  }
 
   &:hover {
     color: var(--primary-color);
@@ -1029,7 +1036,6 @@ export const AudioPlayerPanel = () => {
                 <ModeButton
                   key={mode}
                   type='button'
-                  $active={state.mode === mode}
                   aria-pressed={state.mode === mode}
                   onClick={() => setMode(mode)}
                 >

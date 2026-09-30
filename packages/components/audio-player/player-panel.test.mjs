@@ -125,11 +125,15 @@ test('幽灵传输与碟面环：层级收敛到唯一实心盘', () => {
   assert.match(src, /inset: 9px/)
 })
 
-test('下划线模式带：文字带替代描边 pill，图标退场', () => {
+test('下划线模式带：文字带替代描边 pill，激活态走 aria 属性选择器（动态类规则删除竞态禁入）', () => {
   const modeBlock = src.slice(src.indexOf('const ModeButton'), src.indexOf('const VolumeRow'))
   assert.ok(modeBlock.length > 0)
   assert.match(modeBlock, /border-bottom: 2px solid/)
   assert.doesNotMatch(modeBlock, /border-radius: 999px/)
+  // 激活态必须挂 aria-pressed 属性选择器（静态 CSS）：函数插值的动态类有规则删除竞态，
+  // 生产实测点击后 0.5–1s 内激活变体规则被清、下划线短暂挂在旧钮（暂停时可持续整段会话）
+  assert.match(modeBlock, /&\[aria-pressed='true'\]/)
+  assert.doesNotMatch(modeBlock, /\$active/)
   assert.doesNotMatch(src, /IconRepeat|IconShuffle/)
   assert.match(src, /aria-pressed/)
 })
