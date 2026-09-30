@@ -4,7 +4,7 @@
   "name": "20260930-feature-progress-component",
   "type": "feature",
   "scope": "components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260930-feature-progress-component",
   "files": [
@@ -24,18 +24,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 423,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/423",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 426,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/426"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d9e1ff634760a2ab512c65f90ed64bef76a9428f",
-    "verifiedAt": "2026-09-30T06:11:03.964Z"
+    "verifiedCommit": "f8fe7c557e24edc7d86b2d666829c303cbced338",
+    "verifiedAt": "2026-09-30T06:36:48.841Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:423",
-    "planHash": "0c36f9f161c64fc969ff28824c8ab94cfac90b5e6e2a493e11e608dfa61e2f21",
+    "checkpoint": "merged-pr:426",
+    "planHash": "e2fec62b13e1f794d69bc945c10ff455759b55507fbe4cc5bde62a02c3243bf0",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
