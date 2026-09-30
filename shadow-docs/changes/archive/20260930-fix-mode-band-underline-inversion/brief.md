@@ -4,7 +4,7 @@
   "name": "20260930-fix-mode-band-underline-inversion",
   "type": "fix",
   "scope": "player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260930-fix-mode-band-underline-inversion",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 427,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/427",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 429,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/429"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "f8fe7c557e24edc7d86b2d666829c303cbced338",
-    "verifiedAt": "2026-09-30T06:53:24.864Z"
+    "verifiedCommit": "0e98f8d2cb04f70325a98661b3bbf83d53bc4ee3",
+    "verifiedAt": "2026-09-30T08:49:40.552Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:427",
-    "planHash": "aefabce74f0f2a9d22627edc0a4c3fb7a194f95c8569d0153a11fbcfba70202e",
+    "checkpoint": "merged-pr:429",
+    "planHash": "9df7411a1b61b86238b9f41dd5d97a807b0e1c1fbc9a7b1fb169dc29ee644e9d",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
