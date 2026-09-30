@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type { Metadata } from "next";
-import { permanentRedirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { contentService } from "@wuh.site/core/endpoints";
 import { renderMarkdown } from "../../lib/markdown";
 import {
@@ -21,7 +21,6 @@ import {
   createBreadcrumbStructuredData,
 } from "../../lib/structured-data";
 import {
-  FALLBACK_METADATA,
   SITE_URL,
   type IssueData,
   type PostPageParams,
@@ -74,11 +73,25 @@ const getIssue = cache(async (num: string): Promise<IssueData> => {
   });
 
   if (error || !data) {
-    return { issue: null, prev: null, next: null, total: 0, position: 0 };
+    // 上游明确返回 404：文章不存在，走 notFound()；其余（网络异常/5xx/空响应）属
+    // 上游故障，抛错交由 error.tsx 返回 500，避免把真实故障伪装成 404 误伤收录
+    if (error?.status === 404) {
+      return { issue: null, prev: null, next: null, total: 0, position: 0 };
+    }
+    throw new Error(
+      `Post upstream fetch failed for ${num}: ${error?.message ?? "empty response"}`,
+    );
   }
 
   const content = data as any;
   const issue = mapContentToIssue(content);
+
+  // 已删除/已关闭 Issue 的陈旧同步记录 body 与 body_html 双空，无正文可渲染——
+  // 与上游 404 同路径收敛为 notFound()，避免渲染期抛错演变成 500
+  if (!issue.body?.trim() && !issue.body_html?.trim()) {
+    return { issue: null, prev: null, next: null, total: 0, position: 0 };
+  }
+
   issue.body_html = await ensureRenderedBody(issue);
   return {
     issue,
@@ -103,7 +116,7 @@ export async function generateMetadata({
   const { issue } = await getIssue(number);
 
   if (!issue) {
-    return FALLBACK_METADATA;
+    notFound();
   }
 
   return buildArticleMetadata(issue) as Metadata;
@@ -123,8 +136,7 @@ export default async function Page({
     total,
     position,
   } = await getIssue(number);
-  if (!issue)
-    return <PostView issue={null} prevIssue={null} nextIssue={null} />;
+  if (!issue) notFound();
 
   if (!isCanonicalPostPath(raw, issue.number)) {
     permanentRedirect(buildPostUrl(issue.number));

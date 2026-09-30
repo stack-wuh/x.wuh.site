@@ -1,15 +1,19 @@
 ---
 title: 首页数据获取
 domain: performance
-keywords: [首页, 数据获取, 运行时请求, 生产构建, SSR, 日志, ISR]
+keywords: [首页, 数据获取, 运行时请求, 生产构建, SSR, 日志, ISR, sitemap, force-dynamic]
 scope:
   - apps/site/app/page.tsx
   - apps/site/app/HomeView
+  - apps/site/app/sitemap.ts
 status: active
 source:
   - changes/archive/2026-07-05-B-fix-homepage-build-empty-data/brief.md
   - changes/20260829-fix-homepage-empty-data/brief.md
-verified: 2026-08-29
+  - changes/archive/20260930-fix-seo-indexing-p0/brief.md
+verified: 2026-09-30
+verified-depth: runtime
+verified-scope: apps/site/app/page.tsx、apps/site/app/sitemap.ts
 ---
 
 # 首页数据获取
@@ -24,6 +28,7 @@ verified: 2026-08-29
 
 - 首页必须保持 force-dynamic；不得恢复构建期预渲染或 fetch 级 revalidate（构建环境无 nest 连接，任何预渲染都会烘焙空数据）。
 - 首页不得把构建阶段 API 失败得到的空数组固化为生产结果；运行时请求失败必须记录模块并可降级渲染。
+- **适用边界扩展（2026-09-30，sitemap 为第二实证）：所有「构建期无法访问 nest 的运行时数据路由」都必须 force-dynamic，不得依赖构建期预渲染**——sitemap 曾因此被烘焙成只剩 4 条静态 URL 的残缺产物。
 
 ## 适用边界
 
