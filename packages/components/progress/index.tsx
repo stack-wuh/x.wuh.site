@@ -22,7 +22,8 @@ const Progress: React.FC<ProgressProps> = ({
 }) => {
   const indeterminate = value == null
   const interactive = typeof onChange === 'function'
-  const clamped = indeterminate ? 0 : Math.min(100, Math.max(0, value))
+  // 非有限值（如消费方 0/0 的时长换算）落 0，不把 NaN 灌进受控 range
+  const clamped = indeterminate || !Number.isFinite(value) ? 0 : Math.min(100, Math.max(0, value))
   const showThumb = (thumb ?? interactive) && !indeterminate
 
   const bar = (

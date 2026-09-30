@@ -59,3 +59,15 @@ test('Progress keeps breathing and travel keyframes local and named', () => {
   assert.match(stylesSource, /const inkTravel = keyframes`/)
   assert.match(stylesSource, /const breathe = keyframes`/)
 })
+
+test('interactive range expands touch target to 44px on coarse pointers', () => {
+  assert.match(stylesSource, /@media \(pointer: coarse\)/)
+  const rangeBlock = stylesSource.slice(stylesSource.indexOf('export const SRange'))
+  const coarseBlock = rangeBlock.match(/@media \(pointer: coarse\)[\s\S]*?\n  \}/)?.[0] ?? ''
+  assert.ok(coarseBlock.length > 0, 'SRange needs a coarse-pointer block')
+  assert.match(coarseBlock, /calc\(50% - 22px\)/, 'vertical hit area must reach 44px centred')
+})
+
+test('non-finite values (NaN from zero-duration math) clamp to 0 instead of poisoning the slider', () => {
+  assert.match(indexSource, /Number\.isFinite/)
+})

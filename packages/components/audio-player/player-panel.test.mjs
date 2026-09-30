@@ -73,43 +73,29 @@ test('控制甲板 gutter：桌面左栏获得装裱内距，甲板离开面板�
   assert.match(src, /padding: 0 var\(--space-lg\) var\(--space-xl\) var\(--space-xl\)/)
 })
 
-test('凹槽滑杆（音量）：定制 range 保留凹槽几何，进度自此改行度曲尺', () => {
-  assert.match(src, /-webkit-appearance: none/)
-  assert.match(src, /::-webkit-slider-runnable-track/)
-  assert.match(src, /::-webkit-slider-thumb/)
-  assert.match(src, /::-moz-range-progress/)
-  assert.match(src, /\$fill/)
-  assert.match(src, /background: var\(--background-100\)/)
+test('进度/音量接入共享 Progress 交互态（度曲尺与凹槽私有实现已退役）', () => {
+  assert.doesNotMatch(src, /RulerLayer|RulerNeedle|RulerRange|GrooveSlider|VolumeSlider|TICK_MINOR|TICK_MAJOR/)
+  assert.match(src, /import Progress from '@wuh\.site\/components\/progress'/)
+  // 进度：百分比换算（progressPct*100 进、seek 回写秒），印光标 + 播放态呼吸晕接真实 playing
+  assert.match(src, /<Progress\s+value=\{progressPct \* 100\}/)
+  assert.match(src, /onChange=\{\(pct\) => seek\(\(pct \/ 100\) \* totalDuration\)\}/)
+  assert.match(src, /breathing=\{playing\}/)
+  // 音量：120px 原位窄条，0-100 换算
+  assert.match(src, /<Progress\s+value=\{state\.volume \* 100\}/)
+  assert.match(src, /onChange=\{\(v\) => setVolume\(v \/ 100\)\}/)
+  assert.match(src, /const VolumeBox = styled\.div`/)
+  assert.match(src, /width: 120px/)
 })
 
-test('度曲尺进度：双层刻度 + 已播朱砂层 + 指针，交互仍是原生 range 透明覆盖', () => {
-  // 刻度层：单一声明 prop 化（细刻/主刻 × 余段/已播），JSX 组合出四层
-  const layerBlock = src.slice(src.indexOf('const RulerLayer'), src.indexOf('const RulerNeedle'))
-  assert.ok(layerBlock.length > 0, 'RulerLayer 定义缺失')
-  assert.match(layerBlock, /repeating-linear-gradient\(\s*90deg/)
-  assert.match(layerBlock, /\$major/)
-  assert.match(layerBlock, /\$on/)
-  // 已播段必须整宽裁切（clip-path），窄条宽度会让刻度周期随宽度收缩、与余段错位
-  assert.match(layerBlock, /clip-path: inset/)
-  const layerUsages = src.match(/<RulerLayer[^>]*\/>/g) ?? []
-  assert.equal(layerUsages.length, 4, `RulerLayer 应组合 4 层（细/主 × 余/已播），实际 ${layerUsages.length}`)
-  assert.equal(layerUsages.filter((u) => u.includes('$major')).length, 2, '主刻层应 2 层')
-  assert.equal(layerUsages.filter((u) => u.includes('$on')).length, 2, '已播层应 2 层')
-  assert.match(src, /const RulerNeedle/)
-  const rangeBlock = src.slice(src.indexOf('const RulerRange'), src.indexOf('const MODE_LABELS'))
-  assert.ok(rangeBlock.length > 0, 'RulerRange 定义缺失')
-  assert.match(rangeBlock, /appearance: none/)
-  assert.match(rangeBlock, /background: transparent/)
-  assert.match(src, /<RulerRange\s+type='range'/)
-})
-
-test('时间码嵌尺两端：独立 TimeRow 移除，mono 时间码与尺同行', () => {
+test('进度行布局：时间码两端保留，中段为共享进度条', () => {
   assert.doesNotMatch(src, /const TimeRow/)
-  const timeCodeBlock = src.slice(src.indexOf('const TimeCode'), src.indexOf('const Ruler ='))
+  const timeCodeBlock = src.slice(src.indexOf('const TimeCode'), src.indexOf('const ControlRow'))
   assert.ok(timeCodeBlock.length > 0, 'TimeCode 定义缺失')
   assert.match(timeCodeBlock, /font-family: var\(--font-mono\)/)
   assert.match(timeCodeBlock, /line-height: 1/)
   assert.match(timeCodeBlock, /\$now/)
+  assert.match(src, /<ProgressRow>/)
+  assert.match(src, /<TimeCode \$now>/)
 })
 
 test('传输钮居中：桌面与移动同构图，修复左聚失衡', () => {
