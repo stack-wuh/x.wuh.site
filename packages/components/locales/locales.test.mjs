@@ -141,10 +141,24 @@ test('useLocale 落位 packages/hooks/useLocale 并复用 locales 实现', () =>
   assert.match(useLocaleSource, /@wuh\.site\/components\/locales/)
 })
 
-test('AppearanceOptions 提供语言循环切换（中→EN→日）', () => {
+test('AppearanceOptions 语言三选平铺（中｜英｜日，aria-pressed 直选），不再循环轮转', () => {
   assert.match(appearanceSource, /useLocale\(\)/)
   assert.match(appearanceSource, /setLocale\(/)
-  assert.match(appearanceSource, /'zh', 'en', 'ja'/)
+  assert.match(appearanceSource, /value: 'zh'/)
+  assert.match(appearanceSource, /value: 'en'/)
+  assert.match(appearanceSource, /value: 'ja'/)
+  assert.match(appearanceSource, /aria-pressed=\{locale === option\.value\}/)
+  // 循环轮转退役：无 LOCALE_CYCLE / nextLocale 推导
+  assert.doesNotMatch(appearanceSource, /LOCALE_CYCLE|nextLocale/)
+  // 挂载即兜底预取（外观弹层打开 = 组件挂载）
+  assert.match(appearanceSource, /preloadDictionaries\(\)/)
+})
+
+test('词典空闲预取：requestIdleCallback 回退 setTimeout，双语言槽，失败静默回落', () => {
+  assert.match(indexSource, /export function preloadDictionaries/)
+  assert.match(indexSource, /loader\(\)\.catch\(\(\) => \{\}\)/)
+  assert.match(indexSource, /window\.requestIdleCallback\(\(\) => cb\(\), \{ timeout: 3000 \}\)/)
+  assert.match(indexSource, /window\.setTimeout\(cb, 1500\)/)
 })
 
 test('词典 zh/en/ja 均为可类型剥离的纯对象模块（node 直读无副作用）', () => {

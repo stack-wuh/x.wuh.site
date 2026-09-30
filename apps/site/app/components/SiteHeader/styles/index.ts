@@ -398,17 +398,16 @@ export const ThemeIcon = styled.span`
   color: var(--primary-color);
 `
 
-/* 语言循环切换：单枚墨字钮，语言自称名（中/EN/日）即印面。
-   与 SchemeOption 同一淡墨→实色 hover 语言；常显渐隐下划线（它永远「选中」） */
-export const LanguageCycleRow = styled.div`
+/* 语言三段：与「明暗」行同一分段语言（发丝线分隔 + 渐隐下划线选中），中｜英｜日平铺直选。
+   自称名为跨语言不变量（中/英/日），不进词典 */
+export const LanguageOptions = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 `
 
-export const LanguageCycle = styled.button`
+export const LanguageOption = styled.button`
   appearance: none;
   position: relative;
-  grid-column: 1 / -1;
   padding: var(--space-xs) var(--space-xs);
   border: 0;
   background: transparent;
@@ -418,6 +417,8 @@ export const LanguageCycle = styled.button`
   cursor: pointer;
   transition: color var(--transition-fast) ease;
 
+  & + & { border-left: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent); }
+
   &::after {
     content: '';
     position: absolute;
@@ -426,10 +427,15 @@ export const LanguageCycle = styled.button`
     bottom: calc(var(--space-base) / 2);
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
-    opacity: 1;
+    opacity: 0;
   }
 
   &:hover { color: var(--text-color); }
+  &[aria-pressed='true'] {
+    color: var(--text-color);
+
+    &::after { opacity: 1; }
+  }
   &:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color) 72%, white); outline-offset: calc(var(--space-xs) / 2); }
 `
 
