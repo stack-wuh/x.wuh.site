@@ -3,17 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Empty from '@wuh.site/components/empty'
 import { useAudioPlayer } from '@wuh.site/components/audio-player'
-import { SITE_NAME } from '@wuh.site/core'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import {
   formatTrackDuration,
   type MusicPlaylist,
   type MusicPlaylistTrack,
-  type MusicUserProfile,
   type MusicUserPlaylistSummary
 } from '../specs'
 import {
-  Avatar,
   Chronicle,
   Content,
   ContentInner,
@@ -22,13 +19,10 @@ import {
   Epigraph,
   FavBadge,
   FavSlot,
-  Identity,
-  IdentityName,
   IndexNum,
   IndexPlay,
   Intro,
   IntroTags,
-  LvBadge,
   PageHeader,
   PageSubtitle,
   PageTitle,
@@ -42,8 +36,6 @@ import {
   RailItem,
   RailYear,
   Section,
-  SealAvatar,
-  Since,
   TagChip,
   TitleGroup,
   TrackArtist,
@@ -63,13 +55,12 @@ type MusicViewProps = {
   playlistId: string
   playlist: MusicPlaylist | null
   annualPlaylists: MusicUserPlaylistSummary[]
-  profile?: MusicUserProfile
 }
 
 /** 歌单名里的 4 位年份；无年份回退歌单名（纵轨/水印兜底文案） */
 const yearOf = (name: string): string => name.match(/(?:19|20)\d{2}/)?.[0] ?? name
 
-export default function MusicView({ playlistId, playlist, annualPlaylists, profile }: MusicViewProps) {
+export default function MusicView({ playlistId, playlist, annualPlaylists }: MusicViewProps) {
   const { state, currentTrack, actions } = useAudioPlayer()
   const initialId = Number(playlistId)
   const [selectedId, setSelectedId] = useState<number | null>(Number.isFinite(initialId) ? initialId : null)
@@ -84,13 +75,6 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
   const railRef = useRef<HTMLDivElement | null>(null)
 
   const tracks = useMemo(() => selectedPlaylist?.tracks ?? [], [selectedPlaylist])
-  const firstYear = useMemo(() => {
-    const years = annualPlaylists
-      .map((item) => item.name.match(/(?:19|20)\d{2}/)?.[0])
-      .filter((year): year is string => Boolean(year))
-      .sort()
-    return years[0]
-  }, [annualPlaylists])
 
   const selectedYear = useMemo(
     () => (selectedPlaylist?.name ? yearOf(selectedPlaylist.name) : ''),
@@ -319,18 +303,6 @@ export default function MusicView({ playlistId, playlist, annualPlaylists, profi
           <PageTitle>音乐</PageTitle>
           <PageSubtitle>网易云年度歌单 · 一年一卷编年</PageSubtitle>
         </TitleGroup>
-        {profile && (profile.nickname || profile.avatarUrl) ? (
-          <Identity>
-            {profile.avatarUrl ? (
-              <Avatar src={profile.avatarUrl} alt="" />
-            ) : (
-              <SealAvatar aria-hidden="true">{(profile.nickname ?? SITE_NAME).charAt(0)}</SealAvatar>
-            )}
-            <IdentityName>{profile.nickname ?? SITE_NAME}</IdentityName>
-            {profile.level ? <LvBadge>Lv.{profile.level}</LvBadge> : null}
-            {firstYear ? <Since>自 {firstYear} 年记录</Since> : null}
-          </Identity>
-        ) : null}
       </PageHeader>
 
       <Chronicle>

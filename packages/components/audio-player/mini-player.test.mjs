@@ -50,3 +50,29 @@ test('reduced-motion 降级为静态省略号', () => {
     'reduced-motion 下标题必须回退省略号'
   )
 })
+
+test('收起态书耳播放中换装墨柱等化器，暂停回落展开箭头', () => {
+  // 书耳与印章都携带播放态 transient prop（源码中两处同型签名）
+  const typed = miniPlayerSource.match(/styled\.button<\{ \$visible: boolean; \$playing: boolean \}>/g) ?? []
+  assert.ok(typed.length >= 2, 'CollapsedEar 与 SealButton 都要接 $playing')
+  // 播放中渲染展开卡同款 Equalizer（零新视觉语汇），暂停/空闲渲染箭头
+  assert.match(miniPlayerSource, /\{playing \? \(\s*<Equalizer \$playing=\{playing\} aria-hidden='true'>/)
+  assert.match(miniPlayerSource, /<IconChevronRight size=\{16\} \/>/)
+})
+
+test('移动端印章播放中泛朱砂涟漪环，暂停静止', () => {
+  assert.match(miniPlayerSource, /const ripple = keyframes/)
+  // keyframes 插值必须经 css 帮助函数包裹（裸字符串会运行时报错）；动画只在播放态启动，暂停回到 none
+  assert.match(
+    miniPlayerSource,
+    /animation: \$\{\(p\) => \(p\.\$playing \? css`\$\{ripple\} [^`]*infinite` : 'none'\)\}/
+  )
+})
+
+test('收起态声源动效尊重 reduced-motion', () => {
+  const blocks = miniPlayerSource.match(/@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\n  \}/g) ?? []
+  assert.ok(
+    blocks.some((block) => /&::after/.test(block) && /animation: none/.test(block)),
+    'reduced-motion 下印章涟漪必须关闭'
+  )
+})

@@ -15,24 +15,16 @@ export const Section = styled.section`
   color: var(--text-color);
 `
 
-/* ===== 页头：站点 PageHeader 语言，右侧放网易云身份 ===== */
+/* ===== 页头：站点 PageHeader 语言（标题 + 副题，与博客/关于同构） ===== */
 
 export const PageHeader = styled.header`
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
   gap: var(--space-lg);
-  flex-wrap: wrap;
   padding-bottom: var(--space-md);
   border-bottom: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto auto;
-    align-items: center;
-    column-gap: var(--space-xs);
-    row-gap: 2px;
     padding-bottom: var(--space-sm);
   }
 `
@@ -42,11 +34,6 @@ export const TitleGroup = styled.div`
   flex-direction: column;
   gap: var(--space-xs);
   min-width: 0;
-
-  /* 移动端把标题/副题提升为页头网格的直接参与项：标题与身份同行，副题独占下行 */
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: contents;
-  }
 `
 
 export const PageTitle = styled.h1`
@@ -58,8 +45,6 @@ export const PageTitle = styled.h1`
   letter-spacing: 0.03em;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 1;
-    grid-row: 1;
     font-size: 26px;
   }
 `
@@ -71,85 +56,8 @@ export const PageSubtitle = styled.p`
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 1 / -1;
-    grid-row: 2;
     font-size: var(--font-size-xs);
     color: color-mix(in oklab, var(--text-color) 55%, transparent);
-  }
-`
-
-export const Identity = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
-  min-width: 0;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-`
-
-export const Avatar = styled.img`
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  border: 1px solid color-mix(in oklab, var(--normal-500) 45%, transparent);
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 28px;
-    height: 28px;
-  }
-`
-
-export const SealAvatar = styled.span`
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
-  border-radius: var(--border-radius-xs);
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--primary-color);
-`
-
-export const IdentityName = styled.span`
-  font-family: var(--font-serif);
-  font-size: var(--font-size-base);
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    max-width: 5.5em;
-    font-size: var(--font-size-sm);
-  }
-`
-
-export const LvBadge = styled.span`
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  padding: 1px 6px;
-  border-radius: var(--border-radius-xs);
-  border: 1px solid color-mix(in oklab, var(--accent-color) 55%, transparent);
-  color: color-mix(in oklab, var(--accent-color) 78%, var(--text-color));
-`
-
-export const Since = styled.span`
-  font-size: var(--font-size-xs);
-  color: color-mix(in oklab, var(--text-color) 55%, transparent);
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
   }
 `
 
