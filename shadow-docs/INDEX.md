@@ -59,7 +59,9 @@
 | 20260930-feature-player-dock-progress-seal | reviewed | shadow-docs/changes/20260930-feature-player-dock-progress-seal/brief.md |
 | 20260930-feature-progress-component | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-progress-component/brief.md |
 | 20260930-fix-mode-band-underline-inversion | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-mode-band-underline-inversion/brief.md |
+| 20260930-fix-panel-progress-double-scale | published | shadow-docs/changes/20260930-fix-panel-progress-double-scale/brief.md |
 | 20260930-fix-player-active-state-recalc | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-player-active-state-recalc/brief.md |
+| 20260930-style-lyrics-empty-copy | ✅ 完成 | shadow-docs/changes/archive/20260930-style-lyrics-empty-copy/brief.md |
 | 20260930-style-player-dock-ruler | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-dock-ruler/brief.md |
 | 20260930-style-player-mobile-album-leaf | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-mobile-album-leaf/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |

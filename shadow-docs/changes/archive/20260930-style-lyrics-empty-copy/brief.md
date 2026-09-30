@@ -4,7 +4,7 @@
   "name": "20260930-style-lyrics-empty-copy",
   "type": "style",
   "scope": "player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260930-style-lyrics-empty-copy",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 433,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/433",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 434,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/434"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ef2c302191f87860caafd049486f14f5ba3774b3",
-    "verifiedAt": "2026-09-30T08:58:58.076Z"
+    "verifiedCommit": "1a3b8897bb29894e482251c85638e6555d2d5db8",
+    "verifiedAt": "2026-09-30T10:04:25.192Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:433",
-    "planHash": "aa0b05b6a7c0c8acb0bf4a29afbb12841edda22c27271d945076e7d968a97790",
+    "checkpoint": "merged-pr:434",
+    "planHash": "17e48d7315e88234f605965feef20fca93885e86a76c5f8b65f36f4b818a672f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
