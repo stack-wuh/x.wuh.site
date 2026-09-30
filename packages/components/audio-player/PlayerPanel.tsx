@@ -91,7 +91,7 @@ const Backdrop = styled.div<{ $visible: boolean }>`
   transition: opacity ${DUR_PANEL} ${EASE};
 `
 
-const Panel = styled.div<{ $visible: boolean }>`
+const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
   position: fixed;
   inset: 48px;
   z-index: 2610;
@@ -109,9 +109,12 @@ const Panel = styled.div<{ $visible: boolean }>`
   font-family: var(--font-sans);
   overflow: hidden;
   opacity: ${(p) => (p.$visible ? 1 : 0)};
-  transform: translateY(${(p) => (p.$visible ? '0' : '16px')});
+  transform: translateY(${(p) => (p.$drag != null ? `${Math.min(p.$drag, 320)}px` : p.$visible ? '0' : '16px')});
   pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
-  transition: opacity ${DUR_PANEL} ${EASE}, transform ${DUR_PANEL} ${EASE}, visibility 0s linear ${(p) => (p.$visible ? '0s' : DUR_PANEL)};
+  transition: ${(p) =>
+    p.$drag != null
+      ? 'none'
+      : `opacity ${DUR_PANEL} ${EASE}, transform ${DUR_PANEL} ${EASE}, visibility 0s linear ${p.$visible ? '0s' : DUR_PANEL}`};
   visibility: ${(p) => (p.$visible ? 'visible' : 'hidden')};
 
   /* 纸纹叠印：multiply 让晕染色场成为纸的一部分 */
@@ -134,14 +137,14 @@ const Panel = styled.div<{ $visible: boolean }>`
 
   ${reducedMotion}
 
-  /* 移动端：全屏沉浸页 —— header / 分段切换 / 歌词或列表 / dock 吸底 */
+  /* 移动端：全屏沉浸册页 —— 横翻对页（词页/目次）/ 页缘翻页钮 / dock 吸底 */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     inset: 0;
     max-width: none;
     padding: 0;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
-    grid-template-areas: 'header' 'tabs' 'body' 'dock';
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    grid-template-areas: 'pages' 'ticks' 'dock';
     border: none;
     border-radius: 0;
     box-shadow: none;
@@ -192,16 +195,11 @@ const NowHeader = styled.div`
   min-height: 0;
   display: flex;
   flex-direction: column;
-  /* 桌面 gutter：封面装裱内距，与歌词列 padding-left 同韵 */
+  /* 桌面 gutter：封面装裱内距，与歌词列 padding-left 同韵；移动端由册页词页接替 */
   padding: var(--space-xl) 0 0 var(--space-xl);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-area: header;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: calc(var(--space-sm) + env(safe-area-inset-top, 0px)) var(--space-base) var(--space-sm);
-    border-bottom: 1px solid ${HAIRLINE};
+    display: none;
   }
 `
 
@@ -235,14 +233,6 @@ const CoverHero = styled.div<{ $src?: string }>`
   @media (max-height: 840px) {
     width: min(100%, 220px);
   }
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 54px;
-    height: 54px;
-    min-width: 54px;
-    border-radius: var(--border-radius-base);
-    align-self: center;
-  }
 `
 
 const TrackHeading = styled.h2`
@@ -253,27 +243,12 @@ const TrackHeading = styled.h2`
   line-height: var(--line-height-heading);
   color: var(--text-color);
   overflow-wrap: anywhere;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    margin-top: 0;
-    font-size: var(--font-size-base);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 `
 
 const TrackArtist = styled.p`
   margin-top: var(--space-xs);
   font-size: var(--font-size-sm);
   color: ${INK_MUTED};
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 `
 
 const ProgressWrapper = styled.div`
@@ -553,7 +528,7 @@ const ModeGroup = styled.div`
   gap: var(--space-sm);
 `
 
-/* 下划线模式带：复用 MobileTab/年谱刻度带的选中语言，替代描边 pill */
+/* 下划线模式带：复用页缘钮/年谱刻度带的选中语言，替代描边 pill */
 const ModeButton = styled.button<{ $active?: boolean }>`
   padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
   background: none;
@@ -581,6 +556,226 @@ const VolumeRow = styled.div`
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
   }
+`
+
+/* ===== 移动端册页（2026-09-30 起）：装裱图版 + 短词窗 + 目次对页横翻 ===== */
+
+/* 下滑关闭手柄：拖拽跟手，松手过阈值关闭、否则回弹（reduced-motion 由面板级降级压制过渡） */
+const GrabHandle = styled.div`
+  position: absolute;
+  top: var(--space-xs);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  width: 48px;
+  height: 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+
+  &::before {
+    content: '';
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--text-color) 22%, transparent);
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: flex;
+  }
+`
+
+/* 下滑关闭手柄：见 GrabHandle；图版同作拖拽面 */
+
+/* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径 */
+const LeafPages = styled.div`
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-area: pages;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+`
+
+const LeafPage = styled.section`
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    flex: 0 0 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0 var(--space-base);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+`
+
+/* 装裱图版：纸框发丝线 + 纸边 + 图版内发丝线；图面也是下滑关闭的拖拽面 */
+const Plate = styled.figure`
+  margin: 44px auto 0;
+  width: min(236px, 62vw, 30vh);
+  padding: 10px;
+  background: color-mix(in oklab, var(--background-100) 88%, transparent);
+  border: 1px solid ${HAIRLINE};
+  border-radius: 4px;
+  box-shadow: var(--elevation-soft);
+  touch-action: none;
+  flex-shrink: 0;
+`
+
+const PlateArt = styled.div<{ $src?: string }>`
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: ${(p) =>
+    p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)'};
+  box-shadow: inset 0 0 0 1px ${HAIRLINE};
+`
+
+/* 图版题签：mono 朱砂「曲 · N / 总数」——曲目序号是版面信息不是装饰 */
+const PlateNo = styled.figcaption`
+  margin-top: 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.3em;
+  color: var(--primary-color);
+`
+
+const LeafTitle = styled.h2`
+  margin-top: 8px;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-heading);
+  color: var(--text-color);
+  overflow-wrap: anywhere;
+`
+
+const LeafArtist = styled.p`
+  margin-top: 6px;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: ${INK_MUTED};
+`
+
+/* 短词窗：mask 上下渐隐，当前句加重、相邻淡化；点按行跳播（矮视口可收缩） */
+const WordWindow = styled.div`
+  position: relative;
+  margin-top: auto;
+  flex: 0 1 148px;
+  min-height: 96px;
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, black 22%, black 78%, transparent);
+`
+
+const WordLine = styled.button<{ $active?: boolean; $near?: boolean }>`
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: var(--space-xs) 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+  color: ${INK_GHOST};
+  transition: color ${QUICK} ${EASE};
+
+  ${(p) => (p.$near ? css`color: ${INK_FAINT};` : null)}
+
+  ${(p) =>
+    p.$active
+      ? css`
+          color: var(--text-color);
+          font-size: var(--font-size-base);
+          font-weight: 600;
+        `
+      : null}
+
+  ${focusRing}
+`
+
+/* 无词空态：印章式「词未录」替代死黑——印框朱砂 45%、印面衬线字 */
+const WordEmpty = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > span {
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
+    border-radius: var(--border-radius-xs);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.28em;
+    color: color-mix(in oklab, var(--primary-color) 78%, transparent);
+  }
+`
+
+/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走 aria-current 属性选择器（静态 CSS，
+   规避动态类规则删除竞态——见 ModeButton 注释），选中条宽度切换走 scaleX 不碰布局属性 */
+const PageTicks = styled.div`
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-area: ticks;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: 2px 0 6px;
+  }
+`
+
+const PageTick = styled.button`
+  padding: 10px 8px;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: ${HAIRLINE};
+    transform: scaleX(0.44);
+    opacity: 0.6;
+    transition: transform ${QUICK} ${EASE}, opacity ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+  }
+
+  &[aria-current='true']::before {
+    background: var(--primary-color);
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  ${focusRing}
 `
 
 /* ===== 右侧：歌词 / 播放列表 ===== */
@@ -723,7 +918,15 @@ const LyricLine = styled.p<{ $active?: boolean; $near?: boolean }>`
       : null}
 `
 
+/* 词窗墨晕：短词窗用更矮的一团（册页词页 2026-09-30 起） */
+const WordBloom = styled(LyricBloom)`
+  height: 56px;
+  left: 0;
+  right: 0;
+`
+
 const QueueList = styled.ul`
+  position: relative;
   flex: 1;
   min-height: 0;
   margin: 0;
@@ -818,51 +1021,6 @@ const QueueMeta = styled.span`
   color: ${INK_FAINT};
 `
 
-/* ===== 移动端分段：歌词 / 列表 ===== */
-const MobileTabs = styled.div`
-  position: relative;
-  z-index: 1;
-  grid-area: tabs;
-  display: none;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: flex;
-    gap: var(--space-xs);
-    padding: 0 var(--space-base);
-    border-bottom: 1px solid ${HAIRLINE};
-  }
-`
-
-const MobileTab = styled.button<{ $active?: boolean }>`
-  flex: 1;
-  padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
-  background: none;
-  border: none;
-  border-bottom: 2px solid ${(p) => (p.$active ? 'var(--primary-color)' : 'transparent')};
-  color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_MUTED)};
-  font-family: var(--font-sans);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  transition: color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
-
-  ${focusRing}
-`
-
-const MobileSection = styled.section<{ $active?: boolean }>`
-  position: relative;
-  z-index: 1;
-  grid-area: body;
-  min-height: 0;
-  display: none;
-  flex-direction: column;
-  padding: var(--space-xs) var(--space-base) 0;
-  ${sectionTint}
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    ${(p) => (p.$active ? css`display: flex;` : css`display: none;`)}
-  }
-`
-
 const MODE_LABELS: Record<PlayerMode, string> = {
   order: '顺序',
   'repeat-one': '单曲',
@@ -882,9 +1040,13 @@ export const AudioPlayerPanel = () => {
   const mobileBloomRef = useRef<HTMLDivElement | null>(null)
   const desktopQueueRef = useRef<HTMLUListElement | null>(null)
   const mobileQueueRef = useRef<HTMLUListElement | null>(null)
+  const pagesRef = useRef<HTMLDivElement | null>(null)
   const closeRef = useRef<HTMLButtonElement | null>(null)
   const restoreFocusRef = useRef<HTMLElement | null>(null)
-  const [mobileTab, setMobileTab] = useState<'lyrics' | 'queue'>('lyrics')
+  const dragStartYRef = useRef<number | null>(null)
+  const dragYRef = useRef(0)
+  const [mobilePage, setMobilePage] = useState<'words' | 'queue'>('words')
+  const [dragY, setDragY] = useState<number | null>(null)
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0.01)
   const progressPct = (Math.min(state.progress, totalDuration) / totalDuration) * 100
 
@@ -933,34 +1095,86 @@ export const AudioPlayerPanel = () => {
     }
   }, [state.isPanelOpen])
 
-  // 播放列表定位到当前曲：面板打开或切歌时滚动到高亮项
+  // 播放列表定位到当前曲：面板打开或切歌时滚动到高亮项。
+  // 桌面容器无横翻包裹，scrollIntoView 安全；移动列表在 snap 页内，手动 scrollTop 只动纵向，
+  // 否则 scrollIntoView 会把外层横翻容器一并滚走（实测面板被带去目次页、页缘钮失同步）
   useEffect(() => {
     if (!state.isPanelOpen) return
-    for (const container of [desktopQueueRef.current, mobileQueueRef.current]) {
-      container?.querySelector<HTMLLIElement>('[data-active="true"]')?.scrollIntoView({ block: 'nearest' })
+    const dItem = desktopQueueRef.current?.querySelector<HTMLLIElement>('[data-active="true"]')
+    dItem?.scrollIntoView({ block: 'nearest' })
+    const mList = mobileQueueRef.current
+    const mItem = mList?.querySelector<HTMLLIElement>('[data-active="true"]')
+    if (mList && mItem) {
+      mList.scrollTop = Math.max(0, mItem.offsetTop - mList.clientHeight / 2 + mItem.clientHeight / 2)
     }
-  }, [state.isPanelOpen, state.currentIndex, mobileTab])
+  }, [state.isPanelOpen, state.currentIndex, mobilePage])
 
-  // 歌词跟随滚动 + 墨随声走（桌面与移动两份歌词容器都要跟随）；reduced-motion 下退化为瞬时定位
+  const prefersReducedMotion = () =>
+    typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // 册页横翻：swipe 由 scroll-snap 承担，onScroll 把页缘钮选中态同步回来
+  const handlePagesScroll = () => {
+    const el = pagesRef.current
+    if (!el || !el.clientWidth) return
+    const page = Math.round(el.scrollLeft / el.clientWidth) === 1 ? 'queue' : 'words'
+    setMobilePage((prev) => (prev === page ? prev : page))
+  }
+
+  const gotoPage = (page: 'words' | 'queue') => {
+    setMobilePage(page)
+    const el = pagesRef.current
+    if (!el) return
+    el.scrollTo({ left: page === 'queue' ? el.clientWidth : 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+  }
+
+  // 下滑关闭：手柄与图版是拖拽面，跟手位移，松手过阈值关闭、否则回弹
+  const onDragTouchStart = (event: React.TouchEvent) => {
+    dragStartYRef.current = event.touches[0]?.clientY ?? null
+  }
+
+  const onDragTouchMove = (event: React.TouchEvent) => {
+    const startY = dragStartYRef.current
+    if (startY == null) return
+    dragYRef.current = Math.max(0, (event.touches[0]?.clientY ?? startY) - startY)
+    setDragY(dragYRef.current)
+  }
+
+  const onDragTouchEnd = () => {
+    dragStartYRef.current = null
+    if (dragYRef.current > 96) {
+      togglePanel()
+    }
+    dragYRef.current = 0
+    setDragY(null)
+  }
+
+  // 歌词跟随滚动 + 墨随声走：桌面 scrollIntoView 居中；移动词窗手动垂直 scrollTop（理由同上），
+  // reduced-motion 退化为瞬时定位
   useEffect(() => {
     if (!state.isPanelOpen) return
-    const pairs = [
-      { container: scrollRef.current, bloom: lyricBloomRef.current },
-      { container: mobileLyricsRef.current, bloom: mobileBloomRef.current }
-    ]
     if (activeLyric < 0) {
-      for (const { bloom } of pairs) bloom?.classList.remove('on')
+      for (const bloom of [lyricBloomRef.current, mobileBloomRef.current]) bloom?.classList.remove('on')
       return
     }
-    const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const behavior: ScrollBehavior = reduceMotion ? 'auto' : 'smooth'
-    for (const { container, bloom } of pairs) {
-      const el = container?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
-      if (!el) continue
-      el.scrollIntoView({ behavior, block: 'center' })
-      if (bloom) {
-        bloom.style.transform = `translateY(${el.offsetTop - 12}px)`
-        bloom.classList.add('on')
+    const behavior = prefersReducedMotion() ? 'auto' : 'smooth'
+    const dEl = scrollRef.current?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
+    if (dEl && scrollRef.current) {
+      dEl.scrollIntoView({ behavior, block: 'center' })
+      if (lyricBloomRef.current) {
+        lyricBloomRef.current.style.transform = `translateY(${dEl.offsetTop - 12}px)`
+        lyricBloomRef.current.classList.add('on')
+      }
+    }
+    const mContainer = mobileLyricsRef.current
+    const mEl = mContainer?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
+    if (mEl && mContainer) {
+      mContainer.scrollTo({
+        top: mEl.offsetTop - mContainer.clientHeight / 2 + mEl.clientHeight / 2,
+        behavior
+      })
+      if (mobileBloomRef.current) {
+        mobileBloomRef.current.style.transform = `translateY(${mEl.offsetTop - 10}px)`
+        mobileBloomRef.current.classList.add('on')
       }
     }
   }, [activeLyric, state.isPanelOpen])
@@ -970,6 +1184,7 @@ export const AudioPlayerPanel = () => {
       <Backdrop $visible={state.isPanelOpen} onClick={togglePanel} aria-hidden='true' />
       <Panel
         $visible={state.isPanelOpen}
+        $drag={dragY}
         role='dialog'
         aria-modal='true'
         aria-label='播放器面板'
@@ -1095,73 +1310,84 @@ export const AudioPlayerPanel = () => {
           </QueueList>
         </QueueSection>
 
-        <MobileTabs role='tablist' aria-label='歌词与播放列表切换'>
-          <MobileTab
-            type='button'
-            role='tab'
-            $active={mobileTab === 'lyrics'}
-            aria-selected={mobileTab === 'lyrics'}
-            onClick={() => setMobileTab('lyrics')}
-          >
-            歌词
-          </MobileTab>
-          <MobileTab
-            type='button'
-            role='tab'
-            $active={mobileTab === 'queue'}
-            aria-selected={mobileTab === 'queue'}
-            onClick={() => setMobileTab('queue')}
-          >
-            播放列表
-          </MobileTab>
-        </MobileTabs>
+        {/* 移动端册页：词页（装裱图版 + 短词窗）横翻目次对页；页缘钮为键盘/读屏等价路径 */}
+        <GrabHandle
+          aria-hidden='true'
+          data-testid='panel-grab-handle'
+          onTouchStart={onDragTouchStart}
+          onTouchMove={onDragTouchMove}
+          onTouchEnd={onDragTouchEnd}
+        />
+        <LeafPages ref={pagesRef} onScroll={handlePagesScroll} aria-label='歌词与播放列表'>
+          <LeafPage aria-label='歌词页' aria-hidden={mobilePage !== 'words'} inert={mobilePage !== 'words'}>
+            <Plate
+              data-testid='panel-plate'
+              onTouchStart={onDragTouchStart}
+              onTouchMove={onDragTouchMove}
+              onTouchEnd={onDragTouchEnd}
+            >
+              <PlateArt $src={currentTrack?.coverUrl} aria-hidden='true' />
+              <PlateNo>
+                曲 · {String((state.currentIndex ?? 0) + 1).padStart(2, '0')} / {String(queue.length).padStart(2, '0')}
+              </PlateNo>
+            </Plate>
+            <LeafTitle>{currentTrack?.name ?? '等待播放'}</LeafTitle>
+            <LeafArtist>{currentTrack?.artist ?? ' '}</LeafArtist>
+            <WordWindow ref={mobileLyricsRef}>
+              <WordBloom ref={mobileBloomRef} aria-hidden='true' />
+              {lyrics.length ? (
+                lyrics.map((line, index) => (
+                  <WordLine
+                    key={`${line.time}-${index}`}
+                    type='button'
+                    data-lyric-index={index}
+                    $active={index === activeLyric}
+                    $near={Math.abs(index - activeLyric) === 1}
+                    onClick={() => seek(line.time)}
+                  >
+                    {line.text}
+                  </WordLine>
+                ))
+              ) : (
+                <WordEmpty>
+                  <span>词未录</span>
+                </WordEmpty>
+              )}
+            </WordWindow>
+          </LeafPage>
+          <LeafPage aria-label='播放列表页' aria-hidden={mobilePage !== 'queue'} inert={mobilePage !== 'queue'}>
+            <SectionHeading>目 次</SectionHeading>
+            <QueueList ref={mobileQueueRef}>
+              {queue.map((track, index) => (
+                <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
+                  <QueueButton type='button' onClick={() => playTrack(track.id)}>
+                    <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
+                    <QueueName $active={track.id === currentTrack?.id}>{track.name}</QueueName>
+                    <QueueMeta>
+                      <span>{track.artist}</span>
+                      <span>{formatDuration(track.duration ?? 0)}</span>
+                    </QueueMeta>
+                  </QueueButton>
+                </QueueItem>
+              ))}
+            </QueueList>
+          </LeafPage>
+        </LeafPages>
 
-        <MobileSection
-          role='tabpanel'
-          aria-label='歌词'
-          $active={mobileTab === 'lyrics'}
-          aria-hidden={mobileTab !== 'lyrics'}
-        >
-          <LyricsScroll ref={mobileLyricsRef}>
-            <LyricBloom ref={mobileBloomRef} aria-hidden='true' />
-            {lyrics.length ? (
-              lyrics.map((line, index) => (
-                <LyricLine
-                  key={`${line.time}-${index}`}
-                  data-lyric-index={index}
-                  $active={index === activeLyric}
-                  $near={Math.abs(index - activeLyric) === 1}
-                >
-                  {line.text}
-                </LyricLine>
-              ))
-            ) : (
-              <LyricLine>暂无歌词</LyricLine>
-            )}
-          </LyricsScroll>
-        </MobileSection>
-
-        <MobileSection
-          role='tabpanel'
-          aria-label='播放列表'
-          $active={mobileTab === 'queue'}
-          aria-hidden={mobileTab !== 'queue'}
-        >
-          <QueueList ref={mobileQueueRef}>
-            {queue.map((track, index) => (
-              <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
-                <QueueButton type='button' onClick={() => playTrack(track.id)}>
-                  <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
-                  <QueueName $active={track.id === currentTrack?.id}>{track.name}</QueueName>
-                  <QueueMeta>
-                    <span>{track.artist}</span>
-                    <span>{formatDuration(track.duration ?? 0)}</span>
-                  </QueueMeta>
-                </QueueButton>
-              </QueueItem>
-            ))}
-          </QueueList>
-        </MobileSection>
+        <PageTicks role='group' aria-label='册页翻页'>
+          <PageTick
+            type='button'
+            aria-current={mobilePage === 'words' ? 'true' : undefined}
+            aria-label='歌词页'
+            onClick={() => gotoPage('words')}
+          />
+          <PageTick
+            type='button'
+            aria-current={mobilePage === 'queue' ? 'true' : undefined}
+            aria-label='播放列表页'
+            onClick={() => gotoPage('queue')}
+          />
+        </PageTicks>
       </Panel>
     </>
   )
