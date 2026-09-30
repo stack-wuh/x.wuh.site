@@ -49,6 +49,17 @@ function readStoredLocale(): Locale {
   return 'zh'
 }
 
+/**
+ * 空闲预取 en+ja 词典 chunk：首屏零增量（预取只发生在挂载后的空闲档），
+ * chunk 有模块缓存，之后 loadDict 的 dynamic import 近乎同步，切语言即时生效。
+ * 失败静默：切换时按既有回落路径（zh）再拉。
+ */
+export function preloadDictionaries(): void {
+  for (const loader of Object.values(DICT_LOADERS)) {
+    loader().catch(() => {})
+  }
+}
+
 function applyDocumentLang(locale: Locale) {
   if (typeof document === 'undefined') return
   document.documentElement.lang = LANG_BY_LOCALE[locale]
@@ -81,6 +92,20 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     if (stored !== 'zh') {
       setLocaleState(stored)
       loadDict(stored)
+    }
+    // 空闲预取：requestIdleCallback 不可用（旧 Safari）退 setTimeout
+    let cancelled = false
+    const scheduleIdle = (cb: () => void): number =>
+      typeof window.requestIdleCallback === 'function'
+        ? window.requestIdleCallback(() => cb(), { timeout: 3000 })
+        : window.setTimeout(cb, 1500)
+    const handle = scheduleIdle(() => {
+      if (!cancelled) preloadDictionaries()
+    })
+    return () => {
+      cancelled = true
+      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(handle)
+      else window.clearTimeout(handle)
     }
   }, [loadDict])
 
