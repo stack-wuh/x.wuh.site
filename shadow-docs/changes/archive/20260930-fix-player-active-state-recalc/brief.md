@@ -4,7 +4,7 @@
   "name": "20260930-fix-player-active-state-recalc",
   "type": "fix",
   "scope": "player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260930-fix-player-active-state-recalc",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 431,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/431",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 432,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/432"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "df3fd9f1098d572a318b6663db919aa4d6a800d0",
-    "verifiedAt": "2026-09-30T08:20:23.242Z"
+    "verifiedCommit": "0b5898354eb154ae63cbb24dd7cdbf84f94af7fe",
+    "verifiedAt": "2026-09-30T08:50:28.431Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:431",
-    "planHash": "f8109745b09ad93ee1fce189b97bb0bd216c50925cc39f463119af179343656a",
+    "checkpoint": "merged-pr:432",
+    "planHash": "1e54c02d05bfeb58821426716d38f12cb5939c80cc9146d7e23de4d3aa5a070b",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -87,7 +87,7 @@ v1.4.41（PR #429）生产回归实测复现：模式带激活态虽已改为 `&
 - 实际耗时: 约 1 小时
 - 验证:
   - `node --test packages/components/audio-player/*.test.mjs` **40/40**（模式带/页缘钮守卫改写：静态规则消费 var(--mode-*/var(--tick-*)、JSX 行内挂载在场、属性选择器变体退场）；根 tsc 干净；oxlint 0/0
-  - dev 实测：三向切换行内 --mode-line 跟随（active 挂 var(--primary-color)、非激活回退 fallback）、border-color 过渡平滑（中间色采样证实）、aria-pressed/aria-current 语义保留；生产复验待 v1.4.42 部署后以同一探针执行（复现路径：生产行为表 + React 属性翻转）
+  - dev 实测：三向切换行内 --mode-line 跟随（active 挂 var(--primary-color)、非激活回退 fallback）、border-color 过渡平滑（中间色采样证实）、aria-pressed/aria-current 语义保留；生产复验待 v1.4.42 部署后以同一探针执行（复现路径：生产行为表 + React 属性翻转）；v1.4.42 部署全绿后生产复验**通过**：模式带三向切换 aria/行内变量/计算样式全一致（v1.4.41 同探针失败的路径）；页缘钮稳态 4/4 翻转全对，仅 display:none→flex 后首击背景色有一次性迟滞（自愈，引擎 quirk 同类，已记录）
 
 ## 知识评估
 - **预期影响:** 更新
