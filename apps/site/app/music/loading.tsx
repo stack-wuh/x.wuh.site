@@ -8,7 +8,6 @@ import {
   Content,
   ContentInner,
   FavSlot,
-  Identity,
   IndexNum,
   PageHeader,
   PageSubtitle,
@@ -82,10 +81,6 @@ export default function Loading() {
           <PageTitle>音乐</PageTitle>
           <PageSubtitle>网易云年度歌单 · 一年一卷编年</PageSubtitle>
         </TitleGroup>
-        <Identity>
-          <Skeleton variant="circle" width={34} height={34} />
-          <Skeleton width={72} height={16} />
-        </Identity>
       </PageHeader>
 
       <Chronicle>

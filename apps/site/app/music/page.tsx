@@ -70,7 +70,6 @@ export default async function Page({
       playlistId={playlistId}
       playlist={playlist}
       annualPlaylists={mine?.playlists ?? []}
-      profile={mine?.profile}
     />
   )
 }
