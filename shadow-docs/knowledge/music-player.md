@@ -21,7 +21,7 @@ source:
   - changes/20260930-style-player-panel-deck/brief.md
   - changes/archive/20260929-style-music-interaction-polish/brief.md
   - changes/20260930-style-player-dock-ruler/brief.md
-  - changes/20260930-style-player-mobile-album-leaf/brief.md
+  - changes/archive/20260930-style-player-mobile-album-leaf/brief.md
 verified: 2026-09-30
 verified-depth: runtime
 verified-scope: 服务端 jest 35/35（登录态边界、creator+年度过滤、年份倒序、502/503 映射、听歌排行联表与降级、profile 暴露、user_record 入参 uid 断言）；生产实测 /v2/music/user-playlists 返回 8 张年度歌单（2018-2025 年份倒序）；上游干跑 user_record{uid:398326271,type:0} 匿名 200 + allData 100 条（uid 误传 id 为 502）；站点侧 wiring 7/7、oxlint 0/0、实现截图（桌面夜/移动 500px）与认可原型构图比对一致；20260929-feature-music-skeleton：骨架 runtime 验证（tsc/build/oxlint 干净、wiring 10/10、骨架壳 HTML 增量 +29.5KB 实测、四主题×桌面/移动驻留截图与换容目检）。失效探测：workflow YAML 结构解析、5 个 step 脚本 bash -n、判定逻辑对生产端点干跑（200+healthy；空/非空边界样例）通过；dispatch 正负路径实测见 changes/archive/20260929-build-music-token-watch 交付记录。20260930-style-player-panel-deck：控制甲板 runtime 验证（node --test 29/29 含新增 gutter/凹槽/幽灵钮/模式带守卫、根 tsc 与 oxlint 干净、素雅/酒红 × 明暗四主题桌面 1280 + 矮视口 1366×768 + 移动 390 截图目检、播放态进度推进、模式带切换、focus-visible 走查）。20260929-style-music-interaction-polish：收起态声源指示与身份栏移除验证（audio-player 守卫 33/33、根 tsc 净、oxlint 0/0；dev 实测桌面/移动页头无身份栏 DOM+截图、收起耳暂停态=箭头、印章暂停态涟漪 animationName=none；播放态换装目测因自动化输入管线失效未做，守卫覆盖三元结构，keyframes 裸串插值崩溃已实测复现并修复为 css`` 包裹）。20260930-style-player-mobile-album-leaf：移动端册页 runtime 验证（node --test 40/40 含 5 条册页守卫、根 tsc/oxlint 净、wine/plain × 明暗四主题词页+目次页 390 截图与认可原型 A 构图比对一致、词未录空态与桌面回归截图、歌词点按跳播 10.6s→62.6s 实测、页缘钮翻页 aria-current 联动、合成 Touch 下拉关闭阈值生效；scrollIntoView 横向外滚缺陷实测复现并修复为手动 scrollTop）。
