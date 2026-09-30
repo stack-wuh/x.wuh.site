@@ -113,17 +113,19 @@ test('幽灵传输与碟面环：层级收敛到唯一实心盘', () => {
   assert.match(src, /inset: 9px/)
 })
 
-test('下划线模式带：文字带替代描边 pill，激活态走 aria 属性选择器（动态类规则删除竞态禁入）', () => {
+test('下划线模式带：激活态走行内自定义属性驱动（选择器失效免疫），aria 语义保留', () => {
   const modeBlock = src.slice(src.indexOf('const ModeButton'), src.indexOf('const VolumeRow'))
   assert.ok(modeBlock.length > 0)
-  assert.match(modeBlock, /border-bottom: 2px solid/)
-  assert.doesNotMatch(modeBlock, /border-radius: 999px/)
-  // 激活态必须挂 aria-pressed 属性选择器（静态 CSS）：函数插值的动态类有规则删除竞态，
-  // 生产实测点击后 0.5–1s 内激活变体规则被清、下划线短暂挂在旧钮（暂停时可持续整段会话）
-  assert.match(modeBlock, /&\[aria-pressed='true'\]/)
+  assert.match(modeBlock, /border-bottom: 2px solid var\(--mode-line, transparent\)/)
+  assert.match(modeBlock, /color: var\(--mode-ink, /)
+  // 选择器驱动的激活态在生产行为表上两连败（动态类规则删除竞态、属性翻转失效失灵），禁入
+  assert.doesNotMatch(modeBlock, /&\[aria-pressed=/)
   assert.doesNotMatch(modeBlock, /\$active/)
+  assert.doesNotMatch(modeBlock, /border-radius: 999px/)
+  // JSX 行内挂载 + aria 语义保留
+  assert.match(src, /'--mode-line': 'var\(--primary-color\)'/)
+  assert.match(src, /aria-pressed=\{state\.mode === mode\}/)
   assert.doesNotMatch(src, /IconRepeat|IconShuffle/)
-  assert.match(src, /aria-pressed/)
 })
 
 test('弹层滚动锁：面板打开锁 body 滚动（Dialog lockScroll 配方），关闭还原滚动位置', () => {
@@ -145,9 +147,12 @@ test('册页横翻：MobileTabs/MobileSection 退役，scroll-snap 对页 + 页�
   assert.match(tickBlock, /scaleX\(/)
   const tickButtonBlock = src.slice(src.indexOf('const PageTick ='), src.indexOf('/* ===== 右侧：歌词 / 播放列表 ===== */'))
   assert.ok(tickButtonBlock.length > 0, 'PageTick 定义缺失')
-  // 选中态必须挂 aria-current 属性选择器（静态 CSS），禁 transient 三元插值（动态类规则删除竞态）
-  assert.match(tickButtonBlock, /&\[aria-current='true'\]/)
+  // 选中态走行内自定义属性驱动（与 ModeButton 同一免疫机制），aria-current 语义保留
+  assert.match(tickButtonBlock, /background: var\(--tick-line, /)
+  assert.match(tickButtonBlock, /scaleX\(var\(--tick-fill, 0\.44\)\)/)
+  assert.doesNotMatch(tickButtonBlock, /&\[aria-current=/)
   assert.doesNotMatch(tickButtonBlock, /\$active/)
+  assert.match(src, /'--tick-fill': 1/)
   assert.match(src, /aria-current=/)
   assert.match(src, /onScroll=\{/)
 })

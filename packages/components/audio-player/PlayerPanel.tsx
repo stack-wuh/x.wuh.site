@@ -371,23 +371,20 @@ const ModeGroup = styled.div`
 `
 
 /* 下划线模式带：复用页缘钮/年谱刻度带的选中语言，替代描边 pill。
-   激活态走 aria-pressed 属性选择器（静态 CSS）——函数插值的动态类有规则删除竞态，
-   生产实测点击后 0.5–1s 内激活变体规则被清、下划线短暂挂在旧钮（音频暂停时持续整段会话） */
+   激活态经行内自定义属性驱动（JSX style 挂 --mode-*，静态规则消费 var()）——
+   选择器驱动的激活态在这张生产行为表上两连败：动态类有规则删除竞态（v1.4.36–38），
+   属性选择器又遇 React 属性翻转后失效失灵（v1.4.41 生产实测，手动摘戴属性才恢复）；
+   内联样式变更走引擎保证的失效路径，不依赖任何选择器重匹配。aria-pressed 保留语义、不再参与样式 */
 const ModeButton = styled.button`
   padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
-  color: ${INK_MUTED};
+  border-bottom: 2px solid var(--mode-line, transparent);
+  color: var(--mode-ink, ${INK_MUTED});
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
   transition: color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
-
-  &[aria-pressed='true'] {
-    border-bottom-color: var(--primary-color);
-    color: var(--primary-color);
-  }
 
   &:hover {
     color: var(--primary-color);
@@ -612,21 +609,16 @@ const PageTick = styled.button`
   border: none;
   cursor: pointer;
 
+  /* 选中态经行内自定义属性驱动（与 ModeButton 同一免疫机制，自定义属性继承进 ::before） */
   &::before {
     content: '';
     width: 18px;
     height: 2px;
     border-radius: 2px;
-    background: ${HAIRLINE};
-    transform: scaleX(0.44);
-    opacity: 0.6;
+    background: var(--tick-line, ${HAIRLINE});
+    transform: scaleX(var(--tick-fill, 0.44));
+    opacity: var(--tick-dim, 0.6);
     transition: transform ${QUICK} ${EASE}, opacity ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
-  }
-
-  &[aria-current='true']::before {
-    background: var(--primary-color);
-    transform: scaleX(1);
-    opacity: 1;
   }
 
   ${focusRing}
@@ -1089,6 +1081,11 @@ export const AudioPlayerPanel = () => {
                 <ModeButton
                   key={mode}
                   type='button'
+                  style={
+                    state.mode === mode
+                      ? ({ '--mode-line': 'var(--primary-color)', '--mode-ink': 'var(--primary-color)' } as React.CSSProperties)
+                      : undefined
+                  }
                   aria-pressed={state.mode === mode}
                   onClick={() => setMode(mode)}
                 >
@@ -1219,12 +1216,22 @@ export const AudioPlayerPanel = () => {
         <PageTicks role='group' aria-label='册页翻页'>
           <PageTick
             type='button'
+            style={
+              mobilePage === 'words'
+                ? ({ '--tick-line': 'var(--primary-color)', '--tick-fill': 1, '--tick-dim': 1 } as React.CSSProperties)
+                : undefined
+            }
             aria-current={mobilePage === 'words' ? 'true' : undefined}
             aria-label='歌词页'
             onClick={() => gotoPage('words')}
           />
           <PageTick
             type='button'
+            style={
+              mobilePage === 'queue'
+                ? ({ '--tick-line': 'var(--primary-color)', '--tick-fill': 1, '--tick-dim': 1 } as React.CSSProperties)
+                : undefined
+            }
             aria-current={mobilePage === 'queue' ? 'true' : undefined}
             aria-label='播放列表页'
             onClick={() => gotoPage('queue')}
