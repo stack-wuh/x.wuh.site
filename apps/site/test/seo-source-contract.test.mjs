@@ -46,9 +46,11 @@ test('工具目录不使用 Next metadata route 保留文件名 sitemap.ts', asy
 })
 
 
-test('sitemap 构建阶段 API 失败时降级而不是抛错', () => {
-  assert.doesNotMatch(sitemapSource, /throw new Error\(['"]Failed to load sitemap/)
-  assert.match(sitemapSource, /return \[\]/)
+test('sitemap 运行时生成，上游失败整体抛错而不是静默输出残缺结果', () => {
+  // 构建期烘焙问题由 force-dynamic 根治（构建阶段不再执行 fetch）；运行期上游不可用
+  // 时返回 500，避免「只剩 4 条静态路由」的残缺 sitemap 被搜索引擎当作权威声明
+  assert.match(sitemapSource, /export const dynamic = 'force-dynamic'/)
+  assert.match(sitemapSource, /throw new Error\(['"]sitemap upstream fetch failed/)
 })
 
 test('sitemap API 失败时写入可观测错误日志', () => {

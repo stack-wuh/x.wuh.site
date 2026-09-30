@@ -29,3 +29,16 @@ test('blog metadata noindexes label query pages but leaves base blog indexable',
   assert.match(blogPageSource, /follow:\s*true/)
   assert.match(blogPageSource, /canonical:\s*hasActiveLabels\s*\?\s*`\$\{SITE_URL\}\/blog`/)
 })
+
+test('sitemap renders at runtime to avoid build-time baking', () => {
+  assert.match(sitemapSource, /export const dynamic = 'force-dynamic'/)
+})
+
+test('sitemap upstream failures throw instead of silently returning partial results', () => {
+  assert.equal(
+    (sitemapSource.match(/logSitemapFetchError\([\s\S]{0,140}?\)\n\s*throw new Error\(/g) || []).length,
+    2,
+  )
+  assert.doesNotMatch(sitemapSource, /return \[\]/)
+  assert.equal((sitemapSource.match(/return posts\b/g) || []).length, 1)
+})

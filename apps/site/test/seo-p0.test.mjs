@@ -8,6 +8,7 @@ import { buildPostUrl, isCanonicalPostPath } from '../app/lib/slug.ts'
 const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const postPageSource = await readFile(resolve(appRoot, 'app/post/[number]/page.tsx'), 'utf8')
+const postSpecsSource = await readFile(resolve(appRoot, 'app/post/[number]/specs.tsx'), 'utf8')
 const homePageSource = await readFile(resolve(appRoot, 'app/page.tsx'), 'utf8')
 const rootLayoutSource = await readFile(resolve(appRoot, 'app/layout.tsx'), 'utf8')
 const designLayoutPath = resolve(appRoot, 'app/design/system-color/layout.tsx')
@@ -71,4 +72,26 @@ test('root metadata provides a title template and default description', () => {
 test('design token page is noindex', () => {
   assert.match(designLayoutSource, /index:\s*false/)
   assert.match(designLayoutSource, /follow:\s*false/)
+})
+
+test('missing posts return 404 from both Page and generateMetadata', () => {
+  assert.match(postPageSource, /import \{ notFound, permanentRedirect \} from ['"]next\/navigation['"]/)
+  assert.ok((postPageSource.match(/notFound\(\)/g) || []).length >= 2)
+})
+
+test('missing posts no longer render the PostView empty state', () => {
+  assert.doesNotMatch(postPageSource, /<PostView issue=\{null\}/)
+})
+
+test('stale records without renderable body converge to notFound instead of throwing', () => {
+  assert.match(postPageSource, /!issue\.body\?\.trim\(\) && !issue\.body_html\?\.trim\(\)/)
+})
+
+test('upstream anomalies keep the real 500 instead of masquerading as 404', () => {
+  assert.match(postPageSource, /error\?\.status === 404/)
+  assert.match(postPageSource, /throw new Error\(\s*`Post upstream fetch failed/)
+})
+
+test('FALLBACK_METADATA is removed from specs', () => {
+  assert.doesNotMatch(postSpecsSource, /FALLBACK_METADATA/)
 })
