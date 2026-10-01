@@ -76,4 +76,6 @@
 | 20261001-fix-og-image-metadata-shadowing | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-og-image-metadata-shadowing/brief.md |
 | 20261001-fix-post-cover-sizes | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-post-cover-sizes/brief.md |
 | 20261001-perf-remove-streaming-skeletons | ✅ 完成 | shadow-docs/changes/archive/20261001-perf-remove-streaming-skeletons/brief.md |
+| 20261001-style-player-queue-fold | published | shadow-docs/changes/20261001-style-player-queue-fold/brief.md |
 | 20261001-style-player-stage-budget | ✅ 完成 | shadow-docs/changes/archive/20261001-style-player-stage-budget/brief.md |
+| 20261002-fix-rss-feed-format | ✅ 完成 | shadow-docs/changes/archive/20261002-fix-rss-feed-format/brief.md |

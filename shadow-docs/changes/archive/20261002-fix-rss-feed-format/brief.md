@@ -4,7 +4,7 @@
   "name": "20261002-fix-rss-feed-format",
   "type": "fix",
   "scope": "apps/server",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261002-fix-rss-feed-format",
   "files": [
@@ -17,18 +17,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 462,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/462",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 464,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/464"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "eaab14a98175a740ec8414b2652eef0ad9d64ef8",
-    "verifiedAt": "2026-10-01T23:10:24.479Z"
+    "verifiedCommit": "684438cabb84827be24490e382f7cd03dc580be8",
+    "verifiedAt": "2026-10-01T23:22:58.641Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:462",
-    "planHash": "c7bdea94e786ec63c35a120075f3e36e25a8c98742f8489544ad4177957c1332",
+    "checkpoint": "merged-pr:464",
+    "planHash": "b37c164cb5d6e67a50db45e2b78e761081e8644bc3926dbed6878c98e701f2c3",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -56,7 +56,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/rss.md",
-    "reason": "实现与 brief 选型一致：rss.utils 纯函数三件套（stripMarkdown/rssDescription/rssCopyright）+ service 四处接入（description 剥离、content 回落剥离、guid 永久链接、copyright 动态）。单测 8/8 绿；本地 tsc/nest build 处 SGN-001 密集期以 CI quality-gate+build-nest 为权威；runtime 部署后生产 XML curl 为权威。知识卡 rss.md 原位修正：scope 从已死的 packages/wuh.site.nest 迁到 apps/server 实路径（G 元债 1/16）、item URL 结论刷新为纯数字现状、新增 description 剥离/guid 永久链接/copyright 动态结论"
+    "reason": "归档前在 main HEAD 重签：生产已验证（v1.4.55 部署后三病灶清零：copyright 动态、guid 永久链接、0/20 markdown 字面量），rss.md 知识卡 scope/URL/description 结论已刷新"
   }
 }
 ---
@@ -109,7 +109,10 @@
   - rss.utils.ts 与 spec 同步落盘（新纯函数无既有行为，红阶段跳过——与「先红后绿」纪律的偏差，记档）
   - task-6（PR body 回填）时序原因在 review 前勾结
 - 部署后复测清单（https://wuh.site）: `/api/rss.xml` item description 无 `##`/`![]()` 字面量；guid=永久链接 URL；copyright=`© 2021–2026 wuh.site`
-- 交付发布: 待 PR 合并后按 build-config.md 发布流程执行
+- 交付发布:
+  - PR #464 已合并 main（squash commit `684438c`，本会话代合并）
+  - GitHub Release **[v1.4.55](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.55)** 触发 CI-CD run 36939492877 **全绿**（v1.4.54 被并行会话队列翻页屏占用顺延）
+  - **生产复测（/api/rss.xml，部署后实测）**: copyright `© 2021–2026 wuh.site` ✅；guid `<guid>https://wuh.site/post/165</guid>` 永久链接 ✅；item description markdown 字面量 **0/20**（修复前 19/20）✅，首条已是干净纯文本
 
 ## 知识评估
 - **预期影响:** 更新
