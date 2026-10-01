@@ -31,6 +31,14 @@ const EASE = 'var(--motion-ease-out-soft)'
 const QUICK = 'var(--motion-dur-quick)'
 // 面板开合 240ms：由 --motion-dur-quick(150ms) 派生，落在交互规范 150–300ms 区间
 const DUR_PANEL = 'calc(var(--motion-dur-quick) * 1.6)'
+/* ===== 队列翻页屏（20261001 定稿，视觉稿 shadow-docs/changes/20261001-style-player-queue-fold/prototype.html）=====
+   以右边框为翻页轴：静止斜倚 -40°（= 动画起点，第一帧零跳变）半透明可读不可点，
+   hover/聚焦转正 0° 浮起可选曲。宽度恒定，两态只差角度/透明度/可点击/投影——布局零位移。
+   曲线走站点注入令牌：引用未定义令牌会让 transition 整条作废回退 all 0s（帧采样实证），守卫钉死 */
+const FOLD_WIDTH_PX = 340
+const FOLD_REST_ANGLE = '-40deg'
+const FOLD_DUR = '520ms'
+const FOLD_LIFT_SHADOW = '-24px 12px 48px color-mix(in oklab, black 22%, transparent)'
 // 纸纹：feTurbulence 噪点叠印，把晕染色场「印」进纸里而非悬浮
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")"
@@ -108,6 +116,9 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
   /* clip（而非 hidden）：面板壳必须不是滚动容器——它是可滚容器时，子元素滚动定位 API
      会沿祖先链把它连带滚走（生产实测内容整体上移、眉标被裁、底边露出未罩纸底的晕染色带） */
   overflow: clip;
+  /* 翻页透视源：队列屏绕右缘轴线的 3D 来自这里。透视只作用于直接子级，
+     热区隔层必须 preserve-3d 透传（漏配 = 3D 静默退化为平面缩放） */
+  perspective: 1400px;
   opacity: ${(p) => (p.$visible ? 1 : 0)};
   transform: translateY(${(p) => (p.$drag != null ? `${Math.min(p.$drag, 320)}px` : p.$visible ? '0' : '16px')});
   pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
@@ -156,7 +167,8 @@ const CloseButton = styled.button`
   position: absolute;
   top: var(--space-base);
   right: var(--space-base);
-  z-index: 6;
+  /* z9：高于队列翻页热区（z8）——右缘 hover 不得劫持关闭钮 */
+  z-index: 9;
   width: 44px;
   height: 44px;
   display: inline-flex;
@@ -191,7 +203,8 @@ const TopTools = styled.div`
   position: absolute;
   top: var(--space-base);
   right: calc(var(--space-base) + 48px);
-  z-index: 6;
+  /* z9：高于队列翻页热区（z8）——hover 热区不得劫持詞/列表钮 */
+  z-index: 9;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -499,7 +512,8 @@ const EpiRow = styled.p<{ $act?: boolean }>`
 const NowDock = styled.div`
   grid-area: dock;
   position: relative;
-  z-index: 2;
+  /* z9：高于队列翻页热区（z8）——右缘 hover 不得劫持進度/钮群点击 */
+  z-index: 9;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -877,22 +891,68 @@ const DrawerScrim = styled.button`
   }
 `
 
-const DrawerCard = styled.div`
+/* ===== 队列翻页屏（桌面，20261001 定稿）：右缘热区 + 斜倚屏 =====
+   热区 QZone 是屏的 DOM 祖先：指针滑到转正屏上 :hover 仍保持（CSS 下拉同构）；
+   透视只作用于直接子级，隔层必须 preserve-3d 透传面板灭点（漏配 = 3D 静默退化）。
+   进出场由纯 CSS :hover / :focus-within 引擎驱动（非 React 态翻转，不涉显隐纪律）；
+   转正挂点用静态 data 属性——跨组件插值选择器禁用（design-system.md） */
+const QZone = styled.div`
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
+  width: ${FOLD_WIDTH_PX}px;
   z-index: 8;
-  width: min(320px, 80%);
+  transform-style: preserve-3d;
+
+  /* 键盘等价路径：Tab 进入队列即转正（与 hover 同态），焦点离开原路翻回 */
+  &:focus-within [data-fold-screen='true'] {
+    transform: rotateY(0deg);
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: ${FOLD_LIFT_SHADOW};
+    transition-delay: 0s, 0s, 0s;
+  }
+
+  /* hover 触发只在精确指针设备：触屏/平板走列表钮 pinned 等价路径 */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover [data-fold-screen='true'] {
+      transform: rotateY(0deg);
+      opacity: 1;
+      pointer-events: auto;
+      box-shadow: ${FOLD_LIFT_SHADOW};
+      transition-delay: 0s, 0s, 0s;
+    }
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
+`
+
+/* 屏本体：静止斜倚 -40°（= 动画起点）半透明可读不可点；转正 = 0° 实墨可点选。
+   pinned（queueOpen）由 JSX 行内样式驱动（显隐纪律），与 hover 同一落点姿态 */
+const QScreen = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: ${FOLD_WIDTH_PX}px;
   display: flex;
   flex-direction: column;
-  padding: var(--space-lg) var(--space-base);
-  background: var(--background-100);
+  padding: var(--space-lg) var(--space-base) 0 var(--space-lg);
+  background: color-mix(in oklab, var(--background-100) 94%, transparent);
   border-left: 1px solid ${HAIRLINE};
-  box-shadow: var(--elevation-card);
-  transform: translateX(104%);
-  transition: transform ${DUR_PANEL} ${EASE}, visibility 0s linear ${DUR_PANEL};
-  visibility: hidden;
+  border-radius: var(--radius-card) 0 0 var(--radius-card);
+  transform-origin: 100% 50%;
+  transform: rotateY(${FOLD_REST_ANGLE});
+  opacity: 0.45;
+  pointer-events: none;
+  transition: transform ${FOLD_DUR} var(--motion-ease-in-out-soft), opacity ${QUICK} ${EASE},
+    box-shadow ${FOLD_DUR} ${EASE};
+  /* 离场宽限：透明位延迟 160ms，指针掠过不频闪 */
+  transition-delay: 0s, 160ms, 0s;
+  backface-visibility: hidden;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
@@ -947,31 +1007,55 @@ const QueueList = styled.ul`
   }
 `
 
-const QueueItem = styled.li<{ $active?: boolean }>`
+/* ===== 播放列表行（桌面翻页屏 + 移动目次页共用） =====
+   当前项底色/左标走行内自定义属性 --q-active（激活态禁动态类与属性选择器，music-player.md）；
+   行 hover 整行左引 + 序号翻播放键（/music 目次行既有语言），纯 CSS :hover 驱动 */
+const QueueItem = styled.li`
   position: relative;
-  background: ${(p) => (p.$active ? 'color-mix(in oklab, var(--primary-color) 7%, transparent)' : 'transparent')};
   border-radius: var(--border-radius-base);
-
-  /* 当前项：朱砂左标 */
-  ${(p) =>
-    p.$active
-      ? css`
-          &::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 2.5px;
-            height: 18px;
-            border-radius: 2px;
-            background: var(--primary-color);
-          }
-        `
-      : null}
+  background: color-mix(in oklab, var(--primary-color) calc(var(--q-active, 0) * 7%), transparent);
+  transition: transform 200ms var(--motion-ease-out-soft), background-color 160ms var(--motion-ease-out-soft);
 
   &:hover {
     background: color-mix(in oklab, var(--text-color) 5%, transparent);
+    transform: translateX(-4px);
+  }
+
+  /* 当前项：朱砂左标（透明度随行内 --q-active 显隐） */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5px;
+    height: 18px;
+    border-radius: 2px;
+    background: var(--primary-color);
+    opacity: var(--q-active, 0);
+  }
+
+  /* 序号/播放键双面：hover 翻面 */
+  & .q-no-face,
+  & .q-no-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    transition: opacity 140ms var(--motion-ease-out-soft);
+  }
+
+  & .q-no-play {
+    color: var(--primary-color);
+    opacity: 0;
+  }
+
+  &:hover .q-no-face {
+    opacity: 0;
+  }
+
+  &:hover .q-no-play {
+    opacity: 1;
   }
 `
 
@@ -992,19 +1076,21 @@ const QueueButton = styled.button`
   ${focusRing}
 `
 
-const QueueNo = styled.span<{ $active?: boolean }>`
+const QueueNo = styled.span`
+  position: relative;
   flex-shrink: 0;
   width: 22px;
+  height: 16px;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
-  color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_FAINT)};
+  color: color-mix(in oklab, var(--primary-color) calc(var(--q-active, 0) * 100%), ${INK_FAINT});
 `
 
-const QueueName = styled.span<{ $active?: boolean }>`
+const QueueName = styled.span`
   flex: 1;
   min-width: 0;
   font-size: var(--font-size-sm);
-  color: ${(p) => (p.$active ? 'var(--primary-color)' : 'var(--text-color)')};
+  color: color-mix(in oklab, var(--primary-color) calc(var(--q-active, 0) * 100%), var(--text-color));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1316,7 +1402,8 @@ export const AudioPlayerPanel = () => {
   const epiAct = lyrics[lyricIdx]
   const epiNext = lyrics[lyricIdx + 1]
   const stageName = currentTrack?.name ?? t('player.panel.waiting')
-  const stageTitle = useMarqueeOverflow(stageName)
+  // 显式泛型：wrapperRef 挂在 styled.h2 上，Ref<HTMLElement> 装不进 Ref<HTMLHeadingElement>（域类型守卫存量错误就地修复）
+  const stageTitle = useMarqueeOverflow<HTMLHeadingElement>(stageName)
   const titleMarquee = stageTitle.metrics.visible > 0 && stageTitle.metrics.text > stageTitle.metrics.visible
   const titleDuration = `${(stageTitle.metrics.text + MARQUEE_GAP_PX) / MARQUEE_SPEED_PX_PER_S}s`
   const ModeIcon = MODE_ICONS[state.mode]
@@ -1741,7 +1828,8 @@ export const AudioPlayerPanel = () => {
           </WordsView>
         ) : null}
 
-        {/* 播放列表抽屉（桌面）：遮罩点击收回；显隐态行内样式驱动（免疫动态类竞态） */}
+        {/* 队列翻页屏（桌面）：右缘热区内静止斜倚，hover/聚焦转正浮起可选曲；
+            pinned 由 queueOpen 行内样式驱动（显隐纪律），遮罩仅 pinned 态呈现点击收回 */}
         <DrawerScrim
           aria-hidden='true'
           tabIndex={-1}
@@ -1752,36 +1840,50 @@ export const AudioPlayerPanel = () => {
           }
           onClick={() => setQueueOpen(false)}
         />
-        <DrawerCard
-          role='group'
-          aria-label={t('player.panel.queueDrawer')}
-          aria-hidden={!queueOpen}
-          style={
-            queueOpen
-              ? ({ transform: 'none', visibility: 'visible', transitionDelay: '0s, 0s' } as React.CSSProperties)
-              : undefined
-          }
-        >
-          <SectionHeading>
-            <IconListMusic size={13} aria-hidden='true' /> {t('player.panel.queue')}
-          </SectionHeading>
-          <QueueList ref={drawerListRef} aria-hidden={!queueOpen}>
-            {queue.map((track, index) => (
-              <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
-                <QueueButton type='button' tabIndex={queueOpen ? 0 : -1} onClick={() => playTrack(track.id)}>
-                  <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
-                  <QueueName $active={track.id === currentTrack?.id} title={track.name}>
-                    {track.name}
-                  </QueueName>
-                  <QueueMeta>
-                    <QueueArtist title={track.artist}>{track.artist}</QueueArtist>
-                    <span>{formatDuration(track.duration ?? 0)}</span>
-                  </QueueMeta>
-                </QueueButton>
-              </QueueItem>
-            ))}
-          </QueueList>
-        </DrawerCard>
+        <QZone>
+          <QScreen
+            data-fold-screen='true'
+            role='group'
+            aria-label={t('player.panel.queueDrawer')}
+            style={
+              queueOpen
+                ? ({
+                    transform: 'rotateY(0deg)',
+                    opacity: 1,
+                    pointerEvents: 'auto',
+                    boxShadow: FOLD_LIFT_SHADOW,
+                  } as React.CSSProperties)
+                : undefined
+            }
+          >
+            <SectionHeading>
+              <IconListMusic size={13} aria-hidden='true' /> {t('player.panel.queue')}
+            </SectionHeading>
+            <QueueList ref={drawerListRef}>
+              {queue.map((track, index) => (
+                <QueueItem
+                  key={track.id}
+                  data-active={track.id === currentTrack?.id}
+                  style={{ '--q-active': track.id === currentTrack?.id ? 1 : 0 } as React.CSSProperties}
+                >
+                  <QueueButton type='button' onClick={() => playTrack(track.id)}>
+                    <QueueNo>
+                      <span className='q-no-face'>{String(index + 1).padStart(2, '0')}</span>
+                      <span className='q-no-play' aria-hidden='true'>
+                        <IconPlay size={10} />
+                      </span>
+                    </QueueNo>
+                    <QueueName title={track.name}>{track.name}</QueueName>
+                    <QueueMeta>
+                      <QueueArtist title={track.artist}>{track.artist}</QueueArtist>
+                      <span>{formatDuration(track.duration ?? 0)}</span>
+                    </QueueMeta>
+                  </QueueButton>
+                </QueueItem>
+              ))}
+            </QueueList>
+          </QScreen>
+        </QZone>
 
         {/* 移动端册页：词页（装裱图版 + 短词窗）横翻目次对页；页缘钮为键盘/读屏等价路径 */}
         <GrabHandle
@@ -1835,12 +1937,19 @@ export const AudioPlayerPanel = () => {
             <SectionHeading>{t('player.panel.queueHeadingMobile')}</SectionHeading>
             <QueueList ref={mobileQueueRef}>
               {queue.map((track, index) => (
-                <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
+                <QueueItem
+                  key={track.id}
+                  data-active={track.id === currentTrack?.id}
+                  style={{ '--q-active': track.id === currentTrack?.id ? 1 : 0 } as React.CSSProperties}
+                >
                   <QueueButton type='button' onClick={() => playTrack(track.id)}>
-                    <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
-                    <QueueName $active={track.id === currentTrack?.id} title={track.name}>
-                      {track.name}
-                    </QueueName>
+                    <QueueNo>
+                      <span className='q-no-face'>{String(index + 1).padStart(2, '0')}</span>
+                      <span className='q-no-play' aria-hidden='true'>
+                        <IconPlay size={10} />
+                      </span>
+                    </QueueNo>
+                    <QueueName title={track.name}>{track.name}</QueueName>
                     <QueueMeta>
                       <QueueArtist title={track.artist}>{track.artist}</QueueArtist>
                       <span>{formatDuration(track.duration ?? 0)}</span>
