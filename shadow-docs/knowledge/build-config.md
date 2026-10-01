@@ -39,6 +39,8 @@ Docker 多阶段构建：deps、builder、runner。Console 使用 `nginx:alpine`
 
 CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链（prepare → build → staging-test → switch-traffic）。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。
 
+**常备运维工作流（2026-10-01 起，workflow_dispatch 手动触发，Actions secrets 持 SSH 凭据）**：`server-diagnose.yml`（runner 直访公网验 DNS/响应头/产物块指纹 + 服务器侧系统与容器健康）；`server-repair-nginx.yml`（sudo 拉起 nginx——公网入口 80/443，挂掉时全站不可达但源站 localhost 全绿，2026-10-01 实案）；`server-repair-mongo.yml`（sudo 拉起 mongod，见磁盘防线段）；`server-repair-rebuild.yml`（next 镜像 `--no-cache` 重建 + 强制重建容器，见产物验证纪律段）。排障顺序建议：先 diagnose，再按症状选 repair。注意本机开发环境若挂代理（fake-ip DNS），沙箱到站点 TLS 必失败——远程视点用 runner 工作流，勿信本机 curl。
+
 发布流程（2026-09-03 起实际执行，v1.4.21–v1.4.25 五个 release 一致）：手动 `gh release create vX.Y.Z --title "vX.Y.Z <名称>" --notes-file <结构化 changelog> --target <main head>`，Release 创建即触发部署链，部署全绿（`gh run watch --exit-status`）才算交付完成。版本号唯一来源是 GitHub Release tag（v1.4.x 按 patch 递增，与变更类型无关）；`package.json` version 与 CHANGELOG 停在 1.4.16 不再 bump——standard-version 流程已停用，`scripts/release.sh` 虽在但已废弃（其 `--generate-notes --title "Release $tag"` 输出格式与实际标题惯例不符，勿照其执行）。**PR merged ≠ 已部署**：shadow-dev 工作流的 release 阶段在 PR 之后必须执行本段发布步骤。
 
 Next.js 16 起 `next build` 默认使用 Turbopack（原 webpack），构建产物工具链变化，Docker 构建需在 CI 验证。本机 `pnpm build:next`（脚本内置 `NODE_OPTIONS=--max-old-space-size=2048`）在高 swap 压力下会 SIGSEGV，去掉上限直跑 `apps/site/node_modules/.bin/next build` 稳定；CI/Docker 环境不受影响。

@@ -1,0 +1,37 @@
+name: Server Repair Mongo
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: sudo 拉起 mongod 并复核 nest 重连
+        uses: appleboy/ssh-action@master
+        env:
+          SUDO_PASS: ${{ secrets.SERVER_PASSWORD }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: SUDO_PASS
+          command_timeout: 10m
+          script: |
+            echo "════ mongod 当前态 ════"
+            systemctl is-active mongod || true
+            echo "════ sudo -S systemctl start mongod ════"
+            echo "$SUDO_PASS" | sudo -S systemctl start mongod 2>&1 | grep -v "password" || true
+            sleep 4
+            echo "════ 复核 ════"
+            systemctl is-active mongod || true
+            ss -tlnp 2>/dev/null | grep 27017 || echo "27017 仍无监听"
+            echo "── 等 nest 重连（mongoose 自动重连）──"
+            sleep 12
+            curl -s -o /dev/null -w "nest /v2/health -> HTTP %{http_code}\n" --max-time 10 http://localhost:3200/v2/health || true
+            docker ps --format "{{.Names}} {{.Status}}" | grep -E "nest" || true
