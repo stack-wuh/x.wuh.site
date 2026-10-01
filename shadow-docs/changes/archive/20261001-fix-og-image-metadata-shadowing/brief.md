@@ -4,7 +4,7 @@
   "name": "20261001-fix-og-image-metadata-shadowing",
   "type": "fix",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261001-fix-og-image-metadata-shadowing",
   "files": [
@@ -23,18 +23,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 444,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/444",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 448,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/448"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b116e81827a0ecc5de3ca489f97c9749d7d8e4f6",
-    "verifiedAt": "2026-09-30T23:27:19.068Z"
+    "verifiedCommit": "92342ea7b00e2264d1e70c1e31d6990b6a378036",
+    "verifiedAt": "2026-10-01T00:34:21.725Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:444",
-    "planHash": "964da4f14d343e7864a75dfe75379cfac1cfd83a14123047f6b69b033ee714b0",
+    "checkpoint": "merged-pr:448",
+    "planHash": "2ae25b2efcc3926822a845cce09e49e88fbe52e4f43c62b60a40c725c9a294d8",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -70,7 +70,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/seo.md",
-    "reason": "实现与 brief 方案 A 一致：buildSectionMetadata builder 落地（openGraph 带 og-default 1200×630 + twitter summary_large_image），7 个区块页全部接入，about 双层遮蔽源删除。TDD 5/5 红→绿；全量 171 测试 0 新增失败（18 挂经 stash 对比实证为 main 存量：i18n/music 合入后累积，quality-gate 不跑 node --test）；tsc/oxlint 0 错。runtime 验收 dev 模式 8 页全绿：7 区块页 og:image+large card 到位、og:image:width/height=1200/630、og:url 逐字节不变，robots 语义零回归（labels noindex,follow / footprint noindex,nofollow / weread noindex,follow / design noindex,nofollow 保持）。seo.md『全站页面包含 og:image』过期结论修复后恢复为真，且新增长期事实：Next Metadata API openGraph/twitter 按段整体遮蔽须自带 images，统一走 builder（verified-depth: runtime，scope apps/site/app/lib/seo.ts + 7 区块页）。偏差：本地 next build 被 SGN-001 连杀 5 次（139），生产构建以 CI Docker 为准、部署后生产复测"
+    "reason": "归档前在 main HEAD 重签：实现与 brief 方案 A 一致，生产已验证，seo.md 已更新"
   }
 }
 ---
@@ -132,7 +132,10 @@ layout.tsx 已正确定义 `/og-default.png`(1200×630) + `summary_large_image`�
   - **SGN-001 密集命中**: next build 连续 5 次失败（2 次空日志 139、2 次 page-data worker SIGSEGV、1 次挂死超时），清 .next + 63% 内存空闲仍复现；按信号新增处置「生产构建交 CI Docker 裁决，metadata 类验收退 dev 模式 curl」执行，已写回 signals.md（命中 12→18）
   - task-12（PR body 回填）为时序原因在 review 前勾结：其交付物（#233 低价值页面三项实测事实）随本 PR body 落实
   - task list 的 `grep -c '"done":false'` 单行 JSON 陷阱：数出现次数须 `grep -o | wc -l`，grep -c 数的是行
-- 交付发布: 待 PR 合并后按 build-config.md 发布流程执行
+- 交付发布:
+  - PR #448 已合并 main（merge commit `92342ea`，含与 main 的 SGN-001 signals 冲突语义合并 c64ba1a：证据并集、命中 12+6+1=19）
+  - GitHub Release **[v1.4.47](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.47)** 触发 CI-CD run 36795705656 **全绿**（quality-gate → build-next/build-nest → staging-test → switch-traffic），新代码已切生产流量（v1.4.46 已被 player/i18n 会话占用，顺延 .47）
+  - **生产复测（https://wuh.site，部署后实测）**: 7 区块页 `/`、`/blog`、`/about`、`/music`、`/footprint`、`/weread`、`/topics/Next.js` 全部 og:image=https://wuh.site/og-default.png + twitter:card=summary_large_image；og:image:width/height=1200/630 抽查正确；`/post/165` og:image 仍为 cover 图（cdn.wuh.site）+ large card，零回归
 
 ## 知识评估
 - **预期影响:** 更新
