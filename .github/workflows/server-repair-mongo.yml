@@ -1,0 +1,44 @@
+name: Server Repair Mongo (临时)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-diagnose
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 探测并拉起 Mongo
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            echo "════ 1. 本机是否即 Mongo 主机（27017 监听？）════"
+            ss -tlnp 2>/dev/null | grep 27017 || echo "27017 无监听"
+            echo "════ 2. 停止态 mongo 容器？════"
+            docker ps -a --format "{{.Names}} {{.Status}}" | grep -i mongo || echo "无 mongo 容器（含已退出）"
+            echo "════ 3. mongod 宿主进程/systemd？════"
+            pgrep -a mongod || echo "无 mongod 进程"
+            systemctl status mongod --no-pager 2>&1 | head -6 || true
+            echo "════ 4. 尝试拉起（容器优先，其次 systemd，再 sudo）════"
+            MID=$(docker ps -a --format "{{.Names}}" | grep -i mongo | head -1)
+            if [ -n "$MID" ]; then
+              echo "docker start $MID"
+              docker start "$MID"
+            elif systemctl list-unit-files 2>/dev/null | grep -q mongod; then
+              systemctl start mongod 2>&1 || sudo -n systemctl start mongod 2>&1 || echo "NEED_SUDO: systemctl start mongod 需要权限"
+            else
+              echo "NEED_MANUAL: 本机无 mongo 容器也无 systemd 单元——Mongo 在外部主机，需登录该主机处理"
+            fi
+            sleep 5
+            echo "════ 5. 复核 ════"
+            ss -tlnp 2>/dev/null | grep 27017 || echo "27017 仍无监听"
+            pgrep -a mongod | head -2 || true
+            docker ps --format "{{.Names}} {{.Status}}" | grep -iE "mongo|nest" || true
+            curl -s -o /dev/null -w "prod nest /health: HTTP %{http_code}\n" --max-time 8 http://localhost:3200/health || true
