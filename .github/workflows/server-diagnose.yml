@@ -1,0 +1,41 @@
+name: Server Diagnose Public Path (临时)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-diagnose
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: 公网全路径探测（只读）
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            echo "════ 公网 DNS 解析 ════"
+            getent hosts x.wuh.site || nslookup x.wuh.site 2>&1 | tail -3 || true
+            echo "════ 公网首页响应头（完整）════"
+            curl -s -D - -o /tmp/pub.html --max-time 20 https://x.wuh.site/ | head -25 || echo "HTTPS 失败"
+            echo "════ 公网首页引用的 JS/CSS 块逐个验 252px ════"
+            for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pub.html | sort -u | head -8); do
+              N=$(curl -s --max-time 12 "https://x.wuh.site$c" | grep -c "252px")
+              echo "$c -> 252px x$N"
+            done
+            echo "════ 公网 /music 页同理 ════"
+            curl -s --max-time 20 https://x.wuh.site/music -o /tmp/pubmusic.html
+            for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pubmusic.html | sort -u | head -8); do
+              N=$(curl -s --max-time 12 "https://x.wuh.site$c" | grep -c "252px")
+              echo "$c -> 252px x$N"
+            done
+            echo "════ 直连源站对比（绕过公网）════"
+            for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pub.html | sort -u | head -8); do
+              N=$(curl -s --max-time 12 "http://localhost:3000$c" | grep -c "252px")
+              echo "$c -> 源站 252px x$N"
+            done
