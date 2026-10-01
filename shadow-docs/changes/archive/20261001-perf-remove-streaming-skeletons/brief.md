@@ -4,7 +4,7 @@
   "name": "20261001-perf-remove-streaming-skeletons",
   "type": "build",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "build/20261001-perf-remove-streaming-skeletons",
   "files": [
@@ -18,18 +18,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 456,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/456",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 457,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/457"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "3745bbe298fdf23258209f27debd58f63981fc64",
-    "verifiedAt": "2026-10-01T15:07:59.487Z"
+    "verifiedCommit": "d63f3f6a09d8bcd2be4bf78583959727081365a6",
+    "verifiedAt": "2026-10-01T15:41:21.838Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:456",
-    "planHash": "eb3d8dae81738edcc7880a4bb935a853f0c6a3ced3e0cfd0669786ab84960398",
+    "checkpoint": "merged-pr:457",
+    "planHash": "70b15e0de4c696d2661e883b9e5d5673030083f7bf1dab4a8bef663388e5b6c8",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -55,12 +55,18 @@
       "message": "build(perf): 拆除 /、/blog、/music 流式骨架——单帧直出替代骨架 FCP (#456)",
       "title": "build(perf): 拆除流式骨架——首页/blog/music 退出 Suspense 流式形态",
       "body": "Closes #456（流式骨架拆除；#438 未纳入项 B2 处方落地）\n关联 #233（P0「缓存与抓取效率」线的抓取效率侧）\n\n## 变更\n- 删除 `app/blog/loading.tsx`、`app/music/loading.tsx`（路由级流式骨架边界）\n- `app/HomeView/index.tsx`：TypewriterMotto 由 `next/dynamic` + MottoSkeleton 回退改为**静态 import**（无边界即无流式）；`styles/index.ts` 的 MottoSkeleton 定义随唯一引用方一并移除\n- 新契约测试 `test/first-load-streaming.test.mjs` ×3（blog/music loading 不存在、`/post` 无 loading 先例守卫、HomeView 静态 import）\n- `seo-heading-hierarchy.test.mjs` music 骨架断言同步为文件不存在（heading 变更的 as='div' 补丁随文件消亡，唯一 h1 约束由删除保证）\n\n## 根因\n`/`、`/blog`、`/music` 三页 HTML 处于 Suspense 流式形态（`<template id=\"B:0\">` + `<div hidden id=\"S:0\">`）：骨架先 flush 成为 FCP 元素，真容后置隐藏等脚本交换，`/music` HTML 涨至 120,460B。这是 first-load-performance.md 在 `/post` 已定罪并撤销的同一回归（撤销后单帧 70KB），当时只落到 post 路由未推广。已排查全仓零 `useSearchParams`（blog/music 均服务端收参），删除路由级 loading 无构建风险。\n\n## 验证\n- TDD：3 条契约先红后绿；heading 3/3、og-image 5/5 契约无回归\n- `tsc --noEmit` 0 错（2 次 SGN-001 139 重试后过）；oxlint 0 错\n- 全量 177 测试 159 绿 / 18 挂——与 heading 变更基线同批存量（header/主题/typewriter 等 8 文件；typewriter-motto-stability 虽引用组件路径，但断言的是组件内部 DOM 结构，本次未触碰 `app/components/TypewriterMotto/**`）\n- 本地 dev 仍处 SGN-001 密集期，**部署后生产 curl 为权威 runtime 验收**；CI Docker build 即删边界后的构建验证\n\n## 部署后复测清单（https://wuh.site）\n`/`、`/blog`、`/music` 三页 HTML 无 `<template id=\"B:0\">` / `<div hidden id=\"S:0\">` 流式标记；`/music` HTML 体积显著回落（基线 120,460B）；三页内容直出无灰骨架"
+    },
+    "commit": {
+      "files": [
+        "shadow-docs/knowledge/first-load-performance.md"
+      ],
+      "message": "docs(shadow): 流式边界禁令从 post 推广为全站裁决（first-load-performance）"
     }
   },
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/first-load-performance.md",
-    "reason": "归档前重签于 main HEAD：删 blog/music loading.tsx、首页 dynamic 静态化、heading 测试同步、post 守卫新增；契约 3/3 红转绿，tsc/oxlint 0 错，18 挂全为存量。知识卡裁决从 post 推广为全站：任何路由不得加 loading.tsx，首屏路径 next/dynamic loading 回退同构流式边界，部署后生产 curl 复测为权威"
+    "reason": "归档前在 main HEAD 重签：生产已验证（v1.4.52 部署后三页 B:0/S:0 清零、/music HTML 120,460B→103,257B、home h1 与 og:image 零回归），知识卡流式边界全站裁决已更新"
   }
 }
 ---
@@ -113,7 +119,10 @@
   - styles/index.ts 的 MottoSkeleton 定义随使用点一并移除（HomeView 唯一引用方）
   - task-6（PR body 回填）时序原因在 review 前勾结
 - 部署后复测清单（https://wuh.site）: `/`、`/blog`、`/music` 三页无 `<template id="B:0">` / `<div hidden id="S:0">`；HTML 体积应显著回落（/music 参照基线 120,460B）
-- 交付发布: 待 PR 合并后按 build-config.md 发布流程执行
+- 交付发布:
+  - PR #457 已合并 main（squash commit `d63f3f6`，用户授权后由本会话代合并）
+  - GitHub Release **[v1.4.52](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.52)** 触发 CI-CD run 36884848125 **全绿**
+  - **生产复测（https://wuh.site，部署后实测）**: `/`、`/blog`、`/music` 三页 **B:0/S:0 流式标记全部清零** ✅；`/music` HTML 120,460B → **103,257B**（−17KB）；/home h1=1、og:image 声明在位——前两变更信号零回归
 
 ## 知识评估
 - **预期影响:** 更新
