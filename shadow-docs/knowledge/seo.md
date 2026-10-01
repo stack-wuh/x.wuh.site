@@ -16,6 +16,7 @@ source:
   - changes/archive/20260822-feature-post-url-clean/brief.md
   - changes/archive/20260930-fix-seo-indexing-p0/brief.md
   - changes/20261001-fix-og-image-metadata-shadowing/brief.md
+  - changes/20261001-fix-heading-hierarchy/brief.md
 verified: 2026-10-01
 verified-depth: runtime
 verified-scope: apps/site/app/sitemap.ts、apps/site/app/post/[number]、apps/site/app/lib/seo.ts、7 个区块页、apps/site/test/seo-*
@@ -38,6 +39,8 @@ Sitemap 路由必须 `export const dynamic = 'force-dynamic'` 运行时生成—
 文章不存在与内容不可渲染统一收敛 404：`/post/{不存在}`（上游 404）与 body/body_html 双空的陈旧同步记录（已删除/已关闭 Issue，生产库实测 142 条中 94 条双空）都走 `notFound()`；上游非 404 故障（网络/5xx/空响应）保留真实 500 交路由级 error.tsx，不做无差别兜底（会把真实故障伪装成 404 误伤收录）。
 
 调试页（如 `/design/system-color`）不进入 sitemap 且 `index: false, follow: false`。旧 labels 筛选页（`/blog?labels=...`）设为 `index: false, follow: true`。
+
+heading hierarchy 硬约束：**每页恰好 1 个 `<h1>`**。首页主标题「wuh.site · 朝朝如念」由 `SiteTitle`（app/styles/index.ts）承载，必须是 `styled.h1` 且 margin 全向重置压掉浏览器默认外距；流式骨架（*/loading.tsx）不得渲染 h1 语义元素（骨架 PageTitle 用 `as='div'` 降型），h1 唯一归属真实内容组件（2026-10-01 修复前 `/` 零 h1、`/music` 双 h1）。
 
 公开文章页不使用请求 Cookie，使用 `revalidate: 3600` 级别的 ISR 替代实时渲染。
 

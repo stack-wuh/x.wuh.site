@@ -31,13 +31,13 @@ export const Hero = styled.header`
   padding: var(--space-xl) 0 var(--space-md);
 `
 
-export const SiteTitle = styled.p`
+export const SiteTitle = styled.h1`
   font-family: var(--font-serif);
   font-size: var(--font-size-lg);
   font-weight: 500;
   color: var(--text-primary);
   letter-spacing: 0.04em;
-  margin-top: var(--space-xs);
+  margin: var(--space-xs) 0 0;
   animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
 `
 
