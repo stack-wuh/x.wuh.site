@@ -1,0 +1,38 @@
+name: Server Diagnose (临时)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-diagnose
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: SSH 诊断（只读）
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            echo "════ 磁盘/内存 ════"
+            df -h / | tail -1
+            free -h | grep -E "Mem|Swap"
+            echo "════ 生产容器 ════"
+            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | head -12
+            echo "════ staging 容器（含已退出）════"
+            docker ps -a --format "table {{.Names}}\t{{.Status}}" | grep -i staging || echo "无 staging 容器"
+            echo "════ staging nest 日志尾部 ════"
+            docker logs xwuhsite-staging-nest-1 --tail 40 2>&1 | tail -40 || true
+            echo "════ staging nest 健康检查配置 ════"
+            docker inspect xwuhsite-staging-nest-1 --format '{{json .State.Health}}' 2>/dev/null | head -c 1500 || true
+            echo ""
+            echo "════ 生产 nest 健康 ════"
+            curl -s -o /dev/null -w "prod nest /health: HTTP %{http_code}\n" --max-time 5 http://localhost:3200/health || true
+            docker logs $(docker ps --format "{{.Names}}" | grep -i "prod.*nest\|nest.*prod" | head -1) --tail 15 2>&1 | tail -15 || true
+            echo "════ Mongo 探测 ════"
+            docker ps --format "{{.Names}}" | grep -i mongo || echo "无 mongo 容器在跑"
