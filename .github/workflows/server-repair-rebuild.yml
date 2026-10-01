@@ -1,0 +1,39 @@
+name: Server Repair Rebuild Next (临时)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-repair
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: 无缓存重建 next 镜像并切换
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          command_timeout: 40m
+          script: |
+            set -e
+            cd /github/x.wuh.site
+            echo "════ 磁盘守卫 ════"
+            AVAIL=$(df -h / | tail -1 | awk '{print $4}')
+            echo "可用: $AVAIL"
+            echo "════ 源码对齐 origin/main ════"
+            git fetch origin main
+            git reset --hard origin/main
+            git log --oneline -1
+            echo "════ docker compose build --no-cache next（约 10-20 分钟）════"
+            docker compose build --no-cache --progress=plain next 2>&1 | tail -6
+            echo "════ 重启 next 容器 ════"
+            docker compose up -d --force-recreate next
+            sleep 8
+            echo "════ 指纹复核：JS 块中应有 252px ════"
+            docker exec xwuhsite-next-1 sh -c 'grep -rl "252px" /app --include="*.js" 2>/dev/null | head -2; echo "(空=仍未换新)"' || true
+            curl -s -o /dev/null -w "localhost:3000 -> HTTP %{http_code}\n" --max-time 15 http://localhost:3000/ || true
