@@ -1,4 +1,4 @@
-name: Server Diagnose Fingerprint (临时)
+name: Server Diagnose JS Fingerprint (临时)
 
 on:
   workflow_dispatch:
@@ -12,27 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: 全容器指纹 + 公网出口 CSS 验证（只读）
+      - name: JS 块指纹 + 入口监听（只读）
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            echo "════ 容器布局 ════"
-            docker exec xwuhsite-next-1 sh -c 'ls /app; echo ---; ls /app/apps/site 2>/dev/null | head' || true
-            echo "════ 全容器搜 v1.4.50 CSS 指纹 ════"
-            docker exec xwuhsite-next-1 sh -c 'grep -rl "252px" /app --include="*.css" 2>/dev/null | head -3; echo "(以上为含 252px 的文件，空=无)"' || true
-            echo "════ 公网入口吐出的全部 CSS 块逐个验指纹 ════"
-            curl -s --max-time 15 -k -H "Host: x.wuh.site" https://127.0.0.1/ -o /tmp/pub.html -D /tmp/pub.head || curl -s --max-time 15 -H "Host: x.wuh.site" http://127.0.0.1/ -o /tmp/pub.html
-            ls -la /tmp/pub.html
-            for c in $(grep -o '/_next/static/[^"]*\.css' /tmp/pub.html | sort -u); do
-              N=$(curl -s --max-time 10 -k "https://127.0.0.1$c" -H "Host: x.wuh.site" | grep -c "252px")
-              echo "$c -> 252px x$N"
-            done
-            echo "════ 音乐页也验一遍（PlayerPanel 懒加载块可能挂在那）════"
-            curl -s --max-time 20 -k -H "Host: x.wuh.site" https://127.0.0.1/music -o /tmp/music.html || true
-            for c in $(grep -o '/_next/static/[^"]*\.css' /tmp/music.html | sort -u); do
-              N=$(curl -s --max-time 10 -k "https://127.0.0.1$c" -H "Host: x.wuh.site" | grep -c "252px")
-              echo "$c -> 252px x$N"
-            done
+            echo "════ v1.4.50 指纹（JS 块中的 252px）════"
+            docker exec xwuhsite-next-1 sh -c 'grep -rl "252px" /app --include="*.js" 2>/dev/null | head -2; echo "(空=容器不是 v1.4.50)"' || true
+            echo "════ v1.4.48 漏引 bug 指纹（MARQUEE_SPEED_PX_PER_S 裸标识符）════"
+            docker exec xwuhsite-next-1 sh -c 'grep -rlo "MARQUEE_SPEED_PX_PER_S" /app --include="*.js" 2>/dev/null | head -2; echo "(出现=还是带 ReferenceError 的坏包)"' || true
+            echo "════ 服务器 80/443 监听者 ════"
+            ss -tlnp 2>/dev/null | grep -E ":80 |:443 " || echo "80/443 无监听——公网入口不在本机（CDN/云代理）"
+            echo "════ 本机能不能直吐首页（3000 直连最后确认）════"
+            curl -s -o /dev/null -w "localhost:3000 -> HTTP %{http_code}\n" --max-time 10 http://localhost:3000/ || true
