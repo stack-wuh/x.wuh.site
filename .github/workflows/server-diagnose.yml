@@ -1,4 +1,4 @@
-name: Server Diagnose (临时)
+name: Server Diagnose Cache (临时)
 
 on:
   workflow_dispatch:
@@ -12,28 +12,34 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: 生产实况深探（只读）
+      - name: 生产缓存指纹探测（只读）
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            echo "════ 容器状态 ════"
-            docker ps --format "table {{.Names}}\t{{.Status}}" | head -8
-            echo "════ mongod ════"
-            systemctl is-active mongod || true
-            ss -tlnp 2>/dev/null | grep 27017 | head -1 || echo "27017 无监听"
-            echo "════ nest 真实健康端点（多路径探测）════"
-            for p in /health /v2/health /api/health /api/v2/health; do
-              printf "%s -> " "$p"; curl -s -o /dev/null -w "HTTP %{http_code}\n" --max-time 6 "http://localhost:3200$p" || echo "fail"
+            echo "════ 本地直连 next:3000 的首页响应头 ════"
+            curl -s -D - -o /tmp/home-direct.html --max-time 15 http://localhost:3000/ | head -15
+            echo "════ 直连首页 CSS 链接 ════"
+            grep -o '/_next/static/[^"]*\.css' /tmp/home-direct.html | sort -u | head -5
+            CSS=$(grep -o '/_next/static/[^"]*\.css' /tmp/home-direct.html | head -1)
+            if [ -n "$CSS" ]; then
+              echo "════ 直连 CSS 中的 v1.4.50 指纹（252px / 100vh - 96px）════"
+              curl -s --max-time 10 "http://localhost:3000$CSS" | grep -c "252px" || echo "0 处 252px"
+              curl -s --max-time 10 "http://localhost:3000$CSS" | grep -c "100vh - 96px" || echo "0 处 100vh-96px"
+            fi
+            echo "════ 走 nginx 公网入口的响应头与指纹 ════"
+            curl -s -D - -o /tmp/home-nginx.html --max-time 15 -k "https://127.0.0.1/" -H "Host: x.wuh.site" | head -18 || echo "127.0.0.1:443 不通，试 80"
+            curl -s -D - -o /tmp/home-80.html --max-time 15 -H "Host: x.wuh.site" http://127.0.0.1/ | head -12 || true
+            for f in /tmp/home-nginx.html /tmp/home-80.html; do
+              if [ -s "$f" ]; then
+                echo "── $f CSS 链接与指纹 ──"
+                grep -o '/_next/static/[^"]*\.css' "$f" | sort -u | head -3
+                C2=$(grep -o '/_next/static/[^"]*\.css' "$f" | head -1)
+                [ -n "$C2" ] && curl -s --max-time 10 "http://localhost:3000$C2" | grep -c "252px" || echo "无 CSS 或 0 处 252px"
+                break
+              fi
             done
-            echo "════ prod next 首页 ════"
-            curl -s -o /dev/null -w "localhost:3000/ -> HTTP %{http_code} (%{time_total}s)\n" --max-time 15 http://localhost:3000/ || true
-            curl -s -o /dev/null -w "localhost:3000/music -> HTTP %{http_code} (%{time_total}s)\n" --max-time 20 http://localhost:3000/music || true
-            echo "════ prod next 日志尾部 ════"
-            docker logs xwuhsite-next-1 --tail 25 2>&1 | tail -25 || true
-            echo "════ prod nest 日志尾部 ════"
-            docker logs xwuhsite-nest-1 --tail 30 2>&1 | tail -30 || true
-            echo "════ mongo ping ════"
-            (echo 'db.runCommand({ping:1}).ok' | mongosh --quiet mongodb://localhost:27017/docs --eval 'db.runCommand({ping:1})' 2>&1 | tail -3) || (echo "db.runCommand({ping:1}).ok" | mongo --quiet docs 2>&1 | tail -3) || true
+            echo "════ nginx 是否有代理缓存配置 ════"
+            grep -rn "proxy_cache\|expires\|Cache-Control" /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | head -8 || echo "读不到 nginx 配置"
