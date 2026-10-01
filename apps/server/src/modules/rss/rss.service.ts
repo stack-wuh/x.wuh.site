@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Feed } from 'feed';
 import { SITE_URL, AUTHOR_URL } from '@wuh.site/core';
 import { Content, ContentDocument } from '../content/schemas/content.schema';
+import { rssCopyright, rssDescription, stripMarkdownToText } from './rss.utils';
 
 @Injectable()
 export class RssService {
@@ -42,16 +43,18 @@ export class RssService {
         link: SITE_URL,
         language: 'zh-cn',
         favicon: `${SITE_URL}/favicon.ico`,
-        copyright: '© 2024 wuh.site',
+        copyright: rssCopyright(),
       });
 
       for (const content of contents) {
         feed.addItem({
           title: content.title,
-          id: `${content.number}`,
+          id: `${SITE_URL}/post/${content.number}`,
           link: `${SITE_URL}/post/${content.number}`,
-          description: content.metadata?.summary || content.body?.substring(0, 200) || '',
-          content: content.bodyHtml || content.body || '',
+          description: rssDescription(content),
+          content:
+            content.bodyHtml ||
+            (content.body ? stripMarkdownToText(content.body) : ''),
           author: content.author ? [
             {
               name: content.author.login || 'shadow',

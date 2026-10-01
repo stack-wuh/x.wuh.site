@@ -3,19 +3,24 @@ title: RSS 订阅
 domain: seo
 keywords: [RSS, feed, 自动发现, canonical URL, 订阅, XML]
 scope:
-  - packages/wuh.site.nest/src/modules/rss
-  - packages/wuh.site.next/app/layout.tsx
+  - apps/server/src/modules/rss
+  - apps/site/app/layout.tsx
 status: active
 source:
   - changes/archive/20260628_P_rss_fix_and_entry/brief.md
-verified: 2026-08-08
+  - changes/20261002-fix-rss-feed-format/brief.md
+verified: 2026-10-02
+verified-depth: runtime
+verified-scope: apps/server/src/modules/rss、生产 /api/rss.xml
 ---
 
 # RSS 订阅
 
 ## 当前结论
 
-RSS feed 仅输出 `state: 'open'` 的内容。item link 格式为 `https://wuh.site/post/<number>-<title-slug>`（与博客 SEO canonical URL 一致）。
+RSS feed 仅输出 `state: 'open'` 的内容。item link/guid 格式为 `https://wuh.site/post/<number>`（纯数字 canonical；guid 即永久链接 URL，不再输出裸数字 id）。
+
+item description 为**纯文本**：CMS summary 优先，缺失时经 `stripMarkdownToText`（apps/server/src/modules/rss/rss.utils.ts）剥离 Markdown 字面量后截断 200 字——原始 Markdown 会以 `##`、`![]()` 字面量出现在阅读器（2026-10-02 修复前 19/20 item 中招）。`content:encoded` 的 body 回落同样剥离。copyright 动态计算 `© 2021–<当前年> wuh.site`，与页脚 copyrightYears 语义一致。
 
 全站 `<head>` 包含 RSS 自动发现标签 `<link rel="alternate" type="application/rss+xml" ...>`，页脚提供 RSS 订阅入口链接。
 
