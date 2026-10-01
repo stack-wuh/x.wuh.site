@@ -1,0 +1,36 @@
+name: Server Repair Nginx (临时→常备)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: sudo 拉起 nginx 并验证公网入口
+        uses: appleboy/ssh-action@master
+        env:
+          SUDO_PASS: ${{ secrets.SERVER_PASSWORD }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: SUDO_PASS
+          command_timeout: 10m
+          script: |
+            echo "════ nginx 当前态 ════"
+            systemctl is-active nginx || true
+            systemctl status nginx --no-pager 2>&1 | head -5 || true
+            echo "════ sudo -S systemctl start nginx ════"
+            echo "$SUDO_PASS" | sudo -S systemctl start nginx 2>&1 | grep -v "password" || true
+            sleep 3
+            echo "════ 复核 ════"
+            systemctl is-active nginx || true
+            ss -tlnp 2>/dev/null | grep -E ":80 |:443 " || echo "80/443 仍无监听"
+            curl -s -o /dev/null -w "https://127.0.0.1 (Host: x.wuh.site) -> HTTP %{http_code}\n" --max-time 15 -k -H "Host: x.wuh.site" https://127.0.0.1/ || echo "443 仍不通"
+            curl -s -o /dev/null -w "next / -> HTTP %{http_code}\n" --max-time 15 http://localhost:3000/ || true
