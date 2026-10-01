@@ -579,8 +579,10 @@ const SkipButton = styled.button`
   ${focusRing}
 `
 
-/* 实心盘：面板唯一饱和元素；::after 内缩环作碟面标签环（静态，不旋转） */
+/* 实心盘：面板唯一饱和元素；::after 内缩环作碟面标签环（静态，不旋转）。
+   position: relative 是环的包含块——缺位时 ::after 落到 NowDock，白环画成横贯 dock 的巨椭圆（v1.4.54 生产实证） */
 const PlayButton = styled(SkipButton)`
+  position: relative;
   width: 64px;
   height: 64px;
   background: var(--primary-color);
@@ -1390,6 +1392,9 @@ export const AudioPlayerPanel = () => {
   const [wordsOpen, setWordsOpen] = useState(false)
   const [queueOpen, setQueueOpen] = useState(false)
   const [volOpen, setVolOpen] = useState(false)
+  // 粘性开合：进入右缘热区即锁存「开」，指针在面板内漫游（末行移出/dock/舞台边缘）不收拢，离板才折回。
+  // React 态 → 视觉走行内样式（显隐纪律）；与 queueOpen（pinned）并集驱动 QScreen
+  const [foldLatch, setFoldLatch] = useState(false)
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0.01)
   const progressPct = (Math.min(state.progress, totalDuration) / totalDuration) * 100
 
@@ -1460,6 +1465,7 @@ export const AudioPlayerPanel = () => {
     setWordsOpen(false)
     setQueueOpen(false)
     setVolOpen(false)
+    setFoldLatch(false)
   }, [state.isPanelOpen])
 
   // 弹层滚动锁：面板打开期间锁 body 滚动（复用 Dialog 的 lockScroll 配方，position:fixed 兼顾 iOS），关闭还原滚动位置
@@ -1632,6 +1638,7 @@ export const AudioPlayerPanel = () => {
         aria-modal='true'
         aria-label={t('player.panel.title')}
         aria-hidden={!state.isPanelOpen}
+        onPointerLeave={() => setFoldLatch(false)}
       >
         <WashSrc $src={currentTrack?.coverUrl} aria-hidden='true' />
         <PaperVeil aria-hidden='true' />
@@ -1840,13 +1847,13 @@ export const AudioPlayerPanel = () => {
           }
           onClick={() => setQueueOpen(false)}
         />
-        <QZone>
+        <QZone onPointerEnter={() => setFoldLatch(true)}>
           <QScreen
             data-fold-screen='true'
             role='group'
             aria-label={t('player.panel.queueDrawer')}
             style={
-              queueOpen
+              queueOpen || foldLatch
                 ? ({
                     transform: 'rotateY(0deg)',
                     opacity: 1,

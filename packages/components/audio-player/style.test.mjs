@@ -175,6 +175,20 @@ test('motion 令牌引用完整性（引用未定义令牌 = transition 整条�
   }
 })
 
+test('队列翻页屏 hotfix：碟面环包含块归位 + 粘性开合行内驱动（20261002）', () => {
+  const panel = readSource('PlayerPanel.tsx')
+  // 碟面环 ::after 为 absolute inset 定位：PlayButton 缺 position: relative 时包含块落到 NowDock，
+  // 白环画成横贯 dock 的 1138×116 巨椭圆（v1.4.54 生产 DOM 实证）
+  const playBlock = panel.slice(panel.indexOf('const PlayButton'), panel.indexOf('/* 模式钮'))
+  assert.match(playBlock, /position: relative/, 'PlayButton 缺 position: relative（碟面环包含块归位）')
+  // 粘性开合：转正后在面板内漫游（末行移出/dock/舞台边缘）不收拢，离板才折回；
+  // latch 是 React 态 → 视觉必须走行内样式（显隐纪律）
+  assert.ok(panel.includes('foldLatch'), '缺 foldLatch 粘性开合')
+  assert.match(panel, /onPointerLeave=\{/, 'Panel 缺 pointerleave 解除 latch')
+  const qscreenCall = panel.slice(panel.indexOf('<QScreen'), panel.indexOf('</QScreen>'))
+  assert.match(qscreenCall, /queueOpen \|\| foldLatch/, 'QScreen 开态未并集 queueOpen 与 foldLatch')
+})
+
 test('STYLE_SOURCES 指向存在的文件', () => {
   for (const path of STYLE_SOURCES) {
     assert.ok(readFileSync(path, 'utf8').length > 0, `${path} 为空`)
