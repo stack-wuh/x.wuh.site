@@ -113,6 +113,27 @@ test('显隐态组件走行内样式驱动（动态类规则删除竞态免疫�
   assert.ok(panel.includes("'--tick-fill': 1"), 'PageTick 选中态行内自定义属性缺失')
 })
 
+test('舞台预算：封面为因变量（帽与面板高度同源）+ 题名/歌手空间承诺（20261001 精修）', () => {
+  const panel = readSource('PlayerPanel.tsx')
+  // 面板高 = 100vh - 96px（inset 48px）：封面帽必须与之同源，常态档 252；
+  // 旧帽 min(290px, 32vh) 与面板高度不同源，视口 ≤~920px 时题名被裁（生产实锤），禁入
+  assert.match(panel, /min\(252px,\s*calc\(\(100vh - 96px\) \* 0\.3\)\)/, 'PlateArt 缺常态同源帽 252')
+  assert.doesNotMatch(panel, /min\(290px,\s*32vh\)/, 'PlateArt 残留旧裸 32vh 帽')
+  // 分档按视口高度驱动且经常量插值：一档 224 / 二档 184
+  assert.match(panel, /max-height: \$\{STAGE_TIER_SHORT\}px/, '缺矮视口一档 max-height 规则')
+  assert.match(panel, /min\(224px,\s*calc\(\(100vh - 96px\) \* 0\.3\)\)/, '缺一档 224 同源帽')
+  assert.match(panel, /max-height: \$\{STAGE_TIER_COMPACT\}px/, '缺矮视口二档 max-height 规则')
+  assert.match(panel, /min\(184px,\s*calc\(\(100vh - 96px\) \* 0\.26\)\)/, '缺二档 184 同源帽')
+  // 题名/歌手行空间承诺：舞台再穷也不可挤压
+  const titleBlock = panel.slice(panel.indexOf('const StageTitle'), panel.indexOf('const StageGhost'))
+  assert.match(titleBlock, /flex-shrink: 0/, 'StageTitle 缺 flex-shrink: 0')
+  const artistBlock = panel.slice(panel.indexOf('const StageArtist'), panel.indexOf('const Epigraph'))
+  assert.match(artistBlock, /flex-shrink: 0/, 'StageArtist 缺 flex-shrink: 0')
+  // 二档缓冲：非当前句题跋让位（语义：当前句±0，mask 渐隐语义保留）
+  const epiBlock = panel.slice(panel.indexOf('const EpiRow'), panel.indexOf('/* ===== dock'))
+  assert.match(epiBlock, /max-height: \$\{STAGE_TIER_COMPACT\}px[\s\S]*?display: none/, '题跋二档缓冲规则缺失')
+})
+
 test('STYLE_SOURCES 指向存在的文件', () => {
   for (const path of STYLE_SOURCES) {
     assert.ok(readFileSync(path, 'utf8').length > 0, `${path} 为空`)

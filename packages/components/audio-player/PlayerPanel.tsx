@@ -360,17 +360,34 @@ const Plate = styled.div`
   box-shadow: var(--elevation-soft);
 `
 
+/* 舞台预算分档（按视口高度驱动：面板高 = 100vh − 96px，与宽度无关） */
+const STAGE_TIER_SHORT = 959
+const STAGE_TIER_COMPACT = 859
+
+/* 装裱封面：天薄地厚（下纸边厚一倍，立轴装裱比例）
+   尺寸是舞台预算的唯一因变量：帽与面板高度同源（min(px, (100vh−96px)×系数)），
+   旧裸 32vh 帽与面板高度不同源，矮视口吞题名（生产实锤） */
 const PlateArt = styled.div<{ $src?: string }>`
-  width: min(290px, 32vh);
+  width: min(252px, calc((100vh - 96px) * 0.3));
   aspect-ratio: 1;
   border-radius: 2px;
   background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
   box-shadow: inset 0 0 0 1px ${HAIRLINE};
+
+  @media (max-height: ${STAGE_TIER_SHORT}px) {
+    width: min(224px, calc((100vh - 96px) * 0.3));
+  }
+
+  @media (max-height: ${STAGE_TIER_COMPACT}px) {
+    width: min(184px, calc((100vh - 96px) * 0.26));
+  }
 `
 
-/* 题名手卷：溢出才徐展（暂停停走），reduced-motion 回落省略号，title 显全名 */
+/* 题名手卷：溢出才徐展（暂停停走），reduced-motion 回落省略号，title 显全名
+   空间承诺：舞台再穷题名/歌手也不可挤压（flex-shrink: 0，封面是唯一因变量） */
 const StageTitle = styled.h2<{ $marquee: boolean }>`
   display: block;
+  flex-shrink: 0;
   margin: var(--space-lg) 0 0;
   max-width: 680px;
   width: 100%;
@@ -420,6 +437,7 @@ const StageCopy = styled.span`
 `
 
 const StageArtist = styled.p`
+  flex-shrink: 0;
   margin: var(--space-xs) 0 0;
   max-width: 100%;
   font-size: var(--font-size-sm);
@@ -469,7 +487,12 @@ const EpiRow = styled.p<{ $act?: boolean }>`
             vertical-align: 5px;
           }
         `
-      : null}
+      : css`
+          /* 矮视口二档缓冲：题跋降为当前句，非当前句让位给题名/歌手（静态 media query，不涉态驱动禁令） */
+          @media (max-height: ${STAGE_TIER_COMPACT}px) {
+            display: none;
+          }
+        `}
 `
 
 /* ===== dock（桌面 + 移动共用）：進度 + 单行钮群 ===== */
