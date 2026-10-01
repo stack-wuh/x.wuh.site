@@ -57,6 +57,7 @@
 | 20260929-style-player-collapse-ear | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-collapse-ear/brief.md |
 | 20260929-style-player-panel-inkwash | reviewed | shadow-docs/changes/20260929-style-player-panel-inkwash/brief.md |
 | 20260930-feature-player-dock-progress-seal | reviewed | shadow-docs/changes/20260930-feature-player-dock-progress-seal/brief.md |
+| 20260930-feature-player-length-adaptive | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-player-length-adaptive/brief.md |
 | 20260930-feature-progress-component | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-progress-component/brief.md |
 | 20260930-feature-site-i18n-trilingual | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-site-i18n-trilingual/brief.md |
 | 20260930-fix-locale-switcher-flat-instant | reviewed | shadow-docs/changes/20260930-fix-locale-switcher-flat-instant/brief.md |
@@ -70,4 +71,5 @@
 | 20260930-style-player-favorite-ai-seal | reviewed | shadow-docs/changes/20260930-style-player-favorite-ai-seal/brief.md |
 | 20260930-style-player-mobile-album-leaf | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-mobile-album-leaf/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |
+| 20261001-fix-mini-player-marquee-undefined | branched | shadow-docs/changes/20261001-fix-mini-player-marquee-undefined/brief.md |
 | 20261001-fix-og-image-metadata-shadowing | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-og-image-metadata-shadowing/brief.md |

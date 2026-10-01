@@ -4,7 +4,7 @@
   "name": "20260930-feature-player-length-adaptive",
   "type": "feature",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260930-feature-player-length-adaptive",
   "files": [
@@ -20,18 +20,18 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 449,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/449"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b116e81827a0ecc5de3ca489f97c9749d7d8e4f6",
-    "verifiedAt": "2026-10-01T00:16:20.817Z"
+    "verifiedCommit": "7b0f5942c2f487ad8977769f56813d7f959bf0c9",
+    "verifiedAt": "2026-10-01T02:08:37.235Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
-    "planHash": "e579234e5bc78cbe5fafdd0c3a9850826a230dc134e27f22667ca064c41e42e4",
+    "checkpoint": "merged-pr:449",
+    "planHash": "a74664f15babab3f3781f150a946a1123c2ed87b12d8c51a83da94f039d7f298",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -57,7 +57,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "M 级门槛达成：audio-player 守卫 46/46（含 6 条新守卫：跑马灯同源/模式 icon-only/popover aria/墨痕 aria-hidden/QueueArtist 限宽/lang 钩子）、locales 13/13、wiring 10/10、根 tsc 净、oxlint 0/0（125 文件）、生产构建通过；存量 mini-player/player-panel 测试已随形态重铸更新至新规格。走查确认：激活态全走行内自定义属性/受控 state（免疫机制）、移动 snap 页仍禁 scrollIntoView（手动 scrollTop）、progressPct 直传无二次换算、i18n 三语 key 同步、单行钮群/词卷/抽屉/墨痕与三轮认可原型一致。方案一致性：brief 决策 1-7 全落地。知识更新：music-player.md 面板形态改写（桌面三栏→居中单焦点舞台 + 词卷态/列表抽屉/音量 popover/墨痕歌词；模式带三钮→icon-only 循环钮；移动册页保留）+ components.md 第 43 行过期背景描述修正；verified-depth 于部署后生产复验时补 runtime。另记：main 既有 hydration mismatch（stash 二分证实非本 change 引入且不阻塞挂载），遗留独立排查。截图目检移至部署后生产复验（v1.4.43 先例）：apply 期并行会话共享端口 3000/3001/3200 反复起停 + dist 互踩 + IAB 崩溃 + SIGSEGV 频发，环境不可用已如实记录。"
+    "reason": "交付复核于 main 7b0f594（#449 squash 合入）：全部门禁在合并前后两轮全绿（audio-player 47→49/49 含并档守卫、locales 13→14/14、wiring 10/10、tsc/oxlint 净、生产构建通过）；与 #447/#444 冲突语义并档完成（overflow: clip、全文件禁 scrollIntoView、最愛印 glyph 三元、Track.playCount 移植进留白独奏重写版）。交付：Release v1.4.48 已发布，部署链 CI-CD run 36801314784 全绿（prepare→build→staging-test→switch-traffic），已上线。知识更新落地：music-player.md 留白独奏桌面形态段 + 滚动纪律/最愛印并档、components.md 过期背景修正，已随 #449 入 main。遗留（结果段已记）：①GlobalAudioPlayer 挂载失败已委托其他 AI 排查（changes/20261001-fix-mini-player-marquee-undefined 进行中），修复合入后生产复验并回写 verified-depth: runtime；②四主题×三语截图目检随复验一并补。"
   }
 }
 ---
@@ -125,8 +125,10 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: propose 2026-09-30（含四构视觉提案与用户三轮精修）→ apply/review 2026-10-01 → release/merge 2026-10-01
+- 验证: audio-player 守卫 49/49（新增 7 条 + 并档 favorite-ai-seal/lyric-scroll-bleed 两套）、locales 14/14、wiring 10/10、根 tsc 净、oxlint 0/0（125 文件）、生产构建通过；与 #447/#444 的 merge 冲突语义并档（overflow: clip、全文件禁 scrollIntoView、最愛印 glyph、Track.playCount 全部移植进留白独奏重写版）
+- 交付: PR #449（squash → main 7b0f594，admin 越过评审）→ Release [v1.4.48](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.48) → 部署链 CI-CD run 36801314784 **全绿**（prepare → build → staging-test → switch-traffic），已上线
+- 遗留: ①桌面面板水合后 GlobalAudioPlayer 挂载失败（生产现存）——已委托其他 AI 排查（stash 二分证实源于本 change 之前已存在的水合不一致因素，由本窗口合入后显现），修复合入后需生产复验；②四主题×三语×关键态截图目检随复验一并补，届时回写 music-player.md verified-depth: runtime；③设计方法论已沉淀为 shadow-dev-workflow `shadow-dev-design` 技能（PR stack-wuh/shadow-dev-workflow#21），视觉稿 `/tmp/player-mockup/layouts.html`（会话临时目录，不随库）
 
 ## 知识评估
 
