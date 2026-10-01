@@ -86,6 +86,9 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const hasExplicitSize = typeof finalWidth !== 'undefined' && typeof finalHeight !== 'undefined'
   const shouldStretch = Boolean(finalFill)
   const shouldLazy = lazy && !priority
+  // Next 16 起解耦 priority 与 fetchPriority：priority 只映射 preload link 与禁 lazy，
+  // img 元素上的 fetchpriority="high" 需显式传入，LCP 竞速信号才完整
+  const resolvedFetchPriority = priority ? ('high' as const) : undefined
 
   const [inView, setInView] = React.useState(!shouldLazy)
   const [status, setStatus] = React.useState<ImageStatus>('idle')
@@ -174,6 +177,7 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
           width={finalWidth}
           height={finalHeight}
           sizes={sizes}
+          fetchPriority={resolvedFetchPriority}
           priority={priority}
           loading={loading}
           $objectFit={resolvedVariant}
