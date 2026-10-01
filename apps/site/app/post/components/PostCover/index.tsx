@@ -81,6 +81,9 @@ export default function PostCover({
         fill
         ratio='16:9'
         priority
+        /* 双栏网格 ≥1024 时图列定宽 526px（容器 1100px 半宽），其余单栏全宽；
+           fill 模式不传 sizes 会回落 100vw，浏览器按视口选档造成超需 */
+        sizes='(max-width: 1023px) 100vw, 526px'
         onStatusChange={(status) => {
           if (status === 'error') setFailed(true)
         }}
