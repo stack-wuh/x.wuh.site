@@ -1,4 +1,4 @@
-name: Server Diagnose JS Fingerprint (临时)
+name: Server Diagnose Node Fingerprint (临时)
 
 on:
   workflow_dispatch:
@@ -12,18 +12,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: JS 块指纹 + 入口监听（只读）
+      - name: node 指纹终极探测（错误可见）
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            echo "════ v1.4.50 指纹（JS 块中的 252px）════"
-            docker exec xwuhsite-next-1 sh -c 'grep -rl "252px" /app --include="*.js" 2>/dev/null | head -2; echo "(空=容器不是 v1.4.50)"' || true
-            echo "════ v1.4.48 漏引 bug 指纹（MARQUEE_SPEED_PX_PER_S 裸标识符）════"
-            docker exec xwuhsite-next-1 sh -c 'grep -rlo "MARQUEE_SPEED_PX_PER_S" /app --include="*.js" 2>/dev/null | head -2; echo "(出现=还是带 ReferenceError 的坏包)"' || true
-            echo "════ 服务器 80/443 监听者 ════"
-            ss -tlnp 2>/dev/null | grep -E ":80 |:443 " || echo "80/443 无监听——公网入口不在本机（CDN/云代理）"
-            echo "════ 本机能不能直吐首页（3000 直连最后确认）════"
-            curl -s -o /dev/null -w "localhost:3000 -> HTTP %{http_code}\n" --max-time 10 http://localhost:3000/ || true
+            echo "════ 服务器源码指纹 ════"
+            grep -c "252px" /github/x.wuh.site/packages/components/audio-player/PlayerPanel.tsx || echo "源码无 252px?!"
+            echo "════ 容器里有 grep 吗 ════"
+            docker exec xwuhsite-next-1 which grep || echo "NO_GREP——之前所有容器内 grep 探针全部无效"
+            echo "════ 容器 .next 位置 ════"
+            docker exec xwuhsite-next-1 sh -c 'ls /app/apps/site/.next/ 2>&1 | head -8' || true
+            echo "════ node 全盘指纹扫描（252px 与 290px 各计数）════"
+            docker exec xwuhsite-next-1 node -e "
+              const fs=require('fs');
+              let n252=0,n290=0,hits=[];
+              const walk=d=>{let es;try{es=fs.readdirSync(d,{withFileTypes:true})}catch(e){return}
+                for(const f of es){const fp=d+'/'+f.name;
+                  if(f.isDirectory()){walk(fp);continue}
+                  if(!/\.(js|mjs|css)$/.test(f.name))continue;
+                  let s;try{s=fs.readFileSync(fp,'utf8')}catch(e){continue}
+                  if(s.includes('252px')){n252++;if(hits.length<3)hits.push(fp)}
+                  if(s.includes('min(290px'))n290++;
+                }};
+              walk('/app');
+              console.log('252px 命中文件数:',n252);
+              console.log('旧帽 min(290px 命中文件数:',n290);
+              hits.forEach(h=>console.log('  ->',h));
+            " 2>&1 | tail -8
