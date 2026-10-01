@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@wuh.site/components/button'
-import dynamic from 'next/dynamic'
 import Tag from '@wuh.site/components/tag'
 import { IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconChevronRight } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
@@ -12,11 +11,8 @@ import Empty from '@wuh.site/components/empty'
 import ContactArea from './ContactArea'
 import WereadSection from './WereadSection'
 import ProjectsSection from './ProjectsSection'
+import TypewriterMotto from '../components/TypewriterMotto'
 import type { HomeViewProps } from './specs'
-
-const TypewriterMotto = dynamic(() => import('../components/TypewriterMotto'), {
-  loading: () => <S.MottoSkeleton />,
-})
 
 const TAG_DISPLAY_LIMIT = 3
 

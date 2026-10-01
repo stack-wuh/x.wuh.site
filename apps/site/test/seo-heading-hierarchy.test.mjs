@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { access, readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
@@ -8,8 +8,16 @@ const testDir = dirname(fileURLToPath(import.meta.url))
 const appRoot = resolve(testDir, '..')
 const read = (relative) => readFile(resolve(appRoot, relative), 'utf8')
 
+async function fileExists(relative) {
+  try {
+    await access(resolve(appRoot, relative))
+    return true
+  } catch {
+    return false
+  }
+}
+
 const stylesSource = await read('app/styles/index.ts')
-const musicLoadingSource = await read('app/music/loading.tsx')
 
 test('site title carries the single h1 semantic for the home page', () => {
   assert.match(stylesSource, /export const SiteTitle = styled\.h1/)
@@ -23,7 +31,6 @@ test('h1 default margin is fully reset to preserve the hero layout', () => {
   assert.doesNotMatch(block, /margin-top:/)
 })
 
-test('music streaming skeleton does not render a duplicate h1', () => {
-  assert.match(musicLoadingSource, /<PageTitle as=['"]div['"]>/)
-  assert.doesNotMatch(musicLoadingSource, /<PageTitle>/)
+test('music streaming skeleton is removed entirely, leaving the real h1 as the only one', async () => {
+  assert.equal(await fileExists('app/music/loading.tsx'), false, 'skeleton file must not exist')
 })
