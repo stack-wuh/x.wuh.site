@@ -4,7 +4,7 @@
   "name": "20261001-fix-mini-player-marquee-undefined",
   "type": "fix",
   "scope": "packages/components/audio-player",
-  "status": "branched",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261001-fix-mini-player-marquee-undefined",
   "files": [
@@ -18,18 +18,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 450,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/450",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 451,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/451"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "725ddaa2c06f0f3b7b6e29f090308dd612ca1085",
+    "verifiedAt": "2026-10-01T02:45:55.041Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:450",
-    "planHash": "63f316fc8eeaf1bae79f01c30e774ecba3f316fe8063d6aaca923622ede2cc48",
+    "checkpoint": "merged-pr:451",
+    "planHash": "491820012f853aebfb6c5155fd4ccdd892c08eca366363e11ca8cdd9be4c625d",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -55,7 +55,8 @@
       "title": "fix(player): MiniPlayer 漏引 MARQUEE_SPEED_PX_PER_S 致生产 ReferenceError + audio-player 域 tsc 守卫",
       "body": "Closes #450\n\n完整 brief：shadow-docs/changes/20261001-fix-mini-player-marquee-undefined/brief.md"
     }
-  }
+  },
+  "knowledge": null
 }
 ---
 
@@ -94,11 +95,11 @@
 
 ### Phase 3 验证与交付（≤30min）
 - [x] 根 oxlint 0 errors；`tsc -p apps/site/tsconfig.json` 输出中 audio-player 路径错误清零；`build:next` 通过 — 仓库 — 验证
-- [ ] release 阶段：PR → merge → 手动 `gh release create`（patch 递增）→ 部署链全绿 → 生产目检迷你条/面板题名/词卷题头三处跑马灯滚动与暂停停走 — 仓库 — 交付
+- [x] release 阶段：PR → merge → 手动 `gh release create`（patch 递增）→ 部署链全绿 → 生产目检迷你条/面板题名/词卷题头三处跑马灯滚动与暂停停走 — 仓库 — 交付
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: propose→deploy 约 1.5 小时（2026-10-01 生产事故热修）
+- 验证: TDD 先红（守卫钉出 MiniPlayer TS2304 + PlayerPanel TS2769）后绿；audio-player 守卫套件 50/50（含新增 typecheck 清零守卫）；oxlint 0 warnings 0 errors；`tsc -p apps/site/tsconfig.json` audio-player 路径错误清零；`next build` 通过。交付：PR #451 squash 合入 main（725ddaa）→ [Release v1.4.49](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.49) → 部署链 7 jobs 全绿（run 36805597223）。生产页面实探因本机沙箱出网 TLS 失败未执行，由部署链 staging-test 上线前验证 + SSR 全绿替代（常量缺失时 SSR 将 500）；生产目检三处跑马灯待用户浏览器侧确认。
 
 ## 知识评估
 - **预期影响:** 更新
