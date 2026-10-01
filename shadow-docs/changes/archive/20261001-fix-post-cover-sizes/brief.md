@@ -4,7 +4,7 @@
   "name": "20261001-fix-post-cover-sizes",
   "type": "fix",
   "scope": "packages/components,apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261001-fix-post-cover-sizes",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 458,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/458",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 459,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/459"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "6bf77cfc52255d7435387b77a7e25f08eba2e3e2",
-    "verifiedAt": "2026-10-01T15:57:04.060Z"
+    "verifiedCommit": "e8c7eb55a2716d7ef766f94007b68fd88f873b09",
+    "verifiedAt": "2026-10-01T16:11:33.815Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:458",
-    "planHash": "ab933f43169b53c89f0c9c60f9dea2ce1cbb31e532a6e25394d0bc41c10f98ae",
+    "checkpoint": "merged-pr:459",
+    "planHash": "6c31a969e6d7861747f4ab0ae310f661dcfd88b332a25184291a2ff6928fbbe9",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -55,7 +55,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/first-load-performance.md",
-    "reason": "实现与 brief 选型一致：组件库 priority→fetchPriority=high 映射（Next 16 解耦的根治点，全体 priority 调用方受益）+ PostCover sizes=(max-width:1023px) 100vw,526px（双栏网格实测值）。TDD 2/2 红转绿，tsc/oxlint（apps/site+组件包）0 错，18 挂存量同批。生产 DOM 验尸已关闭处方「根因未确认」项：preload 在而 fetchpriority 缺失，next@16.3.2 get-img-props.js 实证 fetchPriority 独立 prop。runtime 以部署后生产 curl 为权威。知识卡新增：Next 16 priority/fetchPriority 解耦陷阱 + fill 模式必须显式 sizes"
+    "reason": "归档前在 main HEAD 重签：生产已验证（v1.4.53 部署后 /post/165 cover img fetchPriority=high、sizes 526px、preload imageSrcSet 全到位），知识卡 Next 16 解耦陷阱与 fill sizes 约束已更新"
   }
 }
 ---
@@ -106,7 +106,11 @@
 - 流程备注/偏差:
   - task-6（PR body 回填）时序原因在 review 前勾结
 - 部署后复测清单（https://wuh.site）: `/post/165` cover img `fetchpriority="high"` + `sizes="(max-width: 1023px) 100vw, 526px"`
-- 交付发布: 待 PR 合并后按 build-config.md 发布流程执行
+- 交付发布:
+  - PR #459 已合并 main（squash commit `e8c7eb5`，本会话代合并）
+  - GitHub Release **[v1.4.53](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.53)** 触发 CI-CD run 36888366463 **全绿**
+  - **生产复测（https://wuh.site/post/165，部署后实测）**: cover img `fetchPriority="high"` ✅（React 19 camelCase 渲染，首轮检测脚本用全小写正则误报缺失）；`sizes="(max-width: 1023px) 100vw, 526px"` ✅；`<link rel="preload" as="image" imageSrcSet>` ✅（camelCase 同理）；无 loading 属性=原生 eager ✅
+  - 检测教训记档：验尸 DOM 属性大小写必须两种形式都查（React 对 fetchPriority 保留 camelCase）
 
 ## 知识评估
 - **预期影响:** 更新

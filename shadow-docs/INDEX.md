@@ -74,5 +74,6 @@
 | 20261001-fix-heading-hierarchy | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-heading-hierarchy/brief.md |
 | 20261001-fix-mini-player-marquee-undefined | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-mini-player-marquee-undefined/brief.md |
 | 20261001-fix-og-image-metadata-shadowing | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-og-image-metadata-shadowing/brief.md |
+| 20261001-fix-post-cover-sizes | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-post-cover-sizes/brief.md |
 | 20261001-perf-remove-streaming-skeletons | ✅ 完成 | shadow-docs/changes/archive/20261001-perf-remove-streaming-skeletons/brief.md |
 | 20261001-style-player-stage-budget | ✅ 完成 | shadow-docs/changes/archive/20261001-style-player-stage-budget/brief.md |
