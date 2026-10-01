@@ -18,7 +18,7 @@ import {
   IconSkipBack,
   IconSkipForward
 } from '@wuh.site/components/icons'
-import { MARQUEE_GAP_PX, marquee, useMarqueeOverflow } from './useMarquee'
+import { MARQUEE_GAP_PX, MARQUEE_SPEED_PX_PER_S, marquee, useMarqueeOverflow } from './useMarquee'
 
 const COLLAPSE_STORAGE_KEY = 'audio-mini-player-collapsed'
 const CARD_HEIGHT = '96px'

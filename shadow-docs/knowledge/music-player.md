@@ -32,6 +32,7 @@ source:
   - changes/20260930-fix-panel-lyric-scroll-bleed/brief.md
   - changes/20260930-style-player-favorite-ai-seal/brief.md
   - changes/20260930-feature-player-length-adaptive/brief.md
+  - changes/20261001-fix-mini-player-marquee-undefined/brief.md
 verified: 2026-10-01
 verified-depth: unit
 verified-scope: audio-player 守卫 47/47（含 20261001 新守卫 7 条：跑马灯三处同源/模式钮 icon-only/音量 popover aria/墨痕 aria-hidden/QueueArtist 限宽/[lang=en] 钩子/显隐组件行内样式免疫，并并归 favorite-ai-seal 与 lyric-scroll-bleed 两套守卫）+ locales 词典 13/13 + wiring 10/10 + 根 tsc 净 + oxlint 0/0 + 生产构建通过 + 实现走查（与 favorite-ai-seal 的 merge 冲突语义并档：overflow: clip、禁 scrollIntoView、最愛印 glyph 三元、Track.playCount 全部移植进留白独奏重写版）；runtime 目检（四主题×三语×关键态）移至部署后生产复验（v1.4.43 先例），历史 runtime 结论沿承各变更验证记录。20260930-fix-panel-lyric-scroll-bleed：弹层定位纪律 runtime 验证（audio-player 守卫 40/40 含全文件禁 scrollIntoView 与 overflow: clip ≥2 守卫、根 tsc 净、oxlint 0 errors；mock 后端本地复现——面板壳 scrollTop/scrollLeft 全程恒 0 且 118px 隐藏可滚溢出不可达、歌词内滚深居中 scrollTop 1589 正常、队列当前项对齐、明暗双主题截图无底带无眉标裁切）。20260930-style-player-favorite-ai-seal：最爱换印 runtime 验证（audio-player 守卫 40/40 含最爱口径/印面三元/音量无 glyph/Track.playCount 契约守卫、根 tsc 净、oxlint 0 errors、build:next 绿；mock 数据本地实测——最爱曲进度印=愛、音量印=樂、印面 fontFamily=Noto Serif SC，playCount 经队列流入面板；非最爱探针受本地 dev 水合断树阻塞未跑通，由守卫钉死的三元表达式 + Progress 既有默认樂覆盖，部署后生产可即时目检）。
@@ -81,6 +82,7 @@ verified-scope: audio-player 守卫 47/47（含 20261001 新守卫 7 条：跑�
 - 播放地址不得进入缓存层；只有歌单/搜索这类元数据可以缓存。
 - 不可播是**正常业务态**（不是错误）：消费方必须按空 `streamUrl` 跳过，禁止把播放停在错误态。
 - 年度歌单的筛选与排序语义只在服务端 `getUserPlaylists` 持有；消费方对空列表与失败一律隐藏入口并回落 env 兜底歌单，禁止把「拉不到年度歌单」渲染成错误页。
+- 守卫语义化纪律（两连生产实锤，#450 定稿）：换算口径守卫只镜像公式曾放行 #435（progressPct 二次 ×100）；引用存在性守卫只断言用法、不断言 import，曾放行 #449 的 MiniPlayer 漏引 `MARQUEE_SPEED_PX_PER_S`（TS2304 → 生产 ReferenceError）。类型类约束一律并入 audio-player 域 `tsconfig.guard.json + typecheck.test.mjs` 守卫（域内 tsc 错误清零断言，域外存量错误不扩大打击面），不再以源码正则新守卫承担类型语义。跑马灯量尺 `useMarqueeOverflow` 为泛型挂载点（`<T extends HTMLElement>`），span/h2/h3 皆可挂。
 
 ## 适用边界
 
