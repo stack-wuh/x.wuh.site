@@ -4,7 +4,7 @@
   "name": "20261001-fix-heading-hierarchy",
   "type": "fix",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261001-fix-heading-hierarchy",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 454,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/454",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 455,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/455"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "4617f604c3a67b8d7cba1ee302441f979b8876dc",
-    "verifiedAt": "2026-10-01T14:37:06.692Z"
+    "verifiedCommit": "557ed3c83db4eb72bf297309d9deb15f54f01567",
+    "verifiedAt": "2026-10-01T14:53:33.730Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:454",
-    "planHash": "501d33f0eded9a4819442e6b104dde0acb5419cc8ef8b07a575adb21602028a4",
+    "checkpoint": "merged-pr:455",
+    "planHash": "3b03ca6bd878cb253bb739af5f63ae0d6216b09ce2cb29f8eae8fca29fef6579",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -55,7 +55,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/seo.md",
-    "reason": "实现与 brief 选型一致：SiteTitle styled.p→styled.h1 + margin 全向重置、music 骨架 PageTitle as=div 降型。TDD 3/3 红→绿；tsc/oxlint 0 错；19 个挂经失败文件清单+grep 符号零引用实证为 main 存量与本次无因果。runtime 以部署后生产 curl 为权威（本地 dev 处 SGN-001 密集崩溃期，DOM 输出为 JSX 直接函数、源码契约已锁死）。seo.md 新增长期约束：每页恰 1 个 h1、SiteTitle 必须 h1 语义、流式骨架不得渲染 h1"
+    "reason": "归档前在 main HEAD 重签：生产已验证（v1.4.51 部署后 / 恰 1 个 h1「朝朝如念」、/music 恰 1 个），seo.md heading 约束已更新"
   }
 }
 ---
@@ -109,7 +109,10 @@
   - task-6（PR body 回填）为时序原因在 review 前勾结，交付物随 PR body 落实
   - 全量套件归属证据改为「失败文件清单 + grep 符号零引用」而非 stash 全量对比（SGN-001 下全量跑不稳，定向证据足够 S 级）
 - 部署后复测清单（https://wuh.site）: `/` 恰 1 个 h1 且含「朝朝如念」；`/music` 恰 1 个 h1「音乐」；首页标题区无布局塌陷
-- 交付发布: 待 PR 合并后按 build-config.md 发布流程执行
+- 交付发布:
+  - PR #455 已合并 main（merge commit `557ed3c`）
+  - GitHub Release **[v1.4.51](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.51)** 触发 CI-CD run 36878402805 **全绿**（7/7 jobs：quality-gate → prepare → build-next/nest → staging-test → switch-traffic）；v1.4.46–50 已被其他会话占用故顺延
+  - **生产复测（https://wuh.site，部署后实测）**: `/` 恰 1 个 `<h1>` 且文本「wuh.site · 朝朝如念」✅；`/music` 恰 1 个 `<h1>音乐</h1>`（修复前 DOM 双 h1）✅
 
 ## 知识评估
 - **预期影响:** 更新
