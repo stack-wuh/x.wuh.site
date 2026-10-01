@@ -105,7 +105,9 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
   box-shadow: var(--elevation-card);
   color: var(--text-color);
   font-family: var(--font-sans);
-  overflow: hidden;
+  /* clip（而非 hidden）：面板壳必须不是滚动容器——它是可滚容器时，子元素滚动定位 API
+     会沿祖先链把它连带滚走（生产实测内容整体上移、眉标被裁、底边露出未罩纸底的晕染色带） */
+  overflow: clip;
   opacity: ${(p) => (p.$visible ? 1 : 0)};
   transform: translateY(${(p) => (p.$drag != null ? `${Math.min(p.$drag, 320)}px` : p.$visible ? '0' : '16px')});
   pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
@@ -146,7 +148,7 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
     border: none;
     border-radius: 0;
     box-shadow: none;
-    overflow: hidden;
+    overflow: clip;
   }
 `
 
@@ -1296,6 +1298,11 @@ export const AudioPlayerPanel = () => {
   const titleDuration = `${(stageTitle.metrics.text + MARQUEE_GAP_PX) / MARQUEE_SPEED_PX_PER_S}s`
   const ModeIcon = MODE_ICONS[state.mode]
   const volumePct = Math.round(state.volume * 100)
+  // 最爱印：本卷播放次数最高曲目播放时进度印换「愛」——口径与 /music 最爱徽标同源（含并列）
+  const favorite = useMemo(() => {
+    const maxPlays = queue.reduce((max, track) => Math.max(max, track.playCount ?? 0), 0)
+    return maxPlays > 0 && currentTrack?.playCount === maxPlays
+  }, [queue, currentTrack])
 
   const prefersReducedMotion = () =>
     typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -1368,25 +1375,52 @@ export const AudioPlayerPanel = () => {
     }
   }, [state.isPanelOpen])
 
-  // 播放列表定位到当前曲：抽屉（桌面）与目次页（移动）都用手动 scrollTop——
-  // 移动列表在 snap 页内禁用 scrollIntoView（会把外层横翻容器一并滚走，实测缺陷）
+  // 播放列表定位到当前曲：抽屉（桌面）与目次页（移动）都用手动 scrollTop。
+  // 定位一律手动只滚目标容器，禁用原生滚动定位 API（scroll-into-view 类）——它沿祖先链滚动所有可滚容器：
+  // 桌面会连带滚走 overflow 壳的面板（生产实证眉标被裁、底边露晕染色带），
+  // 移动列表在 snap 页内会横滚带跑面板（实测页缘钮失同步）。抽屉 nearest 语义：可见不动，越界才对齐
   useEffect(() => {
     if (!state.isPanelOpen) return
-    const align = (list: HTMLUListElement | null) => {
-      const item = list?.querySelector<HTMLLIElement>('[data-active="true"]')
-      if (list && item) {
-        list.scrollTop = Math.max(0, item.offsetTop - list.clientHeight / 2 + item.clientHeight / 2)
+    const dList = drawerListRef.current
+    const dItem = dList?.querySelector<HTMLLIElement>('[data-active="true"]')
+    if (dList && dItem) {
+      const itemTop = dItem.offsetTop
+      const itemBottom = itemTop + dItem.offsetHeight
+      if (itemTop < dList.scrollTop) {
+        dList.scrollTop = itemTop
+      } else if (itemBottom > dList.scrollTop + dList.clientHeight) {
+        dList.scrollTop = itemBottom - dList.clientHeight
       }
     }
-    align(drawerListRef.current)
-    align(mobileQueueRef.current)
+    const mList = mobileQueueRef.current
+    const mItem = mList?.querySelector<HTMLLIElement>('[data-active="true"]')
+    if (mList && mItem) {
+      mList.scrollTop = Math.max(0, mItem.offsetTop - mList.clientHeight / 2 + mItem.clientHeight / 2)
+    }
   }, [state.isPanelOpen, state.currentIndex, queueOpen, mobilePage])
 
-  // 词卷跟随：当前句列滚到视口中部（桌面纵向容器无 snap 包裹，scrollIntoView 安全）
+  // 词卷跟随：当前句列滚到视口中部。手动 scrollTo 只滚词卷容器（面板壳 overflow: clip 后不是滚动容器，
+  // 但定位纪律仍全文件禁原生滚动定位 API）；竖排 vertical-rl 的 scrollLeft 为负向域，
+  // 按几何换算目标列居中；en 横排回退用同构的 top 公式
   useEffect(() => {
     if (!state.isPanelOpen || !wordsOpen) return
-    const el = wordsVerseRef.current?.querySelector<HTMLElement>(`[data-words-index="${lyricIdx}"]`)
-    el?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    const container = wordsVerseRef.current
+    const el = container?.querySelector<HTMLElement>(`[data-words-index="${lyricIdx}"]`)
+    if (!container || !el) return
+    const behavior = prefersReducedMotion() ? 'auto' : 'smooth'
+    const vertical = getComputedStyle(container).writingMode.startsWith('vertical')
+    if (vertical) {
+      container.scrollTo({
+        left: container.clientWidth / 2 - el.offsetWidth / 2 - el.offsetLeft,
+        top: 0,
+        behavior,
+      })
+    } else {
+      container.scrollTo({
+        top: el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2,
+        behavior,
+      })
+    }
   }, [state.isPanelOpen, wordsOpen, lyricIdx])
 
   // 册页横翻：swipe 由 scroll-snap 承担，onScroll 把页缘钮选中态同步回来
@@ -1425,7 +1459,8 @@ export const AudioPlayerPanel = () => {
     setDragY(null)
   }
 
-  // 移动词窗跟随：手动垂直 scrollTop（snap 页内禁 scrollIntoView）；墨晕随当前句位移
+  // 移动词窗跟随：手动垂直 scrollTop（定位纪律全文件禁原生滚动定位 API）；墨晕随当前句位移。
+  // 桌面歌词定位由词卷跟随 effect 承担（同手册动滚动）
   useEffect(() => {
     if (!state.isPanelOpen) return
     if (activeLyric < 0) {
@@ -1588,6 +1623,7 @@ export const AudioPlayerPanel = () => {
               value={progressPct}
               onChange={(pct) => seek((pct / 100) * totalDuration)}
               thumb
+              glyph={favorite ? '愛' : '樂'}
               breathing={playing}
               label={t('player.panel.progressLabel')}
             />

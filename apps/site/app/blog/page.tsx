@@ -3,7 +3,8 @@ import { contentService } from "@wuh.site/core/endpoints";
 import type { ContentItem, PostListItem } from "@wuh.site/core";
 import BlogListView from "./BlogListView";
 import { toLabelParams } from "./blog-filter-utils";
-import { PER_PAGE, SITE_URL, SITE_NAME, type BlogSearchParams } from "./specs";
+import { buildSectionMetadata } from "../lib/seo";
+import { PER_PAGE, SITE_URL, type BlogSearchParams } from "./specs";
 
 export async function generateMetadata({
   searchParams,
@@ -23,6 +24,9 @@ export async function generateMetadata({
     ? { index: false, follow: true }
     : { index: true, follow: true };
 
+  const socialTitle = hasActiveLabels ? "wuh.site 博客筛选" : "wuh.site 博客";
+  const socialUrl = hasActiveLabels ? `${SITE_URL}/blog` : `${SITE_URL}${canonicalPath}`;
+
   return {
     title: hasActiveLabels ? "博客筛选" : "博客",
     description,
@@ -32,18 +36,11 @@ export async function generateMetadata({
         ? `${SITE_URL}/blog`
         : `${SITE_URL}${canonicalPath}`,
     },
-    openGraph: {
-      title: hasActiveLabels ? "wuh.site 博客筛选" : "wuh.site 博客",
+    ...buildSectionMetadata({
+      title: socialTitle,
       description,
-      url: hasActiveLabels ? `${SITE_URL}/blog` : `${SITE_URL}${canonicalPath}`,
-      siteName: SITE_NAME,
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title: hasActiveLabels ? "wuh.site 博客筛选" : "wuh.site 博客",
-      description,
-    },
+      url: socialUrl,
+    }),
   };
 }
 

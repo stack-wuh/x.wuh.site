@@ -59,11 +59,15 @@
 | 20260930-feature-player-dock-progress-seal | reviewed | shadow-docs/changes/20260930-feature-player-dock-progress-seal/brief.md |
 | 20260930-feature-progress-component | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-progress-component/brief.md |
 | 20260930-feature-site-i18n-trilingual | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-site-i18n-trilingual/brief.md |
+| 20260930-fix-locale-switcher-flat-instant | reviewed | shadow-docs/changes/20260930-fix-locale-switcher-flat-instant/brief.md |
 | 20260930-fix-mode-band-underline-inversion | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-mode-band-underline-inversion/brief.md |
+| 20260930-fix-panel-lyric-scroll-bleed | published | shadow-docs/changes/20260930-fix-panel-lyric-scroll-bleed/brief.md |
 | 20260930-fix-panel-progress-double-scale | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-panel-progress-double-scale/brief.md |
 | 20260930-fix-player-active-state-recalc | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-player-active-state-recalc/brief.md |
-| 20260930-fix-seo-indexing-p0 | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-seo-indexing-p0/brief.md |
+| 20260930-fix-seo-indexing-p0 | branched | shadow-docs/changes/20260930-fix-seo-indexing-p0/brief.md |
 | 20260930-style-lyrics-empty-copy | ✅ 完成 | shadow-docs/changes/archive/20260930-style-lyrics-empty-copy/brief.md |
 | 20260930-style-player-dock-ruler | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-dock-ruler/brief.md |
+| 20260930-style-player-favorite-ai-seal | reviewed | shadow-docs/changes/20260930-style-player-favorite-ai-seal/brief.md |
 | 20260930-style-player-mobile-album-leaf | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-mobile-album-leaf/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |
+| 20261001-fix-og-image-metadata-shadowing | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-og-image-metadata-shadowing/brief.md |

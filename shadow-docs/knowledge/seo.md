@@ -15,9 +15,10 @@ source:
   - changes/archive/2026-07-26-P-seo-discovery-navigation/brief.md
   - changes/archive/20260822-feature-post-url-clean/brief.md
   - changes/archive/20260930-fix-seo-indexing-p0/brief.md
-verified: 2026-09-30
+  - changes/20261001-fix-og-image-metadata-shadowing/brief.md
+verified: 2026-10-01
 verified-depth: runtime
-verified-scope: apps/site/app/sitemap.ts、apps/site/app/post/[number]、apps/site/test/seo-*
+verified-scope: apps/site/app/sitemap.ts、apps/site/app/post/[number]、apps/site/app/lib/seo.ts、7 个区块页、apps/site/test/seo-*
 ---
 
 # SEO
@@ -25,6 +26,8 @@ verified-scope: apps/site/app/sitemap.ts、apps/site/app/post/[number]、apps/si
 ## 当前结论
 
 全站页面包含 `og:title`、`og:description`、`og:image`、`og:url`、`og:type` 和 Twitter Card 标签。默认 Open Graph 图片为 1200x630。博客文章 description 优先使用 CMS summary，fallback 到 Markdown AST 提取的首个有效段落（忽略代码块和标题），再 fallback 到正文前 160 字。
+
+Next Metadata API 的 `openGraph`/`twitter` 按**路由段整体遮蔽**父级，不做字段级合并——子页只要声明了这两个对象，就必须自带 `images` 与 large card，否则 root layout 的 og-default(1200×630) 全部失效（2026-10-01 修复前 7 个区块页全部无 og:image、5 页 card 降级 summary）。区块页统一经 `buildSectionMetadata`（apps/site/app/lib/seo.ts）组装，文章页经 `buildArticleMetadata`（自带 cover 图，无 cover 时回落 og-default）；不得在页面里手写字面量 openGraph/twitter。
 
 博客详情页 URL 格式为 `/post/<number>`（只保留文章 id），旧格式 `/post/<number>-<title-slug>` 兼容并 301 重定向至 canonical。canonical URL 由 `buildPostUrl`（纯 id）和 `isCanonicalPostPath`（纯数字校验）统一生成，`extractPostNumber` 兼容旧 slug 格式提取 id。
 
@@ -41,6 +44,7 @@ Sitemap 路由必须 `export const dynamic = 'force-dynamic'` 运行时生成—
 ## 执行约束
 
 - canonical、OG、Twitter、JSON-LD 和 sitemap 必须使用同一公开 URL；文章 description 按 summary、有效段落、正文截断顺序降级。
+- 页面 metadata 里的 openGraph/twitter 一律走 builder（`buildSectionMetadata`/`buildArticleMetadata`），禁止手写字面量——Next 按段整体遮蔽，手写必丢图（2026-10-01 实证）。
 
 ## 适用边界
 

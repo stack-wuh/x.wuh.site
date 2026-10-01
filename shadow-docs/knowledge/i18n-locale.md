@@ -9,9 +9,10 @@ scope:
 status: active
 source:
   - changes/20260930-feature-site-i18n-trilingual/brief.md
-verified: 2026-09-30
+  - changes/20260930-fix-locale-switcher-flat-instant/brief.md
+verified: 2026-10-01
 verified-depth: runtime
-verified-scope: 浏览器三语（zh/en/ja）× 双主题走查——切换钮循环、localStorage 持久化、刷新后保持、documentElement.lang 同步、日文假名自托管字体渲染截图；locales 守卫测试 13 项 + audio-player 等守卫回归 63/63
+verified-scope: 浏览器三语（zh/en/ja）× 双主题走查——切换钮循环、localStorage 持久化、刷新后保持、documentElement.lang 同步、日文假名自托管字体渲染截图；locales 守卫测试 13 项 + audio-player 等守卫回归 63/63。20260930-fix-locale-switcher-flat-instant：平铺行 DOM 断言（三钮 aria-pressed/下划线/发丝线，循明暗行分段语言）+ 即时切换探针（点中→132ms 内 博客/zh-CN、点英→167ms 内 Blog/en；预取 chunk 先于弹层交互在册）+ 三语 nav/lang 走查（博客/Blog/ブログ）；locales 守卫 14/14、根 tsc 净、oxlint 0 errors
 ---
 
 # 站点多语言 i18n
@@ -22,9 +23,9 @@ verified-scope: 浏览器三语（zh/en/ja）× 双主题走查——切换钮�
 
 词典按命名空间分片段：`packages/components/locales/dictionaries/{zh,en,ja}/<ns>.ts`（ns：common/site/home/blog/post/player/about/guestbook/music/weread/footprint/components），三语装配文件（`dictionaries/zh.ts|en.ts|ja.ts`）只做 import + spread。**zh 为类型基准**（`Dict = Widen<typeof zh>`），en/ja 片段类型 `DeepPartial<Dict['ns']>`，运行时缺 key 回落中文、中文也缺返回 key 本身（fail-visible）。`t(key, params)` 支持点路径与 `{name}` 占位符插值。
 
-en/ja 词典 `dynamic import` 惰性加载（首次切到该语言才拉取，各语言独立槽位缓存、晚到加载无竞态），默认中文用户零增量。持久化 key `wuh.site.locale`（循主题 localStorage 先例）；SSR `<html lang>` 恒 zh-CN，客户端挂载后按已选语言同步（zh-CN/en/ja）——硬加载存在一瞬默认语回落闪，为方案 v1 明确接受。
+en/ja 词典 `dynamic import` 惰性加载（各语言独立槽位缓存、晚到加载无竞态），默认中文用户**首屏**零增量；LocaleProvider 挂载后空闲预取两份词典 chunk（`requestIdleCallback` 回退 `setTimeout`，catch 静默），外观弹层挂载时再经导出的 `preloadDictionaries()` 兜底——chunk 有模块缓存，切换时入库近乎同步、**即时生效**。持久化 key `wuh.site.locale`（循主题 localStorage 先例）；SSR `<html lang>` 恒 zh-CN，客户端挂载后按已选语言同步（zh-CN/en/ja）——硬加载存在一瞬默认语回落闪，为方案 v1 明确接受。
 
-切换入口是 SiteHeader 外观弹层「语言」组循环钮（中→EN→日），桌面弹层与移动菜单共用 AppearanceOptions。语言自称名（中/EN/日）是跨语言不变量，写在组件常量、不进词典；品牌印章字形（墨/念/音/樂/愛）不随 locale 变。
+切换入口是 SiteHeader 外观弹层「语言」组**三钮平铺行**（中｜英｜日 直选，`aria-pressed` + 渐隐下划线 + 发丝线分隔，与「明暗」行同一分段语言）；语言自称名常量（中/英/日）是跨语言不变量，写在组件常量、不进词典；品牌印章字形（墨/念/音/樂/愛）不随 locale 变。
 
 ## 执行约束
 

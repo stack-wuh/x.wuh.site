@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { SITE_NAME, SITE_URL } from '@wuh.site/core'
+import { SITE_URL } from '@wuh.site/core'
+import { buildSectionMetadata } from '../lib/seo'
 import { API_BASE } from '@wuh.site/hooks/useFetch/apiBase'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import MusicView from './MusicView'
@@ -11,13 +12,11 @@ export const metadata: Metadata = {
   title: '音乐',
   description: PAGE_DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/music` },
-  openGraph: {
+  ...buildSectionMetadata({
     title: '音乐',
     description: PAGE_DESCRIPTION,
     url: `${SITE_URL}/music`,
-    siteName: SITE_NAME,
-    type: 'website'
-  }
+  }),
 }
 
 type MusicSearchParams = { playlist?: string | string[] }

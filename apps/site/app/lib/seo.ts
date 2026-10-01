@@ -97,6 +97,60 @@ export function getArticleWordCount(issue: ArticleIssue): number {
   return chineseChars + englishWords
 }
 
+// Next Metadata API 的 openGraph/twitter 按路由段整体遮蔽父级，不做字段级合并：
+// 子页只要声明了这两个对象，就必须自带 images 与 large card，否则 layout 的
+// og-default(1200×630) 全部失效。区块页统一经此 builder 组装，杜绝复制模板丢图。
+type SectionSocialMetadata = {
+  openGraph: {
+    title: string
+    description: string
+    url: string
+    siteName: string
+    type: 'website'
+    images: Array<{ url: string; width: number; height: number; alt: string }>
+  }
+  twitter: {
+    card: 'summary_large_image'
+    title: string
+    description: string
+    images: string[]
+  }
+}
+
+export function buildSectionMetadata({
+  title,
+  description,
+  url,
+}: {
+  title: string
+  description: string
+  url: string
+}): SectionSocialMetadata {
+  return {
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: SITE_NAME,
+      type: 'website',
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE_PATH,
+          width: 1200,
+          height: 630,
+          alt: SITE_NAME,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [DEFAULT_OG_IMAGE_PATH],
+    },
+  }
+}
+
 export function buildArticleMetadata(issue: ArticleIssue): Record<string, unknown> {
   const description = buildArticleDescription(issue)
   const image = getArticleImage(issue)

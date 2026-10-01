@@ -2,20 +2,19 @@ import type { Metadata } from "next";
 import type { WereadBook } from "@wuh.site/core";
 import { wereadService } from "@wuh.site/core/endpoints";
 import WereadView from "./WereadView";
-import { PER_PAGE, SITE_URL, SITE_NAME, type WereadSearchParams } from "./specs";
+import { PER_PAGE, SITE_URL, type WereadSearchParams } from "./specs";
+import { buildSectionMetadata } from "../lib/seo";
 
 export const metadata: Metadata = {
   title: "微信读书",
   description: "吴尒红（Shadow）的微信读书书架与阅读记录",
   robots: { index: false, follow: true },
   alternates: { canonical: `${SITE_URL}/weread` },
-  openGraph: {
+  ...buildSectionMetadata({
     title: "微信读书",
     description: "吴尒红（Shadow）的微信读书书架与阅读记录",
     url: `${SITE_URL}/weread`,
-    siteName: SITE_NAME,
-    type: "website",
-  },
+  }),
 };
 
 const toPageNumber = (value: string | string[] | undefined) => {
