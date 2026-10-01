@@ -1,4 +1,4 @@
-name: Server Diagnose Node Fingerprint (临时)
+name: Server Diagnose Cleanup 确认 (临时)
 
 on:
   workflow_dispatch:
@@ -8,37 +8,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  diagnose:
+  confirm:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 5
     steps:
-      - name: node 指纹终极探测（错误可见）
+      - name: 最终确认后本工作流即删除
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            echo "════ 服务器源码指纹 ════"
-            grep -c "252px" /github/x.wuh.site/packages/components/audio-player/PlayerPanel.tsx || echo "源码无 252px?!"
-            echo "════ 容器里有 grep 吗 ════"
-            docker exec xwuhsite-next-1 which grep || echo "NO_GREP——之前所有容器内 grep 探针全部无效"
-            echo "════ 容器 .next 位置 ════"
-            docker exec xwuhsite-next-1 sh -c 'ls /app/apps/site/.next/ 2>&1 | head -8' || true
-            echo "════ node 全盘指纹扫描（252px 与 290px 各计数）════"
-            docker exec xwuhsite-next-1 node -e "
-              const fs=require('fs');
-              let n252=0,n290=0,hits=[];
-              const walk=d=>{let es;try{es=fs.readdirSync(d,{withFileTypes:true})}catch(e){return}
-                for(const f of es){const fp=d+'/'+f.name;
-                  if(f.isDirectory()){walk(fp);continue}
-                  if(!/\.(js|mjs|css)$/.test(f.name))continue;
-                  let s;try{s=fs.readFileSync(fp,'utf8')}catch(e){continue}
-                  if(s.includes('252px')){n252++;if(hits.length<3)hits.push(fp)}
-                  if(s.includes('min(290px'))n290++;
-                }};
-              walk('/app');
-              console.log('252px 命中文件数:',n252);
-              console.log('旧帽 min(290px 命中文件数:',n290);
-              hits.forEach(h=>console.log('  ->',h));
-            " 2>&1 | tail -8
+            echo "════ 生产最终态 ════"
+            docker ps --format "{{.Names}} {{.Status}}" | head -5
+            curl -s -o /dev/null -w "next / -> HTTP %{http_code}\n" --max-time 15 http://localhost:3000/
+            curl -s -o /dev/null -w "nest /v2/health -> HTTP %{http_code}\n" --max-time 8 http://localhost:3200/v2/health
+            systemctl is-active mongod
