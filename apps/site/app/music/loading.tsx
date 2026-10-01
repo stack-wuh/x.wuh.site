@@ -78,10 +78,12 @@ export default function Loading() {
 
   return (
     <Section aria-busy="true">
-      {/* 标题/副题是静态常量直接出真容，骨架只盖数据未知区域 */}
+      {/* 标题/副题是静态常量直接出真容，骨架只盖数据未知区域；
+          PageTitle 语义是 styled.h1，骨架流式先 flush 会与真实内容各出一个 h1，
+          故降型为 div，h1 唯一归属让给 MusicView */}
       <PageHeader>
         <TitleGroup>
-          <PageTitle>{t('music.page.title')}</PageTitle>
+          <PageTitle as='div'>{t('music.page.title')}</PageTitle>
           <PageSubtitle>{t('music.page.subtitle')}</PageSubtitle>
         </TitleGroup>
       </PageHeader>
