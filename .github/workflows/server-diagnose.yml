@@ -1,4 +1,4 @@
-name: Server Diagnose Cache (临时)
+name: Server Diagnose Build (临时)
 
 on:
   workflow_dispatch:
@@ -12,34 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: 生产缓存指纹探测（只读）
+      - name: 容器内构建产物指纹（只读）
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            echo "════ 本地直连 next:3000 的首页响应头 ════"
-            curl -s -D - -o /tmp/home-direct.html --max-time 15 http://localhost:3000/ | head -15
-            echo "════ 直连首页 CSS 链接 ════"
-            grep -o '/_next/static/[^"]*\.css' /tmp/home-direct.html | sort -u | head -5
-            CSS=$(grep -o '/_next/static/[^"]*\.css' /tmp/home-direct.html | head -1)
-            if [ -n "$CSS" ]; then
-              echo "════ 直连 CSS 中的 v1.4.50 指纹（252px / 100vh - 96px）════"
-              curl -s --max-time 10 "http://localhost:3000$CSS" | grep -c "252px" || echo "0 处 252px"
-              curl -s --max-time 10 "http://localhost:3000$CSS" | grep -c "100vh - 96px" || echo "0 处 100vh-96px"
-            fi
-            echo "════ 走 nginx 公网入口的响应头与指纹 ════"
-            curl -s -D - -o /tmp/home-nginx.html --max-time 15 -k "https://127.0.0.1/" -H "Host: x.wuh.site" | head -18 || echo "127.0.0.1:443 不通，试 80"
-            curl -s -D - -o /tmp/home-80.html --max-time 15 -H "Host: x.wuh.site" http://127.0.0.1/ | head -12 || true
-            for f in /tmp/home-nginx.html /tmp/home-80.html; do
-              if [ -s "$f" ]; then
-                echo "── $f CSS 链接与指纹 ──"
-                grep -o '/_next/static/[^"]*\.css' "$f" | sort -u | head -3
-                C2=$(grep -o '/_next/static/[^"]*\.css' "$f" | head -1)
-                [ -n "$C2" ] && curl -s --max-time 10 "http://localhost:3000$C2" | grep -c "252px" || echo "无 CSS 或 0 处 252px"
-                break
-              fi
-            done
-            echo "════ nginx 是否有代理缓存配置 ════"
-            grep -rn "proxy_cache\|expires\|Cache-Control" /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | head -8 || echo "读不到 nginx 配置"
+            echo "════ 运行中容器 vs 最新镜像 ════"
+            docker inspect xwuhsite-next-1 --format 'container.image={{.Image}} started={{.State.StartedAt}}'
+            docker images --format "{{.Repository}} {{.ID}} {{.CreatedAt}}" | grep -iE "next|site" | head -5
+            echo "════ 容器内 BUILD_ID 与产物指纹 ════"
+            docker exec xwuhsite-next-1 sh -c 'cat /app/apps/site/.next/BUILD_ID 2>/dev/null; echo; grep -rl "252px" /app/apps/site/.next/static/chunks/ 2>/dev/null | head -3; echo "---184---"; grep -rl "184px" /app/apps/site/.next/static/chunks/ 2>/dev/null | head -3' || echo "exec 失败"
+            echo "════ 镜像层里的构建时间 ════"
+            docker exec xwuhsite-next-1 sh -c 'stat -c "%y %n" /app/apps/site/.next/BUILD_ID 2>/dev/null' || true
+            echo "════ switch-traffic 到底切了什么 ════"
+            docker inspect xwuhsite-next-1 --format '{{.Config.Image}}'
