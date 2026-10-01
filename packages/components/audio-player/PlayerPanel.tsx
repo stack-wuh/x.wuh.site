@@ -1651,7 +1651,7 @@ export const AudioPlayerPanel = () => {
             <VolWrap ref={volWrapRef}>
               {volOpen ? (
                 <VolumePop>
-                  <VolumePopLabel>{t('player.panel.volumeLabel')}</VolumePopLabel>
+                  {/* <VolumePopLabel>{t('player.panel.volumeLabel')}</VolumePopLabel> */}
                   <VSlider
                     role='slider'
                     tabIndex={0}
