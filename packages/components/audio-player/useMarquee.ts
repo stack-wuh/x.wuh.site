@@ -13,10 +13,11 @@ export const marquee = keyframes`
 `
 
 /* 标题溢出测量：元素级 ResizeObserver（wrapper 视口宽 + ghost 自然宽），
-   文本变化即重测；不引入全局 scroll/resize 监听器 */
-export const useMarqueeOverflow = (text: string) => {
-  const wrapperRef = useRef<HTMLSpanElement | null>(null)
-  const ghostRef = useRef<HTMLSpanElement | null>(null)
+   文本变化即重测；不引入全局 scroll/resize 监听器。
+   泛型挂载点：量尺只读 offsetWidth/clientWidth，span/h2/h3 等任一元素 ref 皆可挂 */
+export const useMarqueeOverflow = <T extends HTMLElement = HTMLElement>(text: string) => {
+  const wrapperRef = useRef<T | null>(null)
+  const ghostRef = useRef<T | null>(null)
   const [metrics, setMetrics] = useState({ text: 0, visible: 0 })
 
   useEffect(() => {
