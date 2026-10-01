@@ -1,4 +1,4 @@
-name: Server Diagnose Build (临时)
+name: Server Diagnose Fingerprint (临时)
 
 on:
   workflow_dispatch:
@@ -10,21 +10,29 @@ concurrency:
 jobs:
   diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
-      - name: 容器内构建产物指纹（只读）
+      - name: 全容器指纹 + 公网出口 CSS 验证（只读）
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            echo "════ 运行中容器 vs 最新镜像 ════"
-            docker inspect xwuhsite-next-1 --format 'container.image={{.Image}} started={{.State.StartedAt}}'
-            docker images --format "{{.Repository}} {{.ID}} {{.CreatedAt}}" | grep -iE "next|site" | head -5
-            echo "════ 容器内 BUILD_ID 与产物指纹 ════"
-            docker exec xwuhsite-next-1 sh -c 'cat /app/apps/site/.next/BUILD_ID 2>/dev/null; echo; grep -rl "252px" /app/apps/site/.next/static/chunks/ 2>/dev/null | head -3; echo "---184---"; grep -rl "184px" /app/apps/site/.next/static/chunks/ 2>/dev/null | head -3' || echo "exec 失败"
-            echo "════ 镜像层里的构建时间 ════"
-            docker exec xwuhsite-next-1 sh -c 'stat -c "%y %n" /app/apps/site/.next/BUILD_ID 2>/dev/null' || true
-            echo "════ switch-traffic 到底切了什么 ════"
-            docker inspect xwuhsite-next-1 --format '{{.Config.Image}}'
+            echo "════ 容器布局 ════"
+            docker exec xwuhsite-next-1 sh -c 'ls /app; echo ---; ls /app/apps/site 2>/dev/null | head' || true
+            echo "════ 全容器搜 v1.4.50 CSS 指纹 ════"
+            docker exec xwuhsite-next-1 sh -c 'grep -rl "252px" /app --include="*.css" 2>/dev/null | head -3; echo "(以上为含 252px 的文件，空=无)"' || true
+            echo "════ 公网入口吐出的全部 CSS 块逐个验指纹 ════"
+            curl -s --max-time 15 -k -H "Host: x.wuh.site" https://127.0.0.1/ -o /tmp/pub.html -D /tmp/pub.head || curl -s --max-time 15 -H "Host: x.wuh.site" http://127.0.0.1/ -o /tmp/pub.html
+            ls -la /tmp/pub.html
+            for c in $(grep -o '/_next/static/[^"]*\.css' /tmp/pub.html | sort -u); do
+              N=$(curl -s --max-time 10 -k "https://127.0.0.1$c" -H "Host: x.wuh.site" | grep -c "252px")
+              echo "$c -> 252px x$N"
+            done
+            echo "════ 音乐页也验一遍（PlayerPanel 懒加载块可能挂在那）════"
+            curl -s --max-time 20 -k -H "Host: x.wuh.site" https://127.0.0.1/music -o /tmp/music.html || true
+            for c in $(grep -o '/_next/static/[^"]*\.css' /tmp/music.html | sort -u); do
+              N=$(curl -s --max-time 10 -k "https://127.0.0.1$c" -H "Host: x.wuh.site" | grep -c "252px")
+              echo "$c -> 252px x$N"
+            done
