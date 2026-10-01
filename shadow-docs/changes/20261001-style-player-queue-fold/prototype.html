@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh" data-family="wine" data-scheme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>播放列表 3D 右缘开合 · v2 斜立可读 · 20261001</title>
+<!--
+  视觉稿 v7：播放面板桌面/平板 —— 歌单绕右边框竖直轴线的 3D 翻页（静止姿态=动画起点）
+  否决归档：v1 三构（收起须可读）/ v2 斜立大倾角（宽度不得变化）/ v3 无透视假 3D / v4 rotateZ（平面非 3D）
+  / v5 -70°大起势 / v6 keyframes 起势（起点角度≠容器初始角度，仍有第一帧跳变——用户 20261001 指出）
+  v7 交互（20261001 定稿）：
+    · 真 3D：perspective 1400px + preserve-3d 透传 + rotateY 绕右边框竖直轴线
+    · 收起 = 容器静止即斜倚 rotateY(-14°)（=动画起点，无缝）、opacity .45 可读、pointer-events:none
+    · 鼠标移入右缘 = 纯 transition 转正到 0°（300ms）+ 实墨 + 浮起投影 + 可点选；离场原路回 -14°
+    · 两态只差角度/透明度/可点击/投影；布局宽度 340px 恒定
+    · 键盘/触屏等价路径 = 右上列表钮钉住（pinned）/ :focus-within
+  token 全部抄自项目源文件（出处注明），实现 = 本稿无损移植
+  场景：?scene=closed|open|mid  主题：?theme=wl|wd|pl|pd  语言：?lang=zh|en  视宽：?vw=900  钉住：?pin=1
+-->
+<style>
+/* ================= Layer 1 · 原始调色板（抄自 packages/components/themes/generator-color.ts:22-81） ================= */
+:root {
+  --_wl-primary-400:#E2928D; --_wl-primary-500:#C94A44; --_wl-primary-600:#A13531;
+  --_wl-normal-400:#D4C8B8; --_wl-normal-500:#B9A998; --_wl-normal-700:#8A6E5C; --_wl-normal-900:#2A1E16;
+  --_wl-background-100:#FFFBF8; --_wl-background-400:#F5D0BC; --_wl-background-900:#F5F0EC;
+  --_wd-primary-400:#7A2F2F; --_wd-primary-500:#E36A64; --_wd-primary-600:#F07A73;
+  --_wd-normal-400:#7e7e7e; --_wd-normal-500:#adadad; --_wd-normal-700:#e8e8e8; --_wd-normal-900:#f8f8f8;
+  --_wd-background-100:#111111; --_wd-background-400:#0e0a0a; --_wd-background-900:#2f2a2a;
+  --_pl-primary-400:#DBA87E; --_pl-primary-500:#C89060; --_pl-primary-600:#A87348;
+  --_pl-normal-400:#D4CBB8; --_pl-normal-500:#B8AC98; --_pl-normal-700:#6B5E4E; --_pl-normal-900:#2A2218;
+  --_pl-background-100:#FFFDF9; --_pl-background-400:#E5D8C4; --_pl-background-900:#F2EDE4;
+  --_pd-primary-400:#6a3e20; --_pd-primary-500:#D4A478; --_pd-primary-600:#deb896;
+  --_pd-normal-400:rgba(255,255,255,0.14); --_pd-normal-500:rgba(255,255,255,0.20); --_pd-normal-700:rgba(255,255,255,0.42); --_pd-normal-900:rgba(255,255,255,0.72);
+  --_pd-background-100:#1c1814; --_pd-background-400:#322820; --_pd-background-900:#0b0908;
+}
+/* ================= Layer 2 · 主题路由（抄自 cssVariableProvider.tsx:52-57,106-180） ================= */
+:root {
+  --primary-400:var(--_wl-primary-400); --primary-500:var(--_wl-primary-500); --primary-600:var(--_wl-primary-600);
+  --normal-400:var(--_wl-normal-400); --normal-500:var(--_wl-normal-500); --normal-700:var(--_wl-normal-700); --normal-900:var(--_wl-normal-900);
+  --background-100:var(--_wl-background-100); --background-400:var(--_wl-background-400); --background-900:var(--_wl-background-900);
+  --primary-color:var(--primary-500);
+  --text-color:var(--normal-900); --text-muted:var(--normal-700);
+  --elevation-soft:0 4px 14px rgba(0,0,0,.06);
+  --elevation-card:0 20px 40px rgba(0,0,0,0.08);
+}
+html[data-family="plain"] {
+  --primary-400:var(--_pl-primary-400); --primary-500:var(--_pl-primary-500); --primary-600:var(--_pl-primary-600);
+  --normal-400:var(--_pl-normal-400); --normal-500:var(--_pl-normal-500); --normal-700:var(--_pl-normal-700); --normal-900:var(--_pl-normal-900);
+  --background-100:var(--_pl-background-100); --background-400:var(--_pl-background-400); --background-900:var(--_pl-background-900);
+  --primary-color:var(--primary-600);
+  --elevation-soft:0 2px 8px rgba(0,0,0,.04);
+  --elevation-card:0 4px 16px rgba(0,0,0,.06);
+}
+html[data-scheme="dark"] {
+  --primary-400:var(--_wd-primary-400); --primary-500:var(--_wd-primary-500); --primary-600:var(--_wd-primary-600);
+  --normal-400:var(--_wd-normal-400); --normal-500:var(--_wd-normal-500); --normal-700:var(--_wd-normal-700); --normal-900:var(--_wd-normal-900);
+  --background-100:var(--_wd-background-100); --background-400:var(--_wd-background-400); --background-900:var(--_wd-background-900);
+  --text-color:var(--normal-500); --text-muted:var(--normal-700);
+  --elevation-soft:0 4px 14px rgba(0,0,0,.25);
+  --elevation-card:0 18px 36px rgba(0,0,0,0.45);
+}
+html[data-family="plain"][data-scheme="dark"] {
+  --primary-400:var(--_pd-primary-400); --primary-500:var(--_pd-primary-500); --primary-600:var(--_pd-primary-600);
+  --normal-400:var(--_pd-normal-400); --normal-500:var(--_pd-normal-500); --normal-700:var(--_pd-normal-700); --normal-900:var(--_pd-normal-900);
+  --background-100:var(--_pd-background-100); --background-400:var(--_pd-background-400); --background-900:var(--_pd-background-900);
+  --text-color:var(--normal-900); --text-muted:rgba(245,241,234,0.68);
+  --elevation-soft:0 2px 8px rgba(0,0,0,.22);
+  --elevation-card:0 4px 16px rgba(0,0,0,.36);
+}
+/* ================= Layer 3 · 非Color tokens（抄自 packages/components/themes/index.ts:22-61） ================= */
+:root {
+  --space-xs:8px; --space-sm:16px; --space-base:12px; --space-md:28px; --space-lg:36px; --space-xl:48px; --space-2xl:72px;
+  --font-size-xs:12px; --font-size-sm:13px; --font-size-base:15px; --font-size-md:17px; --font-size-lg:22px;
+  --border-radius-xs:2px; --border-radius-base:8px; --radius-card:24px;
+  --motion-ease-out-soft:cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-in-out-soft:cubic-bezier(0.45, 0, 0.25, 1);
+  --motion-dur-quick:150ms;
+  --line-height-heading:1.35;
+  --font-sans:'Noto Sans SC', ui-sans-serif, system-ui, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono:'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  --font-serif:'Noto Serif SC', Georgia, 'Songti SC', 'SimSun', serif;
+  /* 面板私有常量（抄自 PlayerPanel.tsx:25-33） */
+  --hairline:color-mix(in oklab, var(--normal-400) 55%, transparent);
+  --ink-muted:color-mix(in oklab, var(--text-color) 72%, transparent);
+  --ink-faint:color-mix(in oklab, var(--text-color) 56%, transparent);
+  --ink-ghost:color-mix(in oklab, var(--text-color) 38%, transparent);
+  --rule-line:color-mix(in oklab, var(--text-color) 9%, transparent);
+  --ease:var(--motion-ease-out-soft);
+  --quick:var(--motion-dur-quick);
+  --dur-panel:calc(var(--motion-dur-quick) * 1.6); /* 240ms，面板开合既有档 */
+  --fold-dur:520ms; /* 翻页时长：40° 弧线给足被看见的时间（旧 300ms 弧线未及辨认即结束） */
+  --fold-ease:var(--motion-ease-in-out-soft); /* 翻页曲线默认：缓入缓出（有重量的翻页） */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+/* 翻页曲线三档（草稿对比用；定稿只保留选中一档） */
+body[data-ease="outsoft"] { --fold-dur:340ms; --fold-ease:var(--motion-ease-out-soft); }       /* 利落：快起缓收 */
+body[data-ease="inout"]   { --fold-dur:520ms; --fold-ease:var(--motion-ease-in-out-soft); }    /* 从容：缓入缓出 */
+body[data-ease="spring"]  { --fold-dur:560ms; --fold-ease:cubic-bezier(0.34, 1.36, 0.64, 1); } /* 回弹：转过头 ~2° 再落回 */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-sans); color:var(--text-color); background:#0d0a09; min-height:100vh; overflow:hidden; }
+/* ================= 草稿台本（非产品设计件） ================= */
+.lab { position:fixed; left:12px; bottom:12px; z-index:99; display:flex; flex-wrap:wrap; gap:4px; max-width:46vw;
+  font-family:var(--font-mono); font-size:11px; }
+.lab button, .lab select { font:inherit; color:#cfc4bb; background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14); border-radius:4px; padding:4px 8px; cursor:pointer; }
+.lab button[data-on="1"] { color:#fff; background:rgba(230,106,100,.45); border-color:rgba(230,106,100,.6); }
+.viewport { position:fixed; inset:0; margin-inline:auto; transition:max-width 240ms var(--ease); }
+/* ================= 面板：晕染纸底（五层配方简化移植） ================= */
+.panel { position:absolute; inset:48px; max-width:1160px; margin-inline:auto;
+  display:grid; grid-template-rows:minmax(0,1fr) auto; grid-template-areas:'stage' 'dock';
+  background:var(--background-100);
+  border:1px solid var(--hairline); border-radius:var(--radius-card);
+  box-shadow:var(--elevation-card), 0 0 0 1px rgba(0,0,0,.35);
+  color:var(--text-color);
+  overflow:clip;                 /* 面板壳彻底不可滚（生产禁令：壳必须 clip） */
+  perspective:1400px;            /* 真 3D：面板共享灭点，右缘翻页轴线的透视源 */
+}
+.wash { position:absolute; inset:-12%; z-index:0; pointer-events:none;
+  background:linear-gradient(160deg,#1a0d06 8%,#5a2410 34%,#a84e1e 58%,#d97b35 78%,#f0b268 92%);
+  filter:blur(64px) saturate(0.92) brightness(1.18); opacity:.9; }
+html[data-scheme="dark"] .wash { filter:blur(64px) saturate(0.92) brightness(0.62); }
+.veil { position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:color-mix(in oklab, var(--background-100) 72%, transparent); }
+.panel::after { content:''; position:absolute; inset:0; z-index:4; pointer-events:none;
+  border-radius:inherit; background-image:var(--grain); mix-blend-mode:multiply; opacity:.06; }
+html[data-scheme="dark"] .panel::after { mix-blend-mode:soft-light; opacity:.09; }
+/* ================= 舞台（留白独奏：居中单焦点） ================= */
+.stage { grid-area:stage; position:relative; z-index:1; min-height:0;
+  display:flex; flex-direction:column; align-items:center; padding:var(--space-xl) var(--space-2xl) 0; }
+.glow { position:absolute; left:50%; top:36%; transform:translate(-50%,-50%);
+  width:min(760px,90%); height:68%; border-radius:50%; pointer-events:none;
+  background:radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--primary-color) 7%, transparent), transparent 70%);
+  filter:blur(12px); }
+.ghostline { position:absolute; left:50%; top:20%; transform:translateX(-50%); max-width:92%;
+  font-family:var(--font-serif); font-weight:600; font-size:clamp(40px,8vw,74px); line-height:1.2;
+  letter-spacing:.1em; white-space:nowrap; color:color-mix(in oklab, var(--text-color) 3%, transparent); }
+.ghostline.now { top:27%; color:color-mix(in oklab, var(--text-color) 8%, transparent); }
+html[lang="en"] .ghostline { letter-spacing:.02em; }
+.plate-wrap { position:relative; }
+.plate-tab { position:absolute; top:var(--space-xs); left:-14px; z-index:1;
+  writing-mode:vertical-rl; padding:var(--space-xs) 4px;
+  background:var(--background-100); border:1px solid var(--hairline); border-radius:var(--border-radius-xs);
+  font-family:var(--font-mono); font-size:var(--font-size-xs); letter-spacing:.22em; color:var(--primary-color); }
+html[lang="en"] .plate-tab { letter-spacing:.1em; }
+.plate { padding:var(--space-sm) var(--space-sm) calc(var(--space-sm) * 2);
+  background:color-mix(in oklab, var(--background-100) 88%, transparent);
+  border:1px solid var(--hairline); border-radius:var(--border-radius-xs); box-shadow:var(--elevation-soft); }
+.plate-art { width:min(252px, calc((100vh - 96px) * 0.3)); aspect-ratio:1; border-radius:2px;
+  background:
+    radial-gradient(38% 30% at 62% 24%, rgba(255,214,150,.95), transparent 70%),
+    radial-gradient(24% 20% at 30% 38%, rgba(255,150,70,.8), transparent 70%),
+    radial-gradient(60% 46% at 55% 66%, rgba(200,90,40,.75), transparent 75%),
+    linear-gradient(165deg, #241009 10%, #4a1d0c 45%, #7a3416 75%, #93441c 100%);
+  box-shadow:inset 0 0 0 1px var(--hairline); }
+.stage-title { margin:var(--space-lg) 0 0; max-width:680px; width:100%; text-align:center;
+  font-family:var(--font-serif); font-size:25px; font-weight:600; line-height:var(--line-height-heading); }
+.stage-artist { margin:var(--space-xs) 0 0; font-size:var(--font-size-sm); color:var(--ink-muted); }
+.verse { margin-top:var(--space-lg); display:flex; flex-direction:column; align-items:center;
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, black 18%, black 82%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0, black 18%, black 82%, transparent 100%); }
+.verse-line { padding:var(--space-xs) var(--space-md); width:min(520px,72vw); text-align:center;
+  font-family:var(--font-serif); font-size:var(--font-size-base); letter-spacing:.06em; line-height:1.8;
+  color:var(--ink-ghost); border-bottom:1px solid var(--rule-line); }
+html[lang="en"] .verse-line { letter-spacing:.02em; }
+.verse-line.act { font-size:22px; font-weight:600; color:var(--text-color); }
+.verse-line.act::before { content:''; display:inline-block; width:7px; height:7px;
+  border:1.5px solid var(--primary-color); border-radius:50%; margin-right:14px; vertical-align:5px; }
+/* ================= dock：進度印 + 单行钮群 ================= */
+.dock { grid-area:dock; position:relative; z-index:9; min-width:0;
+  display:flex; flex-direction:column; padding:0 var(--space-lg) var(--space-xl); }
+.progress-row { display:flex; align-items:center; gap:var(--space-sm); width:min(100%,460px); margin:0 auto; }
+.time { flex-shrink:0; font-family:var(--font-mono); font-size:var(--font-size-xs); line-height:1; color:var(--ink-faint); }
+.time.now { color:var(--ink-muted); }
+.track-line { flex:1; position:relative; height:22px; }
+.track-line::before { content:''; position:absolute; left:0; right:0; top:50%; height:2px; transform:translateY(-50%);
+  background:var(--rule-line); border-radius:2px; }
+.track-fill { position:absolute; left:0; top:50%; height:2px; width:64%; transform:translateY(-50%);
+  background:var(--primary-color); border-radius:2px; }
+.seal { position:absolute; left:64%; top:50%; transform:translate(-50%,-50%);
+  width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+  background:var(--primary-color); color:var(--background-100);
+  font-family:var(--font-serif); font-size:13px; border-radius:var(--border-radius-xs);
+  box-shadow:0 0 0 4px color-mix(in oklab, var(--primary-color) 14%, transparent); }
+.control-row { margin-top:var(--space-base); display:flex; align-items:center; justify-content:center; gap:var(--space-sm); }
+.btn-ghost { width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center;
+  background:none; border:none; border-radius:50%; color:var(--ink-muted); cursor:pointer;
+  transition:color var(--quick) var(--ease), background-color var(--quick) var(--ease); }
+.btn-ghost:hover { color:var(--primary-color); background:color-mix(in oklab, var(--primary-color) 8%, transparent); }
+.btn-mode.is-on { color:var(--primary-color); }
+.btn-play { width:64px; height:64px; border-radius:50%; border:none; cursor:pointer; position:relative;
+  background:var(--primary-color); color:var(--background-100);
+  display:inline-flex; align-items:center; justify-content:center;
+  box-shadow:0 10px 24px color-mix(in oklab, var(--primary-color) 32%, transparent); }
+.btn-play::after { content:''; position:absolute; inset:5px; border-radius:50%;
+  border:1px solid color-mix(in oklab, var(--background-100) 42%, transparent); }
+/* ================= 右上工具组 + 关闭（z9：高于热区，收起态不被劫持点击） ================= */
+.close-btn { position:absolute; top:var(--space-base); right:var(--space-base); z-index:9;
+  width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center;
+  background:none; border:1px solid transparent; border-radius:50%; color:var(--ink-muted); cursor:pointer;
+  transition:color var(--quick) var(--ease), background-color var(--quick) var(--ease), border-color var(--quick) var(--ease); }
+.close-btn:hover { color:var(--primary-color); background:color-mix(in oklab, var(--primary-color) 8%, transparent); border-color:var(--hairline); }
+.top-tools { position:absolute; top:var(--space-base); right:calc(var(--space-base) + 48px); z-index:9;
+  display:flex; align-items:center; gap:var(--space-xs); }
+.tool-btn { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;
+  background:none; border:1px solid transparent; border-radius:var(--border-radius-xs);
+  color:var(--ink-muted); cursor:pointer; font-family:var(--font-serif); font-size:var(--font-size-base);
+  transition:color var(--quick) var(--ease), background-color var(--quick) var(--ease); }
+.tool-btn:hover { color:var(--primary-color); background:color-mix(in oklab, var(--primary-color) 8%, transparent); }
+.tool-btn[aria-expanded="true"] { color:var(--primary-color); }
+/* ================= 通用：目次列表语言（与现有 QueueItem 同源移植） ================= */
+.q-head { display:flex; align-items:center; gap:var(--space-xs);
+  padding:var(--space-xs) 0 calc(var(--space-xs) + 6px);
+  font-family:var(--font-sans); font-size:var(--font-size-xs); font-weight:500; letter-spacing:.22em; color:var(--ink-muted); }
+.q-head::before { content:''; width:10px; height:2px; background:var(--primary-color); }
+html[lang="en"] .q-head { letter-spacing:.12em; }
+.q-list { list-style:none; overflow-y:auto; flex:1; min-height:0;
+  padding:0 0 var(--space-lg); display:flex; flex-direction:column; gap:2px;
+  scrollbar-width:thin; scrollbar-color:var(--hairline) transparent; }
+.q-item { position:relative; border-radius:var(--border-radius-base); background:transparent;
+  transition:transform 200ms var(--ease), background-color 160ms var(--ease); }
+.q-item:hover { background:color-mix(in oklab, var(--text-color) 5%, transparent);
+  transform:translateX(-4px); }   /* 行 hover：整行左引，像从目次里被抽出 */
+.q-item.is-cur { background:color-mix(in oklab, var(--primary-color) 7%, transparent); }
+.q-item.is-cur::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:2.5px; height:18px; border-radius:2px; background:var(--primary-color); }
+.q-btn { width:100%; display:flex; align-items:center; gap:var(--space-xs);
+  padding:var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm);
+  background:none; border:none; border-radius:inherit; color:var(--text-color); cursor:pointer;
+  font-family:var(--font-sans); text-align:left; }
+.q-btn:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
+.q-no { position:relative; flex-shrink:0; width:22px; height:16px;
+  font-family:var(--font-mono); font-size:var(--font-size-xs); color:var(--ink-faint); }
+.q-item.is-cur .q-no { color:var(--primary-color); }
+/* 序号翻播放键：行 hover 时编号翻面为播放三角（/music 页目次行既有语言） */
+.q-no .q-n, .q-no .q-p { position:absolute; inset:0; display:flex; align-items:center;
+  transition:opacity 140ms var(--ease); }
+.q-no .q-p { color:var(--primary-color); opacity:0; }
+.q-item:hover .q-no .q-n { opacity:0; }
+.q-item:hover .q-no .q-p { opacity:1; }
+.q-name { flex:1; min-width:0; font-size:var(--font-size-sm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.q-item.is-cur .q-name { color:var(--primary-color); }
+.q-meta { flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end;
+  font-size:var(--font-size-xs); color:var(--ink-faint); min-width:0; }
+.q-artist { max-width:92px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* ================================================================
+   3D 歌单屏：绕右边框竖直轴线的翻页（纯 transition，无 keyframes）
+   静止姿态 = 动画起点：收起时容器本身就斜倚在 rotateY(-14°)（绕右边框，
+   这就是「以 3D 列表状态收起在右侧」），hover 转正到 0°——两端角度一致，
+   第一帧零跳变；离场原路过渡回 -14°，同样无跳变。
+   两态只差：角度、透明度、可点击、浮起投影；布局宽度 340px 恒定不变。
+   层序：舞台 z1 < 热区 z5 < 遮罩 z7 < 屏 z8 < dock/工具/关闭 z9
+   ================================================================ */
+.qzone { position:absolute; top:0; right:0; bottom:0; width:340px; z-index:5;
+  transform-style:preserve-3d; /* 透传面板灭点：perspective 只作用于直接子级，隔层必须 preserve-3d */ }
+.qscreen { position:absolute; top:0; right:0; bottom:0; width:340px;
+  display:flex; flex-direction:column; padding:var(--space-lg) var(--space-base) 0 var(--space-lg);
+  background:color-mix(in oklab, var(--background-100) 94%, transparent);
+  border-left:1px solid var(--hairline); border-radius:var(--radius-card) 0 0 var(--radius-card);
+  transform-origin:100% 50%;        /* 翻页轴线 = 右边框竖直线 */
+  transform:rotateY(-40deg);        /* 收起姿态 = 动画起点：深斜倚，向屏幕纵深退去（可见 3D） */
+  opacity:.45;                      /* 收起态：半透明可读 */
+  pointer-events:none;              /* 收起态：不可点 */
+  transition:transform var(--fold-dur) var(--fold-ease), opacity 200ms var(--ease), box-shadow var(--fold-dur) var(--ease);
+  transition-delay:0s, 160ms, 0s;   /* 离场宽限：透明度延迟 160ms 才暗回去 */
+}
+.qzone:hover .qscreen, .qzone:focus-within .qscreen,
+.force-open .qscreen, .pinned .qscreen {
+  transform:rotateY(0deg);          /* 转正：与收起同一条过渡曲线，无跳变 */
+  opacity:1;                        /* 转正态：实墨 */
+  pointer-events:auto;              /* 转正态：可点选 */
+  box-shadow:-24px 12px 48px rgba(0,0,0,.22); /* 浮起投影：离开纸面的证据 */
+  transition-delay:0s, 0s, 0s;
+}
+/* pinned 遮罩：仅钉住态呈现（实现走行内 style，与现 DrawerScrim 同源） */
+.scrim { position:absolute; inset:0; z-index:7; background:color-mix(in oklab, black 28%, transparent);
+  opacity:0; pointer-events:none; visibility:hidden;
+  transition:opacity var(--quick) var(--ease), visibility 0s linear var(--quick); }
+.pinned .scrim { opacity:1; pointer-events:auto; visibility:visible; transition-delay:0s; }
+/* ================= reduced-motion：全部瞬切 ================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration:.01ms !important; animation:none !important; }
+}
+</style>
+</head>
+<body data-scene="closed" data-tilt="60">
+<div class="viewport" id="viewport">
+  <div class="panel" id="panel">
+    <div class="wash" aria-hidden="true"></div>
+    <div class="veil" aria-hidden="true"></div>
+
+    <!-- 舞台 -->
+    <div class="stage">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="ghostline" aria-hidden="true">纯音乐，请欣赏</div>
+      <div class="ghostline now" aria-hidden="true">金风玉露</div>
+      <div class="plate-wrap">
+        <span class="plate-tab">曲 · 01 / 10</span>
+        <div class="plate"><div class="plate-art"></div></div>
+      </div>
+      <h2 class="stage-title" id="stageTitle">风月绵绵（2017七夕节日音乐，金风玉露变奏）</h2>
+      <p class="stage-artist" id="stageArtist">陈致逸</p>
+      <div class="verse" aria-hidden="true">
+        <div class="verse-line">上邪！我欲与君相知</div>
+        <div class="verse-line act">纯音乐，请欣赏</div>
+        <div class="verse-line">金风玉露一相逢</div>
+      </div>
+    </div>
+
+    <!-- dock -->
+    <div class="dock">
+      <div class="progress-row">
+        <span class="time now">02:10</span>
+        <div class="track-line"><div class="track-fill"></div><div class="seal">樂</div></div>
+        <span class="time">03:21</span>
+      </div>
+      <div class="control-row">
+        <button class="btn-ghost btn-mode is-on" title="随机，点击切换">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        </button>
+        <button class="btn-ghost" title="上一曲">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><rect x="5" y="4" width="2" height="16"/></svg>
+        </button>
+        <button class="btn-play" title="暂停">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.4" height="14" rx="1"/><rect x="13.6" y="5" width="3.4" height="14" rx="1"/></svg>
+        </button>
+        <button class="btn-ghost" title="下一曲">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><rect x="17" y="4" width="2" height="16"/></svg>
+        </button>
+        <button class="btn-ghost" title="音量">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9.2 9.2 0 0 1 0 13"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 右上工具组 + 关闭 -->
+    <div class="top-tools">
+      <button class="tool-btn" title="歌词卷">詞</button>
+      <button class="tool-btn" id="pinBtn" title="播放列表（点按钉住）" aria-expanded="false">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
+      </button>
+    </div>
+    <button class="close-btn" title="关闭播放面板">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+
+    <!-- 遮罩：pinned 态 -->
+    <div class="scrim" id="scrim" aria-hidden="true"></div>
+
+    <!-- 3D 歌单：右缘热区 + 斜立屏 -->
+    <div class="qzone" id="zone">
+      <div class="qscreen">
+        <h3 class="q-head">播放列表</h3>
+        <ul class="q-list" id="list"></ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 草稿台本（非产品设计件） -->
+<div class="lab">
+  <button data-scene-set="closed">收起</button>
+  <button data-scene-set="open">转正</button>
+  <button data-scene-set="mid">中帧</button>
+  <span class="sep"></span>
+  <button data-ease-set="outsoft">曲线·利落 340ms</button>
+  <button data-ease-set="inout">曲线·从容 520ms</button>
+  <button data-ease-set="spring">曲线·回弹 560ms</button>
+  <span class="sep"></span>
+  <select id="themeSel">
+    <option value="wl">酒红·亮</option><option value="wd">酒红·暗</option>
+    <option value="pl">素雅·亮</option><option value="pd">素雅·暗</option>
+  </select>
+  <button id="langBtn">EN</button>
+  <button id="vwBtn">平板 900</button>
+  <button id="pinBtn2">钉住</button>
+</div>
+
+<script>
+const TRACKS = [
+  { name:'风月绵绵（2017七夕节日音乐，金风玉露变奏）', short:'风月绵绵', artist:'陈致逸', dur:'03:21' },
+  { name:'千灯愿', artist:'陈致逸 / HOYO-MiX', dur:'04:02' },
+  { name:'碧空吟', artist:'HOYO-MiX', dur:'03:35' },
+  { name:'月照白霜', artist:'陈致逸', dur:'02:58' },
+  { name:'云海之间', artist:'HOYO-MiX', dur:'04:18' },
+  { name:'雾隐山行', artist:'苑迪萌', dur:'03:12' },
+  { name:'星垂野阔', artist:'陈致逸', dur:'03:47' },
+  { name:'归棹', artist:'HOYO-MiX', dur:'02:44' },
+  { name:'灯市行', artist:'苑迪萌', dur:'03:29' },
+  { name:'雪满弓刀', artist:'陈致逸 / HOYO-MiX', dur:'04:05' }
+]
+let current = 0
+const listEl = document.getElementById('list')
+TRACKS.forEach((t, i) => {
+  const li = document.createElement('li')
+  li.className = 'q-item' + (i === current ? ' is-cur' : '')
+  const btn = document.createElement('button')
+  btn.className = 'q-btn'
+  btn.type = 'button'
+    btn.innerHTML =
+      '<span class="q-no"><span class="q-n">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span class="q-p"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></span></span>' +
+      '<span class="q-name" title="' + t.name + '">' + t.name + '</span>' +
+      '<span class="q-meta"><span class="q-artist" title="' + t.artist + '">' + t.artist + '</span><span>' + t.dur + '</span></span>'
+  btn.addEventListener('click', () => {
+    current = i
+    listEl.querySelectorAll('.q-item').forEach((el, k) => el.classList.toggle('is-cur', k === current))
+    document.getElementById('stageTitle').textContent = t.name
+    document.getElementById('stageArtist').textContent = t.artist
+    document.querySelector('.plate-tab').textContent = '曲 · ' + String(current + 1).padStart(2, '0') + ' / 10'
+    /* 交互决策：hover 转正态点选即收拢（选歌动机完成，还舞台于单曲焦点）；钉住态不收 */
+    if (!document.body.classList.contains('pinned')) setScene('closed')
+  })
+  li.appendChild(btn)
+  listEl.appendChild(li)
+})
+
+/* 草稿台本：场景 / 倾角 / 主题 / 语言 / 视宽 / 钉住 */
+const params = new URLSearchParams(location.search)
+function setScene(s) {
+  document.body.dataset.scene = s
+  document.body.classList.remove('force-open')
+  const sc = document.querySelector('.qscreen')
+  sc.style.animation = ''; sc.style.transform = ''; sc.style.opacity = ''; sc.style.transitionDelay = ''
+  if (s === 'open') document.body.classList.add('force-open')
+  if (s === 'mid') {
+    /* 定格在收起(-40°)与转正(0°)的中间姿态 */
+    sc.style.animation = 'none'
+    sc.style.transform = 'rotateY(-20deg)'
+    sc.style.opacity = '.75'
+  }
+  document.querySelectorAll('[data-scene-set]').forEach(b => b.dataset.on = b.dataset.sceneSet === s ? '1' : '0')
+}
+document.querySelectorAll('[data-scene-set]').forEach(b => b.addEventListener('click', () => setScene(b.dataset.sceneSet)))
+function setEase(v) {
+  document.body.dataset.ease = v
+  document.querySelectorAll('[data-ease-set]').forEach(b => b.dataset.on = b.dataset.easeSet === v ? '1' : '0')
+}
+document.querySelectorAll('[data-ease-set]').forEach(b => b.addEventListener('click', () => setEase(b.dataset.easeSet)))
+function setTheme(v) {
+  const map = { wl:['wine','light'], wd:['wine','dark'], pl:['plain','light'], pd:['plain','dark'] }
+  document.documentElement.dataset.family = map[v][0]
+  document.documentElement.dataset.scheme = map[v][1]
+  document.getElementById('themeSel').value = v
+}
+document.getElementById('themeSel').addEventListener('change', e => setTheme(e.target.value))
+let lang = 'zh'
+document.getElementById('langBtn').addEventListener('click', () => {
+  lang = lang === 'zh' ? 'en' : 'zh'
+  document.documentElement.lang = lang
+  document.getElementById('langBtn').dataset.on = lang === 'en' ? '1' : '0'
+})
+let vwOn = false
+document.getElementById('vwBtn').addEventListener('click', () => {
+  vwOn = !vwOn
+  document.getElementById('viewport').style.maxWidth = vwOn ? '900px' : 'none'
+  document.getElementById('vwBtn').dataset.on = vwOn ? '1' : '0'
+})
+function setPin(on) {
+  document.body.classList.toggle('pinned', on)
+  document.getElementById('pinBtn').setAttribute('aria-expanded', String(on))
+  document.getElementById('pinBtn2').dataset.on = on ? '1' : '0'
+}
+document.getElementById('pinBtn').addEventListener('click', () => setPin(!document.body.classList.contains('pinned')))
+document.getElementById('pinBtn2').addEventListener('click', () => setPin(!document.body.classList.contains('pinned')))
+document.getElementById('scrim').addEventListener('click', () => setPin(false))
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setPin(false) })
+
+setTheme(params.get('theme') || 'wl')
+if (params.get('lang')) { lang = params.get('lang'); document.documentElement.lang = lang }
+if (params.get('vw')) { vwOn = true; document.getElementById('viewport').style.maxWidth = params.get('vw') + 'px' }
+if (params.get('pin') === '1') setPin(true)
+if (params.get('ease')) setEase(params.get('ease'))
+setScene(params.get('scene') || 'closed')
+</script>
+</body>
+</html>

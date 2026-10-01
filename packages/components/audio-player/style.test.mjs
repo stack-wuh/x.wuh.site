@@ -134,6 +134,47 @@ test('舞台预算：封面为因变量（帽与面板高度同源）+ 题名/�
   assert.match(epiBlock, /max-height: \$\{STAGE_TIER_COMPACT\}px[\s\S]*?display: none/, '题跋二档缓冲规则缺失')
 })
 
+test('队列翻页屏：右轴 3D 斜倚常驻 + preserve-3d 透传 + 宽度恒定（20261001 定稿）', () => {
+  const panel = readSource('PlayerPanel.tsx')
+  assert.ok(panel.includes('QZone'), 'PlayerPanel 缺队列翻页热区')
+  assert.ok(panel.includes('QScreen'), 'PlayerPanel 缺队列翻页屏')
+  assert.ok(panel.includes('data-fold-screen'), '翻页屏缺 data-fold-screen 静态挂点（跨组件插值选择器禁用的替代）')
+  // 透视源在面板；透视只作用于直接子级，热区隔层必须 preserve-3d 透传（漏配 = 3D 静默退化为平面）
+  assert.match(panel, /perspective:\s*1400px/, 'Panel 缺 perspective 透视源')
+  assert.match(panel, /transform-style:\s*preserve-3d/, 'QZone 缺 preserve-3d 透传')
+  // 静止姿态 = 动画起点：斜倚 -40°（第一帧零跳变的定稿参数，经 FOLD_REST_ANGLE 常量进入 transform）
+  assert.match(panel, /FOLD_REST_ANGLE = '-40deg'/, '缺 -40° 斜倚静止姿态常量 FOLD_REST_ANGLE')
+  assert.match(panel, /rotateY\(\$\{FOLD_REST_ANGLE\}\)/, 'QScreen transform 未挂 FOLD_REST_ANGLE')
+  // 宽度恒定：翻页屏定宽常量（两态只差角度/透明度/可点击/投影）
+  assert.match(panel, /FOLD_WIDTH_PX = 340/, '缺翻页屏定宽常量 FOLD_WIDTH_PX')
+  // 离场宽限：透明度延迟 160ms（指针掠过不频闪）
+  assert.match(panel, /transition-delay:\s*0s,\s*160ms,\s*0s/, 'QScreen 缺离场 160ms 宽限延迟')
+  // hover 触发只在精确指针设备；触屏/平板走列表钮 pinned 等价路径
+  assert.match(panel, /hover:\s*hover\) and \(pointer:\s*fine/, '缺 (hover:hover) and (pointer:fine) 门控')
+  // dock/工具组/关闭钮升至热区之上：hover 热区不得劫持音量/詞/列表/关闭的点击
+  const zNines = [...panel.matchAll(/z-index: 9/g)].length
+  assert.ok(zNines >= 3, `dock/TopTools/CloseButton 需升至 z-index: 9（当前 ${zNines} 处）`)
+})
+
+test('motion 令牌引用完整性（引用未定义令牌 = transition 整条作废回退 all 0s，帧采样实证）', () => {
+  // 站点主题层只注入这五个 motion 令牌（cssVariableProvider Layer 3）；引用名单外的 --motion-*
+  // 会让 transition 简写 invalid at computed-value time → 整条回退 0s，动画静默消失
+  const KNOWN = new Set([
+    '--motion-ease-out-soft',
+    '--motion-ease-in-out-soft',
+    '--motion-dur-quick',
+    '--motion-dur-reveal',
+    '--motion-dur-write',
+  ])
+  for (const file of ['MiniPlayer.tsx', 'PlayerPanel.tsx']) {
+    const source = readSource(file)
+    const referenced = [...source.matchAll(/var\((--motion-[a-z-]+)/g)].map((m) => m[1])
+    for (const name of referenced) {
+      assert.ok(KNOWN.has(name), `${file} 引用了站点不注入的令牌 ${name}`)
+    }
+  }
+})
+
 test('STYLE_SOURCES 指向存在的文件', () => {
   for (const path of STYLE_SOURCES) {
     assert.ok(readFileSync(path, 'utf8').length > 0, `${path} 为空`)
