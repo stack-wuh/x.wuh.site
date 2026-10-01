@@ -50,10 +50,6 @@ export const SiteTagline = styled.p`
   animation-delay: 80ms;
 `
 
-export const MottoSkeleton = styled.div`
-  min-height: calc(var(--font-size-lg) * 1.8 + var(--space-md) * 2);
-`
-
 export const Ctas = styled.div`
   display: flex;
   flex-wrap: wrap;
