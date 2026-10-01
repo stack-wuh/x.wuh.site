@@ -1,0 +1,39 @@
+name: Server Diagnose (临时)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: server-diagnose
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 生产实况深探（只读）
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            echo "════ 容器状态 ════"
+            docker ps --format "table {{.Names}}\t{{.Status}}" | head -8
+            echo "════ mongod ════"
+            systemctl is-active mongod || true
+            ss -tlnp 2>/dev/null | grep 27017 | head -1 || echo "27017 无监听"
+            echo "════ nest 真实健康端点（多路径探测）════"
+            for p in /health /v2/health /api/health /api/v2/health; do
+              printf "%s -> " "$p"; curl -s -o /dev/null -w "HTTP %{http_code}\n" --max-time 6 "http://localhost:3200$p" || echo "fail"
+            done
+            echo "════ prod next 首页 ════"
+            curl -s -o /dev/null -w "localhost:3000/ -> HTTP %{http_code} (%{time_total}s)\n" --max-time 15 http://localhost:3000/ || true
+            curl -s -o /dev/null -w "localhost:3000/music -> HTTP %{http_code} (%{time_total}s)\n" --max-time 20 http://localhost:3000/music || true
+            echo "════ prod next 日志尾部 ════"
+            docker logs xwuhsite-next-1 --tail 25 2>&1 | tail -25 || true
+            echo "════ prod nest 日志尾部 ════"
+            docker logs xwuhsite-nest-1 --tail 30 2>&1 | tail -30 || true
+            echo "════ mongo ping ════"
+            (echo 'db.runCommand({ping:1}).ok' | mongosh --quiet mongodb://localhost:27017/docs --eval 'db.runCommand({ping:1})' 2>&1 | tail -3) || (echo "db.runCommand({ping:1}).ok" | mongo --quiet docs 2>&1 | tail -3) || true
