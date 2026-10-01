@@ -6,30 +6,36 @@ import { dirname, resolve } from 'node:path'
 
 const componentDir = dirname(fileURLToPath(import.meta.url))
 const miniPlayerSource = await readFile(resolve(componentDir, 'MiniPlayer.tsx'), 'utf8')
+const marqueeSource = await readFile(resolve(componentDir, 'useMarquee.ts'), 'utf8')
 
-test('标题溢出测量走 ResizeObserver 且随曲目名重测', () => {
-  assert.match(miniPlayerSource, /typeof ResizeObserver === 'undefined'/)
-  assert.match(miniPlayerSource, /new ResizeObserver\(measure\)/)
-  assert.match(miniPlayerSource, /observer\.observe\(wrapper\)/)
-  assert.match(miniPlayerSource, /observer\.observe\(ghost\)/)
+test('标题溢出测量走共享 useMarquee 量尺（ResizeObserver 单点实现）', () => {
   assert.match(miniPlayerSource, /const name = currentTrack\?\.name \?\?/)
-  assert.match(miniPlayerSource, /useTitleOverflow\(name\)/)
-  assert.match(miniPlayerSource, /\}, \[title\]\)/)
+  assert.match(miniPlayerSource, /useMarqueeOverflow\(name\)/)
+  assert.match(miniPlayerSource, /from '\.\/useMarquee'/)
+  // 量尺实现（ResizeObserver + observe wrapper/ghost）单点存放于 useMarquee.ts，禁复制
+  assert.match(marqueeSource, /typeof ResizeObserver === 'undefined'/)
+  assert.match(marqueeSource, /new ResizeObserver\(measure\)/)
+  assert.match(marqueeSource, /observer\.observe\(wrapper\)/)
+  assert.match(marqueeSource, /observer\.observe\(ghost\)/)
   // 禁止为溢出测量引入全局 scroll/resize 监听器（animation-system 约束）
   assert.doesNotMatch(miniPlayerSource, /addEventListener\('resize'/)
+  assert.doesNotMatch(marqueeSource, /addEventListener\('resize'/)
 })
 
 test('溢出时渲染双份歌名做无缝循环，未溢出保持省略号', () => {
   assert.match(miniPlayerSource, /<TitleCopy aria-hidden='true'>/)
-  assert.match(miniPlayerSource, /translateX\(-50%\)/)
   assert.match(miniPlayerSource, /p\.\$marquee \? 'clip' : 'ellipsis'/)
+  // 0→-50% 无缝循环关键帧单点存放于 useMarquee.ts
+  assert.match(marqueeSource, /translateX\(-50%\)/)
 })
 
 test('跑马灯恒速换算时长并带首尾停顿', () => {
   assert.match(miniPlayerSource, /MARQUEE_SPEED_PX_PER_S/)
   assert.match(miniPlayerSource, /\(metrics\.text \+ MARQUEE_GAP_PX\) \/ MARQUEE_SPEED_PX_PER_S/)
-  assert.match(miniPlayerSource, /0%, 10% \{ transform: translateX\(0\); \}/)
-  assert.match(miniPlayerSource, /90%, 100% \{ transform: translateX\(-50%\); \}/)
+  assert.match(marqueeSource, /MARQUEE_GAP_PX = 48/)
+  assert.match(marqueeSource, /MARQUEE_SPEED_PX_PER_S = 30/)
+  assert.match(marqueeSource, /0%, 10% \{ transform: translateX\(0\); \}/)
+  assert.match(marqueeSource, /90%, 100% \{ transform: translateX\(-50%\); \}/)
 })
 
 test('暂停时跑马灯停走，与播放态一致', () => {

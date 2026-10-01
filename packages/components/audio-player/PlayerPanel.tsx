@@ -1,16 +1,20 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
 import { useLocale } from '@wuh.site/components/locales'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 import Progress from '@wuh.site/components/progress'
+import { MARQUEE_GAP_PX, MARQUEE_SPEED_PX_PER_S, marquee, useMarqueeOverflow } from './useMarquee'
 import {
   IconListMusic,
   IconPause,
   IconPlay,
+  IconRepeat,
+  IconRepeatOne,
+  IconShuffle,
   IconSkipBack,
   IconSkipForward,
   IconVolume,
@@ -22,6 +26,7 @@ const HAIRLINE = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 const INK_MUTED = 'color-mix(in oklab, var(--text-color) 72%, transparent)'
 const INK_FAINT = 'color-mix(in oklab, var(--text-color) 56%, transparent)'
 const INK_GHOST = 'color-mix(in oklab, var(--text-color) 38%, transparent)'
+const RULE_LINE = 'color-mix(in oklab, var(--text-color) 9%, transparent)'
 const EASE = 'var(--motion-ease-out-soft)'
 const QUICK = 'var(--motion-dur-quick)'
 // 面板开合 240ms：由 --motion-dur-quick(150ms) 派生，落在交互规范 150–300ms 区间
@@ -74,15 +79,6 @@ const PaperVeil = styled.div`
   background: color-mix(in oklab, var(--background-100) 72%, transparent);
 `
 
-/* 文字列局部纸罩：正文对比度最稳的位置再加一道保险 */
-const sectionTint = css`
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--background-100) 40%, transparent),
-    color-mix(in oklab, var(--background-100) 26%, transparent)
-  );
-`
-
 const Backdrop = styled.div<{ $visible: boolean }>`
   position: fixed;
   inset: 0;
@@ -100,9 +96,9 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
   max-width: 1160px;
   margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.1fr) minmax(0, 0.86fr);
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-areas: 'now lyrics queue' 'dock lyrics queue';
+  grid-template-areas: 'stage' 'dock';
   background: var(--background-100);
   border: 1px solid ${HAIRLINE};
   border-radius: var(--radius-card);
@@ -141,7 +137,7 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
 
   ${reducedMotion}
 
-  /* 移动端：全屏沉浸册页 —— 横翻对页（词页/目次）/ 页缘翻页钮 / dock 吸底 */
+  /* 移动端：全屏沉浸册页 —— 横翻对页（词页/目次）/ 页缘翻页钮 / dock 吸底（20260930 定稿形态保留） */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     inset: 0;
     max-width: none;
@@ -154,20 +150,13 @@ const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
     box-shadow: none;
     overflow: clip;
   }
-
-  @media (min-width: calc(${BREAKPOINTS.mobile}px + 1px)) and (max-width: ${BREAKPOINTS.tablet}px) {
-    inset: 24px;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
-    grid-template-areas: 'now lyrics' 'dock lyrics';
-  }
 `
 
 const CloseButton = styled.button`
   position: absolute;
   top: var(--space-base);
   right: var(--space-base);
-  z-index: 5;
+  z-index: 6;
   width: 44px;
   height: 44px;
   display: inline-flex;
@@ -190,89 +179,322 @@ const CloseButton = styled.button`
   ${focusRing}
 `
 
-/* ===== 左栏：装裱封面 + 题名（header）/ 进度 + 控制（dock 锚底） ===== */
-const NowHeader = styled.div`
-  grid-area: now;
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  min-height: 0;
+const toolHover = css`
+  &:hover {
+    color: var(--primary-color);
+    background: color-mix(in oklab, var(--primary-color) 8%, transparent);
+  }
+`
+
+/* ===== 右上工具组（桌面）：词卷印章钮 + 列表抽屉钮 ===== */
+const TopTools = styled.div`
+  position: absolute;
+  top: var(--space-base);
+  right: calc(var(--space-base) + 48px);
+  z-index: 6;
   display: flex;
-  flex-direction: column;
-  /* 桌面 gutter：封面装裱内距，与歌词列 padding-left 同韵；移动端由册页词页接替 */
-  padding: var(--space-xl) 0 0 var(--space-xl);
+  align-items: center;
+  gap: var(--space-xs);
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
   }
 `
 
-const NowDock = styled.div`
-  grid-area: dock;
+/* 词卷开关：印章字钮「詞」——印章字形跨语言不变（i18n 卡先例），语义走 aria。
+   选中显隐走行内样式（JSX style 挂载），不经 styled 动态类——免疫规则删除竞态 */
+const WordsToggle = styled.button`
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-xs);
+  color: ${INK_MUTED};
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-base);
+  line-height: 1;
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
+
+  ${toolHover}
+  ${focusRing}
+`
+
+const DrawerButton = styled.button`
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: ${INK_MUTED};
+  cursor: pointer;
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+
+  ${toolHover}
+  ${focusRing}
+`
+
+/* ===== 墨痕歌词：当前句淡墨大字浮上纸底，换句交叠渐变（纯装饰） ===== */
+const GhostLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & > span {
+      animation: none !important;
+    }
+  }
+`
+
+const GhostLine = styled.span<{ $now?: boolean }>`
+  position: absolute;
+  left: 50%;
+  top: ${(p) => (p.$now ? '27%' : '20%')};
+  transform: translateX(-50%);
+  max-width: 92%;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(40px, 8vw, 74px);
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: color-mix(in oklab, var(--text-color) ${(p) => (p.$now ? '8%' : '3%')}, transparent);
+
+  /* 换句渐变：重挂载触发淡入（约 1.6s），旧句随卸载消失 */
+  ${(p) =>
+    p.$now
+      ? css`
+          animation: ghostIn calc(var(--motion-dur-quick) * 10.6) ${EASE} both;
+
+          @keyframes ghostIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+        `
+      : null}
+`
+
+/* ===== 桌面舞台：装裱封面 + 题名手卷 + 界格笺题跋（居中单焦点） ===== */
+const NowStage = styled.div`
+  grid-area: stage;
   position: relative;
   z-index: 1;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  /* 甲板 gutter：右缘离开列罩边界，底缘离开面板圆角 */
-  padding: 0 var(--space-lg) var(--space-xl) var(--space-xl);
+  align-items: center;
+  padding: var(--space-xl) var(--space-2xl) 0;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-area: dock;
+    display: none;
+  }
+`
+
+/* 主舞台后一团主题色暖晕，让居中构图贴住纸面不悬浮 */
+const StageGlow = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 36%;
+  transform: translate(-50%, -50%);
+  width: min(760px, 90%);
+  height: 68%;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--primary-color) 7%, transparent), transparent 70%);
+  filter: blur(12px);
+  pointer-events: none;
+`
+
+const PlateWrap = styled.div`
+  position: relative;
+`
+
+/* 竖排 mono 题签「曲 · N / 总数」：伸出纸边的版本信息；拉丁文语境字距降档 */
+const StageTab = styled.span`
+  position: absolute;
+  top: var(--space-xs);
+  left: -14px;
+  z-index: 1;
+  writing-mode: vertical-rl;
+  padding: var(--space-xs) var(--space-4xs);
+  background: var(--background-100);
+  border: 1px solid ${HAIRLINE};
+  border-radius: var(--border-radius-xs);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.22em;
+  color: var(--primary-color);
+
+  [lang='en'] & {
+    letter-spacing: 0.1em;
+  }
+`
+
+/* 装裱封面：天薄地厚（下纸边厚一倍，立轴装裱比例） */
+const Plate = styled.div`
+  padding: var(--space-sm) var(--space-sm) calc(var(--space-sm) * 2);
+  background: color-mix(in oklab, var(--background-100) 88%, transparent);
+  border: 1px solid ${HAIRLINE};
+  border-radius: var(--border-radius-xs);
+  box-shadow: var(--elevation-soft);
+`
+
+const PlateArt = styled.div<{ $src?: string }>`
+  width: min(290px, 32vh);
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
+  box-shadow: inset 0 0 0 1px ${HAIRLINE};
+`
+
+/* 题名手卷：溢出才徐展（暂停停走），reduced-motion 回落省略号，title 显全名 */
+const StageTitle = styled.h2<{ $marquee: boolean }>`
+  display: block;
+  margin: var(--space-lg) 0 0;
+  max-width: 680px;
+  width: 100%;
+  position: relative;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: var(--line-height-heading);
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ${(p) => (p.$marquee ? 'clip' : 'ellipsis')};
+  mask-image: linear-gradient(90deg, black 0, black calc(100% - 8px), transparent 100%);
+
+  @media (prefers-reduced-motion: reduce) {
+    text-overflow: ellipsis;
+    mask-image: none;
+  }
+`
+
+const StageGhost = styled.span`
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+`
+
+const StageTrack = styled.span<{ $playing: boolean; $duration: string }>`
+  display: inline-flex;
+  min-width: 0;
+  white-space: nowrap;
+  will-change: transform;
+  animation: ${marquee} ${(p) => p.$duration} linear infinite;
+  animation-play-state: ${(p) => (p.$playing ? 'running' : 'paused')};
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`
+
+const StageCopy = styled.span`
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding-right: ${MARQUEE_GAP_PX}px;
+`
+
+const StageArtist = styled.p`
+  margin: var(--space-xs) 0 0;
+  max-width: 100%;
+  font-size: var(--font-size-sm);
+  color: ${INK_MUTED};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+/* 界格笺题跋：三行各落一道发丝界线，当前句大字居格 + 朱砂句读环 */
+const Epigraph = styled.div`
+  margin-top: var(--space-lg);
+  width: min(400px, 100%);
+  mask-image: linear-gradient(180deg, transparent, black 18%, black 86%, transparent);
+`
+
+const EpiRow = styled.p<{ $act?: boolean }>`
+  margin: 0;
+  padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-base);
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+  color: ${INK_GHOST};
+  border-bottom: 1px solid ${RULE_LINE};
+
+  [lang='en'] & {
+    letter-spacing: 0.02em;
+  }
+
+  ${(p) =>
+    p.$act
+      ? css`
+          font-size: 22px;
+          font-weight: 600;
+          color: var(--text-color);
+
+          &::before {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border: 1.5px solid var(--primary-color);
+            border-radius: 50%;
+            margin-right: 14px;
+            vertical-align: 5px;
+          }
+        `
+      : null}
+`
+
+/* ===== dock（桌面 + 移动共用）：進度 + 单行钮群 ===== */
+const NowDock = styled.div`
+  grid-area: dock;
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--space-lg) var(--space-xl);
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     padding: var(--space-sm) var(--space-base) calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid ${HAIRLINE};
   }
 `
 
-/* 封面按面板可用高度与栏宽双重收缩，避免左栏总高撑出面板底边或横向压到歌词列 */
-const CoverHero = styled.div<{ $src?: string }>`
-  width: min(100%, 300px, 40vh);
-  aspect-ratio: 1;
-  align-self: flex-start;
-  border-radius: var(--border-radius-lg);
-  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
-  box-shadow: inset 0 0 0 1px ${HAIRLINE}, var(--elevation-soft);
-
-  /* 矮视口（常见 800 高笔记本）：封面再收缩一档，抵偿 gutter 占用的纵向空间 */
-  @media (max-height: 840px) {
-    width: min(100%, 220px);
-  }
-`
-
-const TrackHeading = styled.h2`
-  margin-top: var(--space-base);
-  font-family: var(--font-serif);
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  line-height: var(--line-height-heading);
-  color: var(--text-color);
-  overflow-wrap: anywhere;
-`
-
-const TrackArtist = styled.p`
-  margin-top: var(--space-xs);
-  font-size: var(--font-size-sm);
-  color: ${INK_MUTED};
-`
-
-const ProgressWrapper = styled.div`
-  margin-top: var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  width: 100%;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    margin-top: 0;
-  }
-`
-
-
-/* 进度行：时间码两端，中段为共享 Progress 交互态（度曲尺已退役，进度语言统一到 @wuh.site/components/progress） */
+/* 进度行：时间码两端，中段为共享 Progress 交互态；桌面 460px 居中 */
 const ProgressRow = styled.div`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  width: min(100%, 460px);
+  margin: 0 auto;
 `
 
 const TimeCode = styled.span<{ $now?: boolean }>`
@@ -283,6 +505,7 @@ const TimeCode = styled.span<{ $now?: boolean }>`
   color: ${(p) => (p.$now ? INK_MUTED : INK_FAINT)};
 `
 
+/* 单行钮群：模式 | 上一曲/播放/下一曲 | 音量（playbar 同构） */
 const ControlRow = styled.div`
   margin-top: var(--space-base);
   display: flex;
@@ -292,12 +515,11 @@ const ControlRow = styled.div`
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     margin-top: var(--space-sm);
-    justify-content: center;
     gap: var(--space-lg);
   }
 `
 
-/* 幽灵传输钮：去常驻描边，纸面安静，hover 才显性（与 CloseButton 同语言） */
+/* 幽灵传输钮：去常驻描边，纸面安静，hover 才显性 */
 const SkipButton = styled.button`
   width: 44px;
   height: 44px;
@@ -320,9 +542,8 @@ const SkipButton = styled.button`
   ${focusRing}
 `
 
-/* 实心盘：面板唯一饱和元素；::after 内缩环作碟面标签环，唱片语言点到即止 */
+/* 实心盘：面板唯一饱和元素；::after 内缩环作碟面标签环（静态，不旋转） */
 const PlayButton = styled(SkipButton)`
-  position: relative;
   width: 64px;
   height: 64px;
   background: var(--primary-color);
@@ -353,287 +574,316 @@ const PlayButton = styled(SkipButton)`
   }
 `
 
-/* 甲板末行：模式带居左、音量居右；移动端音量隐去、模式居中 */
-const DeckRow = styled.div`
-  margin-top: var(--space-base);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-base);
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    margin-top: var(--space-sm);
-    justify-content: center;
-  }
-`
-
-const ModeGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-`
-
-/* 下划线模式带：复用页缘钮/年谱刻度带的选中语言，替代描边 pill。
-   激活态经行内自定义属性驱动（JSX style 挂 --mode-*，静态规则消费 var()）——
-   选择器驱动的激活态在这张生产行为表上两连败：动态类有规则删除竞态（v1.4.36–38），
-   属性选择器又遇 React 属性翻转后失效失灵（v1.4.41 生产实测，手动摘戴属性才恢复）；
-   内联样式变更走引擎保证的失效路径，不依赖任何选择器重匹配。aria-pressed 保留语义、不再参与样式 */
+/* 模式钮：icon-only，图标随当前模式换装（Repeat/Repeat1/Shuffle），
+   朱砂染色即「当前模式」，点击循环——任一语言宽度归零 */
 const ModeButton = styled.button`
-  padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   background: none;
   border: none;
-  border-bottom: 2px solid var(--mode-line, transparent);
-  color: var(--mode-ink, ${INK_MUTED});
+  border-radius: 50%;
+  color: var(--primary-color);
   cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: var(--font-size-xs);
-  transition: color ${QUICK} ${EASE}, border-color ${QUICK} ${EASE};
+  transition: color ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
 
   &:hover {
-    color: var(--primary-color);
+    background: color-mix(in oklab, var(--primary-color) 8%, transparent);
   }
 
   ${focusRing}
 `
 
-const VolumeRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  color: ${INK_MUTED};
+/* 音量：钮群右端图标钮 + 上弹竖向滑杆小纸卡 */
+const VolWrap = styled.span`
+  position: relative;
+  display: inline-flex;
 
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
   }
 `
 
-/* 音量条窄位：共享 Progress 交互态在 120px 原位（凹槽几何归音量 → 印光标接任） */
-const VolumeBox = styled.div`
-  width: 120px;
-`
+const VolumeButton = styled(SkipButton)``
 
-/* ===== 移动端册页（2026-09-30 起）：装裱图版 + 短词窗 + 目次对页横翻 ===== */
-
-/* 下滑关闭手柄：拖拽跟手，松手过阈值关闭、否则回弹（reduced-motion 由面板级降级压制过渡） */
-const GrabHandle = styled.div`
+const VolumePop = styled.div`
   position: absolute;
-  top: var(--space-xs);
+  bottom: 54px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 6;
-  width: 48px;
-  height: 24px;
-  display: none;
+  padding: var(--space-sm) var(--space-sm) var(--space-xs);
+  background: var(--background-100);
+  border: 1px solid ${HAIRLINE};
+  border-radius: 10px;
+  box-shadow: var(--elevation-card);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: var(--space-sm);
+
+  /* 45° 纸角指向锚点 */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    margin-left: -4px;
+    width: 8px;
+    height: 8px;
+    background: var(--background-100);
+    border-right: 1px solid ${HAIRLINE};
+    border-bottom: 1px solid ${HAIRLINE};
+    transform: rotate(45deg);
+  }
+`
+
+const VolumePopLabel = styled.span`
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: ${INK_FAINT};
+`
+
+const VolumePct = styled.span`
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: ${INK_FAINT};
+`
+
+/* 竖向樂印滑杆：共享 Progress 只支持横向，竖向变体在组件内实现同一视觉语言
+   （印光标 = 白文方印「樂」，填充自底向上）；role=slider + 键盘 + 指针拖拽 */
+const VSlider = styled.div`
+  position: relative;
+  width: 24px;
+  height: 112px;
+  cursor: pointer;
   touch-action: none;
-  cursor: grab;
 
   &::before {
     content: '';
-    width: 36px;
-    height: 4px;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    transform: translateX(-50%);
     border-radius: 999px;
-    background: color-mix(in oklab, var(--text-color) 22%, transparent);
+    background: color-mix(in oklab, var(--text-color) 14%, transparent);
   }
 
+  ${focusRing}
+`
+
+const VFill = styled.div<{ $fill: number }>`
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 6px;
+  height: ${(p) => p.$fill * 100}%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: var(--primary-color);
+  pointer-events: none;
+`
+
+const VThumb = styled.div<{ $fill: number }>`
+  position: absolute;
+  left: 50%;
+  bottom: ${(p) => p.$fill * 100}%;
+  transform: translate(-50%, 50%);
+  width: 17px;
+  height: 17px;
+  border-radius: var(--border-radius-xs);
+  background: var(--primary-color);
+  color: var(--background-100);
+  font-family: var(--font-serif);
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 18%, transparent);
+  pointer-events: none;
+`
+
+/* ===== 词卷展开态（桌面）：题头小装裱 + 竖排朱丝栏词卷 ===== */
+const WordsView = styled.div`
+  grid-area: stage;
+  position: relative;
+  z-index: 3;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-xl) var(--space-2xl) var(--space-sm);
+  background: color-mix(in oklab, var(--background-100) 88%, transparent);
+
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: flex;
+    display: none;
   }
 `
 
-/* 下滑关闭手柄：见 GrabHandle；图版同作拖拽面 */
-
-/* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径 */
-const LeafPages = styled.div`
-  display: none;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-area: pages;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    min-height: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
+const WordsHead = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  width: min(680px, 100%);
 `
 
-const LeafPage = styled.section`
-  display: none;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    flex: 0 0 100%;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 0 var(--space-base);
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-`
-
-/* 装裱图版：纸框发丝线 + 纸边 + 图版内发丝线；图面也是下滑关闭的拖拽面 */
-const Plate = styled.figure`
-  margin: 44px auto 0;
-  width: min(236px, 62vw, 30vh);
-  padding: 10px;
+const WordsHeadPlate = styled.div`
+  flex-shrink: 0;
+  padding: var(--space-4xs) var(--space-4xs) var(--space-xs);
   background: color-mix(in oklab, var(--background-100) 88%, transparent);
   border: 1px solid ${HAIRLINE};
-  border-radius: 4px;
+  border-radius: var(--border-radius-xs);
   box-shadow: var(--elevation-soft);
-  touch-action: none;
-  flex-shrink: 0;
 `
 
-const PlateArt = styled.div<{ $src?: string }>`
-  width: 100%;
+const WordsHeadArt = styled.div<{ $src?: string }>`
+  width: 88px;
   aspect-ratio: 1;
   border-radius: 2px;
-  background: ${(p) =>
-    p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)'};
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
   box-shadow: inset 0 0 0 1px ${HAIRLINE};
 `
 
-/* 图版题签：mono 朱砂「曲 · N / 总数」——曲目序号是版面信息不是装饰 */
-const PlateNo = styled.figcaption`
-  margin-top: 20px;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.3em;
-  color: var(--primary-color);
-`
-
-const LeafTitle = styled.h2`
-  margin-top: 8px;
-  text-align: center;
+const WordsTitle = styled.p`
+  margin: 0;
+  min-width: 0;
   font-family: var(--font-serif);
   font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: var(--line-height-heading);
   color: var(--text-color);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
-const LeafArtist = styled.p`
-  margin-top: 6px;
-  text-align: center;
+const WordsArtist = styled.p`
+  margin: var(--space-4xs) 0 0;
   font-size: var(--font-size-sm);
   color: ${INK_MUTED};
 `
 
-/* 短词窗：mask 上下渐隐，当前句加重、相邻淡化；点按行跳播（矮视口可收缩） */
-const WordWindow = styled.div`
-  position: relative;
-  margin-top: auto;
-  flex: 0 1 148px;
-  min-height: 96px;
-  overflow: hidden;
-  mask-image: linear-gradient(180deg, transparent, black 22%, black 78%, transparent);
+/* 竖排词卷：句读自右向左成列，界格转朱丝栏（列间发丝竖线）；
+   当前句大字 + 3px 朱砂侧标；随播逐列左移、两端渐隐。
+   en 语境竖排可读性差 → 回退横排界格笺 */
+const WordsVerse = styled.div`
+  flex: 1;
+  min-height: 0;
+  margin-top: var(--space-base);
+  width: min(880px, 100%);
+  overflow-x: auto;
+  overflow-y: hidden;
+  writing-mode: vertical-rl;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  mask-image: linear-gradient(90deg, transparent 0, black 7%, black 96%, transparent);
+
+  [lang='en'] & {
+    writing-mode: horizontal-tb;
+    overflow-x: hidden;
+    overflow-y: auto;
+    mask-image: linear-gradient(180deg, transparent, black 7%, black 93%, transparent);
+  }
 `
 
-const WordLine = styled.button<{ $active?: boolean; $near?: boolean }>`
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: var(--space-xs) 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: center;
+const WordsLine = styled.p<{ $act?: boolean }>`
+  margin: 0 0 0 var(--space-lg);
+  padding: 0 var(--space-xs) 0 calc(var(--space-xs) + 1px);
   font-family: var(--font-serif);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-body);
+  font-size: var(--font-size-base);
+  letter-spacing: 0.24em;
+  line-height: 1.7;
   color: ${INK_GHOST};
-  transition: color ${QUICK} ${EASE};
+  border-right: 1px solid ${RULE_LINE};
+  cursor: pointer;
 
-  ${(p) => (p.$near ? css`color: ${INK_FAINT};` : null)}
+  [lang='en'] & {
+    margin: 0;
+    padding: var(--space-xs) 0 calc(var(--space-xs) + 2px);
+    letter-spacing: 0.04em;
+    border-right: none;
+    border-bottom: 1px solid ${RULE_LINE};
+    text-align: center;
+  }
 
   ${(p) =>
-    p.$active
+    p.$act
       ? css`
-          color: var(--text-color);
-          font-size: var(--font-size-base);
+          font-size: 20px;
           font-weight: 600;
+          color: var(--text-color);
+          margin-left: var(--space-sm);
+          border-right: 3px solid var(--primary-color);
+
+          [lang='en'] & {
+            border-right: none;
+            border-bottom: none;
+            color: var(--primary-color);
+          }
         `
       : null}
-
-  ${focusRing}
 `
 
-/* 无词空态：印章式「全体欣赏音乐」替代死黑——印框朱砂 45%、印面衬线字 */
-const WordEmpty = styled.div`
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & > span {
-    padding: var(--space-xs) var(--space-sm);
-    border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
-    border-radius: var(--border-radius-xs);
-    font-family: var(--font-serif);
-    font-size: var(--font-size-sm);
-    letter-spacing: 0.28em;
-    color: color-mix(in oklab, var(--primary-color) 78%, transparent);
-  }
-`
-
-/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走 aria-current 属性选择器（静态 CSS，
-   规避动态类规则删除竞态——见 ModeButton 注释），选中条宽度切换走 scaleX 不碰布局属性 */
-const PageTicks = styled.div`
-  display: none;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-area: ticks;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-sm);
-    padding: 2px 0 6px;
-  }
-`
-
-const PageTick = styled.button`
-  padding: 10px 8px;
-  display: inline-flex;
-  align-items: center;
-  background: none;
+/* ===== 播放列表抽屉（桌面）：自右滑入纸卡。
+   显隐态经行内样式驱动（JSX style），不经 styled 动态类插值——规则删除竞态免疫（music-player.md） ===== */
+const DrawerScrim = styled.button`
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  padding: 0;
+  background: color-mix(in oklab, black 28%, transparent);
   border: none;
   cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity ${QUICK} ${EASE}, visibility 0s linear ${QUICK};
+  visibility: hidden;
 
-  /* 选中态经行内自定义属性驱动（与 ModeButton 同一免疫机制，自定义属性继承进 ::before） */
-  &::before {
-    content: '';
-    width: 18px;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--tick-line, ${HAIRLINE});
-    transform: scaleX(var(--tick-fill, 0.44));
-    opacity: var(--tick-dim, 0.6);
-    transition: transform ${QUICK} ${EASE}, opacity ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
   }
-
-  ${focusRing}
 `
 
-/* ===== 右侧：歌词 / 播放列表 ===== */
+const DrawerCard = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 8;
+  width: min(320px, 80%);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg) var(--space-base);
+  background: var(--background-100);
+  border-left: 1px solid ${HAIRLINE};
+  box-shadow: var(--elevation-card);
+  transform: translateX(104%);
+  transition: transform ${DUR_PANEL} ${EASE}, visibility 0s linear ${DUR_PANEL};
+  visibility: hidden;
 
-/* 眉标：短朱砂 tick + 字距小标，不再通栏划线 */
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: none;
+  }
+
+  ${reducedMotion}
+`
+
+/* 眉标：短朱砂 tick + 字距小标 */
 const SectionHeading = styled.h3`
   display: flex;
   align-items: center;
   gap: var(--space-xs);
+  margin: 0;
   padding: var(--space-xs) 0 calc(var(--space-xs) + 6px);
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
@@ -649,131 +899,7 @@ const SectionHeading = styled.h3`
   }
 `
 
-const LyricsSection = styled.section`
-  grid-area: lyrics;
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 0 var(--space-2xl) 0 var(--space-lg);
-  ${sectionTint}
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
-`
-
-const QueueSection = styled.section`
-  grid-area: queue;
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 0 var(--space-lg) 0 var(--space-lg);
-  border-left: 1px solid ${HAIRLINE};
-  ${sectionTint}
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
-`
-
-const LyricsScroll = styled.div`
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 var(--space-sm) var(--space-lg) 0;
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${HAIRLINE};
-    border-radius: 999px;
-  }
-
-  @media (pointer: coarse) {
-    scrollbar-gutter: auto;
-  }
-`
-
-/* 墨随声走：一团软墨晕垫在当前句背后，随演唱进度在纸上洇移 */
-const LyricBloom = styled.div`
-  position: absolute;
-  left: 0;
-  right: var(--space-sm);
-  top: 0;
-  height: 74px;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 16px;
-  background:
-    radial-gradient(60% 100% at 24% 50%, color-mix(in oklab, var(--primary-color) 9%, transparent), transparent 72%),
-    radial-gradient(80% 130% at 55% 50%, color-mix(in oklab, var(--text-color) 6%, transparent), transparent 75%);
-  filter: blur(10px);
-  opacity: 0;
-  transition: transform 0.7s ${EASE}, opacity 0.7s ${EASE};
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    height: 62px;
-  }
-`
-
-/* 书写显现：当前句落笔（audio-player 本地 keyframes，站点专属组件先例） */
-const writeIn = keyframes`
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: none; }
-`
-
-const LyricLine = styled.p<{ $active?: boolean; $near?: boolean }>`
-  position: relative;
-  padding: var(--space-xs) 0 var(--space-xs) 16px;
-  font-family: var(--font-serif);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-body);
-  color: ${INK_GHOST};
-  transition: color ${QUICK} ${EASE}, font-size ${QUICK} ${EASE};
-
-  ${(p) => (p.$near ? css`color: ${INK_FAINT};` : null)}
-
-  ${(p) =>
-    p.$active
-      ? css`
-          color: var(--text-color);
-          font-size: var(--font-size-lg);
-          font-weight: 600;
-          animation: ${writeIn} calc(var(--motion-dur-quick) * 1.66) ${EASE} both;
-
-          &::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 1.4em;
-            border-radius: 2px;
-            background: var(--primary-color);
-          }
-        `
-      : null}
-`
-
-/* 词窗墨晕：短词窗用更矮的一团（册页词页 2026-09-30 起） */
-const WordBloom = styled(LyricBloom)`
-  height: 56px;
-  left: 0;
-  right: 0;
-`
-
+/* ===== 播放列表行（桌面抽屉 + 移动目次页共用） ===== */
 const QueueList = styled.ul`
   position: relative;
   flex: 1;
@@ -803,7 +929,7 @@ const QueueItem = styled.li<{ $active?: boolean }>`
   background: ${(p) => (p.$active ? 'color-mix(in oklab, var(--primary-color) 7%, transparent)' : 'transparent')};
   border-radius: var(--border-radius-base);
 
-  /* 当前项：朱砂左标，替代原粉底 pill */
+  /* 当前项：朱砂左标 */
   ${(p) =>
     p.$active
       ? css`
@@ -851,11 +977,19 @@ const QueueNo = styled.span<{ $active?: boolean }>`
   color: ${(p) => (p.$active ? 'var(--primary-color)' : INK_FAINT)};
 `
 
-const QueueName = styled.span<{$active?: boolean}>`
+const QueueName = styled.span<{ $active?: boolean }>`
   flex: 1;
   min-width: 0;
   font-size: var(--font-size-sm);
   color: ${(p) => (p.$active ? 'var(--primary-color)' : 'var(--text-color)')};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+/* 歌手列限宽省略：长歌手名不再把歌名列挤没，title 显全名 */
+const QueueArtist = styled.span`
+  max-width: 92px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -868,12 +1002,259 @@ const QueueMeta = styled.span`
   align-items: flex-end;
   font-size: var(--font-size-xs);
   color: ${INK_FAINT};
+  min-width: 0;
 `
+
+/* ===== 移动端册页（20260930 定稿形态保留）：装裱图版 + 短词窗 + 目次对页横翻 ===== */
+
+/* 下滑关闭手柄：拖拽跟手，松手过阈值关闭、否则回弹（reduced-motion 由面板级降级压制过渡） */
+const GrabHandle = styled.div`
+  position: absolute;
+  top: var(--space-xs);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  width: 48px;
+  height: 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+
+  &::before {
+    content: '';
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--text-color) 22%, transparent);
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    display: flex;
+  }
+`
+
+/* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径 */
+const LeafPages = styled.div`
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-area: pages;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+`
+
+const LeafPage = styled.section`
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    flex: 0 0 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0 var(--space-base);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+`
+
+/* 装裱图版：纸框发丝线 + 纸边；图面也是下滑关闭的拖拽面 */
+const LeafPlate = styled.figure`
+  margin: 44px auto 0;
+  width: min(236px, 62vw, 30vh);
+  padding: 10px;
+  background: color-mix(in oklab, var(--background-100) 88%, transparent);
+  border: 1px solid ${HAIRLINE};
+  border-radius: 4px;
+  box-shadow: var(--elevation-soft);
+  touch-action: none;
+  flex-shrink: 0;
+`
+
+const LeafPlateArt = styled(PlateArt)``
+
+/* 图版题签：mono 朱砂「曲 · N / 总数」；拉丁文语境字距降档 */
+const PlateNo = styled.figcaption`
+  margin-top: 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.3em;
+  color: var(--primary-color);
+
+  [lang='en'] & {
+    letter-spacing: 0.14em;
+  }
+`
+
+/* 册页题名：i18n 长度防御——单行省略 + title 全名（不自由换行撑瘪词窗） */
+const LeafTitle = styled.h2`
+  margin: var(--space-xs) 0 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-heading);
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+const LeafArtist = styled.p`
+  margin: var(--space-4xs) 0 0;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: ${INK_MUTED};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+/* 短词窗：mask 上下渐隐，当前句加重、相邻淡化；点按行跳播 */
+const WordWindow = styled.div`
+  position: relative;
+  margin-top: auto;
+  flex: 0 1 148px;
+  min-height: 96px;
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, black 22%, black 78%, transparent);
+`
+
+const WordLine = styled.button<{ $active?: boolean; $near?: boolean }>`
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: var(--space-xs) 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+  color: ${INK_GHOST};
+  transition: color ${QUICK} ${EASE};
+
+  ${(p) => (p.$near ? css`color: ${INK_FAINT};` : null)}
+
+  ${(p) =>
+    p.$active
+      ? css`
+          color: var(--text-color);
+          font-size: var(--font-size-base);
+          font-weight: 600;
+        `
+      : null}
+
+  ${focusRing}
+`
+
+/* 无词空态：印章式「全体欣赏音乐」；拉丁文语境字距降档 */
+const WordEmpty = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > span {
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
+    border-radius: var(--border-radius-xs);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.28em;
+    color: color-mix(in oklab, var(--primary-color) 78%, transparent);
+  }
+
+  [lang='en'] & > span {
+    letter-spacing: 0.12em;
+  }
+`
+
+/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走行内自定义属性（免疫机制，
+   见 music-player.md——选择器驱动激活态两连败），选中条宽度切换走 scaleX */
+const PageTicks = styled.div`
+  display: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
+    grid-area: ticks;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: 2px 0 6px;
+  }
+`
+
+const PageTick = styled.button`
+  padding: 10px 8px;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  /* 选中态经行内自定义属性驱动（自定义属性继承进 ::before） */
+  &::before {
+    content: '';
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--tick-line, ${HAIRLINE});
+    transform: scaleX(var(--tick-fill, 0.44));
+    opacity: var(--tick-dim, 0.6);
+    transition: transform ${QUICK} ${EASE}, opacity ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+  }
+
+  ${focusRing}
+`
+
+/* 词窗墨晕：短词窗用更矮的一团 */
+const WordBloom = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 56px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 16px;
+  background:
+    radial-gradient(60% 100% at 24% 50%, color-mix(in oklab, var(--primary-color) 9%, transparent), transparent 72%),
+    radial-gradient(80% 130% at 55% 50%, color-mix(in oklab, var(--text-color) 6%, transparent), transparent 75%);
+  filter: blur(10px);
+  opacity: 0;
+  transition: transform 0.7s ${EASE}, opacity 0.7s ${EASE};
+`
+
+const MODE_CYCLE: PlayerMode[] = ['order', 'repeat-one', 'shuffle']
 
 const MODE_LABEL_KEYS: Record<PlayerMode, string> = {
   order: 'player.panel.modeOrder',
   'repeat-one': 'player.panel.modeRepeatOne',
   shuffle: 'player.panel.modeShuffle'
+}
+
+const MODE_ICONS: Record<PlayerMode, typeof IconRepeat> = {
+  order: IconRepeat,
+  'repeat-one': IconRepeatOne,
+  shuffle: IconShuffle
 }
 
 export const AudioPlayerPanel = () => {
@@ -884,38 +1265,62 @@ export const AudioPlayerPanel = () => {
     state,
     actions: { togglePanel, playNext, playPrevious, togglePlay, seek, setVolume, setMode, playTrack }
   } = useAudioPlayer()
-  const scrollRef = useRef<HTMLDivElement | null>(null)
   const mobileLyricsRef = useRef<HTMLDivElement | null>(null)
-  const lyricBloomRef = useRef<HTMLDivElement | null>(null)
   const mobileBloomRef = useRef<HTMLDivElement | null>(null)
-  const desktopQueueRef = useRef<HTMLUListElement | null>(null)
+  const drawerListRef = useRef<HTMLUListElement | null>(null)
   const mobileQueueRef = useRef<HTMLUListElement | null>(null)
   const pagesRef = useRef<HTMLDivElement | null>(null)
+  const wordsVerseRef = useRef<HTMLDivElement | null>(null)
   const closeRef = useRef<HTMLButtonElement | null>(null)
   const restoreFocusRef = useRef<HTMLElement | null>(null)
+  const volWrapRef = useRef<HTMLSpanElement | null>(null)
   const dragStartYRef = useRef<number | null>(null)
   const dragYRef = useRef(0)
   const [mobilePage, setMobilePage] = useState<'words' | 'queue'>('words')
   const [dragY, setDragY] = useState<number | null>(null)
+  const [wordsOpen, setWordsOpen] = useState(false)
+  const [queueOpen, setQueueOpen] = useState(false)
+  const [volOpen, setVolOpen] = useState(false)
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0.01)
   const progressPct = (Math.min(state.progress, totalDuration) / totalDuration) * 100
 
   const lyrics = useMemo(() => parseLyrics(currentTrack?.lyrics), [currentTrack?.lyrics])
   const activeLyric = useMemo(() => findActiveLyricIndex(lyrics, state.progress), [lyrics, state.progress])
   const playing = state.status === 'playing'
+  // 无词/前奏期（activeLyric<0）回落到首句，题跋与墨痕始终有可渲染行
+  const lyricIdx = activeLyric >= 0 ? activeLyric : 0
+  const epiPrev = lyrics[lyricIdx - 1]
+  const epiAct = lyrics[lyricIdx]
+  const epiNext = lyrics[lyricIdx + 1]
+  const stageName = currentTrack?.name ?? t('player.panel.waiting')
+  const stageTitle = useMarqueeOverflow(stageName)
+  const titleMarquee = stageTitle.metrics.visible > 0 && stageTitle.metrics.text > stageTitle.metrics.visible
+  const titleDuration = `${(stageTitle.metrics.text + MARQUEE_GAP_PX) / MARQUEE_SPEED_PX_PER_S}s`
+  const ModeIcon = MODE_ICONS[state.mode]
+  const volumePct = Math.round(state.volume * 100)
   // 最爱印：本卷播放次数最高曲目播放时进度印换「愛」——口径与 /music 最爱徽标同源（含并列）
   const favorite = useMemo(() => {
     const maxPlays = queue.reduce((max, track) => Math.max(max, track.playCount ?? 0), 0)
     return maxPlays > 0 && currentTrack?.playCount === maxPlays
   }, [queue, currentTrack])
 
-  // 弹层交互：打开时焦点移入关闭钮，Escape 关闭，关闭后焦点移回触发元素
+  const prefersReducedMotion = () =>
+    typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // 弹层交互：打开时焦点移入关闭钮，Escape 按层收起（popover → 抽屉 → 词卷 → 面板），关闭后焦点移回
   useEffect(() => {
     if (!state.isPanelOpen) return
     restoreFocusRef.current = document.activeElement as HTMLElement | null
     closeRef.current?.focus()
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key !== 'Escape') return
+      if (volOpen) {
+        setVolOpen(false)
+      } else if (queueOpen) {
+        setQueueOpen(false)
+      } else if (wordsOpen) {
+        setWordsOpen(false)
+      } else {
         togglePanel()
       }
     }
@@ -925,7 +1330,27 @@ export const AudioPlayerPanel = () => {
       restoreFocusRef.current?.focus?.()
       restoreFocusRef.current = null
     }
-  }, [state.isPanelOpen, togglePanel])
+  }, [state.isPanelOpen, volOpen, queueOpen, wordsOpen, togglePanel])
+
+  // 音量 popover 外点收起
+  useEffect(() => {
+    if (!volOpen) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (volWrapRef.current && !volWrapRef.current.contains(event.target as Node)) {
+        setVolOpen(false)
+      }
+    }
+    window.addEventListener('pointerdown', onPointerDown)
+    return () => window.removeEventListener('pointerdown', onPointerDown)
+  }, [volOpen])
+
+  // 面板关闭时复位桌面覆盖层状态
+  useEffect(() => {
+    if (state.isPanelOpen) return
+    setWordsOpen(false)
+    setQueueOpen(false)
+    setVolOpen(false)
+  }, [state.isPanelOpen])
 
   // 弹层滚动锁：面板打开期间锁 body 滚动（复用 Dialog 的 lockScroll 配方，position:fixed 兼顾 iOS），关闭还原滚动位置
   useEffect(() => {
@@ -950,13 +1375,13 @@ export const AudioPlayerPanel = () => {
     }
   }, [state.isPanelOpen])
 
-  // 播放列表定位到当前曲：面板打开或切歌时滚动到高亮项。
+  // 播放列表定位到当前曲：抽屉（桌面）与目次页（移动）都用手动 scrollTop。
   // 定位一律手动只滚目标容器，禁用原生滚动定位 API（scroll-into-view 类）——它沿祖先链滚动所有可滚容器：
   // 桌面会连带滚走 overflow 壳的面板（生产实证眉标被裁、底边露晕染色带），
-  // 移动列表在 snap 页内会横滚带跑面板（实测页缘钮失同步）。nearest 语义：可见不动，越界才对齐
+  // 移动列表在 snap 页内会横滚带跑面板（实测页缘钮失同步）。抽屉 nearest 语义：可见不动，越界才对齐
   useEffect(() => {
     if (!state.isPanelOpen) return
-    const dList = desktopQueueRef.current
+    const dList = drawerListRef.current
     const dItem = dList?.querySelector<HTMLLIElement>('[data-active="true"]')
     if (dList && dItem) {
       const itemTop = dItem.offsetTop
@@ -972,10 +1397,31 @@ export const AudioPlayerPanel = () => {
     if (mList && mItem) {
       mList.scrollTop = Math.max(0, mItem.offsetTop - mList.clientHeight / 2 + mItem.clientHeight / 2)
     }
-  }, [state.isPanelOpen, state.currentIndex, mobilePage])
+  }, [state.isPanelOpen, state.currentIndex, queueOpen, mobilePage])
 
-  const prefersReducedMotion = () =>
-    typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // 词卷跟随：当前句列滚到视口中部。手动 scrollTo 只滚词卷容器（面板壳 overflow: clip 后不是滚动容器，
+  // 但定位纪律仍全文件禁原生滚动定位 API）；竖排 vertical-rl 的 scrollLeft 为负向域，
+  // 按几何换算目标列居中；en 横排回退用同构的 top 公式
+  useEffect(() => {
+    if (!state.isPanelOpen || !wordsOpen) return
+    const container = wordsVerseRef.current
+    const el = container?.querySelector<HTMLElement>(`[data-words-index="${lyricIdx}"]`)
+    if (!container || !el) return
+    const behavior = prefersReducedMotion() ? 'auto' : 'smooth'
+    const vertical = getComputedStyle(container).writingMode.startsWith('vertical')
+    if (vertical) {
+      container.scrollTo({
+        left: container.clientWidth / 2 - el.offsetWidth / 2 - el.offsetLeft,
+        top: 0,
+        behavior,
+      })
+    } else {
+      container.scrollTo({
+        top: el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2,
+        behavior,
+      })
+    }
+  }, [state.isPanelOpen, wordsOpen, lyricIdx])
 
   // 册页横翻：swipe 由 scroll-snap 承担，onScroll 把页缘钮选中态同步回来
   const handlePagesScroll = () => {
@@ -1013,29 +1459,17 @@ export const AudioPlayerPanel = () => {
     setDragY(null)
   }
 
-  // 歌词跟随滚动 + 墨随声走：桌面手动 scrollTo 只滚 LyricsScroll（公式与移动词窗一致，
-  // 禁用原生滚动定位 API——理由见队列定位注释）；移动词窗手动垂直 scrollTop；reduced-motion 退化为瞬时定位
+  // 移动词窗跟随：手动垂直 scrollTop（定位纪律全文件禁原生滚动定位 API）；墨晕随当前句位移。
+  // 桌面歌词定位由词卷跟随 effect 承担（同手册动滚动）
   useEffect(() => {
     if (!state.isPanelOpen) return
     if (activeLyric < 0) {
-      for (const bloom of [lyricBloomRef.current, mobileBloomRef.current]) bloom?.classList.remove('on')
+      mobileBloomRef.current?.classList.remove('on')
       return
     }
     const behavior = prefersReducedMotion() ? 'auto' : 'smooth'
-    const container = scrollRef.current
-    const dEl = container?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
-    if (dEl && container) {
-      container.scrollTo({
-        top: dEl.offsetTop - container.clientHeight / 2 + dEl.offsetHeight / 2,
-        behavior,
-      })
-      if (lyricBloomRef.current) {
-        lyricBloomRef.current.style.transform = `translateY(${dEl.offsetTop - 12}px)`
-        lyricBloomRef.current.classList.add('on')
-      }
-    }
     const mContainer = mobileLyricsRef.current
-    const mEl = mContainer?.querySelector<HTMLDivElement>(`[data-lyric-index="${activeLyric}"]`)
+    const mEl = mContainer?.querySelector<HTMLElement>(`[data-lyric-index="${activeLyric}"]`)
     if (mEl && mContainer) {
       mContainer.scrollTo({
         top: mEl.offsetTop - mContainer.clientHeight / 2 + mEl.clientHeight / 2,
@@ -1047,6 +1481,36 @@ export const AudioPlayerPanel = () => {
       }
     }
   }, [activeLyric, state.isPanelOpen])
+
+  // 竖向滑杆：指针拖拽 + 键盘步进（方向键/Home/End），语义同共享 Progress 的交互态
+  const volumeFromPointer = (event: React.PointerEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const pct = 1 - (event.clientY - rect.top) / rect.height
+    setVolume(Math.min(1, Math.max(0, pct)))
+  }
+
+  const onVSliderKeyDown = (event: React.KeyboardEvent) => {
+    const step = 0.05
+    if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
+      setVolume(Math.min(1, state.volume + step))
+    } else if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
+      setVolume(Math.max(0, state.volume - step))
+    } else if (event.key === 'Home') {
+      setVolume(0)
+    } else if (event.key === 'End') {
+      setVolume(1)
+    } else {
+      return
+    }
+    event.preventDefault()
+  }
+
+  const cycleMode = () => {
+    const next = MODE_CYCLE[(MODE_CYCLE.indexOf(state.mode) + 1) % MODE_CYCLE.length]
+    setMode(next)
+  }
+
+  const wordsAvailable = lyrics.length > 0
 
   return (
     <>
@@ -1061,34 +1525,120 @@ export const AudioPlayerPanel = () => {
       >
         <WashSrc $src={currentTrack?.coverUrl} aria-hidden='true' />
         <PaperVeil aria-hidden='true' />
+
+        {/* 墨痕歌词：播放中且有词才上纸底；词卷展开时让位。纯装饰层 */}
+        {playing && wordsAvailable && !wordsOpen ? (
+          <GhostLayer aria-hidden='true'>
+            {epiPrev ? <GhostLine key={`ghost-prev-${lyricIdx}`}>{epiPrev.text}</GhostLine> : null}
+            {epiAct ? (
+              <GhostLine key={`ghost-act-${lyricIdx}`} $now>
+                {epiAct.text}
+              </GhostLine>
+            ) : null}
+          </GhostLayer>
+        ) : null}
+
         <CloseButton ref={closeRef} type='button' aria-label={t('player.panel.close')} onClick={togglePanel} tabIndex={state.isPanelOpen ? 0 : -1}>
           <IconX size={20} />
         </CloseButton>
 
-        <NowHeader>
-          <CoverHero $src={currentTrack?.coverUrl} aria-hidden='true' />
-          <TrackHeading>{currentTrack?.name ?? t('player.panel.waiting')}</TrackHeading>
-          <TrackArtist>{currentTrack?.artist ?? ' '}</TrackArtist>
-        </NowHeader>
+        <TopTools>
+          <WordsToggle
+            type='button'
+            aria-pressed={wordsOpen}
+            aria-label={t('player.panel.wordsToggle')}
+            title={t('player.panel.wordsToggle')}
+            style={
+              wordsOpen
+                ? ({
+                    color: 'var(--primary-color)',
+                    borderColor: 'color-mix(in oklab, var(--primary-color) 45%, transparent)',
+                  } as React.CSSProperties)
+                : undefined
+            }
+            onClick={() => {
+              setQueueOpen(false)
+              setVolOpen(false)
+              setWordsOpen((prev) => !prev)
+            }}
+          >
+            詞
+          </WordsToggle>
+          <DrawerButton
+            type='button'
+            aria-expanded={queueOpen}
+            aria-label={t('player.panel.queueDrawer')}
+            title={t('player.panel.queueDrawer')}
+            onClick={() => {
+              setWordsOpen(false)
+              setVolOpen(false)
+              setQueueOpen((prev) => !prev)
+            }}
+          >
+            <IconListMusic size={18} />
+          </DrawerButton>
+        </TopTools>
 
+        {/* 桌面舞台：装裱封面 + 题名手卷 + 界格笺题跋 */}
+        <NowStage>
+          <StageGlow aria-hidden='true' />
+          <PlateWrap>
+            <StageTab aria-hidden='true'>
+              {t('player.panel.plateNo', {
+                index: String((state.currentIndex ?? 0) + 1).padStart(2, '0'),
+                total: String(queue.length).padStart(2, '0')
+              })}
+            </StageTab>
+            <Plate>
+              <PlateArt $src={currentTrack?.coverUrl} aria-hidden='true' />
+            </Plate>
+          </PlateWrap>
+          <StageTitle ref={stageTitle.wrapperRef} $marquee={titleMarquee} title={stageName}>
+            <StageGhost ref={stageTitle.ghostRef} aria-hidden='true'>
+              {stageName}
+            </StageGhost>
+            {titleMarquee ? (
+              <StageTrack $playing={playing} $duration={titleDuration}>
+                <StageCopy>{stageName}</StageCopy>
+                <StageCopy aria-hidden='true'>{stageName}</StageCopy>
+              </StageTrack>
+            ) : (
+              stageName
+            )}
+          </StageTitle>
+          <StageArtist title={currentTrack?.artist ?? ''}>{currentTrack?.artist ?? ' '}</StageArtist>
+          <Epigraph>
+            {epiPrev ? <EpiRow>{epiPrev.text}</EpiRow> : null}
+            {epiAct ? <EpiRow $act>{epiAct.text}</EpiRow> : <EpiRow>{t('player.panel.noLyrics')}</EpiRow>}
+            {epiNext ? <EpiRow>{epiNext.text}</EpiRow> : null}
+          </Epigraph>
+        </NowStage>
+
+        {/* dock：進度 + 单行钮群（桌面/移动共用） */}
         <NowDock>
-          <ProgressWrapper>
-            <ProgressRow>
-              <TimeCode $now>{formatDuration(state.progress)}</TimeCode>
-              {/* progressPct 已是 0–100 百分数，直传即可——二次 ×100 会被钳到 100、光标钉死末端 */}
-              <Progress
-                value={progressPct}
-                onChange={(pct) => seek((pct / 100) * totalDuration)}
-                thumb
-                glyph={favorite ? '愛' : '樂'}
-                breathing={playing}
-                label={t('player.panel.progressLabel')}
-              />
-              <TimeCode>{formatDuration(totalDuration)}</TimeCode>
-            </ProgressRow>
-          </ProgressWrapper>
+          <ProgressRow>
+            <TimeCode $now>{formatDuration(state.progress)}</TimeCode>
+            {/* progressPct 已是 0–100 百分数，直传即可——二次 ×100 会被钳到 100、光标钉死末端（进度双重百分比教训） */}
+            <Progress
+              value={progressPct}
+              onChange={(pct) => seek((pct / 100) * totalDuration)}
+              thumb
+              glyph={favorite ? '愛' : '樂'}
+              breathing={playing}
+              label={t('player.panel.progressLabel')}
+            />
+            <TimeCode>{formatDuration(totalDuration)}</TimeCode>
+          </ProgressRow>
 
           <ControlRow>
+            <ModeButton
+              type='button'
+              aria-label={t('player.panel.modeDialLabel', { mode: t(MODE_LABEL_KEYS[state.mode]) })}
+              title={t('player.panel.modeDialLabel', { mode: t(MODE_LABEL_KEYS[state.mode]) })}
+              onClick={cycleMode}
+            >
+              <ModeIcon size={19} />
+            </ModeButton>
             <SkipButton type='button' aria-label={t('player.panel.previous')} onClick={playPrevious}>
               <IconSkipBack size={20} />
             </SkipButton>
@@ -1098,81 +1648,117 @@ export const AudioPlayerPanel = () => {
             <SkipButton type='button' aria-label={t('player.panel.next')} onClick={playNext}>
               <IconSkipForward size={20} />
             </SkipButton>
+            <VolWrap ref={volWrapRef}>
+              {volOpen ? (
+                <VolumePop>
+                  <VolumePopLabel>{t('player.panel.volumeLabel')}</VolumePopLabel>
+                  <VSlider
+                    role='slider'
+                    tabIndex={0}
+                    aria-label={t('player.panel.volumeLabel')}
+                    aria-orientation='vertical'
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={volumePct}
+                    onKeyDown={onVSliderKeyDown}
+                    onPointerDown={(event) => {
+                      event.currentTarget.setPointerCapture(event.pointerId)
+                      volumeFromPointer(event)
+                    }}
+                    onPointerMove={(event) => {
+                      if (event.buttons > 0) volumeFromPointer(event)
+                    }}
+                  >
+                    <VFill $fill={state.volume} />
+                    <VThumb $fill={state.volume} aria-hidden='true'>
+                      樂
+                    </VThumb>
+                  </VSlider>
+                  <VolumePct>{volumePct}</VolumePct>
+                </VolumePop>
+              ) : null}
+              <VolumeButton
+                type='button'
+                aria-label={t('player.panel.volumeLabel')}
+                aria-haspopup='true'
+                aria-expanded={volOpen}
+                title={t('player.panel.volumeLabel')}
+                onClick={() => setVolOpen((prev) => !prev)}
+              >
+                <IconVolume size={19} />
+              </VolumeButton>
+            </VolWrap>
           </ControlRow>
-
-          <DeckRow>
-            <ModeGroup role='group' aria-label={t('player.panel.modeGroup')}>
-              {(Object.keys(MODE_LABEL_KEYS) as PlayerMode[]).map((mode) => (
-                <ModeButton
-                  key={mode}
-                  type='button'
-                  style={
-                    state.mode === mode
-                      ? ({ '--mode-line': 'var(--primary-color)', '--mode-ink': 'var(--primary-color)' } as React.CSSProperties)
-                      : undefined
-                  }
-                  aria-pressed={state.mode === mode}
-                  onClick={() => setMode(mode)}
-                >
-                  {t(MODE_LABEL_KEYS[mode])}
-                </ModeButton>
-              ))}
-            </ModeGroup>
-
-            <VolumeRow>
-              <IconVolume size={16} aria-hidden='true' />
-              <VolumeBox>
-                <Progress
-                  value={state.volume * 100}
-                  onChange={(v) => setVolume(v / 100)}
-                  thumb
-                  label={t('player.panel.volumeLabel')}
-                />
-              </VolumeBox>
-            </VolumeRow>
-          </DeckRow>
         </NowDock>
 
-        <LyricsSection aria-label={t('player.panel.lyrics')}>
-          <SectionHeading>{t('player.panel.lyricsHeading')}</SectionHeading>
-          <LyricsScroll ref={scrollRef}>
-            <LyricBloom ref={lyricBloomRef} aria-hidden='true' />
-            {lyrics.length ? (
-              lyrics.map((line, index) => (
-                <LyricLine
+        {/* 词卷展开态（桌面）：题头小装裱 + 竖排朱丝栏词卷；点行跳播 */}
+        {wordsOpen ? (
+          <WordsView>
+            <WordsHead>
+              <WordsHeadPlate>
+                <WordsHeadArt $src={currentTrack?.coverUrl} aria-hidden='true' />
+              </WordsHeadPlate>
+              <div style={{ minWidth: 0 }}>
+                <WordsTitle title={stageName}>{stageName}</WordsTitle>
+                <WordsArtist>{currentTrack?.artist ?? ' '}</WordsArtist>
+              </div>
+            </WordsHead>
+            <WordsVerse ref={wordsVerseRef}>
+              {lyrics.map((line, index) => (
+                <WordsLine
                   key={`${line.time}-${index}`}
-                  data-lyric-index={index}
-                  $active={index === activeLyric}
-                  $near={Math.abs(index - activeLyric) === 1}
+                  data-words-index={index}
+                  $act={index === lyricIdx}
+                  onClick={() => seek(line.time)}
                 >
                   {line.text}
-                </LyricLine>
-              ))
-            ) : (
-              <LyricLine>{t('player.panel.noLyrics')}</LyricLine>
-            )}
-          </LyricsScroll>
-        </LyricsSection>
+                </WordsLine>
+              ))}
+            </WordsVerse>
+          </WordsView>
+        ) : null}
 
-        <QueueSection aria-label={t('player.panel.queue')}>
+        {/* 播放列表抽屉（桌面）：遮罩点击收回；显隐态行内样式驱动（免疫动态类竞态） */}
+        <DrawerScrim
+          aria-hidden='true'
+          tabIndex={-1}
+          style={
+            queueOpen
+              ? ({ opacity: 1, pointerEvents: 'auto', visibility: 'visible', transitionDelay: '0s' } as React.CSSProperties)
+              : undefined
+          }
+          onClick={() => setQueueOpen(false)}
+        />
+        <DrawerCard
+          role='group'
+          aria-label={t('player.panel.queueDrawer')}
+          aria-hidden={!queueOpen}
+          style={
+            queueOpen
+              ? ({ transform: 'none', visibility: 'visible', transitionDelay: '0s, 0s' } as React.CSSProperties)
+              : undefined
+          }
+        >
           <SectionHeading>
             <IconListMusic size={13} aria-hidden='true' /> {t('player.panel.queue')}
           </SectionHeading>
-          <QueueList ref={desktopQueueRef}>
+          <QueueList ref={drawerListRef} aria-hidden={!queueOpen}>
             {queue.map((track, index) => (
               <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
-                <QueueButton type='button' onClick={() => playTrack(track.id)}>
+                <QueueButton type='button' tabIndex={queueOpen ? 0 : -1} onClick={() => playTrack(track.id)}>
                   <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
-                  <QueueName $active={track.id === currentTrack?.id}>{track.name}</QueueName>
+                  <QueueName $active={track.id === currentTrack?.id} title={track.name}>
+                    {track.name}
+                  </QueueName>
                   <QueueMeta>
-                    <span>{track.artist}</span>
+                    <QueueArtist title={track.artist}>{track.artist}</QueueArtist>
                     <span>{formatDuration(track.duration ?? 0)}</span>
                   </QueueMeta>
                 </QueueButton>
               </QueueItem>
             ))}
           </QueueList>
-        </QueueSection>
+        </DrawerCard>
 
         {/* 移动端册页：词页（装裱图版 + 短词窗）横翻目次对页；页缘钮为键盘/读屏等价路径 */}
         <GrabHandle
@@ -1184,22 +1770,22 @@ export const AudioPlayerPanel = () => {
         />
         <LeafPages ref={pagesRef} onScroll={handlePagesScroll} aria-label={t('player.panel.pagesAria')}>
           <LeafPage aria-label={t('player.panel.wordsPage')} aria-hidden={mobilePage !== 'words'} inert={mobilePage !== 'words'}>
-            <Plate
+            <LeafPlate
               data-testid='panel-plate'
               onTouchStart={onDragTouchStart}
               onTouchMove={onDragTouchMove}
               onTouchEnd={onDragTouchEnd}
             >
-              <PlateArt $src={currentTrack?.coverUrl} aria-hidden='true' />
+              <LeafPlateArt $src={currentTrack?.coverUrl} aria-hidden='true' />
               <PlateNo>
                 {t('player.panel.plateNo', {
                   index: String((state.currentIndex ?? 0) + 1).padStart(2, '0'),
                   total: String(queue.length).padStart(2, '0')
                 })}
               </PlateNo>
-            </Plate>
-            <LeafTitle>{currentTrack?.name ?? t('player.panel.waiting')}</LeafTitle>
-            <LeafArtist>{currentTrack?.artist ?? ' '}</LeafArtist>
+            </LeafPlate>
+            <LeafTitle title={stageName}>{stageName}</LeafTitle>
+            <LeafArtist title={currentTrack?.artist ?? ''}>{currentTrack?.artist ?? ' '}</LeafArtist>
             <WordWindow ref={mobileLyricsRef}>
               <WordBloom ref={mobileBloomRef} aria-hidden='true' />
               {lyrics.length ? (
@@ -1229,9 +1815,11 @@ export const AudioPlayerPanel = () => {
                 <QueueItem key={track.id} $active={track.id === currentTrack?.id} data-active={track.id === currentTrack?.id}>
                   <QueueButton type='button' onClick={() => playTrack(track.id)}>
                     <QueueNo $active={track.id === currentTrack?.id}>{String(index + 1).padStart(2, '0')}</QueueNo>
-                    <QueueName $active={track.id === currentTrack?.id}>{track.name}</QueueName>
+                    <QueueName $active={track.id === currentTrack?.id} title={track.name}>
+                      {track.name}
+                    </QueueName>
                     <QueueMeta>
-                      <span>{track.artist}</span>
+                      <QueueArtist title={track.artist}>{track.artist}</QueueArtist>
                       <span>{formatDuration(track.duration ?? 0)}</span>
                     </QueueMeta>
                   </QueueButton>

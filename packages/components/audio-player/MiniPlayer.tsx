@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
@@ -18,13 +18,10 @@ import {
   IconSkipBack,
   IconSkipForward
 } from '@wuh.site/components/icons'
+import { MARQUEE_GAP_PX, marquee, useMarqueeOverflow } from './useMarquee'
 
 const COLLAPSE_STORAGE_KEY = 'audio-mini-player-collapsed'
 const CARD_HEIGHT = '96px'
-
-/* 跑马灯：恒速换算时长（文本宽 + 间隔）/ 速度；首尾各留 10% 时长的停顿 */
-const MARQUEE_GAP_PX = 48
-const MARQUEE_SPEED_PX_PER_S = 30
 
 const HAIRLINE = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 const INK_MUTED = 'color-mix(in oklab, var(--text-color) 72%, transparent)'
@@ -51,12 +48,6 @@ const equalize = keyframes`
 const ripple = keyframes`
   from { transform: scale(1); opacity: 0.55; }
   to { transform: scale(1.55); opacity: 0; }
-`
-
-/* 0→-50% 无缝循环：每份拷贝自带右侧间隔，平移半轨即回到视觉起点 */
-const marquee = keyframes`
-  0%, 10% { transform: translateX(0); }
-  90%, 100% { transform: translateX(-50%); }
 `
 
 /* ===== 展开态：桌面 dock 卡 / 移动端全宽底栏 ===== */
@@ -509,34 +500,7 @@ const PanelButton = styled(IconButton)`
   }
 `
 
-/* 标题溢出测量：元素级 ResizeObserver（wrapper 视口宽 + ghost 自然宽），
-   曲目名变化即重测；不引入全局 scroll/resize 监听器 */
-const useTitleOverflow = (title: string) => {
-  const wrapperRef = useRef<HTMLSpanElement | null>(null)
-  const ghostRef = useRef<HTMLSpanElement | null>(null)
-  const [metrics, setMetrics] = useState({ text: 0, visible: 0 })
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current
-    const ghost = ghostRef.current
-    if (!wrapper || !ghost || typeof ResizeObserver === 'undefined') return
-
-    const measure = () => {
-      setMetrics((prev) => {
-        const next = { text: ghost.offsetWidth, visible: wrapper.clientWidth }
-        return prev.text === next.text && prev.visible === next.visible ? prev : next
-      })
-    }
-
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(wrapper)
-    observer.observe(ghost)
-    return () => observer.disconnect()
-  }, [title])
-
-  return { wrapperRef, ghostRef, metrics }
-}
+/* 标题溢出测量与滚动轨道由 useMarquee 共享基建承担（./useMarquee） */
 
 export const AudioMiniPlayer = () => {
   const { t } = useLocale()
@@ -556,7 +520,7 @@ export const AudioMiniPlayer = () => {
 
   const toggleCollapsed = () => setCollapsed((prev) => !prev)
   const name = currentTrack?.name ?? t('player.mini.waiting')
-  const { wrapperRef, ghostRef, metrics } = useTitleOverflow(name)
+  const { wrapperRef, ghostRef, metrics } = useMarqueeOverflow(name)
   const marqueeActive = metrics.visible > 0 && metrics.text > metrics.visible
   const marqueeDuration = `${(metrics.text + MARQUEE_GAP_PX) / MARQUEE_SPEED_PX_PER_S}s`
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0)
@@ -575,7 +539,7 @@ export const AudioMiniPlayer = () => {
           </Cover>
           <MetaCopy>
             <TitleRow>
-              <Title $marquee={marqueeActive} ref={wrapperRef}>
+              <Title $marquee={marqueeActive} ref={wrapperRef} title={name}>
                 <TitleGhost ref={ghostRef} aria-hidden='true'>{name}</TitleGhost>
                 {marqueeActive ? (
                   <TitleTrack $playing={playing} $duration={marqueeDuration}>
@@ -596,7 +560,7 @@ export const AudioMiniPlayer = () => {
             {state.error ? (
               <Notice role='status'>{state.error}</Notice>
             ) : (
-              <Artist>{currentTrack?.artist ?? t('player.mini.loadingDefault')}</Artist>
+              <Artist title={currentTrack?.artist ?? ''}>{currentTrack?.artist ?? t('player.mini.loadingDefault')}</Artist>
             )}
           </MetaCopy>
         </OpenPanelButton>
