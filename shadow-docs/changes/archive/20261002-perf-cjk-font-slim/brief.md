@@ -4,7 +4,7 @@
   "name": "20261002-perf-cjk-font-slim",
   "type": "build",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "build/20261002-perf-cjk-font-slim",
   "files": [
@@ -18,18 +18,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 465,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/465",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 466,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/466"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "36ebfd727d26b57d54540eac59469c4318fdb937",
-    "verifiedAt": "2026-10-02T02:19:20.889Z"
+    "verifiedCommit": "801d5ba98eb418d67e8dbb2bbca80760b2d40b89",
+    "verifiedAt": "2026-10-02T02:38:55.832Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:465",
-    "planHash": "0908c44465ca5c8b644fc96f2ec25cf8f463ad6e51ab10f209f0da124d1c874e",
+    "checkpoint": "merged-pr:466",
+    "planHash": "be371d5eb4369b7d7f8c0dfc6ffe7c8696bdb7c05bb66c1f1d22b4d2c35c6f7b",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -59,7 +59,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/first-load-performance.md",
-    "reason": "实现与 brief 稳健档一致：cjk.css 删 Sans 700 face（-408KB）、layout.tsx 两条首屏字重真 preload（woff2 静态 import，本地 Turbopack 编译成功实证）、FontPrefetch 清理+注释、types/fonts.d.ts 声明、知识卡同步。契约 3/3 红转绿；tsc/oxlint 0 错；18 挂存量同批。本地 next build 处 SGN-001 密集期（4 连败），CI build-next 为权威门禁；runtime 部署后生产复测 preload/CSS/体积/印章无回归"
+    "reason": "归档前在 main HEAD 重签：生产已验证（v1.4.56 部署后 preload×2、CSS 零 Sans700 引用、bundle 哈希证实新产物、首屏字体传输 986KB），知识卡字重交付面+preload 约束已更新；同窗口生产 502 事故由本部署 force-recreate 自愈，事故记录已入 brief"
   }
 }
 ---
@@ -113,7 +113,11 @@
   - task-6（PR body 回填）时序原因在 review 前勾结
   - `files/NotoSansSC-700.woff2` 物理文件保留（扩集脚本产物），CSS 不引用即不进构建产物
 - 部署后复测清单（https://wuh.site）: 首页 HTML 含 2 条 `<link rel=preload as=font>`（Serif/Sans 400）；CSS bundle 无 NotoSansSC-700 引用；`/post/165` 标题与印章（Serif 700）渲染不变
-- 交付发布: 待 PR 合并后按 build-config.md 发布流程执行
+- 交付发布:
+  - PR #466 已合并 main（squash commit `7c3c9c8`，本会话代合并）
+  - GitHub Release **[v1.4.56](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.56)** 触发 CI-CD run 36955150455 **全绿**（build-next/nest → staging-test → switch-traffic 2026-10-02T02:37Z）
+  - **生产复测（https://wuh.site，部署后实测）**: ① 首页 HTML 含 2 条 font preload（Serif/Sans 400 哈希 URL + crossorigin）✅；② CSS bundle 无 NotoSansSC-700 引用（5 面：mono×2/Sans400/Serif400/Serif700），bundle 哈希变化证实新产物上车 ✅；③ 首屏字体传输 1989KB→首屏两文件实测 986KB（Serif700 延迟预热按需）
+- 生产事故记录（同窗口）: 部署前发现全站 502（本机+runner 双视点真实），时间线：23:26Z RSS 复测时全站 200 → 无 switch 动作的窗口内旧 prod next 容器夜间死亡。已排除磁盘满（手动 disk-clean 实测 23G 可用、SSH 通道正常）与部署切换事故；根因无服务器侧日志不可考（疑 OOM/运行时崩溃）。**v1.4.56 的 switch-traffic force-recreate 即恢复动作**，切换后 6 路由全 200。教训：deploy-docker.sh 有 diagnose 能力但 server-diagnose.yml 探针写死 x.wuh.site（设计站）对主站无效——待另开小 change 泛化诊断工作流
 
 ## 知识评估
 - **预期影响:** 更新
