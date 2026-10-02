@@ -17,6 +17,7 @@ source:
   - changes/20260930-style-player-favorite-ai-seal/brief.md
   - changes/20261001-perf-remove-streaming-skeletons/brief.md
   - changes/20261001-fix-post-cover-sizes/brief.md
+  - changes/20261002-perf-cjk-font-slim/brief.md
 status: active
 verified: 2026-10-01
 verified-depth: runtime
@@ -38,6 +39,8 @@ verified-scope: CJK 子集假名扩集——四款 woff2 从 Noto CJK 全量源�
 首页 hydration 边界：styled-components 6.4 组件可在 RSC server component 中直接渲染（样式经 StyledComponentsRegistry 收集，验证通过）。首页为 Server Component，纯展示区块（Hero/时间线/年度总结/分隔线）不参与客户端水合；交互部分（社交链接/联系弹窗/书架/项目刷新/打字机）为独立 client 叶子。Lighthouse 4x CPU 模拟下 TBT 从 2020ms 降至 1030ms（减半）。
 
 详情页首屏载荷边界（2026-09-06）：`/post/[number]` 为动态路由（数据 fetch 有 revalidate 缓存），**不得加 loading.tsx 骨架**——loading 边界使路由进入流式形态，缓存命中也先 flush 灰骨架再由脚本交换真容，HTML 涨至 181KB 且骨架成为 FCP 元素；撤销后单帧 70KB、内联 CSS 39KB。
+
+CJK 字重交付面（2026-10-02 瘦身第一步）：**Sans 700 已下架**——UI 粗体由 400 合成加粗承担（−408KB，四款 CJK 1989KB→1583KB）；**Serif 700 保留**供文章标题/TOC/朱砂印章的真实粗体字形，任何印面字形仍须过 expand_cjk_fonts.py。首屏必需字重（Serif/Sans 400）由 `app/layout.tsx` 以 `<link rel=preload as=font crossOrigin>` 在 HTML 解析期发现（woff2 静态 import 取哈希 URL）；**新增首屏字重必须同步该 preload 清单**，仅靠 cjk.css 会被 CSS 解析拖后、FontPrefetch 的 idle load 更晚。
 
 图片优先级与尺寸（2026-10-01，Next 16 实证）：**priority 与 fetchPriority 已解耦**——next@16.3.2 的 `priority` 只映射 preload link 与禁 lazy，img 元素上的 `fetchpriority="high"` 需显式传 `fetchPriority` prop（组件库 Image 已内置 priority→high 映射）。**fill 模式必须显式传 sizes**，缺省回落 `100vw` 会按视口宽选 srcSet 档（1440 视口选 1920w），PostCover 实测渲染 526px 超需 3.6 倍；sizes 按「网格断点前 100vw、断点后定宽」写（参照 post 双栏 526px 案例）。
 

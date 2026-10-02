@@ -6,6 +6,8 @@ import AppProviders from './components/AppProviders'
 import FontPrefetch from './components/FontPrefetch'
 import JsonLd from './components/JsonLd'
 import { createSiteStructuredData } from './lib/structured-data'
+import serifWoff2 from './fonts/files/NotoSerifSC-400.woff2'
+import sansWoff2 from './fonts/files/NotoSansSC-400.woff2'
 import './fonts/cjk.css'
 
 // CJK 字体（Noto Sans/Serif SC）改由 ./fonts/cjk.css 经构建管线接入
@@ -108,6 +110,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${jetbrainsMono.variable}`}>
+      {/* 首屏必需字重（Serif/Sans 400）在 HTML 解析期即被发现——
+          等价信息经 CSS 解析才触达会拖慢换装（FontPrefetch 的 idle load 更晚） */}
+      <link rel='preload' href={serifWoff2} as='font' type='font/woff2' crossOrigin='anonymous' />
+      <link rel='preload' href={sansWoff2} as='font' type='font/woff2' crossOrigin='anonymous' />
       <JsonLd data={createSiteStructuredData()} />
       <FontPrefetch />
       <AppProviders>{children}</AppProviders>
