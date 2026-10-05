@@ -3,9 +3,11 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
+import { readPanelSource } from './panel-sources.mjs'
 
 const componentDir = dirname(fileURLToPath(import.meta.url))
-const src = await readFile(resolve(componentDir, 'PlayerPanel.tsx'), 'utf8')
+// 20261005 拆分定稿：面板源码按 panel-sources.mjs 规范顺序拼接——indexOf 声明名切片语义不变
+const src = readPanelSource()
 const specsSrc = await readFile(resolve(componentDir, 'specs.tsx'), 'utf8')
 
 test('晕染纸底配方：模糊色场 + 纸色罩 + 词卷局部纸罩 + 暗色反转', () => {
