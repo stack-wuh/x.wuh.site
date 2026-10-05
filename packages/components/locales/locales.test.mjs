@@ -156,7 +156,8 @@ test('AppearanceOptions 语言三选平铺（中｜英｜日，aria-pressed 直�
 
 test('词典空闲预取：requestIdleCallback 回退 setTimeout，双语言槽，失败静默回落', () => {
   assert.match(indexSource, /export function preloadDictionaries/)
-  assert.match(indexSource, /loader\(\)\.catch\(\(\) => \{\}\)/)
+  // 预取必须经单一入口：只热 webpack 模块缓存不等于「可渲染」，词典要落进缓存槽
+  assert.match(indexSource, /ensureDict\(target\)\.catch\(\(\) => \{\}\)/)
   assert.match(indexSource, /window\.requestIdleCallback\(\(\) => cb\(\), \{ timeout: 3000 \}\)/)
   assert.match(indexSource, /window\.setTimeout\(cb, 1500\)/)
 })
@@ -165,4 +166,53 @@ test('词典 zh/en/ja 均为可类型剥离的纯对象模块（node 直读无�
   for (const [label, dict] of [['zh', zh], ['en', en], ['ja', ja]]) {
     assert.equal(typeof dict, 'object', `${label} default 导出必须是对象`)
   }
+})
+
+// 20261005-fix-locale-switch-realtime：切语言非实时的两条根因各钉一枚守卫
+test('词典必须是渲染输入：存 state 且 t 依赖含 dicts，ref+版本号自增的通知机制退役', () => {
+  // 反 bail out：词典不得藏在 ref 里，也不得靠「不进 context value 的版本号自增」来通知
+  assert.doesNotMatch(indexSource, /dictsRef/)
+  assert.doesNotMatch(indexSource, /bumpDictVersion|setDictVersion/)
+  assert.doesNotMatch(indexSource, /loadingRef/)
+  // 词典快照进 state，t 读 state 且依赖含 dicts —— 入库必然改变 context identity
+  assert.match(indexSource, /useState<TranslateDicts>\(\{ zh \}\)/)
+  assert.match(indexSource, /translate\(dicts, locale, key, params\)/)
+  assert.match(indexSource, /\[dicts, locale\]/)
+})
+
+test('切语言就绪门控：ensureDict 到位后才成套提交 locale/lang/localStorage，连点取最新值', () => {
+  // 单一入口 + 模块级缓存 + in-flight 去重
+  assert.match(indexSource, /function ensureDict\(target: Locale\): Promise<void>/)
+  assert.match(indexSource, /dictCache\[slot\]/)
+  assert.match(indexSource, /dictPending\.get\(slot\)/)
+  // 挂载路径同样经门控（不得「先 setLocaleState 后 loadDict」）
+  assert.match(indexSource, /ensureDict\(stored\)/)
+
+  const setLocaleBody = indexSource.slice(
+    indexSource.indexOf('const setLocale = useCallback'),
+    indexSource.indexOf('const t = useCallback'),
+  )
+  assert.ok(setLocaleBody.length > 0, '未找到 setLocale 实现')
+  assert.match(setLocaleBody, /ensureDict\(next\)/)
+  assert.ok(
+    setLocaleBody.indexOf('ensureDict') < setLocaleBody.indexOf('commitLocale'),
+    'setLocale 必须先等词典就绪（ensureDict）再提交（commitLocale），否则点击首帧必读空槽回落中文',
+  )
+  // 提交只许发生在 commitLocale 内，setLocale 里不得出现裸的 setLocaleState
+  assert.doesNotMatch(setLocaleBody, /setLocaleState\(next\)/)
+  // 连点语言取最新值
+  assert.match(setLocaleBody, /requestIdRef\.current/)
+  // 词典加载失败仍提交：按既有回落链走中文，不吞用户意图
+  assert.match(setLocaleBody, /\.catch\(\(\) => \{\}\)/)
+
+  const commitBody = indexSource.slice(
+    indexSource.indexOf('const commitLocale'),
+    indexSource.indexOf('const setLocale'),
+  )
+  assert.ok(commitBody.length > 0, '未找到 commitLocale 实现')
+  // 文案、<html lang>、持久化、词典快照同一批落地，禁止「按钮已切、文案未切」的半更新帧
+  assert.match(commitBody, /setDicts\(\{ \.\.\.dictCache \}\)/)
+  assert.match(commitBody, /setLocaleState\(next\)/)
+  assert.match(commitBody, /applyDocumentLang\(next\)/)
+  assert.match(commitBody, /LOCALE_STORAGE_KEY/)
 })
