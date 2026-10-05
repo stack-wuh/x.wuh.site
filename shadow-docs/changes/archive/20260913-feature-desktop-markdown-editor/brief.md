@@ -4,7 +4,7 @@
   "name": "20260913-feature-desktop-markdown-editor",
   "type": "feature",
   "scope": "apps/desktop",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260913-feature-desktop-markdown-editor",
   "files": [
@@ -19,16 +19,17 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ad965faec36886892fe934ce4ffc44386c1fced3",
-    "verifiedAt": "2026-09-14T16:04:36.372Z"
+    "verifiedCommit": "19c5e4d3d6af45574bc882763fa5de8f08b5efd7",
+    "verifiedAt": "2026-10-05T10:40:26.796Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:380",
-    "planHash": null,
+    "checkpoint": "merged-pr:380",
+    "planHash": "efcaada94d2a541472d4c3beaf928fdda7d4996cebdae406888c36eec121e41b",
     "updatedAt": null,
     "lastError": null
-  }
+  },
+  "knowledge": null
 }
 ---
 
