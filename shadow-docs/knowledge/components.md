@@ -17,9 +17,10 @@ source:
   - changes/20260928-style-player-responsive-redesign/brief.md
   - changes/20260929-style-player-collapse-ear/brief.md
   - changes/20260930-feature-progress-component/brief.md
-verified: 2026-09-30
+  - changes/20261005-refactor-player-split/brief.md
+verified: 2026-10-05
 verified-depth: runtime
-verified-scope: AudioPlayer 书耳收起交互——四主题（wine/plain × light/dark）展开/收起双态截图、耳页接缝特写、往返点击与 `matches(':hover')` 计算样式（观察点见 change 交付记录）；20260930-feature-progress-component：Progress 守卫 7/7 + audio-player 全门禁 36/36 + tsc/oxlint 干净 + 四主题试墨截图（wine/plain × light/dark 全态）+ 交互链路原生步进 47→55（填充 matrix 与印面 left 同步跟随）+ a11y 快照（slider×2 / progressbar）+ MiniPlayer sm 上屏实证；其余段落沿承各自变更时的既有验证。
+verified-scope: AudioPlayer 书耳收起交互——四主题（wine/plain × light/dark）展开/收起双态截图、耳页接缝特写、往返点击与 `matches(':hover')` 计算样式（观察点见 change 交付记录）；20260930-feature-progress-component：Progress 守卫 7/7 + audio-player 全门禁 36/36 + tsc/oxlint 干净 + 四主题试墨截图（wine/plain × light/dark 全态）+ 交互链路原生步进 47→55（填充 matrix 与印面 left 同步跟随）+ a11y 快照（slider×2 / progressbar）+ MiniPlayer sm 上屏实证；20261005-refactor-player-split（拆分段落，unit 深度）：域守卫逐文件全绿 provider 6/6 + style 19/19 + player-panel 22/22 + mini-player 8/8 + typecheck 1/1 + 站点 wiring 10/10 + 根 tsc exit 0 + oxlint 25 文件 0/0 + `next build` exit 0（14/14 页）；行为零变化三重证据=声明普查 100+35 条无丢失无重复 / JSX 元素多重集与拆分前一致（唯一差异为 QueueRows 两处队列行去重，属预期）/ indexOf 锚点切片语义经 panel-sources 拼接保持；runtime 目检按惯例移至部署后生产复验；其余段落沿承各自变更时的既有验证。
 ---
 
 # 组件包
@@ -42,9 +43,12 @@ AudioPlayer（`@wuh.site/components/audio-player`）的降级语义：曲目拿�
 
 AudioPlayer 响应式与视觉（20260928-style-player-responsive-redesign 起）：全组件纸墨语言——颜色只走主题 token、断点只用 `BREAKPOINTS`、图标用 `@wuh.site/components/icons` 播放族具名导出（禁裸字符与散落 SVG）。MiniPlayer 桌面为纸卡 dock + 右缘书耳（20260929-style-player-collapse-ear 起：展开耳必须是 MiniCard **子元素**——absolute 右缘垂直居中 24×44、三边发丝线、左边借卡片边框并以不透明纸面盖住身后段，命中区经 `::before` 外扩；收起耳为屏幕左缘 fixed 小耳 28×48、与展开耳同一水平线；独立 fixed 元素靠坐标拼合必然产生「两张纸」拼贴缝，禁止回退）、移动端为全宽底栏（`safe-area-inset-bottom`、触摸目标 ≥44px），收起态桌面为左缘小耳、移动端为朱砂「音」印章钮，开合只做 opacity/transform/visibility 过渡；PlayerPanel 桌面形态（20260928 三栏纸卡弹层起，20261001 起**留白独奏**居中单焦点舞台替代——见 music-player.md 播放面板桌面形态段：晕染配方/词卷/抽屉/音量 popover/墨痕歌词/单行钮群）、移动端为全屏沉浸册页（词页/目次横翻），面板 z 层（backdrop 2600 / panel 2610）必须高于迷你条（2500）；面板背景为封面晕染纸底（blur 64 色场 + 纸色罩 72%，20260929 起，原图水印层已退役），无封面回退素纸；Escape 关闭、焦点移入/移回、`prefers-reduced-motion` 降级、`role='dialog'` + `aria-modal`；显隐态组件（词卷开关/抽屉/遮罩）与选中态一律行内样式/行内自定义属性驱动（选择器与动态类驱动在生产行为表上两连败，禁入）。以上纪律由同目录 `style.test.mjs` 门禁固化：禁裸十六进制色、禁裸断点数值、禁 `--text-secondary`、transition 禁布局属性、断言 aria-label / `prefers-reduced-motion` / `role='status'` / Escape / safe-area / 跑马灯同源 / 模式钮 icon-only / popover aria / 墨痕 aria-hidden / 显隐行内样式在场——改播放器样式先保此测试绿。
 
+**AudioPlayer 文件布局（20261005 拆分定稿，行为零变化纯结构拆分）**：对标 ImagePreview 先例「主组件 ≤500 行」——PlayerPanel.tsx 2089→467 行（只留 refs/state/effects/Escape 分层/滚动锁/词卷跟随 + JSX 骨架），MiniPlayer.tsx 634→178 行。面板样式按区块拆至 `panel/styles/`（tokens/shell/ghost/stage/dock/words/queue/mobile 八模块，模块间依赖单向：区块 → tokens），MiniPlayer 样式至 `mini/styles.tsx`；三个自包含叶子组件 `panel/PanelVolume`（音量 popover 开合/拖拽/键盘内聚，volOpen 态仍由面板持有）、`panel/PanelQueue`（遮罩 + 翻页屏，含共用 `QueueRows`）、`panel/PanelMobile`（册页态 mobilePage/拖拽手势/词窗跟随内聚；dragY 面板壳位移态留主文件经 props 接线）。守卫读取纪律：面板源码经 `panel-sources.mjs` 的 `PANEL_SOURCES` **规范顺序**（tokens→…→mobile→PlayerPanel→PanelVolume→PanelQueue→PanelMobile）拼接读取，既有 indexOf 声明名切片语义不变——清单顺序 = 原单文件声明顺序，由「拆分纪律」守卫钉死禁重排；禁裸 hex/断点/令牌完整性等全文件断言升级为逐文件遍历。**拆分铁律**：叶子组件 props 沿用原标识符名（volOpen/queueOpen/foldLatch 等），行为不变重构的 effect 依赖数组必须与原形同构（传稳定 setState 而非每次 render 新箭头）；跨列表/跨区块的程序化定位 effect 可按可见性拆分到各自组件（依赖收窄到自身可见列表等价）。
+
 ## 执行约束
 
 - 消费者使用 `@wuh.site/components/<name>` 子路径；Image 外轮廓由 Wrapper 单点负责，预览组件保持职责拆分。
+- audio-player 主组件文件（PlayerPanel/MiniPlayer）≤500 行由守卫钉死；触碰面板源码守卫测试须按 `panel-sources.mjs` 规范顺序读取（清单重排 = 锚点失效 = 红）。
 
 ## 适用边界
 

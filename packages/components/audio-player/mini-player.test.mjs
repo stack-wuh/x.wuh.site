@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
 const componentDir = dirname(fileURLToPath(import.meta.url))
-const miniPlayerSource = await readFile(resolve(componentDir, 'MiniPlayer.tsx'), 'utf8')
+// 20261005 拆分定稿：迷你播放器样式拆至 mini/styles.tsx——守卫读拼接源，语义与拆分前单文件等价
+const miniPlayerSource = [(await readFile(resolve(componentDir, 'mini/styles.tsx'), 'utf8')), (await readFile(resolve(componentDir, 'MiniPlayer.tsx'), 'utf8'))].join('\n')
 const marqueeSource = await readFile(resolve(componentDir, 'useMarquee.ts'), 'utf8')
 
 test('标题溢出测量走共享 useMarquee 量尺（ResizeObserver 单点实现）', () => {

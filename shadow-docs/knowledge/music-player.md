@@ -38,6 +38,7 @@ source:
   - changes/20261002-fix-player-queue-fold-hotfix/brief.md
   - changes/archive/20261002-style-player-ghost-depth/brief.md
   - changes/archive/20261002-style-player-cover-disc/brief.md
+  - changes/20261005-refactor-player-split/brief.md
 verified: 2026-10-05
 verified-depth: unit
 verified-scope: audio-player 守卫 47/47（含 20261001 新守卫 7 条：跑马灯三处同源/模式钮 icon-only/音量 popover aria/墨痕 aria-hidden/QueueArtist 限宽/[lang=en] 钩子/显隐组件行内样式免疫，并并归 favorite-ai-seal 与 lyric-scroll-bleed 两套守卫）+ locales 词典 13/13 + wiring 10/10 + 根 tsc 净 + oxlint 0/0 + 生产构建通过 + 实现走查（与 favorite-ai-seal 的 merge 冲突语义并档：overflow: clip、禁 scrollIntoView、最愛印 glyph 三元、Track.playCount 全部移植进留白独奏重写版）；runtime 目检（四主题×三语×关键态）移至部署后生产复验（v1.4.43 先例），历史 runtime 结论沿承各变更验证记录。20260930-fix-panel-lyric-scroll-bleed：弹层定位纪律 runtime 验证（audio-player 守卫 40/40 含全文件禁 scrollIntoView 与 overflow: clip ≥2 守卫、根 tsc 净、oxlint 0 errors；mock 后端本地复现——面板壳 scrollTop/scrollLeft 全程恒 0 且 118px 隐藏可滚溢出不可达、歌词内滚深居中 scrollTop 1589 正常、队列当前项对齐、明暗双主题截图无底带无眉标裁切）。20260930-style-player-favorite-ai-seal：最爱换印 runtime 验证（audio-player 守卫 40/40 含最爱口径/印面三元/音量无 glyph/Track.playCount 契约守卫、根 tsc 净、oxlint 0 errors、build:next 绿；mock 数据本地实测——最爱曲进度印=愛、音量印=樂、印面 fontFamily=Noto Serif SC，playCount 经队列流入面板；非最爱探针受本地 dev 水合断树阻塞未跑通，由守卫钉死的三元表达式 + Progress 既有默认樂覆盖，部署后生产可即时目检）。
@@ -94,6 +95,7 @@ verified-scope: audio-player 守卫 47/47（含 20261001 新守卫 7 条：跑�
 - 队列翻页屏守卫（20261001 定稿）：preserve-3d 透传在场、`FOLD_REST_ANGLE='-40deg'`/`FOLD_WIDTH_PX=340` 常量钉死、离场 160ms 宽限在场、`(hover:hover) and (pointer:fine)` 门控在场、dock/工具组 `z-index: 9` ≥3 处；motion 令牌引用完整性断言（引用 ∉ 站点注入五令牌 = 红）——两条静默失效（3D 退化平面、transition 回退 0s）都无报错，只能靠守卫拦。
 - 墨痕五列两翼守卫（20261002 定稿）：GhostLine transform 内 `perspective(1000px)` 投影函数在场、GhostLayer 禁 `transform-style: preserve-3d`（overflow: hidden 属 grouping 属性会使其静默失效——铁律②变体，原型帧实测 translateZ 全程压扁）、`GHOST_STATIONS` 五站锚点/`GHOST_LIFT=150px` 常量钉死、换句 key 按「站+句索引」重挂载断言、reduced-motion 局部降级在场。
 - 封面碟化守卫（20261002 定稿）：碟面 `border-radius: 50%` + `repeating-radial-gradient` 纹刻在场、碟心圆标/轴点结构在场、`discSpin` 动画与 `animation-play-state` 由 `$playing` 驱动断言（播放随转/暂停冻结，冻结即不复位）、reduced-motion 降级在场；碟径沿用舞台预算三档帽（唯一因变量关系不破坏），移动册页 `LeafPlateArt` 自持方形、禁继承桌面碟形态。
+- 拆分守卫读取纪律（20261005 拆分定稿）：PlayerPanel.tsx/MiniPlayer.tsx ≤500 行由「拆分纪律」守卫钉死；面板守卫源码经 `panel-sources.mjs` PANEL_SOURCES 规范顺序拼接读取——清单顺序 = 拆分前单文件声明顺序，重排即锚点失效；叶子组件 props 沿用原标识符（volOpen/queueOpen/foldLatch），effect 依赖数组与原形同构。详见 components.md「AudioPlayer 文件布局」。
 
 ## 适用边界
 
