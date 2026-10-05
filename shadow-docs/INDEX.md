@@ -36,7 +36,7 @@
 | 20260906-style-post-header-seal-tag | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-header-seal-tag/brief.md |
 | 20260913-feature-desktop-markdown-editor | ✅ 完成 | shadow-docs/changes/archive/20260913-feature-desktop-markdown-editor/brief.md |
 | 20260914-fix-footer-type-scale | ✅ 完成 | shadow-docs/changes/archive/20260914-fix-footer-type-scale/brief.md |
-| 20260914-style-desktop-ui-redesign | published | shadow-docs/changes/20260914-style-desktop-ui-redesign/brief.md |
+| 20260914-style-desktop-ui-redesign | reviewed | shadow-docs/changes/20260914-style-desktop-ui-redesign/brief.md |
 | 20260914-style-footer-compact | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-compact/brief.md |
 | 20260914-style-footer-ornament | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-ornament/brief.md |
 | 20260915-feature-desktop-plugin-system | ✅ 完成 | shadow-docs/changes/archive/20260915-feature-desktop-plugin-system/brief.md |
@@ -55,7 +55,7 @@
 | 20260929-style-music-chronicle | ✅ 完成 | shadow-docs/changes/archive/20260929-style-music-chronicle/brief.md |
 | 20260929-style-music-interaction-polish | ✅ 完成 | shadow-docs/changes/archive/20260929-style-music-interaction-polish/brief.md |
 | 20260929-style-player-collapse-ear | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-collapse-ear/brief.md |
-| 20260929-style-player-panel-inkwash | reviewed | shadow-docs/changes/20260929-style-player-panel-inkwash/brief.md |
+| 20260929-style-player-panel-inkwash | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-panel-inkwash/brief.md |
 | 20260930-feature-player-dock-progress-seal | reviewed | shadow-docs/changes/20260930-feature-player-dock-progress-seal/brief.md |
 | 20260930-feature-player-length-adaptive | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-player-length-adaptive/brief.md |
 | 20260930-feature-progress-component | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-progress-component/brief.md |

@@ -4,7 +4,7 @@
   "name": "20260929-style-player-panel-inkwash",
   "type": "style",
   "scope": "music-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260929-style-player-panel-inkwash",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 414,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/414",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 415,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/415"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "8fd57f428dc3be4f65a06a15640145b8dfcc32d1",
-    "verifiedAt": "2026-09-29T15:23:41.521Z"
+    "verifiedCommit": "c9709dc2a144e8f0a57c8b921fd5f1b416a77bf0",
+    "verifiedAt": "2026-10-05T10:40:33.661Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:414",
-    "planHash": "8036ec1d554d1824478aa1e95faf5f28e422a9994d9e9692cd30cb58740a58d3",
+    "checkpoint": "merged-pr:415",
+    "planHash": "6719443c2e7ea5a4ff2e796a3648b2d096fd2569dea52d58c8d97f133872ae8e",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
