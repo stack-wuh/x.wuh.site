@@ -4,7 +4,7 @@
   "name": "20261005-fix-queue-fold-exit",
   "type": "fix",
   "scope": "audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261005-fix-queue-fold-exit",
   "files": [
@@ -17,18 +17,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 477,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/477",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 478,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/478"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c9b06d96f73c01bf585dec31d61b0fe1159cd043",
-    "verifiedAt": "2026-10-05T15:59:44.849Z"
+    "verifiedCommit": "fc72d01061cecc9952d372f25a03695db322db45",
+    "verifiedAt": "2026-10-05T16:11:53.326Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:477",
-    "planHash": "652f207c342b3a7a8896b946f1b92d607bff83b466812d7a36b2c2ea441b1fe9",
+    "checkpoint": "merged-pr:478",
+    "planHash": "e13e585f898f7252b10a0fde43a7b4152c24530fcce6de5fd9a230c9007da540",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -56,7 +56,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "粘性开合边界语义（离栏即折）已在 apply 阶段原位改写进 music-player.md 播放列表翻页屏段，source 与 verified-scope 同步；长期交互语义变化必须改卡否则与代码冲突"
+    "reason": "粘性开合边界语义（离栏即折）已改写进 music-player.md，source 与 verified-scope 同步"
   }
 }
 ---
