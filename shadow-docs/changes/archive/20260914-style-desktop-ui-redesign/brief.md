@@ -4,7 +4,7 @@
   "name": "20260914-style-desktop-ui-redesign",
   "type": "style",
   "scope": "apps/desktop",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -19,16 +19,17 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ad965faec36886892fe934ce4ffc44386c1fced3",
-    "verifiedAt": "2026-09-14T16:03:33.401Z"
+    "verifiedCommit": "8a926761801ab41612545a21392814858b5b1b6e",
+    "verifiedAt": "2026-10-05T11:03:50.627Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:380",
-    "planHash": null,
+    "planHash": "ad931868c649cc63372feb83885db4b41d22e2ebf3a5e92e1cae5f8b7aae713b",
     "updatedAt": null,
     "lastError": null
-  }
+  },
+  "knowledge": null
 }
 ---
 
