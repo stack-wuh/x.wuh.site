@@ -39,6 +39,21 @@ const FOLD_WIDTH_PX = 340
 const FOLD_REST_ANGLE = '-40deg'
 const FOLD_DUR = '520ms'
 const FOLD_LIFT_SHADOW = '-24px 12px 48px color-mix(in oklab, black 22%, transparent)'
+/* ===== 墨痕歌词（20261002 定稿，视觉稿 shadow-docs/changes/20261002-style-player-ghost-depth/prototype.html）=====
+   竖排五列两翼：左翼当前侧 3 列（当前句 + 前两句，浓墨）+ 右翼淡墨回声 2 列（前 3/前 4 句，右缘已有队列翻页屏）。
+   站点锚点为面板百分比常量（均经原型遮挡实测：封面/题名带/题跋/队列屏净空）；
+   深度五档经每列 transform 自带 perspective() 投影——GhostLayer 的 overflow:hidden 属 grouping 属性，
+   会使 preserve-3d 静默失效，禁走祖先透传路径（铁律②变体，原型帧实测）；
+   换句 = 各站按「站+句索引」重挂载，ghostIn 从站深 −150px 浮入（铁律①：起点=站内深度） */
+const GHOST_STATIONS = [
+  { x: '27%', top: '6%', maxH: '46%', z: '0px', ink: 15, blur: '0px' },
+  { x: '16%', top: '14%', maxH: '54%', z: '-130px', ink: 5.5, blur: '1px' },
+  { x: '6%', top: '30%', maxH: '46%', z: '-260px', ink: 4.2, blur: '1.5px' },
+  { x: '64.5%', top: '6%', maxH: '51%', z: '-340px', ink: 3.4, blur: '2px' },
+  { x: '73%', top: '13%', maxH: '43%', z: '-400px', ink: 2.6, blur: '2.4px' },
+]
+const GHOST_LIFT = '150px'
+const GHOST_FONT = 'clamp(26px, 2.9vw, 40px)'
 // 纸纹：feTurbulence 噪点叠印，把晕染色场「印」进纸里而非悬浮
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")"
@@ -255,7 +270,9 @@ const DrawerButton = styled.button`
   ${focusRing}
 `
 
-/* ===== 墨痕歌词：当前句淡墨大字浮上纸底，换句交叠渐变（纯装饰） ===== */
+/* ===== 墨痕歌词：竖排五列两翼 · 三阶墨阶（纯装饰） =====
+   GhostLayer 的 overflow:hidden 属 grouping 属性，会使 transform-style: preserve-3d
+   静默失效——故不走祖先透视透传，每列 transform 自带 perspective() 投影函数 */
 const GhostLayer = styled.div`
   position: absolute;
   inset: 0;
@@ -266,46 +283,44 @@ const GhostLayer = styled.div`
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    & > span {
-      animation: none !important;
-    }
-  }
 `
 
-const GhostLine = styled.span<{ $now?: boolean }>`
+const GhostLine = styled.span`
   position: absolute;
-  left: 50%;
-  top: ${(p) => (p.$now ? '27%' : '20%')};
-  transform: translateX(-50%);
-  max-width: 92%;
+  left: var(--ghost-x);
+  top: var(--ghost-top);
+  writing-mode: vertical-rl;
+  max-height: var(--ghost-max-h);
   font-family: var(--font-serif);
   font-weight: 600;
-  font-size: clamp(40px, 8vw, 74px);
-  line-height: 1.2;
-  letter-spacing: 0.1em;
+  font-size: ${GHOST_FONT};
+  letter-spacing: 0.22em;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  color: color-mix(in oklab, var(--text-color) ${(p) => (p.$now ? '8%' : '3%')}, transparent);
+  mask-image: linear-gradient(180deg, black 72%, transparent 98%);
+  color: color-mix(in oklab, var(--text-color) calc(var(--ghost-ink) * 1%), transparent);
+  filter: blur(var(--ghost-blur));
+  transform: perspective(1000px) translateZ(var(--ghost-z));
+  /* 换句重挂载浮入：起点 = 站深 −150px + 墨透明 + blur 加深（静止姿态 = 动画起点，铁律①） */
+  animation: ghostIn calc(var(--motion-dur-quick) * 10.6) ${EASE} both;
 
-  /* 换句渐变：重挂载触发淡入（约 1.6s），旧句随卸载消失 */
-  ${(p) =>
-    p.$now
-      ? css`
-          animation: ghostIn calc(var(--motion-dur-quick) * 10.6) ${EASE} both;
+  @keyframes ghostIn {
+    from {
+      opacity: 0;
+      transform: perspective(1000px) translateZ(calc(var(--ghost-z) - ${GHOST_LIFT}));
+      filter: blur(calc(var(--ghost-blur) + 1.5px));
+    }
+    to {
+      opacity: 1;
+      transform: perspective(1000px) translateZ(var(--ghost-z));
+      filter: blur(var(--ghost-blur));
+    }
+  }
 
-          @keyframes ghostIn {
-            from {
-              opacity: 0;
-            }
-            to {
-              opacity: 1;
-            }
-          }
-        `
-      : null}
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `
 
 /* ===== 桌面舞台：装裱封面 + 题名手卷 + 界格笺题跋（居中单焦点） ===== */
@@ -1643,15 +1658,32 @@ export const AudioPlayerPanel = () => {
         <WashSrc $src={currentTrack?.coverUrl} aria-hidden='true' />
         <PaperVeil aria-hidden='true' />
 
-        {/* 墨痕歌词：播放中且有词才上纸底；词卷展开时让位。纯装饰层 */}
+        {/* 墨痕歌词：竖排五列两翼（当前句+前四句站点化，GHOST_STATIONS 锚点常量），
+            播放中且有词才上纸底；词卷展开时让位。纯装饰层 */}
         {playing && wordsAvailable && !wordsOpen ? (
           <GhostLayer aria-hidden='true'>
-            {epiPrev ? <GhostLine key={`ghost-prev-${lyricIdx}`}>{epiPrev.text}</GhostLine> : null}
-            {epiAct ? (
-              <GhostLine key={`ghost-act-${lyricIdx}`} $now>
-                {epiAct.text}
-              </GhostLine>
-            ) : null}
+            {GHOST_STATIONS.map((station, ti) => {
+              const lineIdx = lyricIdx - ti
+              const text = lineIdx >= 0 ? lyrics[lineIdx]?.text : undefined
+              if (!text) return null
+              return (
+                <GhostLine
+                  key={`ghost-${station.x}-${lineIdx}`}
+                  style={
+                    {
+                      '--ghost-x': station.x,
+                      '--ghost-top': station.top,
+                      '--ghost-max-h': station.maxH,
+                      '--ghost-z': station.z,
+                      '--ghost-ink': String(station.ink),
+                      '--ghost-blur': station.blur,
+                    } as React.CSSProperties
+                  }
+                >
+                  {text}
+                </GhostLine>
+              )
+            })}
           </GhostLayer>
         ) : null}
 

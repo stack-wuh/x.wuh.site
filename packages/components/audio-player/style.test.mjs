@@ -92,6 +92,36 @@ test('墨痕歌词为纯装饰层且可关停', () => {
   assert.ok(panel.includes('GhostLayer aria-hidden'), '墨痕歌词层必须 aria-hidden')
 })
 
+test('墨痕歌词竖排五列两翼：行内投影 + 站点常量钉死 + 换句重挂载（20261002 定稿）', () => {
+  const panel = readSource('PlayerPanel.tsx')
+  const ghostBlock = panel.slice(panel.indexOf('const GhostLayer'), panel.indexOf('const NowStage'))
+  // 每列 transform 自带 perspective() 投影：GhostLayer overflow:hidden 属 grouping 属性，
+  // preserve-3d 透传静默失效（原型实测 translateZ 全程压扁）——禁走透传，必须行内投影
+  assert.match(ghostBlock, /perspective\(1000px\)/, 'GhostLine 缺行内 perspective() 投影函数')
+  assert.doesNotMatch(ghostBlock, /transform-style:\s*preserve-3d/, 'GhostLayer 禁走 preserve-3d 透传（overflow: hidden 使其静默失效）')
+  assert.match(ghostBlock, /writing-mode:\s*vertical-rl/, 'GhostLine 缺竖排')
+  assert.match(ghostBlock, /mask-image:\s*linear-gradient/, 'GhostLine 缺列内墨尽渐隐 mask')
+  // ghostIn 浮入：起点 = 站深 −150px（铁律①：静止姿态 = 动画起点）
+  assert.match(ghostBlock, /@keyframes ghostIn/, '缺 ghostIn 浮入关键帧')
+  assert.match(ghostBlock, /calc\(var\(--ghost-z\) - \$\{GHOST_LIFT\}\)/, 'ghostIn 起点 = 站深 −GHOST_LIFT')
+  // 站点常量钉死：锚点五站 + 深度五档 + 墨量五档（六轮定稿参数，经原型遮挡实测）
+  assert.match(panel, /GHOST_STATIONS = \[/, '缺 GHOST_STATIONS 站点常量')
+  for (const anchor of ["x: '27%'", "x: '16%'", "x: '6%'", "x: '64.5%'", "x: '73%'"]) {
+    assert.ok(panel.includes(anchor), `缺站点锚点 ${anchor}`)
+  }
+  for (const z of ["z: '0px'", "z: '-130px'", "z: '-260px'", "z: '-340px'", "z: '-400px'"]) {
+    assert.ok(panel.includes(z), `缺深度档 ${z}`)
+  }
+  for (const ink of ['ink: 15', 'ink: 5.5', 'ink: 4.2', 'ink: 3.4', 'ink: 2.6']) {
+    assert.ok(panel.includes(ink), `缺墨量档 ${ink}`)
+  }
+  assert.match(panel, /GHOST_LIFT = '150px'/, '缺浮入升幅常量 GHOST_LIFT')
+  // 换句重挂载：key 按站+句索引（同站换句必换 key → ghostIn 重放）
+  assert.match(panel, /key=\{`ghost-\$\{station\.x\}-\$\{lineIdx\}`\}/, '换句重挂载 key 未按站+句索引')
+  // reduced-motion 降级在墨痕块内在场（面板级 reducedMotion 之外的局部双保险）
+  assert.match(ghostBlock, /prefers-reduced-motion[\s\S]*?animation: none/, '墨痕缺 reduced-motion 降级')
+})
+
 test('播放列表歌手列限宽省略', () => {
   const panel = readSource('PlayerPanel.tsx')
   assert.ok(panel.includes('QueueArtist'), 'PlayerPanel 缺少限宽歌手列')
