@@ -28,7 +28,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "merged-pr:478",
-    "planHash": "e13e585f898f7252b10a0fde43a7b4152c24530fcce6de5fd9a230c9007da540",
+    "planHash": "1a927f29d7a11c87f61e1809ce49db221d8179b895243c7ae153e4aeb5ec2962",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -51,6 +51,13 @@
       "message": "fix(player): 队列翻页屏粘性收拢边界——移出 340px 列表栏即折回，不再等离开整个面板",
       "title": "fix(player): 队列翻页屏粘性收拢边界——离列表栏即折",
       "body": "Closes #477\n\n完整 brief：shadow-docs/changes/20261005-fix-queue-fold-exit/brief.md"
+    },
+    "commit": {
+      "files": [
+        "shadow-docs/changes/archive/20261005-fix-queue-fold-exit/brief.md",
+        "shadow-docs/changes/archive/20261005-refactor-player-split/brief.md"
+      ],
+      "message": "docs(shadow): 补记拆分与折叠边界两单交付发布记录——v1.4.60/v1.4.61 部署链全绿，生产目检因本机 DNS 不可达顺延"
     }
   },
   "knowledge": {
@@ -101,7 +108,8 @@
 ## 结果
 
 - 实际耗时: ≈20 分钟
-- 验证: 全绿——style 19/19（含新「离栏即折」四断言：QZone enter/leave 配对、Panel 壳 onPointerLeave doesNotMatch 禁回潮、queueOpen||foldLatch 并集、foldLatch 在场）、player-panel 22/22、typecheck 1/1、provider+mini 14/14、wiring 10/10、oxlint 25 文件 0/0。S 级不跑本地 build:next（PR 合并后 main quality-gate + 部署链覆盖）。行为：鼠标移出右缘 340px 列表栏即原路翻回；pinned（列表钮）与键盘 focus-within 路径不变；离场 160ms 宽限由 QScreen CSS transition-delay 承担；触屏 pointer 抬升即 leave——触屏主路径本就是 pinned 钮，一致性更好。知识卡 music-player.md「粘性开合」结论已改写为离栏即折。
+- 交付发布: Release [v1.4.61](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.61)（target main），CI-CD 部署链全绿（run 37337573074，quality-gate→prepare→prepare-deps→build-next→build-nest→staging-test→switch 全 success）。
+- 验证: 全绿——style 19/19（含新「离栏即折」四断言：QZone enter/leave 配对、Panel 壳 onPointerLeave doesNotMatch 禁回潮、queueOpen||foldLatch 并集、foldLatch 在场）、player-panel 22/22、typecheck 1/1、provider+mini 14/14、wiring 10/10、oxlint 25 文件 0/0。S 级不跑本地 build:next（PR 合并后 main quality-gate + 部署链覆盖）。行为：鼠标移出右缘 340px 列表栏即原路翻回；pinned（列表钮）与键盘 focus-within 路径不变；离场 160ms 宽限由 QScreen CSS transition-delay 承担；触屏 pointer 抬升即 leave——触屏主路径本就是 pinned 钮，一致性更好。知识卡 music-player.md「粘性开合」结论已改写为离栏即折。生产目检记录：开发机此刻无法解析 x.wuh.site（DNS Unknown host，非站点故障——部署链 switch 已 success），目检顺延至网络恢复后。
 
 ## 知识评估
 

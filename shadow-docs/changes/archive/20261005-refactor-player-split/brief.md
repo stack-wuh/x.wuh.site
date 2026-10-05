@@ -175,7 +175,8 @@ audio-player/
 ## 结果
 
 - 实际耗时: ≈2 小时（含并行会话内存争用的等待与重试）
-- 验证: 全绿——域守卫逐文件跑：provider 6/6、style 19/19、player-panel 22/22、mini-player 8/8、typecheck 1/1；站点 wiring 10/10；根 `tsc --noEmit` exit 0；oxlint audio-player 包 25 文件 0 warnings 0 errors；`next build` exit 0（14/14 页生成）。拆分纪律：PlayerPanel 2089→467 行、MiniPlayer 634→178 行（≤500 守卫钉死，PANEL_SOURCES 顺序清单钉死，声明普查 100+35 条无丢失无重复）；JSX 元素多重集对比证实 DOM 零变化（唯一差异 = QueueRows 去重两处队列行，属预期）。单次意外记录：`node --test` 合跑 style.test 时 V8 worker 原生崩溃（并行 lint:next 会话吃满单核 + free 内存 <200MB），单文件连跑 3 轮 19/19 证守卫稳定；`next build` 前两次在 page data 收集阶段 Turbopack worker SIGSEGV（同因内存挤兑），第三次全绿——均为环境性失败，非代码回归，runtime 目检按惯例移至部署后生产复验（v1.4.43 先例）。
+- 交付发布: Release [v1.4.60](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.60)（target main），CI-CD 部署链全绿（run 37335632766，quality-gate→build×2→staging-test→switch 全 success，8m54s）。
+- 验证: 全绿——域守卫逐文件跑：provider 6/6、style 19/19、player-panel 22/22、mini-player 8/8、typecheck 1/1；站点 wiring 10/10；根 `tsc --noEmit` exit 0；oxlint audio-player 包 25 文件 0 warnings 0 errors；`next build` exit 0（14/14 页生成）。拆分纪律：PlayerPanel 2089→467 行、MiniPlayer 634→178 行（≤500 守卫钉死，PANEL_SOURCES 顺序清单钉死，声明普查 100+35 条无丢失无重复）；JSX 元素多重集对比证实 DOM 零变化（唯一差异 = QueueRows 去重两处队列行，属预期）。单次意外记录：`node --test` 合跑 style.test 时 V8 worker 原生崩溃（并行 lint:next 会话吃满单核 + free 内存 <200MB），单文件连跑 3 轮 19/19 证守卫稳定；`next build` 前两次在 page data 收集阶段 Turbopack worker SIGSEGV（同因内存挤兑），第三次全绿——均为环境性失败，非代码回归，runtime 目检按惯例移至部署后生产复验（v1.4.43 先例）。生产目检记录：本会话开发机此刻无法解析 x.wuh.site（DNS Unknown host，非站点故障——部署链 switch 已 success），浏览器与 curl 双路径均不可达，目检顺延至网络恢复后。
 
 ## 知识评估
 
