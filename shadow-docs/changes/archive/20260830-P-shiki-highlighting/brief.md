@@ -4,7 +4,7 @@
   "name": "20260830-P-shiki-highlighting",
   "type": "feature",
   "scope": "site",
-  "status": "proposed",
+  "status": "archived",
   "baseBranch": "main",
   "files": [
     "apps/site/app/lib/markdown.ts",
@@ -46,3 +46,7 @@
 ## 知识评估
 
 - 实现并回归通过后，更新 `blog-code-highlighting.md`（高亮引擎从 highlight.js 改为 Shiki）。
+
+## 归档说明（20261005 补记）
+
+本提案属 shadow-dev 工作流启用前的遗留变更：功能已随提交 `5950e1f`（feat(site): 代码高亮迁移到 Shiki 双主题）直接进入 main 并上线生产，未走 PR 与本状态机（brief 任务清单是旧稿，实际交付以 main 提交与线上表现为准）。归档时补记此说明，状态改 archived。
