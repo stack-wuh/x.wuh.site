@@ -4,7 +4,7 @@
   "name": "20260930-feature-player-dock-progress-seal",
   "type": "feature",
   "scope": "audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20260930-feature-player-dock-progress-seal",
   "files": [
@@ -19,18 +19,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 428,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/428",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 430,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/430"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "521bbde640ed587ad2cdf3df4c9f041c8ac7161d",
-    "verifiedAt": "2026-09-30T07:20:22.688Z"
+    "verifiedCommit": "e585814efb227a711652386c13c6bc8d6dd4e036",
+    "verifiedAt": "2026-10-05T10:40:38.482Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:428",
-    "planHash": "e667a7b2398a8b1d413dcfd266fb1b199cb136956d7465feea27f6840b9c6914",
+    "checkpoint": "merged-pr:430",
+    "planHash": "27a90d64f3618ae83aa9dd7850b57e2a8b7b6a115635af011b213d4b8b410499",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {

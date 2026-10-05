@@ -56,7 +56,7 @@
 | 20260929-style-music-interaction-polish | ✅ 完成 | shadow-docs/changes/archive/20260929-style-music-interaction-polish/brief.md |
 | 20260929-style-player-collapse-ear | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-collapse-ear/brief.md |
 | 20260929-style-player-panel-inkwash | ✅ 完成 | shadow-docs/changes/archive/20260929-style-player-panel-inkwash/brief.md |
-| 20260930-feature-player-dock-progress-seal | reviewed | shadow-docs/changes/20260930-feature-player-dock-progress-seal/brief.md |
+| 20260930-feature-player-dock-progress-seal | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-player-dock-progress-seal/brief.md |
 | 20260930-feature-player-length-adaptive | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-player-length-adaptive/brief.md |
 | 20260930-feature-progress-component | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-progress-component/brief.md |
 | 20260930-feature-site-i18n-trilingual | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-site-i18n-trilingual/brief.md |
