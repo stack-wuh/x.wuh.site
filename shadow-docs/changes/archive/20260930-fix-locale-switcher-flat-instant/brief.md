@@ -4,7 +4,7 @@
   "name": "20260930-fix-locale-switcher-flat-instant",
   "type": "fix",
   "scope": "i18n",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260930-fix-locale-switcher-flat-instant",
   "files": [
@@ -17,18 +17,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 442,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/442",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 446,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/446"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b116e81827a0ecc5de3ca489f97c9749d7d8e4f6",
-    "verifiedAt": "2026-09-30T16:50:48.605Z"
+    "verifiedCommit": "18cfdf203cea480ee478bd573bb69eed60c6319d",
+    "verifiedAt": "2026-10-05T10:40:43.145Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:442",
-    "planHash": "3250321d081ca6cdfcef8320b2760105eefca78c6257151334c37d5aa4c83ec7",
+    "checkpoint": "merged-pr:446",
+    "planHash": "b811f340db7854bb4caf22544a0ce6179eb49846314e86001288d8de9e933020",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -54,11 +54,7 @@
       "body": "Closes #442\n\n完整 brief：shadow-docs/changes/20260930-fix-locale-switcher-flat-instant/brief.md"
     }
   },
-  "knowledge": {
-    "action": "更新",
-    "target": "shadow-docs/knowledge/i18n-locale.md",
-    "reason": "卡内「切换入口是循环钮」「首次切到该语言才拉取」两条结论更新为「三钮平铺行（中｜英｜日自称名常量）」与「挂载后空闲预取 + 弹层开兜底预取，首屏仍零增量、切换即时生效」；补 runtime 实证（预取 chunk 先于弹层交互在册、切换探针 132/167ms、三语 nav/lang 走查、平铺行 DOM 断言）"
-  }
+  "knowledge": null
 }
 ---
 
