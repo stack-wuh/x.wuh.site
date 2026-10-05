@@ -54,14 +54,16 @@ test('dock 结构：桌面舞台/码头两行 / 移动端册页化（pages + tic
   assert.match(src, /env\(safe-area-inset-bottom/)
 })
 
-test('居中单焦点舞台：装裱天薄地厚 + 竖排题签 + 暖晕', () => {
+test('居中单焦点舞台：装裱封面碟化 + 竖排题签 + 暖晕（20261002 碟化定稿）', () => {
   assert.match(src, /const NowStage = styled\.div/)
   assert.match(src, /align-items: center/)
   assert.match(src, /const Plate = styled\.div/)
-  assert.match(src, /padding: var\(--space-sm\) var\(--space-sm\) calc\(var\(--space-sm\) \* 2\)/)
+  // 碟化定稿：纸裱改均边（天薄地厚随图版退役），圆碟嵌中（月洞窗构图）
+  assert.match(src, /padding: var\(--space-sm\);/)
+  assert.match(src, /border-radius: 50%/)
   assert.match(src, /writing-mode: vertical-rl/)
   assert.match(src, /const StageGlow = styled\.div/)
-  assert.match(src, /radial-gradient\(50% 50% at 50% 50%/)
+  assert.match(src, /radial-gradient\(50% 50% at 50% 50%,/)
 })
 
 test('播放列表序号与朱砂左标', () => {

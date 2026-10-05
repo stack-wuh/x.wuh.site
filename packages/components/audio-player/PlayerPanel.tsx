@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
 import { useLocale } from '@wuh.site/components/locales'
@@ -364,9 +364,20 @@ const StageTab = styled.span`
   }
 `
 
-/* 装裱封面：天薄地厚（下纸边厚一倍，立轴装裱比例） */
+/* ===== 封面碟化（20261002 定稿）：黑胶大碟嵌方裱（月洞窗构图）=====
+   碟面 = 纯 CSS 深色底 + 同心纹刻 + 斜向高光；碟心圆标即封面图（换曲随 coverUrl 换图）。
+   播放随转（26s/圈慢转，/music 小黑胶同语言）、暂停冻结当前角度不复位、reduced-motion 静止。
+   碟径沿用舞台预算三档帽（唯一因变量关系不破坏） */
+const DISC_REV = '26s'
+const discSpin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+/* 封面装裱：方形纸裱保留发丝线语言，圆碟嵌中 */
 const Plate = styled.div`
-  padding: var(--space-sm) var(--space-sm) calc(var(--space-sm) * 2);
+  padding: var(--space-sm);
   background: color-mix(in oklab, var(--background-100) 88%, transparent);
   border: 1px solid ${HAIRLINE};
   border-radius: var(--border-radius-xs);
@@ -377,15 +388,23 @@ const Plate = styled.div`
 const STAGE_TIER_SHORT = 959
 const STAGE_TIER_COMPACT = 859
 
-/* 装裱封面：天薄地厚（下纸边厚一倍，立轴装裱比例）
-   尺寸是舞台预算的唯一因变量：帽与面板高度同源（min(px, (100vh−96px)×系数)），
-   旧裸 32vh 帽与面板高度不同源，矮视口吞题名（生产实锤） */
-const PlateArt = styled.div<{ $src?: string }>`
+/* 黑胶碟：尺寸是舞台预算的唯一因变量：帽与面板高度同源（min(px, (100vh−96px)×系数)），
+   旧裸 32vh 帽与面板高度不同源，矮视口吞题名（生产实锤）。
+   旋转由 $playing 驱动 play-state（transient prop 静态规则，显隐纪律）；
+   暂停 = paused 冻结当前角度（真实黑胶行为，不复位） */
+const PlateArt = styled.div<{ $playing?: boolean }>`
+  position: relative;
   width: min(252px, calc((100vh - 96px) * 0.3));
   aspect-ratio: 1;
-  border-radius: 2px;
-  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
-  box-shadow: inset 0 0 0 1px ${HAIRLINE};
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, color-mix(in oklab, white 10%, transparent), transparent 42%),
+    repeating-radial-gradient(circle at 50% 50%, color-mix(in oklab, white 5%, transparent) 0 1px, transparent 1px 4px),
+    radial-gradient(circle, color-mix(in oklab, black 84%, var(--normal-900)) 0 60%, color-mix(in oklab, black 92%, var(--normal-900)) 60% 100%);
+  box-shadow: inset 0 0 0 1px ${HAIRLINE}, inset 0 0 26px color-mix(in oklab, black 35%, transparent),
+    var(--elevation-soft);
+  animation: ${discSpin} ${DISC_REV} linear infinite;
+  animation-play-state: ${(p) => (p.$playing ? 'running' : 'paused')};
 
   @media (max-height: ${STAGE_TIER_SHORT}px) {
     width: min(224px, calc((100vh - 96px) * 0.3));
@@ -394,6 +413,28 @@ const PlateArt = styled.div<{ $src?: string }>`
   @media (max-height: ${STAGE_TIER_COMPACT}px) {
     width: min(184px, calc((100vh - 96px) * 0.26));
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`
+
+/* 碟心封面圆标：换曲随 coverUrl 换图 */
+const DiscLabel = styled.div<{ $src?: string }>`
+  position: absolute;
+  inset: 29%;
+  border-radius: 50%;
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
+  box-shadow: inset 0 0 0 1px ${HAIRLINE}, 0 0 0 3px color-mix(in oklab, black 32%, transparent);
+`
+
+/* 碟心轴点 */
+const DiscDot = styled.div`
+  position: absolute;
+  inset: calc(50% - 4px);
+  border-radius: 50%;
+  background: var(--background-100);
+  box-shadow: 0 0 0 1px ${HAIRLINE};
 `
 
 /* 题名手卷：溢出才徐展（暂停停走），reduced-motion 回落省略号，title 显全名
@@ -1195,7 +1236,22 @@ const LeafPlate = styled.figure`
   flex-shrink: 0;
 `
 
-const LeafPlateArt = styled(PlateArt)``
+/* 移动册页图版：方形封面自持（桌面碟化不影响移动端册页定稿形态） */
+const LeafPlateArt = styled.div<{ $src?: string }>`
+  width: min(252px, calc((100vh - 96px) * 0.3));
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
+  box-shadow: inset 0 0 0 1px ${HAIRLINE};
+
+  @media (max-height: ${STAGE_TIER_SHORT}px) {
+    width: min(224px, calc((100vh - 96px) * 0.3));
+  }
+
+  @media (max-height: ${STAGE_TIER_COMPACT}px) {
+    width: min(184px, calc((100vh - 96px) * 0.26));
+  }
+`
 
 /* 图版题签：mono 朱砂「曲 · N / 总数」；拉丁文语境字距降档 */
 const PlateNo = styled.figcaption`
@@ -1707,7 +1763,10 @@ export const AudioPlayerPanel = () => {
               })}
             </StageTab>
             <Plate>
-              <PlateArt $src={currentTrack?.coverUrl} aria-hidden='true' />
+              <PlateArt $playing={playing} aria-hidden='true'>
+                <DiscLabel $src={currentTrack?.coverUrl} />
+                <DiscDot />
+              </PlateArt>
             </Plate>
           </PlateWrap>
           <StageTitle ref={stageTitle.wrapperRef} $marquee={titleMarquee} title={stageName}>
