@@ -219,6 +219,23 @@ test('队列翻页屏 hotfix：碟面环包含块归位 + 粘性开合行内驱�
   assert.match(qscreenCall, /queueOpen \|\| foldLatch/, 'QScreen 开态未并集 queueOpen 与 foldLatch')
 })
 
+test('封面碟化：黑胶圆碟 + 播放随转/暂停冻结（20261002 定稿）', () => {
+  const panel = readSource('PlayerPanel.tsx')
+  const plateBlock = panel.slice(panel.indexOf('const PlateArt'), panel.indexOf('const StageTitle'))
+  // 圆碟形态：border-radius 50%（月洞窗构图——方裱圆碟）；碟径沿用舞台预算三档帽
+  assert.match(plateBlock, /border-radius:\s*50%/, 'PlateArt 缺圆碟形态')
+  assert.match(plateBlock, /min\(252px,\s*calc\(\(100vh - 96px\) \* 0\.3\)\)/, '碟径缺常态同源帽 252')
+  // 碟面纹刻与碟心/轴点结构在场
+  assert.match(plateBlock, /repeating-radial-gradient/, '碟面缺同心纹刻')
+  assert.ok(panel.includes('DiscLabel'), '缺碟心封面圆标')
+  assert.ok(panel.includes('DiscDot'), '缺碟心轴点')
+  // 播放随转/暂停冻结：play-state 由 $playing 驱动（暂停停在当前角度，不复位）
+  assert.match(plateBlock, /animation:\s*\$\{discSpin\}/, '缺 discSpin 旋转动画')
+  assert.match(plateBlock, /animation-play-state:\s*\$\{\(p\) => \(p\.\$playing/, '碟旋转未接播放态')
+  // reduced-motion 静止（面板级 reducedMotion 之外的局部双保险）
+  assert.match(plateBlock, /prefers-reduced-motion[\s\S]*?animation: none/, '碟旋转缺 reduced-motion 降级')
+})
+
 test('STYLE_SOURCES 指向存在的文件', () => {
   for (const path of STYLE_SOURCES) {
     assert.ok(readFileSync(path, 'utf8').length > 0, `${path} 为空`)
