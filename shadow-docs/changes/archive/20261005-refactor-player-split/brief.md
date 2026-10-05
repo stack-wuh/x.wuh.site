@@ -4,7 +4,7 @@
   "name": "20261005-refactor-player-split",
   "type": "refactor",
   "scope": "audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261005-refactor-player-split",
   "files": [
@@ -31,18 +31,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 473,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/473",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 476,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/476"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "287f63f1fadd93032670660115fbf191d161acf0",
-    "verifiedAt": "2026-10-05T15:37:43.659Z"
+    "verifiedCommit": "5962648bfe156632db4fceac2b0974f0574fac8f",
+    "verifiedAt": "2026-10-05T16:04:08.601Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:473",
-    "planHash": "f94e7c25fa59b03a85c55dbc65d0a004e1def3776795d5f97d0c19602982324f",
+    "checkpoint": "merged-pr:476",
+    "planHash": "6876271da9ea5e7c429e47b08718f01a82330b597ed8539dcd81fb74099036df",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -86,7 +86,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/components.md",
-    "reason": "拆分后主组件达标（PlayerPanel 467 / MiniPlayer 178 行）与 panel/mini 子目录布局、panel-sources 拼接守卫读取纪律、行数上限守卫是长期有效事实，须写入 components.md AudioPlayer 段；music-player.md 执行约束补拼接读取一句"
+    "reason": "拆分布局、≤500 行数上限守卫与 panel-sources 拼接读取纪律已写入 components.md；music-player.md 执行约束补拼接读取条目"
   }
 }
 ---
