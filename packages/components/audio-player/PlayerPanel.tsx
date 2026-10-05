@@ -77,7 +77,7 @@ export const AudioPlayerPanel = () => {
   const [wordsOpen, setWordsOpen] = useState(false)
   const [queueOpen, setQueueOpen] = useState(false)
   const [volOpen, setVolOpen] = useState(false)
-  // 粘性开合：进入右缘热区即锁存「开」，指针在面板内漫游（末行移出/dock/舞台边缘）不收拢，离板才折回。
+  // 粘性开合（20261005 边界修订）：进入右缘 340px 列表栏即锁存「开」，移出该栏即折回（解除点在 PanelQueue 的 QZone）。
   // React 态 → 视觉走行内样式（显隐纪律）；与 queueOpen（pinned）并集驱动 QScreen
   const [foldLatch, setFoldLatch] = useState(false)
   const totalDuration = Math.max(state.duration || currentTrack?.duration || 0, 0.01)
@@ -245,7 +245,6 @@ export const AudioPlayerPanel = () => {
         aria-modal='true'
         aria-label={t('player.panel.title')}
         aria-hidden={!state.isPanelOpen}
-        onPointerLeave={() => setFoldLatch(false)}
       >
         <WashSrc $src={currentTrack?.coverUrl} aria-hidden='true' />
         <PaperVeil aria-hidden='true' />

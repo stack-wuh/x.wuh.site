@@ -61,7 +61,7 @@ interface PanelQueueProps {
   currentTrack?: Track | null
   /** pinned（列表钮 aria-expanded） */
   queueOpen: boolean
-  /** 粘性开合锁存（指针在面板内漫游不收拢，离板才折回） */
+  /** 粘性开合锁存（进栏即开，移出右缘 340px 列表栏即折回——20261005 边界修订） */
   foldLatch: boolean
   drawerListRef: React.RefObject<HTMLUListElement | null>
   setQueueOpen: (open: boolean) => void
@@ -83,7 +83,9 @@ export const PanelQueue = ({ queue, currentTrack, queueOpen, foldLatch, drawerLi
         }
         onClick={() => setQueueOpen(false)}
       />
-      <QZone onPointerEnter={() => setFoldLatch(true)}>
+      {/* 粘性开合（20261005 边界修订）：进栏即锁存「开」，**移出右缘 340px 列表栏即折回**——
+          不再等离开整个面板（旧边界使热区等效整个弹窗、摊开挡视线）；离场 160ms 宽限由 QScreen CSS transition-delay 承担 */}
+      <QZone onPointerEnter={() => setFoldLatch(true)} onPointerLeave={() => setFoldLatch(false)}>
         <QScreen
           data-fold-screen='true'
           role='group'
