@@ -83,3 +83,5 @@
 | 20261002-perf-cjk-font-slim | ✅ 完成 | shadow-docs/changes/archive/20261002-perf-cjk-font-slim/brief.md |
 | 20261002-style-player-cover-disc | ✅ 完成 | shadow-docs/changes/archive/20261002-style-player-cover-disc/brief.md |
 | 20261002-style-player-ghost-depth | ✅ 完成 | shadow-docs/changes/archive/20261002-style-player-ghost-depth/brief.md |
+| 20261005-fix-locale-switch-realtime | ✅ 完成 | shadow-docs/changes/archive/20261005-fix-locale-switch-realtime/brief.md |
+| 20261005-style-nav-section-icons | reviewed | shadow-docs/changes/20261005-style-nav-section-icons/brief.md |

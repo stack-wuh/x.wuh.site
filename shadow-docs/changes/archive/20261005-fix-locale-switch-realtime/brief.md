@@ -4,7 +4,7 @@
   "name": "20261005-fix-locale-switch-realtime",
   "type": "fix",
   "scope": "packages/components/locales",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261005-fix-locale-switch-realtime",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 471,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/471",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 475,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/475"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "eca1fea032f0f48994c5cfdfae58dbbb724885b8",
-    "verifiedAt": "2026-10-05T14:09:07.295Z"
+    "verifiedCommit": "c27a94dc1cdbb38c0f76e57a3176e7d0c87f2ffa",
+    "verifiedAt": "2026-10-05T15:10:15.571Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:471",
-    "planHash": "937cdb572708b61d5bc312612d467c2ef4bae79c8cded885177e2250b7f1bcbe",
+    "checkpoint": "merged-pr:475",
+    "planHash": "1e73116af28947b32aabeb0c4fe617cd25118ead051ec87664af2c99f8d36c14",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -54,7 +54,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/i18n-locale.md",
-    "reason": "根因两条已由代码与运行时双向证实：词典槽位存 ref、自增版本号不进 context value → React bail out 使通知彻底空转；discrete 事件在事件尾部同步 flush、跑在 import().then() 微任务之前 → 点击首帧必读空槽回落中文。修复后 MutationObserver 轨迹：点「日」后 62ms 同一提交内 lang=ja 且 nav 转日本語，全程 aria-expanded=true（弹层未关即生效），零回落语言中间帧；连点中→英 latest-wins；带 locale=ja 硬刷新首屏即目标语言（对照组）。守卫 locales 16/16（对旧实现先取 3 项红灯，证非空断言）、audio-player 回归 41/41、tsc exit=0、oxlint 0 warnings 0 errors。i18n-locale 卡须更新三处：①「晚到加载无竞态」只对词典内容成立，渲染通知维度当时即不成立；②「空闲预取使切换近乎即时」须改述为预取经 ensureDict 单一入口把词典喂进可渲染状态（只热模块缓存不等于可渲染）；③「验证方式」原写法（切语言看导航/aria/lang）正是漏检本 bug 的观测口径，须改为弹层不关前提下以 MutationObserver 记 DOM 文本轨迹并断言无回落帧——只读 lang/aria-pressed 二者不依赖词典，必然假绿。偏离记录：dicts 进的是 t 的依赖（context identity 随之变化），未按字面写进 value 的依赖数组——后者是 brief 中作为方案 C 否掉的隐形炸弹（依赖数组与对象内容不一致）。生产构建未跑成：next build 在 page-data 收集阶段反复 SIGSEGV（node 22 与 24 均复现，swap 5.9G/7.2G），按 SGN-001 改走 dev 模式做 runtime 验收，故生产侧指纹复核留待部署后。信号提案两条随 release 落盘：SGN-001 命中 +1（附新证据：mise exec 下 node 22 亦复现）；新建候选「node --test 守卫依赖 .ts 原生剥离，需 node>=23，mise 钉的 22 跑不动」（negative / weight 2 / unit）。"
+    "reason": "复核重绑至新 HEAD c27a94d（原 review 绑 eca1fea，本 change 已合入 main）。验证与首次结论一致且已交付：locales 守卫 16/16（对修复前实现 3 项红灯）、audio-player 41/41、根 tsc exit=0、oxlint 0/0；生产 wuh.site 轨迹点「英」18ms、「日」66ms 内 lang 与文案同一记录落地、回落帧 0、弹层全程未关。i18n-locale 卡的三处修订与两条执行约束、signals 的 SGN-001 加权与 SGN-002 新建，均已随 PR #475 落盘并合入 main，本次不再产生新的 Knowledge 动作（action 仍记为「更新」以保留闭环事实源）。"
   }
 }
 ---
@@ -175,8 +175,10 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 约 2.5 小时单会话（生产复现取证 → 守卫红绿 → 修复 → 本地与生产双环境轨迹验收 → 发布与分支事故处置 → 归档）
+- 验证: locales 守卫 16/16（同守卫对修复前实现取到 3 项红灯，证非空断言）· audio-player 回归 41/41 · 根 `tsc --noEmit` exit=0 · `oxlint` 0 warnings 0 errors · MutationObserver DOM 文本轨迹（本地 next dev + 生产 wuh.site 双环境，弹层全程不关）
+- 交付: PR #475 合入 main（`abbc486`）→ Release **v1.4.59**（`--target abbc486…`，标题「v1.4.59 语言切换实时生效——词典入渲染输入 + 就绪门控」）触发 CI-CD，`quality-gate → prepare → prepare-deps → build-next → build-nest → staging-test → switch-traffic` 七段全绿（run 37328559181）。生产复核实测：点「英」18ms、点「日」66ms 内 `documentElement.lang` 与 `header nav a` 文案在同一条轨迹记录中落地，回落语言帧 0 条、弹层 `aria-expanded` 全程为 `true`；修复前同站点表现为文案无限滞留、须关弹层才跳出已在手的词典
+- 事故记录（供后续 change 参考）: `release execute` 期间共享工作树 HEAD 被并发会话切到 `refactor/20261005-refactor-player-split`，提交 `ed0a62c` 落到对方分支且推送失败。经用户授权用 `git branch -f` 把本分支指回该提交（对方分支正被 checkout，git 拒绝强推，留待其 sync 到新 main 时自动跳过重复补丁）；此后本 change 的归档改在隔离 worktree `/tmp/wt-i18n-archive` 完成，避免卷入并发会话未提交的 `MiniPlayer.tsx` / `PlayerPanel.tsx`。教训：共享工作树里 release/archive 前必须核对 `branch --show-current`，并发时段优先用隔离 worktree
 
 ## 知识评估
 
