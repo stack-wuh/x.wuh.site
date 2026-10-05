@@ -4,7 +4,7 @@
   "name": "20261002-fix-player-queue-fold-hotfix",
   "type": "fix",
   "scope": "packages/components/audio-player",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261002-fix-player-queue-fold-hotfix",
   "files": [
@@ -12,21 +12,21 @@
     "packages/components/audio-player/style.test.mjs"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 467,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/467"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "36ebfd727d26b57d54540eac59469c4318fdb937",
-    "verifiedAt": "2026-10-01T23:41:32.466Z"
+    "verifiedCommit": "17ef445c4ed0352a49658f77cf5c5e130cfead91",
+    "verifiedAt": "2026-10-05T10:29:01.946Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "f36e02fb9f766767c403fff559143fc8eb0a3c01",
-    "planHash": "864fc2072f7094080f02cace27f25b1469ad99b3078e40c3272bb053f63678fb",
+    "checkpoint": "merged-pr:467",
+    "planHash": "4a32cec4751701f4d763d6356c9563b865cb7d902caa7b396dbd8a85b91296c3",
     "updatedAt": null,
     "lastError": null,
     "release": {
