@@ -4,7 +4,7 @@
   "name": "20260901-fix-wechat-domain-block",
   "type": "fix",
   "scope": "infra",
-  "status": "proposed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [],
@@ -60,8 +60,8 @@ wuh.site 分享到微信后打开显示「网页存在安全风险，已停止�
 
 ### Phase 2（解封后）
 
-- [ ] 微信好友分享 wuh.site 验证 → 打开正常无拦截页
-- [ ] 若复发：优先复查 UGC，再二次申诉
+- [x] 微信好友分享 wuh.site 验证 → 打开正常无拦截页
+- [x] 若复发：优先复查 UGC，再二次申诉
 
 ## 结果
 
@@ -81,3 +81,7 @@ wuh.site 分享到微信后打开显示「网页存在安全风险，已停止�
 - **预期影响:** 新增
 - **候选卡片:** shadow-docs/knowledge/domain-compliance.md（微信拦截双轨机制：检测接口≠拦截名单；申诉入口与所需材料；第三方备案查询源数据可能不全，以站点页脚和 MIIT 为准）
 - **理由:** 项目菜单无此领域卡片；本次「检测安全但被拦」的机制和解封路径值得沉淀
+
+## 归档说明（20261005 补记）
+
+用户确认已实现：微信拦截解除、站内分享验证正常（task-3/4 收口）。本变更为站外申诉类 infra 操作（issue #346 关联），无代码 PR，状态机走的是旧流程，归档时补记此说明。知识评估候选卡片 domain-compliance.md 未创建，结论留在本 brief 供后续触碰域名合规时取用。

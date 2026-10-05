@@ -19,7 +19,7 @@
 | 20260829-P-post-typography-design-language | ✅ 完成 | shadow-docs/changes/archive/20260829-P-post-typography-design-language/brief.md |
 | 20260830-P-article-export | ✅ 完成 | shadow-docs/changes/archive/20260830-P-article-export/brief.md |
 | 20260830-P-shiki-highlighting | ✅ 完成 | shadow-docs/changes/archive/20260830-P-shiki-highlighting/brief.md |
-| 20260901-fix-wechat-domain-block | proposed | shadow-docs/changes/20260901-fix-wechat-domain-block/brief.md |
+| 20260901-fix-wechat-domain-block | ✅ 完成 | shadow-docs/changes/archive/20260901-fix-wechat-domain-block/brief.md |
 | 20260901-style-post-paper-redesign | ✅ 完成 | shadow-docs/changes/archive/20260901-style-post-paper-redesign/brief.md |
 | 20260902-style-post-detail-polish | ✅ 完成 | shadow-docs/changes/archive/20260902-style-post-detail-polish/brief.md |
 | 20260903-feature-notion-publisher | proposed | shadow-docs/changes/20260903-feature-notion-publisher/brief.md |
