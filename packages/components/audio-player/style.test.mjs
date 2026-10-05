@@ -238,16 +238,21 @@ test('拆分纪律：主组件行数上限 + 拼接清单钉死 + 全文件存�
   }
 })
 
-test('队列翻页屏 hotfix：碟面环包含块归位 + 粘性开合行内驱动（20261002）', () => {
+test('队列翻页屏 hotfix：碟面环包含块归位 + 粘性开合行内驱动（20261002）+ 离栏即折边界（20261005 修订）', () => {
   const panel = readPanelSource()
   // 碟面环 ::after 为 absolute inset 定位：PlayButton 缺 position: relative 时包含块落到 NowDock，
   // 白环画成横贯 dock 的 1138×116 巨椭圆（v1.4.54 生产 DOM 实证）
   const playBlock = panel.slice(panel.indexOf('const PlayButton'), panel.indexOf('/* 模式钮'))
   assert.match(playBlock, /position: relative/, 'PlayButton 缺 position: relative（碟面环包含块归位）')
-  // 粘性开合：转正后在面板内漫游（末行移出/dock/舞台边缘）不收拢，离板才折回；
+  // 粘性开合（20261005 边界修订：离列表栏即折）：进栏 pointerenter 锁存「开」，
+  // 移出右缘 340px 列 pointerleave 即解除——旧「离整个 Panel 才折回」使热区等效整个弹窗，已退役；
   // latch 是 React 态 → 视觉必须走行内样式（显隐纪律）
   assert.ok(panel.includes('foldLatch'), '缺 foldLatch 粘性开合')
-  assert.match(panel, /onPointerLeave=\{/, 'Panel 缺 pointerleave 解除 latch')
+  const qzoneCall = panel.slice(panel.indexOf('<QZone'), panel.indexOf('</QZone>'))
+  assert.match(qzoneCall, /onPointerEnter=\{\(\) => setFoldLatch\(true\)\}/, 'QZone 缺 pointerenter 锁存开')
+  assert.match(qzoneCall, /onPointerLeave=\{\(\) => setFoldLatch\(false\)\}/, 'QZone 缺 pointerleave 离栏即折')
+  // Panel 壳不得再挂 pointerleave（解除边界只在列表栏；回潮 = 热区又变整个弹窗）
+  assert.doesNotMatch(readSource('PlayerPanel.tsx'), /onPointerLeave/, 'Panel 级 pointerleave 已退役，禁回潮')
   const qscreenCall = panel.slice(panel.indexOf('<QScreen'), panel.indexOf('</QScreen>'))
   assert.match(qscreenCall, /queueOpen \|\| foldLatch/, 'QScreen 开态未并集 queueOpen 与 foldLatch')
 })
