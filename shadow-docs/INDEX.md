@@ -65,7 +65,7 @@
 | 20260930-fix-panel-lyric-scroll-bleed | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-panel-lyric-scroll-bleed/brief.md |
 | 20260930-fix-panel-progress-double-scale | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-panel-progress-double-scale/brief.md |
 | 20260930-fix-player-active-state-recalc | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-player-active-state-recalc/brief.md |
-| 20260930-fix-seo-indexing-p0 | branched | shadow-docs/changes/20260930-fix-seo-indexing-p0/brief.md |
+| 20260930-fix-seo-indexing-p0 | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-seo-indexing-p0/brief.md |
 | 20260930-style-lyrics-empty-copy | ✅ 完成 | shadow-docs/changes/archive/20260930-style-lyrics-empty-copy/brief.md |
 | 20260930-style-player-dock-ruler | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-dock-ruler/brief.md |
 | 20260930-style-player-favorite-ai-seal | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-favorite-ai-seal/brief.md |
