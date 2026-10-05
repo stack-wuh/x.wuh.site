@@ -4,7 +4,7 @@
   "name": "20261002-style-player-cover-disc",
   "type": "style",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261002-style-player-cover-disc",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 468,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/468",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 470,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/470"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "f7bd7fdc23b10a36ff44c7a6f1236f87dd5a7b95",
-    "verifiedAt": "2026-10-05T12:40:22.678Z"
+    "verifiedCommit": "3863473e2a54ffd420732561dbab4d024dbf0f44",
+    "verifiedAt": "2026-10-05T13:15:28.149Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:468",
-    "planHash": "22a1b72406c945bb8c054590011d582bc98a27f16edb552de0450d2ac67fd133",
+    "checkpoint": "merged-pr:470",
+    "planHash": "bfd4f687db078b6ee131ff0f695e3f553936462a938f596fd6021b9dbf71ee52",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -40,12 +40,10 @@
     },
     "commit": {
       "files": [
-        "packages/components/audio-player/PlayerPanel.tsx",
-        "packages/components/audio-player/player-panel.test.mjs",
-        "packages/components/audio-player/style.test.mjs",
-        "shadow-docs/changes/20261002-style-player-cover-disc/brief.md"
+        "shadow-docs/changes/20261002-style-player-cover-disc/brief.md",
+        "shadow-docs/knowledge/music-player.md"
       ],
-      "message": "style(player): 封面碟化——黑胶大碟嵌方裱，碟心封面圆标，播放随转暂停冻结"
+      "message": "docs(shadow): music-player 卡记录墨痕五列两翼与封面碟化结论；碟化 brief 对账"
     }
   },
   "knowledge": null
@@ -94,8 +92,8 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 约 2.5h（含原型七轮迭代）
+- 验证: audio-player 守卫 55/55（含碟结构/discSpin 接线/reduced-motion 断言；顺修 player-panel 被掩盖的 StageGlow 潜伏正则）+ 域内 tsc 清零 + 根 tsc 净 + oxlint 0 错；PR #470 squash 合入 main（bea8af4），随 v1.4.58 部署全绿（同 run 37312669442）
 
 ## 知识评估
 

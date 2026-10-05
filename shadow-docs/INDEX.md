@@ -81,5 +81,5 @@
 | 20261002-fix-player-queue-fold-hotfix | ✅ 完成 | shadow-docs/changes/archive/20261002-fix-player-queue-fold-hotfix/brief.md |
 | 20261002-fix-rss-feed-format | ✅ 完成 | shadow-docs/changes/archive/20261002-fix-rss-feed-format/brief.md |
 | 20261002-perf-cjk-font-slim | ✅ 完成 | shadow-docs/changes/archive/20261002-perf-cjk-font-slim/brief.md |
-| 20261002-style-player-cover-disc | implemented | shadow-docs/changes/20261002-style-player-cover-disc/brief.md |
+| 20261002-style-player-cover-disc | ✅ 完成 | shadow-docs/changes/archive/20261002-style-player-cover-disc/brief.md |
 | 20261002-style-player-ghost-depth | ✅ 完成 | shadow-docs/changes/archive/20261002-style-player-ghost-depth/brief.md |
