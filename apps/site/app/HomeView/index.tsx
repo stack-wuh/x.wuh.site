@@ -2,7 +2,7 @@
 
 import Button from '@wuh.site/components/button'
 import Tag from '@wuh.site/components/tag'
-import { IconLogo, DiamondDivider, IconBookOpen, IconCalendar, IconChevronRight } from '@wuh.site/components/icons'
+import { IconLogo, DiamondDivider, IconArticle, IconBookOpen, IconCalendar, IconChevronRight } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
 import { buildPostUrl } from '../lib/slug'
 import { formatShortDate } from '../lib/date'
@@ -72,7 +72,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
 
         <S.Section>
           <S.SectionHeader className='reveal'>
-            <S.SectionTitle>{t('home.featured')}</S.SectionTitle>
+            <S.SectionTitle><IconArticle size={16} />{t('home.featured')}</S.SectionTitle>
             <Button href='/blog' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>{t('home.allPosts')}</Button>
           </S.SectionHeader>
           {posts.length === 0 ? (
@@ -110,7 +110,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
 
         <S.Section>
           <S.SectionHeader className='reveal'>
-            <S.SectionTitle>{t('home.yearly')}</S.SectionTitle>
+            <S.SectionTitle><IconCalendar size={16} aria-hidden='true' />{t('home.yearly')}</S.SectionTitle>
           </S.SectionHeader>
           {yearlySummaries.length === 0 ? (
             <Empty icon={<IconCalendar />} title={t('home.empty.yearly')} description={t('home.empty.yearlyDesc')} />

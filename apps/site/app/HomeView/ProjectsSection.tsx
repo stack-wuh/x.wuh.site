@@ -16,7 +16,7 @@ export default function ProjectsSection({ fallbackRepos }: { fallbackRepos: Repo
   return (
     <S.Section>
       <S.SectionHeader className='reveal'>
-        <S.SectionTitle>{t('home.projectsTitle')}</S.SectionTitle>
+        <S.SectionTitle><IconFolderGit2 size={16} aria-hidden='true' />{t('home.projectsTitle')}</S.SectionTitle>
       </S.SectionHeader>
       {repos.length === 0 ? (
         <Empty icon={<IconFolderGit2 />} title={t('home.empty.projects')} description={t('home.empty.projectsDesc')} />

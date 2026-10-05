@@ -98,16 +98,23 @@ export const Section = styled.section`
 export const SectionHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   width: 100%;
 `
 
 export const SectionTitle = styled.h2`
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-family: var(--font-serif);
   font-size: var(--font-size-xl);
   font-weight: 500;
   color: var(--text-primary);
   letter-spacing: 0.03em;
+
+  & > svg {
+    flex: none;
+  }
 `
 
 export const Timeline = styled.div`

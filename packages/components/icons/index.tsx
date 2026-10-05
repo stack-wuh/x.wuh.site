@@ -48,6 +48,8 @@ export {
   Repeat1 as IconRepeatOne,
   Shuffle as IconShuffle,
   ListMusic as IconListMusic,
+  Music as IconNote,
+  User as IconUser,
   Volume2 as IconVolume,
   X as IconX
 } from 'lucide-react'
@@ -70,6 +72,7 @@ export {
   ShieldCheck as IconShield,
   Tag as IconTag,
   BookOpen as IconBookOpen,
+  BookMarked as IconBookMarked,
   Calendar as IconCalendar,
   CalendarDays as IconCalendarDays,
   Feather as IconFeather,
