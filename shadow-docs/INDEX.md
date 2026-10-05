@@ -62,7 +62,7 @@
 | 20260930-feature-site-i18n-trilingual | ✅ 完成 | shadow-docs/changes/archive/20260930-feature-site-i18n-trilingual/brief.md |
 | 20260930-fix-locale-switcher-flat-instant | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-locale-switcher-flat-instant/brief.md |
 | 20260930-fix-mode-band-underline-inversion | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-mode-band-underline-inversion/brief.md |
-| 20260930-fix-panel-lyric-scroll-bleed | published | shadow-docs/changes/20260930-fix-panel-lyric-scroll-bleed/brief.md |
+| 20260930-fix-panel-lyric-scroll-bleed | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-panel-lyric-scroll-bleed/brief.md |
 | 20260930-fix-panel-progress-double-scale | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-panel-progress-double-scale/brief.md |
 | 20260930-fix-player-active-state-recalc | ✅ 完成 | shadow-docs/changes/archive/20260930-fix-player-active-state-recalc/brief.md |
 | 20260930-fix-seo-indexing-p0 | branched | shadow-docs/changes/20260930-fix-seo-indexing-p0/brief.md |

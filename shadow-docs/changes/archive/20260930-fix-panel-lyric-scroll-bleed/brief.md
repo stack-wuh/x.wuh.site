@@ -4,7 +4,7 @@
   "name": "20260930-fix-panel-lyric-scroll-bleed",
   "type": "fix",
   "scope": "player",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20260930-fix-panel-lyric-scroll-bleed",
   "files": [
@@ -20,13 +20,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b116e81827a0ecc5de3ca489f97c9749d7d8e4f6",
-    "verifiedAt": "2026-09-30T16:27:10.703Z"
+    "verifiedCommit": "8a926761801ab41612545a21392814858b5b1b6e",
+    "verifiedAt": "2026-10-05T11:03:49.533Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:445",
-    "planHash": "ea36342f0d1d00423f211fe1d30d4eb99792c2336b0d34620eb595a3cac550da",
+    "checkpoint": "merged-pr:445",
+    "planHash": "a4d17299777693e360f16a0f8d62e6184752d303f679c6ba441a3cc6169789d1",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -57,11 +57,7 @@
       "message": "docs(shadow): #441 brief 回写 PR #445 链接"
     }
   },
-  "knowledge": {
-    "action": "更新",
-    "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "把卡内移动端「外层 snap 页禁 scrollIntoView」陷阱条目扩写为面板级通用纪律：定位只滚目标容器（手动 scrollTop/scrollTo），Panel 壳 overflow 用 clip 防程序化滚动；补生产取证数据（WashSrc inset:-12% 撑出 118px 纵向/139px 横向隐藏可滚溢出、壳 scrollTop 实测 19.5）与本次 runtime 复现+修复实证"
-  }
+  "knowledge": null
 }
 ---
 
