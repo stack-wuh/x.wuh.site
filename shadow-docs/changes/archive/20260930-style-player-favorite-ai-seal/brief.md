@@ -4,7 +4,7 @@
   "name": "20260930-style-player-favorite-ai-seal",
   "type": "style",
   "scope": "player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20260930-style-player-favorite-ai-seal",
   "files": [
@@ -21,18 +21,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 443,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/443",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 447,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/447"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b116e81827a0ecc5de3ca489f97c9749d7d8e4f6",
-    "verifiedAt": "2026-09-30T17:07:19.475Z"
+    "verifiedCommit": "8e9663269392c2aa1ca982668904399cf80b22e1",
+    "verifiedAt": "2026-10-05T11:03:57.372Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:443",
-    "planHash": "39e236e934ee1241e6b141787e88fe36e1c2ab39d18a4aed837f2f23cd8683b7",
+    "checkpoint": "merged-pr:447",
+    "planHash": "9e4740866d6301df0a0e09cf356bbc6d4c170f98d96e98649e322e551daf7654",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -63,11 +63,7 @@
       "body": "Closes #443\n\n完整 brief：shadow-docs/changes/20260930-style-player-favorite-ai-seal/brief.md"
     }
   },
-  "knowledge": {
-    "action": "更新",
-    "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "「进度=白文方印樂」段补最爱换印语义：本卷 playCount 最高曲目（与 /music 最爱徽标同口径，含并列）播放时进度印传 glyph=愛、音量印维持默认樂，Track 契约补 playCount 可选字段；连带实证印章字形集入子集（樂/墨补齐，五印全 webfont）"
-  }
+  "knowledge": null
 }
 ---
 

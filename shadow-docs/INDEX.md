@@ -68,7 +68,7 @@
 | 20260930-fix-seo-indexing-p0 | branched | shadow-docs/changes/20260930-fix-seo-indexing-p0/brief.md |
 | 20260930-style-lyrics-empty-copy | ✅ 完成 | shadow-docs/changes/archive/20260930-style-lyrics-empty-copy/brief.md |
 | 20260930-style-player-dock-ruler | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-dock-ruler/brief.md |
-| 20260930-style-player-favorite-ai-seal | reviewed | shadow-docs/changes/20260930-style-player-favorite-ai-seal/brief.md |
+| 20260930-style-player-favorite-ai-seal | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-favorite-ai-seal/brief.md |
 | 20260930-style-player-mobile-album-leaf | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-mobile-album-leaf/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |
 | 20261001-fix-mini-player-marquee-undefined | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-mini-player-marquee-undefined/brief.md |
