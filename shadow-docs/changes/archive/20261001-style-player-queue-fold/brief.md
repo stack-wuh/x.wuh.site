@@ -4,7 +4,7 @@
   "name": "20261001-style-player-queue-fold",
   "type": "style",
   "scope": "packages/components/audio-player",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261001-style-player-queue-fold",
   "files": [
@@ -19,14 +19,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/460"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "5e1bbbf263bba65ac4fe646e5759c2d00dd7452d",
+    "verifiedAt": "2026-10-05T10:22:18.558Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:461",
-    "planHash": "053fe0fe3a42b01cfe6ef77a53ca2f0a250a3684310ba33b9ad504c7ba831d27",
+    "checkpoint": "merged-pr:460",
+    "planHash": "e4b313c261a80e2e901f0e928cd05230758db834c4e3fcad57336db4667f0a3f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -50,7 +50,8 @@
       "title": "style(player): 队列 3D 翻页屏——右缘斜倚常驻，hover 转正可选曲",
       "body": ""
     }
-  }
+  },
+  "knowledge": null
 }
 ---
 
