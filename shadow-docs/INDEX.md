@@ -36,7 +36,7 @@
 | 20260906-style-post-header-seal-tag | ✅ 完成 | shadow-docs/changes/archive/20260906-style-post-header-seal-tag/brief.md |
 | 20260913-feature-desktop-markdown-editor | ✅ 完成 | shadow-docs/changes/archive/20260913-feature-desktop-markdown-editor/brief.md |
 | 20260914-fix-footer-type-scale | ✅ 完成 | shadow-docs/changes/archive/20260914-fix-footer-type-scale/brief.md |
-| 20260914-style-desktop-ui-redesign | reviewed | shadow-docs/changes/20260914-style-desktop-ui-redesign/brief.md |
+| 20260914-style-desktop-ui-redesign | ✅ 完成 | shadow-docs/changes/archive/20260914-style-desktop-ui-redesign/brief.md |
 | 20260914-style-footer-compact | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-compact/brief.md |
 | 20260914-style-footer-ornament | ✅ 完成 | shadow-docs/changes/archive/20260914-style-footer-ornament/brief.md |
 | 20260915-feature-desktop-plugin-system | ✅ 完成 | shadow-docs/changes/archive/20260915-feature-desktop-plugin-system/brief.md |
@@ -71,11 +71,15 @@
 | 20260930-style-player-favorite-ai-seal | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-favorite-ai-seal/brief.md |
 | 20260930-style-player-mobile-album-leaf | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-mobile-album-leaf/brief.md |
 | 20260930-style-player-panel-deck | ✅ 完成 | shadow-docs/changes/archive/20260930-style-player-panel-deck/brief.md |
+| 20261001-fix-heading-hierarchy | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-heading-hierarchy/brief.md |
 | 20261001-fix-mini-player-marquee-undefined | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-mini-player-marquee-undefined/brief.md |
 | 20261001-fix-og-image-metadata-shadowing | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-og-image-metadata-shadowing/brief.md |
+| 20261001-fix-post-cover-sizes | ✅ 完成 | shadow-docs/changes/archive/20261001-fix-post-cover-sizes/brief.md |
+| 20261001-perf-remove-streaming-skeletons | ✅ 完成 | shadow-docs/changes/archive/20261001-perf-remove-streaming-skeletons/brief.md |
 | 20261001-style-player-queue-fold | ✅ 完成 | shadow-docs/changes/archive/20261001-style-player-queue-fold/brief.md |
 | 20261001-style-player-stage-budget | ✅ 完成 | shadow-docs/changes/archive/20261001-style-player-stage-budget/brief.md |
 | 20261002-fix-player-queue-fold-hotfix | ✅ 完成 | shadow-docs/changes/archive/20261002-fix-player-queue-fold-hotfix/brief.md |
 | 20261002-fix-rss-feed-format | ✅ 完成 | shadow-docs/changes/archive/20261002-fix-rss-feed-format/brief.md |
 | 20261002-perf-cjk-font-slim | ✅ 完成 | shadow-docs/changes/archive/20261002-perf-cjk-font-slim/brief.md |
-| 20261002-style-player-ghost-depth | proposed | shadow-docs/changes/20261002-style-player-ghost-depth/brief.md |
+| 20261002-style-player-cover-disc | implemented | shadow-docs/changes/20261002-style-player-cover-disc/brief.md |
+| 20261002-style-player-ghost-depth | ✅ 完成 | shadow-docs/changes/archive/20261002-style-player-ghost-depth/brief.md |

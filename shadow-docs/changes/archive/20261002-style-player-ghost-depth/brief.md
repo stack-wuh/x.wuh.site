@@ -4,7 +4,7 @@
   "name": "20261002-style-player-ghost-depth",
   "type": "style",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261002-style-player-ghost-depth",
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 463,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/463",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 469,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/469"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "f7bd7fdc23b10a36ff44c7a6f1236f87dd5a7b95",
-    "verifiedAt": "2026-10-05T12:15:18.799Z"
+    "verifiedCommit": "bea8af478725b1fa880095f6583055693e562261",
+    "verifiedAt": "2026-10-05T13:10:03.577Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:463",
-    "planHash": "7479b1398469e60cb7ed68530510795da379423f3d90cdec2f7e5740c3bd5871",
+    "checkpoint": "merged-pr:469",
+    "planHash": "515cff321855ba7b8bcc969532419f5d5d0cafc644c478a7c62d9232ce65a4dd",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -98,8 +98,8 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 约 2.5h（含原型七轮迭代）
+- 验证: audio-player 守卫 55/55（含五列站点常量/行内投影/重挂载 key/reduced-motion 断言）+ 域内 tsc 清零 + 根 tsc 净 + oxlint 0 错；PR #469 squash 合入 main（1d733e7），随 v1.4.58 部署全绿（https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.58，CI-CD run 37312669442 三跑后 success——前两次为主机 OOM/SSH 255 偶发）
 
 ## 知识评估
 
