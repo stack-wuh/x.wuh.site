@@ -3,7 +3,12 @@
 import * as React from 'react'
 import { CSSProperties } from 'react'
 import styled from 'styled-components'
-import { responsive, responsiveSlots, TResponsive } from '@wuh.site/components/themes/responsive'
+import {
+  RESPONSIVE_LADDER,
+  ladderSlots,
+  responsive,
+  TResponsive,
+} from '@wuh.site/components/themes/responsive'
 
 const colAlignSelfOptions = ['start', 'center', 'end', 'stretch'] as const
 export type TColAlignSelf = typeof colAlignSelfOptions[number]
@@ -12,13 +17,13 @@ export type TColAlignSelf = typeof colAlignSelfOptions[number]
 type TPlacement = { span: number; offset: number }
 
 export interface IColProps {
-  /** 占用栏数 1–12，默认 12 = 整行堆叠；数组 = 断点槽 [base, tablet?] */
+  /** 占用栏数 1–12，默认 12 = 整行堆叠；数组 = 断点槽 [base, sm?, md?, lg?] */
   span?: TResponsive<number>
   /** 右移栏数 0–11；数组 = 断点槽，与 span 同槽位组合成一条 grid-column */
   offset?: TResponsive<number>
-  /** 视觉顺序调整（CSS order）；数组 = 断点槽 [base, tablet?] */
+  /** 视觉顺序调整（CSS order）；数组 = 断点槽 [base, sm?, md?, lg?] */
   order?: TResponsive<number>
-  /** 交叉轴对齐（grid align-self）；数组 = 断点槽 [base, tablet?] */
+  /** 交叉轴对齐（grid align-self）；数组 = 断点槽 [base, sm?, md?, lg?] */
   alignSelf?: TResponsive<TColAlignSelf>
   /** 子元素 */
   children?: React.ReactNode
@@ -54,20 +59,30 @@ const StyledCol = styled.div<IStyledColTransientProps>`
 const COL_ONLY_KEYS: (keyof IColProps)[] = ['span', 'offset', 'order', 'alignSelf']
 
 export const Col = React.forwardRef<HTMLDivElement, IColProps>((props, ref) => {
-  const spanSlots = responsiveSlots(props.span ?? 12)
-  const offsetSlots = responsiveSlots(props.offset ?? 0)
-  /* offset 与 span 必须按同一断点槽合成单条 grid-column——任一 prop 有 tablet 槽，
-     即对 tablet 槽补全（缺位方沿用自己的 base），否则两 prop 独立出 media 会互相错位 */
-  const placement: TResponsive<TPlacement> =
-    spanSlots.tablet !== undefined || offsetSlots.tablet !== undefined
-      ? [
-          { span: spanSlots.base, offset: offsetSlots.base },
-          {
-            span: spanSlots.tablet ?? spanSlots.base,
-            offset: offsetSlots.tablet ?? offsetSlots.base,
-          },
-        ]
-      : { span: spanSlots.base, offset: offsetSlots.base }
+  const spanSlots = ladderSlots(props.span ?? 12)
+  const offsetSlots = ladderSlots(props.offset ?? 0)
+  /* offset 与 span 按同一阶梯档合成单条 grid-column：任一 prop 在某档有槽，
+     该档即出块（缺位方沿用最近低档值 carry-forward），否则两 prop 各自出 media 会互相错位。
+     上档全缺位则回落为基线标量，不产出多余的 media 块。 */
+  const rungs = RESPONSIVE_LADDER.length + 1
+  const placements: (TPlacement | undefined)[] = []
+  let carry: TPlacement = { span: spanSlots[0] ?? 12, offset: offsetSlots[0] ?? 0 }
+  for (let tier = 0; tier < rungs; tier += 1) {
+    const hasSlot = spanSlots[tier] !== undefined || offsetSlots[tier] !== undefined
+    if (tier > 0 && !hasSlot) {
+      placements.push(undefined)
+      continue
+    }
+    if (tier > 0) {
+      carry = {
+        span: spanSlots[tier] ?? carry.span,
+        offset: offsetSlots[tier] ?? carry.offset,
+      }
+    }
+    placements.push(carry)
+  }
+  const hasUpperSlot = spanSlots.length > 1 || offsetSlots.length > 1
+  const placement: TResponsive<TPlacement> = hasUpperSlot ? placements : placements[0]
 
   const domProps = { ...props }
   COL_ONLY_KEYS.forEach((key) => delete (domProps as Record<string, unknown>)[key])

@@ -10,17 +10,23 @@ const indexSource = await readFile(resolve(componentDir, 'index.tsx'), 'utf8')
 test('Col renders grid-column span placement, default full-row stack', () => {
   assert.match(indexSource, /grid-column: \$\{offset \+ 1\} \/ span \$\{span\}/)
   assert.match(indexSource, /`grid-column: span \$\{span\};`/)
-  assert.match(indexSource, /responsiveSlots\(props\.span \?\? 12\)/)
+  assert.match(indexSource, /ladderSlots\(props\.span \?\? 12\)/)
 })
 
-test('span and offset share one breakpoint slot pair before compiling to CSS', () => {
+test('span and offset compose jointly per ladder rung (carry-forward), never per-prop', () => {
+  assert.match(indexSource, /const rungs = RESPONSIVE_LADDER\.length \+ 1/)
+  // a rung emits a grid-column block only when either prop declares a slot there
   assert.match(
     indexSource,
-    /spanSlots\.tablet !== undefined \|\| offsetSlots\.tablet !== undefined/,
-    'tablet media block must be decided jointly, never per-prop',
+    /const hasSlot = spanSlots\[tier\] !== undefined \|\| offsetSlots\[tier\] !== undefined/,
+    'missing rungs skip; present rungs must not be split across two media blocks',
   )
-  assert.match(indexSource, /span: spanSlots\.tablet \?\? spanSlots\.base/)
-  assert.match(indexSource, /offset: offsetSlots\.tablet \?\? offsetSlots\.base/)
+  // missing side inherits the last defined value via carry-forward
+  assert.match(indexSource, /span: spanSlots\[tier\] \?\? carry\.span/)
+  assert.match(indexSource, /offset: offsetSlots\[tier\] \?\? carry\.offset/)
+  // no upper slots collapse to a scalar base, so no empty media blocks are emitted
+  assert.match(indexSource, /const hasUpperSlot = spanSlots\.length > 1 \|\| offsetSlots\.length > 1/)
+  assert.match(indexSource, /hasUpperSlot \? placements : placements\[0\]/)
 })
 
 test('Col props are breakpoint-slot typed and order/alignSelf pass through', () => {

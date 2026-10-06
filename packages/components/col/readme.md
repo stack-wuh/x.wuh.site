@@ -13,14 +13,14 @@
 
 - `span` 1–12（可随 Row 的 `cols` 变化理解），**默认 12 = 整行堆叠**——移动优先写法里手机带什么都不传即全宽。
 - `offset > 0` 编译为 `grid-column: {offset+1} / span {span}`（显式落位）；纯 span 编译为 `grid-column: span {n}`（自动流）。混用时显式项先占格、后续项顺排。
-- `span` 与 `offset` **共用同一断点槽对**合成一条 `grid-column`：任一 prop 有 tablet 槽，另一 prop 的 tablet 位沿用自己的 base 补齐——不会出现两个独立 media 块互相错位。
-- 断点数组语法与 Flex/Row 同契约：`span={[12, 6]}` 手机整行、桌面半行。
+- `span` 与 `offset` **共用同一阶梯档**合成一条 `grid-column`：任一 prop 在某档有槽，该档即出块，缺位方沿用最近低档值 carry-forward——不会出现两个独立 media 块互相错位。
+- 断点阶梯语法与 Flex/Row 同契约 `[base, sm?, md?, lg?]`：`span={[12, , , 6]}` 手机整行、桌面半行（第二槽现是 `sm`=521，「仅桌面」须补两个缺位到 `lg`）。
 - `min-width: 0` 内置：长文/媒体不会撑破分栏。
 
 ```tsx
-<Row gap={[12, 'md']}>
-  <Col span={[12, 6]} order={[1, 0]}>…</Col>
-  <Col span={[12, 6]}>…</Col>
+<Row gap={[12, , , 'md']}>
+  <Col span={[12, , , 6]} order={[1, , , 0]}>…</Col>
+  <Col span={[12, , , 6]}>…</Col>
 </Row>
 ```
 
