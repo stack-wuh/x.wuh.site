@@ -28,21 +28,37 @@ interface QueueRowsProps {
   queue: Track[]
   currentTrack?: Track | null
   playTrack: (trackId: number) => void
+  /** 真实播放态（暂停停走纪律：当前行等化器播=跳动、停=冻结） */
+  playing: boolean
 }
 
-export const QueueRows = ({ queue, currentTrack, playTrack }: QueueRowsProps) => (
+export const QueueRows = ({ queue, currentTrack, playTrack, playing }: QueueRowsProps) => (
   <>
-    {queue.map((track, index) => (
+    {queue.map((track, index) => {
+      const isCurrent = track.id === currentTrack?.id
+      return (
       <QueueItem
         key={track.id}
-        data-active={track.id === currentTrack?.id}
-        style={{ '--q-active': track.id === currentTrack?.id ? 1 : 0 } as React.CSSProperties}
+        data-active={isCurrent}
+        style={
+          {
+            '--q-active': isCurrent ? 1 : 0,
+            // 三面切换的行内驱动（激活态纪律）：--q-eq 显隐、--q-eq-state 跳动/冻结
+            '--q-eq': isCurrent ? 1 : 0,
+            '--q-eq-state': isCurrent && playing ? 'running' : 'paused',
+          } as React.CSSProperties
+        }
       >
         <QueueButton type='button' onClick={() => playTrack(track.id)}>
           <QueueNo>
             <span className='q-no-face'>{String(index + 1).padStart(2, '0')}</span>
             <span className='q-no-play' aria-hidden='true'>
               <IconPlay size={10} />
+            </span>
+            <span className='q-no-eq' aria-hidden='true'>
+              <span />
+              <span />
+              <span />
             </span>
           </QueueNo>
           <QueueName title={track.name}>{track.name}</QueueName>
@@ -52,7 +68,8 @@ export const QueueRows = ({ queue, currentTrack, playTrack }: QueueRowsProps) =>
           </QueueMeta>
         </QueueButton>
       </QueueItem>
-    ))}
+      )
+    })}
   </>
 )
 
@@ -67,9 +84,10 @@ interface PanelQueueProps {
   setQueueOpen: (open: boolean) => void
   setFoldLatch: (latch: boolean) => void
   playTrack: (trackId: number) => void
+  playing: boolean
 }
 
-export const PanelQueue = ({ queue, currentTrack, queueOpen, foldLatch, drawerListRef, setQueueOpen, setFoldLatch, playTrack }: PanelQueueProps) => {
+export const PanelQueue = ({ queue, currentTrack, queueOpen, foldLatch, drawerListRef, setQueueOpen, setFoldLatch, playTrack, playing }: PanelQueueProps) => {
   const { t } = useLocale()
   return (
     <>
@@ -112,7 +130,7 @@ export const PanelQueue = ({ queue, currentTrack, queueOpen, foldLatch, drawerLi
             <IconListMusic size={13} aria-hidden='true' /> {t('player.panel.queue')}
           </SectionHeading>
           <QueueList ref={drawerListRef}>
-            <QueueRows queue={queue} currentTrack={currentTrack} playTrack={playTrack} />
+            <QueueRows queue={queue} currentTrack={currentTrack} playTrack={playTrack} playing={playing} />
           </QueueList>
         </QScreen>
       </QZone>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Empty from '@wuh.site/components/empty'
-import { useAudioPlayer } from '@wuh.site/components/audio-player'
+import { Equalizer, useAudioPlayer } from '@wuh.site/components/audio-player'
 import { useLocale } from '@wuh.site/components/locales'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import {
@@ -31,7 +31,7 @@ import {
   PanelHead,
   PanelSub,
   PanelTitle,
-  PlayingDot,
+  PlayingSlot,
   Rail,
   RailCount,
   RailItem,
@@ -244,7 +244,10 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
     return (
       <TrackList>
         {list.map((track, index) => {
-          const isPlaying = currentTrack?.id === track.id
+          // isCurrent 是「当前行」（命名修复：旧码误名 isPlaying，暂停红点不消失即此因）；
+          // 等化器跳动/冻结取真实播放态 isQueuePlaying（暂停停走纪律）
+          const isCurrent = currentTrack?.id === track.id
+          const playing = isCurrent && isQueuePlaying
           const isFav = (track.playCount ?? 0) === maxPlays && maxPlays > 0
           return (
             <TrackRow key={`${track.id}-${index}`} onClick={() => playFrom(index)}>
@@ -256,13 +259,15 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
                   </svg>
                 </IndexPlay>
               </TrackIndex>
-              <PlayingDot $playing={isPlaying} aria-hidden="true" />
+              <PlayingSlot aria-hidden="true">
+                {isCurrent ? <Equalizer $playing={playing}><span /><span /><span /></Equalizer> : null}
+              </PlayingSlot>
               <TrackButton
                 type="button"
                 aria-label={track.artist
                   ? t('music.page.playTrackArtistAria', { name: track.name, artist: track.artist })
                   : t('music.page.playTrackAria', { name: track.name })}
-                aria-current={isPlaying ? 'true' : undefined}
+                aria-current={isCurrent ? 'true' : undefined}
               >
                 <TrackName className="track-name">{track.name}</TrackName>
                 <TrackArtist>{track.artist}</TrackArtist>

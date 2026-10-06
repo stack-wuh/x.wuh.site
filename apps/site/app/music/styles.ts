@@ -522,15 +522,16 @@ export const IndexPlay = styled.span.attrs({ className: 'track-idx-play' })`
   }
 `
 
-export const PlayingDot = styled.span<{ $playing: boolean }>`
-  width: 6px;
-  height: 6px;
+/* 正在播放槽位（20261006 等化器三面）：全行等宽占位防文字抖动，仅当前行在槽内渲染包出口 Equalizer
+   （播放跳动/暂停冻结，与书耳等化器同语言）；静态红点退役——暂停不消失是假状态。
+   移动端维持「歌名主色 + 编号翻播放键」触控语言，槽位不占横向空间 */
+export const PlayingSlot = styled.span`
+  width: 13px;
+  height: 12px;
   flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--primary-color);
-  opacity: ${(p) => (p.$playing ? 1 : 0)};
+  display: inline-flex;
+  align-items: flex-end;
 
-  /* 移动端播放态由歌名主色 + 编号翻播放键表达，不再占横向空间 */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     display: none;
   }
