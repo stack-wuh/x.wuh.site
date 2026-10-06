@@ -4,7 +4,7 @@
   "name": "20261006-refactor-responsive-layout-batch1",
   "type": "refactor",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -15,18 +15,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 495,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/495",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 496,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/496"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d14f4576aa85d67536e1f0d0c4097a47abc444f6",
-    "verifiedAt": "2026-10-06T12:27:51.268Z"
+    "verifiedCommit": "a1993a91a3a3532d1e03c74bbc5a5264eddb88e6",
+    "verifiedAt": "2026-10-06T15:01:26.695Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:495",
-    "planHash": "fa70ba41556b476b7316224e94c5ef9daf4a70c51adfced54bbb1ad9ba25dca9",
+    "checkpoint": "merged-pr:496",
+    "planHash": "6c164fa36736d04350c9c51571c3c12661b28c41e22be1cb405cfe2323c122c8",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -53,7 +53,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "首次真实消费四档阶梯（blog PostRow / ContactCard Body·Hints，3 处布局 @media 迁 Flex），apps/site tsc 计数持平 31=31 证明零新增、三处逐 prop 等价走查成立。消费暴露并沉淀 3 条跨后续站点批次必复用的迁移事实（grid 次列 1fr→Flex 补 flex:1 且定宽块 flex-shrink:0；align 词汇 flex-start 非 grid start；site tsc 计数持平台规），并入 layout-components.md 执行约束（首消费 #495 迁移备忘），source 追加本 brief、verified-scope 更新为含站点首消费。apply 预评估为无需变更，review 判定为更新（迁移备忘属跨变更稳定事实）。"
+    "reason": "main 复核：#496 随 v1.4.67 部署链全绿，站点首消费已上线；三断点目视因 DNS NXDOMAIN 待补，verified-depth 维持 unit。重钉过归档门禁。"
   }
 }
 ---
