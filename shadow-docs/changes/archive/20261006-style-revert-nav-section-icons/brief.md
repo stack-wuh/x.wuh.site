@@ -4,7 +4,7 @@
   "name": "20261006-style-revert-nav-section-icons",
   "type": "style",
   "scope": "apps/site,packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261006-style-revert-nav-section-icons",
   "files": [
@@ -20,18 +20,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 479,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/479",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 480,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/480"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "79f3ed61ab187a9bf87afa5417762f7ccc3dca67",
-    "verifiedAt": "2026-10-06T07:37:58.956Z"
+    "verifiedCommit": "184d6a4a8dd447622e423d72787bff678cee189a",
+    "verifiedAt": "2026-10-06T07:58:09.019Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:479",
-    "planHash": "07af9d8803876ceacd66fbb40a2905e9a509a6e228ef37465b4fbe4cfc819446",
+    "checkpoint": "merged-pr:480",
+    "planHash": "3cff85d960f90ac735afe16fc5ee2095fb59b9f13b55887b2dcfffdd3494feca",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -62,7 +62,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "diff 与 c27a94d 逐文件互逆（内容级精确），tsc/oxlint 干净，SSR 结构核对导航与 h2 均无图标残留；纯还原不产生新事实"
+    "reason": "还原与 c27a94d 逐文件互逆已在 merge 前验证（tsc/lint/SSR 结构零残留）；main 184d6a4 即该还原内容经 squash 合入，v1.4.62 部署链 success，交付闭环"
   }
 }
 ---
@@ -107,8 +107,8 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: ~20 分钟（设计轮另计）
+- 验证: 7 文件与 c27a94d 反向补丁内容级 diff 精确互逆；site 域 tsc + oxlint 0 errors；SSR 结构核对 header nav/h2 无图标 svg；PR #480 已合并（184d6a4，branch protection REVIEW_REQUIRED 因作者无法自审以 admin 合并）；Release v1.4.62 部署链 CI-CD run 37431627213 **success**。生产直接目检因本机 DNS 不可达顺延（既有环境限制先例），还原目标为曾被生产验证的 pre-#474 态，风险为零。
 
 ## 知识评估
 
