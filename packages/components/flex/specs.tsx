@@ -50,6 +50,8 @@ export interface IFlexProps {
   margin?: TResponsive<TSpaceValue>
   /** 是否以内联元素的形式展示 */
   inline?: boolean,
+  /** 响应式显隐：true 档 `display: none`、false 档按 $inline 恢复 flex/inline-flex；数组 = 断点槽 */
+  hidden?: TResponsive<boolean>,
   /** 外联样式表 */
   style?: CSSProperties,
   /** 子元素 */
@@ -60,8 +62,10 @@ export interface IFlexProps {
   onClick?: () => void,
   /** 标题 */
   title?: string,
-  width?: string | number,
-  height?: string | number,
+  /** 宽度：number 按 px、CSS 长度/关键字直通（auto / fit-content / max-content / min-content / '100%'…）；数组 = 断点槽 */
+  width?: TResponsive<string | number>,
+  /** 高度：同 width；数组 = 断点槽 [base, sm?, md?, lg?] */
+  height?: TResponsive<string | number>,
   fullWidth?: boolean,
   fullHeight?: boolean,
   flex?: number | string,

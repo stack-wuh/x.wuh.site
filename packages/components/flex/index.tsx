@@ -17,6 +17,7 @@ interface IStyledFlexTransientProps {
   $padding?: IFlexProps['padding']
   $margin?: IFlexProps['margin']
   $inline?: IFlexProps['inline']
+  $hidden?: IFlexProps['hidden']
   $width?: IFlexProps['width']
   $height?: IFlexProps['height']
   $fullWidth?: IFlexProps['fullWidth']
@@ -30,10 +31,13 @@ interface IStyledFlexTransientProps {
 }
 
 /**
- * 长度值折算：有主题时走 spaces token（number 折 px，'md' 查 token，
- * CSS 简写字符串透传）；无主题回退为 px 折算，不产出无单位非法值。
+ * 长度值折算：CSS 关键字直通（auto / fit-content / max-content / min-content / 继承族 / none）；
+ * 有主题时走 spaces token（number 折 px、'md' 查 token、CSS 长度/百分比透传）；
+ * 无主题回退 px 折算，不产出无单位非法值。
  */
+const CSS_LENGTH_KEYWORDS = /^(auto|fit-content|max-content|min-content|inherit|initial|unset|none)$/
 const lengthValue = (value: string | number, theme?: Tokens): string => {
+  if (typeof value === 'string' && CSS_LENGTH_KEYWORDS.test(value)) return value
   if (theme) return getSpacingValue(value, theme)
   return typeof value === 'number' ? `${value}px` : value
 }
@@ -57,11 +61,17 @@ const StyledFlex = styled.div<IStyledFlexTransientProps & { theme?: Tokens }>`
     props.$margin !== undefined && props.theme
       ? responsive(props.$margin, (v) => `margin: ${lengthValue(v, props.theme)};`)
       : ''}
-  ${(props) => (props.$width !== undefined ? `width: ${lengthValue(props.$width, props.theme)};` : '')}
-  ${(props) => (props.$height !== undefined ? `height: ${lengthValue(props.$height, props.theme)};` : '')}
+  ${(props) => responsive(props.$width, (v) => `width: ${lengthValue(v, props.theme)};`)}
+  ${(props) => responsive(props.$height, (v) => `height: ${lengthValue(v, props.theme)};`)}
   ${(props) => (props.$fullWidth ? 'width: 100%;' : '')}
   ${(props) => (props.$fullHeight ? 'height: 100%;' : '')}
   ${(props) => (props.$flex !== undefined ? `flex: ${props.$flex};` : '')}
+
+  /* hidden 编译置于模板尾部：其 display:none 覆盖初始 display 行；
+     阶梯高槽 false 位发射恢复声明（按 $inline），媒体级联让位后段胜出 */
+  ${(props) =>
+    responsive(props.$hidden, (v) =>
+      v ? 'display: none;' : `display: ${props.$inline ? 'inline-flex' : 'flex'};`)}
 
   & > * {
     ${(props) =>
@@ -73,37 +83,38 @@ const StyledFlex = styled.div<IStyledFlexTransientProps & { theme?: Tokens }>`
   }
 `
 
-const FLEX_ONLY_KEYS: (keyof IFlexProps)[] = [
-  'direction', 'justifyContent', 'alignItems', 'gap', 'wrap', 'padding', 'margin',
-  'inline', 'width', 'height', 'fullWidth', 'fullHeight', 'flex', 'flexGrow',
-  'flexShrink', 'flexBasis', 'alignSelf', 'order'
-]
-
 export const Flex = React.forwardRef<HTMLDivElement, IFlexProps>((props, ref) => {
-  const domProps = { ...props }
-  FLEX_ONLY_KEYS.forEach((key) => delete (domProps as Record<string, unknown>)[key])
+  // 解构剔除布局 props：既避免原生 HTML `hidden`（boolean）与 TResponsive 冲突，
+  // 又杜绝任何布局 prop 泄进 DOM（delete-cast 的 spread 类型仍带 hidden，会撞 styled.div）
+  const {
+    direction, justifyContent, alignItems, gap, wrap, padding, margin,
+    inline, hidden, width, height, fullWidth, fullHeight, flex, flexGrow,
+    flexShrink, flexBasis, alignSelf, order,
+    ...domProps
+  } = props
 
   return (
     <StyledFlex
       ref={ref}
-      $direction={props.direction}
-      $justifyContent={props.justifyContent}
-      $alignItems={props.alignItems}
-      $gap={props.gap}
-      $wrap={props.wrap}
-      $padding={props.padding}
-      $margin={props.margin}
-      $inline={props.inline}
-      $width={props.width}
-      $height={props.height}
-      $fullWidth={props.fullWidth}
-      $fullHeight={props.fullHeight}
-      $flex={props.flex}
-      $flexGrow={props.flexGrow}
-      $flexShrink={props.flexShrink}
-      $flexBasis={props.flexBasis}
-      $alignSelf={props.alignSelf}
-      $order={props.order}
+      $direction={direction}
+      $justifyContent={justifyContent}
+      $alignItems={alignItems}
+      $gap={gap}
+      $wrap={wrap}
+      $padding={padding}
+      $margin={margin}
+      $inline={inline}
+      $hidden={hidden}
+      $width={width}
+      $height={height}
+      $fullWidth={fullWidth}
+      $fullHeight={fullHeight}
+      $flex={flex}
+      $flexGrow={flexGrow}
+      $flexShrink={flexShrink}
+      $flexBasis={flexBasis}
+      $alignSelf={alignSelf}
+      $order={order}
       {...domProps}
     />
   )
