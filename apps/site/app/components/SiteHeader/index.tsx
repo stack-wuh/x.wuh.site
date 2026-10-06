@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { IconArticle, IconBars, IconBookMarked, IconChevronDown, IconLogo, IconNote, IconPalette, IconUser } from '@wuh.site/components/icons'
+import { IconBars, IconChevronDown, IconLogo, IconPalette } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
 import { useThemeMode, type ColorSchemeMode } from '../theme/ThemeModeProvider'
 import type { ThemeFamily } from '@wuh.site/components/themes/tokens'
@@ -103,25 +103,15 @@ export default function SiteHeader() {
 
         <S.Right>
           <S.Nav aria-label={t('common.mainNav')}>
-            <S.NavLink href='/blog' aria-current={isBlog ? 'page' : undefined}>
-              <S.NavIcon aria-hidden='true'><IconArticle size={14} /></S.NavIcon>
-              {t('site.nav.blog')}
-            </S.NavLink>
-            <S.NavLink href='/music' aria-current={isMusic ? 'page' : undefined}>
-              <S.NavIcon aria-hidden='true'><IconNote size={14} /></S.NavIcon>
-              {t('site.nav.music')}
-            </S.NavLink>
-            <S.NavLink href='/about' aria-current={isAbout ? 'page' : undefined}>
-              <S.NavIcon aria-hidden='true'><IconUser size={14} /></S.NavIcon>
-              {t('site.nav.about')}
-            </S.NavLink>
+            <S.NavLink href='/blog' aria-current={isBlog ? 'page' : undefined}>{t('site.nav.blog')}</S.NavLink>
+            <S.NavLink href='/music' aria-current={isMusic ? 'page' : undefined}>{t('site.nav.music')}</S.NavLink>
+            <S.NavLink href='/about' aria-current={isAbout ? 'page' : undefined}>{t('site.nav.about')}</S.NavLink>
             <S.NavLink
               href='https://stack-wuh.github.io/blog/'
               target='_blank'
               rel='noopener noreferrer'
               aria-label={t('site.nav.knowledgeAria')}
             >
-              <S.NavIcon aria-hidden='true'><IconBookMarked size={14} /></S.NavIcon>
               {t('site.nav.knowledge')}<S.ExternalMark aria-hidden='true'>↗</S.ExternalMark>
             </S.NavLink>
           </S.Nav>

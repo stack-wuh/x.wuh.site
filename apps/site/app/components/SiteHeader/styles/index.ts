@@ -84,9 +84,6 @@ export const Right = styled.div`
 
 export const NavLink = styled(Link)`
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: calc(var(--space-xs) / 2);
   text-decoration: none;
   color: color-mix(in oklab, var(--text-color) 78%, transparent);
   font-size: var(--header-fs);
@@ -139,13 +136,6 @@ export const NavLink = styled(Link)`
 
     &::after { transition: none; }
   }
-`
-
-/* 导航装饰图标：随 NavLink 的 currentColor 淡化语言，纯装饰不进无障碍树 */
-export const NavIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  flex: none;
 `
 
 /* 外链标记：↗ 传达的是信息（点它会离开本站），不是装饰；淡化色与导航同一 mix 语言 */
