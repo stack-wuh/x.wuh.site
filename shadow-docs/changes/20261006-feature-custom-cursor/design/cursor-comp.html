@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN" data-family="wine" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>光标比稿 · x.wuh.site 特色鼠标 Icon</title>
+<style>
+/* ============================================================
+   真 token 出处（均抄自仓库源文件）：
+   - 四主题调色板: packages/components/themes/generator-color.ts
+       wine light  primary-500 #C94A44 / normal-900 #2A1E16 / background-900 #F5F0EC / background-100 #FFFBF8 / normal-400 #D4C8B8
+       wine dark   primary-500 #E36A64 / normal-500 #adadad(generate('#ffffff','dark') L37) / background-900 #2f2a2a / background-700 #170e0e / normal-400 #7e7e7e
+       plain light primary-600 #A87348 / normal-900 #2A2218 / background-900 #F2EDE4 / background-100 #FFFDF9 / normal-400 #D4CBB8
+       plain dark  primary-600 #deb896 / normal-900 rgba(255,255,255,.72) / background-900 #0b0908 / background-100 #1c1814 / normal-400 rgba(255,255,255,.14)
+   - 语义路由: packages/components/themes/cssVariableProvider.tsx (--primary-color/--text-color/--background-color/--page-bg 同构)
+   - 动效: packages/components/themes/index.ts L56-59 (ease-out-soft cubic-bezier(.22,1,.36,1) / dur-quick 150ms)
+   - 字体族: --font-serif 'Noto Serif SC' / --font-sans 'Noto Sans SC' / --font-mono 'JetBrains Mono'（比稿无自托管文件，回退系统字族，实现期走真 token）
+   ============================================================ */
+:root{
+  --font-serif:'Noto Serif SC',Georgia,'Songti SC',serif;
+  --font-sans:'Noto Sans SC',ui-sans-serif,system-ui,'PingFang SC',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'Courier New',monospace;
+  --dur-quick:150ms; --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+  --r-base:8px; --r-sm:4px; --r-xs:2px;
+}
+html[data-family="wine"][data-scheme="light"]{ --ink:#2A1E16; --cinnabar:#C94A44; --paper:#F5F0EC; --card:#FFFBF8; --line:#D4C8B8; --faint:#B9A998; }
+html[data-family="wine"][data-scheme="dark"]{  --ink:#adadad; --cinnabar:#E36A64; --paper:#2f2a2a; --card:#170e0e; --line:#7e7e7e; --faint:#5b5b5b; }
+html[data-family="plain"][data-scheme="light"]{ --ink:#2A2218; --cinnabar:#A87348; --paper:#F2EDE4; --card:#FFFDF9; --line:#D4CBB8; --faint:#B8AC98; }
+html[data-family="plain"][data-scheme="dark"]{  --ink:rgba(255,255,255,.72); --cinnabar:#deb896; --paper:#0b0908; --card:#1c1814; --line:rgba(255,255,255,.14); --faint:rgba(255,255,255,.20); }
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{max-width:100vw;overflow-x:clip}
+body{
+  font-family:var(--font-sans); color:var(--ink); min-height:100vh;
+  background:linear-gradient(180deg,var(--paper) 0%, color-mix(in oklab, var(--paper) 95%, var(--cinnabar) 5%) 100%);
+}
+a{color:var(--cinnabar);text-decoration:none}
+a:hover{text-decoration:underline}
+.topbar{
+  position:sticky;top:0;z-index:9; display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  padding:12px 24px; background:var(--card); border-bottom:1px solid color-mix(in oklab, var(--line) 40%, transparent);
+}
+.brand{font-family:var(--serif,inherit);font-family:var(--font-serif);font-size:17px;letter-spacing:.18em}
+.topbar .tabs,.topbar .themes{display:flex;gap:6px;flex-wrap:wrap}
+button.chip,.themes button{
+  font-family:var(--font-sans); font-size:12px; color:var(--ink);
+  background:transparent; border:1px solid color-mix(in oklab, var(--line) 55%, transparent);
+  border-radius:var(--r-sm); padding:5px 11px; cursor:inherit;
+  transition:color var(--dur-quick) var(--ease-out-soft), border-color var(--dur-quick) var(--ease-out-soft), background var(--dur-quick) var(--ease-out-soft);
+}
+.themes button.hair{border-style:solid}
+button.chip[aria-pressed="true"],.themes button[aria-pressed="true"]{
+  color:var(--cinnabar); border-color:color-mix(in oklab,var(--cinnabar) 55%,transparent);
+}
+button.chip[aria-pressed="true"]::after{content:"";display:block;height:1px;margin:4px 0 -1px;background:linear-gradient(90deg,transparent,var(--cinnabar),transparent)}
+main{max-width:1120px;margin:0 auto;padding:28px 24px 80px}
+.scene{display:none}
+.scene.on{display:block}
+.lede{font-family:var(--font-serif);font-size:21px;line-height:1.6;margin:6px 0 4px}
+.tagline{font-size:13px;color:color-mix(in oklab,var(--ink) 72%,transparent);margin-bottom:6px}
+.meta-mono{font-family:var(--font-mono);font-size:11px;color:color-mix(in oklab,var(--ink) 55%,transparent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;margin-top:18px}
+.card{
+  background:var(--card); border:1px solid color-mix(in oklab,var(--line) 45%,transparent);
+  border-radius:var(--r-base); padding:16px; box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+.card h3{font-family:var(--font-serif);font-size:15px;letter-spacing:.12em;font-weight:600;display:flex;justify-content:space-between;align-items:baseline}
+.card h3 .hot{font-family:var(--font-mono);font-size:11px;font-weight:400;color:color-mix(in oklab,var(--ink) 55%,transparent)}
+.zoomrow{display:flex;align-items:center;gap:18px;margin:14px 0 10px}
+.zoombox{position:relative;width:96px;height:96px;flex:none;border:1px dashed color-mix(in oklab,var(--line) 60%,transparent);border-radius:var(--r-sm);background:color-mix(in oklab,var(--paper) 60%,transparent)}
+.zoombox svg{width:100%;height:100%;display:block}
+.real{display:flex;align-items:flex-end;gap:14px}
+.real .u{width:24px;height:24px;flex:none}
+.real .u svg{width:24px;height:24px}
+.real .lbl{font-family:var(--font-mono);font-size:10px;color:color-mix(in oklab,var(--ink) 50%,transparent);text-align:center}
+.cross{position:absolute;inset:0;pointer-events:none;display:none}
+body.crosighton .cross{display:block}
+.cross i{position:absolute;background:transparent}
+.cross .v{left:0;top:0;height:100%;border-left:1px dashed var(--cinnabar)}
+.cross .h{left:0;top:0;width:100%;border-top:1px dashed var(--cinnabar)}
+.note{font-size:12.5px;line-height:1.7;color:color-mix(in oklab,var(--ink) 80%,transparent)}
+.note b{font-weight:600}
+.sysnote{display:inline-block;font-family:var(--font-mono);font-size:10.5px;border:1px solid color-mix(in oklab,var(--line) 60%,transparent);border-radius:var(--r-xs);padding:1px 6px;color:color-mix(in oklab,var(--ink) 55%,transparent)}
+table.trans{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+table.trans th{font-family:var(--font-mono);font-size:11px;text-align:left;font-weight:500;color:color-mix(in oklab,var(--ink) 55%,transparent);border-bottom:1px solid color-mix(in oklab,var(--line) 45%,transparent);padding:6px 8px}
+table.trans td{padding:6px 8px;border-bottom:1px solid color-mix(in oklab,var(--line) 28%,transparent);line-height:1.6}
+table.trans td:first-child{font-family:var(--font-mono);font-size:11.5px;white-space:nowrap}
+.live{background:var(--card);border:1px solid color-mix(in oklab,var(--line) 45%,transparent);border-radius:var(--r-base);padding:18px;margin-top:22px}
+.live h2{font-family:var(--font-serif);font-size:15px;letter-spacing:.14em;margin-bottom:4px}
+.liverow{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch;margin-top:14px}
+.zone{border:1px solid color-mix(in oklab,var(--line) 50%,transparent);border-radius:var(--r-sm);padding:12px 16px;min-width:170px;font-size:13px}
+.zone .zk{font-family:var(--font-mono);font-size:10.5px;color:color-mix(in oklab,var(--ink) 50%,transparent);display:block;margin-bottom:6px}
+.zone.grabzone:active{}
+.zone input{font:inherit;background:transparent;border:none;border-bottom:1px solid color-mix(in oklab,var(--line) 60%,transparent);color:var(--ink);outline:none;width:120px}
+h2.sect{font-family:var(--font-serif);font-size:14px;letter-spacing:.16em;margin:26px 0 0;color:color-mix(in oklab,var(--ink) 78%,transparent)}
+.matrix{margin-top:12px}
+.stage{position:relative;height:230px;overflow:hidden;border:1px solid color-mix(in oklab,var(--line) 50%,transparent);border-radius:var(--r-base);background:var(--card);margin-top:12px}
+.stage.cursorless{cursor:none}
+.stage .hint{position:absolute;left:16px;top:12px;font-size:12.5px;color:color-mix(in oklab,var(--ink) 60%,transparent)}
+.stage .linkish{position:absolute;border:1px solid color-mix(in oklab,var(--line) 55%,transparent);border-radius:var(--r-sm);padding:8px 14px;font-size:13px;background:color-mix(in oklab,var(--paper) 55%,transparent)}
+#trail-dot,#trail-ring{position:absolute;left:0;top:0;pointer-events:none;display:none;border-radius:999px}
+#trail-dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:currentColor}
+#trail-ring{width:26px;height:26px;margin:-13px 0 0 -13px;border:1.2px solid color-mix(in oklab,currentColor 45%,transparent);transition:transform var(--dur-quick) var(--ease-out-soft), border-color var(--dur-quick) var(--ease-out-soft)}
+.stage.armed #trail-dot,.stage.armed #trail-ring{display:block}
+.stage.armed.hot #trail-ring{transform:scale(1.35);border-color:var(--cinnabar)}
+/* ===== 写意蝶 · 两笔一点 ===== */
+.bfly-stage .hint{top:12px}
+.bfly{position:absolute;left:0;top:0;width:28px;height:28px;pointer-events:none;display:none;z-index:6;color:var(--ink)}
+.bfly.on{display:block}
+.bfly .wl,.bfly .wr{fill:currentColor;fill-opacity:.88}
+.bfly .wl{transform-box:fill-box;transform-origin:100% 100%}
+.bfly .wr{transform-box:fill-box;transform-origin:0% 100%}
+.bfly .wdot{fill:var(--cinnabar)}
+@keyframes flapL{50%{transform:rotate(-6deg)}}
+@keyframes flapR{50%{transform:rotate(6deg)}}
+@keyframes flapL2{50%{transform:rotate(-18deg)}}
+@keyframes flapR2{50%{transform:rotate(18deg)}}
+@keyframes foldL{to{transform:rotate(-62deg)}}
+@keyframes foldR{to{transform:rotate(62deg)}}
+@keyframes waveL{35%{transform:rotate(-24deg)}}
+@keyframes waveR{35%{transform:rotate(24deg)}}
+@media (prefers-reduced-motion: no-preference){
+  .bfly .wl{animation:flapL 2.2s cubic-bezier(0.45,0,0.25,1) infinite}
+  .bfly .wr{animation:flapR 2.2s cubic-bezier(0.45,0,0.25,1) infinite}
+  .bfly[data-state=pointer] .wl{animation:flapL2 .5s cubic-bezier(0.45,0,0.25,1) infinite}
+  .bfly[data-state=pointer] .wr{animation:flapR2 .5s cubic-bezier(0.45,0,0.25,1) infinite}
+  .bfly[data-state=grab] .wl{animation:flapL2 .28s cubic-bezier(0.45,0,0.25,1) infinite}
+  .bfly[data-state=grab] .wr{animation:flapR2 .28s cubic-bezier(0.45,0,0.25,1) infinite}
+  .bfly[data-state=text] .wl,.bfly[data-state=wait] .wl{animation:foldL .3s var(--ease-out-soft) forwards}
+  .bfly[data-state=text] .wr,.bfly[data-state=wait] .wr{animation:foldR .3s var(--ease-out-soft) forwards}
+  .bfly.popping .wl{animation:waveL .28s var(--ease-out-soft)}
+  .bfly.popping .wr{animation:waveR .28s var(--ease-out-soft)}
+}
+/* 写意静帧（无动画环境下两笔微开的定姿） */
+@media (prefers-reduced-motion: reduce){
+  .bfly .wl{transform:rotate(-7deg)}
+  .bfly .wr{transform:rotate(7deg)}
+}
+/* ===== 动效 Icon 场景（JS 跟随层） ===== */
+.anim-stage{height:auto;min-height:250px;padding:52px 20px 22px}
+.anim-stage.cursorless{cursor:none}
+.anim-stage .a-hint{top:40px}
+.a-ctl{position:absolute;top:12px;left:16px;display:flex;gap:12px;align-items:center;font-family:var(--font-mono);font-size:11px;color:color-mix(in oklab,var(--ink) 55%,transparent)}
+.a-ctl label{display:flex;gap:4px;align-items:center;cursor:inherit}
+.a-flow{position:absolute;inset:0;display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:52px 18px 18px}
+.a-flow input{font:inherit;background:transparent;border:none;border-bottom:1px solid color-mix(in oklab,var(--line) 60%,transparent);color:var(--ink);outline:none;width:150px}
+.a-flow .a-grab{border:1px solid color-mix(in oklab,var(--line) 55%,transparent);border-radius:var(--r-sm);padding:7px 13px;font-size:13px}
+.acur{position:absolute;left:0;top:0;width:24px;height:24px;pointer-events:none;display:none;z-index:6;color:var(--ink)}
+.acur.on{display:block}
+.acur svg{display:block;overflow:visible}
+.acur .a-dot,.acur .a-ring{transform-box:fill-box;transform-origin:center}
+.acur .a-dot{fill:var(--cinnabar)}
+.acur .a-ring{opacity:0}
+.a-caret{display:none;position:absolute;left:-1.5px;top:-8px;width:3px;height:16px;background:currentColor}
+.acur[data-state=text] .a-body{display:none}
+.acur[data-state=text] .a-caret{display:block}
+@keyframes dotBreathe{50%{transform:scale(1.5);opacity:.5}}
+@keyframes ringBreath{50%{transform:scale(1.7);opacity:.12}}
+@keyframes ringPop{from{transform:scale(1);opacity:.85}to{transform:scale(3.1);opacity:0}}
+@keyframes squish{50%{transform:scale(1.18,.72)}}
+@media (prefers-reduced-motion: no-preference){
+  .acur .a-dot{animation:dotBreathe 2.4s var(--ease-in-out-soft,cubic-bezier(0.45,0,0.25,1)) infinite}
+  .acur[data-state=pointer] .a-dot{animation-duration:1.6s}
+  .acur[data-state=pointer] .a-ring{opacity:.5;animation:ringBreath 2.4s cubic-bezier(0.45,0,0.25,1) infinite}
+  .acur.popping .a-ring{animation:ringPop 300ms var(--ease-out-soft) forwards}
+  .acur.popping .a-body svg{animation:squish 180ms var(--ease-out-soft)}
+  .acur[data-state=text] .a-caret{animation:caretBlink 1.06s steps(1,end) infinite}
+}
+.stage.armed.hot #trail-dot{width:3px;height:14px;margin:-7px 0 0 -1.5px;border-radius:.5px;background:var(--cinnabar);animation:caretBlink 1.06s steps(1,end) infinite}
+@keyframes caretBlink{0%,54%{opacity:1}55%,100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.stage.armed.hot #trail-dot{animation:none;opacity:1}}
+footer{margin-top:40px;font-size:11.5px;line-height:1.8;color:color-mix(in oklab,var(--ink) 52%,transparent)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <span class="brand">光标比稿</span>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="themes" id="themes"></div>
+  <button class="chip" id="crossBtn" aria-pressed="false">热点十字</button>
+  <span class="meta-mono">静态形态优先 · Safari 回退 · pointer:fine 门控 · reduced-motion 全静</span>
+</header>
+<main>
+  <p class="lede">人设转译：<b>文艺的笔 × 程序员的光标</b>。光标本体即一笔书写（F 竖钩 / G 刻刀崩口），hover 落一粒朱（点睛 / 印面），text 态弃系统 I 梁改用<b>终端方块光标 ▮</b>（vim / 终端 / 首页打字机同源），微动效层加<b>光标闪烁</b>。</p>
+  <p class="tagline">A/B/C/D 留档（否决维度＝形借 OS 直边轮廓、特色不足，不复辟）。新 F/G 全部脱离借用轮廓；页面即体验区，鼠标移上去就是实测。放大图 = 96px 矢量，热点十字按真实热点比例。</p>
+  <div id="scenes"></div>
+
+  <section class="scene" id="scene-motion">
+    <h2 class="sect">微动效可选层 ·「墨晕拖尾」</h2>
+    <p class="tagline">加分项，不绑定比稿方向：系统光标隐藏，笔尖墨点+呼吸光晕以 150ms ease-out-soft 滞后追随；悬停可点元素时墨点化作<b>闪烁的朱色方块光标 ▮</b>（1.06s steps 终端式闪烁，全页最程序员的一刻），离元素即收回。仅在 pointer:fine 且非 reduced-motion 时启用，否则整体瞬切回所选构的静态光标。</p>
+    <div class="stage" id="stage">
+      <span class="hint">进入此区体验追随层（离开即恢复原生）</span>
+      <span class="linkish" style="left:12%;top:46%">链接</span>
+      <span class="linkish" style="left:40%;top:24%">按钮</span>
+      <span class="linkish" style="left:62%;top:58%">可拖卡片</span>
+      <div id="trail-ring"></div><div id="trail-dot"></div>
+    </div>
+    <p class="meta-matrix meta-mono">定格帧 = 悬停三件之一时的张环态；生产为 transform-only，不触布局属性。</p>
+  </section>
+
+  <section class="scene" id="scene-anim">
+    <h2 class="sect">动效 Icon ·「会呼吸的墨」——JS 绘制跟随层（cursor:none 接管舞台区）</h2>
+    <p class="tagline">CSS cursor 不能动画，动 = 隐藏系统光标、墨层实时绘出。行为全集：待机 = 钩尖朱砂<b>呼吸明灭</b>（2.4s）；hover 链接/按钮 = 朱点<b>钤印张环</b>；按下 = <b>一圈墨晕扩散</b>（300ms）；进输入框 = 光标化作 <b>▮ 终端方块闪烁</b>（1.06s steps 真实闪烁节奏）；拖拽按住 = <b>压扁回弹</b>。全部 transform/opacity、走 --motion-* 令牌缓动；reduced-motion / 触控 / JS 不可用 → 瞬切上方所选构的静态 SVG（静态稿即回退资产，不白画）。笔身可在 F 竖钩 / G 刻刀 间切换——动效与形体正交。</p>
+    <div class="stage anim-stage" id="animStage">
+      <div class="a-ctl">笔身
+        <label><input type="radio" name="abody" value="hook" checked>F · 竖钩</label>
+        <label><input type="radio" name="abody" value="cut">G · 刻刀</label>
+      </div>
+      <span class="hint a-hint">移进此区，系统光标交还墨层——逐个试过链接/输入框/可拖卡片</span>
+      <div class="a-flow">
+        <a href="#" onclick="return false">链接</a>
+        <button class="zone-btn">按钮</button>
+        <input value="输入框（方块光标）">
+        <span class="zone-text" contenteditable>可选中文字…</span>
+        <span class="zone zone-grab a-grab">可拖卡片（按住）</span>
+      </div>
+      <div class="acur" id="acur" data-state="default">
+        <span class="a-body"><svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path class="a-path" fill="currentColor"/><circle class="a-dot" r="1.7"/><circle class="a-ring" r="3.2" fill="none" stroke="var(--cinnabar)" stroke-width="1.1"/></svg></span>
+        <span class="a-caret"></span>
+      </div>
+    </div>
+    <p class="meta-matrix meta-mono">生产实现：单全局组件（rAF + transform: translate3d 合成器层），document 委托 pointerover 按角色换态；页面外区域仍走静态 CSS cursor，仅 pointer:fine 生效。</p>
+  </section>
+
+  <section class="scene" id="scene-bfly">
+    <h2 class="sect">写意蝶 · 两笔一点</h2>
+    <p class="tagline">以笔写蝶，不以翅写蝶：左叶一笔、右叶一笔、中粒朱砂——就是这只蝶。无翅脉、无斑点、无触须、无节腹、无生命谱系叙事。六态皆同一两笔的开合：待机微呼吸、hover 快扇、按下波动一记、输入合翅成一线、拖拽急扇、加载合翅入定。朱点即热点，蝶身悬于目标正上方。</p>
+    <div class="stage anim-stage bfly-stage" id="bflyStage">
+      <span class="hint">移进此区：两笔开始呼吸。逐个试链接 / 输入框 / 按住不放</span>
+      <div class="a-flow">
+        <a href="#" onclick="return false">花·链接</a>
+        <button class="zone-btn">花·按钮</button>
+        <input value="停栖输入框">
+        <span class="zone-grab bfly-grab">可拖卡片</span>
+        <span class="zone bfly-wait">加载区</span>
+      </div>
+      <div class="bfly" id="bfly" data-state="default">
+        <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <path class="wl" d="M13.9 14C10.5 12.8 7.7 9.6 6.5 4.6C10.5 6 13.1 9.2 14.1 13.2Z"/>
+          <path class="wr" d="M14.1 14C17.5 12.8 20.3 9.6 21.5 4.6C17.5 6 14.9 9.2 13.9 13.2Z"/>
+          <circle class="wdot" cx="14" cy="14" r="1.7"/>
+        </svg>
+      </div>
+    </div>
+    <p class="meta-matrix meta-mono">一笔生万态：两笔只在 −62°（合翅）↔ ±6°（呼吸 2.2s）↔ ±18°（快扇）之间转动；朱点恒定不动。reduced-motion / 触控 → 静帧即两笔微开的定姿。</p>
+  </section>
+
+  <footer>
+    状态矩阵与边界：6 态 × 4 主题自动适配（墨色走 currentColor 随 text-color 路由；朱砂件由生成期按当前主题调色板注入 data URI——出处 generator-color.ts 单一事实源，零复制漂移）。光标画布 24×24（浏览器上限 128，macOS 32 内最稳）；实现期追加 1×/2× 双层 url 回退链，Safari 落系统。触控设备零影响（@media pointer:fine 门控，滚动条先例同构）。
+  </footer>
+</main>
+<style id="liveCss"></style>
+<script>
+/* ============ 光标构造器（与实现期 SVG 一一对应） ============ */
+const ARROW = "M5.5 2.5L5.5 17.2L9.2 13.9L11.7 19.9L14.4 18.8L11.9 12.9L17.3 12.4Z";
+/* 笔锋轮廓：弧中线笔肚外凸 + 合锋凹肩 + 尾部双毫岔口（借系统多边形即「普通」之源，弃） */
+const BRUSH = "M5.2 2.4C4.1 7.6 4.2 12.6 5.1 16.9Q6.6 15.4 8.8 13.3Q9.4 15.9 11.2 19.7Q12.1 18.2 12.7 16.8Q13.5 17.7 14.2 18.3C15.0 15.2 16.2 13.6 17.3 12.4C13.8 9.8 9.8 6.8 5.2 2.4Z";
+const arrowSolid = (op='') => `<path d='${BRUSH}' fill='currentColor' ${op}/>`;
+const SW = s => `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>${s}</svg>`;
+const line = (d,w=1.7,extra='') => `<path d='${d}' fill='none' stroke='currentColor' stroke-width='${w}' stroke-linecap='round' stroke-linejoin='round' ${extra}/>`;
+const inkFill = (s,extra='') => `<circle ${extra} fill='currentColor'/>`.replace('<circle ', `<circle ${s} `);
+function arrowBase(stroke=1.7,ghost=0.15){ return `<path d='${BRUSH}' fill='currentColor' fill-opacity='${ghost}'/>` + line(BRUSH,stroke); }
+
+const B_STATE = (acc, g=0.15) => ({
+  default:  {svg:SW(arrowSolid()), hot:[6,3]},
+  pointer:  {svg:SW(arrowSolid()+`<circle cx='5.2' cy='2.6' r='2.7' fill='currentColor'/>`), hot:[6,3]},
+  text:     {svg:SW(line("M12 4.6C11.4 8.4 11.4 15.6 12 19.4",2)+line("M9.5 5.4h5M9.5 18.6h5",1.3)+`<circle cx='12' cy='4.4' r='1.4' fill='currentColor'/>`), hot:[12,12]},
+  wait:     {svg:SW(`<circle cx='12' cy='12' r='6.5' fill='none' stroke='currentColor' stroke-width='1.4' stroke-dasharray='26 15' transform='rotate(-90 12 12)' opacity='.9'/><circle cx='12' cy='12' r='2' fill='currentColor'/>`), hot:[12,12]},
+  grab:     {svg:SW(arrowSolid("opacity='.55'")+line("M6.8 16.8Q12 20 17.2 16.8",1.3,"stroke-dasharray='1.6 2.6'")), hot:[6,3]},
+  grabbing: {svg:SW(`<ellipse cx='11.6' cy='15.8' rx='5.2' ry='2.7' fill='currentColor' fill-opacity='.85'/>`+line(BRUSH,1.4,"opacity='.4'")), hot:[6,3]},
+});
+const P_STATE = acc => ({
+  default:  {svg:SW(arrowSolid()+`<rect x='14.4' y='1.4' width='4.8' height='4.8' rx='1.1' fill='${acc}'/>`), hot:[6,3]},
+  pointer:  {svg:SW(arrowSolid()+`<circle cx='5.2' cy='2.6' r='2.5' fill='currentColor'/>`+`<rect x='13.9' y='0.9' width='5.6' height='5.6' rx='1.3' fill='${acc}'/>`), hot:[6,3]},
+  text:     {svg:SW(line("M12 5.6C11.5 8.8 11.5 15.2 12 19.4",2)+line("M8.9 6.2h6.2M8.9 18.8h6.2",1.3)+`<rect x='10.4' y='2.2' width='3.2' height='3.2' rx='.8' fill='${acc}'/>`), hot:[12,12]},
+  wait:     {svg:SW(`<circle cx='12' cy='12' r='6.6' fill='none' stroke='currentColor' stroke-width='1.4' stroke-dasharray='26 15' transform='rotate(-90 12 12)' opacity='.8'/><rect x='9.9' y='9.9' width='4.2' height='4.2' rx='.9' fill='${acc}'/>`), hot:[12,12]},
+  grab:     {svg:SW(arrowSolid("opacity='.55'")+line("M6.8 16.8Q12 20 17.2 16.8",1.3,"stroke-dasharray='1.6 2.6'")+`<rect x='14.6' y='14.6' width='4.2' height='4.2' rx='1' fill='${acc}' opacity='.85'/>`), hot:[6,3]},
+  grabbing: {svg:SW(`<rect x='7.8' y='13.1' width='7.2' height='3.6' rx='1.4' fill='${acc}'/>`+line(BRUSH,1.4,"opacity='.4'")), hot:[6,3]},
+});
+const DOT_STATE = acc => ({
+  default:  {svg:SW(`<circle cx='12' cy='12' r='2.6' fill='currentColor'/><circle cx='12' cy='12' r='6.4' fill='none' stroke='currentColor' stroke-width='.9' opacity='.35'/>`), hot:[12,12]},
+  pointer:  {svg:SW(`<circle cx='12' cy='12' r='2' fill='currentColor'/><circle cx='12' cy='12' r='7.8' fill='none' stroke='currentColor' stroke-width='1.2' opacity='.65'/>`), hot:[12,12]},
+  text:     {svg:SW(line("M12 5.6v12.8",1.6)+`<circle cx='12' cy='3.6' r='1.5' fill='currentColor'/>`), hot:[12,12]},
+  wait:     {svg:SW(`<circle cx='12' cy='12' r='1.7' fill='currentColor'/><circle cx='12' cy='12' r='6.2' fill='none' stroke='currentColor' stroke-width='1.3' stroke-dasharray='20 19' transform='rotate(-90 12 12)' opacity='.75'/>`), hot:[12,12]},
+  grab:     {svg:SW(`<circle cx='12' cy='12' r='1.3' fill='currentColor'/>`+line("M6.6 9a6.6 6.6 0 0 1 0 6",1.3)+line("M17.4 9a6.6 6.6 0 0 0 0 6",1.3)), hot:[12,12]},
+  grabbing: {svg:SW(`<ellipse cx='12' cy='12' rx='4.4' ry='2.3' fill='currentColor'/>`), hot:[12,12]},
+});
+
+/* F 竖钩：一笔楷书竖钩作光标本体，钩尖=热点；pointer=点睛一粒朱 */
+const HOOK = "M12.6 3.2C13.7 3.5 13.9 4.7 13.6 6.5C13 10.6 12.7 14.1 13.05 17.05C13.15 18.2 12.5 18.65 11.6 18.2C9.8 17.2 7.4 14.9 5.05 11.25C4.6 10.5 5.45 9.75 6.05 10.5C7.9 12.9 9.7 14.5 11 15.05C10.65 12.3 10.85 8.9 11.45 5C11.65 3.7 12 3 12.6 3.2Z";
+const hookSolid = (op='') => `<path d='${HOOK}' fill='currentColor' ${op}/>`;
+const HOOK_STATE = acc => ({
+  default:  {svg:SW(hookSolid()), hot:[5,11]},
+  pointer:  {svg:SW(hookSolid()+`<circle cx='5.1' cy='10.9' r='2.6' fill='${acc}'/>`), hot:[5,11]},
+  text:     {svg:SW(`<rect x='9.4' y='4' width='5.4' height='16' rx='.7' fill='currentColor'/>`), hot:[9,12]},
+  wait:     {svg:SW(`<circle cx='12' cy='12' r='6.5' fill='none' stroke='currentColor' stroke-width='1.4' stroke-dasharray='26 15' transform='rotate(-90 12 12)' opacity='.9'/><circle cx='12' cy='12' r='2' fill='currentColor'/>`), hot:[12,12]},
+  grab:     {svg:SW(hookSolid("opacity='.5'")+line("M6.8 16.8Q12 20 17.2 16.8",1.3,"stroke-dasharray='1.6 2.6'")), hot:[5,11]},
+  grabbing: {svg:SW(`<ellipse cx='11.6' cy='15.8' rx='5.2' ry='2.7' fill='currentColor' fill-opacity='.85'/>`+line(HOOK,1.4,"opacity='.4'")), hot:[12,12]},
+});
+/* G 刻刀：刻出来的硬角箭头，起刀/收刀带崩口石味；text=崩角方块光标 */
+const CUT = "M5.4 2.3L5.4 9L4.5 9.9L5.4 10.8L5.4 17L9.2 13.9L10.6 17.3L11.9 16.9L11.6 19.8L14.4 18.6L12 13L17.2 12.5L12.4 6.4L13.2 5.7L11.9 4.6L12.6 3.9Z";
+const cutSolid = (op='') => `<path d='${CUT}' fill='currentColor' ${op}/>`;
+const CUT_STATE = acc => ({
+  default:  {svg:SW(cutSolid()), hot:[5,3]},
+  pointer:  {svg:SW(cutSolid()+`<rect x='13.6' y='1' width='5.2' height='5.2' rx='1' fill='${acc}'/>`), hot:[5,3]},
+  text:     {svg:SW(`<path d='M9.8 4.2H14V15.8L12.2 19.4H9.8Z' fill='currentColor'/>`), hot:[9,12]},
+  wait:     {svg:SW(`<circle cx='12' cy='12' r='6.5' fill='none' stroke='currentColor' stroke-width='1.4' stroke-dasharray='26 15' transform='rotate(-90 12 12)' opacity='.9'/><rect x='10' y='10' width='4' height='4' fill='${acc}'/>`), hot:[12,12]},
+  grab:     {svg:SW(cutSolid("opacity='.55'")+line("M6.8 16.8Q12 20 17.2 16.8",1.3,"stroke-dasharray='1.6 2.6'")), hot:[5,3]},
+  grabbing: {svg:SW(`<rect x='7.6' y='13.2' width='7.4' height='3.4' rx='1' fill='${acc}'/>`+line(CUT,1.4,"opacity='.4'")), hot:[12,12]},
+});
+/* D 克制替换：只换交互三态，其余系统保留 */
+const dMix = (b,p)=>({ pointer:b[0].pointer(b[1]), text:b[1].text? undefined:undefined });
+const PROPS = [
+ { id:'A', name:'墨锋', tag:'最文人 · 弃系统直边轮廓，实体浓墨笔锋', build:B_STATE,
+   trans:[['default','弧中线重画笔锋：笔肚外凸、合锋凹肩、尾出双毫岔口；浓墨实体（白文印填涂同系）——不再借 OS 轮廓'],['pointer','锋上涨墨一粒——含墨欲书'],['text','悬针一竖，横脚收短作 I 语义，笔尖一点收锋呼应签名'],['wait','300° 弧线 + 居中墨点（定格帧）'],['grab','笔尖轻提，虚线笔痕离纸'],['grabbing','墨点压扁——「按印入泥」（Progress 同款动词）']],
+   notes:{default:'实体浓墨笔锋：笔肚凸 · 合锋凹 · 双毫尾',pointer:'锋上涨墨 · 含墨欲书',text:'悬针一竖 · 横脚收短 · 笔尖收锋',wait:'弧环提浓 .9 + 墨点（静帧）',grab:'半透提笔 · 虚线笔痕离纸',grabbing:'墨点压扁 · 按印入泥'} },
+ { id:'B', name:'印心', tag:'品牌记忆最强 · 朱砂印面入光标', build:P_STATE,
+   trans:[['default','箭头右上押一方微型朱印——Header「墨」印、落款钤印同构'],['pointer','笔尖含墨，印面浮起放大——选中即钤印'],['text','竖笔端顶一撮朱点，如笔杆装印'],['wait','墨线弧环，印面作芯'],['grab','虚笔离纸，小印随行'],['grabbing','印面压扁——钤印入泥']],
+   notes:{default:'朱砂方印在臂',pointer:'印面浮起 · 墨点含朱',text:'竖笔顶朱点',wait:'环墨 · 芯朱',grab:'随印轻提',grabbing:'印面压扁入泥'} },
+ { id:'C', name:'墨点', tag:'最空灵激进 · 点即光标（热点对齐风险自担）', build:DOT_STATE,
+   trans:[['default','纯墨点 + 呼吸光晕，箭头退场——「一点落纸」'],['pointer','光晕张环抱点——「笔触水」'],['text','细竖 + 端点'],['wait','点 + 240° 断弧'],['grab','环夹成两弧，点收小'],['grabbing','点横向压扁——墨进纸']],
+   notes:{default:'墨点 + 晕环',pointer:'环张抱点',text:'细竖端点',wait:'断弧伴点',grab:'两弧夹点',grabbing:'压扁入纸'} },
+ { id:'D', name:'只易互动', tag:'最低风险 · 常态系统保留，特色只落交互态', build:null,
+   trans:[['default','系统保留'],['pointer','B 构：印心手型'],['text','A 构：悬针一竖'],['wait','系统保留'],['grab','系统保留'],['grabbing','C 构：墨点压扁']],
+   notes:{default:null,pointer:'借 B · 印心',text:'借 A · 悬针',wait:null,grab:null,grabbing:'借 C · 压扁入纸'} },
+ { id:'F', name:'竖钩', tag:'文艺骨 · 光标即一笔竖钩，钩尖点睛', build:HOOK_STATE,
+   trans:[['default','一笔「东」字末笔竖钩：竖笔下行、左上挑钩，钩尖即热点——不再是借来的箭头，是汉字的一竖'],['pointer','点睛：钩尖钤一粒朱——画龙点睛，hover 即目标活了'],['text','终端/vim 方块光标 ▮——程序员身份图腾，首页打字机光标同源；热点在光标左缘'],['wait','300° 弧环 + 居中墨点（定格帧）'],['grab','钩势轻提，虚线笔痕离纸'],['grabbing','墨点压扁——按印入泥']],
+   notes:{default:'竖钩本体 · 钩尖热点',pointer:'点睛 · 钩尖一粒朱',text:'方块光标 ▮（vim/终端）',wait:'弧环 + 墨点',grab:'半透提钩 · 虚线痕',grabbing:'压扁入纸'} },
+ { id:'G', name:'刻刀', tag:'程序员骨 · 篆刻崩口刀味 + 方块印章', build:CUT_STATE,
+   trans:[['default','刻刀刻的箭头：硬角直边，起刀/收刀带崩口石味，白文实体填涂'],['pointer','右上浮一枚朱砂方印——钤印'],['text','崩角方块光标 ▮（终端块光标刻刀版）'],['wait','弧环 + 朱印作芯'],['grab','半透提笔 · 虚线笔痕'],['grabbing','印面压扁——钤印入泥']],
+   notes:{default:'崩口硬角 · 白文实体',pointer:'右上朱印',text:'崩角块光标 ▮',wait:'环墨 · 芯朱',grab:'半透提刀',grabbing:'印面压扁'} },
+];
+const STATES = ['default','pointer','text','wait','grab','grabbing'];
+const SYS_FALLBACK = {default:'default',pointer:'pointer',text:'text',wait:'wait',grab:'grab',grabbing:'grabbing'};
+
+const THEMES = {
+  wl:{label:'酒 · 明',family:'wine', scheme:'light',cinnabar:'#C94A44'},
+  wd:{label:'酒 · 暗',family:'wine', scheme:'dark', cinnabar:'#E36A64'},
+  pl:{label:'素 · 明',family:'plain',scheme:'light',cinnabar:'#A87348'},
+  pd:{label:'素 · 暗',family:'plain',scheme:'dark', cinnabar:'#deb896'},
+};
+const uri = svg => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+function stateFor(propId, st, acc, g){
+  if(propId==='D'){
+    if(st==='pointer') return P_STATE(acc).pointer;
+    if(st==='text')    return B_STATE(acc,g).text;
+    if(st==='grabbing')return DOT_STATE(acc).grabbing;
+    return null;
+  }
+  const build = PROPS.find(p=>p.id===propId).build;
+  return build(acc,g)[st];
+}
+function cssFor(propId, acc, g){
+  let out='';
+  const rule=(st,sel,fb)=>{ const s=stateFor(propId,st,acc,g); if(s) out+=`${sel}{cursor:${uri(s.svg)} ${s.hot[0]} ${s.hot[1]}, ${fb}}\n`; };
+  rule('default','body','default');
+  rule('pointer','a,button,.zone-btn,[role=button]','pointer');
+  rule('text','input,textarea,[contenteditable],.zone-text','text');
+  rule('wait','.zone-wait','wait');
+  rule('grab','.zone-grab','auto');
+  rule('grabbing','.zone-grab:active','auto');
+  document.getElementById('liveCss').textContent = out;
+}
+
+/* ============ 页面渲染 ============ */
+const tabsEl=document.getElementById('tabs'), themesEl=document.getElementById('themes'), scenesEl=document.getElementById('scenes');
+let scene='A', theme='wl';
+const SCENES=[...PROPS.map(p=>({id:p.id,label:p.id+' · '+p.name})),{id:'bfly',label:'写意蝶'},{id:'anim',label:'笔身动效'},{id:'motion',label:'旧拖尾层'}];
+SCENES.forEach(s=>{const b=document.createElement('button');b.className='chip';b.textContent=s.label;b.dataset.scene=s.id;b.onclick=()=>{scene=s.id;render();};tabsEl.appendChild(b);});
+Object.entries(THEMES).forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t.label;b.dataset.theme=k;b.onclick=()=>{theme=k;render();};themesEl.appendChild(b);});
+document.getElementById('crossBtn').onclick=e=>{const on=document.body.classList.toggle('crosighton');e.currentTarget.setAttribute('aria-pressed',on);};
+
+function cardFor(propId, st, acc, g){
+  const s = stateFor(propId,st,acc,g);
+  const prop = PROPS.find(p=>p.id===propId);
+  const note = prop.notes[st];
+  if(!s) return `<div class="card"><h3>${st}<span class="hot">—</span></h3><div class="zoomrow"><div class="zoombox" style="display:grid;place-items:center"><span class="sysnote">系统保留</span></div></div><p class="note">${note}</p></div>`;
+  const svg24 = s.svg;
+  return `<div class="card">
+    <h3>${st}<span class="hot">hot ${s.hot[0]} ${s.hot[1]}</span></h3>
+    <div class="zoomrow">
+      <div class="zoombox">${svg24}<span class="cross"><i class="v" style="left:${s.hot[0]*4}px"></i><i class="h" style="top:${s.hot[1]*4}px"></i></span></div>
+      <div class="real">
+        <div><span class="u" style="color:var(--ink)">${svg24}</span><span class="lbl">24px</span></div>
+        <div><span class="u" style="color:color-mix(in oklab,var(--ink) 72%,transparent)">${svg24}</span><span class="lbl">72% 淡</span></div>
+      </div>
+    </div>
+    <p class="note">${note}</p></div>`;
+}
+
+function render(){
+  const t=THEMES[theme];
+  document.documentElement.dataset.family=t.family; document.documentElement.dataset.scheme=t.scheme;
+  tabsEl.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.scene===scene));
+  themesEl.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.theme===theme));
+  const g=t.scheme==='dark'?0.10:0.15;
+  const STATIC = scene==='motion'||scene==='anim'||scene==='bfly';
+  cssFor(STATIC?(scene==='motion'?'A':'F'):scene, t.cinnabar, g);
+  document.getElementById('stage').classList.toggle('cursorless', scene==='motion');
+  scenesEl.innerHTML='';
+  if(!STATIC){
+    const p=PROPS.find(x=>x.id===scene);
+    const sec=document.createElement('section'); sec.className='scene on';
+    sec.innerHTML=`<h2 class="sect">${p.id} 构 · ${p.name}</h2><p class="tagline">${p.tag}</p>
+      <div class="grid">${STATES.map(st=>cardFor(scene,st,t.cinnabar,g)).join('')}</div>
+      <table class="trans matrix"><tr><th>态</th><th>转译（站点语言对应物）</th></tr>${p.trans.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
+      <div class="live"><h2>活体体验区</h2><p class="tagline">整页已挂本构光标；以下分区触发各态。</p>
+        <div class="liverow">
+          <div class="zone"><span class="zk">pointer</span><a href="#" onclick="return false">链接</a> · <button class="zone-btn">按钮</button></div>
+          <div class="zone"><span class="zk">text</span><input value="可编辑输入框" readonly></div>
+          <div class="zone"><span class="zk">text</span><div class="zone-text" contenteditable>选中这段文字…</div></div>
+          <div class="zone zone-wait"><span class="zk">wait</span>同步中区块（悬停）</div>
+          <div class="zone zone-grab"><span class="zk">grab / grabbing</span>拖拽卡片（按住试试）</div>
+        </div></div>`;
+    scenesEl.appendChild(sec);
+  }
+  document.getElementById('scene-motion').classList.toggle('on', scene==='motion');
+  document.getElementById('scene-anim').classList.toggle('on', scene==='anim');
+  document.getElementById('scene-bfly').classList.toggle('on', scene==='bfly');
+  if(scene==='motion') initTrail();
+  if(scene==='anim') initAnimStage();
+  if(scene==='bfly') initBflyStage();
+  const q=new URLSearchParams(); q.set('scene',scene); q.set('theme',theme);
+  history.replaceState(null,'','?'+q.toString());
+}
+
+/* 微动效层：墨点+光晕滞后追随（transform-only，reduced-motion/粗指针整体停用） */
+let trailInit=false;
+function initTrail(){ if(trailInit) return; trailInit=true;
+  const stage=document.getElementById('stage'), dot=document.getElementById('trail-dot'), ring=document.getElementById('trail-ring');
+  let tx=-100,ty=-100,cx=-100,cy=-100,raf=null,armed=false;
+  const fine=matchMedia('(pointer:fine)').matches, noRed=matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  if(!(fine&&noRed)){ stage.classList.remove('cursorless'); stage.querySelector('.hint').textContent='当前环境（粗指针/减少动效）：本层不启用，走静态光标。'; return; }
+  stage.addEventListener('pointerenter',e=>{armed=true;stage.classList.add('armed');});
+  stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect();tx=e.clientX-r.left;ty=e.clientY-r.top;
+    const hov=e.target.closest('a,button,.linkish'); stage.classList.toggle('hot',!!hov); if(!raf) loop();});
+  stage.addEventListener('pointerleave',()=>{armed=false;stage.classList.remove('armed','hot');cancelAnimationFrame(raf);raf=null;});
+  function loop(){cx+=(tx-cx)*0.22;cy+=(ty-cy)*0.22;dot.style.transform=`translate(${cx}px,${cy}px)`;ring.style.transform=`translate(${cx}px,${cy}px)`+(stage.classList.contains('hot')?' scale(1.35)':'');
+    if(Math.abs(tx-cx)>0.3||Math.abs(ty-cy)>0.3){raf=requestAnimationFrame(loop)}else{raf=null}}
+}
+/* 动效 Icon：全局跟随层的比稿微缩版——rAF+transform 合成器位移，按角色换态 */
+function initAnimStage(){
+  const stage=document.getElementById('animStage');
+  if(!(matchMedia('(pointer:fine)').matches)){
+    stage.classList.remove('cursorless');
+    stage.querySelector('.a-hint').textContent='粗指针设备：动效层不启用（生产同规则——回退静态 CSS 光标）。';
+    return;
+  }
+  stage.classList.add('cursorless');
+  if(stage._armed) return; stage._armed=true;
+  const cur=document.getElementById('acur'), path=cur.querySelector('.a-path'), dot=cur.querySelector('.a-dot'), ring=cur.querySelector('.a-ring');
+  const BODY={hook:{hot:[5,11],dot:[5.1,11.2],d:HOOK}, cut:{hot:[5,3],dot:[5.5,3.1],d:CUT}};
+  let body='hook';
+  const setBody=b=>{body=b;const o=BODY[b];path.setAttribute('d',o.d);dot.setAttribute('cx',o.dot[0]);dot.setAttribute('cy',o.dot[1]);ring.setAttribute('cx',o.dot[0]);ring.setAttribute('cy',o.dot[1]);};
+  setBody('hook');
+  stage.querySelectorAll('input[name=abody]').forEach(r=>r.addEventListener('change',()=>setBody(r.value)));
+  let tx=-50,ty=-50,raf=null;
+  const place=()=>{const h=cur.dataset.state==='text'?[1.5,8]:BODY[body].hot;cur.style.transform=`translate(${tx-h[0]}px,${ty-h[1]}px)`;raf=null;};
+  stage.addEventListener('pointerenter',()=>cur.classList.add('on'));
+  stage.addEventListener('pointermove',e=>{
+    const r=stage.getBoundingClientRect();tx=e.clientX-r.left;ty=e.clientY-r.top;
+    const t0=e.target.closest('a,button,input:not([type=radio]),[contenteditable],.a-grab');
+    let st='default';if(t0){if(t0.matches('input,[contenteditable]'))st='text';else if(t0.matches('.a-grab'))st='grab';else st='pointer';}
+    if(cur.dataset.state!==st)cur.dataset.state=st;
+    if(!raf)raf=requestAnimationFrame(place);
+  });
+  stage.addEventListener('pointerdown',()=>{cur.classList.remove('popping');void cur.offsetWidth;cur.classList.add('popping');});
+  stage.addEventListener('pointerup',()=>cur.classList.remove('popping'));
+  stage.addEventListener('pointerleave',()=>{cur.classList.remove('on','popping');cur.dataset.state='default';});
+}
+/* 写意蝶舞台：一个状态机，六态只是转角的参数 */
+function initBflyStage(){
+  const stage=document.getElementById('bflyStage');
+  if(!(matchMedia('(pointer:fine)').matches)){stage.querySelector('.hint').textContent='粗指针设备：动效层不启用（生产同规则——回退静帧）。';return;}
+  stage.classList.add('cursorless');
+  if(stage._armed) return; stage._armed=true;
+  const b=document.getElementById('bfly');
+  let tx=0,ty=0,raf=null;
+  const place=()=>{b.style.transform=`translate(${tx-14}px,${ty-14}px)`;raf=null;};
+  stage.addEventListener('pointerenter',()=>b.classList.add('on'));
+  stage.addEventListener('pointermove',e=>{
+    const r=stage.getBoundingClientRect();tx=e.clientX-r.left;ty=e.clientY-r.top;
+    const t0=e.target.closest('a,button,input,[contenteditable],.bfly-grab,.bfly-wait');
+    let st='default';
+    if(t0){ if(t0.matches('input,[contenteditable]')) st='text'; else if(t0.matches('.bfly-wait')) st='wait'; else if(t0.matches('.bfly-grab')) st='grab'; else st='pointer'; }
+    if(b.dataset.state!==st) b.dataset.state=st;
+    if(!raf) raf=requestAnimationFrame(place);
+  });
+  stage.addEventListener('pointerdown',()=>{b.classList.remove('popping');void b.offsetWidth;b.classList.add('popping');});
+  stage.addEventListener('pointerup',()=>b.classList.remove('popping'));
+  stage.addEventListener('pointerleave',()=>{b.classList.remove('on','popping');b.dataset.state='default';});
+}
+const params=new URLSearchParams(location.search);
+if(SCENES.some(s=>s.id===params.get('scene'))) scene=params.get('scene');
+if(THEMES[params.get('theme')]) theme=params.get('theme');
+render();
+</script>
+</body>
+</html>
