@@ -43,22 +43,23 @@ export const QueueRows = ({ queue, currentTrack, playTrack, playing }: QueueRows
         style={
           {
             '--q-active': isCurrent ? 1 : 0,
-            // 三面切换的行内驱动（激活态纪律）：--q-eq 显隐、--q-eq-state 跳动/冻结
+            // 水印显隐/跳动/冻结的行内驱动（激活态纪律，20261006 水印重锚）
             '--q-eq': isCurrent ? 1 : 0,
             '--q-eq-state': isCurrent && playing ? 'running' : 'paused',
           } as React.CSSProperties
         }
       >
+        {/* 正在播放背景水印（行层直接子级，先于按钮）：行内容经 QueueButton z-index 抬升恒压其上 */}
+        <span className='q-no-eq' aria-hidden='true'>
+          <span />
+          <span />
+          <span />
+        </span>
         <QueueButton type='button' onClick={() => playTrack(track.id)}>
           <QueueNo>
             <span className='q-no-face'>{String(index + 1).padStart(2, '0')}</span>
             <span className='q-no-play' aria-hidden='true'>
               <IconPlay size={10} />
-            </span>
-            <span className='q-no-eq' aria-hidden='true'>
-              <span />
-              <span />
-              <span />
             </span>
           </QueueNo>
           <QueueName title={track.name}>{track.name}</QueueName>

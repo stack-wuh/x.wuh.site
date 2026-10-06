@@ -193,28 +193,46 @@ export const QueueItem = styled.li`
     opacity: 1;
   }
 
-  /* 正在播放等化器面（20261006 等化器三面）：QueueNo 第三面，与序号面/播放键面同 absolute 几何——
-     当前行显示（--q-eq），跳动/冻结由 --q-eq-state 行内驱动（激活态纪律，暂停停走同碟面语言）；
-     hover 让位播放键（操作提示优先于状态提示）；reduced-motion 静止 */
+  /* 正在播放背景水印等化器（20261006 水印重锚）：从序号位三面升到行层水印——
+     小尺寸前景细柱在 3D 转正屏上被亚像素裁切糊成一团（旧病灶），改放大柱体沉入序号背后，
+     浓度定死 16%（背景侧不与文字抢读），序号位复位两面（--q-active 染色链路不变）；
+     跳动/冻结仍由 --q-eq/--q-eq-state 行内驱动（激活态纪律，暂停停走同碟面语言）；
+     水印不可交互（pointer-events），hover 淡出让位（操作提示优先于状态提示）；reduced-motion 静止 */
   & .q-no-eq {
     position: absolute;
-    inset: 0;
+    left: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 2px;
-    opacity: var(--q-eq, 0);
+    gap: 3px;
+    pointer-events: none;
+    opacity: calc(var(--q-eq, 0) * 0.16);
     transition: opacity 140ms var(--motion-ease-out-soft);
   }
 
   & .q-no-eq span {
-    width: 2.5px;
-    height: 12px;
-    border-radius: 1px;
+    width: 3px;
+    height: 14px;
+    border-radius: 1.5px;
     background: var(--primary-color);
     transform-origin: bottom;
     animation: ${equalize} 0.9s ease-in-out infinite;
     animation-play-state: var(--q-eq-state, paused);
+    /* delay 段（含首挂载即暂停）取 0% 帧——否则后两柱回落基准高度，冻结态两高一矮（复现页量测实锤） */
+    animation-fill-mode: backwards;
+  }
+
+  /* 相位与 mini Equalizer 延迟值同步（0.18s/0.36s）——三柱同相位糊成一坨是初版病灶；
+     keyframes 单源已锁，此两处毫秒值为镜像常量，改动必须两处同改 */
+  & .q-no-eq span:nth-child(2) {
+    animation-delay: 0.18s;
+  }
+
+  & .q-no-eq span:nth-child(3) {
+    animation-delay: 0.36s;
   }
 
   &:hover .q-no-eq {
@@ -229,6 +247,10 @@ export const QueueItem = styled.li`
 `
 
 export const QueueButton = styled.button`
+  /* 行内容整体抬到水印之上（20261006 水印重锚层叠链路）——QScreen opacity 上下文使负 z 不可取，
+     抬升一层是水印真沉背景侧的唯一安全路径 */
+  position: relative;
+  z-index: 1;
   width: 100%;
   display: flex;
   align-items: center;

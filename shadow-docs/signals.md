@@ -21,3 +21,13 @@
 - 命中: 1（最近 2026-10-05）
 - 退役条件: 守卫改为显式经 loader/构建产物读取（不再直读 `.ts`），或 `mise.toml` 的 node 钉到 ≥ 23 且 next 构建在 ≥ 23 下稳定
 - 陈述: 仓内 `.mjs` 守卫直读 `.ts` 源码，依赖 node 的原生类型剥离，只在 node ≥ 23 可跑；`mise.toml` 为绕开 V8 SIGSEGV 钉的是 node 22——两者冲突。看到「守卫命令秒退、无测试摘要」先核对 `node -v`，不要判成测试红。（补充证据）
+
+## SGN-003 · CSS 动画/层叠语义疑点先做 /tmp 静态复现页 DOMMatrix 量测再动源码
+- 方向: positive
+- 权重: 3
+- 深度: runtime
+- 域/scope: 验证工具链 · packages/components/audio-player（面板 3D 屏动画、层叠、滚动几何语义）
+- 证据: changes/archive/20261006-fix-player-queue-layer-lyric-follow/brief.md——镜像几何复现页量测出词卷滚动公式在 vertical-rl 下残差 809.9px（static 滚动容器 offsetLeft 基准漂移 −281px），双分支皆坏的事实先于改码确认；changes/20261006-style-queue-eq-background/brief.md——水印重锚复现页以 getComputedStyle+DOMMatrix.d（=scaleY）量柱高，首帧 [0.35,1,1] 暴露「首挂载即暂停时 delay 段柱回落基准高度」（补 animation-fill-mode: backwards 后 [0.35,0.35,0.35]），相位错开 [0.93,0.96,0.6]→300ms→[0.48,0.36,0.67] 同页双帧证实
+- 命中: 2（最近 2026-10-06）
+- 退役条件: 面板样式具备无头视觉回归环境（不再需要手写复现页）
+- 陈述: 3D 转正屏上的小尺寸动画、亚像素裁切与层叠次序无法靠读源码或正则守卫判定——先建单文件 /tmp 复现页镜像最终 CSS 几何（127.0.0.1 起静态服务；goto 不吃 file:），页面内 evaluate 读 computed transform 做双帧量测；比整机 dev 服务器轻得多，不触 SGN-001 内存悬崖。动画含 delay 且靠 play-state 冻结的，必须专测「首挂载即暂停」帧形。

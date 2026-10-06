@@ -135,21 +135,34 @@ test('播放列表歌手列限宽省略', () => {
   assert.ok(panel.includes('QueueArtist'), 'PlayerPanel 缺少限宽歌手列')
 })
 
-test('正在播放等化器三面切换（20261006 #487）：equalize 单源 + 行内自定义属性驱动 + hover 让位', () => {
-  // 队列行 QueueNo 三面：序号面（默认）→ 等化器面（当前行）→ 播放键面（hover，操作 > 状态）
-  // 激活态纪律：--q-eq/--q-eq-state 行内挂载，静态规则消费（禁 styled 动态类/属性选择器）
+test('正在播放背景水印等化器（20261006 #490 水印重锚）：行层水印 + 相位错开 + 序号位复位两面', () => {
+  // 层叠定稿：水印为 li 直接子级（锚左缘序号列、不可交互、16% 朱砂浓度），行内容经 QueueButton 抬升恒压其上；
+  // 序号位复位两面（序号/播放键）。激活态纪律不变：--q-eq/--q-eq-state 行内挂载、静态规则消费
   const queueStyle = readSource('panel/styles/queue.tsx')
   assert.match(queueStyle, /import \{[^}]*equalize[^}]*\} from '\.\.\/\.\.\/mini\/styles'/, 'equalize 必须单源复用 mini/styles（三处同源纪律，禁复制 keyframes）')
-  assert.match(queueStyle, /\.q-no-eq/, 'QueueNo 缺等化器第三面 .q-no-eq')
+  assert.match(queueStyle, /\.q-no-eq \{[\s\S]*?pointer-events: none/, '水印必须绝对定位且不可交互（禁抢行/按钮 hover）')
+  assert.match(queueStyle, /opacity: calc\(var\(--q-eq, 0\) \* 0\.16\)/, '水印浓度必须 --q-eq × 16% 行内驱动')
   assert.match(queueStyle, /animation: \$\{equalize\}/, '等化器柱未消费同源 keyframes')
-  assert.match(queueStyle, /opacity: var\(--q-eq/, '等化器显隐缺 --q-eq 行内驱动')
   assert.match(queueStyle, /animation-play-state: var\(--q-eq-state/, '跳动/冻结缺 --q-eq-state 行内驱动（暂停停走纪律）')
-  assert.match(queueStyle, /&:hover \.q-no-eq \{\s*opacity: 0/, 'hover 时等化器必须让位播放键（操作提示优先于状态提示）')
+  assert.match(queueStyle, /\.q-no-eq span:nth-child\(2\) \{\s*animation-delay: 0\.18s/, '第二柱缺相位延迟（三柱同相位糊成一坨是初版病灶）')
+  assert.match(queueStyle, /\.q-no-eq span:nth-child\(3\) \{\s*animation-delay: 0\.36s/, '第三柱缺相位延迟')
+  // fill-mode 陷阱（复现页量测实锤）：首挂载即暂停时后两柱滞留 delay 段，无 fill 回落基准 scaleY(1) 冻成两高一矮
+  assert.match(queueStyle, /\.q-no-eq span \{[\s\S]*?animation-fill-mode: backwards/, '柱体缺 fill-mode: backwards（首挂载冻结态必须均匀矮柱）')
+  assert.match(queueStyle, /&:hover \.q-no-eq \{\s*opacity: 0/, 'hover 时水印必须淡出让位（操作提示优先于状态提示）')
   assert.match(queueStyle, /prefers-reduced-motion[\s\S]*?\.q-no-eq[\s\S]*?animation: none/, '等化器缺 reduced-motion 降级')
+  // 层叠链路：QScreen opacity 堆叠上下文使负 z 不可取，行内容抬升 z-index: 1 是水印沉入背景侧的唯一安全路径
+  assert.match(queueStyle, /export const QueueButton = styled\.button`[^`]*position: relative;[^`]*z-index: 1;/, 'QueueButton 缺 relative + z-index:1（行内容必须恒压水印）')
   const panelQueue = readSource('panel/PanelQueue.tsx')
   assert.match(panelQueue, /'--q-eq':/, 'QueueItem 缺 --q-eq 行内挂载')
   assert.match(panelQueue, /'--q-eq-state':/, 'QueueItem 缺 --q-eq-state 行内挂载')
-  assert.match(panelQueue, /className='q-no-eq'/, 'QueueRows 缺等化器第三面 JSX')
+  const eqIdx = panelQueue.indexOf("className='q-no-eq'")
+  const btnIdx = panelQueue.indexOf('<QueueButton')
+  const noIdx = panelQueue.indexOf('<QueueNo>')
+  assert.ok(eqIdx > -1 && eqIdx < btnIdx && btnIdx < noIdx, '水印必须是 QueueItem 直接子级且先于按钮（行层几何）')
+  const queueNoBlock = panelQueue.slice(noIdx, panelQueue.indexOf('</QueueNo>', noIdx))
+  assert.ok(!queueNoBlock.includes('q-no-eq'), '序号位未复位——水印已移行层，QueueNo 只保留两面')
+  assert.match(queueNoBlock, /q-no-face/, '序号位默认面缺失')
+  assert.match(queueNoBlock, /q-no-play/, '序号位 hover 翻面缺失')
   assert.match(panelQueue, /playing/, 'QueueRows/PanelQueue 契约缺 playing 透传')
   assert.match(readSource('PlayerPanel.tsx'), /playing=\{playing\}/, 'PanelQueue 调用未传 playing')
   const panelMobile = readSource('panel/PanelMobile.tsx')
