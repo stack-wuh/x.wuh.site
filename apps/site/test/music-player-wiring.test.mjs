@@ -83,6 +83,20 @@ test('曲目行两行制：右列归组桌面溶入行布局、移动端竖排�
   assert.match(musicView, /<TrackSide>/)
 })
 
+test('正在播放等化器接替红点（20261006 #487）：/music 当前行三柱，暂停冻结', () => {
+  // 红点退役（暂停也不消失是假状态）；等化器单源从包出口消费，禁页面复制 keyframes
+  assert.match(musicView, /import \{[^}]*Equalizer[^}]*\} from '@wuh\.site\/components\/audio-player'/, 'Equalizer 未经包导入')
+  assert.match(musicView, /\{isCurrent \? <Equalizer \$playing=\{playing\}>/, '当前行条件渲染等化器缺失')
+  assert.doesNotMatch(musicView, /PlayingDot/, 'PlayingDot 已退役，禁回潮')
+  // 命名误导修复：现码把「是当前行」误名 isPlaying（暂停红点不消失根因）
+  assert.doesNotMatch(musicView, /const isPlaying = currentTrack\?\.id === track\.id/, 'isCurrent 命名修复不得回退')
+  assert.match(musicStyles, /export const PlayingSlot = styled\.span`/, '等宽防抖槽位缺失')
+  // 槽位 13px（三柱 3×3px + 双 gap 2px），移动端维持「歌名主色+编号翻播放键」触控语言不占空间
+  assert.match(musicStyles, /width: 13px/)
+  assert.match(musicStyles, /PlayingSlot[\s\S]*?@media \(max-width: \$\{BREAKPOINTS\.mobile\}px\)[\s\S]*?display: none/)
+  assert.doesNotMatch(musicStyles, /PlayingDot/, 'styles 侧红点同退')
+})
+
 test('卷名随队列流入面板卷题签：两消费者 loadQueue 均带 playlistName（20261006）', () => {
   // /music 本卷名（年轮编年同源）与兜底默认队列都要带；漏引 = 卷题签永不点亮且无报错
   assert.match(musicView, /loadQueue\(tracks, \{ startIndex: index, autoPlay: true, playlistName: selectedPlaylist\?\.name \}\)/)

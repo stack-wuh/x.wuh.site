@@ -39,6 +39,8 @@ interface PanelMobileProps {
   isPanelOpen: boolean
   seek: (seconds: number) => void
   playTrack: (trackId: number) => void
+  /** 真实播放态（目次 QueueRows 等化器暂停停走用） */
+  playing: boolean
   onDragStart: (event: React.TouchEvent) => void
   onDragMove: (event: React.TouchEvent) => void
   onDragEnd: () => void
@@ -60,6 +62,7 @@ export const PanelMobile = ({
   isPanelOpen,
   seek,
   playTrack,
+  playing,
   onDragStart,
   onDragMove,
   onDragEnd
@@ -169,7 +172,7 @@ export const PanelMobile = ({
         <LeafPage aria-label={t('player.panel.queuePage')} aria-hidden={mobilePage !== 'queue'} inert={mobilePage !== 'queue'}>
           <SectionHeading>{t('player.panel.queueHeadingMobile')}</SectionHeading>
           <QueueList ref={mobileQueueRef}>
-            <QueueRows queue={queue} currentTrack={currentTrack} playTrack={playTrack} />
+            <QueueRows queue={queue} currentTrack={currentTrack} playTrack={playTrack} playing={playing} />
           </QueueList>
         </LeafPage>
       </LeafPages>

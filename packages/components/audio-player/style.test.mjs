@@ -135,6 +135,29 @@ test('播放列表歌手列限宽省略', () => {
   assert.ok(panel.includes('QueueArtist'), 'PlayerPanel 缺少限宽歌手列')
 })
 
+test('正在播放等化器三面切换（20261006 #487）：equalize 单源 + 行内自定义属性驱动 + hover 让位', () => {
+  // 队列行 QueueNo 三面：序号面（默认）→ 等化器面（当前行）→ 播放键面（hover，操作 > 状态）
+  // 激活态纪律：--q-eq/--q-eq-state 行内挂载，静态规则消费（禁 styled 动态类/属性选择器）
+  const queueStyle = readSource('panel/styles/queue.tsx')
+  assert.match(queueStyle, /import \{[^}]*equalize[^}]*\} from '\.\.\/\.\.\/mini\/styles'/, 'equalize 必须单源复用 mini/styles（三处同源纪律，禁复制 keyframes）')
+  assert.match(queueStyle, /\.q-no-eq/, 'QueueNo 缺等化器第三面 .q-no-eq')
+  assert.match(queueStyle, /animation: \$\{equalize\}/, '等化器柱未消费同源 keyframes')
+  assert.match(queueStyle, /opacity: var\(--q-eq/, '等化器显隐缺 --q-eq 行内驱动')
+  assert.match(queueStyle, /animation-play-state: var\(--q-eq-state/, '跳动/冻结缺 --q-eq-state 行内驱动（暂停停走纪律）')
+  assert.match(queueStyle, /&:hover \.q-no-eq \{\s*opacity: 0/, 'hover 时等化器必须让位播放键（操作提示优先于状态提示）')
+  assert.match(queueStyle, /prefers-reduced-motion[\s\S]*?\.q-no-eq[\s\S]*?animation: none/, '等化器缺 reduced-motion 降级')
+  const panelQueue = readSource('panel/PanelQueue.tsx')
+  assert.match(panelQueue, /'--q-eq':/, 'QueueItem 缺 --q-eq 行内挂载')
+  assert.match(panelQueue, /'--q-eq-state':/, 'QueueItem 缺 --q-eq-state 行内挂载')
+  assert.match(panelQueue, /className='q-no-eq'/, 'QueueRows 缺等化器第三面 JSX')
+  assert.match(panelQueue, /playing/, 'QueueRows/PanelQueue 契约缺 playing 透传')
+  assert.match(readSource('PlayerPanel.tsx'), /playing=\{playing\}/, 'PanelQueue 调用未传 playing')
+  const panelMobile = readSource('panel/PanelMobile.tsx')
+  assert.match(panelMobile, /playing=\{playing\}/, 'PanelMobile 目次 QueueRows 未传 playing')
+  // 站点消费面：等化器经包出口单源导出（/music 曲目行用）
+  assert.match(readSource('index.tsx'), /export \{ Equalizer \} from '\.\/mini\/styles'/, '包出口缺 Equalizer（/music 页消费单源件）')
+})
+
 test('拉丁文语境字距降档走 html[lang] 钩子', () => {
   const panel = readPanelSource()
   assert.ok(panel.includes("[lang='en']"), 'PlayerPanel 缺少 [lang=en] 字距降档钩子')

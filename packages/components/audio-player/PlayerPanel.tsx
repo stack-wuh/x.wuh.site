@@ -453,6 +453,7 @@ export const AudioPlayerPanel = () => {
           setQueueOpen={setQueueOpen}
           setFoldLatch={setFoldLatch}
           playTrack={playTrack}
+          playing={playing}
         />
 
         {/* 移动端册页：词页（装裱图版 + 短词窗）横翻目次对页；页缘钮为键盘/读屏等价路径 */}
@@ -469,6 +470,7 @@ export const AudioPlayerPanel = () => {
           isPanelOpen={state.isPanelOpen}
           seek={seek}
           playTrack={playTrack}
+          playing={playing}
           onDragStart={onDragTouchStart}
           onDragMove={onDragTouchMove}
           onDragEnd={onDragTouchEnd}

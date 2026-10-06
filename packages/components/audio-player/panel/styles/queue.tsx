@@ -3,6 +3,7 @@
 /* 队列：遮罩 + 翻页屏 + 队列行（桌面抽屉与移动目次共用）（20261005 自 PlayerPanel.tsx 拆出） */
 import styled from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { equalize } from '../../mini/styles'
 import { EASE, FOLD_DUR, FOLD_LIFT_SHADOW, FOLD_REST_ANGLE, FOLD_WIDTH_PX, HAIRLINE, INK_FAINT, INK_MUTED, QUICK, focusRing, reducedMotion } from './tokens'
 
 /* ===== 播放列表抽屉（桌面）：自右滑入纸卡。
@@ -190,6 +191,40 @@ export const QueueItem = styled.li`
 
   &:hover .q-no-play {
     opacity: 1;
+  }
+
+  /* 正在播放等化器面（20261006 等化器三面）：QueueNo 第三面，与序号面/播放键面同 absolute 几何——
+     当前行显示（--q-eq），跳动/冻结由 --q-eq-state 行内驱动（激活态纪律，暂停停走同碟面语言）；
+     hover 让位播放键（操作提示优先于状态提示）；reduced-motion 静止 */
+  & .q-no-eq {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    opacity: var(--q-eq, 0);
+    transition: opacity 140ms var(--motion-ease-out-soft);
+  }
+
+  & .q-no-eq span {
+    width: 2.5px;
+    height: 12px;
+    border-radius: 1px;
+    background: var(--primary-color);
+    transform-origin: bottom;
+    animation: ${equalize} 0.9s ease-in-out infinite;
+    animation-play-state: var(--q-eq-state, paused);
+  }
+
+  &:hover .q-no-eq {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & .q-no-eq span {
+      animation: none;
+    }
   }
 `
 
