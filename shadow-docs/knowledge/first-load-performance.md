@@ -18,10 +18,11 @@ source:
   - changes/20261001-perf-remove-streaming-skeletons/brief.md
   - changes/20261001-fix-post-cover-sizes/brief.md
   - changes/20261002-perf-cjk-font-slim/brief.md
+  - changes/20261006-feature-player-playlist-seal/brief.md
 status: active
-verified: 2026-10-01
+verified: 2026-10-06
 verified-depth: runtime
-verified-scope: CJK 子集假名扩集——四款 woff2 从 Noto CJK 全量源重切（fonttools desubroutinize + 去 hinting）后 fontTools cmap 校验 平92/片90 全覆盖，浏览器日文界面目检假名自托管渲染无回退；20260930-style-player-favorite-ai-seal：印章字形扩列（2243→2257 码点，樂/墨补齐、五印 cmap 全 True）后 build:next 绿、面板印面 fontFamily 实测 Noto Serif SC；其余段落沿承各自变更时的既有验证
+verified-scope: 20261006-feature-player-playlist-seal：fontTools cmap 探针实测四款 woff2（2257 码点）均已含 卷 U+5377（随词典字符集在集）——SEAL_CODES 扩档零重切；CJK 子集假名扩集——四款 woff2 从 Noto CJK 全量源重切（fonttools desubroutinize + 去 hinting）后 fontTools cmap 校验 平92/片90 全覆盖，浏览器日文界面目检假名自托管渲染无回退；20260930-style-player-favorite-ai-seal：印章字形扩列（2243→2257 码点，樂/墨补齐、五印 cmap 全 True）后 build:next 绿、面板印面 fontFamily 实测 Noto Serif SC；其余段落沿承各自变更时的既有验证
 ---
 
 # 首屏加载性能
@@ -46,7 +47,7 @@ CJK 字重交付面（2026-10-02 瘦身第一步）：**Sans 700 已下架**—�
 
 流式边界全站裁决（2026-10-01 推广）：**任何路由不得加 loading.tsx 流式骨架；首屏路径上 next/dynamic 的 loading 回退同构 Suspense 边界，同样产生流式形态**（`/`、`/blog`、`/music` 曾因此骨架成 FCP 元素、/music HTML 涨至 120,460B）。页面主体数据在服务端有缓存策略时，直接单帧 SSR 直出（blog/music 服务端 await searchParams 收参、playlist/文章列表即主体，删除路由骨架无构建风险——前提是全仓无 useSearchParams 客户端依赖）。验收断言：HTML 不含 `<template id="B:0">` / `<div hidden id="S:0">` 流式标记。CJK 字体（Noto Sans/Serif SC，1795 字子集）必须经 `app/fonts/cjk.css` 构建管线接入以获得 `/_next/static/media` 哈希 + immutable 缓存；public/fonts 直引会继承 `max-age=0`，回访每次重新验证/下载 634KB 衬线字体。分享图/导出全文组件（依赖 html-to-image、qrcode）用 next/dynamic + 首次打开才挂载，不进首包。对已在千字级的子集字体做 unicode-range 切片是负优化（woff2 跨字形压缩优势丢失，总量 2.2 倍）；切片仅对全量字形大字体有意义（管线脚本留档 `apps/site/scripts/split_cjk_fonts.py`）。
 
-CJK 子集假名扩集（20260930-feature-site-i18n-trilingual）：多语言日文界面需要假名与日文汉字，原 1795 字子集假名覆盖为零且全量源字体不在仓库。扩集做法：下载 Noto CJK 官方 SubsetOTF 全量源，以「现有子集 cmap ∪ 五十音/CJK 标点/半角片假名区间 ∪ ja 词典全量字符」为目标重新子集化（2243 码点；`hinting=False` + `desubroutinize=True` + `layout_features=['ccmp']` 压回 Sans 406KB / Serif 574KB 单字重——保留全部 layout 表会让体积翻倍），文件名不变、cjk.css 哈希自动更新。假名类增量约 +130KB/字重，是日文界面的一次性固定成本。20260930-style-player-favorite-ai-seal 起扩集管线落档 `apps/site/scripts/expand_cjk_fonts.py`（`NOTO_SRC_DIR` 指源字体目录），并集加入品牌印章字形：**樂 U+6A02 / 墨 U+58A8 此前不在子集、一直由系统回退字体渲染**，补齐后五印（樂/愛/念/音/墨）全 webfont（2257 码点，Sans 408KB / Serif 578KB，增量可忽略）——后续任何印面/品牌字形变更必须过此脚本重切，禁止裸打不在子集里的字形。
+CJK 子集假名扩集（20260930-feature-site-i18n-trilingual）：多语言日文界面需要假名与日文汉字，原 1795 字子集假名覆盖为零且全量源字体不在仓库。扩集做法：下载 Noto CJK 官方 SubsetOTF 全量源，以「现有子集 cmap ∪ 五十音/CJK 标点/半角片假名区间 ∪ ja 词典全量字符」为目标重新子集化（2243 码点；`hinting=False` + `desubroutinize=True` + `layout_features=['ccmp']` 压回 Sans 406KB / Serif 574KB 单字重——保留全部 layout 表会让体积翻倍），文件名不变、cjk.css 哈希自动更新。假名类增量约 +130KB/字重，是日文界面的一次性固定成本。20260930-style-player-favorite-ai-seal 起扩集管线落档 `apps/site/scripts/expand_cjk_fonts.py`（`NOTO_SRC_DIR` 指源字体目录），并集加入品牌印章字形：**樂 U+6A02 / 墨 U+58A8 此前不在子集、一直由系统回退字体渲染**，补齐后五印（樂/愛/念/音/墨）全 webfont（2257 码点，Sans 408KB / Serif 578KB，增量可忽略）——后续任何印面/品牌字形变更必须过此脚本重切，禁止裸打不在子集里的字形。第六印「卷」U+5377（面板卷题签印，20261006）实测**已在 2257 码点集内**（早随三语词典字符集入集）——SEAL_CODES 扩档仅作品牌字形在册保护，**零重切**；补条纪律：新印面字先跑 fontTools cmap 探针，在集即零施工，不在集才走重切管线。
 
 ## 执行约束
 

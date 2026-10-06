@@ -233,9 +233,10 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
   const playFrom = useCallback(
     (index: number) => {
       if (!tracks.length) return
-      actions.loadQueue(tracks, { startIndex: index, autoPlay: true })
+      // 卷名随队列流入面板卷题签（本卷语义与年轮编年同源）
+      actions.loadQueue(tracks, { startIndex: index, autoPlay: true, playlistName: selectedPlaylist?.name })
     },
-    [tracks, actions]
+    [tracks, actions, selectedPlaylist?.name]
   )
 
   const renderTracks = (list: MusicPlaylistTrack[]) => {

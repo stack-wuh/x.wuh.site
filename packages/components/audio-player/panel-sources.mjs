@@ -1,5 +1,6 @@
 // 面板源码规范清单（20261005 拆分定稿）：顺序 = 原 PlayerPanel.tsx 声明顺序。
 // 守卫测试的 indexOf 声明名切片依赖此拼接顺序——各模块内声明相对顺序禁变，本清单禁重排。
+// 新增模块（拆分后新文件，如 20261006 volume.tsx）只准在其所属组的**末尾追加**，不属重排。
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -15,6 +16,7 @@ export const PANEL_SOURCES = [
   'panel/styles/words.tsx',
   'panel/styles/queue.tsx',
   'panel/styles/mobile.tsx',
+  'panel/styles/volume.tsx',
   'PlayerPanel.tsx',
   'panel/PanelVolume.tsx',
   'panel/PanelQueue.tsx',

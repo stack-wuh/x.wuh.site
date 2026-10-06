@@ -26,6 +26,8 @@ export type TrackResolver = (trackId: number) => Promise<TrackSource>
 
 export interface AudioPlayerState {
   queue: Track[]
+  /** 当前队列来源卷名（/v2/music playlist.name）；缺省 → 面板卷题签整位隐去 */
+  playlistName?: string
   currentIndex: number
   progress: number
   duration: number
@@ -37,7 +39,7 @@ export interface AudioPlayerState {
 }
 
 export interface AudioPlayerActions {
-  loadQueue: (tracks: Track[], options?: { startIndex?: number; autoPlay?: boolean }) => void
+  loadQueue: (tracks: Track[], options?: { startIndex?: number; autoPlay?: boolean; playlistName?: string }) => void
   playTrack: (trackId: number) => void
   playAt: (index: number) => void
   togglePlay: () => void
