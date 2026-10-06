@@ -61,31 +61,5 @@ export const DefaultTheme: Tokens = {
   }
 }
 
-/**
- * @NOTE 获取spacing有效值
- *
- * @param { string|number } value - spacing值
- * @param { Tokens } theme - 主题对象
- * @returns { string } - 有效的spacing值
- */
-export const getSpacingValue = (value: string | number, theme?: Tokens): string => {
-  if (typeof value === 'number') {
-    return `${value}px`
-  }
-
-  if (typeof value === 'string') {
-    const spaceValue = theme?.spaces?.[value as keyof typeof theme.spaces]
-    if (spaceValue) {
-      return spaceValue
-    }
-
-    // 如果是 CSS 单位直接返回
-    if (/(px|em|rem|%|vh|vw)$/.test(value)) {
-      return value
-    }
-
-    return `${value}px`
-  }
-
-  return '0'
-}
+// getSpacingValue 纯函数迁至 ./spacing（隔离主题色依赖，可单测）；此处再导出保持既有 import 路径兼容
+export { getSpacingValue } from './spacing'

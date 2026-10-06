@@ -276,28 +276,22 @@ export const PostTagLink = styled(Link)`
   }
 `
 
-export const PostTags = styled.span`
-  display: flex;
-  gap: 4px;
+export const PostTags = styled(Flex).attrs({
+  gap: 4,
+  width: ['100%', 'auto'],
+  margin: ['0 0 0 calc(6px + var(--space-sm))', '0'],
+})`
   flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: calc(6px + var(--space-sm));
-    width: 100%;
-  }
 `
 
-export const PostMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+export const PostMeta = styled(Flex).attrs({
+  alignItems: 'center',
+  gap: 'xs',
+  margin: ['0 0 0 calc(6px + var(--space-sm))', '0'],
+})`
+  flex-shrink: 0;
   font-size: var(--font-size-xs);
   color: var(--text-muted);
-  flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: calc(6px + var(--space-sm));
-  }
 `
 
 export const MetaDot = styled.span`
