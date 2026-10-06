@@ -7,19 +7,19 @@ import Row from '@wuh.site/components/row'
 import Col from '@wuh.site/components/col'
 
 // 手机整行堆叠，桌面三等分：Col 自带响应，Row 只给节奏
-<Row gap={[12, 'md']}>
-  <Col span={[12, 4]}>…</Col>
-  <Col span={[12, 4]}>…</Col>
-  <Col span={[12, 4]}>…</Col>
+<Row gap={[12, , , 'md']}>
+  <Col span={[12, , , 4]}>…</Col>
+  <Col span={[12, , , 4]}>…</Col>
+  <Col span={[12, , , 4]}>…</Col>
 </Row>
 ```
 
 ## 语义
 
 - 实现为 `display: grid; grid-template-columns: repeat(cols, 1fr)`，**无负 margin、无百分比宽度**；`cols` 默认 12。
-- 断点数组语法与 Flex/Col 同契约：`[base, tablet]`，tablet 槽在 `min-width: 1024px` 生效。
+- 断点阶梯语法与 Flex/Col 同契约 `[base, sm?, md?, lg?]`（边界 521/641/1024，由 `RESPONSIVE_LADDER` 派生）；「仅桌面变档」写 `[base, , , lg]`。详见 flex readme。
 - 常用分栏预设（配 Col span）：`12` 整行 / `6` 半行 / `4` 三等分 / `3` 四等分 / `8` 三分之二。
-- 少数场景可离开 12 词汇直接用其他列数：`cols={[2, 5]}`——此时 Col span 按该列数理解。
+- 少数场景可离开 12 词汇直接用其他列数：`cols={[2, , , 5]}`——此时 Col span 按该列数理解。
 
 ## Props
 
@@ -31,7 +31,7 @@ import Col from '@wuh.site/components/col'
 
 ```tsx
 <Stagger as={Row} gap="md">
-  <Col span={[12, 4]}>…</Col>
+  <Col span={[12, , , 4]}>…</Col>
   …
 </Stagger>
 ```

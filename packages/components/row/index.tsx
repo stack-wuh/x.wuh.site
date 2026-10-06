@@ -24,13 +24,13 @@ const gridJustifyOptions = [
 export type TGridJustify = typeof gridJustifyOptions[number]
 
 export interface IRowProps {
-  /** 分栏列数，默认 12 等分栅格；数组 = 断点槽 [base, tablet?] */
+  /** 分栏列数，默认 12 等分栅格；数组 = 断点槽 [base, sm?, md?, lg?] */
   cols?: TResponsive<number>
-  /** 子项间距（spaces token 或 CSS 长度）；数组 = 断点槽 [base, tablet?] */
+  /** 子项间距（spaces token 或 CSS 长度）；数组 = 断点槽 [base, sm?, md?, lg?] */
   gap?: TResponsive<TRowSpaceValue>
-  /** 交叉轴对齐（grid align-items）；数组 = 断点槽 [base, tablet?] */
+  /** 交叉轴对齐（grid align-items）；数组 = 断点槽 [base, sm?, md?, lg?] */
   alignItems?: TResponsive<TGridAlign>
-  /** 轨道分布（grid justify-content）；数组 = 断点槽 [base, tablet?] */
+  /** 轨道分布（grid justify-content）；数组 = 断点槽 [base, sm?, md?, lg?] */
   justifyContent?: TResponsive<TGridJustify>
   /** 是否以内联元素的形式展示 */
   inline?: boolean

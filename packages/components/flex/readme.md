@@ -2,19 +2,28 @@
 
 `@wuh.site/components/flex` — flex 容器：方向、对齐、分布与间距。栅格分栏请用 `row/col`；入场动效叠加请用 `stagger`。
 
-## 断点数组语法（全族统一契约）
+## 断点阶梯语法（全族统一契约）
 
 ```tsx
-import { Flex, Column, Center } from '@wuh.site/components/flex'
+import { Flex } from '@wuh.site/components/flex'
 
-// 基线（<1024）纵向堆叠，桌面带（≥BREAKPOINTS.tablet）转横向行
-<Flex direction={['column', 'row']} gap={[12, 'md']} alignItems="center">
+// 基线纵向堆叠，桌面档（≥1024）转横向行——用缺位槽只命中 lg
+<Flex direction={['column', , , 'row']} gap={[12, , , 'md']} alignItems="center">
   …
 </Flex>
+
+// 手机带（<641）堆叠、平板带起转行——命中 md
+<Flex direction={['column', , 'row']} />
 ```
 
-- 标量 = 全视口生效；`[base, tablet]` = 索引 0 为 <1024 基线，索引 1 在 `min-width: 1024px` 生效；`[base]` 等价标量。
-- 只开两槽（`themes/responsive.ts`），超窄屏由 clamp 间距 token 与基线堆叠承担。
+- 值形态：标量 = 全视口；`[base]` 等价标量；`[base, sm?, md?, lg?]` = 升序 min-width 阶梯。
+- 四档边界（`themes/responsive.ts` 的 `RESPONSIVE_LADDER`，全部由 `BREAKPOINTS` +1 派生，禁裸断点）：
+  - `base`：0+，移动优先基线（含超窄段）
+  - `sm`：≥521（`BREAKPOINTS.small + 1`，原 `≤520` 负声明档转正）
+  - `md`：≥641（`BREAKPOINTS.mobile + 1`，原 `≤640` 档转正）
+  - `lg`：≥1024（`BREAKPOINTS.tablet`，桌面带）
+- **缺位槽跳过、低档声明自然延续**：`[a, , , b]` 里 sm/md 不重述，靠媒体级联延续 a 直到 1024 换 b。
+- ⚠️ 迁移：两槽时代 `[base, tablet]` 的第二槽曾是 1024；阶梯化后第二槽是 `sm`(521)。「仅桌面变档」必须写 `[base, , , lg]`（三个缺位）。
 - **顶层数组一律 = 断点槽**。非对称盒式简写不占数组语法：`padding="8px 16px"`（CSS 字符串透传）。
 
 ## Props

@@ -9,9 +9,9 @@ import Col from '@wuh.site/components/col'
 
 // 作为渲染目标套在栅格上：列项依次浮现
 <Stagger as={Row} gap="md" step={80}>
-  <Col span={[12, 4]}>…</Col>
-  <Col span={[12, 4]}>…</Col>
-  <Col span={[12, 4]}>…</Col>
+  <Col span={[12, , , 4]}>…</Col>
+  <Col span={[12, , , 4]}>…</Col>
+  <Col span={[12, , , 4]}>…</Col>
 </Stagger>
 
 // 独立包裹：默认 div 容器
