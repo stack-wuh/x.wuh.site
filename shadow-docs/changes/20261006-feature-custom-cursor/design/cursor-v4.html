@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="zh-CN" data-family="wine" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>光标比稿 v4 · 换思路：不画虫，换物件</title>
+<style>
+/* ============================================================
+   v4 · 换骨架轮。否决留档（本需求内不复辟）：
+     墨锋/印心/墨点/只易互动/竖钩/刻刀 = 借 OS 箭头轮廓、特色不足
+     工笔贴纸蝶、写意蝶（两笔一点）    = 「画」具象生物，越简越残
+   本轮立场：光标不是画出来的图案，是一枚「被使用的物件」——
+   灯（提灯夜读）/ 鱼（游标 · 摸鱼）/ 活字（字模 · 终端光标）。
+   真 token 出处同 cursor-comp.html L9-17（generator-color.ts /
+   cssVariableProvider.tsx / themes/index.ts motion 令牌）。
+   ============================================================ */
+:root{
+  --font-serif:'Noto Serif SC',Georgia,'Songti SC',serif;
+  --font-sans:'Noto Sans SC',ui-sans-serif,system-ui,'PingFang SC',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'Courier New',monospace;
+  --dur-quick:150ms; --ease-out-soft:cubic-bezier(0.22,1,0.36,1); --ease-in-out-soft:cubic-bezier(0.45,0,0.25,1);
+  --r-base:8px; --r-sm:4px; --r-xs:2px;
+}
+html[data-family="wine"][data-scheme="light"]{ --ink:#2A1E16; --cinnabar:#C94A44; --paper:#F5F0EC; --card:#FFFBF8; --line:#D4C8B8; --faint:#B9A998; }
+html[data-family="wine"][data-scheme="dark"]{  --ink:#adadad; --cinnabar:#E36A64; --paper:#2f2a2a; --card:#170e0e; --line:#7e7e7e; --faint:#5b5b5b; }
+html[data-family="plain"][data-scheme="light"]{ --ink:#2A2218; --cinnabar:#A87348; --paper:#F2EDE4; --card:#FFFDF9; --line:#D4CBB8; --faint:#B8AC98; }
+html[data-family="plain"][data-scheme="dark"]{  --ink:rgba(255,255,255,.72); --cinnabar:#deb896; --paper:#0b0908; --card:#1c1814; --line:rgba(255,255,255,.14); --faint:rgba(255,255,255,.20); }
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);color:var(--ink);min-height:100vh;background:linear-gradient(180deg,var(--paper) 0%, color-mix(in oklab, var(--paper) 95%, var(--cinnabar) 5%) 100%);line-height:1.7}
+main{max-width:1080px;margin:0 auto;padding:18px 22px 60px}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 22px;background:color-mix(in oklab,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid color-mix(in oklab,var(--line) 45%,transparent)}
+.brand{font-family:var(--font-serif);font-size:15px;letter-spacing:.18em}
+.tabs,.themes{display:flex;gap:8px;flex-wrap:wrap}
+button.chip{font-family:var(--font-sans);font-size:12px;color:var(--ink);background:transparent;border:1px solid color-mix(in oklab,var(--line) 60%,transparent);border-radius:99px;padding:4px 12px;cursor:pointer}
+button.chip[aria-pressed="true"]{color:var(--cinnabar);border-color:color-mix(in oklab,var(--cinnabar) 55%,transparent)}
+.meta-mono{font-family:var(--font-mono);font-size:11px;color:color-mix(in oklab,var(--ink) 55%,transparent);margin-left:auto}
+h2.sect{font-family:var(--font-serif);font-size:19px;letter-spacing:.12em;margin:34px 0 6px}
+.lede,.tagline{font-size:13.5px;color:color-mix(in oklab,var(--ink) 82%,transparent);max-width:760px}
+.lede b,.tagline b{color:var(--cinnabar);font-weight:600}
+.stage{position:relative;min-height:250px;overflow:hidden;border:1px solid color-mix(in oklab,var(--line) 50%,transparent);border-radius:var(--r-base);background:var(--card);margin-top:14px;padding:52px 20px 26px}
+.stage.cursorless{cursor:none}
+.hint{position:absolute;left:16px;top:12px;font-size:12.5px;color:color-mix(in oklab,var(--ink) 60%,transparent)}
+.flow{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.flow a{color:var(--cinnabar)}
+.flow button{font:inherit;color:inherit;background:transparent;border:1px solid color-mix(in oklab,var(--line) 60%,transparent);border-radius:var(--r-sm);padding:6px 14px}
+.flow input{font:inherit;background:transparent;border:none;border-bottom:1px solid color-mix(in oklab,var(--line) 60%,transparent);color:var(--ink);outline:none;width:170px}
+.flow .txt{border:1px dashed color-mix(in oklab,var(--line) 60%,transparent);border-radius:var(--r-sm);padding:6px 12px;outline:none;min-width:120px}
+.flow .grab{border:1px solid color-mix(in oklab,var(--line) 60%,transparent);border-radius:var(--r-sm);padding:7px 14px;font-size:13px}
+.flow .waitz{border-radius:99px;padding:7px 16px;font-size:13px;background:color-mix(in oklab,var(--faint) 22%,transparent)}
+/* 热点十字：验证触点是否落在刀口 */
+.crosshair{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;display:none;z-index:9}
+.stage.crosighton .crosshair{display:block}
+.crosshair i{position:absolute;background:var(--cinnabar)}
+.crosshair .v{left:-0.5px;top:-400px;width:1px;height:800px;opacity:.55}
+.crosshair .h{left:-400px;top:-0.5px;height:1px;width:800px;opacity:.55}
+/* 跟随层通用 */
+.cur{position:absolute;left:0;top:0;pointer-events:none;display:none;z-index:6;color:var(--ink)}
+.cur.on{display:block}
+.cur svg{display:block;overflow:visible}
+/* ===== 甲 · 一豆灯 ===== */
+.ff{width:24px;height:24px}
+.ff .halo{position:absolute;left:12px;top:15px;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:999px;
+  background:radial-gradient(circle, color-mix(in oklab,var(--cinnabar) 46%,transparent), transparent 66%);filter:blur(1px)}
+.ff .flame{fill:currentColor;fill-opacity:.8;transform-box:fill-box;transform-origin:50% 100%}
+.ff .core{fill:var(--cinnabar)}
+@keyframes flick{30%{transform:rotate(-3.5deg) scaleX(.94)}65%{transform:rotate(2.6deg) scaleX(1.05)}}
+@keyframes breathe{50%{transform:scale(1.16);opacity:.72}}
+@keyframes lick{50%{transform:scaleY(1.3) scaleX(.9)}}
+@keyframes tremble{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+@keyframes cower{50%{transform:scale(.74)}}
+@keyframes spark{from{transform:translate(var(--sx),var(--sy)) scale(1);opacity:.42}to{transform:translate(var(--sx),var(--sy)) scale(.18);opacity:0}}
+.spark{position:absolute;left:0;top:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:999px;background:var(--cinnabar);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion: no-preference){
+  .ff .flame{animation:flick 1.7s var(--ease-in-out-soft) infinite}
+  .ff .halo{animation:breathe 2.6s var(--ease-in-out-soft) infinite}
+  .ff[data-state=pointer] .flame{animation:lick .62s var(--ease-in-out-soft) infinite}
+  .ff[data-state=pointer] .halo{animation-duration:1.5s}
+  .ff[data-state=text] .flame{transform:scaleX(.34)}
+  .ff[data-state=text] .halo{transform:scale(.62);opacity:.5;animation:none}
+  .ff[data-state=wait] .flame{animation:tremble .3s var(--ease-in-out-soft) infinite}
+  .ff[data-state=grab] .flame{transform:rotate(-24deg) scaleY(.86)}
+  .ff[data-state=grab] .halo{transform:scale(.55);opacity:.35;animation:none}
+  .ff[data-state=grabbing] .flame{animation:cower .34s var(--ease-in-out-soft) infinite}
+  .ff[data-state=grabbing] .halo{transform:scale(.4);opacity:.28;animation:none}
+}
+@media (prefers-reduced-motion: reduce){ .ff .flame{transform:rotate(-2deg)} }
+/* ===== 乙 · 一尾鱼 ===== */
+.fish{width:28px;height:24px}
+.fish .body{fill:currentColor;fill-opacity:.86}
+.fish .fin{fill:currentColor;fill-opacity:.5;transform-box:fill-box;transform-origin:0% 50%}
+.fish .eye{fill:var(--cinnabar)}
+.orbit{transform-box:fill-box;transform-origin:center}
+@keyframes wag{50%{transform:rotate(13deg)}}
+@keyframes wagFast{50%{transform:rotate(19deg)}}
+@keyframes leap{50%{transform:rotate(-9deg) translateY(-1.2px)}}
+@keyframes circle{to{transform:rotate(360deg)}}
+@keyframes nudge{50%{transform:scaleY(.62)}}
+@media (prefers-reduced-motion: no-preference){
+  .fish .fin{animation:wag 1.5s var(--ease-in-out-soft) infinite}
+  .fish.swift .fin{animation-duration:.5s}
+  .fish[data-state=pointer] .fin{animation:wagFast .55s var(--ease-in-out-soft) infinite}
+  .fish[data-state=pointer] .body{animation:leap .8s var(--ease-in-out-soft) infinite}
+  .fish[data-state=text] .fin{animation:none;transform:rotate(0)}
+  .fish[data-state=wait] .fin{animation-duration:.34s}
+  .fish[data-state=wait] .orbit{animation:circle 1.15s linear infinite}
+  .fish[data-state=grab] .body{transform:scaleX(.84);fill-opacity:.62}
+  .fish[data-state=grab] .fin{animation:none}
+  .fish[data-state=grabbing] .body{animation:nudge .26s var(--ease-in-out-soft) infinite}
+}
+/* ===== 丙 · 活字 ===== */
+.tp{width:12px;height:12px;color:var(--ink)}
+.tp .mold{position:absolute;left:0;top:0;width:11px;height:12px;border:1px solid currentColor;
+  transform-origin:0 50%;transition:transform var(--dur-quick) var(--ease-out-soft),border-color var(--dur-quick) var(--ease-out-soft)}
+.tp .grain{position:absolute;left:2px;bottom:-3px;width:7px;height:2px;background:var(--cinnabar);transform-origin:0 50%;
+  transition:transform var(--dur-quick) var(--ease-out-soft)}
+.tp .inked{position:absolute;left:1px;top:1px;width:9px;height:10px;background:currentColor;opacity:0;
+  transition:opacity var(--dur-quick) var(--ease-out-soft)}
+.tp .bars{position:absolute;left:2.5px;top:2px;width:6px;height:8px;display:none}
+.tp .bars i{position:absolute;left:0;width:6px;height:1.6px;background:var(--card);opacity:.25}
+.tp .bars i:nth-child(1){top:0}.tp .bars i:nth-child(2){top:3.2px}.tp .bars i:nth-child(3){top:6.4px}
+@keyframes blink{0%,54%{opacity:1}55%,100%{opacity:0}}
+@keyframes softBreathe{50%{opacity:.5}}
+@keyframes load1{50%{opacity:1}}
+@media (prefers-reduced-motion: no-preference){
+  .tp[data-state=default] .mold{animation:softBreathe 1.9s var(--ease-in-out-soft) infinite}
+  .tp[data-state=text] .mold{transform:scaleX(.24)}
+  .tp[data-state=text] .grain{transform:scaleX(1.5)}
+  .tp[data-state=grabbing] .inked{opacity:1;background:var(--cinnabar)}
+}
+.tp[data-state=pointer] .inked{opacity:.9}
+.tp[data-state=grab] .mold{transform:scale(.84)}
+.tp[data-state=grab] .inked{opacity:.35}
+.tp[data-state=wait] .bars{display:block}
+.tp[data-state=wait] .inked{opacity:.55}
+@media (prefers-reduced-motion: no-preference){
+  .tp[data-state=wait] .bars i{animation:load1 .72s var(--ease-in-out-soft) infinite}
+  .tp[data-state=wait] .bars i:nth-child(2){animation-delay:.12s}
+  .tp[data-state=wait] .bars i:nth-child(3){animation-delay:.24s}
+}
+@media (prefers-reduced-motion: reduce){ .tp[data-state=text] .mold{transform:scaleX(.24)} }
+/* ===== 丁 · 一页书 ===== */
+.bk{width:30px;height:30px}
+.bk .pl,.bk .pr{stroke:currentColor;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;transform-box:fill-box;
+  transition:fill var(--dur-quick) var(--ease-out-soft), fill-opacity var(--dur-quick) var(--ease-out-soft)}
+.bk .pl{fill:color-mix(in oklab, var(--cinnabar) 30%, var(--card));transform-origin:100% 50%}
+.bk .pr{fill:color-mix(in oklab, var(--cinnabar) 18%, var(--card));transform-origin:0% 50%}
+.bk .pt{transform-box:fill-box;transform-origin:0% 50%}
+.bk .pt .face{fill:color-mix(in oklab, var(--cinnabar) 38%, var(--card));stroke:currentColor;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.bk .pt .edge{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.bk .spine{fill:none;stroke:var(--cinnabar);stroke-width:1.25;stroke-linecap:round}
+.bk .pin{fill:var(--cinnabar)}
+.bk .rules{opacity:0;transition:opacity var(--dur-quick) var(--ease-out-soft)}
+.bk .rules path{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;opacity:.42;vector-effect:non-scaling-stroke}
+.bk .base{fill:var(--cinnabar);transform-box:fill-box;transform-origin:0% 50%;transform:scaleX(0);transition:transform 240ms var(--ease-out-soft)}
+@keyframes breeze{0%,56%{transform:scaleX(1);opacity:0}61%{transform:scaleX(.78);opacity:1}66%{transform:scaleX(.5)}71%{transform:scaleX(.9);opacity:1}78%{transform:scaleX(.12)}87%{transform:scaleX(-.42)}91%{opacity:1}93%,100%{transform:scaleX(1);opacity:0}}
+/* idle 自读书：静止 ≥5s 后整页翻——从右页掀起、越过书脊、落在左页、化去，一版一页 */
+@keyframes idleTurn{0%,26%{transform:scaleX(1);opacity:0}34%{transform:scaleX(.6);opacity:1}55%{transform:scaleX(-.7);opacity:1}66%{transform:scaleX(-1);opacity:1}84%{transform:scaleX(-1);opacity:0}100%{transform:scaleX(1);opacity:0}}
+@keyframes lift{50%{transform:scaleX(.08)}}
+@keyframes turn{to{transform:scaleX(-1)}}
+@keyframes closeL{50%{transform:scaleX(.3)}}
+@keyframes pressR{50%{transform:scaleX(.44) scaleY(.72)}}
+/* 离散状态形变：reduced-motion 下同样成立（只是不动） */
+.bk[data-state=text] .pl,.bk[data-state=text] .pr{transform:scaleY(.36);transform-origin:100% 100%}
+.bk[data-state=text] .pr{transform-origin:0% 100%}
+.bk[data-state=text] .pt,.bk[data-state=grab] .pt{display:none}
+.bk[data-state=text] .base{transform:scaleX(1)}
+.bk[data-state=text] .rules{opacity:.5}
+.bk[data-state=pointer] .pr,.bk[data-state=wait] .pr{fill:color-mix(in oklab, var(--cinnabar) 26%, var(--card))}
+.bk[data-state=pointer] .rules{opacity:1}
+.bk[data-state=grab] .pl{transform:scaleX(.5)}
+.bk[data-state=grab] .pr{transform:scaleX(.4)}
+@media (prefers-reduced-motion: no-preference){
+  .bk .pt{animation:breeze 5.4s var(--ease-in-out-soft) infinite}
+  /* idle 压过 breeze；hover/输入/拖拽各态规则在其后，仍可覆盖 */
+  .bk.idle .pt{animation:idleTurn 3.4s var(--ease-in-out-soft) infinite}
+  .bk[data-state=pointer] .pt{animation:lift 1.05s var(--ease-in-out-soft) infinite}
+  .bk[data-state=wait] .pt{animation:turn .52s var(--ease-in-out-soft) infinite alternate}
+  .bk[data-state=grabbing] .pl{animation:closeL .3s var(--ease-in-out-soft) infinite}
+  .bk[data-state=grabbing] .pr{animation:pressR .3s var(--ease-in-out-soft) infinite}
+  .bk.popping .pt{animation:none}
+  .bk.popping .pl{animation:closeL 260ms var(--ease-out-soft)}
+}
+@media (prefers-reduced-motion: reduce){ .bk .pt{display:none} .bk .rules{transition:none} .bk .base{transition:none} }
+/* 静帧回退资产展示 */
+.fb{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-top:14px}
+.fb figure{text-align:center}
+.fb .zoom{display:grid;place-items:center;width:76px;height:76px;border:1px solid color-mix(in oklab,var(--line) 45%,transparent);border-radius:var(--r-sm);background:color-mix(in oklab,var(--paper) 60%,transparent)}
+.fb figcaption{font-family:var(--font-mono);font-size:10.5px;color:color-mix(in oklab,var(--ink) 55%,transparent);margin-top:4px}
+table.trans{margin-top:14px;border-collapse:collapse;width:100%;max-width:760px}
+table.trans th{font-family:var(--font-mono);font-size:11px;text-align:left;font-weight:500;color:color-mix(in oklab,var(--ink) 55%,transparent);border-bottom:1px solid color-mix(in oklab,var(--line) 45%,transparent);padding:6px 8px}
+table.trans td{font-size:12.5px;padding:6px 8px;border-bottom:1px solid color-mix(in oklab,var(--line) 28%,transparent);vertical-align:top}
+table.trans td:first-child{font-family:var(--font-mono);font-size:11px;color:color-mix(in oklab,var(--ink) 60%,transparent);white-space:nowrap}
+footer{margin-top:44px;font-size:11.5px;line-height:1.8;color:color-mix(in oklab,var(--ink) 52%,transparent);max-width:840px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <span class="brand">光标比稿 v4</span>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="themes" id="themes"></div>
+  <button class="chip" id="crossBtn" aria-pressed="false">热点十字</button>
+  <span class="meta-mono">活体物件，不是图案 · pointer:fine 门控 · reduced-motion 落静帧</span>
+</header>
+<main>
+  <p class="lede">上一轮否到底的不只是蝴蝶，是<b>「用光标画一个东西」这件事本身</b>——画什么都要越少越残。本轮换骨架：光标是一枚<b>正在被你使用的物件</b>。四个互斥骨架，按人设取四源：本站主体的<b>书</b>（阅读 · 你点名的方向）、夜读的<b>灯</b>、庄子的<b>鱼</b>（文艺 × 游标/摸鱼）、毕昇与 vim 的<b>字模</b>（程序员）。每套都只有 2–4 个元件，六态不换形状、只换物件的使用状态。</p>
+
+  <section id="sec-ff">
+    <h2 class="sect">甲 · 一豆灯</h2>
+    <p class="tagline">热点 = 灯芯豆。火苗悬在触点正上方，你走到哪，光跟到哪：<b>提灯夜读</b>。移动时身后落三点火星（拖尾即光痕），是唯一一个「走过留痕」的骨架。</p>
+    <div class="stage" id="stage-ff">
+      <span class="hint">移进此区：灯会跟着你晃。逐个试链接 / 输入框 / 按住拖卡片 / 加载区</span>
+      <div class="flow">
+        <a href="#" onclick="return false">链接</a>
+        <button>按钮</button>
+        <input value="输入框">
+        <span class="txt" contenteditable>可选中文字…</span>
+        <span class="grab js-grab">可拖卡片（按住）</span>
+        <span class="waitz js-wait">加载区</span>
+      </div>
+      <span class="spark" id="ff-sp0"></span><span class="spark" id="ff-sp1"></span><span class="spark" id="ff-sp2"></span>
+      <div class="cur ff" id="cur-ff" data-state="default">
+        <span class="halo"></span>
+        <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+          <path class="flame" d="M12 3.6C13.7 6.3 14.7 7.9 14.7 9.9C14.7 12.2 13.5 13.4 12 13.4C10.5 13.4 9.3 12.2 9.3 9.9C9.3 7.9 10.3 6.3 12 3.6Z"/>
+          <circle class="core" cx="12" cy="15" r="2.3"/>
+        </svg>
+      </div>
+      <span class="crosshair"><i class="v"></i><i class="h"></i></span>
+    </div>
+    <div class="fb" id="fb-ff"></div>
+    <table class="trans"><tr><th>态</th><th>物件在做什么</th></tr>
+      <tr><td>default</td><td>火苗摇曳 1.7s（rotate ±3.5°）· 光晕呼吸 2.6s</td></tr>
+      <tr><td>pointer</td><td>苗<b>窜高</b>（scaleY 1.3 / .62s）——凑近看时灯焰自己立起来</td></tr>
+      <tr><td>text</td><td>苗收成<b>一细线</b>（scaleX .34）、光晕收小静止——青灯对句</td></tr>
+      <tr><td>wait</td><td>风中烛：快颤 .3s（±6°），光晕不加大</td></tr>
+      <tr><td>grab / grabbing</td><td>拢手：苗倾 24° 伏低；按住持续缩成豆、光晕压到 .28</td></tr>
+    </table>
+  </section>
+
+  <section id="sec-fish">
+    <h2 class="sect">乙 · 一尾鱼</h2>
+    <p class="tagline">热点 = 吻尖。三个元件：一笔身、一尾鳍、一粒朱眼。<b>它认得你往哪儿去</b>——头随移动方向转（EMA 平滑 + 限速倾角），停下来才回到斜倚定姿，游得越快摆尾越急。文艺是「子非鱼」，程序员是「游标」与摸鱼；「cursor」一词本义即游标，这是唯一一套把词源演出来的。</p>
+    <div class="stage" id="stage-fish">
+      <span class="hint">移进此区：鱼头会转向你的去向。试试快速划动、原地停住</span>
+      <div class="flow">
+        <a href="#" onclick="return false">链接</a>
+        <button>按钮</button>
+        <input value="输入框">
+        <span class="txt" contenteditable>可选中文字…</span>
+        <span class="grab js-grab">可拖卡片（按住）</span>
+        <span class="waitz js-wait">加载区</span>
+      </div>
+      <div class="cur fish" id="cur-fish" data-state="default">
+        <span class="orbit">
+          <svg viewBox="0 0 28 24" width="28" height="24" xmlns="http://www.w3.org/2000/svg">
+            <path class="body" d="M3.2 12C6 8.2 13 6.6 18.4 9.4Q20.6 10.5 20.6 12Q20.6 13.5 18.4 14.6C13 17.4 6 15.8 3.2 12Z"/>
+            <path class="fin" d="M20.6 12L26.4 7.4Q24.6 12 26.4 16.6Z"/>
+            <circle class="eye" cx="6.8" cy="10.4" r="0.95"/>
+          </svg>
+        </span>
+      </div>
+      <span class="crosshair"><i class="v"></i><i class="h"></i></span>
+    </div>
+    <div class="fb" id="fb-fish"></div>
+    <table class="trans"><tr><th>态</th><th>物件在做什么</th></tr>
+      <tr><td>default</td><td>定姿斜倚 −26°，摆尾 1.5s；移动时整条鱼转向去向（±70° 封顶，永不翻肚）</td></tr>
+      <tr><td>pointer</td><td>鱼跃：身拱起 −9° + 尾张急扇 .55s</td></tr>
+      <tr><td>text</td><td>竖身（强制 −90°）尾贴住——一尾悬针，语义即 I 梁</td></tr>
+      <tr><td>wait</td><td>绕圈游：外层 1.15s 匀速回转，尾 .34s 急摆</td></tr>
+      <tr><td>grab / grabbing</td><td>被托起：身缩 .84 半透、尾停；按住时身持续绷细</td></tr>
+    </table>
+  </section>
+
+  <section id="sec-tp">
+    <h2 class="sect">丙 · 活字（字模 ▮）</h2>
+    <p class="tagline">热点 = 字模左缘中点，与 vim / 终端块光标同一取位。两个元件：一方<b>空字模</b> + 一横<b>朱砂墨脚</b>。没沾墨时是框，hover 即着墨，进输入框收成竖线并按终端节奏闪烁（1.06s steps），加载时字模里三道墨位轮转，按住即钤出一枚阳文朱印。文艺是毕昇，程序员是光标本身——<b>两套身份压在同一个几何形上，不靠画出来的东西撑特色，因此不存在画丑的风险</b>。</p>
+    <div class="stage" id="stage-tp">
+      <span class="hint">移进此区：字模左缘就是你的触点。试试进输入框、按住拖卡片</span>
+      <div class="flow">
+        <a href="#" onclick="return false">链接</a>
+        <button>按钮</button>
+        <input value="输入框">
+        <span class="txt" contenteditable>可选中文字…</span>
+        <span class="grab js-grab">可拖卡片（按住）</span>
+        <span class="waitz js-wait">加载区</span>
+      </div>
+      <div class="cur tp" id="cur-tp" data-state="default">
+        <span class="mold"></span><span class="inked"></span><span class="bars"><i></i><i></i><i></i></span><span class="grain"></span>
+      </div>
+      <span class="crosshair"><i class="v"></i><i class="h"></i></span>
+    </div>
+    <div class="fb" id="fb-tp"></div>
+    <table class="trans"><tr><th>态</th><th>物件在做什么</th></tr>
+      <tr><td>default</td><td>空字模（1px 墨框 + 朱脚）明灭呼吸 1.9s——等着被使用</td></tr>
+      <tr><td>pointer</td><td>沾墨：框内实墨 .9，朱脚保留</td></tr>
+      <tr><td>text</td><td>框收成竖线（scaleX .24）+ 1.06s steps 终端闪烁</td></tr>
+      <tr><td>wait</td><td>装墨：墨块内三道墨位 .72s 错峰轮转（不新增第四色）</td></tr>
+      <tr><td>grab / grabbing</td><td>按入泥：框缩 .84 半墨；按住转成一枚朱砂阳文印</td></tr>
+    </table>
+  </section>
+
+  <section id="sec-bk">
+    <h2 class="sect">丁 · 一页书（定稿候选 · R2 曲线轮）</h2>
+    <p class="tagline">热点 = 画布锚 (4,4)、书形整体右下平移 (6,6)（R4 明显错开），指针对位处空出 ~6px，书页摊向右下；脊头钉 (12,3.6) 为装订点。元件：左页、右页、一页<b>会自己动</b>的翻页（带 1.5px 弧边纸口）、底页三行弧字、一痕朱脊 + 一枚脊头钉、一道只在输入态拉开的朱基线。页面是<b>真纸色</b>：左页铺 `--background-100`（笺纸白）、右页压一层淡茶（`--faint` .22，纸背比纸面暗）、翻页那张最亮并带 1.5px 弧边——R3 前页面是空的，白纸不挡底，翻页掠过去时页面里的内容从纸下透上来，假。形幅 15.4×11.6，<b>R2 起全部直边改贝塞尔</b>：页面上缘向书口扬起、书口微外凸，三行淡字沿纸面弧度走，翻页带弧边厚度——粗糙感来自"直线贴在弧面上"，一根都不留。hover 掀页欲读、进输入框压成一行、加载<b>哗哗翻书</b>、拖拽合卷、按住压紧、点击落一记。<b>它和写意蝶是同一个轮廓</b>——两页即两翅，差别在于书是「被使用的物件」，不是被画出来的虫。</p>
+    <div class="stage" id="stage-bk">
+      <span class="hint">移进此区：书会摊开跟着你，加载区里翻书。试试进输入框、按住拖卡片、点一下</span>
+      <div class="flow">
+        <a href="#" onclick="return false">链接</a>
+        <button>按钮</button>
+        <input value="输入框">
+        <span class="txt" contenteditable>可选中文字…</span>
+        <span class="grab js-grab">可拖卡片（按住）</span>
+        <span class="waitz js-wait">加载区</span>
+      </div>
+      <div class="cur bk" id="cur-bk" data-state="default">
+        <svg viewBox="0 0 30 30" width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(6,6)">
+          <path class="pl" d="M11.5 6.5C9 5.2 6.4 4.6 4.3 4.9L4.3 14.7C6.4 14.4 9 15 11.5 16.2Z" vector-effect="non-scaling-stroke"/>
+          <path class="pr" d="M12.5 6.5C15 5.2 17.6 4.6 19.7 4.9L19.7 14.7C17.6 14.4 15 15 12.5 16.2Z" vector-effect="non-scaling-stroke"/>
+          <g class="rules"><path d="M14 8.3C15.7 7.7 17.4 7.4 18.9 7.5"/><path d="M14 10.6C15.7 10 17.4 9.7 18.9 9.8"/><path d="M14 12.9C15.4 12.4 16.7 12.1 17.7 12.1"/></g>
+          <g class="pt"><path class="face" d="M12.5 6.5C15 5.2 17.6 4.6 19.7 4.9L19.7 14.7C17.6 14.4 15 15 12.5 16.2Z" vector-effect="non-scaling-stroke"/><path class="edge" d="M19.7 4.9C20 8 20 11.8 19.7 14.7" vector-effect="non-scaling-stroke"/></g>
+          <rect class="base" x="4.3" y="17.9" width="15.4" height="1.3" rx=".65"/>
+          <line class="spine" x1="12" y1="4.6" x2="12" y2="16.6"/>
+          <circle class="pin" cx="12" cy="3.6" r=".78"/>
+          </g>
+        </svg>
+      </div>
+      <span class="crosshair"><i class="v"></i><i class="h"></i></span>
+    </div>
+    <div class="fb" id="fb-bk"></div>
+    <table class="trans"><tr><th>态</th><th>物件在做什么</th></tr>
+      <tr><td>default</td><td>摊卷静置（15.4×11.6，叶形扬边 + 圆头描边），5.4s 一轮<b>风掀两记</b>（先 .55 小掀、再 −.42 大掀）——大部分时间是静的</td></tr>
+      <tr><td>idle · 自读书</td><td><b>静止 ≥5s</b>：风掀升级为<b>整页翻</b>——从右页掀起、越过书脊、落在左页、化去（idleTurn 3.4s 一页）。指针一动立即收回风掀，进任何交互态则被该态接管（规则序在 hover/输入/拖拽之前）。<b>书停在原地时，它在读。</b></td></tr>
+      <tr><td>pointer</td><td>掀页欲读：翻页停在半开（scaleX 1↔.08，1.05s）、弧边纸口 1.5px 随动，底页显形到 .18 并<b>浮出三行弧线淡字</b></td></tr>
+      <tr><td>text</td><td>两页压成一行（scaleY .36）+ 一道<b>朱基线</b>拉开（scaleX 0→1，240ms）——书即一行文本</td></tr>
+      <tr><td>wait</td><td>不断翻书：一页绕书脊 1↔−1 来回，.52s alternate，哗哗地读。<b>行林此时不上</b>——翻得太快只剩灰噪，删（R1 除饰品）</td></tr>
+      <tr><td>grab / grabbing</td><td>合卷成册（两页收到 .5/.4）；按住持续压紧（左页 .3 合、右页 .44×.72 压）</td></tr>
+      <tr><td>click</td><td>左页轻合一记（260ms，不循环）作按压反馈</td></tr>
+      <tr><td>热点</td><td>锚 (4,4) + 右下偏移 (6,6)：指针与书页之间 ~6px/14px 视觉间隙，对位不被压；书脊装订点不再当锚（R4）</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    全站一致纪律（四套通用）：单一 rAF 全局跟随层，translate3d 合成器位移，全部动画 transform/opacity、走 --motion-* 令牌；热点即触点（灯芯豆 / 鱼吻 / 字模左缘），开热点十字自检。降级：粗指针或 prefers-reduced-motion → 交还 CSS cursor，用每套下方那组静帧 SVG（生成期按 4 主题调色板注入实色 data URI，墨走 --text-color、朱走 --primary-color，零裸 hex 入仓）。六态全覆盖，静态帧与动效稿同一支笔。
+  </footer>
+</main>
+<style id="liveCss"></style>
+<script>
+/* ============ 静帧回退资产（生成期注入实色，此处按当前主题 hex 现生成） ============ */
+const uri = s => `url("data:image/svg+xml,${encodeURIComponent(s)}")`;
+const SW = inner => `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>${inner}</svg>`;
+const FLAME = "M12 3.6C13.7 6.3 14.7 7.9 14.7 9.9C14.7 12.2 13.5 13.4 12 13.4C10.5 13.4 9.3 12.2 9.3 9.9C9.3 7.9 10.3 6.3 12 3.6Z";
+const FISH_B = "M3.2 12C6 8.2 13 6.6 18.4 9.4Q20.6 10.5 20.6 12Q20.6 13.5 18.4 14.6C13 17.4 6 15.8 3.2 12Z";
+const FISH_F = "M20.6 12L26.4 7.4Q24.6 12 26.4 16.6Z";
+function fbSet(motif, ink, acc, paper, tint={}){
+  const G = (rot,inner)=>`<g transform='rotate(${rot} 3.2 12)'>${inner}</g>`;
+  if(motif==='ff') return {
+    default:{svg:SW(`<path d='${FLAME}' fill='${ink}' fill-opacity='.8'/><circle cx='12' cy='15' r='2.2' fill='${acc}'/>`),hot:[12,15]},
+    pointer:{svg:SW(`<path d='${FLAME}' fill='${ink}' fill-opacity='.9' transform='translate(0 -1.4) scale(1 .96)'/><circle cx='12' cy='15' r='2.6' fill='${acc}'/>`),hot:[12,15]},
+    text:{svg:SW(`<path d='${FLAME}' fill='${ink}' fill-opacity='.8' transform='translate(12 0) scale(.34 1) translate(-12 0)'/><circle cx='12' cy='15' r='2' fill='${acc}'/>`),hot:[12,15]},
+    wait:{svg:SW(`<circle cx='12' cy='12' r='6.4' fill='none' stroke='${ink}' stroke-width='1.4' stroke-dasharray='26 15' opacity='.85'/><circle cx='12' cy='12' r='2' fill='${acc}'/>`),hot:[12,12]},
+    grab:{svg:SW(`<path d='${FLAME}' fill='${ink}' fill-opacity='.5' transform='rotate(-22 12 13.4)'/><circle cx='12' cy='15' r='2' fill='${acc}'/>`),hot:[12,15]},
+    grabbing:{svg:SW(`<ellipse cx='12' cy='13.6' rx='2.6' ry='3.4' fill='${ink}' fill-opacity='.55'/><circle cx='12' cy='15' r='1.8' fill='${acc}'/>`),hot:[12,15]},
+  };
+  if(motif==='fish'){
+    const fish=(rot,op,eye)=>SW(G(rot,`<path d='${FISH_B}' fill='${ink}' fill-opacity='${op}'/><path d='${FISH_F}' fill='${ink}' fill-opacity='${op*0.6}'/>`+(eye?`<circle cx='6.8' cy='10.4' r='.95' fill='${acc}'/>`:'')));
+    return {
+      default:{svg:fish(-26,.86,true),hot:[3,12]},
+      pointer:{svg:fish(-34,.95,true),hot:[3,12]},
+      text:{svg:fish(-90,.86,true),hot:[3,12]},
+      wait:{svg:SW(`<circle cx='12' cy='12' r='6.4' fill='none' stroke='${ink}' stroke-width='1.4' stroke-dasharray='26 15' opacity='.85'/>`+`<g transform='rotate(-26 3.2 12) translate(9 3) scale(.62)'><path d='${FISH_B}' fill='${ink}' fill-opacity='.9'/></g>`),hot:[12,12]},
+      grab:{svg:fish(-18,.6,true),hot:[3,12]},
+      grabbing:{svg:fish(-18,.85,false),hot:[3,12]},
+    };
+  }
+  if(motif==='bk'){
+
+    const P1='M11.5 6.5C9 5.2 6.4 4.6 4.3 4.9L4.3 14.7C6.4 14.4 9 15 11.5 16.2Z', P2='M12.5 6.5C15 5.2 17.6 4.6 19.7 4.9L19.7 14.7C17.6 14.4 15 15 12.5 16.2Z';
+    const SK=`stroke='${ink}' stroke-width='1.2' stroke-linejoin='round' stroke-linecap='round'`;
+    const SWBK=inner=>`<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><g transform='translate(6,6)'>${inner}</g></svg>`;
+    const F1=tint.pg, F2=tint.pgb, FF=tint.pgf;
+    const leaf=(d,f)=>`<path d='${d}' fill='${f}' ${SK}/>`;
+    const pg=()=>leaf(P1,F1)+leaf(P2,F2);
+    const sp=(y1=4.6,y2=16.6)=>`<line x1='12' y1='${y1}' x2='12' y2='${y2}' stroke='${acc}' stroke-width='1.25' stroke-linecap='round'/><circle cx='12' cy='3.6' r='.78' fill='${acc}'/>`;
+    const rules=(o)=>`<g fill='none' opacity='${o}' stroke='${ink}' stroke-width='1' stroke-linecap='round'><path d='M14 8.3C15.7 7.7 17.4 7.4 18.9 7.5'/><path d='M14 10.6C15.7 10 17.4 9.7 18.9 9.8'/><path d='M14 12.9C15.4 12.4 16.7 12.1 17.7 12.1'/></g>`;
+    const LIFT='M12.5 6.5C13.9 5.7 14.9 5.2 15.8 4.9L15.8 14.9C14.9 14.7 13.9 15.2 12.5 16.2Z';
+    const FLIP='M12.5 6.5C10 5.2 7.4 4.6 5.3 4.9L5.3 14.7C7.4 14.4 10 15 12.5 16.2Z';
+    const EDGE=(x)=>`<path d='M${x} 4.9C${x+0.3} 8 ${x+0.3} 11.8 ${x} 14.7' fill='none' stroke='${ink}' stroke-width='1.5' stroke-linecap='round'/>`;
+    return {
+      default:{svg:SWBK(pg()+sp()),hot:[4,4]},
+      pointer:{svg:SWBK(pg()+rules(.42)+leaf(LIFT,FF)+EDGE(15.8)+sp()),hot:[4,4]},
+      text:{svg:SWBK(leaf('M4.3 14.3C6.6 13.9 9.2 14.7 11.5 15.6L11.5 16.6C9.2 15.8 6.6 15.1 4.3 15.4Z',F1)+leaf('M19.7 14.3C17.4 13.9 14.8 14.7 12.5 15.6L12.5 16.6C14.8 15.8 17.4 15.1 19.7 15.4Z',F2)+`<rect x='4.3' y='17.9' width='15.4' height='1.3' rx='.65' fill='${acc}'/>`+sp(14.9,16.6)),hot:[4,4]},
+      wait:{svg:SWBK(pg()+leaf(FLIP,FF)+EDGE(5.3)+sp()),hot:[4,4]},
+      grab:{svg:SWBK(leaf('M11.5 6.5C9.9 5.6 8.5 5.1 7 5.1L7 14.8C8.5 14.6 9.9 15.2 11.5 16.2Z',F1)+leaf('M12.5 6.5C14.1 5.6 15.2 5.1 16.3 5.1L16.3 14.8C15.2 14.6 14.1 15.2 12.5 16.2Z',F2)+sp()),hot:[4,4]},
+      grabbing:{svg:SWBK(leaf('M11.5 8C10.2 7.2 9 6.8 8 6.9L8 14.4C9 14.3 10.2 14.8 11.5 15.6Z',F1)+leaf('M12.5 8C13.8 7.2 15 6.8 16 6.9L16 14.4C15 14.3 13.8 14.8 12.5 15.6Z',F2)+sp(6.6,15.8)),hot:[4,4]},
+    };
+  }
+  return {
+    default:{svg:SW(`<rect x='4.6' y='6' width='10' height='12' fill='none' stroke='${ink}' stroke-width='1.3'/><rect x='6' y='18.6' width='7.2' height='1.8' fill='${acc}'/>`),hot:[4.6,12]},
+    pointer:{svg:SW(`<rect x='4.6' y='6' width='10' height='12' fill='${ink}' fill-opacity='.9'/><rect x='6' y='18.6' width='7.2' height='1.8' fill='${acc}'/>`),hot:[4.6,12]},
+    text:{svg:SW(`<rect x='4.6' y='6' width='3' height='12' fill='${ink}'/><rect x='4.6' y='18.6' width='9' height='1.8' fill='${acc}'/>`),hot:[4.6,12]},
+    wait:{svg:SW(`<rect x='4.6' y='6' width='10' height='12' fill='${ink}' fill-opacity='.5'/><rect x='6.6' y='8' width='6' height='1.5' fill='${acc}'/><rect x='6.6' y='11' width='6' height='1.5' fill='${acc}' fill-opacity='.55'/><rect x='6.6' y='14' width='6' height='1.5' fill='${acc}' fill-opacity='.25'/>`),hot:[4.6,12]},
+    grab:{svg:SW(`<rect x='5.6' y='7' width='8.4' height='10' fill='none' stroke='${ink}' stroke-width='1.3' opacity='.7'/><rect x='6.4' y='8' width='6.8' height='8' fill='${ink}' fill-opacity='.35'/><rect x='6.4' y='18' width='7' height='1.8' fill='${acc}'/>`),hot:[5,12]},
+    grabbing:{svg:SW(`<rect x='4.6' y='6' width='10' height='12' fill='${acc}'/>`),hot:[4.6,12]},
+  };
+}
+
+/* ============ 主题与场景 ============ */
+const THEMES = {
+  /* paper = --background-100 原值；pg/pgb/pgf = color-mix(in oklab, --primary-color {30,18,38}%, --background-100) 离线预混实色
+     （生产同值由生成脚本从调色板算出，注入静态 SVG 光标——cursor data URI 不支持 CSS 变量/color-mix） */
+  wl:{label:'酒 · 明',family:'wine', scheme:'light', cinnabar:'#C94A44', ink:'#2A1E16', paper:'#FFFBF8', pg:'#EEC6C2', pgb:'#F5DBD8', pgf:'#EAB8B4'},
+  wd:{label:'酒 · 暗',family:'wine', scheme:'dark',  cinnabar:'#E36A64', ink:'#adadad', paper:'#170e0e', pg:'#542A28', pgb:'#3C1F1D', pgf:'#65312F'},
+  pl:{label:'素 · 明',family:'plain',scheme:'light', cinnabar:'#A87348', ink:'#2A2218', paper:'#FFFDF9', pg:'#E5D4C4', pgb:'#F0E4D9', pgf:'#DEC9B6'},
+  pd:{label:'素 · 暗',family:'plain',scheme:'dark',  cinnabar:'#deb896', ink:'rgba(255,255,255,.72)', paper:'#1c1814', pg:'#56483B', pgb:'#3F352B', pgf:'#665545'},
+};
+const MOTIFS = [
+  {id:'ff',label:'甲 · 一豆灯'},
+  {id:'fish',label:'乙 · 一尾鱼'},
+  {id:'tp',label:'丙 · 活字'},
+  {id:'bk',label:'丁 · 一页书'},
+];
+const HOT = {ff:[12,15], fish:[3,12], tp:[0,6], bk:[4,4]};
+const REST = {ff:0, fish:-26, tp:0, bk:0};
+const STATES = ['default','pointer','text','wait','grab','grabbing'];
+let theme='wl', motif='bk';
+
+const tabsEl=document.getElementById('tabs'), themesEl=document.getElementById('themes');
+MOTIFS.forEach(m=>{const b=document.createElement('button');b.className='chip';b.textContent=m.label;b.dataset.motif=m.id;b.onclick=()=>{motif=m.id;render()};tabsEl.appendChild(b)});
+Object.entries(THEMES).forEach(([k,t])=>{const b=document.createElement('button');b.className='chip';b.textContent=t.label;b.dataset.theme=k;b.onclick=()=>{theme=k;render()};themesEl.appendChild(b)});
+document.getElementById('crossBtn').onclick=e=>{MOTIFS.forEach(m=>document.getElementById('stage-'+m.id).classList.toggle('crosighton'));e.currentTarget.setAttribute('aria-pressed',document.getElementById('stage-tp').classList.contains('crosighton'))};
+
+function render(){
+  const t=THEMES[theme];
+  document.documentElement.dataset.family=t.family; document.documentElement.dataset.scheme=t.scheme;
+  tabsEl.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.motif===motif));
+  themesEl.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.theme===theme));
+  MOTIFS.forEach(m=>{
+    const set=fbSet(m.id,t.ink,t.cinnabar,t.paper,{pg:t.pg,pgb:t.pgb,pgf:t.pgf});
+    document.getElementById('fb-'+m.id).innerHTML=STATES.map(st=>
+      `<figure><div class="zoom">${set[st].svg.replace("width='24' height='24'","width='64' height='64'")}</div><figcaption>${st} · hot ${set[st].hot.join(' ')}</figcaption></figure>`).join('');
+    /* 整页挂静帧兜底，边读边体验（动效层进舞台区再接管） */
+    let css='';
+    const rule=(st,sel,fb)=>{css+=`${sel}{cursor:${uri(set[st].svg)} ${Math.round(set[st].hot[0])} ${Math.round(set[st].hot[1])}, ${fb}}\n`};
+    rule('default','body','default'); rule('pointer','a,button,.flow button','pointer');
+    rule('text','input,textarea,[contenteditable],.txt','text'); rule('wait','.js-wait','wait');
+    rule('grab','.js-grab','auto'); rule('grabbing','.js-grab:active','auto');
+    if(m.id===motif){ document.getElementById('liveCss').textContent=css; }
+  });
+  const q=new URLSearchParams(); q.set('motif',motif); q.set('theme',theme);
+  history.replaceState(null,'','?'+q.toString());
+}
+
+/* ============ 跟随层引擎（三套共用一个状态机） ============ */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const STAGES = {};
+function initStage(id){
+  const stage=document.getElementById('stage-'+id), cur=document.getElementById('cur-'+id), cross=stage.querySelector('.crosshair');
+  const fine=matchMedia('(pointer:fine)').matches, noRed=matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  if(!fine||!noRed){ stage.querySelector('.hint').textContent='粗指针 / 减少动效：动效层不接管，交还静帧 CSS 光标（上排即生产回退资产）。'; return; }
+  stage.classList.add('cursorless');
+  if(stage._armed) return; stage._armed=true;
+  const hot=HOT[id], S={tx:-80,ty:-80,lx:-80,ly:-80,vx:0,vy:0,ang:REST[id],raf:null,spI:0,spT:0};
+  const sparks=[0,1,2].map(i=>document.getElementById('ff-sp'+i));
+  function frame(){
+    const speed=Math.hypot(S.vx,S.vy);
+    let target=REST[id];
+    if(id==='fish'){
+      if(cur.dataset.state==='text') target=-90;
+      else if(speed>1.1) target=clamp(Math.atan2(S.vy,S.vx)*180/Math.PI,-70,70);
+    } else if(id==='ff'){ target=clamp(S.vx*0.9,-14,14); }
+    S.ang+=(target-S.ang)*0.12;
+    cur.style.transform=`translate(${S.tx-hot[0]}px,${S.ty-hot[1]}px) rotate(${S.ang.toFixed(2)}deg)`;
+    cur.style.transformOrigin=`${hot[0]}px ${hot[1]}px`;
+    cross.style.transform=`translate(${S.tx}px,${S.ty}px)`;
+    if(id==='ff'&&speed>3&&performance.now()-S.spT>90){ S.spT=performance.now(); const s=sparks[S.spI++%3];
+      s.style.setProperty('--sx',S.tx+'px'); s.style.setProperty('--sy',S.ty+'px');
+      s.style.animation='none'; void s.offsetWidth; s.style.animation='spark 620ms var(--ease-out-soft) forwards'; }
+    if(id==='fish'){ cur.classList.toggle('swift', speed>3); }
+    if(Math.abs(target-S.ang)<0.4 && speed<0.3){ S.raf=null; return; }
+    S.vx*=0.86; S.vy*=0.86;
+    S.raf=requestAnimationFrame(frame);
+  }
+  STAGES[id]={stage,cur,S,frame};
+  stage.addEventListener('pointerenter',()=>{cur.classList.add('on')});
+  stage.addEventListener('pointermove',e=>{
+    const r=stage.getBoundingClientRect(), nx=e.clientX-r.left, ny=e.clientY-r.top;
+    if(S.lx>0){ S.vx=S.vx*0.5+(nx-S.lx)*0.5; S.vy=S.vy*0.5+(ny-S.ly)*0.5; }
+    S.tx=nx; S.ty=ny; S.lx=nx; S.ly=ny;
+    const t0=e.target.closest('a,button,input,.txt,.js-grab,.js-wait');
+    let st='default';
+    if(t0){ if(t0.matches('input,.txt')) st='text'; else if(t0.matches('.js-wait')) st='wait'; else if(t0.matches('.js-grab')) st='grab'; else st='pointer'; }
+    if(e.buttons>0 && t0 && t0.matches('.js-grab')) st='grabbing';
+    if(cur.dataset.state!==st) cur.dataset.state=st;
+    if(!S.raf) S.raf=requestAnimationFrame(frame);
+  });
+  stage.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.js-grab')) cur.dataset.state='grabbing';
+    if(id==='bk'){ cur.classList.remove('popping'); void cur.offsetWidth; cur.classList.add('popping'); }
+  });
+  stage.addEventListener('pointerup',()=>{ if(cur.dataset.state==='grabbing') cur.dataset.state='grab'; });
+  stage.addEventListener('pointerleave',()=>{ cur.classList.remove('on','swift','idle'); cur.dataset.state='default'; S.ang=REST[id]; });
+  if(id==='bk'){
+    /* 静止 ≥5s → 书自己翻；任何一次移动立刻收回 breeze。生产同规则挂在全局层 pointermove 上 */
+    let idleT=null;
+    const wake=()=>{ clearTimeout(idleT); cur.classList.remove('idle'); idleT=setTimeout(()=>cur.classList.add('idle'),5000); };
+    stage.addEventListener('pointerenter',wake);
+    stage.addEventListener('pointermove',wake);
+    stage.addEventListener('pointerleave',()=>clearTimeout(idleT));
+  }
+}
+/* 比稿定帧驱动口（仅本地产物用；浏览器后台 rAF 挂起时手工定一帧） */
+window.__drive=(id,x,y,st,vx=0,vy=0,iters=24)=>{
+  const s=STAGES[id]; if(!s) return 'no-stage';
+  s.cur.classList.add('on'); if(st!==undefined) s.cur.dataset.state=st;
+  s.S.tx=x; s.S.ty=y; s.S.lx=x; s.S.ly=y; s.S.vx=vx; s.S.vy=vy; s.S.raf=null;
+  for(let i=0;i<iters;i++){ s.S.raf=null; s.frame(); }
+  return { tf:s.cur.style.transform, st:s.cur.dataset.state };
+};
+const params=new URLSearchParams(location.search);
+if(MOTIFS.some(m=>m.id===params.get('motif'))) motif=params.get('motif');
+if(THEMES[params.get('theme')]) theme=params.get('theme');
+render();
+['ff','fish','tp','bk'].forEach(initStage);
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, AUTHOR_NAME, AUTHOR_URL } from '@wuh.site/core'
 import AppProviders from './components/AppProviders'
+import CursorLayer from '@wuh.site/components/cursor'
 import FontPrefetch from './components/FontPrefetch'
 import JsonLd from './components/JsonLd'
 import { createSiteStructuredData } from './lib/structured-data'
@@ -116,7 +117,9 @@ export default function RootLayout({
       <link rel='preload' href={sansWoff2} as='font' type='font/woff2' crossOrigin='anonymous' />
       <JsonLd data={createSiteStructuredData()} />
       <FontPrefetch />
-      <AppProviders>{children}</AppProviders>
+      {/* 光标跟随层与页面同级：rAF+translate3d 合成器层，pointer:fine ∧ no-reduced-motion 才接管，
+          环境不满足时由降级链静态帧顶替——触控与 reduce 用户零影响 */}
+      <AppProviders><CursorLayer />{children}</AppProviders>
       </body>
     </html>
   )
