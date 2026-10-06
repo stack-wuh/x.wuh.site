@@ -40,10 +40,32 @@ test('Flex keeps only the alignment alias set; Row alias belongs to the grid row
   assert.doesNotMatch(indexSource, /export const (Wrap|NoWrap|FlexEnd|FlexStart|AlignTop|AlignBottom|FullWidth|FullHeight|FullSize) =/)
 })
 
-test('Flex layout props never leak to the DOM', () => {
-  assert.match(indexSource, /const FLEX_ONLY_KEYS: \(keyof IFlexProps\)\[\] = \[/)
-  assert.match(indexSource, /FLEX_ONLY_KEYS\.forEach\(\(key\) => delete/)
-  assert.match(indexSource, /\$direction=\{props\.direction\}/)
+test('Flex layout props never leak to the DOM (destructured out, not delete-cast)', () => {
+  // 布局 props 解构剔除，hidden 等原生同名属性不会带错误类型泄进 styled.div
+  assert.match(indexSource, /const \{[\s\S]*?hidden, width, height[\s\S]*?\.\.\.domProps\s*\} = props/)
+  assert.match(indexSource, /\$hidden=\{hidden\}/)
+  assert.match(indexSource, /\$direction=\{direction\}/)
+})
+
+test('Flex adds ladder-responsive hidden and width/height (#499)', () => {
+  // hidden 编译段在模板尾部——覆盖初始 display、媒体块后段胜出
+  const hiddenAt = indexSource.indexOf('responsive(props.$hidden')
+  const flexBasisAt = indexSource.indexOf('props.$flexBasis')
+  assert.ok(hiddenAt > 0, 'hidden ladder compile present')
+  assert.ok(hiddenAt < flexBasisAt, 'hidden emitted before & > * block (top-level tail, after sizing)')
+  assert.match(indexSource, /display: \$\{props\.\$inline \? 'inline-flex' : 'flex'\}/, 'false 档恢复值按 $inline 内推')
+  assert.match(indexSource, /responsive\(props\.\$width, \(v\) => `width: \$\{lengthValue\(v, props\.theme\)\};`\)/)
+  assert.match(indexSource, /responsive\(props\.\$height, \(v\) => `height: \$\{lengthValue\(v, props\.theme\)\};`\)/)
+  // CSS 关键字直通（防 getSpacingValue 把 'auto' 拼成 'autopx'）
+  assert.match(indexSource, /const CSS_LENGTH_KEYWORDS = \//)
+  assert.match(indexSource, /CSS_LENGTH_KEYWORDS\.test\(value\)/)
+  assert.match(indexSource, /auto\|fit-content\|max-content\|min-content/)
+  // 剥离面（transient props + 解构剔除）
+  assert.match(indexSource, /\$hidden\?: IFlexProps\['hidden'\]/)
+  assert.match(indexSource, /inline, hidden, width, height/)
+  assert.match(specsSource, /hidden\?: TResponsive<boolean>/)
+  assert.match(specsSource, /width\?: TResponsive<string \| number>/)
+  assert.match(specsSource, /height\?: TResponsive<string \| number>/)
 })
 
 test('Flex obeys component-package style discipline', () => {
