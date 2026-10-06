@@ -1,8 +1,11 @@
+'use client'
+
 import * as React from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { getSpacingValue } from '@wuh.site/components/themes/index'
 import { Tokens } from '@wuh.site/components/themes/tokens'
-import { IFlexProps, TFlexGap, TFlexSpace } from './specs'
+import { responsive } from '@wuh.site/components/themes/responsive'
+import { IFlexProps } from './specs'
 
 /** 仅用于 styled 的 transient props，不会透传到 DOM */
 interface IStyledFlexTransientProps {
@@ -27,110 +30,46 @@ interface IStyledFlexTransientProps {
 }
 
 /**
- * @NOTE 处理gap间距
- * @param gap
- * @param theme
- * @returns
+ * 长度值折算：有主题时走 spaces token（number 折 px，'md' 查 token，
+ * CSS 简写字符串透传）；无主题回退为 px 折算，不产出无单位非法值。
  */
-const parsGap = (gap: TFlexGap, theme: Tokens): string => {
-  if (Array.isArray(gap)) {
-    const [row, column = row] = gap
-    return [getSpacingValue(row, theme), getSpacingValue(column, theme)].join(' ')
-  }
-  return getSpacingValue(gap, theme)
-}
-
-/**
- * @NOTE 处理margin和padding
- * @param value
- * @param theme
- * @returns
- */
-const parseMarginPadding = (value: TFlexSpace, theme: Tokens): string => {
-  if (Array.isArray(value)) {
-    const [top, right, bottom = top, left = right] = value
-    return [getSpacingValue(top, theme), getSpacingValue(right, theme), getSpacingValue(bottom, theme), getSpacingValue(left, theme)].join(' ')
-  }
-  return getSpacingValue(value, theme)
+const lengthValue = (value: string | number, theme?: Tokens): string => {
+  if (theme) return getSpacingValue(value, theme)
+  return typeof value === 'number' ? `${value}px` : value
 }
 
 const StyledFlex = styled.div<IStyledFlexTransientProps & { theme?: Tokens }>`
   display: ${(props) => (props.$inline ? 'inline-flex' : 'flex')};
-  flex-direction: ${(props) => props.$direction ?? 'row'};
-  justify-content: ${(props) => props.$justifyContent ?? 'flex-start'};
-  align-items: ${(props) => props.$alignItems ?? 'flex-start'};
-  flex-wrap: ${(props) => (props.$wrap ? 'wrap' : 'nowrap')};
   box-sizing: border-box;
+  ${(props) => responsive(props.$direction ?? 'row', (v) => `flex-direction: ${v};`)}
+  ${(props) => responsive(props.$justifyContent ?? 'flex-start', (v) => `justify-content: ${v};`)}
+  ${(props) => responsive(props.$alignItems ?? 'flex-start', (v) => `align-items: ${v};`)}
+  ${(props) => responsive(props.$wrap, (v) => `flex-wrap: ${v ? 'wrap' : 'nowrap'};`)}
   ${(props) =>
-    props.$gap &&
-    props.theme &&
-    css`
-      gap: ${parsGap(props.$gap, props.theme)};
-    `}
+    props.$gap !== undefined && props.theme
+      ? responsive(props.$gap, (v) => `gap: ${lengthValue(v, props.theme)};`)
+      : ''}
   ${(props) =>
-    props.$padding &&
-    props.theme &&
-    css`
-      padding: ${parseMarginPadding(props.$padding, props.theme)};
-    `}
+    props.$padding !== undefined && props.theme
+      ? responsive(props.$padding, (v) => `padding: ${lengthValue(v, props.theme)};`)
+      : ''}
   ${(props) =>
-    props.$margin &&
-    props.theme &&
-    css`
-      margin: ${parseMarginPadding(props.$margin, props.theme)};
-    `}
-  ${(props) =>
-    props.$width &&
-    css`
-      width: ${props.$width};
-    `}
-  ${(props) =>
-    props.$height &&
-    css`
-      height: ${props.$height};
-    `}
-  ${(props) =>
-    props.$fullWidth &&
-    css`
-      width: 100%;
-    `}
-  ${(props) =>
-    props.$fullHeight &&
-    css`
-      height: 100%;
-    `}
-  ${(props) =>
-    props.$flex &&
-    css`
-      flex: ${props.$flex};
-    `}
+    props.$margin !== undefined && props.theme
+      ? responsive(props.$margin, (v) => `margin: ${lengthValue(v, props.theme)};`)
+      : ''}
+  ${(props) => (props.$width !== undefined ? `width: ${lengthValue(props.$width, props.theme)};` : '')}
+  ${(props) => (props.$height !== undefined ? `height: ${lengthValue(props.$height, props.theme)};` : '')}
+  ${(props) => (props.$fullWidth ? 'width: 100%;' : '')}
+  ${(props) => (props.$fullHeight ? 'height: 100%;' : '')}
+  ${(props) => (props.$flex !== undefined ? `flex: ${props.$flex};` : '')}
 
   & > * {
     ${(props) =>
-      props.$flexBasis &&
-      css`
-        flex-basis: ${props.$flexBasis};
-      `}
-    ${(props) =>
-      props.$flexGrow &&
-      css`
-        flex-grow: ${props.$flexGrow};
-      `}
-    ${(props) =>
-      props.$flexShrink &&
-      css`
-        flex-shrink: ${props.$flexShrink};
-      `}
-    ${(props) =>
-      props.$order &&
-      css`
-        order: ${props.$order};
-      `}
-    ${(props) =>
-      props.$alignSelf &&
-      css`
-        align-self: ${props.$alignSelf};
-      `}
+      props.$flexBasis !== undefined ? `flex-basis: ${lengthValue(props.$flexBasis, props.theme)};` : ''}
+    ${(props) => (props.$flexGrow !== undefined ? `flex-grow: ${props.$flexGrow};` : '')}
+    ${(props) => (props.$flexShrink !== undefined ? `flex-shrink: ${props.$flexShrink};` : '')}
+    ${(props) => (props.$order !== undefined ? `order: ${props.$order};` : '')}
+    ${(props) => (props.$alignSelf ? `align-self: ${props.$alignSelf};` : '')}
   }
 `
 
@@ -176,16 +115,6 @@ export default Flex
 
 export const InlineFlex = styled(Flex).attrs<IFlexProps>({ inline: true })``
 
-/** 水平布局 */
-export const Row = styled(Flex).attrs<IFlexProps>({
-  direction: 'row'
-})``
-
-/** 反向行布局 */
-export const RowReverse = styled(Flex).attrs<IFlexProps>({
-  direction: 'row-reverse'
-})``
-
 /** 垂直布局 */
 export const Column = styled(Flex).attrs<IFlexProps>({ direction: 'column' })``
 
@@ -225,47 +154,8 @@ export const SpaceEvenly = styled(Flex).attrs<IFlexProps>({
   justifyContent: 'space-evenly'
 })``
 
-/** 换行 */
-export const Wrap = styled(Flex).attrs<IFlexProps>({
-  wrap: true
-})``
-
-/** 不换行 */
-export const NoWrap = styled(Flex).attrs<IFlexProps>({
-  wrap: false
-})``
-
-/** 水平右对齐 */
-export const FlexEnd = styled(Flex).attrs<IFlexProps>({
-  justifyContent: 'flex-end'
-})``
-
-/** 水平左对齐 */
-export const FlexStart = styled(Flex).attrs<IFlexProps>({
-  justifyContent: 'flex-start'
-})``
-
-/** 垂直顶部对齐 */
-export const AlignTop = styled(Flex).attrs<IFlexProps>({
-  alignItems: 'flex-start'
-})``
-
-/** 垂直底部对齐 */
-export const AlignBottom = styled(Flex).attrs<IFlexProps>({
-  alignItems: 'flex-end'
-})``
-
-/** 填充容器宽度 */
-export const FullWidth = styled(Flex).attrs<IFlexProps>({
-  fullWidth: true
-})``
-
-/** 填充容器高度 */
-export const FullHeight = styled(Flex).attrs<IFlexProps>({
-  fullHeight: true
-})``
-
-export const FullSize = styled(Flex).attrs<IFlexProps>({
-  fullWidth: true,
-  fullHeight: true
-})``
+/**
+ * @NOTE 旧 20 个别名已收敛：单 bool/尺寸糖（Wrap/NoWrap/FlexEnd/FlexStart/
+ * AlignTop/AlignBottom/FullWidth/FullHeight/FullSize）由对应 props 直给，
+ * Row/RowReverse 让位给 @wuh.site/components/row 的栅格 Row——本包零消费者，无兼容义务。
+ */

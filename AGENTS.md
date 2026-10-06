@@ -89,10 +89,10 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 ## 组件库清单
 
 ### 已实现组件
-`Alert`, `Button`, `Card`, `Dialog`, `Empty`, `Skeleton`, `Result`, `Flex/Row/Column`, `Image`, `ImagePreview`, `LinkGroup`, `SharedLinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main)
+`Alert`, `Button`, `Card`, `Dialog`, `Empty`, `Skeleton`, `Result`, `Flex`（响应式分布原语）, `Row`/`Col`（12 分栏栅格，断点数组语法 `[base, tablet]`）, `Stagger`（子项错峰入场动效层）, `Image`, `ImagePreview`, `LinkGroup`, `SharedLinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main) — 布局族契约见 `shadow-docs/knowledge/layout-components.md`
 
 ### 占位组件（使用前需实现）
-`Col`, `ConfigProvider`, `Divider`, `FloatButton`, `Modal`, `Row`, `Space`, `Spin`, `VideoPlayer`
+`ConfigProvider`, `Divider`, `FloatButton`, `Modal`, `Space`, `Spin`, `VideoPlayer`
 
 ### Hooks
 - `useDialog` - Dialog 打开/关闭状态，提供 `bind: { open, onClose }`
