@@ -91,7 +91,7 @@
 | 20261006-feature-player-playlist-seal | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-player-playlist-seal/brief.md |
 | 20261006-feature-responsive-breakpoint-ladder | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-responsive-breakpoint-ladder/brief.md |
 | 20261006-feature-responsive-layout-components | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-responsive-layout-components/brief.md |
-| 20261006-fix-layout-typecheck | reviewed | shadow-docs/changes/20261006-fix-layout-typecheck/brief.md |
+| 20261006-fix-layout-typecheck | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-layout-typecheck/brief.md |
 | 20261006-fix-player-queue-layer-lyric-follow | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-player-queue-layer-lyric-follow/brief.md |
 | 20261006-refactor-responsive-layout-batch1 | reviewed | shadow-docs/changes/20261006-refactor-responsive-layout-batch1/brief.md |
 | 20261006-style-queue-eq-background | reviewed | shadow-docs/changes/20261006-style-queue-eq-background/brief.md |

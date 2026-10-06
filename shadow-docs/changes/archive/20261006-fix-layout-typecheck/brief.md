@@ -4,7 +4,7 @@
   "name": "20261006-fix-layout-typecheck",
   "type": "fix",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -18,18 +18,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 493,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/493",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 494,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/494"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c625f8f66ab1fef8165c47d3836cd69002308c64",
-    "verifiedAt": "2026-10-06T11:21:51.334Z"
+    "verifiedCommit": "b9bb924cf3d021fc02277e039ac9c5d5cbb1cf23",
+    "verifiedAt": "2026-10-06T15:00:50.940Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:493",
-    "planHash": "ccc7bf481ed1d38f3c5ddea50eb67f99f86fd4fdebf79e05b8a3edb5ac8aeb5f",
+    "checkpoint": "merged-pr:494",
+    "planHash": "0627dbb8c4c7ffc72f9667d7c878837c51a55b200444eb8d407100e40eec8208",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -59,7 +59,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "三处 latent 类型错误（ladderSlots 返回类型、col placement 顶层 undefined、stagger forwardRef 泛型）经域内 scoped tsc 修复清零，并新增 tsconfig.layout.guard.json + layout-typecheck.test.mjs 纳入 CI。'组件域需 typecheck guard、根 tsc 不覆盖 packages/components' 这一稳定事实已由 build-config 卡组件域守卫段完整覆盖（audio-player 首发、其余照此复制），本 change 是该配方在布局域的第二次落地，属应用实例而非新增长期事实；guard 自证于 CI，不需在卡片另立条目。"
+    "reason": "main 复核（b9bb924，#494 已随 v1.4.67 部署链绿）：scoped tsc 清零 3 处 latent 类型 + 布局域 typecheck 守卫入 CI；守卫配方属 build-config 卡既有覆盖，本 change 为应用实例，知识无需变更。重钉过归档门禁。"
   }
 }
 ---
