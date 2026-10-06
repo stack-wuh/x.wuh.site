@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react'
+import { TResponsive } from '@wuh.site/components/themes/responsive'
 
 export const flexDirections = ['row', 'row-reverse', 'column', 'column-reverse'] as const
 export type TFlexDirection = typeof flexDirections[number]
@@ -22,25 +23,30 @@ export const alignItemsOptions = [
 ] as const
 export type TAlignItems = typeof alignItemsOptions[number]
 
-export type TFlexGap = number | string | [number | string, number | string]
-
-export type TFlexSpace = number | string | [number | string, number | string]
+/**
+ * 间距值：number 按 px 折算；string 可为 spaces token 名（sm/md/lg…）
+ * 或任意 CSS 长度/简写（如 '8px 16px'），经 getSpacingValue 解析。
+ *
+ * 契约：布局 props 的顶层数组一律 = 断点槽 [base, tablet]，
+ * 非对称盒式简写（如 padding 四值）经 CSS 字符串传入，不占数组语法。
+ */
+export type TSpaceValue = number | string
 
 export interface IFlexProps {
-  /** 控制Flex布局的方向 */
-  direction?: TFlexDirection
-  /** 控制Flex布局主轴的对齐方式 */
-  justifyContent?: TJustifyContent
-  /** 控制Flex布局交叉轴的对齐方式 */
-  alignItems?: TAlignItems,
-  /** 控制Flex布局的子元素之间的间距 */
-  gap?: TFlexGap,
-  /** 控制Flex布局是否换行 */
-  wrap?: boolean,
-  /** 控制Flex布局的内边距 */
-  padding?: TFlexSpace,
-  /** 控制Flex布局的外边距 */
-  margin?: TFlexSpace,
+  /** 布局方向；数组 = 断点槽 [base, tablet?] */
+  direction?: TResponsive<TFlexDirection>
+  /** 主轴对齐；数组 = 断点槽 [base, tablet?] */
+  justifyContent?: TResponsive<TJustifyContent>
+  /** 交叉轴对齐；数组 = 断点槽 [base, tablet?] */
+  alignItems?: TResponsive<TAlignItems>
+  /** 子项间距（spaces token 或 CSS 长度）；数组 = 断点槽 [base, tablet?] */
+  gap?: TResponsive<TSpaceValue>
+  /** 是否换行；数组 = 断点槽 [base, tablet?] */
+  wrap?: TResponsive<boolean>
+  /** 内边距；数组 = 断点槽 [base, tablet?] */
+  padding?: TResponsive<TSpaceValue>
+  /** 外边距；数组 = 断点槽 [base, tablet?] */
+  margin?: TResponsive<TSpaceValue>
   /** 是否以内联元素的形式展示 */
   inline?: boolean,
   /** 外联样式表 */
