@@ -41,7 +41,7 @@ export default function WereadSection({ fallbackBooks }: { fallbackBooks: Weread
       ) : (
         <S.Section>
           <S.SectionHeader className='reveal'>
-            <S.SectionTitle><IconLibrary size={16} aria-hidden='true' />{t('home.wereadTitle')}</S.SectionTitle>
+            <S.SectionTitle>{t('home.wereadTitle')}</S.SectionTitle>
             {books.length > 0 && <Button href='/weread' variant='text' color='secondary' size='small' icon={<IconChevronRight />} iconPosition='right'>{t('home.myShelf')}</Button>}
           </S.SectionHeader>
           {books.length === 0 ? (
