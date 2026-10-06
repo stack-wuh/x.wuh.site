@@ -84,10 +84,17 @@ test('弹层定位纪律：禁 scrollIntoView，桌面定位手动只滚目标�
   // 被连带滚走 20–30px+（WashSrc inset:-12% 撑出 118px 纵向 / 139px 横向隐藏可滚溢出），
   // 顶部眉标被裁、底边露出未罩纸底的晕染色带。整文件禁入，含注释外的任何调用形态
   assert.doesNotMatch(src, /scrollIntoView/)
-  // 词卷手动定位（留白独奏版桌面歌词载体）：竖排 vertical-rl 走负向 scrollLeft 几何换算，
-  // en 横排回退镜像移动端词窗 top 公式（手动 scrollTo 只滚词卷容器）
-  assert.match(src, /left: container\.clientWidth \/ 2 - el\.offsetWidth \/ 2 - el\.offsetLeft/)
-  assert.match(src, /top: el\.offsetTop - container\.clientHeight \/ 2 \+ el\.offsetHeight \/ 2/)
+  // 词卷手动定位（留白独奏版桌面歌词载体）语义守卫（20261006 四修，替换旧镜像公式断言）：
+  // 居中必须按视口 rect 增量换算（screenX = const − scrollLeft：IAB 实测斜率 −1、vertical-rl 负向域钳制），
+  // 禁 offsetLeft/offsetTop 基准——滚动容器非定位元素时 offsetParent 落在外层（实测 stage、负偏移 −281），
+  // 旧镜像公式守卫恰好把残差 809.9px 的失效换算钉死过一版（#435 教训复刻，复现见 20261006 brief）
+  const followStart = src.indexOf('词卷跟随')
+  const wordsFollow = src.slice(followStart, src.indexOf('下滑关闭', followStart))
+  assert.ok(wordsFollow.length > 100, '词卷跟随 effect 切片锚点丢失')
+  assert.match(wordsFollow, /container\.getBoundingClientRect\(\)/, '词卷居中缺滚动容器 rect 基准')
+  assert.match(wordsFollow, /el\.getBoundingClientRect\(\)/, '词卷居中缺当前句列 rect 基准')
+  assert.doesNotMatch(wordsFollow, /offsetLeft/, '词卷禁 offsetLeft 基准（offsetParent 与容器无关 = 基准漂移）')
+  assert.doesNotMatch(wordsFollow, /offsetTop/, '词卷禁 offsetTop 基准（en 横排同样走 rect 增量）')
   // 队列 nearest 语义：高亮项可见不动、越界才对齐；移动端手动 scrollTop 保持
   assert.match(src, /dList\.scrollTop = /)
   assert.match(src, /mList\.scrollTop = /)

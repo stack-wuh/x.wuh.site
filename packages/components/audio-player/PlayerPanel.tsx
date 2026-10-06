@@ -183,8 +183,10 @@ export const AudioPlayerPanel = () => {
   }, [state.isPanelOpen, state.currentIndex, queueOpen])
 
   // 词卷跟随：当前句列滚到视口中部。手动 scrollTo 只滚词卷容器（面板壳 overflow: clip 后不是滚动容器，
-  // 但定位纪律仍全文件禁原生滚动定位 API）；竖排 vertical-rl 的 scrollLeft 为负向域，
-  // 按几何换算目标列居中；en 横排回退用同构的 top 公式
+  // 但定位纪律仍全文件禁原生滚动定位 API）。居中走视口 rect 增量换算（20261006 四修）：
+  // screen = const − scroll 恒成立（IAB 实测：vertical-rl scrollLeft 为 [−(sw−cw), 0] 负向域、斜率 −1；
+  // en 横排同构正向量），与布局偏移基准/符号域解耦——旧换算以元素布局偏移为基准，滚动容器非定位元素时
+  // 基准漂到外层（实测 offsetParent=WordsView 级、负偏移 −281，残差 ~810px 全程不滚，复现见 20261006 brief）
   useEffect(() => {
     if (!state.isPanelOpen || !wordsOpen) return
     const container = wordsVerseRef.current
@@ -192,15 +194,17 @@ export const AudioPlayerPanel = () => {
     if (!container || !el) return
     const behavior = prefersReducedMotion() ? 'auto' : 'smooth'
     const vertical = getComputedStyle(container).writingMode.startsWith('vertical')
+    const cRect = container.getBoundingClientRect()
+    const elRect = el.getBoundingClientRect()
     if (vertical) {
       container.scrollTo({
-        left: container.clientWidth / 2 - el.offsetWidth / 2 - el.offsetLeft,
+        left: container.scrollLeft + (elRect.left + elRect.width / 2 - (cRect.left + cRect.width / 2)),
         top: 0,
         behavior,
       })
     } else {
       container.scrollTo({
-        top: el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2,
+        top: container.scrollTop + (elRect.top + elRect.height / 2 - (cRect.top + cRect.height / 2)),
         behavior,
       })
     }
@@ -250,8 +254,8 @@ export const AudioPlayerPanel = () => {
         <PaperVeil aria-hidden='true' />
 
         {/* 墨痕歌词：竖排五列两翼（当前句+前四句站点化，GHOST_STATIONS 锚点常量），
-            播放中且有词才上纸底；词卷展开时让位。纯装饰层 */}
-        {playing && wordsAvailable && !wordsOpen ? (
+            有词就上纸底——暂停/待播保留（20261006 拍板，playing 门控退役）；词卷展开时让位。纯装饰层 */}
+        {wordsAvailable && !wordsOpen ? (
           <GhostLayer aria-hidden='true'>
             {GHOST_STATIONS.map((station, ti) => {
               const lineIdx = lyricIdx - ti

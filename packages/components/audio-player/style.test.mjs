@@ -94,6 +94,10 @@ test('墨痕歌词为纯装饰层且可关停', () => {
   const panel = readPanelSource()
   assert.ok(panel.includes('GhostLayer'), 'PlayerPanel 缺少墨痕歌词层')
   assert.ok(panel.includes('GhostLayer aria-hidden'), '墨痕歌词层必须 aria-hidden')
+  // 20261006 拍板修订：暂停/待播保留墨痕（playing 门控退役）；词卷态与无词仍让位隐去
+  const playerSrc = readSource('PlayerPanel.tsx')
+  assert.doesNotMatch(playerSrc, /playing && wordsAvailable/, '墨痕 playing 暂停门控已退役（暂停不消失），禁回潮')
+  assert.match(playerSrc, /wordsAvailable && !wordsOpen/, '无词/词卷态让位隐去语义必须保留')
 })
 
 test('墨痕歌词竖排五列两翼：行内投影 + 站点常量钉死 + 换句重挂载（20261002 定稿）', () => {
@@ -185,9 +189,14 @@ test('队列翻页屏：右轴 3D 斜倚常驻 + preserve-3d 透传 + 宽度恒�
   assert.match(panel, /transition-delay:\s*0s,\s*160ms,\s*0s/, 'QScreen 缺离场 160ms 宽限延迟')
   // hover 触发只在精确指针设备；触屏/平板走列表钮 pinned 等价路径
   assert.match(panel, /hover:\s*hover\) and \(pointer:\s*fine/, '缺 (hover:hover) and (pointer:fine) 门控')
-  // dock/工具组/关闭钮升至热区之上：hover 热区不得劫持音量/詞/列表/关闭的点击
-  const zNines = [...panel.matchAll(/z-index: 9/g)].length
-  assert.ok(zNines >= 3, `dock/TopTools/CloseButton 需升至 z-index: 9（当前 ${zNines} 处）`)
+  // 层序修订（20261006 四修）：斜倚态热区维持现状——NowDock 保持 z9 不被劫持；
+  // 转正态（queueOpen || foldLatch）QZone 整栏行内升 z10 盖过 dock（进度条/时间码不得浮在列表上）；
+  // 詞/列表/关闭工具钮 z12 恒高于转正热区（防劫持语义收窄为「工具钮恒高于翻页屏」）
+  assert.match(panel, /z-index: 9/, 'NowDock 需保持 z-index: 9（斜倚态热区不劫持 dock）')
+  const zTwelves = [...panel.matchAll(/z-index: 12/g)].length
+  assert.ok(zTwelves >= 2, `TopTools/CloseButton 需升至 z-index: 12 恒高于转正热区（当前 ${zTwelves} 处）`)
+  const zoneCall = panel.slice(panel.indexOf('<QZone'), panel.indexOf('</QZone>'))
+  assert.match(zoneCall, /zIndex: 10/, '转正时 QZone 缺行内样式 z-index: 10（盖过 dock z9 显隐纪律路径）')
 })
 
 test('motion 令牌引用完整性（引用未定义令牌 = transition 整条作废回退 all 0s，帧采样实证）', () => {
@@ -255,6 +264,9 @@ test('队列翻页屏 hotfix：碟面环包含块归位 + 粘性开合行内驱�
   assert.doesNotMatch(readSource('PlayerPanel.tsx'), /onPointerLeave/, 'Panel 级 pointerleave 已退役，禁回潮')
   const qscreenCall = panel.slice(panel.indexOf('<QScreen'), panel.indexOf('</QScreen>'))
   assert.match(qscreenCall, /queueOpen \|\| foldLatch/, 'QScreen 开态未并集 queueOpen 与 foldLatch')
+  // 离栏即折的语义前提（20261006）：转正热区必须整栏高于 dock，否则指针进入 dock 横带即命中 dock
+  // （非 QZone 后代）触发 pointerleave 误折回——等效热区只剩行区域（生产反馈 bug①根因）
+  assert.match(qzoneCall, /zIndex: 10/, 'QZone 转正缺 z-index: 10——整卡热区可悬停的层序前提')
 })
 
 test('封面碟化：黑胶圆碟 + 播放随转/暂停冻结（20261002 定稿）', () => {
