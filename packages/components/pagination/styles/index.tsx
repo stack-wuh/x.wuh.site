@@ -1,6 +1,7 @@
 'use client'
 
 import styled from 'styled-components'
+import Link from 'next/link'
 
 export const Nav = styled.nav`
   display: flex;
@@ -26,7 +27,7 @@ export const LetterGroup = styled.div`
   }
 `
 
-export const LetterLink = styled.a<{ $active: boolean }>`
+export const LetterLink = styled(Link)<{ $active: boolean }>`
   display: inline-flex;
   align-items: center;
   text-decoration: none;
@@ -44,7 +45,7 @@ export const Ellipsis = styled.span`
   font-size: var(--font-size-sm);
 `
 
-export const NavLink = styled.a<{ $disabled: boolean }>`
+export const NavLink = styled(Link)<{ $disabled: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 4px;

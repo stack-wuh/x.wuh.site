@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react'
 import { useLocale } from '@wuh.site/components/locales'
 import { formatFullDate } from '@/app/lib/date'
 import { buildTopicUrl } from '@/app/lib/topic-url'
+import Link from 'next/link'
 import { Header, TopRow, MetaLine, TagGroup, Title, Summary, HeadRule } from '../../styles'
 import type { PostHeaderProps } from './specs'
 
@@ -37,9 +38,9 @@ export default function PostHeader({ issue }: PostHeaderProps) {
         {issue.labels.length > 0 && (
           <TagGroup aria-label={t('post.header.labelsAria')}>
             {issue.labels.map((label) => (
-              <a key={label.name} href={buildTopicUrl(label.name)} style={sealTilt(label.name)}>
+              <Link key={label.name} href={buildTopicUrl(label.name)} style={sealTilt(label.name)}>
                 {label.name}
-              </a>
+              </Link>
             ))}
           </TagGroup>
         )}
