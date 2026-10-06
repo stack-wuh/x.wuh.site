@@ -1,11 +1,16 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { buttonTokens, type ButtonColor, type ButtonSize, type ButtonVariant } from './tokens'
 import type { ButtonProps } from './specs'
 import * as S from './styles'
 
 export type { ButtonColor, ButtonProps, ButtonSize, ButtonVariant }
+
+// 站内路径（含查询串）一律走客户端软导航：裸锚点会全文档重载，杀根布局的全局状态（播放器）；
+// 协议相对与绝对地址（http/https/mailto 等）维持原生 anchor 语义
+const isInternalHref = (href: string): boolean => href.startsWith('/') && !href.startsWith('//')
 
 const BUTTON_ONLY_KEYS: (keyof ButtonProps)[] = [
   'variant',
@@ -58,6 +63,7 @@ const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
     if (href !== undefined && !disabled) {
       return (
         <S.StyledLink
+          as={isInternalHref(href) ? Link : undefined}
           ref={ref as React.Ref<HTMLAnchorElement>}
           href={href}
           $variant={variant}

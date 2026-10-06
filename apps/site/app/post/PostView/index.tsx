@@ -18,6 +18,8 @@ import {
 } from '@wuh.site/components/icons'
 import { useDialog } from '@wuh.site/hooks/useDialog'
 import { useLocale, type TranslateParams } from '@wuh.site/components/locales'
+// 站内导航必须客户端软导航：裸锚点会全文档重载，杀根布局的播放器 provider
+import Link from 'next/link'
 
 import type { Issue, PostViewProps } from '../PostView.types'
 import { usePostImagePreview } from '../usePostImagePreview'
@@ -438,24 +440,24 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
           {(prevIssue || nextIssue) && (
             <TocPrevNext aria-label={t('post.view.prevNextAria')}>
               {prevIssue ? (
-                <a href={buildPostUrl(prevIssue.number)} data-dir='prev'>
+                <Link href={buildPostUrl(prevIssue.number)} data-dir='prev'>
                   <span className='toc-pn-label'>
                     <span className='toc-pn-arrow' aria-hidden='true'>‹</span>
                     {t('post.view.prevLabel')}
                   </span>
                   <span className='toc-pn-title'>{prevIssue.title}</span>
-                </a>
+                </Link>
               ) : (
                 <span className='toc-pn-empty'>{t('post.view.earliest')}</span>
               )}
               {nextIssue ? (
-                <a href={buildPostUrl(nextIssue.number)} data-dir='next'>
+                <Link href={buildPostUrl(nextIssue.number)} data-dir='next'>
                   <span className='toc-pn-label'>
                     {t('post.view.nextLabel')}
                     <span className='toc-pn-arrow' aria-hidden='true'>›</span>
                   </span>
                   <span className='toc-pn-title'>{nextIssue.title}</span>
-                </a>
+                </Link>
               ) : (
                 <span className='toc-pn-empty'>{t('post.view.latest')}</span>
               )}

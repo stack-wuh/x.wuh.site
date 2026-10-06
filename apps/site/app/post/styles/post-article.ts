@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Link from 'next/link'
 import Empty from '@wuh.site/components/empty'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
@@ -127,7 +128,7 @@ export const RelatedPostArrow = styled.span`
   transition: color 180ms ease, transform 180ms ease;
 `
 
-export const RelatedPostLink = styled.a`
+export const RelatedPostLink = styled(Link)`
   display: block;
   padding: var(--space-xs) 0;
   color: var(--text-secondary);

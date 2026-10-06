@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Link from 'next/link'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
@@ -96,7 +97,7 @@ export const SpreadDivider = styled.div`
   }
 `
 
-export const SpreadSide = styled.a<{ $next?: boolean; $disabled?: boolean }>`
+export const SpreadSide = styled(Link)<{ $next?: boolean; $disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 10px;

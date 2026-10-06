@@ -1,6 +1,8 @@
 export type FooterNavItem = {
   label: string
   href: string
+  /** 资源链接（RSS 等非页面文档）保留原生锚点，站内页项经 next/link 软导航 */
+  native?: boolean
 }
 
 /**
@@ -15,7 +17,7 @@ export const footerConf = {
     { label: '博客', href: '/blog' },
     { label: '音乐', href: '/music' },
     { label: '关于', href: '/about' },
-    { label: 'RSS 订阅', href: '/api/rss.xml' },
+    { label: 'RSS 订阅', href: '/api/rss.xml', native: true },
   ] as FooterNavItem[],
   icp: { label: '鄂ICP备20001814号-1', href: 'https://beian.miit.gov.cn/' },
   /** 公安备案（深圳，粤） */
