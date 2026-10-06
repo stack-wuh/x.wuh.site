@@ -117,6 +117,7 @@ test('pointer:fine ∧ prefers-reduced-motion 双门控在场；reduce 降级静
 
 test('idle 自读书：≥5s 触发、一动收回、规则序先于交互态', () => {
   assert.match(LAYER, /IDLE_DELAY = 5000/, 'idle 阈值必须 5s')
+  assert.match(LAYER, /const armIdle[\s\S]{0,300}?window\.clearTimeout\(idleTimer\)[\s\S]{0,300}?window\.setTimeout/, 'D2：armIdle 必须先清新定时器再挂新（长移动逐帧闪 idle 的根因）')
   assert.match(LAYER, /setTimeout\([\s\S]*?IDLE_DELAY\)/, 'setTimeout 必须挂 IDLE_DELAY')
   assert.ok(LAYER.includes("classList.remove('idle')"), 'pointermove 必须收回 idle')
   assert.ok(LAYER.includes("'idle'"), 'idle 类名接线')
@@ -125,8 +126,19 @@ test('idle 自读书：≥5s 触发、一动收回、规则序先于交互态', 
   assert.ok(idlePos > -1 && hoverPos > idlePos, 'idle 规则必须先于 hover 态（交互态覆盖 ambient）')
 })
 
-test('跟随层仅合成器位移、无布局副作用、无滚动/尺寸监听、无开关', () => {
-  assert.ok(LAYER.includes('requestAnimationFrame') && LAYER.includes('translate3d'), 'rAF + translate3d 合成器层')
+test('跟随层引擎 = framer-motion 弹簧随动；自持 rAF 已除；D1 延迟接管时序（首动 jump 落位、leave 重武装）', () => {
+  assert.ok(LAYER.includes('useMotionValue') && LAYER.includes('useSpring') && LAYER.includes('motion.div'), '跟随引擎断言：framer-motion 三件套')
+  assert.match(LAYER, /\.jump\(/, '接管必须 jump 落位（无左上角扫移）')
+  assert.equal(LAYER.match(/requestAnimationFrame/), null, 'D4：自持 rAF 必须删除，由 framer 统一帧调度接管')
+  assert.equal(LAYER.match(/translate3d/), null, 'translate3d 由引擎写入，源码不再手抄字符串')
+  assert.equal(LAYER.match(/className='bk-cursor on'/), null, 'JSX 初始不得含 on——钉角 bug 的源头')
+  assert.equal((LAYER.match(/classList\.add\('bk-cursor-active'\)/g) || []).length, 1, 'bk-cursor-active 必须恰好添加一次')
+  assert.match(LAYER, /const takeover[\s\S]{0,500}?classList\.add\('on'\)[\s\S]{0,160}?classList\.add\('bk-cursor-active'\)[\s\S]{0,80}?taken = true/, '系统光标接管只发生在 takeover 内（首个 pointermove 触发）')
+  assert.match(LAYER, /if \(taken\)[\s\S]*?else \{\s*takeover\(/, 'onMove：接管后弹簧跟位，接管前先 takeover')
+  assert.match(LAYER, /const onLeave[\s\S]{0,300}?taken = false/, 'pointerleave 后重置接管标记，重入重新落位')
+})
+
+test('跟随层无布局副作用、无滚动/尺寸监听、无开关', () => {
   assert.equal(LAYER.match(/addEventListener\(['"](scroll|resize)/), null, '禁 scroll/resize listener')
   for (const [f, src] of [['index.tsx', LAYER], ['style.tsx', STYLE]]) {
     assert.ok(!src.includes('localStorage'), `${f} 出现 localStorage——D8 无开关纪律`)
