@@ -26,7 +26,9 @@ test('span and offset compose jointly per ladder rung (carry-forward), never per
   assert.match(indexSource, /offset: offsetSlots\[tier\] \?\? carry\.offset/)
   // no upper slots collapse to a scalar base, so no empty media blocks are emitted
   assert.match(indexSource, /const hasUpperSlot = spanSlots\.length > 1 \|\| offsetSlots\.length > 1/)
-  assert.match(indexSource, /hasUpperSlot \? placements : placements\[0\]/)
+  // tier0 恒为完整 TPlacement，顶层不含 undefined（避免 TResponsive<TPlacement> 类型错）
+  assert.match(indexSource, /const base: TPlacement = placements\[0\]/)
+  assert.match(indexSource, /hasUpperSlot \? \[base, \.\.\.placements\.slice\(1\)\] : base/)
 })
 
 test('Col props are breakpoint-slot typed and order/alignSelf pass through', () => {
