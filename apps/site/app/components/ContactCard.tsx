@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import Button from '@wuh.site/components/button'
 import Image from '@wuh.site/components/image'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { Flex } from '@wuh.site/components/flex'
 
 import ImagePreview, { type ImagePreviewItem } from '@wuh.site/components/image-preview'
 import { useLocale } from '@wuh.site/components/locales'
@@ -37,18 +37,11 @@ const Root = styled.div`
   gap: var(--space-base);
 `
 
-const Body = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-md);
-  align-items: start;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    gap: var(--space-xs);
-  }
-`
+const Body = styled(Flex).attrs({
+  direction: ['column', undefined, 'row'],
+  alignItems: ['center', undefined, 'flex-start'],
+  gap: ['xs', undefined, 'md'],
+})``
 
 /* 左侧操作区：纸面 + 3D 指针手势
    --rx/--ry/--gx/--gy 由 useEffect 指针跟踪直写 DOM（不经 React state），
@@ -162,6 +155,7 @@ const Info = styled.div`
   gap: 6px;
   padding-top: 6px;
   min-width: 0;
+  flex: 1;
   animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
   animation-delay: 80ms;
 `
@@ -210,19 +204,16 @@ const Tagline = styled.p`
 `
 
 /* 底部提示 */
-const Hints = styled.div`
-  display: flex;
-  gap: var(--space-base);
+const Hints = styled(Flex).attrs({
+  direction: ['column', undefined, 'row'],
+  alignItems: 'stretch',
+  gap: [4, undefined, 'base'],
+})`
   padding-top: 10px;
   border-top: 1px solid color-mix(in oklab, var(--normal-300) 25%, transparent);
 
   animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
   animation-delay: 160ms;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    flex-direction: column;
-    gap: 4px;
-  }
 `
 
 const Hint = styled.span`

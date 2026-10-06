@@ -12,9 +12,10 @@ status: active
 source:
   - changes/20261006-feature-responsive-layout-components/brief.md
   - changes/20261006-feature-responsive-breakpoint-ladder/brief.md
+  - changes/20261006-refactor-responsive-layout-batch1/brief.md
 verified: 2026-10-06
 verified-depth: unit
-verified-scope: 守卫 33/33 绿（responsive 阶梯单测 9 + flex 6 + row 5 + col 6 + stagger 7）、根 tsc --noEmit exit 0、oxlint 0/0（12 文件）、全组件套件 144/147（3 红为 image-role-contract main 基线存量，与布局族无关）；组件尚无站点消费者，runtime 目检随首个替换 change 补
+verified-scope: 守卫 34/34 绿（responsive 阶梯 9 + flex/row/col/stagger 25 + layout typecheck guard）、根 tsc + layout guard tsc 0 错、oxlint 0/0；首站点消费（#495 blog PostRow / ContactCard Body·Hints 迁 Flex）apps/site tsc 计数持平（31=31，pointermove 为存量非本次）、三处逐 prop 等价走查；runtime 目检随部署链补
 ---
 
 # 响应式布局组件族
@@ -40,6 +41,7 @@ verified-scope: 守卫 33/33 绿（responsive 阶梯单测 9 + flex 6 + row 5 + 
 - `order`/`wrap` 等 falsy 合法值一律 `!== undefined` 判定，禁止真值短路。
 - 动效语义正交：Stagger 管「进场顺序」（挂载即播、页内重渲染不重播），站点 `.reveal` 管「入视口点亮」，可叠加各计时长。
 - 替换存量手写 `@media` 时按此词汇迁移：方向/对齐分布 → Flex，分栏 → Row/Col，错峰入场 → Stagger；间距响应优先靠 clamp token，离散切换才用数组槽。
+- 站点存量 @media→Flex 迁移备忘（首消费 #495 实证，后续批次复用）：① grid 次列 `1fr`（如 `auto 1fr`）迁 Flex row 时，撑满列须补 `flex:1`（配 `min-width:0`），定宽块须 `flex-shrink:0`——否则 Flex 不自动撑满；② 对齐词汇不同源：Flex/Row/Col 的 `alignItems`/`justifyContent` 用 flex 词汇（`flex-start` 非 CSS grid 的 `start`），grid 单列 `justify-items:center` 的堆叠居中对应 column-flex 的 `alignItems='center'`；③ 站点存量约数十条类型错误（build-config），改动前后 `apps/site tsc` 计数须持平以证明零新增。
 
 ## 适用边界
 

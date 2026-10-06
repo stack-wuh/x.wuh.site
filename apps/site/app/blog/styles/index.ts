@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import Link from 'next/link'
+import { Flex } from '@wuh.site/components/flex'
 
 export const Root = styled.div`
   display: flex;
@@ -198,10 +199,11 @@ export const YearLabel = styled.div`
   }
 `
 
-export const PostRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+export const PostRow = styled(Flex).attrs({
+  alignItems: 'center',
+  wrap: [true, false],
+  gap: [6, 'sm'],
+})`
   padding: var(--space-xs) 8px;
   border-radius: 6px;
   color: inherit;
@@ -220,8 +222,6 @@ export const PostRow = styled.div`
       padding-left: 8px;
     }
   }
-
-  @media (max-width: 520px) { flex-wrap: wrap; gap: 6px; }
 `
 
 export const InkDot = styled.span`
