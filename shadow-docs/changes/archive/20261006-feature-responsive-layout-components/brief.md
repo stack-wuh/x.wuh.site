@@ -4,7 +4,7 @@
   "name": "20261006-feature-responsive-layout-components",
   "type": "feature",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261006-feature-responsive-layout-components",
   "files": [
@@ -28,18 +28,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 483,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/483",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 485,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/485"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "214dab7a6bb36354ece841575c4247bc568d9cf4",
-    "verifiedAt": "2026-10-06T09:32:56.219Z"
+    "verifiedCommit": "13b1f04928812b1e3809d20dc1544e4b648ebdf4",
+    "verifiedAt": "2026-10-06T10:05:19.661Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:483",
-    "planHash": "c57b90715b08313d1167a7eacc8fdd97a6f7b33708882af4c8fefc27a83f9c1a",
+    "checkpoint": "merged-pr:485",
+    "planHash": "0b296e89279d7c2517a045a8d2eaf1d3676d58e69b2ca943a87f7b75699836da",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -81,7 +81,7 @@
   "knowledge": {
     "action": "新增",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "本 change 确立的布局契约跨变更长期有效：12 分栏词汇 + grid-column span 实现契约、[base, tablet] 数组断点两槽语法（responsive helper 唯一编译口）、Stagger 字面值节奏与 --motion-* 禁令规避法、纯 styled 布局组件必须挂 'use client' 的消费边界——后续存量替换 change 以此为唯一执行依据，且 image 布局重构后不存在承载这些事实的既有卡片（design-system 卡管 token 层，components 卡管组件包纪律，均不重叠），故新增卡片并以本 change 为 source；release 阶段同步更新 components.md 组件清单补 Row/Col/Flex/Stagger 条目。"
+    "reason": "main 复核（13b1f04，代码与 14d8693 合入后一致，其后仅 player 归档 docs 提交）：守卫 31/31 全绿；main push CI-CD run 37444841723 success；随 Release v1.4.64 部署链 run 37445898806 全绿。布局契约维持新增卡 layout-components.md（已随 #485 入 main）不变。"
   }
 }
 ---
@@ -152,8 +152,9 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 约 2.5 小时（propose → apply → review → release 全会话连续完成）
+- 验证: M 级 unit——本 change 守卫 31/31 绿（responsive 7 + flex/row/col 17 + stagger 7）；根 `tsc --noEmit` exit 0（首跑 139，SGN-001 重试即过）；oxlint 0 warnings 0 errors。runtime 目检随首个站点消费 change 补齐（组件零消费者，无页面可目检，brief 评级已声明 unit 深度）。
+- **交付结论:** PR [#485](https://github.com/stack-wuh/x.wuh.site/pull/485) 已 merged（merge commit 14d8693）；随 [Release v1.4.64](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.64) 部署，CI-CD run 37445898806（release 触发）全链绿（quality-gate → build → deploy → switch-traffic success）。注：v1.4.64 由并行 change player-playlist-seal 先占版本号，两 change 同 Release 上线互不冲突。
 - **apply 发现（不顺手修，另立 change）:** `packages/components/test/image-role-contract.test.mjs` 3 条红为 main 基线既有问题（测试期望 `export type ImageRole` 在 image/index.tsx，代码实际已迁移至 specs.tsx；image 源码与该测试均不在本 change diff 内）。
 - **apply 发现（环境）:** 工作区同期存在 `20261006-feature-player-playlist-seal` 的未提交改动（audio-player/apps/site 侧），与本 change 文件清单零交集，conflict inspect 全程无重叠。
 
