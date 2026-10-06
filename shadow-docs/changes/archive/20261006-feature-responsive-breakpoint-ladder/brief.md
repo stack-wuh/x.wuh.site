@@ -4,7 +4,7 @@
   "name": "20261006-feature-responsive-breakpoint-ladder",
   "type": "feature",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261006-feature-responsive-breakpoint-ladder",
   "files": [
@@ -26,18 +26,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 488,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/488",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 491,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/491"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "7978f1d870436e69cf3ff9ab133ab7e657da4b51",
-    "verifiedAt": "2026-10-06T11:00:22.819Z"
+    "verifiedCommit": "560639d6ec1121b416555a350774dbbd7dc4bc3e",
+    "verifiedAt": "2026-10-06T12:53:46.705Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:488",
-    "planHash": "dbc8b5e4745b0d4720b2094e8238cd81a2d99bb7216aa421b9a609d8efd8191b",
+    "checkpoint": "merged-pr:491",
+    "planHash": "9263b44d8b9ce206fd16c68a7f5791401c4f02b77d1cd86a7984ba678bb577b2",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -72,7 +72,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "四档阶梯契约落地：TResponsive 由两槽升 [base,sm,md,lg]（边界 521/641/1024 全由 BREAKPOINTS+1 派生、无裸断点），responsive() 稀疏槽跳过、col 逐档 carry-forward 合成。这是对上一批 layout-components.md 卡「只开两槽/超窄不开第三槽」结论的完整化修订（首批站点消费证伪两槽）。卡片已在本 change 内原位更新（当前结论阶梯段、执行约束 span/offset 逐档、验证方式 33 条、frontmatter source 追加本 brief 且 verified-depth 维持 unit）；release 步骤 1 消费本结论时核对一致性并把该卡纳入 commit 文件清单。"
+    "reason": "main 复核（560639d，#491 代码已随 v1.4.66 部署 success）：四档阶梯契约卡已由 #491 建立、并经 #496 首消费补迁移备忘。本次仅重钉 verifiedCommit 以过归档门禁，知识动作维持更新。"
   }
 }
 ---
