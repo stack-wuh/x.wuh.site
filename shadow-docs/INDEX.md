@@ -86,5 +86,6 @@
 | 20261005-fix-locale-switch-realtime | ✅ 完成 | shadow-docs/changes/archive/20261005-fix-locale-switch-realtime/brief.md |
 | 20261005-fix-queue-fold-exit | ✅ 完成 | shadow-docs/changes/archive/20261005-fix-queue-fold-exit/brief.md |
 | 20261005-refactor-player-split | ✅ 完成 | shadow-docs/changes/archive/20261005-refactor-player-split/brief.md |
-| 20261005-style-nav-section-icons | reviewed | shadow-docs/changes/20261005-style-nav-section-icons/brief.md |
+| 20261005-style-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261005-style-nav-section-icons/brief.md |
+| 20261006-fix-player-queue-layer-lyric-follow | proposed | shadow-docs/changes/20261006-fix-player-queue-layer-lyric-follow/brief.md |
 | 20261006-style-revert-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261006-style-revert-nav-section-icons/brief.md |

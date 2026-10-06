@@ -4,7 +4,7 @@
   "name": "20261005-style-nav-section-icons",
   "type": "style",
   "scope": "apps/site,packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261005-style-nav-section-icons",
   "files": [
@@ -20,18 +20,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 472,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/472",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 474,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/474"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "eca1fea032f0f48994c5cfdfae58dbbb724885b8",
-    "verifiedAt": "2026-10-05T14:44:26.687Z"
+    "verifiedCommit": "fe300de6f72426dcf81defdc34a10f7b903f697e",
+    "verifiedAt": "2026-10-06T07:59:59.670Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:472",
-    "planHash": "ee0bffc4aa92fb5c0cfa7f561dad5b7ddf9969e2463635008f7408b363f35d5f",
+    "checkpoint": "merged-pr:474",
+    "planHash": "8c94a0a05a3231892a245f781083a0d0a40cd067b679c480c8f96ad9727a82c6",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -62,7 +62,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "图标映射与方案A一致，icon-system/design-system/i18n 约束全部遵循并经四主题 field 验证；对齐修复回归 brief 声明的 flex align 语言；无新的长期事实需入卡（装饰图标 currentColor 淡化属既有结论正常消费）"
+    "reason": "squash 合入后 main HEAD 与旧 verifiedCommit 异源，在 184d6a4 重认：该变更内容曾随 c27a94d 合入并经 v1.4.60/61 部署，后由 #480（v1.4.62，部署链 success）整体撤回；全生命周期闭环，知识结论维持无需变更"
   }
 }
 ---
