@@ -111,8 +111,8 @@ export const CloseButton = styled.button`
   position: absolute;
   top: var(--space-base);
   right: var(--space-base);
-  /* z9：高于队列翻页热区（z8）——右缘 hover 不得劫持关闭钮 */
-  z-index: 9;
+  /* z12（20261006）：恒高于翻页屏两态（含转正 z10）——右缘 hover/转正不得劫持关闭钮 */
+  z-index: 12;
   width: 44px;
   height: 44px;
   display: inline-flex;
@@ -147,8 +147,8 @@ export const TopTools = styled.div`
   position: absolute;
   top: var(--space-base);
   right: calc(var(--space-base) + 48px);
-  /* z9：高于队列翻页热区（z8）——hover 热区不得劫持詞/列表钮 */
-  z-index: 9;
+  /* z12（20261006）：恒高于翻页屏两态（含转正 z10）——转正热区不得劫持詞/列表钮 */
+  z-index: 12;
   display: flex;
   align-items: center;
   gap: var(--space-xs);

@@ -9,7 +9,8 @@ import { EASE, HAIRLINE, INK_FAINT, INK_MUTED, QUICK, focusRing } from './tokens
 export const NowDock = styled.div`
   grid-area: dock;
   position: relative;
-  /* z9：高于队列翻页热区（z8）——右缘 hover 不得劫持進度/钮群点击 */
+  /* z9：斜倚态高于队列翻页热区（z8）——右缘 hover 不得劫持進度/钮群点击；
+     转正态 QZone 行内升 z10，本横带右段被整卡覆盖——20261006 拍板语义（进度条不得浮在列表上） */
   z-index: 9;
   min-width: 0;
   display: flex;

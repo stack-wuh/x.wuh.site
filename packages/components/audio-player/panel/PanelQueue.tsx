@@ -84,8 +84,15 @@ export const PanelQueue = ({ queue, currentTrack, queueOpen, foldLatch, drawerLi
         onClick={() => setQueueOpen(false)}
       />
       {/* 粘性开合（20261005 边界修订）：进栏即锁存「开」，**移出右缘 340px 列表栏即折回**——
-          不再等离开整个面板（旧边界使热区等效整个弹窗、摊开挡视线）；离场 160ms 宽限由 QScreen CSS transition-delay 承担 */}
-      <QZone onPointerEnter={() => setFoldLatch(true)} onPointerLeave={() => setFoldLatch(false)}>
+          不再等离开整个面板（旧边界使热区等效整个弹窗、摊开挡视线）；离场 160ms 宽限由 QScreen CSS transition-delay 承担。
+          层序（20261006 拍板）：转正态整栏行内升 z10 盖过 dock z9——进度条/时间码不得浮在列表上，
+          且指针进入卡片下缘不再命中 dock（非 QZone 后代）触发 pointerleave 误折回（热区 = role=group 整卡）。
+          斜倚态维持 z8：不劫持 dock 拖拽（工具钮 z12 恒高于本栏，见 shell.tsx） */}
+      <QZone
+        onPointerEnter={() => setFoldLatch(true)}
+        onPointerLeave={() => setFoldLatch(false)}
+        style={queueOpen || foldLatch ? ({ zIndex: 10 } as React.CSSProperties) : undefined}
+      >
         <QScreen
           data-fold-screen='true'
           role='group'
