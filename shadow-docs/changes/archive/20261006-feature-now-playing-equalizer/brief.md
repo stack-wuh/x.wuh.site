@@ -4,7 +4,7 @@
   "name": "20261006-feature-now-playing-equalizer",
   "type": "feature",
   "scope": "packages/components/audio-player,apps/site/app/music",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261006-feature-now-playing-equalizer",
   "files": [
@@ -22,18 +22,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 487,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/487",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 489,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/489"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "7978f1d870436e69cf3ff9ab133ab7e657da4b51",
-    "verifiedAt": "2026-10-06T10:29:25.191Z"
+    "verifiedCommit": "285c50019ddc82feb3378a1ebad5b5fab173c2bb",
+    "verifiedAt": "2026-10-06T10:47:20.307Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:487",
-    "planHash": "0a313067151130d8da860147568603787462acae0e5e7ccc6d7a40c854e71dcf",
+    "checkpoint": "merged-pr:489",
+    "planHash": "444e2df561cf5cdda6a289ee486b56239cd275181ffc56460602106d22bbf8d5",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -68,7 +68,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "曲目行/队列屏「正在播放」定稿事实入卡：等化器接替静态红点（isCurrent 命名修复根因记录）、QueueNo 三面切换与 --q-eq/--q-eq-state 行内驱动、equalize 单源复用扩至站点消费面（Equalizer 包出口）、PlayingSlot 等宽占位与移动端触控语言保留；执行约束补等化器同源守卫"
+    "reason": "复核通过：main(285c500) 即本工已验证内容（PR #489 squash 全量入 main，12 文件与声明面一致）；知识结论已随发布 commit 落卡"
   }
 }
 ---
@@ -130,6 +130,7 @@
   - **命名误导修复**：旧 `const isPlaying = currentTrack?.id === track.id`（实为 isCurrent，且 `$playing` 恒真 = 暂停红点不消失根因）改为 isCurrent + 真实播放态 `isQueuePlaying` 组合；aria-current 残留同步修。
   - **域守卫逐文件**：style 21/21 · player-panel 22/22 · provider 7/7 · mini-player 8/8 · 域 typecheck 1/1 · wiring 12/12；oxlint 30 文件 0/0；根 tsc exit 0（mise node 22）；**next build 四试一绿**（SIGSEGV×2 + 139×1，最后成功 Compiled successfully、15 路由行——SGN-001，free 长期 ~200MB；CI build-next 为最终权威门禁）。
   - **本地 runtime 目检未执行（环境不可行，如实记录）**：无 Nest/Mongo 栈与音频上游，播放动效无法本地起真队列；替代保证 = 守卫结构钉死 + 书耳等化器既有 runtime 语言（同款 keyframes 同款 paused 形态）。生产目检（task-11）随 DNS 恢复与积压两单合并执行。
+  - **交付**：PR #489 admin-squash 合入 main（285c500）；Release v1.4.65（https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.65）CI-CD 七 job 全绿（quality-gate/prepare/prepare-deps/build-nest/build-next/staging-test/switch-traffic success，run 37450541167 约 8 分钟）。发布走通无串枝（与上一单事故对照：release plan→execute 连贯短跑 + 执行前确认 HEAD 在本工分支）。
 
 ## 知识评估
 
