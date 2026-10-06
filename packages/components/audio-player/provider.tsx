@@ -35,7 +35,7 @@ const initialState: AudioPlayerState = {
 const AudioPlayerContext = createContext<AudioPlayerContextValue | null>(null)
 
 type Action =
-  | { type: 'LOAD_QUEUE'; payload: { queue: Track[]; startIndex: number } }
+  | { type: 'LOAD_QUEUE'; payload: { queue: Track[]; startIndex: number; playlistName?: string } }
   | { type: 'SET_STATUS'; payload: { status: PlayerStatus; error?: string } }
   | { type: 'SET_PROGRESS'; payload: number }
   | { type: 'SET_DURATION'; payload: number }
@@ -52,6 +52,8 @@ const reducer = (state: AudioPlayerState, action: Action): AudioPlayerState => {
         ...state,
         queue: action.payload.queue,
         currentIndex: action.payload.startIndex,
+        // 卷名随队列整体替换：未传即 undefined（换队列必换卷，禁黏滞旧名）
+        playlistName: action.payload.playlistName,
         progress: 0,
         duration: action.payload.queue[action.payload.startIndex]?.duration ?? 0,
         status: 'idle',
@@ -279,10 +281,10 @@ export const AudioPlayerProvider = ({
   }, [])
 
   const loadQueue = useCallback(
-    (tracks: Track[], options?: { startIndex?: number; autoPlay?: boolean }) => {
+    (tracks: Track[], options?: { startIndex?: number; autoPlay?: boolean; playlistName?: string }) => {
       if (!tracks?.length) return
       const startIndex = options?.startIndex ?? 0
-      dispatch({ type: 'LOAD_QUEUE', payload: { queue: tracks, startIndex } })
+      dispatch({ type: 'LOAD_QUEUE', payload: { queue: tracks, startIndex, playlistName: options?.playlistName } })
       if (options?.autoPlay) {
         playTrackAt(startIndex)
       }

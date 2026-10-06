@@ -82,3 +82,12 @@ test('曲目行两行制：右列归组桌面溶入行布局、移动端竖排�
   assert.match(musicStyles, /min-height: 54px/)
   assert.match(musicView, /<TrackSide>/)
 })
+
+test('卷名随队列流入面板卷题签：两消费者 loadQueue 均带 playlistName（20261006）', () => {
+  // /music 本卷名（年轮编年同源）与兜底默认队列都要带；漏引 = 卷题签永不点亮且无报错
+  assert.match(musicView, /loadQueue\(tracks, \{ startIndex: index, autoPlay: true, playlistName: selectedPlaylist\?\.name \}\)/)
+  assert.match(musicView, /\[tracks, actions, selectedPlaylist\?\.name\]/)
+  assert.match(globalPlayer, /loadQueue\(normalized, \{ playlistName: data\.name \}\)/)
+  // fetch 层类型必须透传 name（窄化成 { tracks } 会让 data.name 编译期消失）
+  assert.match(globalPlayer, /Promise<\{ tracks\?: Track\[\]; name\?: string \}>/)
+})

@@ -19,7 +19,7 @@ import {
   IconX
 } from '@wuh.site/components/icons'
 import type { PlayerMode } from './specs'
-import { GHOST_STATIONS } from './panel/styles/tokens'
+import { GHOST_STATIONS, VOLUME_SEAL_GLYPH } from './panel/styles/tokens'
 import { Backdrop, CloseButton, DrawerButton, Panel, PaperVeil, TopTools, WashSrc, WordsToggle } from './panel/styles/shell'
 import { GhostLayer, GhostLine } from './panel/styles/ghost'
 import {
@@ -41,6 +41,7 @@ import {
 } from './panel/styles/stage'
 import { ControlRow, ModeButton, NowDock, PlayButton, ProgressRow, SkipButton, TimeCode } from './panel/styles/dock'
 import { WordsArtist, WordsHead, WordsHeadArt, WordsHeadPlate, WordsLine, WordsTitle, WordsVerse, WordsView } from './panel/styles/words'
+import { VolumeSeal, VolumeTab } from './panel/styles/volume'
 import { PanelVolume } from './panel/PanelVolume'
 import { PanelQueue } from './panel/PanelQueue'
 import { PanelMobile } from './panel/PanelMobile'
@@ -333,6 +334,14 @@ export const AudioPlayerPanel = () => {
                 total: String(queue.length).padStart(2, '0')
               })}
             </StageTab>
+            {/* 卷题签姊妹列（20261006 设计定稿 B）：装裱左缘卷名 + 列脚卷印，与曲题签一卷一曲对读；
+                空态整位隐去（无数据即无位），换卷 key 重挂载不黏滞，长名墨尽封顶 + title 全名 */}
+            {state.playlistName ? (
+              <VolumeTab key={state.playlistName} role='note' title={state.playlistName} aria-label={state.playlistName}>
+                <span className='volume-name'>{state.playlistName}</span>
+                <VolumeSeal aria-hidden='true'>{VOLUME_SEAL_GLYPH}</VolumeSeal>
+              </VolumeTab>
+            ) : null}
             <Plate>
               <PlateArt $playing={playing} aria-hidden='true'>
                 <DiscLabel $src={currentTrack?.coverUrl} />

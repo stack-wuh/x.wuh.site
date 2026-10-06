@@ -13,7 +13,7 @@ import {
 
 const FALLBACK_PLAYLIST_ID = process.env.NEXT_PUBLIC_NETEASE_PLAYLIST_ID ?? '3778678'
 
-const fetchPlaylistTracks = async (id: string): Promise<{ tracks?: Track[] }> => {
+const fetchPlaylistTracks = async (id: string): Promise<{ tracks?: Track[]; name?: string }> => {
   const res = await fetch(`/api/music/playlist?playlistId=${id}`)
   if (!res.ok) throw new Error('无法加载歌单')
   return res.json()
@@ -23,7 +23,7 @@ const fetchPlaylistTracks = async (id: string): Promise<{ tracks?: Track[] }> =>
  * 默认队列取最新一年的年度歌单；年度链路任一步不可得（未配置登录态、接口异常、空列表）
  * 都回落 env 兜底歌单，兜底也失败才把错误暴露给迷你播放器。
  */
-const fetchDefaultPlaylistTracks = async (): Promise<{ tracks?: Track[] }> => {
+const fetchDefaultPlaylistTracks = async (): Promise<{ tracks?: Track[]; name?: string }> => {
   try {
     const res = await fetch('/api/music/user-playlists')
     const data = res.ok ? await res.json() : null
@@ -105,7 +105,7 @@ export const GlobalAudioPlayer = () => {
           ...track,
           duration: typeof track.duration === 'number' ? track.duration : undefined
         }))
-        loadQueue(normalized)
+        loadQueue(normalized, { playlistName: data.name })
         setPlaylistError(null)
         return
       }

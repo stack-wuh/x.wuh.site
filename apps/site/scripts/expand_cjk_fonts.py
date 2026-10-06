@@ -13,6 +13,7 @@ NOTO_SRC_DIR（默认 /tmp/noto-src）。运行环境需 fontTools + brotli
 品牌印章字形（勿删，删了会退回系统回退字体渲染）：
     樂 U+6A02（面板进度/音量印） · 墨 U+58A8（页头外观钮印）
     愛 U+611B / 念 U+5FF5 / 音 U+97F3 已随词典与历史子集入集
+    卷 U+5377（面板卷题签印，20261006 定稿 B）
 """
 from pathlib import Path
 import os
@@ -26,7 +27,7 @@ DICT_DIR = SITE.parent.parent / 'packages' / 'components' / 'locales' / 'diction
 SRC = Path(os.environ.get('NOTO_SRC_DIR', '/tmp/noto-src'))
 
 # 品牌印章字形集：面板进度印「樂/愛」、页头印「墨」、主题样张「念」、移动端音印「音」
-SEAL_CODES = {0x6A02, 0x58A8, 0x611B, 0x5FF5, 0x97F3}
+SEAL_CODES = {0x6A02, 0x58A8, 0x611B, 0x5FF5, 0x97F3, 0x5377}  # 卷 U+5377（面板卷题签印，20261006）
 
 TARGETS = [
     ('NotoSansSC-Regular.otf', 'NotoSansSC-400.woff2'),

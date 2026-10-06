@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>歌单名印章落款 · 视觉稿（?prop=A|B|C|D &scene=normal|words|fold|empty）</title>
+<style>
+  /* ===== 主题令牌（真值抄自 archive/20261002-style-player-ghost-depth/prototype.html ← generator-color.ts） ===== */
+  .wine-light {
+    --page:#F5F0EC; --paper:#FDF3EC;
+    --ink:#2A1E16; --muted:rgba(42,30,22,.56); --faint:rgba(42,30,22,.38);
+    --primary:#C94A44; --primary-600:#A13531;
+    --hairline:rgba(42,30,22,.18); --normal-400:#D4C8B8;
+    --elev: 0 18px 48px rgba(42,30,22,.16);
+    --grain-blend: multiply; --grain-opacity:.06;
+  }
+  .wine-dark {
+    --page:#120a0b; --paper:#1e1113;
+    --ink:rgba(255,244,238,.88); --muted:rgba(255,244,238,.6); --faint:rgba(255,244,238,.4);
+    --primary:#E36A64; --primary-600:#F07A73;
+    --hairline:rgba(255,244,238,.14); --normal-400:rgba(255,244,238,.16);
+    --elev: 0 18px 48px rgba(0,0,0,.5);
+    --grain-blend: soft-light; --grain-opacity:.09;
+  }
+  .plain-light {
+    --page:#F2EDE4; --paper:#F8F3EC;
+    --ink:#2A2218; --muted:rgba(42,34,24,.56); --faint:rgba(42,34,24,.38);
+    --primary:#C89060; --primary-600:#A87348;
+    --hairline:rgba(42,34,24,.16); --normal-400:#D4CBB8;
+    --elev: 0 18px 48px rgba(42,34,24,.14);
+    --grain-blend: multiply; --grain-opacity:.06;
+  }
+  .plain-dark {
+    --page:#0b0908; --paper:#1c1814;
+    --ink:rgba(255,255,255,.72); --muted:rgba(255,255,255,.5); --faint:rgba(255,255,255,.34);
+    --primary:#D4A478; --primary-600:#deb896;
+    --hairline:rgba(255,255,255,.14); --normal-400:rgba(255,255,255,.14);
+    --elev: 0 18px 48px rgba(0,0,0,.55);
+    --grain-blend: soft-light; --grain-opacity:.09;
+  }
+  :root {
+    --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    --sans: 'Noto Sans SC', 'PingFang SC', sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out-soft: cubic-bezier(0.45, 0, 0.25, 1);
+    --fold-dur: 520ms;
+    --ink-muted: color-mix(in oklab, var(--ink) 72%, transparent);
+    --ink-faint: color-mix(in oklab, var(--ink) 56%, transparent);
+    --ink-ghost: color-mix(in oklab, var(--ink) 38%, transparent);
+    --rule: color-mix(in oklab, var(--ink) 9%, transparent);
+    --hair: color-mix(in oklab, var(--normal-400) 55%, transparent);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--sans); background: #cfc8bf; color: #333; padding: 18px; }
+  .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; font: 12px var(--sans); color:#555; }
+  .bar button { font: 12px var(--sans); padding: 4px 12px; border: 1px solid #9993; border-radius: 6px; background: #fff8; cursor: pointer; }
+  .bar button.on { background: #333; color: #fff; }
+  .bar .lab { color:#777; }
+
+  /* ===== 面板壳（留白独奏：stage + dock，inset 48 / max-w 1160 等比缩小） ===== */
+  .panel {
+    position: relative; width: 1112px; height: 620px; margin: 0 auto;
+    display: grid; grid-template-rows: minmax(0,1fr) auto; grid-template-areas: 'stage' 'dock';
+    background: var(--paper, #fff); border: 1px solid var(--hair); border-radius: 18px;
+    box-shadow: var(--elev); color: var(--ink); overflow: clip; font-family: var(--sans);
+  }
+  .wash { position: absolute; left: 50%; top: 26%; transform: translate(-50%,-50%); width: 560px; height: 420px;
+    background: radial(closest-side, color-mix(in oklab, var(--primary) 7%, transparent), transparent); filter: blur(12px); pointer-events: none; }
+  .veil { position: absolute; inset: 0; pointer-events: none; opacity: var(--grain-opacity); mix-blend-mode: var(--grain-blend);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E"); }
+
+  /* 右上工具 + 关闭（z12 恒高，20261006 层序） */
+  .tools { position: absolute; top: 16px; right: 64px; z-index: 12; display: flex; gap: 8px; }
+  .tools span { width: 32px; height: 32px; border: 1px solid var(--hair); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font: 14px var(--serif); color: var(--ink-muted); }
+  .close { position: absolute; top: 16px; right: 16px; z-index: 12; width: 32px; height: 32px; border: 1px solid transparent; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-muted); font: 14px var(--sans); }
+
+  /* ===== 舞台 ===== */
+  .stage { grid-area: stage; position: relative; z-index: 1; display: grid; place-content: center; justify-items: center; gap: 10px; min-height: 0; padding: 26px 0 6px; }
+  .platewrap { position: relative; display: flex; align-items: flex-end; gap: 14px; }
+  .tab { position: absolute; right: calc(100% + 4px); bottom: 0; writing-mode: vertical-rl; font: 11px var(--mono); letter-spacing: .3em; color: var(--primary); white-space: nowrap; }
+  .disc { width: 190px; height: 190px; border-radius: 50%; position: relative;
+    background: radial-gradient(circle at 50% 50%, #211814 0 41%, transparent 41%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.05) 0 2px, transparent 2px 6px), #241a15; }
+  .disc::after { content:''; position: absolute; inset: 42%; border-radius: 50%; background: linear-gradient(135deg, #8a5b4a, #c78f6f 55%, #7c4f40); box-shadow: inset 0 0 0 4px rgba(0,0,0,.35); }
+  .disc .dot { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; transform: translate(-50%,-50%); border-radius: 50%; background: var(--paper); z-index: 1; }
+  .title { font: 600 24px var(--serif); letter-spacing: .06em; max-width: 520px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .artist { font: 12px var(--sans); letter-spacing: .14em; color: var(--ink-faint); flex-shrink: 0; }
+
+  /* 界格题跋三行 */
+  .epi { display: grid; gap: 2px; text-align: center; font: 13px var(--serif); }
+  .epi p { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 5px 26px; color: var(--ink-ghost); max-width: 640px; white-space: nowrap; overflow: hidden; }
+  .epi p.act { font-size: 17px; font-weight: 600; color: var(--ink); border-color: var(--hair); position: relative; }
+  .epi p.act::after { content:''; position:absolute; left: 14px; top: 20%; height: 60%; width: 3px; background: var(--primary); border-radius: 2px; }
+
+  /* ===== dock（z9，斜倚热区之上——20261006 转正盖过它） ===== */
+  .dock { grid-area: dock; position: relative; z-index: 9; display: flex; flex-direction: column; gap: 12px; padding: 0 24px 22px; }
+  .prog { display: flex; align-items: center; gap: 10px; width: min(100%, 460px); margin: 0 auto; }
+  .tc { font: 10px var(--mono); color: var(--ink-faint); flex-shrink: 0; }
+  .track { position: relative; flex: 1; height: 3px; border-radius: 99px; background: var(--hair); }
+  .track i { position: absolute; left: 0; top: 0; bottom: 0; width: 42%; background: var(--primary); border-radius: 99px; opacity: .9; }
+  .seal-c { position: absolute; top: 50%; left: 42%; width: 15px; height: 15px; border-radius: 3px; background: var(--primary); color: var(--paper); transform: translate(-50%,-50%); display: inline-flex; align-items: center; justify-content: center; font: 10px var(--serif); }
+  .ctlrow { display: flex; align-items: center; justify-content: center; gap: 34px; position: relative; }
+  .ctl { width: 40px; height: 40px; border: 1px solid transparent; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-muted); font: 13px var(--sans); }
+  .play { width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: var(--paper); }
+  .ctl.on { color: var(--primary); }
+
+  /* ===== 队列翻页屏（静止 -40°；scene=fold 转正盖过 dock z10） ===== */
+  .qzone { position: absolute; top: 0; right: 0; bottom: 0; width: 340px; z-index: 8; perspective: none; }
+  .qscreen { position: absolute; inset: 0; width: 340px; display: flex; flex-direction: column; padding: 24px 16px 0 24px;
+    background: color-mix(in oklab, var(--paper) 94%, transparent); border-left: 1px solid var(--hair); border-radius: 18px 0 0 18px;
+    transform-origin: 100% 50%; transform: rotateY(-40deg); opacity: .45; pointer-events: none;
+    transition: transform var(--fold-dur) var(--ease-in-out-soft), opacity .15s var(--ease-out-soft); }
+  .scene-fold .qscreen { transform: rotateY(0deg); opacity: 1; pointer-events: auto; box-shadow: -24px 12px 48px color-mix(in oklab, black 22%, transparent); }
+  .scene-fold .qzone { z-index: 10; }
+  .qhead { display: flex; align-items: center; gap: 6px; font: 500 11px var(--sans); letter-spacing: .22em; color: var(--ink-muted); padding: 4px 0 12px; }
+  .qhead::before { content:''; width: 10px; height: 2px; background: var(--primary); }
+  .qlist { flex: 1; overflow: hidden; display: grid; align-content: start; gap: 2px; }
+  .qrow { display: flex; gap: 8px; align-items: center; font: 12px var(--sans); color: var(--ink-muted); padding: 5px 6px; border-radius: 6px; }
+  .qrow .no { font: 10px var(--mono); color: var(--ink-faint); width: 18px; }
+  .qrow.cur { background: color-mix(in oklab, var(--primary) 7%, transparent); }
+  .qrow.cur .no { color: var(--primary); }
+  .qrow .nm { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+  .qrow .du { font: 10px var(--mono); color: var(--ink-faint); }
+
+  /* ===== 词卷展开态（scene=words） ===== */
+  .words { grid-area: stage; position: absolute; inset: 0 0 auto 0; bottom: 0; z-index: 3; display: none;
+    flex-direction: column; align-items: center; background: color-mix(in oklab, var(--paper) 88%, transparent); padding: 26px 32px 12px; }
+  .scene-words .words { display: flex; }
+  .scene-words .stage { visibility: hidden; }
+  .whead { display: flex; gap: 12px; align-items: center; width: min(880px,100%); }
+  .whead .art { width: 44px; height: 44px; border: 1px solid var(--hair); background: linear-gradient(135deg,#8a5b4a,#c78f6f); }
+  .whead b { font: 600 16px var(--serif); }
+  .wverse { flex: 1; writing-mode: vertical-rl; width: min(880px,100%); display: flex; gap: 14px; padding-top: 14px; font: 13px var(--serif); color: var(--ink-ghost); letter-spacing: .24em; }
+  .wverse p.act { font-size: 19px; font-weight: 600; color: var(--ink); border-left: none; border-right: 3px solid var(--primary); }
+  .wverse p { padding: 0 8px; border-right: 1px solid var(--rule); }
+
+  /* ===== 提案共用的「卷」印（朱砂描边阴文，静配重，不做第二饱和件） ===== */
+  .seal { display: inline-flex; align-items: center; justify-content: center; border: 1px solid color-mix(in oklab, var(--primary) 55%, transparent);
+    color: var(--primary); border-radius: 4px; font-family: var(--serif); flex-shrink: 0; line-height: 1; }
+  .colophon { color: var(--ink-faint); letter-spacing: .12em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pl { display: none; }
+  .prop-A .pl-A, .prop-B .pl-B, .prop-C .pl-C, .prop-D .pl-D,
+  .prop-AB .pl-A, .prop-AB .pl-B, .prop-AC .pl-A, .prop-AC .pl-C, .prop-AD .pl-A, .prop-AD .pl-D { display: block; }
+
+  /* 构 A · 题跋下横向落款带 */
+  .pl-A { display: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: 10px; align-items: center; gap: 8px; max-width: 420px; }
+  .pl-A .row { display: flex; align-items: center; gap: 8px; }
+  .pl-A .colophon { font: 12px var(--serif); }
+  .pl-A .seal { width: 22px; height: 22px; font-size: 13px; }
+
+  /* 构 B · 题签姊妹列（B-1 精修）：装裱左缘一列，右为曲题签、左为卷题签，
+     印随列尾行内续排（列脚收笔），超长名列底 mask 墨尽渐隐，title 悬浮全名 */
+  .pl-B { display: none; position: absolute; right: calc(100% + 26px); bottom: -4px; text-align: center; }
+  .pl-B .col { writing-mode: vertical-rl; max-height: 208px; margin: 0 auto; font: 11px var(--serif);
+    letter-spacing: .3em; color: var(--ink-faint); overflow: hidden; width: 22px;
+    mask-image: linear-gradient(180deg, black 78%, transparent); }
+  .pl-B .seal { display: inline-flex; margin-top: 7px; width: 20px; height: 20px; font-size: 12px; }
+  /* 墨痕遮挡验证层（scene=ghost）：五站参数抄自 panel/styles/tokens.ts GHOST_STATIONS */
+  .ghost-probe { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; display: none; }
+  .scene-ghost .ghost-probe { display: block; }
+  /* 真实 GhostLine 同参数：max-height + 溢出裁切 + 墨尽 mask（长句不折第二列，探针必须同形否则虚警） */
+  .ghost-probe .g { position: absolute; left: var(--gx); top: var(--gy); max-height: var(--gh); width: clamp(26px, 2.9vw, 40px);
+    writing-mode: vertical-rl; overflow: hidden; mask-image: linear-gradient(180deg, black 70%, transparent);
+    font: 600 clamp(26px, 2.9vw, 40px) var(--serif); letter-spacing: .22em; color: color-mix(in oklab, var(--ink) var(--gink), transparent); }
+
+  /* 构 C · 甲板 ControlRow 左白落款群 */
+  .pl-C { display: none; position: absolute; left: 0; bottom: 26px; align-items: center; gap: 7px; max-width: 220px; }
+  .pl-C .row { display: flex; align-items: center; gap: 7px; }
+  .pl-C .colophon { font: 11px var(--sans); }
+  .pl-C .seal { width: 17px; height: 17px; font-size: 10px; }
+
+  /* 构 D · 屏首题（替换「播放列表」眉标） */
+  .pl-D { display: none; }
+  .qhead.d { gap: 6px; max-width: 100%; }
+  .qhead.d .colophon { font: 12px var(--serif); letter-spacing: .1em; }
+  .qhead.d .seal { width: 16px; height: 16px; font-size: 9px; }
+
+  /* 空态：无歌单名 → 各位整体隐去（非灰字占位） */
+  .scene-empty .pl-A .row, .scene-empty .pl-B, .scene-empty .pl-C .row { visibility: hidden; }
+  .scene-empty .qhead.d .colophon, .scene-empty .qhead.d .seal { visibility: hidden; }
+
+  .note { width: 1112px; margin: 12px auto 0; font: 11px/1.7 var(--sans); color: #666; }
+  .note b { color: #333; }
+</style>
+</head>
+<body class="wine-light prop-A scene-normal">
+  <div class="bar">
+    <span class="lab">构：</span>
+    <button data-prop="A">A 落款带</button><button data-prop="B">B 题签列</button><button data-prop="C">C 甲板印</button><button data-prop="D">D 屏首题</button><button data-prop="AB">A+D 叠加</button>
+    <span class="lab">景：</span>
+    <button data-scene="normal">常态</button><button data-scene="fold">翻页屏</button><button data-scene="words">词卷</button><button data-scene="empty">空态</button><button data-scene="ghost">墨痕遮挡</button>
+    <span class="lab">主题：</span>
+    <button data-theme="wine-light">wine light</button><button data-theme="wine-dark">wine dark</button><button data-theme="plain-light">plain light</button><button data-theme="plain-dark">plain dark</button>
+    <span class="lab" id="urltip">URL 参数：?prop=A&scene=normal</span>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="wash"></div><div class="veil"></div>
+    <!-- 墨痕五站探针（scene=ghost，参数抄自 panel/styles/tokens.ts GHOST_STATIONS） -->
+    <div class="ghost-probe">
+      <div class="g" style="--gx:27%;--gy:6%;--gh:46%;--gink:15%">当前句大字居格·声在纸行</div>
+      <div class="g" style="--gx:16%;--gy:14%;--gh:54%;--gink:5.5%">檐雨敲秋淡墨先句</div>
+      <div class="g" style="--gx:6%;--gy:30%;--gh:46%;--gink:4.2%">远山落款又见笛声</div>
+      <div class="g" style="--gx:64.5%;--gy:6%;--gh:51%;--gink:3.4%">卷底藏声后句余韵</div>
+      <div class="g" style="--gx:73%;--gy:13%;--gh:43%;--gink:2.6%">第三叠风起于疏笔</div>
+    </div>
+    <div class="tools"><span>詞</span><span>≡</span></div>
+    <div class="close">✕</div>
+
+    <div class="stage">
+      <div class="platewrap">
+        <div class="tab">曲 · 03 / 20</div>
+        <!-- 构 B · 卷题签姊妹列（B-1：印随列尾、墨尽封顶、贴装裱左缘与曲题签成对） -->
+        <div class="pl-B pl"><div class="col" title="2024年度歌单·秋冬辑·钢琴与弦乐夜曲选">2024年度歌单·秋冬辑·钢琴与弦乐夜曲选</div><span class="seal">卷</span></div>
+        <div class="disc"><i class="dot"></i></div>
+      </div>
+      <div class="title">墨痕随想曲·第三乐章（题名长句演示）</div>
+      <div class="artist">陈秋晚 / 雨巷管弦社</div>
+      <div class="epi">
+        <p>淡墨先一句·檐雨敲秋</p>
+        <p class="act">当前句大字居格·声在纸行</p>
+        <p>后一句淡墨·卷底藏声</p>
+      </div>
+
+      <!-- 构 A：题跋下横向落款带 -->
+      <div class="pl-A pl"><div class="row"><span class="colophon">本卷 · 《2024年度歌单·秋冬辑》</span><span class="seal">卷</span></div></div>
+
+    </div>
+
+    <div class="dock">
+      <div class="prog"><span class="tc">1:52</span><span class="track"><i></i><b class="seal-c">樂</b></span><span class="tc">4:31</span></div>
+      <div class="ctlrow">
+        <span class="ctl on">↻</span><span class="ctl">⏮</span><span class="ctl play">▶</span><span class="ctl">⏭</span><span class="ctl">🔈</span>
+        <!-- 构 C：甲板左白落款群（与右端音量对秤） -->
+        <div class="pl-C pl"><div class="row"><span class="seal">卷</span><span class="colophon">《2024年度歌单·秋冬辑》</span></div></div>
+      </div>
+    </div>
+
+    <!-- 词卷展开态 -->
+    <div class="words">
+      <div class="whead"><div class="art"></div><div><b>墨痕随想曲·第三乐章</b><br><small style="color:var(--ink-faint)">陈秋晚</small></div></div>
+      <div class="wverse">
+        <p>声在纸行当前句大字</p><p class="act">当前句大字居格·声在纸行</p><p>檐雨敲秋淡墨先句</p><p>卷底藏声后句余韵</p><p>第三叠·风起于疏笔</p><p>落款处见远山</p><p>墨色未干闻笛</p><p>雨过山青</p>
+      </div>
+    </div>
+
+    <!-- 队列翻页屏（含构 D） -->
+    <div class="qzone"><div class="qscreen">
+      <!-- 构 D：屏首题替换眉标 -->
+      <div class="qhead d pl pl-D"><span class="colophon">《2024年度歌单·秋冬辑》</span><span class="seal">卷</span></div>
+      <div class="qhead" style="display:none" id="dhead">播放列表</div>
+      <div class="qlist">
+        <div class="qrow"><span class="no">01</span><span class="nm">雨巷</span><span class="du">3:58</span></div>
+        <div class="qrow cur"><span class="no">02</span><span class="nm">墨痕随想曲·第三乐章</span><span class="du">4:31</span></div>
+        <div class="qrow"><span class="no">03</span><span class="nm">秋灯琐忆</span><span class="du">4:02</span></div>
+        <div class="qrow"><span class="no">04</span><span class="nm">疏笔风起</span><span class="du">3:26</span></div>
+        <div class="qrow"><span class="no">05</span><span class="nm">远山落款（长曲名演示限宽省略）</span><span class="du">5:12</span></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="note" id="note"></div>
+
+<script>
+  const body = document.body;
+  const NOTE = {
+    A: '构 A · 落款带（最文人）：题跋正下方一行——衬线小字「本卷 · 《歌单名》」+ 朱砂描边「卷」印。签名记忆点=这枚落款印；印面永远单字（宽度恒定），长名由题跋行 ellipsis+title 承载。词卷态随舞台让位，空态整体隐去。',
+    B: '构 B · 题签列（密度最高·立轴）：装裱左缘第二条竖题签——竖排小字歌单名，列脚收「卷」印，与「曲 · N/总数」朱砂题签成姊妹列。名字越长列越沉，竖排 ellipsis 封顶；与墨痕左翼站点有遮挡预算风险（站 x=6%/16%）。',
+    C: '构 C · 甲板印（最空灵）：ControlRow 左空白（模式钮左侧）横排「卷」印+无衬线小名，与右端音量钮对秤成 playbar 同构第二行；dock 有空间承诺，词卷态仍在位——但 dock 属操作面，混入内容件是本案最大争议点。',
+    D: '构 D · 屏首题（最低调）：翻页屏眉标「播放列表」换成《歌单名》+小印——列表之源即题面，主舞台零侵占；代价：只在 hover/钉住时可见。',
+    AB: '叠加参考 · A+D 双位同字（落款常驻 + 屏首呼应）——若主选 A 后可否叠加 D。',
+  };
+  const state = { prop: 'A', scene: 'normal', theme: 'wine-light' };
+  const themes = ['wine-light','wine-dark','plain-light','plain-dark'];
+  const props = ['A','B','C','D','AB'];
+  const scenes = ['normal','fold','words','empty','ghost'];
+  function render() {
+    body.className = state.theme + ' prop-' + state.prop + ' scene-' + state.scene;
+    document.getElementById('dhead').style.display = state.prop === 'D' || state.prop === 'AB' ? 'none' : 'flex';
+    document.getElementById('note').innerHTML = '<b>' + state.prop + ' / ' + state.scene + ' / ' + state.theme + '</b> — ' + NOTE[state.prop];
+    history.replaceState(null, '', '?prop=' + state.prop + '&scene=' + state.scene);
+    document.querySelectorAll('.bar button').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('[data-prop]').forEach(b => b.classList.toggle('on', b.dataset.prop === state.prop));
+    document.querySelectorAll('[data-scene]').forEach(b => b.classList.toggle('on', b.dataset.scene === state.scene));
+    document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('on', b.dataset.theme === state.theme));
+  }
+  document.querySelectorAll('[data-prop]').forEach(b => b.onclick = () => { state.prop = b.dataset.prop; render(); });
+  document.querySelectorAll('[data-scene]').forEach(b => b.onclick = () => { state.scene = b.dataset.scene; render(); });
+  document.querySelectorAll('[data-theme]').forEach(b => b.onclick = () => { state.theme = b.dataset.theme; render(); });
+  const q = new URLSearchParams(location.search);
+  if (props.includes(q.get('prop'))) state.prop = q.get('prop');
+  if (scenes.includes(q.get('scene'))) state.scene = q.get('scene');
+  if (themes.includes(q.get('theme'))) state.theme = q.get('theme');
+  render();
+</script>
+</body>
+</html>

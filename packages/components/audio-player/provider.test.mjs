@@ -49,6 +49,15 @@ test('跳过提示在用户操作前保持可见', () => {
   assert.doesNotMatch(providerSource, /playAt: playTrackAt/)
 })
 
+test('歌单名契约：loadQueue 随队列整体替换、缺省落 undefined（20261006 卷题签）', () => {
+  // State 位与 options 位都在；只增字段，公开契约向后兼容
+  assert.match(specsSource, /playlistName\?: string/)
+  assert.match(specsSource, /startIndex\?: number; autoPlay\?: boolean; playlistName\?: string/)
+  assert.match(providerSource, /payload: \{ queue: Track\[\]; startIndex: number; playlistName\?: string \}/)
+  // 整体替换语义：未传即 undefined——换队列必换卷名，禁「保留旧卷名」的黏滞分支
+  assert.match(providerSource, /playlistName: action\.payload\.playlistName/)
+})
+
 test('迷你播放器展示跳过/失败提示且不改变卡片高度', () => {
   assert.match(miniPlayerSource, /\{state\.error \? \(/)
   assert.match(miniPlayerSource, /role='status'/)

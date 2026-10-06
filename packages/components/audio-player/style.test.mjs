@@ -235,6 +235,8 @@ test('拆分纪律：主组件行数上限 + 拼接清单钉死 + 全文件存�
     'panel/styles/words.tsx',
     'panel/styles/queue.tsx',
     'panel/styles/mobile.tsx',
+    // 卷题签模块为 20261006 新增——新文件只准在样式组末尾**追加**（不重排既有条目，锚点切片语义不受影响）
+    'panel/styles/volume.tsx',
     'PlayerPanel.tsx',
     'panel/PanelVolume.tsx',
     'panel/PanelQueue.tsx',
@@ -245,6 +247,31 @@ test('拆分纪律：主组件行数上限 + 拼接清单钉死 + 全文件存�
   for (const path of [...PANEL_SOURCES, ...MINI_SOURCES]) {
     assert.ok(readFileSync(join(dir, path), 'utf8').length > 0, `${path} 为空`)
   }
+})
+
+test('卷题签姊妹列（20261006 设计定稿 B）：竖列墨尽封顶 + 列脚卷印 + 空态整位隐去', () => {
+  // 视觉稿 shadow-docs/designs/20261006-playlist-name-seal/（构 B 定稿，A/C/D 否决留档）
+  const volumeBlock = readSource('panel/styles/volume.tsx')
+  // 竖列：vertical-rl 小字疏排 + 长度封顶走「墨尽」裁切（同 GhostLine 语言），禁滚动条禁折列
+  assert.match(volumeBlock, /writing-mode: vertical-rl/)
+  assert.match(volumeBlock, /max-height: 208px/)
+  assert.match(volumeBlock, /overflow: hidden/)
+  assert.match(volumeBlock, /mask-image: linear-gradient\(180deg, black 78%, transparent\)/)
+  // 锚点：装裱左缘姊妹列（与曲题签 box -14..10 错身，离 x27% 墨痕站实测净空 ~42px）
+  assert.match(volumeBlock, /right: calc\(100% \+ 26px\)/)
+  // 卷印：朱砂描边阴文（静配重，不做第二饱和件——禁实心白文回潮）
+  assert.match(volumeBlock, /color-mix\(in oklab, var\(--primary-color\) 55%, transparent\)/)
+  assert.doesNotMatch(volumeBlock, /background: var\(--primary-color\)/, '卷印必须描边阴文，实心白文禁入')
+  // 印面单字常量钉死（U+5377 卷，webfont 子集扩档见 apps/site/scripts SEAL_CODES）
+  assert.match(readSource('panel/styles/tokens.ts'), /VOLUME_SEAL_GLYPH = '卷'/)
+  // 挂载：PlateWrap 内条件渲染——空态整位隐去（无数据即无位，禁灰字/空串回退）；key 重挂载 + title/aria 全名
+  const playerSrc = readSource('PlayerPanel.tsx')
+  const plateBlock = playerSrc.slice(playerSrc.indexOf('<PlateWrap>'), playerSrc.indexOf('</PlateWrap>'))
+  assert.match(plateBlock, /\{state\.playlistName \? \(/, '卷题签缺空态条件渲染')
+  assert.doesNotMatch(plateBlock, /playlistName \?\?/, '空串/兜底回退禁入')
+  assert.match(plateBlock, /key=\{state\.playlistName\}/, '换卷须重挂载（题签不黏滞）')
+  assert.match(plateBlock, /title=\{state\.playlistName\}/, '长名悬浮全名承诺')
+  assert.match(plateBlock, /<VolumeTab[\s\S]*<VolumeSeal[\s\S]*<\/VolumeTab>/, '印随列尾（VolumeSeal 在 VolumeTab 内）')
 })
 
 test('队列翻页屏 hotfix：碟面环包含块归位 + 粘性开合行内驱动（20261002）+ 离栏即折边界（20261005 修订）', () => {

@@ -60,3 +60,7 @@ export const reducedMotion = css`
 /* 舞台预算分档（按视口高度驱动：面板高 = 100vh − 96px，与宽度无关） */
 export const STAGE_TIER_SHORT = 959
 export const STAGE_TIER_COMPACT = 859
+
+/* 卷题签印面字（20261006 设计定稿 B）：「卷」U+5377——webfont 子集需经
+   apps/site/scripts/expand_cjk_fonts.py SEAL_CODES 扩档，扩档前系统宋体兜底 */
+export const VOLUME_SEAL_GLYPH = '卷'
