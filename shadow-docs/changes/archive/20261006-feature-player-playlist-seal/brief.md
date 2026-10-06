@@ -4,7 +4,7 @@
   "name": "20261006-feature-player-playlist-seal",
   "type": "feature",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261006-feature-player-playlist-seal",
   "files": [
@@ -26,18 +26,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 484,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/484",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 486,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/486"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "214dab7a6bb36354ece841575c4247bc568d9cf4",
-    "verifiedAt": "2026-10-06T09:32:12.371Z"
+    "verifiedCommit": "d85b4f6a761db7d5d930c85889fb6a8db64175df",
+    "verifiedAt": "2026-10-06T10:03:10.671Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:484",
-    "planHash": "ed0f5f45179251fee3a6f88cf0e18b5ac1e3cd67b3eb23e35dc199e2831dcbc6",
+    "checkpoint": "merged-pr:486",
+    "planHash": "13e8ba22c4a63f1b19b616c63914314ca16a6972c33c7e4143f3def2040c6058",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -77,7 +77,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "面板新增定稿内容位「卷题签姊妹列」（装裱左缘卷名+列脚卷印，空态整位隐去）与契约字段 playlistName 需入 active 结论；SEAL_CODES 探针新事实「卷已随词典字符集在集、无需重切」更新 first-load-performance 印面事实；守卫新增卷题签 12 断言族"
+    "reason": "复核通过：main(d85b4f6) 即本工已验证内容（卷题签姊妹列/契约/知识两卡/信号/设计稿目录，PR #486 squash 全量入 main）；知识结论已在发布 commit 内落卡（music-player 卷题签段+first-load 六印零重切探针）"
   }
 }
 ---
@@ -150,6 +150,8 @@
   - **域守卫逐文件**：style 20/20 · player-panel 22/22（新增 volume.tsx 入拼后既有切片锚全部稳定）· provider 7/7 · mini-player 8/8 · 域 typecheck 1/1 · wiring 11/11。
   - **根 `tsc --noEmit`** exit 0（mise node 22，SGN-001 绕行）；**oxlint** 31 文件 0/0；**`next build`** 两败一绿（SIGSEGV×1 + 139×1，清 `.next` 第三试 exit 0、Compiled successfully、14 路由行）。
   - **本地 runtime 目检未执行（环境不可行，如实记录）**：3000/3200 无服务、Nest 依赖 Mongo、宿主机 free <200MB——起全栈必撞 SGN-001。替代保证 = 视觉稿同几何原型量测（姊妹列与曲题签 box 错身、离 x27% 墨痕站净空 73→实装约 42px）+ 守卫结构钉死。**部署后生产复验**（与四修单目检合并）：/music 播曲开面板目检姊妹列成对、长名墨尽、暂停墨痕保留、词卷随播滚动、离栏即折、印面 webfont 字形——待开发机 DNS 恢复。
+  - **交付**：PR #486 admin-squash 合入 main（d85b4f6）；Release v1.4.64（https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.64）CI-CD 七 job 全绿（quality-gate/prepare/prepare-deps/build-nest/build-next/staging-test/switch-traffic success，run 37445898806 约 8 分钟）。
+  - **跨会话串枝事故记录（恢复成功）**：release execute 首跑时共享工作区被并行 responsive 会话切至其分支，commit 745b53d 落错分支且 PR 创建撞 Validation Failed；恢复 = 对方 checkpoint 噪声打标签 stash（responsive-session-checkpoint-noise-restore-20261006，留其自取）→ 切回本分支 reset --keep origin/main → cherry-pick 本工 commit → 重 plan/execute；远端全程未受污染（对方远端分支无本工 commit）。教训：同仓多会话并行发布存在串枝窗口，plan/execute 须连贯短跑。
 
 ## 知识评估
 

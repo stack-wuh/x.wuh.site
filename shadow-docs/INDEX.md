@@ -87,5 +87,7 @@
 | 20261005-fix-queue-fold-exit | ✅ 完成 | shadow-docs/changes/archive/20261005-fix-queue-fold-exit/brief.md |
 | 20261005-refactor-player-split | ✅ 完成 | shadow-docs/changes/archive/20261005-refactor-player-split/brief.md |
 | 20261005-style-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261005-style-nav-section-icons/brief.md |
+| 20261006-feature-player-playlist-seal | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-player-playlist-seal/brief.md |
+| 20261006-feature-responsive-layout-components | reviewed | shadow-docs/changes/20261006-feature-responsive-layout-components/brief.md |
 | 20261006-fix-player-queue-layer-lyric-follow | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-player-queue-layer-lyric-follow/brief.md |
 | 20261006-style-revert-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261006-style-revert-nav-section-icons/brief.md |
