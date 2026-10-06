@@ -23,9 +23,11 @@ export type TResponsive<T> = T | readonly (T | undefined)[]
  */
 export const RESPONSIVE_LADDER = [BREAKPOINTS.small + 1, BREAKPOINTS.mobile + 1, BREAKPOINTS.tablet] as const
 
-/** 拆响应式值为槽位数组（标量 → 单槽；索引 0 恒有值） */
+/** 拆响应式值为槽位数组（标量 → 单槽；索引 0 恒有值）。
+ *  Array.isArray 不收窄 readonly 数组分支，运行时判定后以 as 落类型——
+ *  true 分支 value 必为槽数组、false 分支必为标量，非绕过而是表达运行时事实。 */
 export const ladderSlots = <T>(value: TResponsive<T>): readonly (T | undefined)[] =>
-  Array.isArray(value) ? value : [value]
+  Array.isArray(value) ? (value as readonly (T | undefined)[]) : [value as T]
 
 /**
  * 把响应式值编译为 CSS 文本：基线声明 + 每个非缺位上档一个 min-width 媒体块。

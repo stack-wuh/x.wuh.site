@@ -69,7 +69,7 @@ const StyledStagger = styled.div<IStyledStaggerTransientProps>`
 
 const STAGGER_ONLY_KEYS: (keyof IStaggerProps)[] = ['step', 'duration', 'count']
 
-export const Stagger = React.forwardRef<HTMLElement, IStaggerProps>((props, ref) => {
+export const Stagger = React.forwardRef<HTMLDivElement, IStaggerProps>((props, ref) => {
   const domProps = { ...props }
   STAGGER_ONLY_KEYS.forEach((key) => delete (domProps as Record<string, unknown>)[key])
 

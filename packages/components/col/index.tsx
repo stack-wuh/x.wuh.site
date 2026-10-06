@@ -81,8 +81,11 @@ export const Col = React.forwardRef<HTMLDivElement, IColProps>((props, ref) => {
     }
     placements.push(carry)
   }
+  // tier0 必已 push，基线恒为完整 TPlacement；上档缺位维持 undefined 由编译口跳过
+  const base: TPlacement = placements[0] ?? { span: 12, offset: 0 }
   const hasUpperSlot = spanSlots.length > 1 || offsetSlots.length > 1
-  const placement: TResponsive<TPlacement> = hasUpperSlot ? placements : placements[0]
+  const placement: TResponsive<TPlacement> =
+    hasUpperSlot ? [base, ...placements.slice(1)] : base
 
   const domProps = { ...props }
   COL_ONLY_KEYS.forEach((key) => delete (domProps as Record<string, unknown>)[key])
