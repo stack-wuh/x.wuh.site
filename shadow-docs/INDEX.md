@@ -99,5 +99,5 @@
 | 20261006-fix-soft-navigation-audio-continuity | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-soft-navigation-audio-continuity/brief.md |
 | 20261006-refactor-responsive-layout-batch1 | ✅ 完成 | shadow-docs/changes/archive/20261006-refactor-responsive-layout-batch1/brief.md |
 | 20261006-refactor-responsive-layout-batch2 | reviewed | shadow-docs/changes/20261006-refactor-responsive-layout-batch2/brief.md |
-| 20261006-style-queue-eq-background | published | shadow-docs/changes/20261006-style-queue-eq-background/brief.md |
+| 20261006-style-queue-eq-background | ✅ 完成 | shadow-docs/changes/archive/20261006-style-queue-eq-background/brief.md |
 | 20261006-style-revert-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261006-style-revert-nav-section-icons/brief.md |
