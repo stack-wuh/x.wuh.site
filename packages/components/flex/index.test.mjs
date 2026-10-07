@@ -68,6 +68,23 @@ test('Flex adds ladder-responsive hidden and width/height (#499)', () => {
   assert.match(specsSource, /height\?: TResponsive<string \| number>/)
 })
 
+test('Flex adds ladder-responsive maxWidth (#508)', () => {
+  // 编译段与 width 同口同构（themes/responsive.ts 唯一编译口 + lengthValue 关键字直通）；
+  // 标量直编/阶梯出 min-width media 块/稀疏槽跳过由 responsive.test.mjs 在 helper 层钉死，
+  // 本层钉死 max-width 的确切编译行，杜绝旁路
+  assert.match(
+    indexSource,
+    /responsive\(props\.\$maxWidth, \(v\) => `max-width: \$\{lengthValue\(v, props\.theme\)\};`\)/,
+  )
+  assert.match(indexSource, /\$maxWidth\?: IFlexProps\['maxWidth'\]/)
+  assert.match(indexSource, /\$maxWidth=\{maxWidth\}/)
+  // 剥离面：解构清单含 maxWidth（同 width/height，杜绝 prop 泄进 DOM）
+  assert.match(indexSource, /hidden, width, height, maxWidth/)
+  assert.match(specsSource, /maxWidth\?: TResponsive<string \| number>/)
+  // 词汇文档：与 height「同 width」注释并列，声明数组=断点槽
+  assert.match(specsSource, /最大宽度：同 width；数组 = 断点槽/)
+})
+
 test('Flex obeys component-package style discipline', () => {
   // styled-components 内部 useContext(ThemeContext)，消费惯例要求客户端边界（divider/card/tag 同规）
   assert.match(indexSource, /^'use client'/)

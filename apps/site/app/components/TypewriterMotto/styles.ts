@@ -1,6 +1,13 @@
 import styled from 'styled-components'
+import { Flex } from '@wuh.site/components/flex'
 
-export const Container = styled.div`
+export const Container = styled(Flex).attrs({
+  direction: 'column',
+  // 显式 stretch 保持 block 全宽流：Sizer 在流内撑高是 20260915 防跳动机制，收缩即坏
+  alignItems: 'stretch',
+  // ≤520 收宽走 maxWidth 阶梯 sm 槽（≥521 = none 即原不设限）；maxWidth 为本批新增契约词汇
+  maxWidth: ['320px', 'none'],
+})`
   position: relative;
   font-family: var(--font-serif);
   font-size: var(--font-size-lg);
@@ -11,10 +18,6 @@ export const Container = styled.div`
   padding: var(--space-md) 0;
   margin: 0 auto;
   min-height: calc(var(--font-size-lg) * 1.8 + var(--space-md) * 2);
-
-  @media (max-width: 520px) {
-    max-width: 320px;
-  }
 
   &::after {
     content: '';

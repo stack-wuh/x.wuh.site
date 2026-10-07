@@ -1,15 +1,17 @@
 'use client'
 
 import styled from 'styled-components'
+import { Flex } from '@wuh.site/components/flex'
 
-export const PageWrapper = styled.div`
+export const PageWrapper = styled(Flex).attrs({
+  direction: 'column',
+  // column 容器显式 stretch：Flex 默认出 align-items:flex-start，子项会收缩为 fit-content
+  alignItems: 'stretch',
+  // ≤640 padding 收缩 → 移动优先基线 + md 槽（641 起恢复桌面值）
+  padding: ['32px 16px 64px', undefined, '48px 24px 80px'],
+})`
   max-width: 720px;
   margin: 0 auto;
-  padding: 48px 24px 80px;
-
-  @media (max-width: 640px) {
-    padding: 32px 16px 64px;
-  }
 `
 
 export const PageHeader = styled.header`
@@ -61,6 +63,8 @@ export const BackLink = styled.a`
 `
 
 /* ====== Timeline ====== */
+/* 注：本段 ≤640 三处块改的是 padding-left/伪元素 left/圆点尺寸等绝对定位几何，
+   非 Flex 阶梯词汇射程（无 position/pseudo 语义），维持手写媒体查询（批次3 射程判定，#508） */
 
 export const Timeline = styled.div`
   position: relative;

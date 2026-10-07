@@ -66,6 +66,8 @@ export interface IFlexProps {
   width?: TResponsive<string | number>,
   /** 高度：同 width；数组 = 断点槽 [base, sm?, md?, lg?] */
   height?: TResponsive<string | number>,
+  /** 最大宽度：同 width；数组 = 断点槽 [base, sm?, md?, lg?]，尺寸断点词汇补全 */
+  maxWidth?: TResponsive<string | number>,
   fullWidth?: boolean,
   fullHeight?: boolean,
   flex?: number | string,
