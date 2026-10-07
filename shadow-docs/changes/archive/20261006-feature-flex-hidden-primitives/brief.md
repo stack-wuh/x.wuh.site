@@ -4,7 +4,7 @@
   "name": "20261006-feature-flex-hidden-primitives",
   "type": "feature",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -20,18 +20,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 499,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/499",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 503,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/503"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ef62462d270b95d38a5c407969c5982cbb7227df",
-    "verifiedAt": "2026-10-06T16:14:57.236Z"
+    "verifiedCommit": "3ba6d8d80af5f52db95f22f0aed642b6dbd88c29",
+    "verifiedAt": "2026-10-07T01:14:28.992Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:499",
-    "planHash": "cdd0fc5b6cadcdfee21b3f69695ff8be844fa478fde388e5d0cb7085d39442ca",
+    "checkpoint": "merged-pr:503",
+    "planHash": "d0d2f1375cb037366f8cdb697474f6d08636dc6c1cca786660b206f3f9940d50",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -60,7 +60,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "Flex 新增响应式 hidden 与 width/height 阶梯原语，补齐站点批暴露的显隐/换行占满缺口；四段卡更新（当前结论 Flex 段、执行约束迁移词汇行、source 追加本 brief、verified-scope）。验证：layout 域守卫 34/34、布局 typecheck guard 0 错（且此 guard 抓到 hidden 撞原生 HTML hidden 属性的真实 TS2769，已用解构剔除修复）、根 tsc 0 错、oxlint 0/0。"
+    "reason": "main 复核：#503 已随 v1.4.71 部署 success（含 #506 的 main tip d59c8c6）。Flex hidden/width 阶梯原语上线。重钉过归档门禁。"
   }
 }
 ---

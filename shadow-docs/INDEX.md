@@ -87,8 +87,8 @@
 | 20261005-fix-queue-fold-exit | ✅ 完成 | shadow-docs/changes/archive/20261005-fix-queue-fold-exit/brief.md |
 | 20261005-refactor-player-split | ✅ 完成 | shadow-docs/changes/archive/20261005-refactor-player-split/brief.md |
 | 20261005-style-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261005-style-nav-section-icons/brief.md |
-| 20261006-feature-custom-cursor | published | shadow-docs/changes/20261006-feature-custom-cursor/brief.md |
-| 20261006-feature-flex-hidden-primitives | reviewed | shadow-docs/changes/20261006-feature-flex-hidden-primitives/brief.md |
+| 20261006-feature-custom-cursor | reviewed | shadow-docs/changes/20261006-feature-custom-cursor/brief.md |
+| 20261006-feature-flex-hidden-primitives | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-flex-hidden-primitives/brief.md |
 | 20261006-feature-now-playing-equalizer | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-now-playing-equalizer/brief.md |
 | 20261006-feature-player-playlist-seal | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-player-playlist-seal/brief.md |
 | 20261006-feature-responsive-breakpoint-ladder | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-responsive-breakpoint-ladder/brief.md |
