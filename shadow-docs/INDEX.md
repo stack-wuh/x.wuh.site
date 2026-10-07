@@ -93,7 +93,7 @@
 | 20261006-feature-player-playlist-seal | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-player-playlist-seal/brief.md |
 | 20261006-feature-responsive-breakpoint-ladder | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-responsive-breakpoint-ladder/brief.md |
 | 20261006-feature-responsive-layout-components | ✅ 完成 | shadow-docs/changes/archive/20261006-feature-responsive-layout-components/brief.md |
-| 20261006-fix-cursor-follow-spring | reviewed | shadow-docs/changes/20261006-fix-cursor-follow-spring/brief.md |
+| 20261006-fix-cursor-follow-spring | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-cursor-follow-spring/brief.md |
 | 20261006-fix-layout-typecheck | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-layout-typecheck/brief.md |
 | 20261006-fix-player-queue-layer-lyric-follow | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-player-queue-layer-lyric-follow/brief.md |
 | 20261006-fix-soft-navigation-audio-continuity | ✅ 完成 | shadow-docs/changes/archive/20261006-fix-soft-navigation-audio-continuity/brief.md |

@@ -4,7 +4,7 @@
   "name": "20261006-fix-cursor-follow-spring",
   "type": "fix",
   "scope": "packages/components/cursor",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261006-fix-cursor-follow-spring",
   "files": [
@@ -23,13 +23,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ef62462d270b95d38a5c407969c5982cbb7227df",
-    "verifiedAt": "2026-10-06T16:06:59.617Z"
+    "verifiedCommit": "c53e498675939d6e8dbcb5b6287019e275ba2d4c",
+    "verifiedAt": "2026-10-07T02:46:47.856Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:507",
-    "planHash": "f4ff2a01ec905a2044834c756b21f5c70bf35b0f59053d8349fec18c909e7da0",
+    "checkpoint": "merged-pr:507",
+    "planHash": "a8a553ae4365032d8f6f6d88b82c123a3581f10c33be127275ff6dec354316f0",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -58,7 +58,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/cursor-system.md",
-    "reason": "跟随机制结论（单一 rAF + translate3d）被 framer-motion 弹簧 + 延迟接管 + leave 重武装取代；idle 定时器须先 clear 的纪律入卡；六态/idle 语义/data-URI 降级链/HOT+OFFSET 热点不变；验证方式段同步守卫新断言"
+    "reason": "跟随机制结论被 framer-motion 弹簧+延迟接管取代；idle 定时器先 clear 纪律入卡；六态/idle/降级链/热点不变"
   }
 }
 ---
