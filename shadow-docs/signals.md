@@ -27,20 +27,20 @@
 - 权重: 3
 - 深度: runtime
 - 域/scope: 验证工具链 · 一切经 ZCode 内置浏览器（IAB/WKWebView）的 runtime 验收（动画时长曲线、rAF 节拍、水合）
-- 证据: changes/20261006-fix-cursor-follow-spring/brief.md——镜像页 :8914 实测 rAF 完全不回调（`visibilityState:'visible'` 下 1.2s race 超时）、页面计时器预算 3 次/秒（140ms sleep 采样呈 300/1300/2300ms 台阶）、framer 弹簧在假帧时钟下可推进且终值精确，但毫秒收敛时长不可测（真实时间线被冻结，量出的时长全是环境伪影）；changes/20261006-feature-custom-cursor/brief.md——同源根因：Next dev 应用在 IAB 内从不水合（renderers=0）
-- 命中: 1（最近 2026-10-07）
+- 证据: changes/20261006-fix-cursor-follow-spring/brief.md——镜像页 :8914 实测 rAF 完全不回调（`visibilityState:'visible'` 下 1.2s race 超时）、页面计时器预算 3 次/秒（140ms sleep 采样呈 300/1300/2300ms 台阶）、framer 弹簧在假帧时钟下可推进且终值精确，但毫秒收敛时长不可测（真实时间线被冻结，量出的时长全是环境伪影）；changes/20261006-feature-custom-cursor/brief.md——同源根因：Next dev 应用在 IAB 内从不水合（renderers=0）；changes/20261006-feature-cursor-ink-trail/brief.md——v3 复测坐实「x.set 跟位在自动泵链下仅爬行推进」，但**速度分类/节流/池复用等事件驱动状态机经 `Object.defineProperty(ev,'timeStamp')` 给合成事件钟后全部精确可量**（事件钟与渲染钟解耦：PointerEvent 构造不接受 timeStamp，实例 defineProperty 覆盖 getter 即可注入毫秒级速度脚本）
+- 命中: 2（最近 2026-10-07）
 - 退役条件: 内置浏览器提供前台真实渲染帧或会话内具备真浏览器/CDP 环境
-- 陈述: 内置浏览器后台帧饥饿时，「JS 驱动动画的毫秒级时长/逐帧轨迹」不可在其中量测——验收清单应设计为不依赖渲染帧的对象：DOM 类与 dataset、假帧时钟下的单帧落位值、秒级阈值行为（如 idle 5s、定时器泄漏观察器）；主观时长与手感移交真浏览器 field（另起 dev 端口），报告中记录为环境限制偏差即可，不得把「量不到曲线」当「引擎坏了」，也不得为凑量测去改被测代码。
+- 陈述: 内置浏览器后台帧饥饿时，「JS 驱动动画的毫秒级时长/逐帧轨迹」不可在其中量测——验收清单应设计为不依赖渲染帧的对象：DOM 类与 dataset、假帧时钟下的单帧落位值、秒级阈值行为（如 idle 5s、定时器泄漏观察器）；**依赖指针事件间隔测速度的逻辑（分类/节流/急停判定）用 `Object.defineProperty(ev,'timeStamp',…)` 合成事件时间戳驱动，完全帧无关**；主观时长与手感移交真浏览器 field（另起 dev 端口），报告中记录为环境限制偏差即可，不得把「量不到曲线」当「引擎坏了」，也不得为凑量测去改被测代码。
 
 ## SGN-003 · CSS 动画/层叠语义疑点先做 /tmp 静态复现页 DOMMatrix 量测再动源码
 - 方向: positive
 - 权重: 3
 - 深度: runtime
 - 域/scope: 验证工具链 · packages/components/audio-player（面板 3D 屏动画、层叠、滚动几何语义）
-- 证据: changes/archive/20261006-fix-player-queue-layer-lyric-follow/brief.md——镜像几何复现页量测出词卷滚动公式在 vertical-rl 下残差 809.9px（static 滚动容器 offsetLeft 基准漂移 −281px），双分支皆坏的事实先于改码确认；changes/20261006-style-queue-eq-background/brief.md——水印重锚复现页以 getComputedStyle+DOMMatrix.d（=scaleY）量柱高，首帧 [0.35,1,1] 暴露「首挂载即暂停时 delay 段柱回落基准高度」（补 animation-fill-mode: backwards 后 [0.35,0.35,0.35]），相位错开 [0.93,0.96,0.6]→300ms→[0.48,0.36,0.67] 同页双帧证实；changes/20261006-fix-cursor-follow-spring/brief.md——esbuild 实包真 cursor 组件 + 真 framer-motion 建镜像页，假帧时钟下证「首跳同帧落位 matrix(296,196) 零扫移、700px 远跳终值精确收敛」，替代了上一轮「逐字手抄引擎」形态
-- 命中: 3（最近 2026-10-07）
+- 证据: changes/archive/20261006-fix-player-queue-layer-lyric-follow/brief.md——镜像几何复现页量测出词卷滚动公式在 vertical-rl 下残差 809.9px（static 滚动容器 offsetLeft 基准漂移 −281px），双分支皆坏的事实先于改码确认；changes/20261006-style-queue-eq-background/brief.md——水印重锚复现页以 getComputedStyle+DOMMatrix.d（=scaleY）量柱高，首帧 [0.35,1,1] 暴露「首挂载即暂停时 delay 段柱回落基准高度」（补 animation-fill-mode: backwards 后 [0.35,0.35,0.35]），相位错开 [0.93,0.96,0.6]→300ms→[0.48,0.36,0.67] 同页双帧证实；changes/20261006-fix-cursor-follow-spring/brief.md——esbuild 实包真 cursor 组件 + 真 framer-motion 建镜像页，假帧时钟下证「首跳同帧落位 matrix(296,196) 零扫移、700px 远跳终值精确收敛」，替代了上一轮「逐字手抄引擎」形态；changes/20261006-feature-cursor-ink-trail/brief.md——同法 v3 实包含墨层组件，`?mode=coarse|reduce` URL 参数化 stub matchMedia 验降级环境（零粒子/不激活），Web Animations API `pause()+currentTime` 定格 CSS 动画取四主题截图（绕开帧饥饿的视觉取证法）
+- 命中: 4（最近 2026-10-07）
 - 退役条件: 面板样式具备无头视觉回归环境（不再需要手写复现页）
-- 陈述: 3D 转正屏上的小尺寸动画、亚像素裁切与层叠次序无法靠读源码或正则守卫判定——先建单文件 /tmp 复现页镜像最终 CSS 几何（127.0.0.1 起静态服务；goto 不吃 file:），页面内 evaluate 读 computed transform 做双帧量测；比整机 dev 服务器轻得多，不触 SGN-001 内存悬崖。动画含 delay 且靠 play-state 冻结的，必须专测「首挂载即暂停」帧形。**涉及 React 组件与第三方库行为时，镜像页从「手抄引擎」升级为「esbuild 实包真组件」**：`build({ stdin:{ resolveDir: 消费者包目录 } })` 直接打包真源码（react/react-dom/库全部解析真包，pnpm 双份 react 靠 realpath 去重），保真度最高且 200ms 级完成；配合页面内注入的可暂停假帧时钟（在 bundle 前替换 rAF 引用）可做单帧精确落位量测。
+- 陈述: 3D 转正屏上的小尺寸动画、亚像素裁切与层叠次序无法靠读源码或正则守卫判定——先建单文件 /tmp 复现页镜像最终 CSS 几何（127.0.0.1 起静态服务；goto 不吃 file:），页面内 evaluate 读 computed transform 做双帧量测；比整机 dev 服务器轻得多，不触 SGN-001 内存悬崖。动画含 delay 且靠 play-state 冻结的，必须专测「首挂载即暂停」帧形。**涉及 React 组件与第三方库行为时，镜像页从「手抄引擎」升级为「esbuild 实包真组件」**：`build({ stdin:{ resolveDir: 消费者包目录 } })` 直接打包真源码（react/react-dom/库全部解析真包，pnpm 双份 react 靠 realpath 去重），保真度最高且 200ms 级完成；配合页面内注入的可暂停假帧时钟（在 bundle 前替换 rAF 引用）可做单帧精确落位量测。**假帧时钟两个实锤坑（v3）**：① 初始 `__shimPaused=true` 会让 framer 帧循环根本不会启动——泵队列恒空、transform 钉死在首个 jump 值，读矩阵前必须保持 setTimeout 自动泵链存活；② 同一泵环里先喂未来合成时间戳再回真实时间戳会污染帧钟 dt，弹簧从此不再推进——要么纯真实 `performance.now()` 泵、要么一次性连续合成步进，绝不混用。
 
 ## SGN-005 · IAB 做 dev runtime 复测必须走 localhost，文档指纹判软导航
 - 方向: positive
