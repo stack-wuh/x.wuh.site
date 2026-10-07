@@ -7,8 +7,9 @@
  * 六态经 closest 委托按角色切换，静止 ≥5s 进入 idle 自读书（整页翻），一动立即收回（D7）。
  * 延迟接管（D1）：指针未动时浏览器无任何 API 可读指针位置，故首个 pointermove 之前系统箭头保持可见；
  * 首跳将源值与弹簧 jump 落位再隐藏系统光标——刷新后不再钉在左上角，leave 后重入同样 jump 落位。
- * 墨迹粒子层（ink）：指 = 笔尖，onMove/onDown 同时喂 InkField——位移节流钉出纸上残墨（dot/floss/bead/speck），
- * 池复用零 DOM 增删、零 React 渲染、零新监听器；接管与 leave 时同步显隐并重锚。
+ * 墨迹粒子层（ink）：指 = 笔尖，onMove/onDown 同时喂 InkField——位移节流钉出纸上残墨（dot/floss/bead/speck）、
+ * 点击一晕墨圈（halo）、接管后单发射钟飘出环绕墨尘（dust）；池复用零 DOM 增删、零 React 渲染、零新监听器；
+ * 接管与 leave 时同步显隐、重锚并起停发射钟（start 幂等、stop 即清）。
  * 环境不满足时本组件不挂载任何动效——静态帧（CursorStyles ① 降级链）顶替，触控零影响。
  */
 import { useEffect, useRef } from 'react'
@@ -61,6 +62,7 @@ export default function CursorLayer() {
       taken = true
       inkHost.classList.add('on')
       field.reset()
+      field.start()
     }
 
     const stateFor = (target: EventTarget | null, buttons: number) => {
@@ -106,6 +108,7 @@ export default function CursorLayer() {
       layer.dataset.state = 'default'
       taken = false
       inkHost.classList.remove('on')
+      field.stop()
       field.reset()
     }
 
@@ -114,6 +117,7 @@ export default function CursorLayer() {
     window.addEventListener('pointerup', onUp)
     document.documentElement.addEventListener('pointerleave', onLeave)
     return () => {
+      field.stop()
       window.clearTimeout(idleTimer)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerdown', onDown)

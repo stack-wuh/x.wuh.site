@@ -157,7 +157,7 @@ test('热点锚 (4,4) + 书形右下偏移 OFFSET(6,6)：指针对位点与书�
 
 test('墨迹粒子层：池 round-robin + 位移节流寄生既有事件时序（零新监听器），四类 keyframes 与 token 色在场', () => {
   // 引擎（ink.ts）
-  assert.match(INK, /INK_POOL = 32/, '池上限 32')
+  assert.match(INK, /INK_POOL = 48/, '池上限 48（尘/晕在飞 + 拖尾余量）')
   assert.match(INK, /SPAWN_GAP = 6/, 'T1 位移节流阈值 6px')
   assert.match(INK, /this\.cur % INK_POOL/, 'T4 round-robin 覆盖最老池位')
   assert.match(INK, /void el\.offsetWidth/, '重启动画 = 清类→强制重排→重挂（机制同 popping）')
@@ -170,7 +170,7 @@ test('墨迹粒子层：池 round-robin + 位移节流寄生既有事件时序�
   assert.match(LAYER, /const onMove[\s\S]{0,400}?field\.move\(/, 'onMove 喂粒子（弹簧跟位/接管落位同帧）')
   assert.match(LAYER, /const onDown[\s\S]{0,400}?field\.tap\(/, 'onDown 溅墨与 popping 同源')
   assert.match(LAYER, /const onLeave[\s\S]{0,300}?field\.reset\(\)/, 'pointerleave 重锚池，重入不假甩珠')
-  assert.match(LAYER, /length: INK_POOL/, 'JSX 池元素 32 一次渲染，运行期零增删')
+  assert.match(LAYER, /length: INK_POOL/, 'JSX 池元素 48 一次渲染，运行期零增删')
   assert.equal(LAYER.match(/useState/), null, '移动路径（含粒子）零 React state')
   // 样式层（style.tsx）：容器纯装饰、四类 keyframes、颜色全 token
   assert.match(STYLE, /\.bk-ink \{[\s\S]{0,200}?pointer-events: none/, '粒子层 pointer-events:none 纯装饰')
@@ -181,4 +181,32 @@ test('墨迹粒子层：池 round-robin + 位移节流寄生既有事件时序�
   }
   // 错峰延迟必须长写（animation 简写会把 var(--dl) 重置为 0s）
   assert.match(STYLE, /\.bk-ink i\.go\.speck \{[^}]*animation-delay: var\(--dl, 0ms\)/, 'speck 错峰延迟长写在场')
+})
+
+test('环绕墨尘与点击墨晕：单发射钟生命周期（takeover 起 / leave+cleanup 停）、halo 恰一粒、尘晕 keyframes 与色纪律', () => {
+  // 发射钟：域内唯一 setInterval，stop 唯一 clearInterval；起停只挂现有生命周期（零新监听器口径不变）
+  assert.equal((INK.match(/window\.setInterval/g) || []).length, 1, 'K1 域内 window.setInterval 恰一处')
+  assert.equal((INK.match(/window\.clearInterval/g) || []).length, 1, 'stop() 为唯一清钟出口')
+  assert.match(INK, /start\(\) \{[\s\S]{0,120}?if \(this\.timer\) return[\s\S]{0,120}?window\.setInterval/, 'start 幂等（重入不叠钟）')
+  assert.match(INK, /DUST_INTERVAL = 200/, 'K1 发射节拍 200ms')
+  assert.match(INK, /const tick[\s\S]|private tick\(\)/, 'tick 拍生尘存在')
+  // K2 拖曳：出生点随速度反向偏置（DRAG 常量参与）
+  assert.match(INK, /DRAG_SPEED[\s\S]{0,300}?bx -= Math\.cos\(this\.ang\)/, '移动中尘向速度反方向拖曳')
+  // K3 形态：dust 低透随机（--o 由 JS 逐粒写入）、1/6 朱砂
+  assert.match(INK, /'dust hot'/, '1/6 概率朱砂热尘')
+  assert.match(INK, /setProperty\('--o'/, '尘浓淡 --o 逐粒指定')
+  // K8 点击一晕：tap 恰出 1 粒 halo
+  assert.match(INK, /this\.put\(x, y, 0, 'halo'/, 'K8 每击恰一粒墨晕')
+  // 接线生命周期
+  assert.match(LAYER, /const takeover[\s\S]{0,400}?field\.start\(\)/, 'K1 takeover 内起钟')
+  assert.match(LAYER, /const onLeave[\s\S]{0,200}?field\.stop\(\)/, 'leave 停钟')
+  assert.match(LAYER, /return \(\) => \{[\s\S]{0,60}?field\.stop\(\)/, 'cleanup 停钟（热更新/卸载不遗留）')
+  // 样式层：尘/晕 keyframes 与色纪律（尘 --o、晕 currentColor 描边环、hot 朱砂）
+  assert.ok(STYLE.includes('@keyframes bk-ink-dust'), '缺 bk-ink-dust')
+  assert.ok(STYLE.includes('@keyframes bk-ink-halo'), '缺 bk-ink-halo')
+  assert.match(STYLE, /@keyframes bk-ink-dust \{[\s\S]{0,200}?var\(--o/, '尘峰值透明度走 --o')
+  assert.match(STYLE, /\.bk-ink i\.halo \{[^}]*border: 1px solid currentColor/, '晕 = currentColor 细描边环（静态 border，动画只 transform/opacity）')
+  assert.match(STYLE, /\.bk-ink i\.hot \{[^}]*var\(--primary-color\)/, '热尘朱砂 = --primary-color')
+  assert.match(STYLE, /\.bk-ink i\.go\.dust \{[^}]*animation-delay: var\(--dl, 0ms\)/, 'dust 延迟长写在场')
+  assert.equal((INK.match(/#[0-9a-fA-F]{3,8}\b/g) || []).length, 0, 'ink.ts 零色值')
 })
