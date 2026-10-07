@@ -1,19 +1,16 @@
 import styled from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 
 export const TocAside = styled.aside`
-  display: none;
-
-  @media (min-width: ${BREAKPOINTS.tablet}px) {
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 88px;
-    align-self: start;
-    max-height: calc(100vh - 112px);
-  }
+  /* 桌面侧栏整段显形组走编译口（aside landmark 保留，不可 Flex 化，备忘⑦）：
+     基线隐藏，lg 槽(1024)显形并挂 sticky 组 */
+  ${responsive([false, undefined, undefined, true], (v) =>
+    v
+      ? 'display: flex; flex-direction: column; position: sticky; top: 88px; align-self: start; max-height: calc(100vh - 112px);'
+      : 'display: none;',
+  )}
 `
 
 /**
@@ -199,9 +196,8 @@ export const TocMobile = styled.details`
   margin: 0 0 var(--space-md);
   border-top: 1px solid ${hairline};
 
-  @media (min-width: ${BREAKPOINTS.tablet}px) {
-    display: none;
-  }
+  /* 桌面端隐藏移动折叠条走编译口（details 原生折叠语义保留） */
+  ${responsive([false, undefined, undefined, true], (v) => (v ? 'display: none;' : ''))}
 
   summary {
     list-style: none;

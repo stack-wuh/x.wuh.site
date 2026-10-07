@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import Link from 'next/link'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 
@@ -67,34 +67,21 @@ export const SpreadArrow = styled.span`
 `
 
 export const Spread = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
-  gap: clamp(14px, 3vw, 32px);
   align-items: center;
   margin-top: 12px;
 
-  /* 桌面端前后篇已移入目录侧栏（TocPrevNext），文末仅移动/平板保留 */
-  @media (min-width: ${BREAKPOINTS.tablet}px) {
-    display: none;
-  }
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
+  /* 桌面端前后篇已移入目录侧栏（TocPrevNext），文末仅移动/平板保留。
+     折叠/显隐经 themes/responsive 唯一编译口（载体 grid-div 不可 Flex 化，备忘⑦）：
+     基线=≤640 单列零 gap，md 槽(641)三列桌面形，lg 槽(1024)整体隐藏 */
+  ${responsive(['grid-template-columns: minmax(0, 1fr); gap: 0;', undefined, 'grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); gap: clamp(14px, 3vw, 32px);'], (v) => v)}
+  ${responsive([false, undefined, undefined, true], (v) => (v ? 'display: none;' : 'display: grid;'))}
 `
 
 export const SpreadDivider = styled.div`
-  width: 1px;
-  height: 44px;
   background: ${hairline};
-  justify-self: center;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: auto;
-    height: 1px;
-    justify-self: stretch;
-  }
+  /* ≤640 竖线转横线走编译口：基线=移动形（横线拉伸），md 槽(641)起桌面竖线 */
+  ${responsive(['width: auto; height: 1px; justify-self: stretch;', undefined, 'width: 1px; height: 44px; justify-self: center;'], (v) => v)}
 `
 
 export const SpreadSide = styled(Link)<{ $next?: boolean; $disabled?: boolean }>`
@@ -106,9 +93,8 @@ export const SpreadSide = styled(Link)<{ $next?: boolean; $disabled?: boolean }>
   text-decoration: none;
   ${({ $next }) => ($next ? 'justify-content: flex-end;' : 'justify-content: flex-start;')}
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    padding: 12px 0;
-  }
+  /* ≤640 行内纵垫走编译口（载体 styled(Link) 锚点保留，备忘⑥）：基线 12px 0，md 槽(641)归零 */
+  ${responsive(['12px 0', undefined, '0'], (v) => `padding: ${v};`)}
 
   &:hover ${SpreadTitle},
   &:hover ${SpreadArrow} {
