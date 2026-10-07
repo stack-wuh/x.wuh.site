@@ -4,7 +4,7 @@
   "name": "20261007-feature-cursor-ink-dust",
   "type": "feature",
   "scope": "packages/components/cursor",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261007-feature-cursor-ink-dust",
   "files": [
@@ -17,18 +17,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 513,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/513",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 514,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/514"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "84f79810d0c8716f1c58c355f9b0b5cb7fc8ae49",
-    "verifiedAt": "2026-10-07T04:43:21.225Z"
+    "verifiedCommit": "a23425701a1e98e19a0bfefe7ab2985f08cc39c0",
+    "verifiedAt": "2026-10-07T05:23:13.046Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:513",
-    "planHash": "aa4ff6a21db9565b830483ac76f9d445b85e52ac39374d0a0c011637ba1de21d",
+    "checkpoint": "merged-pr:514",
+    "planHash": "a0e73bdfb67150d1b27a267a139c04d76518d3751f9a252321d349bf23e4eb87",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -58,7 +58,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/cursor-system.md",
-    "reason": "墨层新增 dust 环绕发射维（单 setInterval 生命周期绑接管/leave、--o 逐粒浓淡、拖曳偏置）与 halo 落笔一晕（点击语义升级为 5–8 渣+一晕）；池 32→48；守卫第 13 条钉死发射钟唯一性与停钟双保险；卡需追加两维结论与新执行约束，verified 随 runtime 刷新"
+    "reason": "知识已随 PR #514 落地，仅刷 verifiedCommit 至当前 HEAD"
   }
 }
 ---
@@ -133,6 +133,11 @@ v1.4.73 墨迹拖尾上线后用户 field 反馈两轮：①「有轨迹了，�
   - **参数终值**：DUST_INTERVAL 200ms × P 0.8、尘出生环带 10–24px、升程 12–30px、摆 ±3px、`--o` 0.05–0.18、寿命 2200ms；halo scale .4→2.8 / opacity .5→0 / 520ms、初始径 10px border 1px；speck 5–8 粒 / 2.6px / 飞 8–18px / 600ms / 错峰 ≤140ms。淡档备选（field 若嫌尘抢戏）：`--o` 上限降 0.12 或 DUST_PROB 0.5。
   - **偏差记录**：尘寿命用单值 2200ms（brief K3 的 1.6–2.4s 随机简化——scale/摆幅随机已提供形态差，时长随机需 per-particle duration 会破长写守卫简洁性，取中值）。SGN-004 同源限制不变：CSS 动画视觉推进在此环境靠 seek 定格取证，真实流畅度归 field。
   - 走查：`--files` 外零改动（book/tints/layout/引擎弹簧/拖尾 dot·floss·bead 参数未碰）；监听器仍 4；发射钟生命周期双保险（leave + cleanup）；样式追加区未触既有规则（speck 尺寸/时长属本单点击升级范围，brief 已注明）。
+- 交付发布记录（2026-10-07）：
+  - PR #514 squash 合入 main = `64993e5`（用户合并）；经用户「我执行（同上次）」授权代跑 `gh release create v1.4.74`（target 64993e5，notes=/tmp/v1.4.74-notes.md，https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.74）。
+  - 部署链 run 37575147863（event=release）**7/7 全绿**：quality-gate/prepare/prepare-deps/build-nest/build-next/staging-test/switch-traffic；switch-traffic 日志证实 `xwuhsite-nest-1 Started → Healthy`、`xwuhsite-next-1 Started`（容器换件即部署完成判据，同 v1.4.73 口径）。本轮零 255、零重跑。
+  - 公网指纹仍不可达（`curl https://x.wuh.site/` DNS 解析失败，前单遗留域名问题，与本变更无关）；服务器侧健康链为当前唯一可用验证面。
+  - 用户 field 验证点（开放）：真浏览器刷新看环绕墨尘浓度与点击一晕观感；如嫌尘抢戏单一改点 = ink.ts `DUST_PROB`/`--o` 上限或 style.tsx dust 时长。
 
 
 ## 知识评估
