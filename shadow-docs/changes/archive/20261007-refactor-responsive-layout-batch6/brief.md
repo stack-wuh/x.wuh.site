@@ -4,7 +4,7 @@
   "name": "20261007-refactor-responsive-layout-batch6",
   "type": "refactor",
   "scope": "apps/site/app/components/SiteHeader",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261007-refactor-responsive-layout-batch6",
   "files": [
@@ -14,18 +14,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 518,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/518",
-    "pullRequest": null,
+    "pullRequest": 519,
     "pullRequestUrl": null
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "a81aa9f44be05d01c6d32eeaf587c12b825ae668",
-    "verifiedAt": "2026-10-07T08:34:39.314Z"
+    "verifiedCommit": "c4edb5049f514ca71316b151f3c2b16a19d1c51e",
+    "verifiedAt": "2026-10-07T09:09:00.533Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:518",
-    "planHash": "08b31d13f0bfbfdbf5529fe7557662e052afcbf41d7efdf572749560d6ccd9b2",
+    "checkpoint": "merged-pr:519",
+    "planHash": "f63ca3e96df976d840844a207004d649913485912fe08ee0b836d2c937cf8a30",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -51,7 +51,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "4 处收编全部落在既有备忘 ⑩⑪⑭ 射程：显隐 md 槽同批次5 PlayingSlot 形态；--header-fs 自定义属性进阶梯槽只是声明名不同（⑪ 已覆盖「槽值→CSS 串」），无新契约事实；MobilePanel 为备忘⑩ 直接命中案例；卡片 verified-scope 已累计五批，重复消费不再扩账"
+    "reason": "main-HEAD c4edb50 复核：本批未新增知识事实（结论沿用分支期 review），部署 255 断链与 rerun 全绿属 SGN 域非布局契约"
   }
 }
 ---
@@ -103,8 +103,8 @@
 - [x] 2.2 oxlint 该文件 0/0；布局族守卫 40 例回归网跑绿（防编译口误用）；导出组件名/props 零变化走查（index.tsx 消费端不须动）
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 半日内完成（propose 16:00 前后→部署切流 16:52，S 档全链约 1h）
+- 验证: S 档口径全绿——diff 逐块等价走查（±11/9 行，5 处收编/注记，零导出漂移；640→641 契约窗口与 1024 lg 档恰等均已核对）、oxlint 0/0、布局族守卫 39+typecheck 1 全绿（一轮 40/39/1 瞬态 worker 崩溃同状态复跑归绿，packages 零改动）、备忘⑨ 手动域 tsc EXIT=0；S 档明确不跑全量 site tsc 位集（CSS 串不入类型面）。PR #519 squash c4edb50；Release v1.4.77 首发遭 build-nest/build-next 同秒 SSH status 255 断链（v1.4.72/70 同签名、quality-gate 全绿、nest 编至 docker #18——服务器瞬断非代码），等 60s 幂等 rerun --failed 后 7/7 全绿切流（run 37595158891，2026-10-07 16:52 本地）。合入段 SGN-006 再录（graphql IP 20.205.243.168 超时，canary+同法幂等重试 1 次过）；task set 五连批丢一条单发补齐（CLI 老坑复现）。
 
 ## 知识评估
 

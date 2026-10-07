@@ -106,3 +106,4 @@
 | 20261007-refactor-responsive-layout-batch3 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch3/brief.md |
 | 20261007-refactor-responsive-layout-batch4 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch4/brief.md |
 | 20261007-refactor-responsive-layout-batch5 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch5/brief.md |
+| 20261007-refactor-responsive-layout-batch6 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch6/brief.md |
