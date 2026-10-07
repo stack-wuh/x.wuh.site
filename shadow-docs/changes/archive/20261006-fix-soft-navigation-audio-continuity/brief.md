@@ -4,7 +4,7 @@
   "name": "20261006-fix-soft-navigation-audio-continuity",
   "type": "fix",
   "scope": "apps/site,packages/components",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261006-fix-soft-navigation-audio-continuity",
   "files": [
@@ -27,18 +27,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 501,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/501",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 505,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/505"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ef62462d270b95d38a5c407969c5982cbb7227df",
-    "verifiedAt": "2026-10-06T16:22:31.892Z"
+    "verifiedCommit": "d59c8c6b81ee0fc8dcc10278dd74acab926c7620",
+    "verifiedAt": "2026-10-07T01:02:23.921Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:501",
-    "planHash": "4382631f8c5cc31b20f0db36e2e766c1b6141850d0b1a45a49d8704ba48e0473",
+    "checkpoint": "merged-pr:505",
+    "planHash": "8791523baea9617cf431b934ce2355c877ee4efaf7f760a4fa4b90bef876208f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -76,7 +76,7 @@
   "knowledge": {
     "action": "新增",
     "target": "shadow-docs/knowledge/site-navigation.md",
-    "reason": "站内导航必须客户端软导航是全站级长期事实：main 上 7 面同源裸 <a>/styled.a 实测全文档重载杀根 provider（断音根因），本单清零并立守卫钉死（零增长白名单+Button 根判定）；release 阶段一并写新卡主体、menu 路由与 music-player.md 生命周期段引用"
+    "reason": "复核（main d59c8c6，含 #505 squash e6d2a2e 与后续并行单）：七面软化+守卫+知识卡均已落地 main；用户确认发布完成；交付结论与信号并轨已入 brief 结果段"
   }
 }
 ---
@@ -139,6 +139,7 @@
   2. `packages/components/pagination/index.tsx` 追加禁用态 `as={hasPrev ? undefined : 'span'}`——styled(Link) 下 href undefined 会让 Link 抛错，须摘除；原声明外新触及
   3. 根因诊断阶段确认：断音机制=全文档重载杀根 provider；IAB 经 127.0.0.1 访问 Next dev 全部 chunk 403→整树不水合→一切点击硬导航假象，复测必须 localhost（已写入 task-5 注记）
 - 信号命中记录（供 review 写回）: SGN-001 二次命中（tsc 139→node22）；新负信号候选——残留 `pnpm exec` 僵尸进程可致后续 `pnpm dev:next` 无限挂起，绕行直接调用 `apps/site/node_modules/.bin/next dev`
+- 交付发布: PR #505 squash 合并 e6d2a2e；合并含 main 并轨（3d24faa 携带 #502/#503）——signals.md 编号冲突已解（本单两条信号改号 SGN-005/006、吸收 esbuild 实包升级陈述），合并后复测 softnav+button+pagination+flex+cursor 25/25 绿 → Release v1.4.70（https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.70）→ 部署链 run 37496890422 **红×2**：首试 build-next+build-nest 同秒掉线（`remote command exited without exit status`，纯 SSH 会话故障）；`rerun --failed` 后 build-nest 绿、build-next 仍挂（64s 无错误日志截断 ELIFECYCLE exit 1，CI 日志无真实编译错误）。同型失败在本单合并前的 v1.4.69（16:13，未含本单代码）已存在（双 job 同分钟掉线 exit 255）——判定为**部署机环境故障（内存悬崖/SSH 不稳，SGN-001 谱系），非本单代码**；本地 `next build`（node22、清 `.next`）在 Collecting page data 段 SIGSEGV 复现同型环境崩溃佐证。按纪律：部署未绿 → 停止、不归档，待部署机环境恢复后重触发 release 链复验。
 
 ## 知识评估
 
