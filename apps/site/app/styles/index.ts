@@ -1,6 +1,10 @@
+'use client'
+
 import styled from 'styled-components'
 import Link from 'next/link'
 import Image from '@wuh.site/components/image'
+import { Flex } from '@wuh.site/components/flex'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 export const Root = styled.div`
   font-family: var(--font-sans);
@@ -139,7 +143,10 @@ export const YearLabel = styled.div`
 export const PostRow = styled(Link)`
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  /* ≤520 wrap/gap 断点：载体是 next/link 锚点行，不可 Flex 化（SC 的 as prop 是目标替换，
+     会把布局 props 原样灌给 Link→<a>、原语失效），改经 themes/responsive 唯一编译口出 sm 槽（521） */
+  ${responsive([true, false], (v) => `flex-wrap: ${v ? 'wrap' : 'nowrap'};`)}
+  ${responsive(['6px', 'var(--space-sm)'], (v) => `gap: ${v};`)}
   padding: var(--space-xs) 8px;
   border-radius: 6px;
   text-decoration: none;
@@ -150,11 +157,6 @@ export const PostRow = styled(Link)`
     background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
     padding-left: 12px;
     text-decoration: none;
-  }
-
-  @media (max-width: 520px) {
-    flex-wrap: wrap;
-    gap: 6px;
   }
 `
 
@@ -178,17 +180,15 @@ export const PostTitle = styled.span`
   text-overflow: ellipsis;
 `
 
-export const PostMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+export const PostMeta = styled(Flex).attrs({
+  alignItems: 'center',
+  gap: 'xs',
+  margin: ['0 0 0 calc(6px + var(--space-sm))', '0'],
+})`
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+  /* 自身侧 flex-shrink 写 css 块：Flex 的 flexShrink prop 编译进子项规则（备忘④） */
   flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: calc(6px + var(--space-sm));
-  }
 `
 
 export const MetaDot = styled.span`
@@ -199,15 +199,12 @@ export const MetaDot = styled.span`
   opacity: 0.5;
 `
 
-export const PostTags = styled.span`
-  display: flex;
-  gap: 4px;
+export const PostTags = styled(Flex).attrs({
+  gap: 4,
+  width: ['100%', 'auto'],
+  margin: ['0 0 0 calc(6px + var(--space-sm))', '0'],
+})`
   flex-shrink: 0;
-
-  @media (max-width: 520px) {
-    margin-left: calc(6px + var(--space-sm));
-    width: 100%;
-  }
 `
 
 export const ProjectList = styled.div`
@@ -235,7 +232,8 @@ export const ProjectLink = styled.a`
     text-decoration: none;
   }
 
-  @media (max-width: 520px) { flex-wrap: wrap; }
+  /* 载体 styled.a 保留外链原生锚语义，不可 Flex 化；≤520 换行走唯一编译口 sm 槽（521） */
+  ${responsive([true, false], (v) => `flex-wrap: ${v ? 'wrap' : 'nowrap'};`)}
 `
 
 export const ProjectName = styled.span`
@@ -255,13 +253,12 @@ export const ProjectDesc = styled.span`
   @media (max-width: 520px) { white-space: normal; }
 `
 
-export const ProjectMeta = styled.span`
+export const ProjectMeta = styled(Flex).attrs({
+  margin: ['0', '0 0 0 auto'],
+})`
   font-size: var(--font-size-xs);
   color: var(--text-muted);
-  margin-left: auto;
   flex-shrink: 0;
-
-  @media (max-width: 520px) { margin-left: 0; }
 `
 
 export const BooksList = styled.div`

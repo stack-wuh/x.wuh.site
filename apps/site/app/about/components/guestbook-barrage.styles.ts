@@ -1,6 +1,7 @@
 import Button from '@wuh.site/components/button'
 import { MessageCard } from '@wuh.site/components/message-card'
 import ScrollArea from '@wuh.site/components/scroll-area'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import styled from 'styled-components'
 
 /* ====== Trigger ====== */
@@ -244,13 +245,12 @@ export const ChatRow = styled.div<{ $mine: boolean }>`
   gap: 9px;
 `
 
-/* 气泡语境下的宽度约束：窄屏给头像留出空间 */
+/* 气泡语境下的宽度约束：窄屏给头像留出空间。
+   载体是信笺卡基座 styled.div——Flex 化会把气泡内部 block 流变 flex、且违反
+   「卡片视觉只维护在 message-card」（guestbook-barrage 卡），故宽度阶梯经
+   themes/responsive 唯一编译口直用；≤640 → 移动优先基线 + md 槽（641 起回桌面值） */
 export const GuestbookCard = styled(MessageCard)`
-  max-width: min(68%, 620px);
-
-  @media (max-width: 640px) {
-    max-width: calc(100% - 44px);
-  }
+  ${responsive(['calc(100% - 44px)', undefined, 'min(68%, 620px)'], (v) => `max-width: ${v};`)}
 `
 
 /* ====== Floating Composer Bar ====== */

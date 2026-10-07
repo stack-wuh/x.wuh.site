@@ -20,6 +20,7 @@ interface IStyledFlexTransientProps {
   $hidden?: IFlexProps['hidden']
   $width?: IFlexProps['width']
   $height?: IFlexProps['height']
+  $maxWidth?: IFlexProps['maxWidth']
   $fullWidth?: IFlexProps['fullWidth']
   $fullHeight?: IFlexProps['fullHeight']
   $flex?: IFlexProps['flex']
@@ -63,6 +64,7 @@ const StyledFlex = styled.div<IStyledFlexTransientProps & { theme?: Tokens }>`
       : ''}
   ${(props) => responsive(props.$width, (v) => `width: ${lengthValue(v, props.theme)};`)}
   ${(props) => responsive(props.$height, (v) => `height: ${lengthValue(v, props.theme)};`)}
+  ${(props) => responsive(props.$maxWidth, (v) => `max-width: ${lengthValue(v, props.theme)};`)}
   ${(props) => (props.$fullWidth ? 'width: 100%;' : '')}
   ${(props) => (props.$fullHeight ? 'height: 100%;' : '')}
   ${(props) => (props.$flex !== undefined ? `flex: ${props.$flex};` : '')}
@@ -88,7 +90,7 @@ export const Flex = React.forwardRef<HTMLDivElement, IFlexProps>((props, ref) =>
   // 又杜绝任何布局 prop 泄进 DOM（delete-cast 的 spread 类型仍带 hidden，会撞 styled.div）
   const {
     direction, justifyContent, alignItems, gap, wrap, padding, margin,
-    inline, hidden, width, height, fullWidth, fullHeight, flex, flexGrow,
+    inline, hidden, width, height, maxWidth, fullWidth, fullHeight, flex, flexGrow,
     flexShrink, flexBasis, alignSelf, order,
     ...domProps
   } = props
@@ -107,6 +109,7 @@ export const Flex = React.forwardRef<HTMLDivElement, IFlexProps>((props, ref) =>
       $hidden={hidden}
       $width={width}
       $height={height}
+      $maxWidth={maxWidth}
       $fullWidth={fullWidth}
       $fullHeight={fullHeight}
       $flex={flex}
