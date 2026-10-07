@@ -104,4 +104,4 @@
 | 20261006-style-revert-nav-section-icons | ✅ 完成 | shadow-docs/changes/archive/20261006-style-revert-nav-section-icons/brief.md |
 | 20261007-feature-cursor-ink-dust | ✅ 完成 | shadow-docs/changes/archive/20261007-feature-cursor-ink-dust/brief.md |
 | 20261007-refactor-responsive-layout-batch3 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch3/brief.md |
-| 20261007-refactor-responsive-layout-batch4 | reviewed | shadow-docs/changes/20261007-refactor-responsive-layout-batch4/brief.md |
+| 20261007-refactor-responsive-layout-batch4 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch4/brief.md |

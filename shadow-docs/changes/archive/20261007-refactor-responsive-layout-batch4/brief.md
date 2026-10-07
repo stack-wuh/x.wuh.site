@@ -4,7 +4,7 @@
   "name": "20261007-refactor-responsive-layout-batch4",
   "type": "refactor",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261007-refactor-responsive-layout-batch4",
   "files": [
@@ -18,18 +18,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 512,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/512",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 515,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/515"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "dd5b2457754180c53ae534763ef0eb20aec9ca42",
-    "verifiedAt": "2026-10-07T05:12:15.242Z"
+    "verifiedCommit": "a6e0ea18243f43321137703d78d009a9b9c3a4a0",
+    "verifiedAt": "2026-10-07T05:39:25.204Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:512",
-    "planHash": "0b162891846081a11aba6831e12a5c2763e95358b41f39710a5dd1d357d06a4c",
+    "checkpoint": "merged-pr:515",
+    "planHash": "770bebc0f2a228c2026683c77ad1ff9d388db2c96dab4ade7f7ace1942a41193",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -60,7 +60,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "批次4 十块迁移逐块等价走查通过（两类有意归一：640/641 边界翻转含首个 min-width 正声明形态、1fr→minmax(0,1fr) 防溢出归一；±1px 窗口归阶梯契约所有，属收编设计）。新增长期事实待落卡：⑩ 编译口 decl 只吃阶梯槽值、不吃实例 transient——$compact 型动态断点非编译口射程（FloatingButton/LikeButton 实证）；⑪ 整段显形组可单槽声明串表达（TocAside lg 槽一条串打包 display+flex-direction+sticky 组，aside/details/grid 载体不适用 Flex 时的通用形态）。验证真实可查：worktree site tsc EXIT=2 且错误位集与基线逐条相同（零新增）、oxlint 0/0、主仓守卫 39 例复跑全绿、剥注释扫描仅剩保留清单 4 处、JSX 消费端零 diff——M 级 unit+走查达标。"
+    "reason": "交付全绿后于 main 复核（HEAD 已含 a234257）：结论不变——备忘⑩⑪与边界翻转披露已随 PR #515 落卡，verified-scope/source 含批次4；验证位集持平、守卫 39 例、部署 run 37576508401 全绿。"
   }
 }
 ---
@@ -132,8 +132,11 @@
 - [x] 1.6 验证 — 五文件剥注释扫描：布局类 raw `@media` 仅余明示保留清单；`apps/site tsc --noEmit` 错误位集与基线逐条相同（当前基线 35，双跑对照，139 时按 SGN-001 堆上限配方）；oxlint 0/0；守卫套件不受影响复跑（components 零改动）；JSX 消费端零 diff（git status 不含 .tsx）
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 2026-10-07 单日多段（propose→archive；含宿主机 139 风暴、egress 抖动 canary、与 cursor 会话的 main 竞争合并）
+- 验证: worktree site tsc EXIT=2 且错误 (file,line,col,TSxxxx) 位集与基线逐条 diff 为空（零新增；期间识破过滤安装缺 components 依赖的 136 条级联假阳，补装归位）；oxlint 0/0；主仓组件守卫 39 例复跑全绿；五文件剥注释扫描＝迁移射程内 raw @media 清零、保留块与 brief 清单一致（含 order/$compact 动态断点两处注记）；JSX 消费端零 diff
+- 交付: PR #515 squash 合入（a234257）；Release v1.4.75（73/74 已被 cursor 会话发布占用，按 patch 递增顺延；target a6e0ea1 含 batch4）；部署 run 37576508401 全绿——build-nest/build-next/staging-test/switch-traffic ✓，生产已切换
+- 偏离: 零机制偏离（9 编译口 + 1 Flex-ify 全按 brief 配方）；披露两点归一：640/641 边界翻转含首个 min-width 正声明形态、1fr→minmax(0,1fr) 防溢出——均入卡片备忘⑩⑪
+- 冲突处理: signals.md 与 cursor 会话双向追加冲突手工三方合并（batch4 堆配方 + cursor 拆跑配方同存，SGN-001 命中并 27）；合并提交钩子合规（amend 去除误用的 --no-verify）
 
 ## 知识评估
 - **预期影响:** 无需变更（预判）
