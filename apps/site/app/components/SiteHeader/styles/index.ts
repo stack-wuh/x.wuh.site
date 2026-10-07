@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import Link from 'next/link'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 /**
  * 静默条：Header 只做导航与主题入口，视觉全部退后。
@@ -32,9 +33,7 @@ export const HeaderRoot = styled.header`
    * 15px，正是体检抓出的陷阱，故取局部字面量并注释豁免）；
    * ≥1024 PC 带升到 base 档 15px：宽屏下 13px 视觉参照系偏小（用户实测反馈），
    * 与正文同档的主导航在宽栏里才立得住。 */
-  --header-fs: 13px;
-
-  @media (min-width: ${BREAKPOINTS.tablet}px) { --header-fs: var(--font-size-base); }
+  ${responsive(['13px', undefined, undefined, 'var(--font-size-base)'], (v) => `--header-fs: ${v};`)}
 `
 
 export const HeaderInner = styled.div`
@@ -68,11 +67,11 @@ export const Brand = styled.div`
 `
 
 export const Nav = styled.nav`
-  display: none;
   align-items: center;
   gap: var(--space-sm);
 
-  @media (min-width: ${BREAKPOINTS.mobile}px) { display: flex; }
+  /* 移动端收起导航行，≥641 桌面展开 */
+  ${responsive(['none', undefined, 'flex'], (v) => `display: ${v};`)}
 `
 
 export const Right = styled.div`
@@ -147,7 +146,6 @@ export const ExternalMark = styled.span`
 
 export const MobileToggle = styled.button`
   appearance: none;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
@@ -168,7 +166,8 @@ export const MobileToggle = styled.button`
     height: 20px;
   }
 
-  @media (min-width: ${BREAKPOINTS.mobile}px) { display: none; }
+  /* 汉堡钮仅移动端可见，≥641 桌面隐去 */
+  ${responsive(['inline-flex', undefined, 'none'], (v) => `display: ${v};`)}
 
   &:hover {
     border-color: color-mix(in oklab, var(--primary-color) 35%, var(--normal-300) 65%);
@@ -184,9 +183,9 @@ export const MobileToggle = styled.button`
 
 export const AppearanceRoot = styled.div`
   position: relative;
-  display: none;
 
-  @media (min-width: ${BREAKPOINTS.mobile}px) { display: block; }
+  /* 外观入口（墨印弹层）仅桌面存在，移动端走 MobilePanel 内动作行 */
+  ${responsive(['none', undefined, 'block'], (v) => `display: ${v};`)}
 `
 
 /*
@@ -457,6 +456,9 @@ export const MobilePanel = styled.div<{ $open: boolean }>`
   display: ${({ $open }) => ($open ? 'block' : 'none')};
   padding: 0 var(--space-md) var(--space-base);
 
+  /* 注记（范围外·备忘⑩族）：base display 由 transient $open 展开态驱动，
+     编译口槽只吃槽值不吃实例 transient，两档槽不适配；
+     媒体层语义是「桌面强制整板隐」——保留手写条件媒体（批次5 备忘⑭同族注记） */
   @media (min-width: ${BREAKPOINTS.mobile}px) { display: none; }
 `
 
