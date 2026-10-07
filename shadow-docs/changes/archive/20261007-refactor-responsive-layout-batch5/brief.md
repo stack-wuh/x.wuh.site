@@ -4,7 +4,7 @@
   "name": "20261007-refactor-responsive-layout-batch5",
   "type": "refactor",
   "scope": "apps/site/app/music",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261007-refactor-responsive-layout-batch5",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 516,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/516",
-    "pullRequest": null,
+    "pullRequest": 517,
     "pullRequestUrl": null
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "87154c78a966c13adb60260ad1b3a679b6679a3f",
-    "verifiedAt": "2026-10-07T07:39:27.723Z"
+    "verifiedCommit": "c5cd6f39600eac7e49aebf117bc96097265b9199",
+    "verifiedAt": "2026-10-07T08:04:30.963Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:516",
-    "planHash": "817ccb169c002a63631b04a8e2538077da6928acbe495aa88478cb820dd9b26f",
+    "checkpoint": "merged-pr:517",
+    "planHash": "7728e3f70ba7723c23a0cb2af3065ffee1e121e1ecf04d092bd893553b22ec4e",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -56,7 +56,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "批次5 实证两条长期事实：编译口声明串可含嵌套选择器（SSRExtract 实测 + 透传守卫，responsive.ts 措辞同步）；两档槽适用边界——回退税须复现桌面实际行为、桌面惰性落位可直落 base、但桌面原形态为「无规则」的选择器级条件组（hover/active 交互态）不可用 md 回退复现（同特异度媒体提升位次反超 + 无 hover 有 active 设备误伤），此类保留手写注记"
+    "reason": "已在批次5 PR #517 落实：备忘⑫嵌套选择器透传、⑬回退税/惰性直落、⑭选择器级条件组边界；review 复核 main-HEAD c5cd6f3 无新增知识事实"
   }
 }
 ---
@@ -136,8 +136,8 @@
 - **验证快照（unit 层）**：守卫 40/40（新增嵌套透传例，先红后绿）；layout-typecheck 手动域 tsc 实跑 EXIT=0（备忘⑨ 复核）；apps/site tsc 终态位集 vs main 基线 EMPTY diff（35=35；main 侧 139 五连败第 5 Attempt 出结果，b5 侧一次过）；oxlint 3 文件 0/0；`styles.ts` 导出 38 项与 HEAD 逐项一致；逐块声明多重集全 diff 走查闭合。3.4 runtime 目检随 DNS 顺延（CLI 无 skipped 态，task-17 留 pending 如实披露）。
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: —（会话连续执行未留完整时间戳链；propose→部署完成同日 2026-10-07 完成，review verifiedAt 15:39 本地、部署转绿 15:59 本地）
+- 验证: 守卫 40/40（含嵌套选择器透传新例，先红后绿）、layout-typecheck 手动域 tsc 实跑 EXIT=0（备忘⑨）、apps/site tsc 终态位集 vs main EMPTY diff（35=35）、oxlint 0/0、styles.ts 导出 38 项与基线逐项一致、逐块声明多重集全 diff 走查；styles.ts @media 残留 3 = reduced-motion 1 + 选择器级条件组注记 2（apply 修订见决策段后）。PR #517 squash 合入 c5cd6f3；Release v1.4.76（target main=c5cd6f3）部署 run 37589809995 七作业全绿（quality-gate/prepare/prepare-deps/build-next/build-nest/staging-test/switch-traffic）。runtime 目检随 DNS 顺延（2026-10-07 复核 dig 仍无记录）。过程：branch execute 检出主树按惯例复位 worktree；PLAN_HASH_INVALID 一次重 plan 即过；release execute 缺 GITHUB_TOKEN 一次幂等重跑；139 命中记 SGN-001（命中 28，重试上限 ≥5 与新形态「合并跑 worker 瞬态崩溃判红前复跑」入陈述）。
 
 ## 知识评估
 
