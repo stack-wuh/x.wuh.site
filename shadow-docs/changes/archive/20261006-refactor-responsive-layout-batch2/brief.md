@@ -4,7 +4,7 @@
   "name": "20261006-refactor-responsive-layout-batch2",
   "type": "refactor",
   "scope": "apps/site,packages/components/themes",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -18,18 +18,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 504,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/504",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 506,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/506"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "3d24faa4dd1ef161d6b0478633cc5992e87264d3",
-    "verifiedAt": "2026-10-06T16:33:47.078Z"
+    "verifiedCommit": "6b79fa418abebd045832cfa194dc48b6ab97eabe",
+    "verifiedAt": "2026-10-07T01:15:05.926Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:504",
-    "planHash": "690dc7742bd076ead0b9490b0eafaed944516385353643fc03638b109aa3bd71",
+    "checkpoint": "merged-pr:506",
+    "planHash": "fc7c7587664249c0826f1ab8e6e47a0d4c20aa58b74d0c67ca8be7d413829b2f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -59,7 +59,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "批次2 消费 #503 的 hidden/width 迁移 blog PostTags/PostMeta 与 about TimelineTrack，并把 getSpacingValue 抽为纯函数 themes/spacing.ts 落实 CSS 简写/函数/关键字透传（兑现卡承诺、flex/row 零回归）。验证：布局域 tsc exit0/0 错、站点 tsc 计 31 持平基线且 blog/about/themes 0 错、spacing+flex 守卫 10/10、域守卫 37/37。卡补两条跨批复用事实：flexShrink 等编译进 & > *（子项自身 flex-shrink 须写 css 块）+ getSpacingValue 透传位置，source 追加本 brief。"
+    "reason": "main 复核：#506（含 flexShrink 语义坑 + getSpacingValue 简写透传两条卡补充）已随 v1.4.71 部署 success。重钉过归档门禁；三断点目视因 x.wuh.site 公共 DNS 未解析待补，卡 verified-depth 维持 unit。"
   }
 }
 ---
