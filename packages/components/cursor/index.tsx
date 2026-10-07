@@ -7,6 +7,8 @@
  * 六态经 closest 委托按角色切换，静止 ≥5s 进入 idle 自读书（整页翻），一动立即收回（D7）。
  * 延迟接管（D1）：指针未动时浏览器无任何 API 可读指针位置，故首个 pointermove 之前系统箭头保持可见；
  * 首跳将源值与弹簧 jump 落位再隐藏系统光标——刷新后不再钉在左上角，leave 后重入同样 jump 落位。
+ * 墨迹粒子层（ink）：指 = 笔尖，onMove/onDown 同时喂 InkField——位移节流钉出纸上残墨（dot/floss/bead/speck），
+ * 池复用零 DOM 增删、零 React 渲染、零新监听器；接管与 leave 时同步显隐并重锚。
  * 环境不满足时本组件不挂载任何动效——静态帧（CursorStyles ① 降级链）顶替，触控零影响。
  */
 import { useEffect, useRef } from 'react'
@@ -14,6 +16,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 import BookCursor from './book'
 import { CursorStyles } from './style'
 import { HOT } from './tints'
+import { INK_POOL, InkField } from './ink'
 
 const STATE_SELECTOR = 'a[href],button,[role=button],input,textarea,[contenteditable=true],[data-cursor=wait],[data-cursor=grab]'
 const IDLE_DELAY = 5000
@@ -23,6 +26,7 @@ const SPRING = { stiffness: 1000, damping: 60, mass: 0.5 }
 
 export default function CursorLayer() {
   const layerRef = useRef<HTMLDivElement>(null)
+  const inkRef = useRef<HTMLDivElement>(null)
   const x = useMotionValue(-50)
   const y = useMotionValue(-50)
   const sx = useSpring(x, SPRING)
@@ -35,6 +39,10 @@ export default function CursorLayer() {
 
     const layer = layerRef.current
     if (!layer) return
+
+    const inkHost = inkRef.current
+    if (!inkHost) return
+    const field = new InkField(inkHost)
 
     let idleTimer = 0
     // D1 接管标记：首次 pointermove 前不隐藏系统光标；pointerleave 后重置，重入重新 jump 落位
@@ -51,6 +59,8 @@ export default function CursorLayer() {
       layer.classList.add('on')
       document.documentElement.classList.add('bk-cursor-active')
       taken = true
+      inkHost.classList.add('on')
+      field.reset()
     }
 
     const stateFor = (target: EventTarget | null, buttons: number) => {
@@ -76,6 +86,7 @@ export default function CursorLayer() {
       } else {
         takeover(e.clientX, e.clientY)
       }
+      field.move(e.clientX, e.clientY, e.timeStamp)
       const st = stateFor(e.target, e.buttons)
       if (layer.dataset.state !== st) layer.dataset.state = st
       armIdle()
@@ -84,6 +95,7 @@ export default function CursorLayer() {
       layer.classList.remove('popping')
       void layer.offsetWidth
       layer.classList.add('popping')
+      field.tap(e.clientX, e.clientY)
       if (layer.dataset.state === 'grab') layer.dataset.state = 'grabbing'
     }
     const onUp = () => {
@@ -93,6 +105,8 @@ export default function CursorLayer() {
       layer.classList.remove('on', 'idle', 'popping')
       layer.dataset.state = 'default'
       taken = false
+      inkHost.classList.remove('on')
+      field.reset()
     }
 
     window.addEventListener('pointermove', onMove)
@@ -112,6 +126,11 @@ export default function CursorLayer() {
   return (
     <>
       <CursorStyles />
+      <div ref={inkRef} className='bk-ink' aria-hidden='true'>
+        {Array.from({ length: INK_POOL }, (_, i) => (
+          <i key={i} />
+        ))}
+      </div>
       <motion.div
         ref={layerRef}
         className='bk-cursor'
