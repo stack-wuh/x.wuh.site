@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { Flex } from '@wuh.site/components/flex'
 
 const hairline = 'color-mix(in oklab, var(--normal-400) 55%, transparent)'
 
@@ -9,27 +10,25 @@ export const Header = styled.header`
   margin-bottom: var(--space-xl);
   order: 1;
 
+  /* 保留注记：order 非阶梯词汇（Flex 的 order prop 为标量、编译进子项规则），
+     此显式重排块维持手写（批次4 射程判定） */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     order: 2;
   }
 `
 
-/** 注记式页头：辅助信息双列单行——meta 行靠左、书签标签靠右，520 以下折为上下 */
-export const TopRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
+/** 注记式页头：辅助信息双列单行——meta 行靠左、书签标签靠右，520 以下折为上下。
+ *  本批 post 域唯一 Flex-ify（机制 A）：direction/alignItems/gap 走 sm 槽（521）阶梯 */
+export const TopRow = styled(Flex).attrs({
+  direction: ['column', 'row'],
+  alignItems: ['flex-start', 'center'],
+  justifyContent: 'space-between',
+  gap: ['10px', 'sm'],
+  wrap: true,
+})`
   margin-bottom: 14px;
   animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both;
   animation-delay: 80ms;
-
-  @media (max-width: ${BREAKPOINTS.small}px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
 `
 
 export const MetaLine = styled.p`

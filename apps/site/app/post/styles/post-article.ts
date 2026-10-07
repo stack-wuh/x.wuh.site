@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import Link from 'next/link'
 import Empty from '@wuh.site/components/empty'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 export { MarkdownBody, UpdateDivider } from './post-markdown'
 
@@ -35,14 +35,10 @@ export const RelatedPostsSection = styled.section`
 
 export const RelatedPostsHeader = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: var(--space-sm);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-template-columns: 1fr;
-    gap: 2px;
-  }
+  /* ≤640 双列→单列折叠走编译口（grid 载体，备忘⑦）：基线单列紧 gap，md 槽(641)起标题+计数双列 */
+  ${responsive(['grid-template-columns: minmax(0, 1fr); gap: 2px;', undefined, 'grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-sm);'], (v) => v)}
 `
 
 export const RelatedPostsHeading = styled.h2`
@@ -171,11 +167,9 @@ export const ArticleColophon = styled.footer`
   text-align: center;
 `
 
-/** 文末三钮组：仅移动/平板显示（桌面端同组移入目录侧栏 TocTools） */
+/** 文末三钮组：仅移动/平板显示（桌面端同组移入目录侧栏 TocTools）。≥1024 隐藏走编译口 lg 槽 */
 export const ColophonTools = styled.div`
-  @media (min-width: ${BREAKPOINTS.tablet}px) {
-    display: none;
-  }
+  ${responsive([false, undefined, undefined, true], (v) => (v ? 'display: none;' : ''))}
 `
 
 export const ColophonLicense = styled.p`

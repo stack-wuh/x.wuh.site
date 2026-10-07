@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import Button from '@wuh.site/components/button'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 /**
  * 返回首页/回到顶部/点赞 三钮组，全断点统一「连体分段胶囊」形态：
@@ -61,6 +62,8 @@ export const FloatingButton = styled(Button)<{ $compact?: boolean }>`
 
   transition: ${hoverTransition};
 
+  /* 保留注记：块内含 $compact 动态值（height 随实例变化），编译口 decl 只吃阶梯槽值、
+     不吃实例 transient——动态断点非本词汇射程（批次4 射程判定，#512） */
   @media (min-width: ${BREAKPOINTS.mobile}px) {
     flex: 0 0 auto;
     width: 40px;
@@ -147,7 +150,6 @@ export const FloatingButtonGroup = styled.div<{ $compact?: boolean }>`
   display: flex;
   align-items: center;
   gap: 3px;
-  width: 100%;
   max-width: 320px;
   margin: var(--space-sm) auto 0;
   padding: 3px;
@@ -155,10 +157,9 @@ export const FloatingButtonGroup = styled.div<{ $compact?: boolean }>`
   border-radius: 999px;
   background: var(--background-200);
 
-  @media (min-width: ${BREAKPOINTS.mobile}px) {
-    /* fit-content 而非 auto：flex 容器为块级盒，auto 会撑满整列导致分段左偏留白 */
-    width: fit-content;
-  }
+  /* ≥641 内容宽走编译口 md 槽：fit-content 而非 auto——flex 容器为块级盒，
+     auto 会撑满整列导致分段左偏留白（原注释语义迁移，批次4 #512） */
+  ${responsive(['100%', undefined, 'fit-content'], (v) => `width: ${v};`)}
 
   ${({ $compact }) =>
     $compact
