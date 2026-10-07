@@ -88,3 +88,20 @@ test('ladderSlots normalizes scalar to a single-slot array', () => {
   assert.deepEqual(ladderSlots('a'), ['a'])
   assert.deepEqual(ladderSlots(['a', 'b']), ['a', 'b'])
 })
+
+// 批次5 契约：decl 声明串可含嵌套选择器（&:active / ::before 等）逐字透传进媒体块，
+// SC v6.4.2 SSR 展开实测正确挂宿主类、媒体块提升后级联方向不变（九宫格移动端伪类组的落位依据）。
+test('decl may return nested-selector strings, passed through verbatim into media blocks', () => {
+  const css = responsive(
+    ['&:active { background: red; }', undefined, '&:active { background: blue; }'],
+    (v) => v,
+  )
+  assert.ok(css.startsWith('&:active { background: red; }'), 'baseline 嵌套串逐字在场')
+  assert.match(
+    css,
+    /@media \(min-width: 641px\)[\s\S]*&:active \{ background: blue; \}/,
+    'md 槽嵌套声明进 641 媒体块',
+  )
+  // 文档承诺同步：源码注释必须声明嵌套选择器可用（旧措辞「不含嵌套选择器」作废）
+  assert.match(source, /decl 可含嵌套选择器串/)
+})
