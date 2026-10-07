@@ -4,7 +4,7 @@
   "name": "20261006-feature-cursor-ink-trail",
   "type": "feature",
   "scope": "packages/components/cursor",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261006-feature-cursor-ink-trail",
   "files": [
@@ -17,18 +17,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 509,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/509",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 511,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/511"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b4680864d747c062f52f90560045814aa23a1593",
-    "verifiedAt": "2026-10-07T03:37:12.844Z"
+    "verifiedCommit": "800d56a7b0d4ccf49cc8e3b6501c91dff58259d1",
+    "verifiedAt": "2026-10-07T04:11:00.974Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:509",
-    "planHash": "3c856e437b72c66d86629c245fcb88ae6b4b6ce0929b45bf6d40d984daa90aa2",
+    "checkpoint": "merged-pr:511",
+    "planHash": "d6a5b7c4434ab258c8f089470443334d1be45ececd01c971b8cff6ddfed0821f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -58,7 +58,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/cursor-system.md",
-    "reason": "跟随层新增墨迹粒子池引擎（ink.ts，32 池位 round-robin/6px 位移节流/1.2px/ms 墨丝分档/急停甩珠/点击朱砂溅墨），零新监听器与池纪律由守卫第 12 条钉死；卡需追加结论与执行约束，verified 随 runtime 证据刷新"
+    "reason": "墨迹粒子层结论与纪律已随 PR #511 落地 main，本次刷新 verifiedCommit 至 800d56a"
   }
 }
 ---
@@ -145,6 +145,11 @@ v1.4.69 弹簧随动上线后用户反馈「感官还是不太好」，希望给
   - **偏差记录（SGN-004 同源）**：弹簧**跟位收敛时长**仍不可量测——镜像初版把伪帧钟静默暂停（`__shimPaused=true`）致 framer 帧循环休眠（泵帧队列恒空、transform 钉死），恢复 v2 自动泵链后 takeover/重入 jump 落位复验通过，但 x.set 跟位在真实钟节流下仅爬行推进；引擎正确性由 v2 同栈 runtime 既有证据覆盖，本变更未触碰弹簧参数。浓淡主观手感归真浏览器 field。
   - **探针教训**：`getComputedStyle` 读 transform 依赖 framer 帧循环存活；合成时间戳不可与真实时间戳混泵（污染帧钟 dt）；粒子层可测性在 DOM 类/自定义属性/池计数——全部帧无关。
   - 走查：`--files` 之外零改动（book.tsx/tints.ts/layout 未碰）；style.tsx 既有规则一字未动（只追加 keyframes 段与 no-preference 块内四条长写）；监听器仍 4 个；移动路径零 React state；粒子色值仅 currentColor/两 token，零裸 hex。
+- 交付发布记录（2026-10-07）：
+  - PR #511 squash 合入 main = `800d56a`（用户合并）；按 v1.4.69 先例经用户「我执行（同上次）」授权代跑 `gh release create v1.4.73`（target 800d56a，notes=/tmp/v1.4.73-notes.md）。
+  - 部署链 run 37569232449（event=release）**7/7 全绿**：quality-gate/prepare/prepare-deps/build-next/build-nest/staging-test/switch-traffic；switch-traffic 日志证实 `xwuhsite-nest-1 Started → Healthy`、`xwuhsite-next-1 Started`（容器换件即部署完成判据，同 v1.4.69 口径）。本轮零 255、零重跑。
+  - 公网指纹仍不可达：`curl https://x.wuh.site/` DNS 解析失败（exit 6）——前单遗留的域名解析问题，与本变更无关；服务器侧健康链为当前唯一可用验证面。
+  - 用户 field 验证点（开放）：真浏览器刷新看拖尾浓淡/跟手感；如需调节，单一改点 = style.tsx 四类粒子时长与 keyframes opacity 峰值（dot .34 / floss .30 / bead .50 / speck .80）。
 
 
 ## 知识评估
