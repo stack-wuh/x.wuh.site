@@ -1,4 +1,5 @@
 import Button from '@wuh.site/components/button'
+import { Flex } from '@wuh.site/components/flex'
 import { styled } from 'styled-components'
 
 /* ====== Page Root ====== */
@@ -77,16 +78,14 @@ export const AboutTimeline = styled.div`
   gap: 16px;
 `
 
-export const TimelineTrack = styled.div`
+export const TimelineTrack = styled(Flex).attrs({
+  hidden: [true, undefined, false],
+})`
   width: 2px;
   background: linear-gradient(to bottom, var(--primary-300), transparent);
   flex-shrink: 0;
   position: relative;
   margin-top: 4px;
-
-  @media (max-width: 767px) {
-    display: none;
-  }
 `
 
 export const TimelineDot = styled.div<{ $top: number }>`

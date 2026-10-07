@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import Divider from '@wuh.site/components/divider'
 import { IconLogo } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
@@ -29,11 +30,17 @@ const Footer = () => {
         <p className="footer-slogan">{footerConf.slogan}</p>
 
         <nav className="footer-nav" aria-label={t('site.footer.navAria')}>
-          {footerConf.navItems.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
+          {footerConf.navItems.map((item) =>
+            item.native ? (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
 
         <div className="footer-beian">

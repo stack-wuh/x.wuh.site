@@ -4,7 +4,7 @@
   "name": "20261006-fix-cursor-follow-spring",
   "type": "fix",
   "scope": "packages/components/cursor",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "fix/20261006-fix-cursor-follow-spring",
   "files": [
@@ -18,8 +18,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 500,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/500",
-    "pullRequest": 507,
-    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/507"
+    "pullRequest": null,
+    "pullRequestUrl": null
   },
   "review": {
     "conclusion": "passed",
@@ -28,8 +28,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:507",
-    "planHash": "f4ff2a01ec905a2044834c756b21f5c70bf35b0f59053d8349fec18c909e7da0",
+    "checkpoint": "issue:500",
+    "planHash": "9e817b0c0f6136cc7290a060165402c11116e4d26843a5cac8ffa2e2894abf75",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -134,11 +134,6 @@ v1.4.68「一页书」上线后用户实走发现两个问题：
     - ④ **弹簧收敛**：700px 远跳终值精确命中目标位（截图取证 54,69＝链接位−HOT，见 `design/runtime-mirror-pointer-state.png`：书形右下错开、pointer 态掀页、主题纸色渲染正确）。
   - **偏差记录（环境限制）**：ZCode 内置浏览器 WKWebView 后台渲染帧饥饿实锤——rAF 完全不回调、页面计时器限 3 次/秒预算；弹簧**毫秒级收敛时长曲线**在该环境无法可信量测（fake 帧时钟可证明「动画在推进且终值精确」，不能证明时长）。D3 参数维持起点值 stiffness=1000 / damping=60 / mass=0.5 不动；收敛时长与主观跟手感由用户 field 验证（dev 站 :3000 已在本分支工作树，浏览器打开刷新即可）。
   - 走查：移动路径零 React state（classList/dataset 直写维持）；cleanup 完备（listener/timer/active 类全撤）；`--files` 之外零改动（book.tsx/tints.ts/layout 未碰）。
-- 交付发布记录（2026-10-07）:
-  - PR #502 merged（2cb8cc8），push quality-gate 绿；Release [v1.4.69](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.69)（用户授权代跑创建）。
-  - 部署链 run 37493964499：首试 `build-next`/`build-nest` 于 16:16:14 **同一秒** SSH exit 255（远端构建输出此前正常）＝主机层面事件（当日旁证：凌晨 disk-clean docker prune 10 分钟超时红、15:29 起 runner 视角 x.wuh.site DNS 解析失败）；`gh run rerun --failed` 后 **7/7 全绿**，switch-traffic 日志实锤旧容器销毁→新容器（release SHA 构建）起服、nest Healthy。
-  - 产物指纹抽查受阻于公网：本机外联半瘫（ssh/443 超时、直连 curl/DoH 全灭，仅 gh HTTPS 存活）+ runner DNS 解析失败同源——**x.wuh.site 域名解析故障为基建问题与本 change 无关**（v1.4.68 同样不可达）；上线内容以 CI 链 + 容器更换日志为证。域名 DNS 恢复后建议浏览器目检一次光标（钉角消失、长移动不抖）。
-  - 归档修复注记：#502 squash 合并后 CLI 断点重建分支产生 #507；因合并后其他会话继续修改 `signals.md` 造成假冲突面，经授权以 `merge -X theirs`（内容一律以 main 为准）收敛为仅 brief 状态文件差异的干净 PR。
 
 ## 知识评估
 

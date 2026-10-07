@@ -28,11 +28,34 @@ import { Flex } from '@wuh.site/components/flex'
 
 ## Props
 
-响应式（数组可用）：`direction` `justifyContent` `alignItems` `gap` `wrap` `padding` `margin`。
-固定：`inline` `width` `height` `fullWidth` `fullHeight` `flex` `flexGrow` `flexShrink` `flexBasis` `alignSelf` `order`（后五项编译进 `& > *`，作用于全部直接子项）。
+响应式（数组可用）：`direction` `justifyContent` `alignItems` `gap` `wrap` `padding` `margin` `width` `height` `hidden`。
+固定：`inline` `fullWidth` `fullHeight` `flex` `flexGrow` `flexShrink` `flexBasis` `alignSelf` `order`（后五项编译进 `& > *`，作用于全部直接子项）。
 
 `gap`/`padding`/`margin` 传 spaces token 名（`xs|sm|base|md|lg|xl|2xl|3xl`）、数字（按 px）或 CSS 长度。
+`width`/`height` 传数字（px）或 CSS 长度/百分比，也放行关键字 `auto` / `fit-content` / `max-content` / `min-content`（`getSpacingValue` 会把这些误拼成 `autopx`，lengthValue 前置直通）。
 token 名解析依赖 styled `ThemeProvider`：消费侧无主题提供者时这三个 spacing props 不输出，请预接主题或走 `style`。
+
+### 响应式显隐 `hidden`
+
+true 档编译 `display: none`、false 档按 `$inline` 恢复 `flex`/`inline-flex`。稀疏槽 `[true, , false]` = 「基线隐藏、md 档（≥641）复显」（媒体级联：base none → sm 缺位延续 none → md 恢复 flex）。旧 `@media (max-width: 767px) { display: none }` 的野断点收编到 641 阶梯：
+
+```tsx
+{/* 手机带隐藏，桌面/平板带显示；对应 [base, sm?, md?] 三槽，缺位跳过 */}
+<Flex hidden={[true, undefined, false]}>{decorativeRail}</Flex>
+```
+
+### 响应式换行占满（配合父 `wrap` 阶梯）
+
+「窄屏某子项独占一行、宽屏回归并排」：父 Flex 用 `wrap` 阶梯允许换行、子项 Flex 用 `width` 阶梯占满：
+
+```tsx
+{/* ≤520 换行、gap6px；≥521 不换行、gap=space-sm——原 @media(max-width:520){flex-wrap:wrap;gap:6px} */}
+<Flex wrap={[true, false]} gap={[6, 'sm']} alignItems="center">
+  <span>…title…</span>
+  {/* ≤520 独占一行、≥521 回归内容宽——原 @media(max-width:520){width:100%} */}
+  <Flex gap={4} width={['100%', 'auto']}>…tags…</Flex>
+</Flex>
+```
 
 ## 别名（收敛后的最小集）
 

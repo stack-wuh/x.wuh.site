@@ -96,6 +96,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
   return (
     <S.Nav aria-label={t('common.pagination.navAria')}>
       <S.NavLink
+        as={hasPrev ? undefined : 'span'}
         $disabled={!hasPrev}
         href={hasPrev ? getPageUrl(currentPage - 1) : undefined}
         aria-label={t('common.pagination.prev')}
@@ -125,6 +126,7 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
       </S.LetterGroup>
 
       <S.NavLink
+        as={hasNext ? undefined : 'span'}
         $disabled={!hasNext}
         href={hasNext ? getPageUrl(currentPage + 1) : undefined}
         aria-label={t('common.pagination.next')}

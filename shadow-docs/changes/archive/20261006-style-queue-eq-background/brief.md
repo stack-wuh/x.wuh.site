@@ -4,7 +4,7 @@
   "name": "20261006-style-queue-eq-background",
   "type": "style",
   "scope": "packages/components/audio-player",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261006-style-queue-eq-background",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 490,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/490",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 492,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/492"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "04c927cda2a34526437b9122de2585a7ea0d7fc5",
-    "verifiedAt": "2026-10-06T11:08:17.033Z"
+    "verifiedCommit": "352eb9ef91c396ecd9d96ca6c0cf7cc5d222d772",
+    "verifiedAt": "2026-10-07T01:03:25.600Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:490",
-    "planHash": "008be654fc2033101c0799e76443e6be5ad992b2888a38784639d4f90c618bc3",
+    "checkpoint": "merged-pr:492",
+    "planHash": "dbdb4af807c3a2a13f880433ffe41ef559f8998a9416f83bae2ff1aa4e9b07ce",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -56,7 +56,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "队列行正在播放特效定稿事实由「序号位三面切换」改为「行背景水印+序号复位两面」；新增两条长期事实：带 delay 动画靠 play-state 冻结必须配 animation-fill-mode: backwards（首挂载暂停帧形陷阱，复现页量测实锤）、小尺寸前景指示器在 3D 翻面屏上会被亚像素裁切（状态件宜走背景水印层）"
+    "reason": "复核于 main 352eb9e：#492 squash c625c8f 已合入，v1.4.66 部署链 run 37454945834 全绿（7/7 job）；水印知识正文与守卫已在 main，知识更新已落地"
   }
 }
 ---
