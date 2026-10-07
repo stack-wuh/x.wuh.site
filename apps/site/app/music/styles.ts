@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components'
 import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 
 /* ==========================================================================
    /music 页样式（与组件逻辑分离，样式集中导出）
@@ -21,12 +22,9 @@ export const PageHeader = styled.header`
   display: flex;
   align-items: flex-end;
   gap: var(--space-lg);
-  padding-bottom: var(--space-md);
   border-bottom: 1px solid color-mix(in oklab, var(--normal-400) 55%, transparent);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    padding-bottom: var(--space-sm);
-  }
+  ${responsive(['var(--space-sm)', undefined, 'var(--space-md)'], (v) => `padding-bottom: ${v};`)}
 `
 
 export const TitleGroup = styled.div`
@@ -39,26 +37,26 @@ export const TitleGroup = styled.div`
 export const PageTitle = styled.h1`
   margin: 0;
   font-family: var(--font-serif);
-  font-size: var(--font-size-xl);
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0.03em;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    font-size: 26px;
-  }
+  ${responsive(['26px', undefined, 'var(--font-size-xl)'], (v) => `font-size: ${v};`)}
 `
 
 export const PageSubtitle = styled.p`
   margin: 0;
-  font-size: var(--font-size-sm);
   line-height: 1.7;
-  color: color-mix(in oklab, var(--text-color) 72%, transparent);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    font-size: var(--font-size-xs);
-    color: color-mix(in oklab, var(--text-color) 55%, transparent);
-  }
+  ${responsive(['var(--font-size-xs)', undefined, 'var(--font-size-sm)'], (v) => `font-size: ${v};`)}
+  ${responsive(
+    [
+      'color-mix(in oklab, var(--text-color) 55%, transparent)',
+      undefined,
+      'color-mix(in oklab, var(--text-color) 72%, transparent)',
+    ],
+    (v) => `color: ${v};`,
+  )}
 `
 
 /* ==========================================================================
@@ -68,23 +66,19 @@ export const PageSubtitle = styled.p`
 export const Chronicle = styled.div`
   position: relative;
   display: grid;
-  grid-template-columns: 148px minmax(0, 1fr);
-  gap: var(--space-lg);
-  padding-top: var(--space-lg);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    padding-top: var(--space-sm);
-  }
+  ${responsive(['minmax(0, 1fr)', undefined, '148px minmax(0, 1fr)'], (v) => `grid-template-columns: ${v};`)}
+  ${responsive(['0', undefined, 'var(--space-lg)'], (v) => `gap: ${v};`)}
+  ${responsive(['var(--space-sm)', undefined, 'var(--space-lg)'], (v) => `padding-top: ${v};`)}
 `
 
 export const Rail = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+
+  /* 移动端落位：无滚动容器时 snap/scrollbar 声明惰性，直落基线静态 */
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
 
   /* 纵轨基线 */
   &::before {
@@ -98,25 +92,32 @@ export const Rail = styled.div`
   }
 
   /* 移动端：年谱刻度带——纯文字沿一条基线排开，两端渐隐提示横滑，
-     滚动条全隐藏（组件级 specific 于全局滚动条语言，留言板先例） */
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    flex-direction: row;
-    align-items: baseline;
-    gap: 22px;
-    overflow-x: auto;
-    margin: 6px calc(-1 * var(--space-base)) 0;
-    padding: 8px var(--space-base) 8px;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    cursor: grab;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    -webkit-mask: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent);
-    mask: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent);
-  }
+     滚动条全隐藏（组件级 specific 于全局滚动条语言，留言板先例）；
+     回退税逐条复现桌面：overflow-x visible、mask none、光标 auto */
+  ${responsive(['row', undefined, 'column'], (v) => `flex-direction: ${v};`)}
+  ${responsive(['baseline', undefined, 'flex-start'], (v) => `align-items: ${v};`)}
+  ${responsive(['22px', undefined, '2px'], (v) => `gap: ${v};`)}
+  ${responsive(['auto', undefined, 'visible'], (v) => `overflow-x: ${v};`)}
+  ${responsive(['6px calc(-1 * var(--space-base)) 0', undefined, '0'], (v) => `margin: ${v};`)}
+  ${responsive(['8px var(--space-base)', undefined, '0'], (v) => `padding: ${v};`)}
+  ${responsive(['grab', undefined, 'auto'], (v) => `cursor: ${v};`)}
+  ${responsive(
+    [
+      'linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent)',
+      undefined,
+      'none',
+    ],
+    (v) => `-webkit-mask: ${v};
+  mask: ${v};`,
+  )}
+  ${responsive(
+    [
+      '&::-webkit-scrollbar { display: none; }',
+      undefined,
+      '&::-webkit-scrollbar { display: revert; }',
+    ],
+    (v) => v,
+  )}
 `
 
 export const RailItem = styled.button`
@@ -125,9 +126,11 @@ export const RailItem = styled.button`
   display: block;
   background: none;
   border: none;
-  padding: 2px 0 2px 18px;
   cursor: pointer;
   text-align: left;
+
+  /* 移动端落位：刻度吸附（非滚动容器惰性直落） */
+  scroll-snap-align: center;
 
   /* 轨上节点 */
   &::before {
@@ -162,29 +165,21 @@ export const RailItem = styled.button`
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color) 18%, transparent);
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    flex: 0 0 auto;
-    position: relative;
-    padding: 4px 0 7px;
-    border: none;
-    scroll-snap-align: center;
+  ${responsive(['4px 0 7px', undefined, '2px 0 2px 18px'], (v) => `padding: ${v};`)}
+  ${responsive(['0 0 auto', undefined, '0 1 auto'], (v) => `flex: ${v};`)}
 
-    &::before {
-      display: none;
-    }
+  /* 移动端隐轨上节点，桌面回显 */
+  ${responsive(['&::before { display: none; }', undefined, '&::before { display: block; }'], (v) => v)}
 
-    /* 选中年份的刻度下划标（挂在自身属性选择器上，不跨组件插值） */
-    &[aria-current='true']::after {
-      content: '';
-      position: absolute;
-      left: 1px;
-      right: 1px;
-      bottom: 0;
-      height: 2px;
-      border-radius: 2px;
-      background: var(--primary-color);
-    }
-  }
+  /* 选中年份的刻度下划标（挂在自身属性选择器上，不跨组件插值）；桌面回 content none */
+  ${responsive(
+    [
+      '&[aria-current="true"]::after { content: ""; position: absolute; left: 1px; right: 1px; bottom: 0; height: 2px; border-radius: 2px; background: var(--primary-color); }',
+      undefined,
+      '&[aria-current="true"]::after { content: none; }',
+    ],
+    (v) => v,
+  )}
 `
 
 export const RailYear = styled.span<{ $dist: number }>`
@@ -192,8 +187,6 @@ export const RailYear = styled.span<{ $dist: number }>`
   font-family: var(--font-serif);
   font-weight: ${(p) => (p.$dist === 0 ? 600 : 500)};
   letter-spacing: 0.04em;
-  font-size: var(--font-size-lg);
-  line-height: 1.5;
   color: ${(p) =>
     p.$dist === 0
       ? 'var(--primary-color)'
@@ -212,15 +205,14 @@ export const RailYear = styled.span<{ $dist: number }>`
     color: var(--primary-color);
   }
 
-  /* 移动端：选中年放大成刻度主档，其余按距离缩小淡化（衬线数字本身当刻度） */
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    font-size: ${(p) => (p.$dist === 0 ? '27px' : '16px')};
-    line-height: 1.3;
-  }
+  /* 移动端：选中年放大成刻度主档，其余按距离缩小淡化（衬线数字本身当刻度）；
+     逐实例槽——transient 参与槽值构造而非声明函数 */
+  ${({ $dist }) =>
+    responsive([$dist === 0 ? '27px' : '16px', undefined, 'var(--font-size-lg)'], (v) => `font-size: ${v};`)}
+  ${responsive(['1.3', undefined, '1.5'], (v) => `line-height: ${v};`)}
 `
 
 export const RailCount = styled.span`
-  display: block;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   color: color-mix(in oklab, var(--text-color) 45%, transparent);
@@ -230,9 +222,8 @@ export const RailCount = styled.span`
     color: color-mix(in oklab, var(--primary-color) 75%, var(--text-color));
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  /* 移动端整段隐去（年谱刻度带只留年份） */
+  ${responsive(['none', undefined, 'block'], (v) => `display: ${v};`)}
 `
 
 export const Content = styled.div`
@@ -254,9 +245,8 @@ export const Watermark = styled.span`
   pointer-events: none;
   user-select: none;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  /* 移动端水印年份隐去 */
+  ${responsive(['none', undefined, 'unset'], (v) => `display: ${v};`)}
 `
 
 export const ContentInner = styled.div`
@@ -285,8 +275,6 @@ export const CoverDisc = styled.span<{
   $fast: boolean
 }>`
   position: relative;
-  width: 64px;
-  height: 64px;
   flex-shrink: 0;
   border-radius: 50%;
   display: flex;
@@ -334,10 +322,9 @@ export const CoverDisc = styled.span<{
         `
       : ''}
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 72px;
-    height: 72px;
-  }
+  /* 移动端碟心放大一档 */
+  ${responsive(['72px', undefined, '64px'], (v) => `width: ${v};
+  height: ${v};`)}
 
   @media (prefers-reduced-motion: reduce) {
     transition-duration: 0.01ms;
@@ -346,17 +333,14 @@ export const CoverDisc = styled.span<{
 `
 
 export const DiscLabel = styled.span`
-  width: 30px;
-  height: 30px;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
   box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.45);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 34px;
-    height: 34px;
-  }
+  /* 移动端圆标随碟心同步放大 */
+  ${responsive(['34px', undefined, '30px'], (v) => `width: ${v};
+  height: ${v};`)}
 `
 
 export const PanelCopy = styled.div`
@@ -430,14 +414,19 @@ export const TrackList = styled.ol`
 `
 
 export const TrackRow = styled.li`
-  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: 9px var(--space-xs);
   border-bottom: 1px solid color-mix(in oklab, var(--normal-400) 30%, transparent);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   transition: background-color var(--motion-dur-quick) ease;
+
+  /* 移动端两行制落位：桌面 flex 上下文惰性的列定义直落基线静态 */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+
+  ${responsive(['grid', undefined, 'flex'], (v) => `display: ${v};`)}
+  ${responsive(['2px 10px', undefined, 'var(--space-sm)'], (v) => `gap: ${v};`)}
+  ${responsive(['9px 4px', undefined, '9px var(--space-xs)'], (v) => `padding: ${v};`)}
+  ${responsive(['54px', undefined, 'unset'], (v) => `min-height: ${v};`)}
 
   &:hover {
     background: color-mix(in oklab, var(--primary-color) 5%, transparent);
@@ -457,15 +446,13 @@ export const TrackRow = styled.li`
   }
 
   /* 移动端两行制：编号跨两行、歌名独占一行、艺术家退第二行、次数/时长/最爱右列竖排 */
+  /* 触屏无 hover：按住即翻出播放键。
+     注记（范围外）：移动端专属的「选择器级条件组」——桌面原形态是「无规则」，
+     md 槽回退声明参与级联与静态 hover 规则同特异度、位次靠后，桌面按下态会反转；
+     回写 hover 备份规则又救不到行级 hover（跨组件引用违纪），
+     且会误伤 ≥641 无 hover 有 active 的触屏平板——整体保留手写 max-width 块
+     （批次4 FloatingButton compact 条件媒体同法） */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 2px 10px;
-    padding: 9px 4px;
-    min-height: 54px;
-
-    /* 触屏无 hover：按住即翻出播放键 */
     &:active {
       background: color-mix(in oklab, var(--primary-color) 8%, transparent);
     }
@@ -483,19 +470,18 @@ export const TrackRow = styled.li`
 export const TrackIndex = styled.span`
   position: relative;
   width: 2.2em;
-  height: 20px;
   flex-shrink: 0;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   color: color-mix(in oklab, var(--text-color) 55%, transparent);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    align-self: stretch;
-    height: auto;
-    min-height: 40px;
-  }
+  /* 移动端落位（桌面 flex 惰性直落）：编号跨两行 */
+  grid-column: 1;
+  grid-row: 1 / 3;
+
+  ${responsive(['auto', undefined, '20px'], (v) => `height: ${v};`)}
+  ${responsive(['40px', undefined, 'unset'], (v) => `min-height: ${v};`)}
+  ${responsive(['stretch', undefined, 'auto'], (v) => `align-self: ${v};`)}
 `
 
 export const IndexNum = styled.span.attrs({ className: 'track-idx-num' })`
@@ -529,20 +515,16 @@ export const PlayingSlot = styled.span`
   width: 13px;
   height: 12px;
   flex-shrink: 0;
-  display: inline-flex;
   align-items: flex-end;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  /* 移动端不占横向空间（触控语言改由歌名主色承担） */
+  ${responsive(['none', undefined, 'inline-flex'], (v) => `display: ${v};`)}
 `
 
 export const TrackButton = styled.button`
   flex: 1;
   min-width: 0;
   display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
   border: none;
   background: none;
   padding: 0;
@@ -550,6 +532,15 @@ export const TrackButton = styled.button`
   text-align: left;
   color: inherit;
   font-family: inherit;
+
+  /* 移动端落位（桌面 flex 惰性直落）：第二列跨两行 */
+  grid-column: 2;
+  grid-row: 1 / 3;
+
+  /* 陷阱：两行制下必须 stretch，flex-start 会让歌名保持内容宽不截断、溢出盖住右列 */
+  ${responsive(['column', undefined, 'row'], (v) => `flex-direction: ${v};`)}
+  ${responsive(['stretch', undefined, 'baseline'], (v) => `align-items: ${v};`)}
+  ${responsive(['1px', undefined, 'var(--space-sm)'], (v) => `gap: ${v};`)}
 
   &:hover .track-name {
     color: var(--primary-color);
@@ -560,13 +551,10 @@ export const TrackButton = styled.button`
     outline-offset: 2px;
   }
 
+  /* 注记（范围外）：移动端专属选择器级条件组——「播放中歌名常驻主色」在桌面无对应规则，
+     md 槽回退 inherit 与行级/钮级 hover 主色规则同特异度且位次靠后，桌面悬停当前行会丢高亮；
+     与 TrackRow active 三连同法保留手写（批次4 条件媒体注记先例） */
   @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 2;
-    grid-row: 1 / 3;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1px;
-
     /* 播放中的卷内曲目：歌名常驻主色（移动端无 dot，主色即状态） */
     &[aria-current='true'] .track-name {
       color: var(--primary-color);
@@ -579,13 +567,10 @@ export const TrackName = styled.span`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: var(--font-size-sm);
   transition: color var(--motion-dur-quick) ease;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    font-size: var(--font-size-base);
-    line-height: 1.55;
-  }
+  ${responsive(['var(--font-size-base)', undefined, 'var(--font-size-sm)'], (v) => `font-size: ${v};`)}
+  ${responsive(['1.55', undefined, 'normal'], (v) => `line-height: ${v};`)}
 `
 
 export const TrackArtist = styled.span`
@@ -593,13 +578,17 @@ export const TrackArtist = styled.span`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: color-mix(in oklab, var(--text-color) 72%, transparent);
   font-size: var(--font-size-xs);
   flex-shrink: 1;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    color: color-mix(in oklab, var(--text-color) 58%, transparent);
-  }
+  ${responsive(
+    [
+      'color-mix(in oklab, var(--text-color) 58%, transparent)',
+      undefined,
+      'color-mix(in oklab, var(--text-color) 72%, transparent)',
+    ],
+    (v) => `color: ${v};`,
+  )}
 `
 
 export const TrackPlays = styled.span`
@@ -607,65 +596,58 @@ export const TrackPlays = styled.span`
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
-  min-width: 3.4em;
   text-align: right;
   font-variant-numeric: tabular-nums;
+
+  /* 移动端落位（父 contents 时桌面 flex 惰性直落）：横贯两行制顶行 */
+  grid-column: 1 / -1;
+  grid-row: 1;
 
   .unit {
     margin-left: 2px;
     color: color-mix(in oklab, var(--text-color) 45%, transparent);
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    min-width: 0;
-  }
+  ${responsive(['0', undefined, '3.4em'], (v) => `min-width: ${v};`)}
 `
 
 /* 次数/时长/最爱归组的右侧竖列：桌面 contents 溶入行布局（与历史渲染一致），移动端两行右锚 */
 export const TrackSide = styled.span`
-  display: contents;
+  /* 移动端落位：contents 溶入时桌面 flex/grid 上下文惰性直落 */
+  grid-column: 3;
+  grid-row: 1 / 3;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: end;
+  column-gap: 6px;
+  row-gap: 3px;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: grid;
-    grid-column: 3;
-    grid-row: 1 / 3;
-    grid-template-columns: auto auto;
-    grid-template-rows: auto auto;
-    align-items: center;
-    justify-items: end;
-    column-gap: 6px;
-    row-gap: 3px;
-  }
+  ${responsive(['grid', undefined, 'contents'], (v) => `display: ${v};`)}
 `
 
 export const FavSlot = styled.span`
-  width: 40px;
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 2;
-    grid-row: 2;
-    width: auto;
-  }
+  /* 移动端落位（桌面 contents 溶入惰性直落）：右列第二行 */
+  grid-column: 2;
+  grid-row: 2;
+
+  ${responsive(['auto', undefined, '40px'], (v) => `width: ${v};`)}
 `
 
 export const FavBadge = styled.span`
   padding: 0 5px;
   white-space: nowrap;
-  font-size: var(--font-size-xs);
   line-height: 1.6;
   color: var(--primary-color);
   border: 1px solid color-mix(in oklab, var(--primary-color) 45%, transparent);
   border-radius: var(--border-radius-xs);
   background: color-mix(in oklab, var(--primary-color) 7%, var(--background-100));
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    font-size: 10px;
-  }
+  ${responsive(['10px', undefined, 'var(--font-size-xs)'], (v) => `font-size: ${v};`)}
 `
 
 export const TrackDuration = styled.span`
@@ -674,10 +656,9 @@ export const TrackDuration = styled.span`
   font-size: var(--font-size-xs);
   color: color-mix(in oklab, var(--text-color) 55%, transparent);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-column: 1;
-    grid-row: 2;
-  }
+  /* 移动端落位（桌面 contents 溶入惰性直落）：右列第二行左格 */
+  grid-column: 1;
+  grid-row: 2;
 `
 
 export const TracksEmpty = styled.p`

@@ -32,7 +32,8 @@ export const ladderSlots = <T>(value: TResponsive<T>): readonly (T | undefined)[
 /**
  * 把响应式值编译为 CSS 文本：基线声明 + 每个非缺位上档一个 min-width 媒体块。
  * media 只经 RESPONSIVE_LADDER（由 BREAKPOINTS 派生），不落裸断点数值。
- * 返回值作为 styled-components 插值注入（纯 CSS 文本，不含嵌套选择器）。
+ * 返回值作为 styled-components 插值注入；纯 CSS 文本，decl 可含嵌套选择器串
+ * （&:active、伪元素组等），SC v6 展平时相对宿主选择器解析、媒体块提升后级联方向不变（SSR 实测）。
  */
 export const responsive = <T>(
   value: TResponsive<T> | undefined,
