@@ -4,7 +4,7 @@
   "name": "20261007-refactor-responsive-layout-batch3",
   "type": "refactor",
   "scope": "packages/components,apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261007-refactor-responsive-layout-batch3",
   "files": [
@@ -20,18 +20,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 508,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/508",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 510,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/510"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "ec07c0f47c35c5eee49a14517826a3c05f3a9956",
-    "verifiedAt": "2026-10-07T03:16:19.433Z"
+    "verifiedCommit": "b4680864d747c062f52f90560045814aa23a1593",
+    "verifiedAt": "2026-10-07T03:52:54.985Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:508",
-    "planHash": "4cc1d60b0e8cda6a5bad40b4344f95af398decb5a9fb566ffb5c8c10a3772862",
+    "checkpoint": "merged-pr:510",
+    "planHash": "3c9163288abb482352ab5f2f0d803b86e51013b6252c4786741ccebcfc4bada3",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -63,7 +63,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "Flex 公开词汇新增 maxWidth（与 width 同口同构、TypewriterMotto 首消费）；站点替换批沉淀四条长期事实：⑥锚点行(styled(Link)/styled.a)不可 Flex 化——SC v6 as 即目标替换，断点改走 themes/responsive 编译口（PostRow/ProjectLink 实证）；⑦非可换基座载体（message-card 气泡）同理直用编译口不动组件库；⑧CSS 块注释内反引号会终结 styled 模板字面量；⑨新 worktree 缺 node_modules 时 layout-typecheck 守卫空转假绿须手动域 tsc 复核。brief 2.1/3.1 文本已按实证机制修订并标注 apply 修订。验证：守卫 39/39、域 tsc 手动 EXIT=0、site tsc 35=35 错误位集相同、oxlint 0/0、剥注释扫描射程内清零——M 级 unit+走查达标。"
+    "reason": "批次3 交付绿后于 main 复核：结论不变（maxWidth 词汇 + 备忘⑥⑦⑧⑨已随 PR #510 落卡）；site tsc 位集持平、守卫 39/39、v1.4.72 部署链全绿。"
   }
 }
 ---
@@ -140,8 +140,10 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 2026-10-07 单日多段（propose→archive；含沙箱 egress 对 github.com .166 间歇不可达的 canary 等待、部署链首attempt SSH 255 红后 rerun）
+- 验证: 守卫 39/39 绿、布局域 tsc 手动实跑 EXIT=0（识破新 worktree 缺依赖时 layout-typecheck 空转假绿）、oxlint 0/0、apps/site tsc 35=35 且 (file,line,col,TSxxxx) 位集逐条相同（零新增）
+- 交付: PR #510 squash 合入 main（b468086）；Release v1.4.72 部署链 run 37567469385 全绿（build-nest/build-next/staging-test/switch-traffic ✓，生产已切换）
+- 偏离: PostRow/ProjectLink/GuestbookCard 因 SC v6 `as` 目标替换语义改走 themes/responsive 编译口直用（brief 已标注 apply 修订，机制沉淀为卡片备忘⑥⑦）；三断点公共 DNS 目视仍未解锁，verified-depth 维持 unit
 
 ## 知识评估
 
