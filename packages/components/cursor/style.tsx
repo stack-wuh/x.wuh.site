@@ -123,6 +123,65 @@ export const CursorStyles = createGlobalStyle`
     50% { transform: scaleX(0.44) scaleY(0.72); opacity: 1; }
   }
 
+  /* ===== ④ 墨迹粒子层（运笔残墨：dot 洇开 / floss 墨丝 / bead 甩珠 / speck 朱砂渣 + halo 落笔一晕；dust 环绕墨尘）=====
+     几何全部由 ink.ts 经 --px/--py/--ang/--dx/--dy/--dl/--o 自定义属性内联写入，
+     keyframes 只动 transform/opacity（白名单纪律不变）；display 随 takeover/leave 的 on 类同步 */
+  .bk-ink {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    display: none;
+    color: var(--text-color);
+  }
+  .bk-ink.on { display: block; }
+  .bk-ink i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3.2px;
+    height: 3.2px;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translate(var(--px, -99px), var(--py, -99px));
+    opacity: 0;
+  }
+  .bk-ink i.floss { width: 9px; height: 2.2px; border-radius: 1.1px; }
+  .bk-ink i.bead { width: 2.4px; height: 2.4px; }
+  .bk-ink i.speck { width: 2.6px; height: 2.6px; background: var(--primary-color); }
+  /* 尘：细于墨点，浓淡由 --o 逐粒指定（发射钟随机） */
+  .bk-ink i.dust { width: 2px; height: 2px; }
+  .bk-ink i.hot { background: var(--primary-color); }
+  /* 晕：透明心 + 细描边圆环，放大时描边随 transform 变细正合「晕开变淡」 */
+  .bk-ink i.halo { width: 10px; height: 10px; background: none; border: 1px solid currentColor; }
+
+  @keyframes bk-ink-dot {
+    from { transform: translate(var(--px), var(--py)) scale(0.5); opacity: 0.34; }
+    to { transform: translate(var(--px), var(--py)) scale(1.7); opacity: 0; }
+  }
+  @keyframes bk-ink-floss {
+    from { transform: translate(var(--px), var(--py)) rotate(var(--ang)) scale(1.8, 0.6); opacity: 0.3; }
+    to { transform: translate(var(--px), var(--py)) rotate(var(--ang)) scale(0.5, 0.25); opacity: 0; }
+  }
+  @keyframes bk-ink-bead {
+    from { transform: translate(var(--px), var(--py)) scale(1); opacity: 0.5; }
+    to { transform: translate(calc(var(--px) + var(--dx)), calc(var(--py) + var(--dy))) scale(0.2); opacity: 0; }
+  }
+  @keyframes bk-ink-speck {
+    from { transform: translate(var(--px), var(--py)) scale(0.9); opacity: 0.8; }
+    to { transform: translate(calc(var(--px) + var(--dx)), calc(var(--py) + var(--dy))) scale(0.15); opacity: 0; }
+  }
+  /* 尘：自 --dx 微摆、沿 --dy 缓升（负值上飘），scale 洇散、透明度自 --o 峰值化去 */
+  @keyframes bk-ink-dust {
+    from { transform: translate(var(--px), var(--py)) scale(0.6); opacity: var(--o, 0.12); }
+    to { transform: translate(calc(var(--px) + var(--dx)), calc(var(--py) + var(--dy))) scale(1.5); opacity: 0; }
+  }
+  /* 晕：-50% 自居中于点击位，scale 0.4→2.8 放大淡出一圈 */
+  @keyframes bk-ink-halo {
+    from { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(0.4); opacity: 0.5; }
+    to { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(2.8); opacity: 0; }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .bk-cursor .pt { animation: bk-breeze 5.4s var(--motion-ease-in-out-soft, cubic-bezier(0.45, 0, 0.25, 1)) infinite; }
     /* idle 必须先于交互态：hover/输入/拖拽覆盖自读书 */
@@ -133,6 +192,13 @@ export const CursorStyles = createGlobalStyle`
     .bk-cursor[data-state='grabbing'] .pr { animation: bk-press-r 0.3s var(--motion-ease-in-out-soft, cubic-bezier(0.45, 0, 0.25, 1)) infinite; }
     .bk-cursor.popping .pt { animation: none; }
     .bk-cursor.popping .pl { animation: bk-close-l 260ms var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); }
+    /* 墨粒动画：长写全设（shorthand 会把 --dl 错峰延迟重置为 0——var() 禁入 animation 简写） */
+    .bk-ink i.go.dot { animation-name: bk-ink-dot; animation-duration: 640ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.floss { animation-name: bk-ink-floss; animation-duration: 560ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.bead { animation-name: bk-ink-bead; animation-duration: 680ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.speck { animation-name: bk-ink-speck; animation-duration: 600ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.dust { animation-name: bk-ink-dust; animation-duration: 2200ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.halo { animation-name: bk-ink-halo; animation-duration: 520ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
   }
   /* reduced-motion / 未接管环境：翻页件与行林静默，书保持摊开静帧 */
   @media (prefers-reduced-motion: reduce) {
