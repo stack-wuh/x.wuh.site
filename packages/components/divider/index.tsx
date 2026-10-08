@@ -2,9 +2,9 @@
 
 import * as React from 'react'
 import * as S from './styles'
-import type { DividerProps } from './specs'
+import type { DividerProps } from './types'
 
-export type { DividerProps, DividerVariant } from './specs'
+export type { DividerProps, DividerVariant } from './types'
 
 const Divider: React.FC<DividerProps> = ({ variant = 'hairline', children, ...rest }) => {
   if (variant === 'ornament') {

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 const componentDir = dirname(fileURLToPath(import.meta.url))
 const indexSource = await readFile(resolve(componentDir, 'index.tsx'), 'utf8')
-const specsSource = await readFile(resolve(componentDir, 'specs.tsx'), 'utf8')
+const specsSource = await readFile(resolve(componentDir, 'types.ts'), 'utf8')
 
 test('Flex is a responsive distribution primitive compiled through the breakpoint helper', () => {
   assert.match(indexSource, /import \{ responsive \} from '@wuh\.site\/components\/themes\/responsive'/)

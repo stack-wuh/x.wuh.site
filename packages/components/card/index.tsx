@@ -11,10 +11,10 @@ import {
   type CardPadding,
   type CardVariant,
 } from './styles'
-import type { CardActionsProps, CardContentProps, CardHeaderProps, CardProps } from './specs'
+import type { CardActionsProps, CardContentProps, CardHeaderProps, CardProps } from './types'
 
 export type { CardVariant, CardElevation, CardPadding, CardActionsAlign }
-export type { CardActionsProps, CardContentProps, CardHeaderProps, CardProps } from './specs'
+export type { CardActionsProps, CardContentProps, CardHeaderProps, CardProps } from './types'
 
 const resolveElevation = (value: CardElevation | undefined): CardElevation => {
   if (typeof value !== 'number' || Number.isNaN(value)) return 1

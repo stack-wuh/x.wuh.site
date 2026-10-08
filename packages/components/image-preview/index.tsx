@@ -29,8 +29,8 @@ import {
   IconArrowRight,
 } from '../icons'
 
-export type { ImagePreviewItem, ImagePreviewProps, ThumbnailRenderProps, ToolbarRenderProps } from './specs'
-import type { ImagePreviewItem, ImagePreviewProps, ToolbarRenderProps } from './specs'
+export type { ImagePreviewItem, ImagePreviewProps, ThumbnailRenderProps, ToolbarRenderProps } from './types'
+import type { ImagePreviewItem, ImagePreviewProps, ToolbarRenderProps } from './types'
 
 import { useControllableState } from './hooks/useControllableState'
 import { useMediaQuery } from './hooks/useMediaQuery'

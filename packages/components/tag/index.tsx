@@ -1,7 +1,7 @@
 'use client'
 
 import * as S from './styles'
-import { DEFAULT_TAG_COLOR, type TagProps } from './specs'
+import { DEFAULT_TAG_COLOR, type TagProps } from './types'
 
 const normalizeHexColor = (value?: string | null): string => {
   if (!value) return DEFAULT_TAG_COLOR
@@ -20,4 +20,4 @@ const Tag = ({ label, color, className }: TagProps) => {
 }
 
 export default Tag
-export type { TagProps } from './specs'
+export type { TagProps } from './types'

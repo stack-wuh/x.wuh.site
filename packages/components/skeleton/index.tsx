@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import * as S from './styles'
-import type { SkeletonProps, SkeletonVariant } from './specs'
+import type { SkeletonProps, SkeletonVariant } from './types'
 
 const toSize = (value: number | string | undefined, fallback: string) => {
   if (value === undefined || value === null) return fallback
@@ -51,5 +51,5 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(function Skelet
   )
 })
 
-export type { SkeletonProps, SkeletonVariant } from './specs'
+export type { SkeletonProps, SkeletonVariant } from './types'
 export default Skeleton

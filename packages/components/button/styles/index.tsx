@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { buttonTokens, type ButtonColor } from '../tokens'
-import type { ButtonTransientProps, ButtonVariant } from '../specs'
+import type { ButtonTransientProps, ButtonVariant } from '../types'
 
 const COLOR_MAP: Record<ButtonColor, string> = {
   primary: 'var(--primary-color)',

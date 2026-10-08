@@ -1,7 +1,7 @@
 'use client'
 
 import styled from 'styled-components'
-import type { ResultStatus } from './specs'
+import type { ResultStatus } from './types'
 
 export const Root = styled.section`
   min-height: 70vh;

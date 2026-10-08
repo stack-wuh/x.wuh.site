@@ -6,7 +6,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocale } from '@wuh.site/components/locales'
 import type { LyricLine } from '../utils'
-import type { Track } from '../specs'
+import type { Track } from '../types'
 import { QueueRows } from './PanelQueue'
 import {
   GrabHandle,

@@ -3,9 +3,9 @@
 import * as React from 'react'
 import { IconWechat, IconQQ, IconTwitter, IconEmail, IconGithub, IconDouban } from '../icons'
 import * as S from './styles'
-import type { LinkGroupProps, LinkType } from './specs'
+import type { LinkGroupProps, LinkType } from './types'
 
-export type { LinkGroupProps, LinkGroupSize, LinkItem, LinkType } from './specs'
+export type { LinkGroupProps, LinkGroupSize, LinkItem, LinkType } from './types'
 
 const getPresetIcon = (type: LinkType) => {
   switch (type) {

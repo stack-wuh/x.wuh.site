@@ -9,4 +9,4 @@ export {
   MessageStatus,
   MessageContent,
 } from './styles'
-export type { MessageCardProps, MessageMetaProps, MessageStatusProps } from './specs'
+export type { MessageCardProps, MessageMetaProps, MessageStatusProps } from './types'

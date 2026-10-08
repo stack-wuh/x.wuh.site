@@ -4,9 +4,9 @@ import * as React from 'react'
 import { useLocale } from '@wuh.site/components/locales'
 import { IconWarning } from '../icons'
 import * as S from './styles'
-import { DEFAULT_CONTENT, type ResultProps, type ResultStatus } from './specs'
+import { DEFAULT_CONTENT, type ResultProps, type ResultStatus } from './types'
 
-export type { ResultLink, ResultProps, ResultStatus } from './specs'
+export type { ResultLink, ResultProps, ResultStatus } from './types'
 
 type TranslateFn = (key: string, params?: Record<string, string | number>) => string
 

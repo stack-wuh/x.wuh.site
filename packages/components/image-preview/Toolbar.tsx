@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useLocale } from '@wuh.site/components/locales'
-import type { ToolbarRenderProps } from './specs'
+import type { ToolbarRenderProps } from './types'
 import {
   IconClose,
   IconArrowLeft,

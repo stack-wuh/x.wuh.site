@@ -14,9 +14,9 @@ import {
   DialogFooter,
   DragHandle,
 } from './styles'
-import type { DialogProps } from './specs'
+import type { DialogProps } from './types'
 
-export type { DialogControlBridge, DialogProps, FooterRenderer } from './specs'
+export type { DialogControlBridge, DialogProps, FooterRenderer } from './types'
 
 function resolvePlacement(
   placement: DialogProps['placement'],

@@ -8,9 +8,9 @@ import {
   ScrollAreaThumb,
   ScrollAreaViewport,
 } from './styles'
-import type { ScrollAreaProps } from './specs'
+import type { ScrollAreaProps } from './types'
 
-export type { ScrollAreaProps } from './specs'
+export type { ScrollAreaProps } from './types'
 
 /**
  * 主题化滚动区域，移植自 shadcn ScrollArea（Radix 封装）。

@@ -13,10 +13,10 @@ import {
   type ImageStatus,
 } from './styles'
 import { IconFallbackImage } from '../icons'
-import { ROLE_PRESETS, type AspectRatio, type ImageProps, type ImageRole } from './specs'
+import { ROLE_PRESETS, type AspectRatio, type ImageProps, type ImageRole } from './types'
 
 export type { ImageVariant, ImageAppearance }
-export type { AspectRatio, ImageProps, ImageRole } from './specs'
+export type { AspectRatio, ImageProps, ImageRole } from './types'
 
 function formatRadius(radius?: string | number): string {
   if (typeof radius === 'number') return `${radius}px`

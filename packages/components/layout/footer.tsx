@@ -7,7 +7,7 @@ import { IconLogo } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
 import { SiteStats } from './site-stats'
 import { StyledFooter } from './styles'
-import { footerConf } from './specs'
+import { footerConf } from './types'
 
 /** 版权区间：建站年 → 当前年（同值显示单年），从 siteBorn 推导，无第二日期源 */
 function copyrightYears(): string {

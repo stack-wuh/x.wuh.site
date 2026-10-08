@@ -2,7 +2,7 @@
 
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../../button'
-import type { LinkGroupSize } from '../specs'
+import type { LinkGroupSize } from '../types'
 
 const pulse = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.08); }

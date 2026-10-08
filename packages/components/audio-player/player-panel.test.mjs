@@ -8,7 +8,7 @@ import { readPanelSource } from './panel-sources.mjs'
 const componentDir = dirname(fileURLToPath(import.meta.url))
 // 20261005 拆分定稿：面板源码按 panel-sources.mjs 规范顺序拼接——indexOf 声明名切片语义不变
 const src = readPanelSource()
-const specsSrc = await readFile(resolve(componentDir, 'specs.tsx'), 'utf8')
+const specsSrc = await readFile(resolve(componentDir, 'types.ts'), 'utf8')
 
 test('晕染纸底配方：模糊色场 + 纸色罩 + 词卷局部纸罩 + 暗色反转', () => {
   assert.match(src, /blur\(64px\)/)

@@ -3,9 +3,9 @@
 import * as React from 'react'
 import { IconWechat, IconQQ, IconWeibo, IconTwitter, IconEmail, IconLink, IconCopy } from '../icons'
 import * as S from './styles'
-import type { ShareItem, ShareType, SharedLinkGroupProps } from './specs'
+import type { ShareItem, ShareType, SharedLinkGroupProps } from './types'
 
-export type { ShareItem, ShareType, SharedLinkGroupProps, SharedLinkGroupSize } from './specs'
+export type { ShareItem, ShareType, SharedLinkGroupProps, SharedLinkGroupSize } from './types'
 
 const getPresetIcon = (type: ShareType) => {
   switch (type) {

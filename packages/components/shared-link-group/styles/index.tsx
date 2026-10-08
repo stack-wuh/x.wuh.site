@@ -2,7 +2,7 @@
 
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../../button'
-import type { SharedLinkGroupSize } from '../specs'
+import type { SharedLinkGroupSize } from '../types'
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(8px); }

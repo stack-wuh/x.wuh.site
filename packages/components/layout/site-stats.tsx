@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { IconCalendarDays, IconFeather, IconEye } from '@wuh.site/components/icons';
 import { useLocale } from '@wuh.site/components/locales';
-import { footerConf } from './specs';
+import { footerConf } from './types';
 
 /** 万字段：原始计数格式化为「N.N」数值文本，万字以下保持原值（单位走词典） */
 function formatWanCount(total: number): string {

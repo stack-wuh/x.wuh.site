@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { getSpacingValue } from '@wuh.site/components/themes/index'
 import { Tokens } from '@wuh.site/components/themes/tokens'
 import { responsive } from '@wuh.site/components/themes/responsive'
-import { IFlexProps } from './specs'
+import { IFlexProps } from './types'
 
 /** 仅用于 styled 的 transient props，不会透传到 DOM */
 interface IStyledFlexTransientProps {

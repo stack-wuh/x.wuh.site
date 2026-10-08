@@ -26,7 +26,7 @@ import {
   TitleWrap,
   type AlertVariant,
 } from './styles'
-import type { AlertProps } from './specs'
+import type { AlertProps } from './types'
 
 type DateInput = string | number | Date
 
@@ -216,7 +216,7 @@ const Alert = React.forwardRef<HTMLElement, AlertProps>(function Alert(props, re
 })
 
 export type { AlertVariant } from './styles'
-export type { AlertLabel, AlertLink, AlertProps } from './specs'
+export type { AlertLabel, AlertLink, AlertProps } from './types'
 export type { ShareItem } from '../shared-link-group'
 
 export default Alert
