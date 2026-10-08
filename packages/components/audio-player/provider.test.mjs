@@ -8,12 +8,12 @@ const componentDir = dirname(fileURLToPath(import.meta.url))
 const [providerSource, miniPlayerSource, specsSource] = await Promise.all([
   readFile(resolve(componentDir, 'provider.tsx'), 'utf8'),
   readFile(resolve(componentDir, 'MiniPlayer.tsx'), 'utf8'),
-  readFile(resolve(componentDir, 'specs.tsx'), 'utf8')
+  readFile(resolve(componentDir, 'types.ts'), 'utf8')
 ])
 
 test('播放器状态类型不再被收窄成 idle 字面量', () => {
   assert.doesNotMatch(providerSource, /typeof initialState\.status/)
-  assert.match(providerSource, /import type \{[^}]*PlayerStatus[^}]*\} from '\.\/specs'/s)
+  assert.match(providerSource, /import type \{[^}]*PlayerStatus[^}]*\} from '\.\/types'/s)
   assert.match(providerSource, /const initialState: AudioPlayerState/)
   assert.match(providerSource, /payload: \{ status: PlayerStatus; error\?: string \}/)
   assert.match(providerSource, /\(state: AudioPlayerState, action: Action\): AudioPlayerState/)

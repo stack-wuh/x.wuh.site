@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { buttonTokens, type ButtonColor, type ButtonSize, type ButtonVariant } from './tokens'
-import type { ButtonProps } from './specs'
+import type { ButtonProps } from './types'
 import * as S from './styles'
 
 export type { ButtonColor, ButtonProps, ButtonSize, ButtonVariant }

@@ -5,9 +5,9 @@ import { useLocale } from '@wuh.site/components/locales'
 import { IconEmpty } from '../icons'
 import Button from '../button'
 import * as S from './styles'
-import type { EmptyProps } from './specs'
+import type { EmptyProps } from './types'
 
-export type { ActionItem, EmptyProps } from './specs'
+export type { ActionItem, EmptyProps } from './types'
 
 const Empty = React.forwardRef<HTMLElement, EmptyProps>(function Empty(props, ref) {
   const {

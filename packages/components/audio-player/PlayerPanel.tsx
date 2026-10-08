@@ -18,7 +18,7 @@ import {
   IconSkipForward,
   IconX
 } from '@wuh.site/components/icons'
-import type { PlayerMode } from './specs'
+import type { PlayerMode } from './types'
 import { GHOST_STATIONS, VOLUME_SEAL_GLYPH } from './panel/styles/tokens'
 import { Backdrop, CloseButton, DrawerButton, Panel, PaperVeil, TopTools, WashSrc, WordsToggle } from './panel/styles/shell'
 import { GhostLayer, GhostLine } from './panel/styles/ghost'

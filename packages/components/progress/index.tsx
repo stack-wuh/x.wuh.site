@@ -3,9 +3,9 @@
 import * as React from 'react'
 import { useLocale } from '@wuh.site/components/locales'
 import * as S from './styles'
-import type { ProgressProps } from './specs'
+import type { ProgressProps } from './types'
 
-export type { ProgressProps, ProgressSize } from './specs'
+export type { ProgressProps, ProgressSize } from './types'
 
 /* 纸墨「运笔」双模态进度条：
    传 onChange 即交互态（原生 range 透明覆盖，印光标随 $fill 移动）；

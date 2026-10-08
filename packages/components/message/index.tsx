@@ -20,10 +20,10 @@ import type {
   MessagePlacement,
   MessagePlacementInput,
   MessageType,
-} from './specs'
+} from './types'
 import { IconInfo, IconSuccess, IconWarning, IconError, IconClose } from '../icons'
 
-export type { MessageConfig, MessageKey, MessageOptions, MessagePlacement, MessageType } from './specs'
+export type { MessageConfig, MessageKey, MessageOptions, MessagePlacement, MessageType } from './types'
 
 type MessageArgs = MessageOptions | React.ReactNode
 

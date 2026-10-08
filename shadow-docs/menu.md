@@ -5,6 +5,7 @@
 | 任务域 | 关键词 | Active Knowledge |
 |--------|--------|------------------|
 | 主题与样式 | 主题 配色 字体 token styled-components 光标 cursor 一页书 | knowledge/design-system.md, knowledge/components.md, knowledge/icon-system.md, knowledge/cursor-system.md |
+| 组件编写规范 | 组件规范 目录结构 命名规则 文件职责 exports 入口 types.ts specs.tsx readme 导出形态 默认导出 命名导出 双导出 守卫 棘轮 baseline 占位组件 props 命名 variant 受控 逃生口 | knowledge/component-standard.md |
 | 布局组件 | 布局 Row Col Flex Stagger 栅格 12分栏 断点数组 响应式 grid 组合式 | knowledge/layout-components.md |
 | 动画与动效 | 动画 motion 动效 渐入 view-timeline view-transition | knowledge/animation-system.md |
 | 博客详情 | 博客 文章 详情 排版 工具栏 目录 封面 | knowledge/blog-detail.md, knowledge/post-cover.md, knowledge/blog-display.md |

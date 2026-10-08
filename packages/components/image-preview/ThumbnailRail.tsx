@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useLocale } from '@wuh.site/components/locales'
-import type { ImagePreviewItem, ThumbnailRenderProps } from './specs'
+import type { ImagePreviewItem, ThumbnailRenderProps } from './types'
 import { ThumbnailRail, ThumbnailButton, ThumbLabel } from './styles'
 
 type Props = {

@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from 'react'
 import { useLocale } from '@wuh.site/components/locales'
-import type { HeatmapData, ColorScheme } from './specs'
-import { GITHUB_COLORS, WARM_COLORS, DAY_LABELS, MONTH_LABELS } from './specs'
+import type { HeatmapData, ColorScheme } from './types'
+import { GITHUB_COLORS, WARM_COLORS, DAY_LABELS, MONTH_LABELS } from './types'
 import * as S from './styles'
 
 const ACTIVITY_LABELS: Record<string, string> = {

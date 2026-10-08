@@ -1,0 +1,50 @@
+{
+  "missing-entry": [
+    "analytics"
+  ],
+  "missing-types": [
+    "analytics",
+    "col",
+    "cursor",
+    "icons",
+    "row",
+    "stagger"
+  ],
+  "missing-readme": [
+    "analytics",
+    "cursor",
+    "dialog",
+    "footprint-map",
+    "heatmap",
+    "icons",
+    "image-preview",
+    "message-card",
+    "pagination",
+    "scroll-area",
+    "tag"
+  ],
+  "legacy-readme-name": [
+    "dialog",
+    "footprint-map",
+    "heatmap",
+    "image-preview",
+    "message-card",
+    "pagination",
+    "scroll-area",
+    "tag"
+  ],
+  "dual-export": [
+    "col",
+    "flex",
+    "footprint-map",
+    "image-preview",
+    "row",
+    "stagger"
+  ],
+  "styles-inline": [
+    "col",
+    "cursor",
+    "row",
+    "stagger"
+  ]
+}

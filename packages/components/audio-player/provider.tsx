@@ -18,7 +18,7 @@ import type {
   PlayerStatus,
   Track,
   TrackResolver
-} from './specs'
+} from './types'
 
 const initialState: AudioPlayerState = {
   queue: [],

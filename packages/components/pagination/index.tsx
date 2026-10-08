@@ -2,7 +2,7 @@
 
 import { useLocale } from '@wuh.site/components/locales'
 import * as S from './styles'
-import type { PageItem, PaginationProps } from './specs'
+import type { PageItem, PaginationProps } from './types'
 
 function getPageItems(currentPage: number, totalPages: number): PageItem[] {
   if (totalPages <= 1) return []

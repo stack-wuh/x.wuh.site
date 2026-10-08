@@ -8,7 +8,7 @@ import React from 'react'
 import { useLocale } from '@wuh.site/components/locales'
 import { IconListMusic, IconPlay } from '@wuh.site/components/icons'
 import { formatDuration } from '../utils'
-import type { Track } from '../specs'
+import type { Track } from '../types'
 import { FOLD_LIFT_SHADOW } from './styles/tokens'
 import {
   DrawerScrim,
