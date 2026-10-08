@@ -4,7 +4,7 @@
   "name": "20261008-refactor-component-standard",
   "type": "refactor",
   "scope": "packages/components",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "refactor/20261008-refactor-component-standard",
   "files": [
@@ -84,8 +84,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:522",
-    "planHash": "8bc02110606984f4cacd8712dde0d807e40faaf2a1b9a98a7e8e0a12750e4f95",
+    "checkpoint": "c296db3c1ecfcf7dc31421a4fc6e99c6a143d1b8",
+    "planHash": "446bcb534f7f13babc9017d004cc93e8ec37d96c4bb9b0862fa3615325e2804e",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -100,10 +100,9 @@
     "worktree": "D:\\works\\x.wuh.site-component-standard",
     "commit": {
       "files": [
-        "packages/components/button/types.ts",
         "shadow-docs/changes/20261008-refactor-component-standard/brief.md"
       ],
-      "message": "fix(components): button 类型契约补 re-export 并回写 brief 发布状态"
+      "message": "docs(shadow): 回写 brief checkpoint c296db3"
     }
   },
   "knowledge": null
