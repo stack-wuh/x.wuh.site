@@ -4,7 +4,7 @@
   "name": "20261008-refactor-component-standard",
   "type": "refactor",
   "scope": "packages/components",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261008-refactor-component-standard",
   "files": [
@@ -79,13 +79,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e0e09a119bee0cc3e7e5687633e4695c41f5a447",
-    "verifiedAt": "2026-10-08T04:10:00.603Z"
+    "verifiedCommit": "80cc0973256f0730ab399b76fa35fd119defcd75",
+    "verifiedAt": "2026-10-08T07:13:10.445Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "c296db3c1ecfcf7dc31421a4fc6e99c6a143d1b8",
-    "planHash": "446bcb534f7f13babc9017d004cc93e8ec37d96c4bb9b0862fa3615325e2804e",
+    "checkpoint": "merged-pr:522",
+    "planHash": "899edc3341d3e9482d6c4c466fb80acf7f25d013324e8fbdca6ecb6f97a9ef20",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
