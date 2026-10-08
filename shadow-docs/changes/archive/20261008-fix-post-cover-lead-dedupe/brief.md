@@ -4,7 +4,7 @@
   "name": "20261008-fix-post-cover-lead-dedupe",
   "type": "fix",
   "scope": "apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261008-fix-post-cover-lead-dedupe",
   "files": [
@@ -21,13 +21,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e0e09a119bee0cc3e7e5687633e4695c41f5a447",
-    "verifiedAt": "2026-10-08T03:41:23.899Z"
+    "verifiedCommit": "e6f7b5c47cd0570c0a04eb755b5d3c7059c2a6b8",
+    "verifiedAt": "2026-10-08T07:18:35.777Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:521",
-    "planHash": "1399829544454718470728a27c993f3ab3aec37a437fee0b8f5e9641d3779630",
+    "checkpoint": "merged-pr:521",
+    "planHash": "0381011701f25b095d08c1f5b309553736df50fbebe782fb0abb4869c9ff1ac7",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
