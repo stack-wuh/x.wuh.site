@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { contentService } from "@wuh.site/core/endpoints";
 import { renderMarkdown } from "../../lib/markdown";
+import { dedupeLeadArtifacts } from "../../lib/postLeadDedupe";
 import {
   buildArticleDescription,
   buildArticleMetadata,
@@ -93,6 +94,13 @@ const getIssue = cache(async (num: string): Promise<IssueData> => {
   }
 
   issue.body_html = await ensureRenderedBody(issue);
+  // 新版文档结构在正文里自带大标题与内嵌封面图，而页头/封面卡已由 chrome 渲染；
+  // 渲染层只收编导语区这两类重复，数据层（body/metadata）保持原文，RSS/SEO 消费侧不受影响；
+  // 导出全文自带标题封面头，复用去重后正文同样免除重复
+  issue.body_html = dedupeLeadArtifacts(issue.body_html, {
+    title: issue.title,
+    cover: issue.metadata?.cover ?? null,
+  }).html;
   return {
     issue,
     prev: content.prev

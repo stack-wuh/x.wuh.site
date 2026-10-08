@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原型 · 博客详情页封面首屏去重（方案 A · 渲染层导语区去重）</title>
+<style>
+  /* ============ 设计令牌（酒红·浅色主题实值，源自 packages/components/themes） ============ */
+  :root{
+    --primary-100:#FCEDEC; --primary-200:#F8D8D6; --primary-300:#F2BEBB; --primary-400:#E2928D;
+    --primary-500:#C94A44; --primary-600:#A13531; --primary-700:#8A2A26; --primary-800:#6B1F1E; --primary-900:#4D1515;
+    --normal-100:#FFFDFB; --normal-200:#F8F3EE; --normal-300:#EBE2D8; --normal-400:#D4C8B8;
+    --normal-500:#B9A998; --normal-600:#A08878; --normal-700:#8A6E5C; --normal-800:#5A4438; --normal-900:#2A1E16;
+    --background-100:#FFFBF8; --background-200:#FDF3EC; --background-300:#FAE5D8; --background-900:#F5F0EC;
+    --accent:#E3B567;
+    --primary-color:var(--primary-500);
+    --text-primary:var(--normal-900);
+    --text-secondary:var(--normal-700);
+    --text-muted:var(--normal-700);
+    --font-serif:'Noto Serif SC', Georgia, 'Songti SC', 'SimSun', serif;
+    --font-sans:'Noto Sans SC', ui-sans-serif, 'Microsoft YaHei', sans-serif;
+    --font-mono:'JetBrains Mono', Consolas, 'Courier New', monospace;
+    --hairline:color-mix(in oklab, var(--normal-400) 55%, transparent);
+    --space-xs:8px; --space-sm:16px; --space-md:clamp(20px,4vw,28px);
+    --space-lg:clamp(24px,5vw,36px); --space-xl:clamp(32px,6vw,48px);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; padding:56px 64px 72px;
+    background:var(--background-900);
+    color:var(--text-primary);
+    font-family:var(--font-serif);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ============ 原型文档眉标 ============ */
+  .proto-head{ max-width:1832px; margin:0 auto 14px; }
+  .proto-kicker{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.18em;
+    color:var(--text-secondary); text-transform:uppercase; margin:0 0 10px;
+  }
+  .proto-title{ font-size:30px; font-weight:700; line-height:1.35; margin:0 0 12px; letter-spacing:.02em; }
+  .proto-title em{ font-style:normal; color:var(--primary-color); }
+  .proto-sub{ font-size:13px; line-height:1.8; color:var(--text-secondary); margin:0; }
+  .proto-src{
+    display:inline-block; margin-top:14px; padding:8px 12px;
+    font-family:var(--font-mono); font-size:11px; line-height:1.7; color:var(--normal-800);
+    background:var(--normal-100); border:1px solid var(--hairline); border-radius:6px;
+    max-width:100%; overflow-wrap:anywhere;
+  }
+  .proto-src b{ color:var(--primary-600); font-weight:700; }
+  .proto-rule{ height:1px; border:none; margin:26px auto 0; max-width:1832px;
+    background:linear-gradient(to right, transparent, color-mix(in oklab, var(--primary-color) 45%, transparent), transparent); }
+
+  /* ============ 对比双栏 ============ */
+  .boards{ display:flex; gap:48px; justify-content:center; align-items:flex-start; margin-top:40px; }
+  .board{ position:relative; width:776px; flex:none; }
+  .board-tag{
+    position:relative; z-index:3; display:flex; align-items:center; gap:10px;
+    margin:0 0 14px; padding-left:2px;
+  }
+  .board-tag .state{
+    font-family:var(--font-sans); font-size:12px; font-weight:600; letter-spacing:.06em;
+    padding:5px 12px; border-radius:3px;
+  }
+  .board--before .state{ color:#fff; background:var(--primary-color); }
+  .board--after  .state{ color:var(--primary-700); background:var(--primary-100); border:1px solid color-mix(in oklab, var(--primary-color) 45%, transparent); }
+  .board-tag .what{ font-family:var(--font-sans); font-size:13px; color:var(--text-secondary); }
+
+  .paper{
+    position:relative; background:var(--background-100);
+    border:1px solid var(--hairline); border-radius:16px;
+    padding:44px 48px 40px;
+  }
+
+  /* ============ 详情页复刻：注记式页头 ============ */
+  .p-header{ display:flex; flex-direction:column; margin-bottom:var(--space-xl); }
+  .p-toprow{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; }
+  .p-meta{ margin:0; font-family:var(--font-sans); font-size:13px; color:color-mix(in oklab, var(--text-primary) 76%, transparent); }
+  .p-meta .author{ color:var(--text-primary); font-weight:500; }
+  .p-meta .dot{ margin:0 8px; color:var(--normal-400); }
+  .p-tags{ display:flex; gap:8px; padding-top:2px; }
+  .seal{
+    display:inline-flex; align-items:center; text-decoration:none;
+    padding:5px calc(10px - .14em) 5px 10px;
+    font-family:var(--font-sans); font-size:12px; font-weight:500; line-height:1; letter-spacing:.14em;
+    color:color-mix(in oklab, var(--primary-color) 84%, var(--text-primary));
+    border:1px solid color-mix(in oklab, var(--primary-color) 48%, transparent); border-radius:3px;
+    background:color-mix(in oklab, var(--primary-color) 5%, transparent);
+    box-shadow:inset 0 0 0 1px var(--background-100), inset 0 0 0 2px color-mix(in oklab, var(--primary-color) 20%, transparent);
+    transform:rotate(-1.2deg);
+  }
+  .p-title{ color:var(--text-primary); font-family:var(--font-serif); font-size:40px; font-weight:700;
+    letter-spacing:-.01em; line-height:1.35; margin:0 0 18px; }
+  .p-headrule{ display:flex; align-items:center; gap:var(--space-sm); margin-top:18px; }
+  .p-headrule::before{ content:''; width:44px; height:2px; background:var(--primary-color); }
+  .p-headrule::after{ content:''; flex:1; height:1px; background:var(--hairline); }
+
+  /* ============ 封面杂志卡 ============ */
+  .cover{
+    position:relative; width:680px; aspect-ratio:16/9; max-height:360px;
+    margin:0 auto var(--space-lg); border-radius:12px; overflow:hidden;
+    border:1px solid color-mix(in oklab, var(--accent) 16%, transparent);
+    background:color-mix(in oklab, var(--background-200) 88%, var(--accent) 12%);
+  }
+  .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cover .grad{ position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(to top, color-mix(in oklab,#000 40%,transparent) 0%, transparent 40%); }
+
+  /* ============ 正文（markdown-body 复刻） ============ */
+  .md{ width:680px; margin:0 auto; }
+  .md h2{ font-family:var(--font-serif); font-weight:700; line-height:1.4; letter-spacing:.02em; margin:2.6em 0 .8em; }
+  .md .sec-eyebrow{ display:flex; align-items:center; gap:12px; margin-bottom:12px;
+    font-weight:600; font-size:12px; letter-spacing:.42em; color:var(--primary-color); }
+  .md .sec-eyebrow .stub{ flex:none; width:44px; height:1px;
+    background:color-mix(in oklab, var(--primary-color) 38%, transparent); }
+  .md h2 .sec-text{ display:block; font-size:23px; color:var(--text-primary); }
+  .md h3 .sec-text{ display:block; font-size:20px; color:var(--text-primary); }
+  .md p{ margin:1.15em 0; font-size:15.5px; line-height:1.85; }
+  .md .dropcap{ float:left; margin:.05em .14em 0 0; font-weight:700; font-size:3.35em; line-height:1.15; color:var(--primary-color); }
+  .md .fig-inline{ margin:1.4em 0; border-radius:8px; }
+  .md .fig-inline img{ width:100%; display:block; border-radius:8px; }
+  .md .fig-cap{ margin:8px 0 0; font-family:var(--font-sans); font-size:12px; color:var(--text-muted); text-align:center; }
+
+  /* ============ 问题/效果标注 ============ */
+  .flag{ position:absolute; z-index:4; width:26px; height:26px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-sans); font-size:13px; font-weight:700; color:#fff; background:var(--primary-color);
+    box-shadow:0 0 0 3px var(--background-100); }
+  .flag.ok{ color:var(--primary-700); background:#fff; border:1.5px solid var(--primary-color); }
+  .dup-zone{ position:relative; outline:2px dashed color-mix(in oklab, var(--primary-color) 65%, transparent); outline-offset:8px; }
+  .dup-note{
+    margin:20px 0 0; padding:12px 16px; border-radius:8px;
+    font-family:var(--font-sans); font-size:12.5px; line-height:1.9;
+    color:var(--primary-800); background:color-mix(in oklab, var(--primary-color) 6%, var(--background-100));
+    border:1px solid color-mix(in oklab, var(--primary-color) 24%, transparent);
+  }
+  .dup-note b{ color:var(--primary-600); }
+  .good-note{ color:var(--normal-800); background:color-mix(in oklab, var(--accent) 9%, var(--background-100));
+    border-color:color-mix(in oklab, var(--accent) 35%, transparent); }
+  .good-note b{ color:var(--primary-700); }
+
+  /* ============ 规则说明带 ============ */
+  .rules{ max-width:1832px; margin:56px auto 0; }
+  .rules-title{ display:flex; align-items:center; gap:14px; font-size:20px; font-weight:700; margin:0 0 6px; }
+  .rules-title::before{ content:''; width:44px; height:2px; background:var(--primary-color); flex:none; }
+  .rules-sub{ font-family:var(--font-sans); font-size:12.5px; color:var(--text-secondary); margin:0 0 22px; }
+  .rule-grid{ display:flex; gap:28px; align-items:stretch; }
+  .rule-card{ flex:1; background:var(--background-100); border:1px solid var(--hairline); border-radius:12px; padding:24px 26px; }
+  .rule-card h4{ margin:0 0 10px; font-size:15px; letter-spacing:.02em; display:flex; align-items:center; gap:10px; }
+  .rule-card h4 .no{
+    font-family:var(--font-sans); font-size:11px; font-weight:700; color:#fff; background:var(--primary-color);
+    width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex:none;
+  }
+  .rule-card p{ margin:0; font-family:var(--font-sans); font-size:12.5px; line-height:2; color:var(--normal-800); }
+  .rule-card code{ font-family:var(--font-mono); font-size:11.5px; color:var(--primary-700); background:color-mix(in oklab,var(--primary-color) 7%,transparent); padding:1px 6px; border-radius:4px; }
+  .rule-card ul{ margin:6px 0 0; padding-left:18px; font-family:var(--font-sans); font-size:12.5px; line-height:2; color:var(--normal-800); }
+
+  .footnotes{ max-width:1832px; margin:30px auto 0; font-family:var(--font-sans); font-size:12px; line-height:2.1; color:var(--text-secondary); }
+  .footnotes b{ color:var(--primary-700); }
+  .fn-line{ display:flex; gap:10px; }
+  .fn-mark{ color:var(--primary-color); flex:none; }
+</style>
+</head>
+<body>
+
+<header class="proto-head">
+  <p class="proto-kicker">PROTOTYPE · POST-DETAIL LEAD · 2026-10-08 · SHADOW-DEV PROPOSE</p>
+  <h1 class="proto-title">博客详情页首屏封面重复 —— <em>方案 A · 渲染层导语区去重</em></h1>
+  <p class="proto-sub">数据源为线上真实文章 stack-wuh/blog #172《Vibe Coding Workflow 概述》：正文 md 以文档结构原样发布（自带大标题 + 封面图内嵌首段），与详情页 chrome（PostHeader h1、PostCover 杂志卡）叠加后，同一张图出现 2 次、同一句标题出现 3 次。左为现状，右为方案 A 修复后——不改文档结构、不改数据层，仅渲染层收编。</p>
+  <div class="proto-src">
+    metadata：<b>"cover": "https://cdn.wuh.site/2026-10/2026-10-07-122611.png"</b>
+    &nbsp;≡&nbsp; 正文首图：<b>![](https://cdn.wuh.site/2026-10/2026-10-07-122611.png)</b>
+    &nbsp;·&nbsp; 正文首行标题：<b>## Vibe Coding Workflow 概述</b> ≡ issue.title
+  </div>
+  <hr class="proto-rule">
+</header>
+
+<main class="boards">
+
+  <!-- ================= 现状 ================= -->
+  <section class="board board--before">
+    <div class="board-tag">
+      <span class="state">现状 · BEFORE</span>
+      <span class="what">线上 #172 实际渲染首屏（桌面 ≥1024，正文栏宽 680px）</span>
+    </div>
+    <div class="paper">
+      <!-- 页头 -->
+      <header class="p-header">
+        <div class="p-toprow">
+          <p class="p-meta"><span class="author">吴尒红（Shadow）</span><span class="dot">·</span>1天前发布<span class="dot">·</span>128 次浏览</p>
+          <nav class="p-tags"><a class="seal" href="javascript:void(0)">ai</a></nav>
+        </div>
+        <span class="flag" style="top:6px; right:12px;">③</span>
+        <h1 class="p-title">Vibe Coding Workflow 概述</h1>
+        <div class="p-headrule"></div>
+      </header>
+      <!-- 封面杂志卡 -->
+      <div class="cover" style="position:relative;">
+        <span class="flag" style="top:12px; right:12px;">①</span>
+        <img src="./cover172.png" alt="">
+        <div class="grad"></div>
+      </div>
+      <!-- 正文 -->
+      <div class="md">
+        <div class="dup-zone">
+          <span class="flag" style="top:-10px; right:-38px;">②</span>
+          <h2>
+            <span class="sec-eyebrow">壹<i class="stub"></i></span>
+            <span class="sec-text">Vibe Coding Workflow 概述</span>
+          </h2>
+          <div class="fig-inline">
+            <span class="flag" style="top:10px; right:-38px;">④</span>
+            <img src="./cover172.png" alt="">
+          </div>
+        </div>
+        <p><span class="dropcap">在</span>今年 4 月底我开始正式接触和使用 AI，最开始使用的 chatgpt 和 opus，使用的方式也很简单一问一答，跟 AI 一轮一轮地对话，让 AI 执行，然后人工介入验收代码和代码。</p>
+        <p>慢慢地我们开始发现，有点不太对劲。在团队开发的过程中，每一个人可能会遇到相同的需求，但是每一个的提示词不同，使用的大模型不同，使用的智能体不同，得出的结果差异性特别的大，所以迫切地需要一个统一的流程性的内容……</p>
+        <h2>
+          <span class="sec-eyebrow">贰<i class="stub"></i></span>
+          <span class="sec-text" style="font-size:20px;">工作流存在的意义?</span>
+        </h2>
+        <p>不要让 AI 更快写代码，应该是让 AI 先明确边界。……</p>
+      </div>
+    </div>
+    <div class="dup-note">
+      <b>①</b> 封面杂志卡（metadata.cover）——同一张文字标题卡；<b>②</b> 图内又印着一遍标题；<b>③</b> PostHeader 真 h1 第三遍；<b>④</b> 正文首段内嵌图原样再渲染一次（现行规范条款「正文首图不因封面展示被移除」）。<br>
+      效果：图 ×2 · 标题文字 ×3 挤满首屏；目录「共 7 节」，<b>第壹节被文档标题占位</b>，正文六节从「贰」起跳。
+    </div>
+  </section>
+
+  <!-- ================= 修复后 ================= -->
+  <section class="board board--after">
+    <div class="board-tag">
+      <span class="state">方案 A · AFTER</span>
+      <span class="what">渲染层导语区去重（同一份 md、同一套 chrome，仅正文 html 收编）</span>
+    </div>
+    <div class="paper">
+      <!-- 页头 -->
+      <header class="p-header">
+        <div class="p-toprow">
+          <p class="p-meta"><span class="author">吴尒红（Shadow）</span><span class="dot">·</span>1天前发布<span class="dot">·</span>128 次浏览</p>
+          <nav class="p-tags"><a class="seal" href="javascript:void(0)">ai</a></nav>
+        </div>
+        <span class="flag ok" style="top:6px; right:12px;">✓</span>
+        <h1 class="p-title">Vibe Coding Workflow 概述</h1>
+        <div class="p-headrule"></div>
+      </header>
+      <!-- 封面杂志卡 -->
+      <div class="cover" style="position:relative;">
+        <span class="flag ok" style="top:12px; right:12px;">✓</span>
+        <img src="./cover172.png" alt="">
+        <div class="grad"></div>
+      </div>
+      <!-- 正文 -->
+      <div class="md">
+        <p><span class="dropcap">在</span>今年 4 月底我开始正式接触和使用 AI，最开始使用的 chatgpt 和 opus，使用的方式也很简单一问一答，跟 AI 一轮一轮地对话，让 AI 执行，然后人工介入验收代码和代码。</p>
+        <p>慢慢地我们开始发现，有点不太对劲。在团队开发的过程中，每一个人可能会遇到相同的需求，但是每一个的提示词不同，使用的大模型不同，使用的智能体不同，得出的结果差异性特别的大，所以迫切地需要一个统一的流程性的内容……</p>
+        <h2>
+          <span class="sec-eyebrow">壹<i class="stub"></i></span>
+          <span class="sec-text" style="font-size:20px;">工作流存在的意义?</span>
+        </h2>
+        <p>不要让 AI 更快写代码，应该是让 AI 先明确边界。如果我们是做的团队使用的工作流，那么还需要赋予更多的限制条件，需要明确的是以下两点：</p>
+        <h2>
+          <span class="sec-eyebrow">贰<i class="stub"></i></span>
+          <span class="sec-text" style="font-size:20px;">启发式探索</span>
+        </h2>
+        <p>启发式探索，先回答三个问题。……</p>
+      </div>
+    </div>
+    <div class="dup-note good-note">
+      封面 <b>×1</b>（杂志卡，承载图）、标题 <b>×1</b>（PostHeader 唯一 h1）、首屏直达正文导语（<b>首字下沉</b>恢复在真正的导语段上）。<br>
+      目录「共 6 节」，<b>编号从壹顺排</b>到陆；正文中途的同 URL 配图、与标题不同的首行标题均不受影响（见下方规则卡）。
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= 规则说明 ================= -->
+<section class="rules">
+  <h2 class="rules-title">去重规则 · 只收导语区</h2>
+  <p class="rules-sub">输入上下文 { title, cover }；发生在 SSR renderMarkdown 之后、useToc 消费之前——TOC / 章节记号 / 图片预览索引全部跟随同一份干净 html。数据层（GitHub body、MongoDB、RSS、导出全文）保持原文不动。</p>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <h4><span class="no">1</span>图片命中条件</h4>
+      <p>导语区（<b>首个实质段落之前</b>的块组）内 <code>归一化(src) === metadata.cover</code> 的 <code>&lt;img&gt;</code>（含其空壳段落）→ 渲染时移除。</p>
+      <ul>
+        <li>归一化：协议/大小写/查询参数差异合并比较</li>
+        <li>导语区之后再次出现的同 URL 图片不动</li>
+      </ul>
+    </div>
+    <div class="rule-card">
+      <h4><span class="no">2</span>标题命中条件</h4>
+      <p>导语区首个 heading，剥离手写编号前缀（「一、/1.」——与 <code>articleTypography</code> 同一套归一化）后 <code>文本 === issue.title</code> → 移除。</p>
+      <ul>
+        <li>heading id 与锚点不回收：目录重排、眉线编号自动续位</li>
+        <li>标题不等同 → 保留（作者写的是真章节）</li>
+      </ul>
+    </div>
+    <div class="rule-card">
+      <h4><span class="no">3</span>边界与不变量</h4>
+      <ul>
+        <li>存量未命中文章：<b>零变化</b>（无 cover、首图不同、无前置标题均不触发）</li>
+        <li>无封面生成式封面分支、封面回退语义不动</li>
+        <li>移动端出血/圆角/order 规则不动——去重只删块，断点表现自动一致</li>
+        <li>SSR 单帧输出，客户端零 DOM 操作（遵守排印变换确定性约束）</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footnotes">
+    <div class="fn-line"><span class="fn-mark">◇</span><span>视觉基线不变：封面仍是 16:9 杂志卡（1px accent 细边 + 12px 圆角 + 底部轻渐变），本次只解决「重复」，不重设计封面本体。</span></div>
+    <div class="fn-line"><span class="fn-mark">◇</span><span><b>待确认点（不并入本 change）</b>：#172 正文另含 6 张 <b>./assets/fig-0X-*.png</b> 相对路径配图，详情页按相对 URL 解析将破图——属发布管线资产改写问题，建议另立变更核实处理。</span></div>
+    <div class="fn-line"><span class="fn-mark">◇</span><span>知识评估预期：更新 <b>post-cover.md</b>「显式封面与正文图片独立」条款 → 「导语区内与显式封面同 URL 的正文图由渲染层去重」；数据层独立性条款保留。</span></div>
+  </div>
+</section>
+
+</body>
+</html>
