@@ -135,3 +135,25 @@ jobs:
             set -e
             cd /github/x.wuh.site
             ./scripts/deploy-docker.sh switch-traffic
+
+  restart-nginx:
+    needs: [switch-traffic]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Restart nginx and show status
+        uses: appleboy/ssh-action@master
+        env:
+          SUDO_PASS: ${{ secrets.SERVER_PASSWORD }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: SUDO_PASS
+          script: |
+            set -e
+            echo "════ systemctl restart nginx ════"
+            echo "$SUDO_PASS" | sudo -S systemctl restart nginx 2>&1 | grep -v -i "password" || true
+            echo "════ systemctl status nginx ════"
+            systemctl status nginx --no-pager 2>&1 | head -15 || true
