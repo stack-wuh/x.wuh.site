@@ -4,7 +4,7 @@
   "name": "20261006-feature-custom-cursor",
   "type": "feature",
   "scope": "cursor",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261006-feature-custom-cursor",
   "files": [
@@ -21,18 +21,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 497,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/497",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 498,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/498"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c625f8f66ab1fef8165c47d3836cd69002308c64",
-    "verifiedAt": "2026-10-06T14:54:29.900Z"
+    "verifiedCommit": "83efea3967d2414c4e6a7ef4d54ca16f8c06c896",
+    "verifiedAt": "2026-10-08T07:19:34.592Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:497",
-    "planHash": "f34de0e66f11a146034ba8a83db0fba88f070b1aa17a1e3aec2293f9ce475bcf",
+    "checkpoint": "merged-pr:498",
+    "planHash": "fb7c1c3f08675ae166ba0dc27e3543f9baa3798a6d1fe11e356fe28d7277a73f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -61,11 +61,7 @@
       "body": "Closes #497\n\n完整 brief：shadow-docs/changes/20261006-feature-custom-cursor/brief.md"
     }
   },
-  "knowledge": {
-    "action": "新增",
-    "target": "shadow-docs/knowledge/cursor-system.md",
-    "reason": "新增稳定领域事实：全站一页书光标系统的契约（锚点/六态/idle/降级链/主题纸色），后续任何改光标的 change 必须遵守；卡片含 source、scope、menu 路由、verified-depth runtime + 可追溯观察点"
-  }
+  "knowledge": null
 }
 ---
 
