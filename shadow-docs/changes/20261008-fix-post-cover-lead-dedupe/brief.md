@@ -4,7 +4,7 @@
   "name": "20261008-fix-post-cover-lead-dedupe",
   "type": "fix",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261008-fix-post-cover-lead-dedupe",
   "files": [
@@ -16,8 +16,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 521,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/521"
   },
   "review": {
     "conclusion": "passed",
@@ -26,8 +26,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
-    "planHash": "5942171eae29e0a18d3e46e6bdc8e304f83b123f2e5548f338debe2e5b0d6187",
+    "checkpoint": "pr:521",
+    "planHash": "1399829544454718470728a27c993f3ab3aec37a437fee0b8f5e9641d3779630",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
