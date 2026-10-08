@@ -1,6 +1,8 @@
 import * as React from 'react'
 import type { ButtonVariant, ButtonColor, ButtonSize } from './tokens'
 
+export type { ButtonVariant, ButtonColor, ButtonSize } from './tokens'
+
 export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
   children?: React.ReactNode
   variant?: ButtonVariant
