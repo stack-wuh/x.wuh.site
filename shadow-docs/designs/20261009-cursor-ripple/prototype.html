@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="wl" data-scene="drop" data-mode="fine">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>光标比稿 · 水波 + 墨晕 · x.wuh.site</title>
+<style>
+/* ==============================================================
+   视觉稿即规格：token 全部抄自项目源文件
+   主色/纸色/墨色  packages/components/themes/generator-color.ts:19-77
+     wl #C94A44(primary-500)  wd #E36A64(500)  pl #A87348(primary-600)  pd #D4A478(500)
+   变量路由      packages/components/themes/cssVariableProvider.tsx:108/113/131-146/149-180
+   动效令牌      packages/components/themes/index.ts:56-60（时长一律令牌倍数，禁裸值）
+   书形几何      packages/components/cursor/tints.ts（P1/P2/EDGE/HOT/OFFSET 原样）
+   ============================================================== */
+:root{
+  --motion-ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+  --motion-ease-in-out-soft:cubic-bezier(0.45,0,0.25,1);
+  --motion-dur-quick:150ms;
+  --motion-dur-reveal:600ms;
+  --motion-dur-write:400ms;
+  --font-sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-serif:"Noto Serif SC","Songti SC",serif;
+  --font-mono:"JetBrains Mono",Consolas,monospace;
+  --space-xs:4px; --space-sm:8px; --space-base:16px; --space-md:24px;
+  --border-radius-base:6px; --border-radius-xs:3px;
+  --font-size-xs:12px; --font-size-sm:13px; --font-size-base:15px;
+}
+html[data-theme="wl"]{
+  --primary-color:#C94A44; --text-color:#2A1E16; --background-100:#FDF3EC;
+  --page-bg:linear-gradient(180deg,#FDF3EC 0%,#F5F0EC 100%);
+  --elevation-soft:0 4px 14px rgba(0,0,0,.06);
+  --hairline:color-mix(in oklab,#2A1E16 14%,transparent);
+}
+html[data-theme="wd"]{
+  --primary-color:#E36A64; --text-color:#ADADAD; --background-100:#111111;
+  --page-bg:radial-gradient(circle at 18% 0%,color-mix(in oklab,#E36A64 18%,transparent),transparent 55%),linear-gradient(180deg,#170e0e,#2F2A2A);
+  --elevation-soft:0 4px 14px rgba(0,0,0,.25);
+  --hairline:color-mix(in oklab,#ADADAD 20%,transparent);
+}
+html[data-theme="pl"]{
+  --primary-color:#A87348; --text-color:#2A2218; --background-100:#F8F3EC;
+  --page-bg:linear-gradient(180deg,#F8F3EC 0%,#F2EDE4 100%);
+  --elevation-soft:0 2px 8px rgba(0,0,0,.04);
+  --hairline:color-mix(in oklab,#2A2218 14%,transparent);
+}
+html[data-theme="pd"]{
+  --primary-color:#D4A478; --text-color:rgba(255,255,255,.72); --background-100:#1c1814;
+  --page-bg:linear-gradient(180deg,#1c1814,#0b0908);
+  --elevation-soft:0 2px 8px rgba(0,0,0,.22);
+  --hairline:color-mix(in oklab,rgba(255,255,255,.72) 20%,transparent);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--page-bg);color:var(--text-color);font-family:var(--font-sans);overflow:hidden}
+html[data-mode="fine"] body{cursor:none}
+
+/* ===== 比稿面板（纸卡语言：不透明 background-100 + 发丝线 + elevation-soft） ===== */
+.masthead{position:fixed;left:var(--space-md);top:var(--space-base);z-index:60;pointer-events:none}
+.masthead h1{margin:0;font-family:var(--font-serif);font-size:19px;font-weight:500;letter-spacing:.22em}
+.masthead p{margin:6px 0 0;font-family:var(--font-mono);font-size:var(--font-size-xs);opacity:.55;letter-spacing:.08em}
+.panel{
+  position:fixed;left:var(--space-md);bottom:var(--space-md);z-index:60;width:430px;max-width:calc(100vw - 48px);
+  background:var(--background-100);border:1px solid var(--hairline);border-radius:var(--border-radius-base);
+  box-shadow:var(--elevation-soft);padding:14px 16px 12px;
+}
+.panel h2{margin:0;font-family:var(--font-serif);font-size:15px;font-weight:500;letter-spacing:.16em}
+.panel .lede{margin:4px 0 10px;font-size:var(--font-size-sm);line-height:1.7;opacity:.78}
+.panel .params{margin:0;padding:0;list-style:none;font-family:var(--font-mono);font-size:11px;line-height:1.9;opacity:.62}
+.grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.grp span{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;opacity:.5;align-self:center;margin-right:2px}
+.grp button{
+  font:inherit;font-size:var(--font-size-xs);font-family:var(--font-sans);letter-spacing:.06em;
+  padding:3px 10px;background:transparent;color:var(--text-color);
+  border:1px solid var(--hairline);border-radius:var(--border-radius-xs);cursor:pointer;
+  transition:background-color var(--motion-dur-quick) var(--motion-ease-out-soft),border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.grp button:hover{border-color:color-mix(in oklab,var(--primary-color) 45%,transparent)}
+.grp button[aria-pressed="true"]{color:var(--primary-color);border-color:var(--primary-color)}
+.hint{margin:6px 0 0;font-family:var(--font-mono);font-size:10px;opacity:.45;letter-spacing:.04em}
+
+/* ===== 跟随层「一页书」（生产 style.tsx 原样，动它=污染比稿） ===== */
+.bk-cursor{
+  position:fixed;left:0;top:0;width:30px;height:30px;pointer-events:none;z-index:9999;
+  display:none;color:var(--text-color);
+}
+html[data-mode="fine"] .bk-cursor.on{display:block}
+.bk-cursor svg{display:block;overflow:visible}
+.bk-cursor .pl,.bk-cursor .pr{
+  stroke:currentColor;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;transform-box:fill-box;
+}
+.bk-cursor .pl{fill:color-mix(in oklab,var(--primary-color) 30%,var(--background-100));transform-origin:100% 50%}
+.bk-cursor .pr{fill:color-mix(in oklab,var(--primary-color) 18%,var(--background-100));transform-origin:0% 50%}
+.bk-cursor .spine{fill:none;stroke:var(--primary-color);stroke-width:1.25;stroke-linecap:round}
+.bk-cursor .pin{fill:var(--primary-color)}
+.bk-cursor .rules{opacity:.28}
+.bk-cursor .rules path{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;opacity:.42;vector-effect:non-scaling-stroke}
+
+/* ===== ① 墨层容器 · 颜色口径 =====
+   现状 scene=current 保持生产色 = --text-color（近黑正文字色）——这就是「不像主题色」的现场证据；
+   四个新构型整层只吃 --primary-color，浓淡一律 currentColor + color-mix 透明度分层。 */
+.bk-ink{position:fixed;inset:0;z-index:9998;pointer-events:none;display:none}
+html[data-mode="fine"] .bk-ink{display:block}
+html[data-scene="current"] .bk-ink{color:var(--text-color)}
+html:not([data-scene="current"]) .bk-ink{color:var(--primary-color)}
+.bk-ink i{
+  position:absolute;left:0;top:0;width:var(--sz,16px);height:var(--sz,16px);
+  border-radius:50%;opacity:0;
+  transform:translate(var(--px,-99px),var(--py,-99px));
+  will-change:transform,opacity;
+}
+
+/* ===== ② 新构型元件库（柔边全靠 radial-gradient，禁硬轮廓） ===== */
+/* bleed 墨晕：浓心 + 中段化开 + 边缘透明，scale 放大即「洇开」 */
+.bk-ink i.bleed{background:radial-gradient(circle closest-side,color-mix(in oklab,currentColor 92%,transparent) 0 26%,color-mix(in oklab,currentColor 42%,transparent) 52%,transparent 80%)}
+/* streak 疾笔：同一渐变沿速度向拉长（替代被删的 floss 硬边墨丝） */
+.bk-ink i.streak{width:calc(var(--sz,16px)*2.2);height:calc(var(--sz,16px)*.62);background:radial-gradient(circle closest-side,color-mix(in oklab,currentColor 62%,transparent) 0%,color-mix(in oklab,currentColor 24%,transparent) 46%,transparent 78%)}
+/* wave 水波：靠边一条柔环，放大时同步变淡 */
+.bk-ink i.wave{background:radial-gradient(circle closest-side,transparent 0 70%,color-mix(in oklab,currentColor 54%,transparent) 84%,transparent 97%)}
+/* wave2 双线环：外细环 + 内圈淡环（朱丝栏界格语言） */
+.bk-ink i.wave2{background:radial-gradient(circle closest-side,transparent 0 70%,color-mix(in oklab,currentColor 50%,transparent) 84%,transparent 97%),radial-gradient(circle closest-side,transparent 0 40%,color-mix(in oklab,currentColor 24%,transparent) 52%,transparent 64%)}
+/* splash 落笔一晕 = 本次唯一签名件：四段浓淡、长尾洇开 */
+.bk-ink i.splash{background:radial-gradient(circle closest-side,color-mix(in oklab,currentColor 88%,transparent) 0%,color-mix(in oklab,currentColor 42%,transparent) 38%,color-mix(in oklab,currentColor 14%,transparent) 66%,transparent 86%)}
+/* sat 墨屑：极淡小晕（不是硬点） */
+.bk-ink i.sat{background:radial-gradient(circle closest-side,color-mix(in oklab,currentColor 36%,transparent) 0%,transparent 74%)}
+
+/* ===== ③ keyframes：只动 transform/opacity，元素自居于出生点（- 50%） ===== */
+@keyframes bk-bleed{
+  0%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(.45);opacity:var(--o,.2)}
+  32%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(1.05);opacity:calc(var(--o,.2) * .92)}
+  100%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(2);opacity:0}
+}
+@keyframes bk-streak{
+  from{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) rotate(var(--ang)) scale(1.65,.7);opacity:var(--o,.2)}
+  to{transform:translate(calc(var(--px) + var(--dx) - 50%),calc(var(--py) + var(--dy) - 50%)) rotate(var(--ang)) scale(.9,.26);opacity:0}
+}
+@keyframes bk-wave{
+  0%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(.42);opacity:var(--o,.4)}
+  22%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(1.15);opacity:calc(var(--o,.4) * .9)}
+  100%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(3.1);opacity:0}
+}
+@keyframes bk-splash{
+  0%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(.16);opacity:0}
+  18%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(1);opacity:var(--o,.6)}
+  100%{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(2.7);opacity:0}
+}
+@keyframes bk-sat{
+  from{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(.5);opacity:var(--o,.18)}
+  to{transform:translate(calc(var(--px) + var(--dx) - 50%),calc(var(--py) + var(--dy) - 50%)) scale(1.8);opacity:0}
+}
+
+/* animation-delay 长写（shorthand 会把 var 错峰延迟重置为 0，生产已踩过） */
+.bk-ink i.go.bleed{animation-name:bk-bleed;animation-duration:calc(var(--motion-dur-reveal)*1.5);animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+.bk-ink i.go.streak{animation-name:bk-streak;animation-duration:calc(var(--motion-dur-write)*3);animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+.bk-ink i.go.wave{animation-name:bk-wave;animation-duration:calc(var(--motion-dur-reveal)*1.8);animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+.bk-ink i.go.wave2{animation-name:bk-wave;animation-duration:calc(var(--motion-dur-reveal)*2);animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+.bk-ink i.go.splash{animation-name:bk-splash;animation-duration:calc(var(--motion-dur-reveal)*2);animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+.bk-ink i.go.sat{animation-name:bk-sat;animation-duration:calc(var(--motion-dur-write)*2.5);animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+/* 构型内的时长差（同一元件在不同骨架里的呼吸） */
+html[data-scene="bleed"] .bk-ink i.go.bleed{animation-duration:calc(var(--motion-dur-reveal)*2.5)}
+html[data-scene="grid"] .bk-ink i.go.bleed{animation-duration:calc(var(--motion-dur-reveal)*1.8)}
+html[data-scene="ripple"] .bk-ink i.go.bleed{animation-duration:calc(var(--motion-dur-reveal)*1.2)}
+html[data-scene="ripple"] .bk-ink i.go.wave{animation-duration:calc(var(--motion-dur-reveal)*1.5)}
+
+/* ===== ④ 现状对照 scene=current：生产 style.tsx:138-201 原样（硬边小圆点 + 6px 密排 + 尘） ===== */
+html[data-scene="current"] .bk-ink i{width:3.2px;height:3.2px;background:currentColor}
+html[data-scene="current"] .bk-ink i.floss{width:9px;height:2.2px;border-radius:1.1px}
+html[data-scene="current"] .bk-ink i.bead{width:2.4px;height:2.4px}
+html[data-scene="current"] .bk-ink i.speck{width:2.6px;height:2.6px;background:var(--primary-color)}
+html[data-scene="current"] .bk-ink i.dust{width:2px;height:2px}
+html[data-scene="current"] .bk-ink i.hot{background:var(--primary-color)}
+html[data-scene="current"] .bk-ink i.halo{width:10px;height:10px;background:none;border:1px solid currentColor}
+@keyframes bk-ink-dot{from{transform:translate(var(--px),var(--py)) scale(.5);opacity:.34}to{transform:translate(var(--px),var(--py)) scale(1.7);opacity:0}}
+@keyframes bk-ink-floss{from{transform:translate(var(--px),var(--py)) rotate(var(--ang)) scale(1.8,.6);opacity:.3}to{transform:translate(var(--px),var(--py)) rotate(var(--ang)) scale(.5,.25);opacity:0}}
+@keyframes bk-ink-bead{from{transform:translate(var(--px),var(--py)) scale(1);opacity:.5}to{transform:translate(calc(var(--px) + var(--dx)),calc(var(--py) + var(--dy))) scale(.2);opacity:0}}
+@keyframes bk-ink-speck{from{transform:translate(var(--px),var(--py)) scale(.9);opacity:.8}to{transform:translate(calc(var(--px) + var(--dx)),calc(var(--py) + var(--dy))) scale(.15);opacity:0}}
+@keyframes bk-ink-dust{from{transform:translate(var(--px),var(--py)) scale(.6);opacity:var(--o,.12)}to{transform:translate(calc(var(--px) + var(--dx)),calc(var(--py) + var(--dy))) scale(1.5);opacity:0}}
+@keyframes bk-ink-halo{from{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(.4);opacity:.5}to{transform:translate(calc(var(--px) - 50%),calc(var(--py) - 50%)) scale(2.8);opacity:0}}
+html[data-scene="current"] .bk-ink i.go.dot{animation-name:bk-ink-dot;animation-duration:640ms;animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+html[data-scene="current"] .bk-ink i.go.floss{animation-name:bk-ink-floss;animation-duration:560ms;animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+html[data-scene="current"] .bk-ink i.go.bead{animation-name:bk-ink-bead;animation-duration:680ms;animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+html[data-scene="current"] .bk-ink i.go.speck{animation-name:bk-ink-speck;animation-duration:600ms;animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+html[data-scene="current"] .bk-ink i.go.dust{animation-name:bk-ink-dust;animation-duration:2200ms;animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+html[data-scene="current"] .bk-ink i.go.halo{animation-name:bk-ink-halo;animation-duration:520ms;animation-timing-function:var(--motion-ease-out-soft);animation-delay:var(--dl,0ms);animation-fill-mode:forwards}
+
+/* ===== ⑤ 定格与降级 =====
+   定格：截图取证用（animation-play-state: paused，帧不抖）
+   降级：coarse / reduced-motion 零特效，与生产同一门控（静帧链顶替，此处以提示条示意） */
+html.frozen .bk-ink i{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){
+  .bk-ink{display:none}
+  body{cursor:auto}
+}
+html[data-mode="coarse"] .bk-ink{display:none}
+html[data-mode="coarse"] body{cursor:auto}
+.fallback{display:none;position:fixed;right:var(--space-md);bottom:var(--space-md);z-index:60;
+  padding:10px 14px;background:var(--background-100);border:1px solid var(--hairline);
+  border-radius:var(--border-radius-base);font-size:var(--font-size-sm);box-shadow:var(--elevation-soft)}
+html[data-mode="coarse"] .fallback{display:block}
+</style>
+</head>
+<body>
+
+<!-- 比稿台：真实纸面 + 真实书形 + 真实墨层池 -->
+<div class="bk-ink" id="ink" aria-hidden="true"></div>
+<div class="bk-cursor" id="cursor" aria-hidden="true">
+  <svg viewBox="0 0 30 30" width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(6,6)">
+      <path class="pl" d="M11.5 6.5C9 5.2 6.4 4.6 4.3 4.9L4.3 14.7C6.4 14.4 9 15 11.5 16.2Z"/>
+      <path class="pr" d="M12.5 6.5C15 5.2 17.6 4.6 19.7 4.9L19.7 14.7C17.6 14.4 15 15 12.5 16.2Z"/>
+      <g class="rules">
+        <path d="M6.1 8.4C7.6 8.1 9.2 8.3 10.6 8.9"/>
+        <path d="M6.1 10.9C7.6 10.6 9.2 10.8 10.6 11.4"/>
+        <path d="M6.1 13.4C7.6 13.1 9.2 13.3 10.6 13.9"/>
+      </g>
+      <line class="spine" x1="12" y1="4.6" x2="12" y2="16.6"/>
+      <circle class="pin" cx="12" cy="3.6" r=".78"/>
+    </g>
+  </svg>
+</div>
+
+<header class="masthead">
+  <h1>落笔一晕</h1>
+  <p id="tagline">cursor · ink bleed + water ripple · 四主题同构</p>
+</header>
+
+<section class="panel" aria-label="比稿面板">
+  <h2 id="sceneName">S1 一滴水</h2>
+  <p class="lede" id="sceneLede">拖尾是连续自洇的墨晕，点击是中心一记浓晕外加三圈同心水波。最空灵、最克制。</p>
+  <ul class="params" id="sceneParams"></ul>
+  <div class="grp" id="grpScene"><span>构型</span>
+    <button type="button" data-scene="drop" aria-pressed="true">S1 一滴水</button>
+    <button type="button" data-scene="bleed" aria-pressed="false">S2 墨洇长痕</button>
+    <button type="button" data-scene="ripple" aria-pressed="false">S3 涟漪场</button>
+    <button type="button" data-scene="grid" aria-pressed="false">S4 界格涟漪</button>
+    <button type="button" data-scene="current" aria-pressed="false">现状对照</button>
+  </div>
+  <div class="grp" id="grpTheme"><span>主题</span>
+    <button type="button" data-theme="wl" aria-pressed="true">酒红·明</button>
+    <button type="button" data-theme="wd" aria-pressed="false">酒红·暗</button>
+    <button type="button" data-theme="pl" aria-pressed="false">素雅·明</button>
+    <button type="button" data-theme="pd" aria-pressed="false">素雅·暗</button>
+  </div>
+  <div class="grp" id="grpMode"><span>取态</span>
+    <button type="button" id="btnDemo" aria-pressed="false">自动笔迹</button>
+    <button type="button" id="btnFreeze" aria-pressed="false">定格</button>
+    <button type="button" id="btnCoarse" aria-pressed="false">触控降级</button>
+  </div>
+  <p class="hint">1-5 切构型 · Q/W/E/R 切主题 · D 笔迹 · F 定格 · C 降级 · 移动鼠标即所见</p>
+</section>
+<div class="fallback">降级态：系统光标 + 24 条主题静帧顶替，粒子层整层不挂载。</div>
+
+<script>
+/* ================================================================
+   引擎与生产 ink.ts 同纪律：
+   池 48 round-robin 复用 · 运行期零 DOM 增删 · 零 React 渲染 ·
+   几何全部经 --px/--py/--ang/--dx/--dy/--dl/--o/--sz 内联自定义属性 ·
+   动画重启 = 清类 → void offsetWidth → 重挂（与 popping 同机制）
+   ================================================================ */
+var POOL = 48;
+var host = document.getElementById("ink");
+for (var i = 0; i < POOL; i++) { host.appendChild(document.createElement("i")); }
+var els = Array.prototype.slice.call(host.children);
+var cur = 0;
+function rnd(a, b) { return a + Math.random() * (b - a); }
+
+function put(x, y, cls, o) {
+  var el = els[cur % POOL]; cur++;
+  var s = el.style;
+  s.setProperty("--px", x.toFixed(1) + "px");
+  s.setProperty("--py", y.toFixed(1) + "px");
+  s.setProperty("--ang", (o.ang || 0).toFixed(3) + "rad");
+  s.setProperty("--dx", (o.dx || 0).toFixed(1) + "px");
+  s.setProperty("--dy", (o.dy || 0).toFixed(1) + "px");
+  s.setProperty("--dl", Math.round(o.dl || 0) + "ms");
+  s.setProperty("--o", (o.o == null ? 0.2 : o.o).toFixed(3));
+  s.setProperty("--sz", Math.round(o.sz || 16) + "px");
+  el.className = "";
+  void el.offsetWidth;
+  el.className = "go " + cls;
+}
+
+/* 构型参数表（数值即规格，apply 阶段一比一移植进 ink.ts） */
+var CFG = {
+  drop:   { gap:11, sz:16, oMin:.20, oMax:.42, waveGap:0,  rings:3, stag:140, ringKind:"wave",  ringSz:20, ringO:.46, splashSz:14, splashO:.52, sat:0 },
+  bleed:  { gap:8,  sz:24, oMin:.26, oMax:.48, waveGap:0,  rings:1, stag:0,   ringKind:"wave",  ringSz:34, ringO:.42, splashSz:30, splashO:.60, sat:0, streak:true },
+  ripple: { gap:15, sz:20, oMin:.34, oMax:.52, waveGap:1,  rings:2, stag:120, ringKind:"wave",  ringSz:16, ringO:.62, splashSz:26, splashO:.66, sat:0 },
+  grid:   { gap:12, sz:18, oMin:.16, oMax:.34, waveGap:0,  rings:3, stag:150, ringKind:"wave2", ringSz:24, ringO:.42, splashSz:18, splashO:.50, sat:4 }
+};
+var MAX_PER_MOVE = 8, TELEPORT = 140, FLOSS_SPEED = 1.2;
+var ax = 0, ay = 0, px = 0, py = 0, pt = 0, speed = 0, ang = 0, armed = false;
+var scene = "drop";
+function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+
+/* 出生：沿「上一锚点 → 当前位」按 gap 步进插值，一帧跨多段仍连续 */
+function walk(x, y, c) {
+  var adx = x - ax, ady = y - ay, steps = 0;
+  while (Math.hypot(adx, ady) >= c.gap && steps++ < MAX_PER_MOVE) {
+    var len = Math.hypot(adx, ady);
+    var dir = Math.atan2(ady, adx);
+    ax += (adx / len) * c.gap; ay += (ady / len) * c.gap;
+    adx = x - ax; ady = y - ay;
+    var j = (Math.random() - .5) * 1.6;
+    var jx = ax + Math.cos(dir + Math.PI / 2) * j;
+    var jy = ay + Math.sin(dir + Math.PI / 2) * j;
+    emit(jx, jy, dir, c);
+    ang = dir;
+  }
+}
+function emit(x, y, dir, c) {
+  var fast = clamp(speed, 0, 3);
+  if (c.waveGap) {
+    /* S3 涟漪场：拖尾就是水波本身 */
+    put(x, y, "wave", { sz:c.sz, o:clamp(c.oMax - fast * .04, c.oMin, c.oMax), ang:dir });
+    return;
+  }
+  if (c.streak && speed >= FLOSS_SPEED) {
+    /* S2 疾笔：沿速度向拉长，慢下来才回到圆晕 */
+    put(x, y, "streak", { sz:c.sz, o:clamp(c.oMax / (1 + speed * .28), c.oMin, c.oMax), ang:dir, dx:Math.cos(dir) * 10, dy:Math.sin(dir) * 10 });
+    return;
+  }
+  put(x, y, "bleed", { sz:c.sz + fast * 3.5, o:clamp(rnd(c.oMin, c.oMax) / (1 + speed * .14), c.oMin, c.oMax) });
+}
+
+/* 点击：落笔一晕（签名件）+ 同心水波 + 可选墨屑 */
+function tap(x, y) {
+  var c = CFG[scene];
+  if (scene === "current") { legacyTap(x, y); return; }
+  put(x, y, "splash", { sz:c.splashSz, o:c.splashO });
+  for (var i = 0; i < c.rings; i++) {
+    put(x, y, c.ringKind, { sz:c.ringSz, o:clamp(c.ringO - i * .09, .12, c.ringO), dl:i * c.stag });
+  }
+  for (var k = 0; k < c.sat; k++) {
+    var a = Math.PI * 2 * (k / c.sat) + rnd(-.3, .3);
+    var fly = rnd(16, 26);
+    put(x, y, "sat", { sz:9, o:rnd(.10, .18), dx:Math.cos(a) * fly, dy:Math.sin(a) * fly, dl:Math.round(rnd(40, 120)) });
+  }
+}
+
+function move(x, y, t) {
+  var c = CFG[scene];
+  var dt = t - pt, evDist = Math.hypot(x - px, y - py);
+  var first = !armed || evDist > TELEPORT;
+  var inst = (!first && dt > 0) ? evDist / dt : 0;
+  if (first) { ax = x; ay = y; armed = true; }
+  else { walk(x, y, c); }
+  px = x; py = y; pt = t;
+  speed = first ? 0 : speed * .7 + inst * .3;
+}
+
+/* ===== 现状对照实现（生产 ink.ts 语义，仅 scene=current 时启用，含那枚 200ms 发射钟） ===== */
+var LGAP = 6;
+var lax = 0, lay = 0, lastX = 0, lastY = 0, lastT = 0, lspeed = 0, lang = 0, larmed = false;
+function legacyMove(x, y, t) {
+  var dt = t - lastT, evDist = Math.hypot(x - lastX, y - lastY);
+  var first = !larmed || evDist > TELEPORT;
+  var inst = (!first && dt > 0) ? evDist / dt : 0;
+  if (first) { lax = x; lay = y; larmed = true; }
+  else {
+    if (lspeed >= 1.5 && inst < .2 && evDist > 1) legacySling();
+    var adx = x - lax, ady = y - lay, steps = 0;
+    while (Math.hypot(adx, ady) >= LGAP && steps++ < MAX_PER_MOVE) {
+      var len = Math.hypot(adx, ady), dir = Math.atan2(ady, adx);
+      lax += (adx / len) * LGAP; lay += (ady / len) * LGAP;
+      adx = x - lax; ady = y - lay;
+      var j = (Math.random() - .5) * 1.6;
+      lang = dir;
+      put(lax + Math.cos(dir + Math.PI / 2) * j, lay + Math.sin(dir + Math.PI / 2) * j, lspeed >= 1.2 ? "floss" : "dot", { ang:dir, sz:3.2 });
+    }
+  }
+  lastX = x; lastY = y; lastT = t;
+  lspeed = first ? 0 : lspeed * .7 + inst * .3;
+}
+function legacySling() {
+  var n = 1 + (Math.random() < .5 ? 1 : 0);
+  for (var i = 0; i < n; i++) {
+    var a = lang + (Math.random() - .5) * .8, fly = 6 + Math.random() * 8;
+    put(lastX, lastY, "bead", { ang:a, dx:Math.cos(a) * fly, dy:Math.sin(a) * fly, dl:Math.random() * 60, sz:2.4 });
+  }
+}
+function legacyTap(x, y) {
+  var n = 5 + ((Math.random() * 4) | 0);
+  for (var i = 0; i < n; i++) {
+    var a = Math.random() * Math.PI * 2, fly = 8 + Math.random() * 10;
+    put(x, y, "speck", { ang:a, dx:Math.cos(a) * fly, dy:Math.sin(a) * fly, dl:Math.random() * 140, sz:2.6 });
+  }
+  put(x, y, "halo", { sz:10 });
+}
+var dustTimer = 0;
+function dustTick() {
+  if (!lastT || Math.random() > .8) return;
+  var a = Math.random() * Math.PI * 2, r = 10 + Math.random() * 14, bx = lastX, by = lastY;
+  if (lspeed >= .3) { var back = Math.min(24, lspeed * 12); bx -= Math.cos(lang) * back; by -= Math.sin(lang) * back; }
+  var kind = Math.random() < 1 / 6 ? "dust hot" : "dust";
+  put(bx + Math.cos(a) * r, by + Math.sin(a) * r, kind, { sz:2, dx:(Math.random() - .5) * 6, dy:-(12 + Math.random() * 18), dl:Math.random() * 100, o:.05 + Math.random() * .13 });
+}
+function syncDust() {
+  if (scene === "current") { if (!dustTimer) dustTimer = window.setInterval(dustTick, 200); }
+  else if (dustTimer) { window.clearInterval(dustTimer); dustTimer = 0; }
+}
+
+/* ===== 跟随层：真实书形 + 生产弹簧参数（stiffness1000/damping60/mass0.5，热点 HOT 4,4） =====
+   生产由 framer-motion 引擎写 transform；比稿台里没有 React，这里用同参数定步长积分复现手感，
+   实现阶段跟随引擎一行不动（本次只换墨层）。
+   ============================================================== */
+var K = 1000, DAMP = 60, MASS = .5, HOTX = 4, HOTY = 4;
+var gx = -50, gy = -50, fx = -50, fy = -50, velX = 0, velY = 0, taken = false;
+var cursorEl = document.getElementById("cursor");
+function step(dt) {
+  var axx = (-K * (fx - gx) - DAMP * velX) / MASS;
+  var ayy = (-K * (fy - gy) - DAMP * velY) / MASS;
+  velX += axx * dt; velY += ayy * dt;
+  fx += velX * dt; fy += velY * dt;
+}
+var lastFrame = 0;
+function frame(ts) {
+  var dt = lastFrame ? Math.min(.032, (ts - lastFrame) / 1000) : .016;
+  lastFrame = ts;
+  if (taken) { step(dt); cursorEl.style.transform = "translate3d(" + fx.toFixed(2) + "px," + fy.toFixed(2) + "px,0)"; }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+function takeover(x, y) {
+  gx = x - HOTX; gy = y - HOTY; fx = gx; fy = gy; velX = 0; velY = 0;
+  cursorEl.classList.add("on"); taken = true;
+  armed = false; larmed = false; speed = 0; lspeed = 0; syncDust();
+  /* 起笔一按：接管落点先出一晕，否则首帧只重锚、轨迹没有起头 */
+  if (scene !== "current") { var c0 = CFG[scene]; put(x, y, c0.waveGap ? "wave" : "bleed", { sz:c0.sz, o:c0.oMax * .85 }); }
+}
+
+/* ===== 事件接线（生产 CursorLayer 同构：move/down/leave 三个口喂墨层） ===== */
+function onMove(e) { feedMove(e.clientX, e.clientY, e.timeStamp); }
+function feedMove(x, y, t) {
+  if (!taken) takeover(x, y);
+  gx = x - HOTX; gy = y - HOTY;
+  if (scene === "current") legacyMove(x, y, t); else move(x, y, t);
+}
+function feedTap(x, y) { tap(x, y); }
+window.addEventListener("pointermove", onMove);
+window.addEventListener("pointerdown", function (e) { feedTap(e.clientX, e.clientY); });
+document.documentElement.addEventListener("pointerleave", function () {
+  cursorEl.classList.remove("on"); taken = false;
+  if (dustTimer) { window.clearInterval(dustTimer); dustTimer = 0; }
+});
+
+/* ===== 构型文案（定稿后逐条进 brief 决策清单） ===== */
+var CAP = {
+  drop: { name:"S1 一滴水", tag:"最空灵、最克制", lede:"拖尾 = 每粒一记自洇柔边墨晕（间距 11px 让相邻晕重叠成连续墨痕）；点击 = 中心一记浓晕 + 三圈同心水波错峰外扩。",
+    p:["拖尾 bleed · gap 11px · sz 16px · 900ms = reveal×1.5 · 浓淡 .20–.42（随速度衰减）",
+       "点击 splash 14px/.52 + wave×3 20px 错峰 0/140/280ms",
+       "发射钟退役 → 零 setInterval · 静止不产噪声",
+       "色 currentColor = --primary-color（四主题自动跟随）"] },
+  bleed: { name:"S2 墨洇长痕", tag:"最书写、纸感最强", lede:"拖尾 = 大晕高重叠（24px、间距 10px、1500ms）连成一条湿墨痕，快移沿速度向拉成 streak；点击 = 一记宽环大波加中心化开。",
+    p:["拖尾 bleed gap 8px · sz 24px · 1500ms = reveal×2.5 · 浓淡 .26–.48",
+       "疾笔 speed≥1.2 → streak（同一渐变沿 --ang 拉长，替代硬边墨丝）",
+       "点击 splash 30px/.60 + wave 34px/.42 单圈宽环",
+       "浓淡随速度：慢=浓而小（洇得深），快=淡而大"] },
+  ripple: { name:"S3 涟漪场", tag:"最灵动、水感最重（风险最高）", lede:"语义反转：移动时指针后方一圈圈水波连续外扩，点击才落一记浓墨晕。快移时环易叠成一片，需要盯池位复用与错峰。",
+    p:["拖尾 wave gap 15px · sz 20px · 900ms = reveal×1.5 · 浓淡 .34–.52",
+       "点击 splash 26px/.66 + wave×2 16px 错峰 120ms",
+       "水为主、墨为点：饱和度全部来自主题 primary",
+       "风险：快移环重叠 → 已用 18px 间距 + 速度衰减兜底"] },
+  grid: { name:"S4 界格涟漪", tag:"密度最高、文人味最重", lede:"晕保持极淡，波用双线环（外细环 + 内圈淡环），点击再溅四粒极淡墨屑——和导航「一支运笔」与朱丝栏界格同源。",
+    p:["拖尾 bleed gap 12px · sz 18px · 1080ms = reveal×1.8 · 浓淡 .16–.34",
+       "点击 splash 18px/.50 + wave2×3 24px 错峰 150ms（双线环）",
+       "sat×4 极淡墨屑 9px/.10–.18 飞出 16–26px",
+       "最费笔触的一版，适合想要「看得出设计过」的场合"] },
+  current: { name:"现状 v4 粒子", tag:"对照条（本次要替换掉的东西）", lede:"硬边 3.2px 小圆点以 6px 密排 + 9px 墨丝 + 甩珠 + 200ms 发射钟飘尘；整层色 = --text-color（近黑正文字色），所以看着不像主题色。",
+    p:["dot/floss/bead/speck/halo/dust 六类 · gap 6px · 池 48",
+       "色 --text-color 近黑，只有 speck 与 1/6 热尘吃 primary",
+       "发射钟 setInterval 200ms（新方案退役）",
+       "切回上面四构即可同页对比"] },
+};
+
+/* ===== 面板与切换 ===== */
+var rootEl = document.documentElement;
+var nameEl = document.getElementById("sceneName"), ledeEl = document.getElementById("sceneLede");
+var paramsEl = document.getElementById("sceneParams"), tagEl = document.getElementById("tagline");
+function press(group, attr, val) {
+  var bs = document.querySelectorAll("#" + group + " button");
+  for (var i = 0; i < bs.length; i++) { bs[i].setAttribute("aria-pressed", bs[i].getAttribute(attr) === val ? "true" : "false"); }
+}
+function setScene(s) {
+  if (!CAP[s]) return;
+  scene = s; rootEl.setAttribute("data-scene", s);
+  nameEl.textContent = CAP[s].name; ledeEl.textContent = CAP[s].lede;
+  tagEl.textContent = "cursor · " + CAP[s].tag + " · " + s;
+  paramsEl.innerHTML = "";
+  for (var i = 0; i < CAP[s].p.length; i++) { var li = document.createElement("li"); li.textContent = CAP[s].p[i]; paramsEl.appendChild(li); }
+  press("grpScene", "data-scene", s); syncDust();
+}
+function setTheme(t) { rootEl.setAttribute("data-theme", t); press("grpTheme", "data-theme", t); }
+document.getElementById("grpScene").addEventListener("click", function (e) { if (e.target.dataset.scene) setScene(e.target.dataset.scene); });
+document.getElementById("grpTheme").addEventListener("click", function (e) { if (e.target.dataset.theme) setTheme(e.target.dataset.theme); });
+
+/* ===== 取态：自动笔迹 / 定格 / 触控降级 ===== */
+var demoOn = false, demoT = 0, demoTimer = 0;
+function demoFrame(ts) {
+  var w = window.innerWidth, h = window.innerHeight;
+  var a = ts / 1000;
+  var x = w * .52 + Math.cos(a * .9) * w * .21;
+  var y = h * .5 + Math.sin(a * 1.7) * h * .17;
+  feedMove(x, y, ts);
+  if (ts - demoT > 1300) { demoT = ts; feedTap(x, y); }
+}
+function toggle(btn, on, fn) { btn.setAttribute("aria-pressed", on ? "true" : "false"); fn(); }
+var bD = document.getElementById("btnDemo"), bF = document.getElementById("btnFreeze"), bC = document.getElementById("btnCoarse");
+bD.addEventListener("click", function () {
+  demoOn = !demoOn;
+  bD.setAttribute("aria-pressed", demoOn ? "true" : "false");
+  if (demoOn) { demoTimer = window.setInterval(function () { demoFrame(Date.now()); }, 16); } else if (demoTimer) { window.clearInterval(demoTimer); demoTimer = 0; }
+});
+bF.addEventListener("click", function () { var on = rootEl.classList.toggle("frozen"); bF.setAttribute("aria-pressed", on ? "true" : "false"); });
+bC.addEventListener("click", function () {
+  var coarse = rootEl.getAttribute("data-mode") === "coarse";
+  rootEl.setAttribute("data-mode", coarse ? "fine" : "coarse");
+  bC.setAttribute("aria-pressed", coarse ? "false" : "true");
+});
+window.addEventListener("keydown", function (e) {
+  var k = e.key.toLowerCase();
+  var map = { "1":"drop", "2":"bleed", "3":"ripple", "4":"grid", "5":"current" };
+  if (map[k]) { setScene(map[k]); return; }
+  var th = { q:"wl", w:"wd", e:"pl", r:"pd" };
+  if (th[k]) { setTheme(th[k]); return; }
+  if (k === "d") { bD.click(); } else if (k === "f") { bF.click(); } else if (k === "c") { bC.click(); }
+});
+
+/* ===== URL 参数：?scene= ?theme= ?demo=1 ?mode=coarse ===== */
+var q = new URLSearchParams(window.location.search);
+setTheme(q.get("theme") || "wl");
+setScene(q.get("scene") || "drop");
+if (q.get("mode") === "coarse") { bC.click(); }
+if (q.get("demo") === "1") { bD.click(); }
+</script>
+</body>
+</html>

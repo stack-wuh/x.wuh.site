@@ -123,65 +123,53 @@ export const CursorStyles = createGlobalStyle`
     50% { transform: scaleX(0.44) scaleY(0.72); opacity: 1; }
   }
 
-  /* ===== ④ 墨迹粒子层（运笔残墨：dot 洇开 / floss 墨丝 / bead 甩珠 / speck 朱砂渣 + halo 落笔一晕；dust 环绕墨尘）=====
-     几何全部由 ink.ts 经 --px/--py/--ang/--dx/--dy/--dl/--o 自定义属性内联写入，
-     keyframes 只动 transform/opacity（白名单纪律不变）；display 随 takeover/leave 的 on 类同步 */
+  /* ===== ④ 墨晕粒子层（S1 一滴水：移动 = 柔边墨晕连续洇开；点击 = 落笔一晕 + 三圈同心水波）=====
+     几何与浓淡由 ink.ts 经 --px/--py/--o/--sz/--dl 自定义属性内联写入，
+     keyframes 只动 transform/opacity（白名单纪律不变）；display 随 takeover/leave 的 on 类同步。
+     颜色口径（决策 D2）：整层只声明一次主题色，浓淡一律 currentColor + color-mix 分层——
+     正文字色已从墨层退出，四主题（酒红/素雅 × 明/暗）自动跟随。 */
   .bk-ink {
     position: fixed;
     inset: 0;
     z-index: 9998;
     pointer-events: none;
     display: none;
-    color: var(--text-color);
+    color: var(--primary-color);
   }
   .bk-ink.on { display: block; }
   .bk-ink i {
     position: absolute;
     left: 0;
     top: 0;
-    width: 3.2px;
-    height: 3.2px;
+    width: var(--sz, 16px);
+    height: var(--sz, 16px);
     border-radius: 50%;
-    background: currentColor;
-    transform: translate(var(--px, -99px), var(--py, -99px));
     opacity: 0;
+    transform: translate(var(--px, -99px), var(--py, -99px));
   }
-  .bk-ink i.floss { width: 9px; height: 2.2px; border-radius: 1.1px; }
-  .bk-ink i.bead { width: 2.4px; height: 2.4px; }
-  .bk-ink i.speck { width: 2.6px; height: 2.6px; background: var(--primary-color); }
-  /* 尘：细于墨点，浓淡由 --o 逐粒指定（发射钟随机） */
-  .bk-ink i.dust { width: 2px; height: 2px; }
-  .bk-ink i.hot { background: var(--primary-color); }
-  /* 晕：透明心 + 细描边圆环，放大时描边随 transform 变细正合「晕开变淡」 */
-  .bk-ink i.halo { width: 10px; height: 10px; background: none; border: 1px solid currentColor; }
+  /* 墨晕：三段柔边（浓心 0–26% → 42% → 80% 化去），scale 放大即「洇开」 */
+  .bk-ink i.bleed { background: radial-gradient(circle closest-side, color-mix(in oklab, currentColor 92%, transparent) 0 26%, color-mix(in oklab, currentColor 42%, transparent) 52%, transparent 80%); }
+  /* 水波：靠边一条柔环，外扩时同步变淡 */
+  .bk-ink i.wave { background: radial-gradient(circle closest-side, transparent 0 70%, color-mix(in oklab, currentColor 54%, transparent) 84%, transparent 97%); }
+  /* 落笔一晕（唯一签名件）：四段浓淡长尾 */
+  .bk-ink i.splash { background: radial-gradient(circle closest-side, color-mix(in oklab, currentColor 88%, transparent) 0%, color-mix(in oklab, currentColor 42%, transparent) 38%, color-mix(in oklab, currentColor 14%, transparent) 66%, transparent 86%); }
 
-  @keyframes bk-ink-dot {
-    from { transform: translate(var(--px), var(--py)) scale(0.5); opacity: 0.34; }
-    to { transform: translate(var(--px), var(--py)) scale(1.7); opacity: 0; }
+  /* 驻留段（决策 D4）：ease-out 会把淡出提前吃掉，故前 32%/22% 先浓后淡；- 50% 使元件自居于出生点 */
+  @keyframes bk-ink-bleed {
+    0% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(0.45); opacity: var(--o, 0.2); }
+    32% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(1.05); opacity: calc(var(--o, 0.2) * 0.92); }
+    100% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(2); opacity: 0; }
   }
-  @keyframes bk-ink-floss {
-    from { transform: translate(var(--px), var(--py)) rotate(var(--ang)) scale(1.8, 0.6); opacity: 0.3; }
-    to { transform: translate(var(--px), var(--py)) rotate(var(--ang)) scale(0.5, 0.25); opacity: 0; }
+  @keyframes bk-ink-wave {
+    0% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(0.42); opacity: var(--o, 0.4); }
+    22% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(1.15); opacity: calc(var(--o, 0.4) * 0.9); }
+    100% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(3.1); opacity: 0; }
   }
-  @keyframes bk-ink-bead {
-    from { transform: translate(var(--px), var(--py)) scale(1); opacity: 0.5; }
-    to { transform: translate(calc(var(--px) + var(--dx)), calc(var(--py) + var(--dy))) scale(0.2); opacity: 0; }
+  @keyframes bk-ink-splash {
+    0% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(0.16); opacity: 0; }
+    18% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(1); opacity: var(--o, 0.6); }
+    100% { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(2.7); opacity: 0; }
   }
-  @keyframes bk-ink-speck {
-    from { transform: translate(var(--px), var(--py)) scale(0.9); opacity: 0.8; }
-    to { transform: translate(calc(var(--px) + var(--dx)), calc(var(--py) + var(--dy))) scale(0.15); opacity: 0; }
-  }
-  /* 尘：自 --dx 微摆、沿 --dy 缓升（负值上飘），scale 洇散、透明度自 --o 峰值化去 */
-  @keyframes bk-ink-dust {
-    from { transform: translate(var(--px), var(--py)) scale(0.6); opacity: var(--o, 0.12); }
-    to { transform: translate(calc(var(--px) + var(--dx)), calc(var(--py) + var(--dy))) scale(1.5); opacity: 0; }
-  }
-  /* 晕：-50% 自居中于点击位，scale 0.4→2.8 放大淡出一圈 */
-  @keyframes bk-ink-halo {
-    from { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(0.4); opacity: 0.5; }
-    to { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)) scale(2.8); opacity: 0; }
-  }
-
   @media (prefers-reduced-motion: no-preference) {
     .bk-cursor .pt { animation: bk-breeze 5.4s var(--motion-ease-in-out-soft, cubic-bezier(0.45, 0, 0.25, 1)) infinite; }
     /* idle 必须先于交互态：hover/输入/拖拽覆盖自读书 */
@@ -192,13 +180,11 @@ export const CursorStyles = createGlobalStyle`
     .bk-cursor[data-state='grabbing'] .pr { animation: bk-press-r 0.3s var(--motion-ease-in-out-soft, cubic-bezier(0.45, 0, 0.25, 1)) infinite; }
     .bk-cursor.popping .pt { animation: none; }
     .bk-cursor.popping .pl { animation: bk-close-l 260ms var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); }
-    /* 墨粒动画：长写全设（shorthand 会把 --dl 错峰延迟重置为 0——var() 禁入 animation 简写） */
-    .bk-ink i.go.dot { animation-name: bk-ink-dot; animation-duration: 640ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
-    .bk-ink i.go.floss { animation-name: bk-ink-floss; animation-duration: 560ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
-    .bk-ink i.go.bead { animation-name: bk-ink-bead; animation-duration: 680ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
-    .bk-ink i.go.speck { animation-name: bk-ink-speck; animation-duration: 600ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
-    .bk-ink i.go.dust { animation-name: bk-ink-dust; animation-duration: 2200ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
-    .bk-ink i.go.halo { animation-name: bk-ink-halo; animation-duration: 520ms; animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    /* 墨晕动画：长写全设（shorthand 会把 --dl 错峰延迟重置为 0——var() 禁入 animation 简写）；
+       时长全部走 --motion-dur-reveal 倍数（决策 D9）：墨晕 900ms、水波 1080ms、落笔一晕 1200ms */
+    .bk-ink i.go.bleed { animation-name: bk-ink-bleed; animation-duration: calc(var(--motion-dur-reveal, 600ms) * 1.5); animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.wave { animation-name: bk-ink-wave; animation-duration: calc(var(--motion-dur-reveal, 600ms) * 1.8); animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
+    .bk-ink i.go.splash { animation-name: bk-ink-splash; animation-duration: calc(var(--motion-dur-reveal, 600ms) * 2); animation-timing-function: var(--motion-ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)); animation-delay: var(--dl, 0ms); animation-fill-mode: forwards; }
   }
   /* reduced-motion / 未接管环境：翻页件与行林静默，书保持摊开静帧 */
   @media (prefers-reduced-motion: reduce) {
