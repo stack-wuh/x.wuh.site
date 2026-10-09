@@ -101,7 +101,7 @@ test('跟随层书形结构计数：path×5 字面（pl/pr/pt.face/pt.edge/rules
 
 test('keyframes 只动 transform/opacity（禁布局属性动画）', () => {
   const blocks = [...STYLE.matchAll(/@keyframes\s+([\w-]+)\s*\{([\s\S]*?)\n\s*\}/g)]
-  assert.ok(blocks.length >= 10, '应含 breeze/lift/turn/closeL/pressR/idleTurn + ink 四类（dot/floss/bead/speck）')
+  assert.equal(blocks.length, 9, 'keyframes 总数 = 书形 6（breeze/idleTurn/lift/turn/closeL/pressR）+ 墨层 3（bleed/wave/splash）')
   for (const [, name, body] of blocks) {
     const props = [...body.matchAll(/([a-z-]+)\s*:/g)].map((m) => m[1])
     for (const p of props) assert.ok(['transform', 'opacity'].includes(p), `idleTurn/…/${name} 出现非 transform/opacity 属性: ${p}`)
@@ -155,58 +155,68 @@ test('热点锚 (4,4) + 书形右下偏移 OFFSET(6,6)：指针对位点与书�
   assert.ok(STYLE.includes('} 4 4, default'), '静帧 cursor 热点必须输出 4 4')
 })
 
-test('墨迹粒子层：池 round-robin + 位移节流寄生既有事件时序（零新监听器），四类 keyframes 与 token 色在场', () => {
-  // 引擎（ink.ts）
-  assert.match(INK, /INK_POOL = 48/, '池上限 48（尘/晕在飞 + 拖尾余量）')
-  assert.match(INK, /SPAWN_GAP = 6/, 'T1 位移节流阈值 6px')
-  assert.match(INK, /this\.cur % INK_POOL/, 'T4 round-robin 覆盖最老池位')
+test('墨晕粒子层：三类元件柔边渐变、池 round-robin 位移节流、零新监听器零定时器', () => {
+  // 引擎（ink.ts）——S1 一滴水：Kind 收敛为 bleed/wave/splash，旧六类全退役
+  assert.match(INK, /INK_POOL = 48/, '池上限 48（拖尾在飞 + 点击波余量）')
+  assert.match(INK, /SPAWN_GAP = 11/, '出生阈值 11px：相邻墨晕重叠成连续墨痕（旧 6px 是点列感的来源）')
+  assert.match(INK, /this\.cur % INK_POOL/, 'round-robin 覆盖最老池位，运行期零 DOM 增删')
   assert.match(INK, /void el\.offsetWidth/, '重启动画 = 清类→强制重排→重挂（机制同 popping）')
   assert.match(INK, /TELEPORT/, '传送防护（tab 返回/大幅跳变不连线）')
   assert.match(INK, /MAX_PER_MOVE/, '单帧出生上限（突发保护）')
-  assert.equal(INK.match(/requestAnimationFrame|localStorage|addEventListener/), null, '池引擎自持零监听器零 rAF')
+  assert.match(INK, /type Kind = 'bleed'[\s\S]{0,40}'wave'[\s\S]{0,40}'splash'/, 'Kind 联合仅 bleed|wave|splash')
+  for (const dead of ['dot', 'floss', 'bead', 'speck', 'halo', 'dust', 'hot']) {
+    assert.equal(new RegExp("'" + dead + "'").exec(INK), null, '旧粒子类 ' + dead + ' 必须退役')
+  }
+  assert.equal(INK.match(/requestAnimationFrame|localStorage|addEventListener|window\.setInterval|window\.clearInterval/), null, '池引擎零监听器、零 rAF、零定时器（发射钟已随尘层退役）')
   // 接线（index.tsx）：粒子只寄生现有 handler，监听器计数纹丝不动
   assert.equal((LAYER.match(/\.addEventListener/g) || []).length, 4, '仍为 move/down/up/leave 四个 addEventListener——墨层零新增')
   assert.match(LAYER, /new InkField\(/, 'effect 内实例化池引擎')
-  assert.match(LAYER, /const onMove[\s\S]{0,400}?field\.move\(/, 'onMove 喂粒子（弹簧跟位/接管落位同帧）')
-  assert.match(LAYER, /const onDown[\s\S]{0,400}?field\.tap\(/, 'onDown 溅墨与 popping 同源')
-  assert.match(LAYER, /const onLeave[\s\S]{0,300}?field\.reset\(\)/, 'pointerleave 重锚池，重入不假甩珠')
+  assert.match(LAYER, /const onMove[\s\S]{0,400}?field\.move\(/, 'onMove 喂墨晕（弹簧跟位/接管落位同帧）')
+  assert.match(LAYER, /const onDown[\s\S]{0,400}?field\.tap\(/, 'onDown 落笔一晕与 popping 同源')
+  assert.match(LAYER, /const onLeave[\s\S]{0,300}?field\.reset\(\)/, 'pointerleave 重锚池，重入不假连线')
   assert.match(LAYER, /length: INK_POOL/, 'JSX 池元素 48 一次渲染，运行期零增删')
-  assert.equal(LAYER.match(/useState/), null, '移动路径（含粒子）零 React state')
-  // 样式层（style.tsx）：容器纯装饰、四类 keyframes、颜色全 token
-  assert.match(STYLE, /\.bk-ink \{[\s\S]{0,200}?pointer-events: none/, '粒子层 pointer-events:none 纯装饰')
-  assert.match(STYLE, /\.bk-ink \{[^}]*color: var\(--text-color\)/, '墨色 = --text-color（currentColor 继承）')
-  assert.match(STYLE, /\.bk-ink i\.speck \{[^}]*var\(--primary-color\)/, '朱砂渣 = --primary-color')
-  for (const k of ['bk-ink-dot', 'bk-ink-floss', 'bk-ink-bead', 'bk-ink-speck']) {
-    assert.ok(STYLE.includes(`@keyframes ${k}`), `缺 keyframes ${k}`)
+  assert.equal(LAYER.match(/useState/), null, '移动路径（含墨晕）零 React state')
+  assert.equal(LAYER.match(/field\.(start|stop)\(\)/), null, '发射钟起停接线必须随尘层退役')
+  // 样式层（style.tsx）：容器纯装饰、三类柔边元件、错峰延迟长写
+  assert.match(STYLE, /\.bk-ink \{[\s\S]{0,200}?pointer-events: none/, '墨层 pointer-events:none 纯装饰')
+  for (const k of ['bk-ink-bleed', 'bk-ink-wave', 'bk-ink-splash']) {
+    assert.ok(STYLE.includes('@keyframes ' + k), '缺 keyframes ' + k)
   }
-  // 错峰延迟必须长写（animation 简写会把 var(--dl) 重置为 0s）
-  assert.match(STYLE, /\.bk-ink i\.go\.speck \{[^}]*animation-delay: var\(--dl, 0ms\)/, 'speck 错峰延迟长写在场')
+  for (const dead of ['bk-ink-dot', 'bk-ink-floss', 'bk-ink-bead', 'bk-ink-speck', 'bk-ink-dust', 'bk-ink-halo']) {
+    assert.equal(STYLE.includes('@keyframes ' + dead), false, '旧 keyframes ' + dead + ' 必须退役')
+  }
+  assert.match(STYLE, /\.bk-ink i\.go\.wave \{[^}]*animation-delay: var\(--dl, 0ms\)/, '水波错峰延迟长写（shorthand 会把 var 重置为 0）')
 })
 
-test('环绕墨尘与点击墨晕：单发射钟生命周期（takeover 起 / leave+cleanup 停）、halo 恰一粒、尘晕 keyframes 与色纪律', () => {
-  // 发射钟：域内唯一 setInterval，stop 唯一 clearInterval；起停只挂现有生命周期（零新监听器口径不变）
-  assert.equal((INK.match(/window\.setInterval/g) || []).length, 1, 'K1 域内 window.setInterval 恰一处')
-  assert.equal((INK.match(/window\.clearInterval/g) || []).length, 1, 'stop() 为唯一清钟出口')
-  assert.match(INK, /start\(\) \{[\s\S]{0,120}?if \(this\.timer\) return[\s\S]{0,120}?window\.setInterval/, 'start 幂等（重入不叠钟）')
-  assert.match(INK, /DUST_INTERVAL = 200/, 'K1 发射节拍 200ms')
-  assert.match(INK, /const tick[\s\S]|private tick\(\)/, 'tick 拍生尘存在')
-  // K2 拖曳：出生点随速度反向偏置（DRAG 常量参与）
-  assert.match(INK, /DRAG_SPEED[\s\S]{0,300}?bx -= Math\.cos\(this\.ang\)/, '移动中尘向速度反方向拖曳')
-  // K3 形态：dust 低透随机（--o 由 JS 逐粒写入）、1/6 朱砂
-  assert.match(INK, /'dust hot'/, '1/6 概率朱砂热尘')
-  assert.match(INK, /setProperty\('--o'/, '尘浓淡 --o 逐粒指定')
-  // K8 点击一晕：tap 恰出 1 粒 halo
-  assert.match(INK, /this\.put\(x, y, 0, 'halo'/, 'K8 每击恰一粒墨晕')
-  // 接线生命周期
-  assert.match(LAYER, /const takeover[\s\S]{0,400}?field\.start\(\)/, 'K1 takeover 内起钟')
-  assert.match(LAYER, /const onLeave[\s\S]{0,200}?field\.stop\(\)/, 'leave 停钟')
-  assert.match(LAYER, /return \(\) => \{[\s\S]{0,60}?field\.stop\(\)/, 'cleanup 停钟（热更新/卸载不遗留）')
-  // 样式层：尘/晕 keyframes 与色纪律（尘 --o、晕 currentColor 描边环、hot 朱砂）
-  assert.ok(STYLE.includes('@keyframes bk-ink-dust'), '缺 bk-ink-dust')
-  assert.ok(STYLE.includes('@keyframes bk-ink-halo'), '缺 bk-ink-halo')
-  assert.match(STYLE, /@keyframes bk-ink-dust \{[\s\S]{0,200}?var\(--o/, '尘峰值透明度走 --o')
-  assert.match(STYLE, /\.bk-ink i\.halo \{[^}]*border: 1px solid currentColor/, '晕 = currentColor 细描边环（静态 border，动画只 transform/opacity）')
-  assert.match(STYLE, /\.bk-ink i\.hot \{[^}]*var\(--primary-color\)/, '热尘朱砂 = --primary-color')
-  assert.match(STYLE, /\.bk-ink i\.go\.dust \{[^}]*animation-delay: var\(--dl, 0ms\)/, 'dust 延迟长写在场')
+test('落笔一晕与同心水波：tap 恰 1 splash + 3 wave 错峰、takeover 起笔一晕、颜色整层仅主题色', () => {
+  // 点击语义：签名件 splash 恰一粒 + 水波恰三圈、按 RIPPLE_STAGGER 依次错峰
+  assert.match(INK, /RIPPLE_RINGS = 3/, '水波三圈')
+  assert.match(INK, /RIPPLE_STAGGER = 140/, '错峰 140ms（0/140/280）')
+  assert.match(INK, /this\.put\(x, y, 'splash'/, '每击恰一粒落笔一晕')
+  assert.match(INK, /for \(let i = 0; i < RIPPLE_RINGS; i\+\+\)[\s\S]{0,160}this\.put\(x, y, 'wave'/, '三圈同心水波沿池位错峰出生')
+  // 起笔一晕（决策 D6）：接管首帧只重锚会让轨迹没有起头——原型实测根因
+  assert.match(INK, /first\(x: number, y: number\)[\s\S]{0,160}'bleed'/, 'first() 在接管落点出一记墨晕')
+  assert.match(LAYER, /const takeover[\s\S]{0,600}?field\.first\(/, 'takeover 内调用起笔一晕')
+  // 逐粒几何与浓淡全部经自定义属性内联（禁第二份硬编码）
+  for (const p of ['--px', '--py', '--o', '--sz', '--dl']) {
+    assert.ok(INK.includes("setProperty('" + p + "'"), '缺几何自定义属性 ' + p)
+  }
+  assert.match(INK, /O_DECAY/, '速度→浓淡衰减系数在场（慢=浓而小洇得深，快=淡而大）')
+  // 颜色口径（决策 D2）：墨层整层只吃 --primary-color，--text-color 彻底退出
+  const inkBlock = STYLE.slice(STYLE.indexOf('.bk-ink {'), STYLE.indexOf('@keyframes bk-ink-bleed'))
+  assert.match(inkBlock, /\.bk-ink \{[^}]*color: var\(--primary-color\)/, '墨层色 = --primary-color（四主题自动跟随）')
+  assert.equal(inkBlock.includes('--text-color'), false, '墨层禁现 --text-color——这正是「看着不像主题色」的根因')
+  assert.equal((inkBlock.match(/var\(--primary-color\)/g) || []).length, 1, '主题色只在容器声明一次，浓淡一律 currentColor + color-mix 分层')
+  for (const kind of ['bleed', 'wave', 'splash']) {
+    assert.match(inkBlock, new RegExp('\\.bk-ink i\\.' + kind + ' \\{[^}]*color-mix\\(in oklab, currentColor'), kind + ' 柔边渐变必须用 currentColor + color-mix 分层（不新增色值源）')
+  }
+  assert.match(inkBlock, /\.bk-ink i \{[^}]*width: var\(--sz/, '逐粒尺寸走 --sz')
+  // 驻留段（决策 D4）：ease-out 会提前吃掉淡出，前段必须先浓后淡
+  assert.equal(((STYLE.match(/@keyframes bk-ink-bleed \{[\s\S]*?\n  \}/) || [''])[0].match(/^\s*\d+%/gm) || []).length, 3, 'bk-ink-bleed 三关键帧（0/32/100 驻留段）')
+  assert.equal(((STYLE.match(/@keyframes bk-ink-wave \{[\s\S]*?\n  \}/) || [''])[0].match(/^\s*\d+%/gm) || []).length, 3, 'bk-ink-wave 三关键帧（0/22/100 驻留段）')
+  // 时长令牌化（决策 D9）
+  assert.match(STYLE, /\.bk-ink i\.go\.bleed \{[^}]*animation-duration: calc\(var\(--motion-dur-reveal/, '墨晕时长走 --motion-dur-reveal 倍数')
+  assert.match(STYLE, /\.bk-ink i\.go\.wave \{[^}]*animation-duration: calc\(var\(--motion-dur-reveal/, '水波时长走 --motion-dur-reveal 倍数')
+  assert.match(STYLE, /\.bk-ink i\.go\.splash \{[^}]*animation-duration: calc\(var\(--motion-dur-reveal/, '落笔一晕时长走 --motion-dur-reveal 倍数')
   assert.equal((INK.match(/#[0-9a-fA-F]{3,8}\b/g) || []).length, 0, 'ink.ts 零色值')
 })

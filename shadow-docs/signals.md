@@ -17,10 +17,11 @@
 - 权重: 2
 - 深度: unit
 - 域/scope: 验证工具链 · packages/components/**/*.test.mjs、apps/site/test/*.test.mjs
-- 证据: changes/20261005-fix-locale-switch-realtime/brief.md——`mise exec` 下按 `mise.toml` 钉的 node 22.23.2 跑 `node --test packages/components/locales/locales.test.mjs` 直接起不来（守卫靠 `.ts` 原生类型剥离：`import('./translate.ts')`、`import(\`./dictionaries/${lang}/${ns}.ts\`)`，node 22 无此能力），换 ambient node 24 后同一命令 16/16 通过
-- 命中: 1（最近 2026-10-05）
+- 证据: changes/20261009-feature-cursor-ripple-ink/brief.md——ambient node 22.14 跑 `node --test packages/components/cursor/cursor.test.mjs` 出现 4 条 `ERR_UNKNOWN_FILE_EXTENSION` 假失败（全部集中在 import tints.ts / generator-color.ts 的用例，与本次改动无关），换 `node --experimental-strip-types --test` 同一命令 13/13 真绿；若按原始报告判定，会去「修」四条与本次无关的正确既存日志。
+- 原证据: changes/20261005-fix-locale-switch-realtime/brief.md——`mise exec` 下按 `mise.toml` 钉的 node 22.23.2 跑 `node --test packages/components/locales/locales.test.mjs` 直接起不来（守卫靠 `.ts` 原生类型剥离：`import('./translate.ts')`、`import(\`./dictionaries/${lang}/${ns}.ts\`)`，node 22 无此能力），换 ambient node 24 后同一命令 16/16 通过
+- 命中: 2（最近 2026-10-09）
 - 退役条件: 守卫改为显式经 loader/构建产物读取（不再直读 `.ts`），或 `mise.toml` 的 node 钉到 ≥ 23 且 next 构建在 ≥ 23 下稳定
-- 陈述: 仓内 `.mjs` 守卫直读 `.ts` 源码，依赖 node 的原生类型剥离，只在 node ≥ 23 可跑；`mise.toml` 为绕开 V8 SIGSEGV 钉的是 node 22——两者冲突。看到「守卫命令秒退、无测试摘要」先核对 `node -v`，不要判成测试红。（补充证据）
+- 陈述: 仓内 `.mjs` 守卫直读 `.ts` 源码，依赖 node 的原生类型剥离，只在 node ≥ 23 可跑；`mise.toml` 为绕开 V8 SIGSEGV 钉的是 node 22——两者冲突。看到「守卫命令秒退、无测试摘要」先核对 `node -v`，不要判成测试红。补充：**node 22 并非完全不可跑**——显式加 `--experimental-strip-types` 即可，比换 node 版本更可控；假失败的特征是 `ERR_UNKNOWN_FILE_EXTENSION ".ts"` 且失败条数恰好等于 import `.ts` 的用例数。（补充证据）
 
 ## SGN-004 · 内置浏览器 WKWebView 后台帧饥饿：JS 动画毫秒级时序不可量测
 - 方向: negative
@@ -81,3 +82,23 @@
 - 命中: 1（最近 2026-10-07）
 - 退役条件: 沙箱 DNS/egress 对 github.com 多记录稳定解析
 - 陈述: GitHub 写操作失败先分层定位——ls-remote/curl 探测解析 IP 与 api 域各自可达性，区分「egress 单 IP 抖动」与「全断网」与「服务器侧掉线」；抖动时以 canary 探测 + 原命令同方式重试（幂等断点续跑），禁止切 SSH/改 hosts 换方式旁路；同窗口部署链红要单独判 SSH 签名，勿混为一谈。
+
+## SGN-007 · 受控浏览器沙箱量测前先探全局，缺就改走页面自带探针 + DOM 落盘
+- 方向: positive
+- 权重: 3
+- 深度: runtime
+- 域/scope: 验证工具链 · 一切在 Codex 内置浏览器 / playwright evaluate 里做的 runtime 量测
+- 证据: changes/20261009-feature-cursor-ripple-ink/brief.md——量测镜像页时发现沙箱会剥接大量标准全局：`PointerEvent`/`Event` 构造器、`parseFloat`、`performance`、`requestAnimationFrame`、`document.getAnimations()` 全部不可用，页面脚本里赋的 `window.__probe` 在沙箱侧读回 `undefined`（导致连续多次尝试白跑）；改为「页面自带 `<script>` 探针把结果写进 `<pre id="out">`」后，沙箱只需读 `textContent` 即可得到完整量测。定格取证不依赖 `getAnimations()` pause+seek（SGN-003 原配方在此环境失效），改用 `animation-play-state: paused` 同样拿到可读帧。
+- 命中: 1（最近 2026-10-09）
+- 退役条件: 受控浏览器注入环境恢复标准全局与 Web Animations API
+- 陈述: 在注入式浏览器沙箱里写量测脚本前，先用一条最小探针确认可用面；凡需要派事件/读动画进度/取页面内存活对象，一律把逻辑放进被测页面自己的 `<script>` 并把结果落到 DOM 文本节点，别在沙箱侧硬碰。
+
+## SGN-008 · 动效「看不见」先量出生计数与 computed opacity，再谈调参
+- 方向: positive
+- 权重: 3
+- 深度: runtime
+- 域/scope: UI 动效 · packages/components/cursor 及一切 keyframes 装饰层
+- 证据: changes/20261009-feature-cursor-ripple-ink/brief.md——用户反馈「看不到鼠标轨迹」，第一次定位误判为「浓度太低」（已经把参数改了一轮）；真正根因是量出来的两件事：① `kinds{bleed:0}`——跟随层那段块注释漏收尾 `*/`，静默吞掉后续全部声明，只留 `ReferenceError: taken is not defined`，拖尾从未出生（修法：把 `<script>` 段抽出来跑 `node --check`）；②修后 `bleed:38` 在位、computed opacity `.157–.337`，而早先无驻留段的纯 ease-out 曲线会把 opacity 峰值提前衰尽——两者目测与代码走查都分不清。
+- 命中: 1（最近 2026-10-09）
+- 退役条件: 无（常驻方法论）
+- 陈述: 报「动效看不见/不好」时，第一步永远是数出生计数（按类名统计池内活跃元素）与 computed opacity 区间，区分「没出生」与「出生了但看不见」两类根因；不要直接去调浓度/时长参数。
