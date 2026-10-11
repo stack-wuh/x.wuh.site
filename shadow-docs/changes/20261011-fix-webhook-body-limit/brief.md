@@ -4,7 +4,7 @@
   "name": "20261011-fix-webhook-body-limit",
   "type": "fix",
   "scope": "apps/server",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261011-fix-webhook-body-limit",
   "files": [
@@ -24,7 +24,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "c87b8aa68350c3d36abdd4bf780cc52cf7551b1f",
     "planHash": "f64fe4452925193d45e1bcc466ae11534b11189a1332640675c81e04f9306311",
     "updatedAt": null,
     "lastError": null,
