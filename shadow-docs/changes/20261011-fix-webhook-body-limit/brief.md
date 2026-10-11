@@ -4,7 +4,7 @@
   "name": "20261011-fix-webhook-body-limit",
   "type": "fix",
   "scope": "apps/server",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261011-fix-webhook-body-limit",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 528,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/528"
   },
   "review": {
     "conclusion": "passed",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "c87b8aa68350c3d36abdd4bf780cc52cf7551b1f",
-    "planHash": "f64fe4452925193d45e1bcc466ae11534b11189a1332640675c81e04f9306311",
+    "checkpoint": "pr:528",
+    "planHash": "9c01ad9715e81314acbfd46d67e14dd706deb9af79ea86deb36e99fd7a244e6a",
     "updatedAt": null,
     "lastError": null,
     "release": {
