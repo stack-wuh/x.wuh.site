@@ -4,7 +4,7 @@
   "name": "20261012-docs-pr-and-commit-templates",
   "type": "docs",
   "scope": null,
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261012-docs-pr-and-commit-templates",
   "files": [
@@ -21,13 +21,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "cc4948f98429a80ae3f157ebc7ca2ac2f56beedb",
-    "verifiedAt": "2026-10-12T11:24:29.041Z"
+    "verifiedCommit": "a904d6f3a09b5cdb254a406eedb71296c9379542",
+    "verifiedAt": "2026-10-12T11:53:18.350Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:530",
-    "planHash": "fb3e8e1d002d9b3cb4a7d311fb3c7a6f6068b9c29f963856e69541e0d2cdb120",
+    "checkpoint": "merged-pr:530",
+    "planHash": "45ce3b47e4b135c65a989dce5f704f58f9a536f9bb38c8a22485851c03b9568d",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -53,7 +53,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": "shadow-docs/knowledge",
-    "reason": "规范真源在插件仓 norms/pr-message.md，本仓只承载生成物；未产生需要独立卡片承载的长期事实"
+    "reason": "规范真源在插件仓 norms/pr-message.md，本仓只承载生成物；未产生需独立卡片承载的长期事实"
   }
 }
 ---
