@@ -4,7 +4,7 @@
   "name": "20261012-docs-pr-and-commit-templates",
   "type": "docs",
   "scope": null,
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261012-docs-pr-and-commit-templates",
   "files": [
@@ -16,8 +16,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 529,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/529",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 530,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/530"
   },
   "review": {
     "conclusion": "passed",
@@ -26,7 +26,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:529",
+    "checkpoint": "pr:530",
     "planHash": "fb3e8e1d002d9b3cb4a7d311fb3c7a6f6068b9c29f963856e69541e0d2cdb120",
     "updatedAt": null,
     "lastError": null,
