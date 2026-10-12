@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { json, urlencoded } from 'express';
 import * as Sentry from '@sentry/node';
 import { SITE_URL } from '@wuh.site/core';
 import { AppModule } from './app.module';
@@ -12,7 +13,10 @@ import { parseCorsOrigin } from './common/utils/cors-origin.util';
 const logger = pino();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bodyParser: false });
+  // GitHub webhook payloads carry full issue bodies (long posts exceed express's 100kb default)
+  app.use(json({ limit: '5mb' }));
+  app.use(urlencoded({ extended: true, limit: '5mb' }));
   const configService = app.get(ConfigService);
 
   // Initialize Sentry

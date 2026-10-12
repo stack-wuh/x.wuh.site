@@ -1,15 +1,17 @@
 ---
 title: 组件编写规范
 domain: components
-keywords: [组件规范, 目录结构, 命名规则, 文件职责, exports, 入口, types.ts, specs.tsx, readme, 导出形态, default, 命名导出, 双导出, 守卫, 棘轮, baseline, props词汇, variant, size, 受控, 逃生口, 占位组件]
+keywords: [组件规范, 目录结构, 命名规则, 文件职责, exports, 入口, types.ts, specs.tsx, readme, 导出形态, default, 命名导出, 双导出, 守卫, 棘轮, baseline, props词汇, variant, size, 受控, 逃生口, 占位组件, 应用层私有组件, constants.ts, PascalCase, 页面级View]
 scope:
   - packages/components
+  - apps/site
 status: active
 source:
   - changes/20261008-refactor-component-standard/brief.md
+  - changes/20261011-refactor-site-structure-standard-base/brief.md
 verified: 2026-10-08
 verified-depth: unit
-verified-scope: 条款由 2026-10-08 对 40 个组件目录全量普查归纳（文件构成、导出语句、readme 标题、引用点逐一 grep）；结构约束由 packages/components/test/structure.test.mjs + structure-baseline.json 棘轮守卫可重复验证，验证方式段给出复跑命令。
+verified-scope: 条款由 2026-10-08 对 40 个组件目录全量普查归纳（文件构成、导出语句、readme 标题、引用点逐一 grep）；结构约束由 packages/components/test/structure.test.mjs + structure-baseline.json 棘轮守卫可重复验证，验证方式段给出复跑命令。site 章节待 20261011 基座 change 的守卫实测后更新 verified。
 ---
 
 # 组件编写规范
