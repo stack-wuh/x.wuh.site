@@ -4,7 +4,7 @@
   "name": "20261009-feature-cursor-ripple-ink",
   "type": "feature",
   "scope": "packages/components/cursor",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20261009-feature-cursor-ripple-ink",
   "files": [
@@ -20,18 +20,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 524,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/524",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 526,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/526"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "039556c3a83cb7601015e29ef7dfe61134ff6eb1",
-    "verifiedAt": "2026-10-09T09:54:58.494Z"
+    "verifiedCommit": "452052ba77669c4c670d8b79603429dc441681cb",
+    "verifiedAt": "2026-10-09T11:50:48.667Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:524",
-    "planHash": "60598033695c8df3433612d648098f1b98b7d6167e942af79a99292e2842e4e1",
+    "checkpoint": "pr:526",
+    "planHash": "8ed5f28b1e2978c68308214a743b555f4890ffc6af9ee5a479d45d59344449a2",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -73,7 +73,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/cursor-system.md",
-    "reason": "墨层形态、颜色口径与发射钟纪律三条既有结论已过期（粒子色仅两 token、域内唯一发射钟、setInterval 恰 1），必须原位更新否则下个变更会照旧实现；本次同时补齐 verified-depth runtime 观察点与 node 22 守卫开关事实"
+    "reason": "墨层形态、颜色口径与发射钟纪律三条既有结论已过期（粒子色仅两 token、域内唯一发射钟、setInterval 恰 1），已原位更新；本次同时补齐 verified-depth runtime 观察点与 node 22 守卫开关事实"
   }
 }
 ---
@@ -170,6 +170,9 @@
     - 降级：`mode=coarse` → `live 0`、跟随层不接管；`mode=reduce` → `pool 0`（CursorLayer 整层不挂载）
     - 控制台 0 错误；定格帧留档 `shadow-docs/designs/20261009-cursor-ripple/shots/mirror-v5-{wl,wd,pl,pd}.png`
 - 环境事实（须回写卡片）：域守卫在 Node 22.14 直跑会因 `ERR_UNKNOWN_FILE_EXTENSION ".ts"` 假失败 4 条（tints/oklab/data URI/d 值/热点锚），必须加 `--experimental-strip-types`；卡片「验证方式」原命令缺该开关。
+- 交付发布（2026-10-09 11:35 UTC）：GitHub Release **v1.4.79** 已创建（target `39881cf`），部署链 run `37924636279` 全绿——quality-gate / prepare / prepare-deps / build-nest / build-next / staging-test / switch-traffic / restart-nginx 八 job 皆 success。发布由 AI 在用户两次显式指令下代跑（项目卡片默认委托用户执行，本次为显式破例）。
+  - 踩坑留痕：`gh release create --target` 传**短 SHA**（`39881cf`）会被 API 拒为 `HTTP 422: Release.target_commitish is invalid`（连带报 tag 无效），必须传完整 40 位 SHA 或分支名。
+  - 未完成的复核：容器内产物指纹未取到——本机代理 fake-ip DNS 使 `curl https://x.wuh.site/` 报 exit 6、内置浏览器报 `ERR_CONNECTION_CLOSED`，`server-diagnose.yml` 的探针是 2026-10-01 针对 252px 硬编码的一次性脚本、不含本次指纹。按卡片「CI 绿 ≠ 新产物上车」，此项归 field 目检（鼠标移动应见柔边墨晕、点击见三圈水波、颜色随主题变）。
 - 偏差留痕：brief T2 文案写「重写墨层与尘晕守卫」，尘晕守卫实为整条退役（改判为「零定时器」断言），非遗漏。
 
 ## 知识评估
