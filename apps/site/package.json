@@ -17,6 +17,7 @@
     "@shikijs/rehype": "^4.4.3",
     "@wuh.site/components": "workspace:^",
     "@wuh.site/core": "workspace:^",
+    "@wuh.site/hooks": "workspace:^",
     "ahooks": "3.7.1",
     "html-to-image": "^1.11.13",
     "next": "16.3.2",

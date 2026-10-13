@@ -2,7 +2,8 @@
 
 /* 音量：钮群右端图标钮 + 上弹竖向樂印滑杆小纸卡——外点收起/指针拖拽/键盘步进内聚（20261005 自 PlayerPanel.tsx 拆出；
    volOpen 开合态仍由面板持有，Escape 分层不变） */
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
+import { useClickOutside } from '@wuh.site/hooks/useClickOutside'
 import { IconVolume } from '@wuh.site/components/icons'
 import { VolumeButton, VolumePop, VolWrap, VolumePct, VFill, VSlider, VThumb } from './styles/dock'
 
@@ -21,16 +22,7 @@ export const PanelVolume = ({ volume, volOpen, label, onToggle, setVolOpen, setV
   const volumePct = Math.round(volume * 100)
 
   // 外点收起：开态监听 pointerdown，包裹层外点击即收
-  useEffect(() => {
-    if (!volOpen) return
-    const onPointerDown = (event: PointerEvent) => {
-      if (volWrapRef.current && !volWrapRef.current.contains(event.target as Node)) {
-        setVolOpen(false)
-      }
-    }
-    window.addEventListener('pointerdown', onPointerDown)
-    return () => window.removeEventListener('pointerdown', onPointerDown)
-  }, [volOpen, setVolOpen])
+  useClickOutside(volWrapRef, () => setVolOpen(false), { enabled: volOpen })
 
   // 竖向滑杆：指针拖拽 + 键盘步进（方向键/Home/End），语义同共享 Progress 的交互态
   const volumeFromPointer = (event: React.PointerEvent) => {

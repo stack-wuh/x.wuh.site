@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type ImagePreviewItem, type ImagePreviewProps } from '@wuh.site/components/image-preview'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { useImagePreview } from '@wuh.site/hooks/useImagePreview'
 import { useLocale } from '@wuh.site/components/locales'
 
@@ -143,33 +144,25 @@ export const usePostImagePreview = (bodyHtml?: string) => {
     setPreviewItems(decorateAndCollectImages())
   }, [bodyHtml, decorateAndCollectImages, t])
 
-  useEffect(() => {
-    const root = containerRef.current
-    if (!root) return
-
-    const handleClick = (event: MouseEvent) => {
-      if (openPreviewByTarget(event.target)) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
+  // 正文图片/链接的预览捕获层：容器节点持久（bodyHtml 更新只换子树），
+  // openPreviewByTarget 经 hook 的最新 handler 取用，无需随其身份重绑
+  const handleClick = (event: MouseEvent) => {
+    if (openPreviewByTarget(event.target)) {
+      event.preventDefault()
+      event.stopPropagation()
     }
+  }
 
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return
-      if (openPreviewByTarget(event.target)) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    if (openPreviewByTarget(event.target)) {
+      event.preventDefault()
+      event.stopPropagation()
     }
+  }
 
-    root.addEventListener('click', handleClick, true)
-    root.addEventListener('keydown', handleKeydown, true)
-
-    return () => {
-      root.removeEventListener('click', handleClick, true)
-      root.removeEventListener('keydown', handleKeydown, true)
-    }
-  }, [bodyHtml, openPreviewByTarget])
+  useEventListener('click', handleClick, containerRef, { capture: true })
+  useEventListener('keydown', handleKeydown, containerRef, { capture: true })
 
   const previewProps = useMemo<PreviewProps>(
     () => ({

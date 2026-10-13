@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import Dialog from '@wuh.site/components/dialog'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { IconArrowRight } from '@wuh.site/components/icons'
 import { useLocale, type Locale } from '@wuh.site/components/locales'
 import {
@@ -163,21 +164,16 @@ export default function GuestbookBarrageDialog() {
     }
   }
 
-  // 视口滚动监听：距底 50px 内视为贴底，恢复贴底时清除新留言提示
-  useEffect(() => {
-    if (!open) return
+  // 视口滚动监听：距底 50px 内视为贴底，恢复贴底时清除新留言提示（开态才挂载）
+  const handleViewportScroll = () => {
     const viewport = viewportRef.current
     if (!viewport) return
+    const isAtBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <= 50
+    setAtBottom(isAtBottom)
+    if (isAtBottom) setHasNewWhileAway(false)
+  }
 
-    const handleScroll = () => {
-      const isAtBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <= 50
-      setAtBottom(isAtBottom)
-      if (isAtBottom) setHasNewWhileAway(false)
-    }
-
-    viewport.addEventListener('scroll', handleScroll, { passive: true })
-    return () => viewport.removeEventListener('scroll', handleScroll)
-  }, [open])
+  useEventListener('scroll', handleViewportScroll, viewportRef, { passive: true, enabled: open })
 
   // 首次填充 instant 定位底部；后续新消息在贴底时跟随，否则提示
   const prevChatLengthRef = useRef(0)

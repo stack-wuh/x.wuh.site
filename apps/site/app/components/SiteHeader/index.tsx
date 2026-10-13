@@ -1,7 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { useClickOutside } from '@wuh.site/hooks/useClickOutside'
+import { useKeyPress } from '@wuh.site/hooks/useKeyPress'
 import { IconBars, IconChevronDown, IconLogo, IconPalette } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
 import { useThemeMode, type ColorSchemeMode } from '../theme/ThemeModeProvider'
@@ -67,32 +69,12 @@ export default function SiteHeader() {
     setMobileAppearanceExpanded((value) => !value)
   }, [])
 
-  useEffect(() => {
-    if (!open) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') close()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [open, close])
+  // 移动菜单 Escape 关闭（开态才挂载）
+  useKeyPress('Escape', close, { enabled: open })
 
-  useEffect(() => {
-    if (!appearanceOpen) return
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!appearanceRef.current?.contains(event.target as Node)) closeAppearance()
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeAppearance(true)
-    }
-
-    document.addEventListener('pointerdown', onPointerDown)
-    window.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown)
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [appearanceOpen, closeAppearance])
+  // 桌面外观浮层：外点收起 + Escape 关闭并归还焦点（开态才挂载）
+  useClickOutside(appearanceRef, () => closeAppearance(), { enabled: appearanceOpen })
+  useKeyPress('Escape', () => closeAppearance(true), { enabled: appearanceOpen })
 
   return (
     <S.HeaderRoot>

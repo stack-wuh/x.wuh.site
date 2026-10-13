@@ -58,10 +58,11 @@ test('桌面 Header 提供可访问的外观入口和编辑部调色台浮层', 
   assert.match(appearanceOptionsSource, /aria-pressed=\{colorSchemeMode === option\.value\}/)
 })
 
+// 20261013-shared-event-hooks：监听形态收敛到 @wuh.site/hooks——断言由手写 keydown/pointerdown 字面量改钉 hook 调用，意图不变
 test('桌面外观浮层支持 Escape、外部点击和焦点归还', () => {
   assert.match(headerSource, /appearanceRef/)
-  assert.match(headerSource, /event\.key === 'Escape'/)
-  assert.match(headerSource, /contains\(event\.target as Node\)/)
+  assert.match(headerSource, /useKeyPress\('Escape', \(\) => closeAppearance\(true\), \{ enabled: appearanceOpen \}\)/)
+  assert.match(headerSource, /useClickOutside\(appearanceRef, \(\) => closeAppearance\(\), \{ enabled: appearanceOpen \}\)/)
   assert.match(headerSource, /appearanceTriggerRef\.current\?\.focus\(\)/)
 })
 
@@ -91,7 +92,7 @@ test('移动菜单通过外观设置入口内联展开主题选项', () => {
 })
 
 test('移动菜单支持 Escape 关闭并重置展开状态', () => {
-  assert.match(headerSource, /event\.key === 'Escape'/)
+  assert.match(headerSource, /useKeyPress\('Escape', close, \{ enabled: open \}\)/)
   assert.match(headerSource, /setMobileAppearanceExpanded\(false\)/)
 })
 

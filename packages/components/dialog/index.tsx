@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useKeyPress } from '@wuh.site/hooks/useKeyPress'
 import { useLocale } from '@wuh.site/components/locales'
 import {
   Barrier,
@@ -111,23 +112,15 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     }
   }, [closing, onClose, closeDialogProp, setOpenProp])
 
-  React.useEffect(() => {
-    if (!open || !closeOnEsc) return
-
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        event.stopPropagation()
-        handleClose()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeydown)
-
-    return () => {
-      window.removeEventListener('keydown', handleKeydown)
-    }
-  }, [open, closeOnEsc])
+  // Escape 关闭：开态才挂载监听；preventDefault 由 hook 先行，再停传播、走统一关闭
+  useKeyPress(
+    'Escape',
+    (event) => {
+      event.stopPropagation()
+      handleClose()
+    },
+    { enabled: open && closeOnEsc, preventDefault: true }
+  )
 
   React.useEffect(() => {
     if (!open || !lockScroll || typeof document === 'undefined') return

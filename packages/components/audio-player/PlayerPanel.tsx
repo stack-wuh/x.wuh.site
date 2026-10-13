@@ -2,6 +2,7 @@
 
 /* 播放面板组合入口：状态 / effects / Escape 分层 / 滚动锁 + JSX 骨架——样式按区块拆至 panel/styles/*（20261005 拆分） */
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
 import { useLocale } from '@wuh.site/components/locales'
@@ -108,29 +109,31 @@ export const AudioPlayerPanel = () => {
     typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   // 弹层交互：打开时焦点移入关闭钮，Escape 按层收起（popover → 抽屉 → 词卷 → 面板），关闭后焦点移回
+  // 焦点 effect 的 deps 含子层开关与 togglePanel（沿用原实现的捕获/归还时序，勿缩窄）；监听拆到 hook
   useEffect(() => {
     if (!state.isPanelOpen) return
     restoreFocusRef.current = document.activeElement as HTMLElement | null
     closeRef.current?.focus()
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      if (volOpen) {
-        setVolOpen(false)
-      } else if (queueOpen) {
-        setQueueOpen(false)
-      } else if (wordsOpen) {
-        setWordsOpen(false)
-      } else {
-        togglePanel()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
       restoreFocusRef.current?.focus?.()
       restoreFocusRef.current = null
     }
   }, [state.isPanelOpen, volOpen, queueOpen, wordsOpen, togglePanel])
+
+  const handleEscape = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape') return
+    if (volOpen) {
+      setVolOpen(false)
+    } else if (queueOpen) {
+      setQueueOpen(false)
+    } else if (wordsOpen) {
+      setWordsOpen(false)
+    } else {
+      togglePanel()
+    }
+  }
+
+  useEventListener('keydown', handleEscape, 'window', { enabled: state.isPanelOpen })
 
   // 面板关闭时复位桌面覆盖层状态
   useEffect(() => {

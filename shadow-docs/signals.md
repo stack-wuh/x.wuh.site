@@ -93,6 +93,38 @@
 - 退役条件: 受控浏览器注入环境恢复标准全局与 Web Animations API
 - 陈述: 在注入式浏览器沙箱里写量测脚本前，先用一条最小探针确认可用面；凡需要派事件/读动画进度/取页面内存活对象，一律把逻辑放进被测页面自己的 `<script>` 并把结果落到 DOM 文本节点，别在沙箱侧硬碰。
 
+## SGN-009 · IAB 合成 matchMedia change 验实例级监听前先证实例同一性，不可达就换 UI 链路替代
+- 方向: negative
+- 权重: 2
+- 深度: runtime
+- 域/scope: 验证工具链 · IAB/WKWebView runtime 验收 · 一切 `window.matchMedia` 实例监听（媒体查询跟随类）
+- 证据: changes/20261013-refactor-shared-event-hooks/brief.md——WKWebView 实测 `window.matchMedia(q) === window.matchMedia(q)` 为 false（每次调用返回新实例），合成 `mql.dispatchEvent(new Event('change'))` 永远触不到组件 memo 持有的实例上的监听（getter 探针 matchesReads=0）；main 旧实现同为实例级监听，同样不可测——把「组件不响应」当回归即误判。替代验收：UI 显示模式切换（setColorSchemeMode→applyColorScheme 同链路）+ 守卫静态断言
+- 退役条件: 改用真浏览器/CDP `Emulation.setEmulatedMedia`（对真实实例广播 change），或验证到引擎实例缓存语义变化
+
+## SGN-010 · IAB React 事件验收走 __reactProps.onClick 与 window.dispatchEvent，el.click()/坐标/locator 点击不可靠
+- 方向: positive
+- 权重: 2
+- 深度: runtime
+- 域/scope: 验证工具链 · IAB · site 生产构建（已水合）的 React 交互验收
+- 证据: changes/20261013-refactor-shared-event-hooks/brief.md——同一生产页面：经按钮 `__reactProps` expando 调 `onClick({...})` 可靠开浮层且状态可读；`el.click()`、`cua.click` 坐标、`locator.click`（含 force）对同一外观按钮无效/超时×3；`window.dispatchEvent(new KeyboardEvent('keydown',…))` 可达 window 级监听（移动菜单/外观 Escape 均正确关闭）；document pointerdown 冒泡可达外点监听（内点不收起/外点收起双分支判定正确）。写脚本前先一条最小探针确认可用面（呼应 SGN-007）
+- 退役条件: IAB 注入环境提供真实输入事件，或验收整体迁真浏览器
+
+## SGN-011 · site 守卫集 main 基线存量红量大，验收判据是失败名集基线 diff 为空，不是全绿
+- 方向: positive
+- 权重: 3
+- 深度: unit
+- 域/scope: 验证工具链 · apps/site/test/*.test.mjs
+- 证据: changes/20261013-refactor-shared-event-hooks/brief.md——分支 204 tests/27 fail vs main 基线 193/32，`comm -23` 分支独有失败=空即零新增红；27 项红为存量（样式字面量守卫与现码漂移，如 site-header-theme-toggle 6 项双侧同名红、image-role-contract 3 项）；CI 仅跑根 tsc+oxlint，未含 .mjs 守卫。注意基线 worktree 若有文件级加载失败（如 seo-p1/p14/p17）会被 node --test 折叠成单行 ✖、总数不同（193 vs 204）——计数差≠回归，比对以失败名集为准；守卫结论只取单条成功输出（呼应 SGN-001 拆单配方）
+- 退役条件: 守卫集纳入 CI 且转全绿，或存量红清零
+
+## SGN-012 · Windows/Git Bash 下 package.json scripts 的行内 `NODE_OPTIONS=…` 赋值失败，直调包内二进制等价
+- 方向: positive
+- 权重: 2
+- 深度: unit
+- 域/scope: 验证工具链 · win 本地 pnpm 脚本执行（build:next 等 Unix 行内 env 形态）
+- 证据: changes/20261013-refactor-shared-event-hooks/brief.md——`pnpm build:next` 报 `'NODE_OPTIONS' 不是内部或外部命令`（pnpm 委托 cmd 不认 Unix 行内 env）；等价跑法 `cd apps/site && NODE_OPTIONS=--max-old-space-size=2048 ./node_modules/.bin/next build` RC=0 一遍过、17 路由全出。CI（ubuntu）按脚本原样可跑，差异仅本地；呼应 SGN-006 绕 pnpm 直调二进制
+- 退役条件: 脚本改 cross-env 等跨平台形态，或本地验收迁 WSL
+
 ## SGN-008 · 动效「看不见」先量出生计数与 computed opacity，再谈调参
 - 方向: positive
 - 权重: 3
