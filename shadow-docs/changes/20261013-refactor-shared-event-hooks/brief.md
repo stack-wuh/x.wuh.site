@@ -48,7 +48,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "issue:531",
-    "planHash": "daeb96342c614ef8809d45ea4b719e98928703c94d5142ffdde59efcd667efb7",
+    "planHash": "748d9f1a26ee29c1a7abc2a0855c082cffc7850feed77a4099e0a3dd9091b851",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -75,7 +75,6 @@
         "packages/components/dialog/index.tsx",
         "packages/components/icons/iconfont-context.tsx",
         "packages/components/image-preview/hooks/useKeyboard.ts",
-        "packages/components/image-preview/hooks/useMediaQuery.ts",
         "packages/components/image-preview/index.tsx",
         "packages/components/image/index.tsx",
         "packages/components/package.json",
