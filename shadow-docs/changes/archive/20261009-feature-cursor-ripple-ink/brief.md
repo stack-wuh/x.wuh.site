@@ -4,7 +4,7 @@
   "name": "20261009-feature-cursor-ripple-ink",
   "type": "feature",
   "scope": "packages/components/cursor",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261009-feature-cursor-ripple-ink",
   "files": [
@@ -20,18 +20,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 524,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/524",
-    "pullRequest": 526,
-    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/526"
+    "pullRequest": 525,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/525"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "452052ba77669c4c670d8b79603429dc441681cb",
-    "verifiedAt": "2026-10-09T11:50:48.667Z"
+    "verifiedCommit": "a4897ff082b9fd83482dea6bcdefaa7dd8333157",
+    "verifiedAt": "2026-10-13T11:30:21.895Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:526",
-    "planHash": "8ed5f28b1e2978c68308214a743b555f4890ffc6af9ee5a479d45d59344449a2",
+    "checkpoint": "merged-pr:525",
+    "planHash": "072040a472571cd70be2f75ba1f6240d500ee3ba5c6af28d44188159a80fa7cc",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -73,7 +73,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/cursor-system.md",
-    "reason": "墨层形态、颜色口径与发射钟纪律三条既有结论已过期（粒子色仅两 token、域内唯一发射钟、setInterval 恰 1），已原位更新；本次同时补齐 verified-depth runtime 观察点与 node 22 守卫开关事实"
+    "reason": "main 同源复核：squash merge 后 verifiedCommit 需重钉至 main（0e3c382 及后续），知识结论沿用 2026-10-09 原评估（cursor-system.md 已随 #525 更新）"
   }
 }
 ---
