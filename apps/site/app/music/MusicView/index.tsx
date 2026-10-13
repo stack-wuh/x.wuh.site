@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Empty from '@wuh.site/components/empty'
 import { Equalizer, useAudioPlayer } from '@wuh.site/components/audio-player'
 import { useLocale } from '@wuh.site/components/locales'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import {
   formatTrackDuration,
@@ -182,53 +183,46 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
   )
 
   /* 移动刻度带在桌面鼠标下不可滚：pointer 拖拽横滑，拖动后拦截误触点击（触屏走原生滚动不介入） */
-  useEffect(() => {
+  // (pointer: fine) 门控按原实现语义在挂载时求值一次（会话内切换输入设备不重判）
+  const [finePointer] = useState(() => typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches)
+  const railDragRef = useRef({ dragging: false, moved: false, startX: 0, startLeft: 0 })
+
+  const onRailPointerDown = (event: PointerEvent) => {
     const rail = railRef.current
-    if (!rail || typeof window === 'undefined') return
-    if (!window.matchMedia('(pointer: fine)').matches) return
+    if (!rail) return
+    if (event.pointerType !== 'mouse') return
+    railDragRef.current.dragging = true
+    railDragRef.current.moved = false
+    railDragRef.current.startX = event.clientX
+    railDragRef.current.startLeft = rail.scrollLeft
+  }
+  const onRailPointerMove = (event: PointerEvent) => {
+    const rail = railRef.current
+    if (!rail) return
+    const drag = railDragRef.current
+    if (!drag.dragging) return
+    const dx = event.clientX - drag.startX
+    if (Math.abs(dx) > 4) {
+      drag.moved = true
+      rail.setPointerCapture(event.pointerId)
+      rail.scrollLeft = drag.startLeft - dx
+    }
+  }
+  const onRailPointerUp = () => {
+    railDragRef.current.dragging = false
+  }
+  const onRailClickCapture = (event: MouseEvent) => {
+    const drag = railDragRef.current
+    if (!drag.moved) return
+    event.preventDefault()
+    event.stopPropagation()
+    drag.moved = false
+  }
 
-    let dragging = false
-    let moved = false
-    let startX = 0
-    let startLeft = 0
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return
-      dragging = true
-      moved = false
-      startX = event.clientX
-      startLeft = rail.scrollLeft
-    }
-    const onPointerMove = (event: PointerEvent) => {
-      if (!dragging) return
-      const dx = event.clientX - startX
-      if (Math.abs(dx) > 4) {
-        moved = true
-        rail.setPointerCapture(event.pointerId)
-        rail.scrollLeft = startLeft - dx
-      }
-    }
-    const onPointerUp = () => {
-      dragging = false
-    }
-    const onClickCapture = (event: MouseEvent) => {
-      if (!moved) return
-      event.preventDefault()
-      event.stopPropagation()
-      moved = false
-    }
-
-    rail.addEventListener('pointerdown', onPointerDown)
-    rail.addEventListener('pointermove', onPointerMove)
-    rail.addEventListener('pointerup', onPointerUp)
-    rail.addEventListener('click', onClickCapture, true)
-    return () => {
-      rail.removeEventListener('pointerdown', onPointerDown)
-      rail.removeEventListener('pointermove', onPointerMove)
-      rail.removeEventListener('pointerup', onPointerUp)
-      rail.removeEventListener('click', onClickCapture, true)
-    }
-  }, [])
+  useEventListener('pointerdown', onRailPointerDown, railRef, { enabled: finePointer })
+  useEventListener('pointermove', onRailPointerMove, railRef, { enabled: finePointer })
+  useEventListener('pointerup', onRailPointerUp, railRef, { enabled: finePointer })
+  useEventListener('click', onRailClickCapture, railRef, { enabled: finePointer, capture: true })
 
   const playFrom = useCallback(
     (index: number) => {

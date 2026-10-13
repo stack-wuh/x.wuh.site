@@ -3,6 +3,7 @@
 import * as React from 'react'
 import NextImage from 'next/image'
 import { useLocale } from '@wuh.site/components/locales'
+import { useMediaQuery } from '@wuh.site/hooks/useMediaQuery'
 import {
   Wrapper,
   ImgWrapper,
@@ -101,15 +102,14 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     }
   }, [role])
 
+  // reduced-motion 单向闩：命中即永久跳过懒加载（与原实现一致，关闭开关不回退）
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   React.useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mediaQuery.matches) { setSkipLazy(true); setInView(true) }
-    const handler = (event: MediaQueryListEvent) => {
-      if (event.matches) { setSkipLazy(true); setInView(true) }
+    if (reduceMotion) {
+      setSkipLazy(true)
+      setInView(true)
     }
-    mediaQuery.addEventListener('change', handler)
-    return () => mediaQuery.removeEventListener('change', handler)
-  }, [])
+  }, [reduceMotion])
 
   React.useEffect(() => {
     if (!shouldLazy || skipLazy || inView) return

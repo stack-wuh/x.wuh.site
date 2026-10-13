@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 
 const CDN_URL = '//at.alicdn.com/t/c/font_2595178_z5oq1y0t12.css'
 
@@ -15,22 +16,23 @@ export function useIconfontLoadState() {
 export function IconfontStyle({ children }: { children: ReactNode }) {
   const [loadState, setLoadState] = useState<IconfontLoadState>('loading')
 
-  useEffect(() => {
-    const inject = () => {
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = CDN_URL
-      link.onload = () => setLoadState('loaded')
-      link.onerror = () => setLoadState('error')
-      document.head.appendChild(link)
-    }
+  const inject = () => {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = CDN_URL
+    link.onload = () => setLoadState('loaded')
+    link.onerror = () => setLoadState('error')
+    document.head.appendChild(link)
+  }
 
+  useEffect(() => {
+    // load 已发生（readyState complete）后注入；未完成时走下方 once 监听，两条路径互斥
     if (document.readyState === 'complete') {
       inject()
-    } else {
-      window.addEventListener('load', inject, { once: true })
     }
   }, [])
+
+  useEventListener('load', inject, 'window', { once: true })
 
   return (
     <IconfontContext.Provider value={loadState}>

@@ -32,8 +32,9 @@ import {
 export type { ImagePreviewItem, ImagePreviewProps, ThumbnailRenderProps, ToolbarRenderProps } from './types'
 import type { ImagePreviewItem, ImagePreviewProps, ToolbarRenderProps } from './types'
 
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
+import { useMediaQuery } from '@wuh.site/hooks/useMediaQuery'
 import { useControllableState } from './hooks/useControllableState'
-import { useMediaQuery } from './hooks/useMediaQuery'
 import { useLockScroll } from './hooks/useLockScroll'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useGesture } from './hooks/useGesture'
@@ -291,15 +292,12 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
     }
   }, [open, previousOpen, onOpen, onClose])
 
-  React.useEffect(() => {
-    if (!allowFullscreen || typeof document === 'undefined') return
-    const handleFullscreenChange = () => {
-      const element = document.fullscreenElement
-      setIsNativeFullscreen(Boolean(element && overlayRef.current && element === overlayRef.current))
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [allowFullscreen])
+  const handleFullscreenChange = () => {
+    const element = document.fullscreenElement
+    setIsNativeFullscreen(Boolean(element && overlayRef.current && element === overlayRef.current))
+  }
+
+  useEventListener('fullscreenchange', handleFullscreenChange, 'document', { enabled: allowFullscreen })
 
   const handleOverlayClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (event.target === event.currentTarget && closeOnOverlay) {

@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import type { ThemeFamily, ColorScheme } from '@wuh.site/components/themes/tokens'
 
 export type Theme = ThemeFamily
@@ -73,21 +74,25 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     applyColorScheme(nextScheme)
   }, [])
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+  // 系统深浅色跟随：只在 change 事件上应用（挂载时不触发，初始值由上方存储恢复决定）。
+  // handler 经 hook 取最新闭包，colorSchemeMode 切换无需重绑监听
+  const darkSchemeQuery = useMemo(
+    () => (typeof window === 'undefined' || typeof window.matchMedia !== 'function' ? null : window.matchMedia('(prefers-color-scheme: dark)')),
+    []
+  )
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const onSystemSchemeChange = (event: MediaQueryListEvent | MediaQueryList) => {
+  useEventListener(
+    'change',
+    (event: MediaQueryListEvent) => {
       if (colorSchemeMode === 'system') {
         const nextScheme: ColorScheme = event.matches ? 'dark' : 'light'
         setResolvedColorScheme(nextScheme)
         applyColorScheme(nextScheme)
       }
-    }
-
-    mediaQuery.addEventListener('change', onSystemSchemeChange)
-    return () => mediaQuery.removeEventListener('change', onSystemSchemeChange)
-  }, [colorSchemeMode])
+    },
+    darkSchemeQuery,
+    { enabled: darkSchemeQuery !== null }
+  )
 
   const setThemeFamily = useCallback((family: ThemeFamily) => {
     setThemeFamilyState(family)
