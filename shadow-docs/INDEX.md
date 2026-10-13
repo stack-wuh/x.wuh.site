@@ -109,6 +109,7 @@
 | 20261007-refactor-responsive-layout-batch6 | ✅ 完成 | shadow-docs/changes/archive/20261007-refactor-responsive-layout-batch6/brief.md |
 | 20261008-fix-post-cover-lead-dedupe | ✅ 完成 | shadow-docs/changes/archive/20261008-fix-post-cover-lead-dedupe/brief.md |
 | 20261008-refactor-component-standard | ✅ 完成 | shadow-docs/changes/archive/20261008-refactor-component-standard/brief.md |
-| 20261009-feature-cursor-ripple-ink | reviewed | shadow-docs/changes/20261009-feature-cursor-ripple-ink/brief.md |
+| 20261009-feature-cursor-ripple-ink | published | shadow-docs/changes/20261009-feature-cursor-ripple-ink/brief.md |
 | 20261011-fix-webhook-body-limit | published | shadow-docs/changes/20261011-fix-webhook-body-limit/brief.md |
 | 20261012-docs-pr-and-commit-templates | ✅ 完成 | shadow-docs/changes/archive/20261012-docs-pr-and-commit-templates/brief.md |
+| 20261013-refactor-shared-event-hooks | ✅ 完成 | shadow-docs/changes/archive/20261013-refactor-shared-event-hooks/brief.md |

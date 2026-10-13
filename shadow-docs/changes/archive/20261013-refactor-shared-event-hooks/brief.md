@@ -4,7 +4,7 @@
   "name": "20261013-refactor-shared-event-hooks",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261013-refactor-shared-event-hooks",
   "files": [
@@ -42,13 +42,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "71b9f2cdbdf90067689a9c52cad43f33e128d0fd",
-    "verifiedAt": "2026-10-13T09:28:25.456Z"
+    "verifiedCommit": "0e3c3821de5743bffc70131388d297cac0b06ca1",
+    "verifiedAt": "2026-10-13T10:12:33.323Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:532",
-    "planHash": "748d9f1a26ee29c1a7abc2a0855c082cffc7850feed77a4099e0a3dd9091b851",
+    "checkpoint": "merged-pr:532",
+    "planHash": "7c3cba78fca04e12a10636963826e4c97d5f4f416be1c4c93d2e42350173d8a7",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -97,7 +97,7 @@
   "knowledge": {
     "action": "新增",
     "target": "shadow-docs/knowledge/shared-hooks.md",
-    "reason": "本 change 后「浏览器事件副作用一律复用 @wuh.site/hooks 四件套（useEventListener/useMediaQuery/useKeyPress/useClickOutside），site/components 新代码不手写 addEventListener；例外白名单 cursor/provider/ContactCard/footprint-map 各有已证实的不适用理由」是长期有效且低可发现（新代码极易再手写监听）的项目事实，现有卡片（component-standard 等）均未覆盖 hooks 包契约，须新增卡片并在 menu.md 路由；verified-depth 待 release 阶段按实测定级"
+    "reason": "四件套契约与白名单棘轮为长期有效低可发现事实；卡片已在 release 阶段落地并随 PR #532 进入 main（0e3c382），本次为 main 同源复核"
   }
 }
 ---
@@ -216,6 +216,18 @@
 - ✓ 观察点⑥ 替代路径：外观面板 UI 切「深色」→ localStorage 写入 + `data-color-scheme` 链正常（ThemeModeProvider 迁移文件的 handler 生效）。**「系统深浅色跟随」合成 change 事件不可测**：WKWebView 每次 `window.matchMedia(q)` 返回新实例（实测 `same:false`），合成事件触不到组件 memo 实例上的监听；main 旧实现同为实例级监听，此测法对旧码同样无效——非迁移回归，环境限制记录偏差
 - ✗ PlayerPanel Escape 分层：面板展开受曲目/队列数据门控（GitHub Issues / 网易云后端本地不可用，首页呈「获取数据失败」），`isPanelOpen=true` 态在本环境不可达。已反向验证**关态 enabled=false 监听正确不挂载**（合成 Escape 无副作用、window 探针证明事件可达，说明未响应即因监听未挂=预期）；分层 handler 与 SiteHeader 复用同一 `useEventListener + enabled` 实现点
 - ✗ 观察点③ 图片预览键盘导航、⑤ 标题 tooltip resize 重算：同样被 GitHub 数据环境阻塞（无可用文章）；其机制分别由已证的 useKeyPress（4 keydown 实例路径）与 useEventListener resize 同实现点覆盖
+
+## 交付发布（判定命中 + 委托执行，2026-10-13）
+
+- **判定:** 命中 `shadow-docs/menu.md`「构建与前端模块」→ `knowledge/build-config.md` 当前结论：部署链由 **GitHub Release published** 触发（push main 仅 quality-gate）；**PR merged ≠ 已部署**。最新 Release 先例 v1.4.80（2026-10-11，标题 `vX.Y.Z <中文名>`、body 空），下一版按 patch 递增取 **v1.4.81**。
+- **执行记录（用户授权代执行）：**
+  - PR #532 squash merged（merge commit `0e3c382`，2026-10-13T09:47:37Z）→ push main quality-gate 绿
+  - `gh release create v1.4.81 --title "v1.4.81 事件副作用四件套（@wuh.site/hooks）" --target main` → https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.81
+  - 部署链 run `38379323780` 首试 `prepare-deps` 红——`docker.m.daocloud.io` 镜像加速源对 `node:20-alpine` manifest HEAD 返回 **502 Bad Gateway**（第三方镜像瞬时故障，与被部署代码无关；磁盘 24G 充足）
+  - `gh run rerun --failed` 断点续跑 → **全链 7 作业 success**（prepare-deps/build-next/build-nest/staging-test/switch-traffic/restart-nginx），run 终态 completed/success（2026-10-13）
+  - 公网复核：`https://wuh.site/` HTTP 200
+- **交付结论:** ✅ **已部署**（v1.4.81 全链绿 + 入口可达）。镜像源 502 属外部瞬时故障，本次重试即恢复，未构成新信号（单次、无「勿再走」语义）；若后续复发再考虑「Dockerfile 基础镜像源治理」独立 change。
+- **归档:** 部署链绿，可进入 `shadow-dev-archive`。
 
 ## 知识评估
 
