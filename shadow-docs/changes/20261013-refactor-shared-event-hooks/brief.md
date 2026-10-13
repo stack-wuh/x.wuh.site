@@ -4,7 +4,7 @@
   "name": "20261013-refactor-shared-event-hooks",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "refactor/20261013-refactor-shared-event-hooks",
   "files": [
@@ -37,8 +37,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 531,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/531",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 532,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/532"
   },
   "review": {
     "conclusion": "passed",
@@ -47,7 +47,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:531",
+    "checkpoint": "pr:532",
     "planHash": "748d9f1a26ee29c1a7abc2a0855c082cffc7850feed77a4099e0a3dd9091b851",
     "updatedAt": null,
     "lastError": null,
