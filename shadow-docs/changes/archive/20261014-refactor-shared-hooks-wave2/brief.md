@@ -4,7 +4,7 @@
   "name": "20261014-refactor-shared-hooks-wave2",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-shared-hooks-wave2",
   "files": [
@@ -38,13 +38,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "269b2854429cacdc7a28a41994f42510383cbac5",
-    "verifiedAt": "2026-10-14T03:07:49.059Z"
+    "verifiedCommit": "7143ee282e5d62309d467a1276944bb82219bfcd",
+    "verifiedAt": "2026-10-14T04:11:10.093Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:534",
-    "planHash": "8e5df3407efd7e6efb47f88b00a5fb3057e2aecaba1ae5b1d9f9624d86bad014",
+    "checkpoint": "merged-pr:534",
+    "planHash": "4689e28cee5e1f04c7484ea1226624dc83ca520b9740cc997faf459ece582c25",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -95,7 +95,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/shared-hooks.md",
-    "reason": "三件套(useScrollLock/useLocalStorageState+原语/scheduleIdle)成为 packages/hooks 新契约面,事件四件套卡需扩为共享 hooks 契约全集;AppProviders ahooks 收敛条款已兑现,迁移台账+白名单棘轮需同步;基线守卫网与 wave2 守卫已实跑,runtime 五类观察点有生产实例证据,verified-depth 达 runtime"
+    "reason": "沿用 apply 期七维审查结论(零新增红+tsc/lint+runtime 五类观察点);main 同源复核 verifiedCommit=squash 后 HEAD;知识动作已落实——shared-hooks.md 重写为契约全集、signals.md SGN-011 命中+SGN-013/014/015 已随 #534 入 main"
   }
 }
 ---
@@ -207,6 +207,11 @@
   - **lint:** `pnpm run lint:next` 0 warnings/0 errors(CI 同款);本轮新增红 1 条(useLocalStorageState useCallback 未用)已消除;其余触及文件 lint 输出与 main 既有基线同。
   - **runtime(生产 `next start` localhost:3000,IAB 合成配方 SGN-010):** ①Dialog fixed 配方四值锁定(overflow:hidden/position:fixed/top:-400px/width:100%,scrollY 400 对应)+ 关闭还原 + 滚动位置归 400 ✓(关闭链需合成 `animationend` 触发动画收尾——Dialog 退出动画链本非本轮改动,旧实现同依赖,环境归因);②语言读路径(种子 'en'→reload→lang=en+UI 英文化)✓、写路径(点「中」→storage='zh'+lang zh-CN+词典同步)✓;③主题/配色:刷新后 aria-label『current Plain, Dark』+ data-theme-family=plain/data-color-scheme=dark(mount readStorage+SSR 脚本注入形态)✓,点「浅色」writeStorage 落库 mode='light'+即时生效 ✓;④MiniPlayer 折叠态:点「收起播放器」write-through storage 'false'→'true' ✓,reload 后收起形态首帧渲染(惰性同步读)✓;⑤留言昵称:输入→storage='抽检君' ✓,重开弹窗徽章显「抽」(mount readStorage 回显)✓;footprint 键自动补齐 '0720eb7b-…' ✓。
   - **不可达观察点(如实登记):** visibilitychange 标题换装/还原——WKWebView `document.visibilityState` 为 own 非 configurable 属性,无法像 SGN-009 matchMedia 那样 defineProperty 伪造,真实切后台不可控时序;该观察点深度=code-read + wave2 守卫⑦钉死消费形态(事件订阅链本身 wave1 已 runtime 证可达)。PlayerPanel 合同配方开合观察——歌单数据后端不可达(『Playlist failed to load』)面板无内容展开;同一契约已由 Dialog 实测 + 守卫④(两文件钉同一 useScrollLock)覆盖。
+- **交付发布(20261014 release 段执行记录,用户授权代执行):**
+  - PR #534 squash merged → main `7143ee2`。分支保护要求 1 approving review 而 PR 作者即当前账号(GitHub 禁自评,与 #532 同款局面),经用户明确授权以 `gh pr merge --squash --admin` 直合;TLS 抖动仅断响应面,幂等复查 state=MERGED。
+  - Release [v1.4.82](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.82) 已发布(target=main,`--target` 完整 SHA 纪律沿 build-config 卡片)。
+  - 部署链 run 38509066255 **8 作业全绿**:quality-gate / prepare / prepare-deps / build-next / build-nest / staging-test / switch-traffic / restart-nginx(wave1 曾 502 的 prepare-deps 本轮一次通过)。
+  - 交付结论:**已部署**。push→PR→Release→部署全链闭环,本地 main 同步至 7143ee2。
 
 ## 知识评估
 

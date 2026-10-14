@@ -113,3 +113,4 @@
 | 20261011-fix-webhook-body-limit | published | shadow-docs/changes/20261011-fix-webhook-body-limit/brief.md |
 | 20261012-docs-pr-and-commit-templates | ✅ 完成 | shadow-docs/changes/archive/20261012-docs-pr-and-commit-templates/brief.md |
 | 20261013-refactor-shared-event-hooks | ✅ 完成 | shadow-docs/changes/archive/20261013-refactor-shared-event-hooks/brief.md |
+| 20261014-refactor-shared-hooks-wave2 | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-shared-hooks-wave2/brief.md |
