@@ -44,7 +44,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "issue:533",
-    "planHash": "da11fc83b24f02d5f50366dab716cba5c7ac325c7ed654b82166623bcc454e6d",
+    "planHash": "8e5df3407efd7e6efb47f88b00a5fb3057e2aecaba1ae5b1d9f9624d86bad014",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -74,7 +74,6 @@
         "packages/components/audio-player/player-panel.test.mjs",
         "packages/components/audio-player/tsconfig.guard.json",
         "packages/components/dialog/index.tsx",
-        "packages/components/image-preview/hooks/useLockScroll.ts",
         "packages/components/image-preview/index.tsx",
         "packages/components/locales/index.tsx",
         "packages/components/locales/locales.test.mjs",
