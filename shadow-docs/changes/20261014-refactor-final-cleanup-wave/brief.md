@@ -4,7 +4,7 @@
   "name": "20261014-refactor-final-cleanup-wave",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-final-cleanup-wave",
   "files": [
@@ -30,14 +30,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/542"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "21b938807cea735466b8eec76aa5e0b01980a61e",
+    "verifiedAt": "2026-10-14T10:59:17.725Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:542",
-    "planHash": "8b30e11f1a9c8f06fbcef305dedc706f86339e16c9c8ffdf91d3790061099ee1",
+    "planHash": "d891a716ac2d37baf5368ae2efbb187458c267a0e0fe423da446328ee3e74c32",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -52,32 +52,15 @@
     "worktree": "D:\\works\\x.wuh.final-cleanup",
     "commit": {
       "files": [
-        "AGENTS.md",
-        "apps/site/app/about/AboutView/index.tsx",
-        "apps/site/app/components/AppProviders.tsx",
-        "apps/site/app/components/player/GlobalAudioPlayer.tsx",
-        "apps/site/package.json",
-        "packages/components/audio-player/mini/styles.tsx",
-        "packages/components/audio-player/panel/styles/dock.tsx",
-        "packages/components/audio-player/panel/styles/ghost.tsx",
-        "packages/components/audio-player/panel/styles/mobile.tsx",
-        "packages/components/audio-player/panel/styles/queue.tsx",
-        "packages/components/audio-player/panel/styles/shell.tsx",
-        "packages/components/audio-player/panel/styles/stage.tsx",
-        "packages/components/audio-player/panel/styles/words.tsx",
-        "packages/components/image-preview/index.tsx",
-        "packages/components/image-preview/styles/index.tsx",
-        "packages/components/test/breakpoint-raw-scan.test.mjs",
-        "packages/hooks/useFetch/createService.ts",
-        "packages/hooks/useRequest/",
-        "pnpm-lock.yaml",
-        "shadow-docs/changes/20261014-refactor-final-cleanup-wave/",
-        "shadow-docs/knowledge/layout-components.md",
-        "shadow-docs/knowledge/shared-hooks.md",
-        "shadow-docs/menu.md"
+        "shadow-docs/changes/20261014-refactor-final-cleanup-wave/brief.md"
       ],
-      "message": "refactor: self-hosted useRequest + batch7 responsive consolidation + cleanup"
+      "message": "docs(shadow): review passed——useRequest 契约与批次7 终态落卡"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/shared-hooks.md",
+    "reason": "useRequest 三波契约入卡（runner 内核+UR1–UR7 行为面+cacheKey 挂载种子语义与 ahooks 差异声明）；layout-components 批次 7 终态台账同步（27 收编/保留族入册）；verified 待 release 后按部署实测更新"
   }
 }
 ---
