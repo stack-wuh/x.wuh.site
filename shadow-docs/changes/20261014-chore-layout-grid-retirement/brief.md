@@ -4,7 +4,7 @@
   "name": "20261014-chore-layout-grid-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-layout-grid-retirement",
   "files": [
@@ -33,7 +33,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:540",
+    "checkpoint": "37ab2b567ecc947c0d210f376631ef7ad4a49dfd",
     "planHash": "d96a6eb5d9fc27bb422946c152311f9ae052da0d07511153077cb7c05aba3a67",
     "updatedAt": null,
     "lastError": null,
