@@ -4,7 +4,7 @@
   "name": "20261014-refactor-responsive-sweep",
   "type": "refactor",
   "scope": "packages/components,apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-responsive-sweep",
   "files": [
@@ -36,13 +36,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e4d84467a3d6aa5cd1685256dc34876f8b926400",
-    "verifiedAt": "2026-10-14T04:43:28.909Z"
+    "verifiedCommit": "21c3965188b9d1b7713a13a47dd608af845fa344",
+    "verifiedAt": "2026-10-14T05:00:11.987Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:536",
-    "planHash": "3dcd79c2e1c55937c59902718a32ee09bb539a8f2ea7d40dc930ab93751a6021",
+    "checkpoint": "merged-pr:536",
+    "planHash": "7300e0a2b8551f4095df95576edf7ead96c52439f44ea4dfb30a4fe23a32f3a8",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -86,7 +86,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "组件库层收编状态是布局族契约的执行面事实:阶梯外具名常量登记制(OFF_LADDER_BREAKPOINTS 三值冻结)、breakpoint-raw-scan 守卫入验证方式段、收编/保留台账与 ⑩⑪⑬⑭ 判据先例补强(dialog 嵌套 variant、barrage 打包收编、result 双判据回退)均须入卡"
+    "reason": "main 同源复核:HEAD 21c3965=squash 后,验证证据沿用 apply/review 期(守卫 6/6、名集零新增、build/tsc/lint、CSSOM runtime);知识动作已随 #536 落实(layout-components 增阶梯外常量登记制与守卫入册,verified=runtime)"
   }
 }
 ---
@@ -184,6 +184,11 @@
   - **类型/构建:** 根 `pnpm exec tsc --noEmit` RC=0;`pnpm run lint:next` 0/0;`next build`(SGN-012 直调配方)RC=0,14 路由全出。
   - **守卫网:** 布局族 40 例 + structure 18 例 + hooks 两波 20 例 + 触及域组件守卫全绿(仅 main 既有基线红维持原样)。
   - **runtime(生产 3001 新 build + IAB CSSOM 探针):** ①barrage 两块——`@media (min-width:521px)` 输出桌面三列居中/Cta auto 回退,当前 1280 视口 computed `auto minmax(0,1fr) auto` ✓;②GAP 悬浮钮——`@media (min-width:641px){left:24px;bottom:124px}` 规则在位 ✓;③Dialog body——开弹窗后 `@media (min-width:641px){padding:12px 22px 18px}` ✓。值迁移 22 处逐文件 diff 走查(声明文本零改动,仅媒体条件模板化)。
+- **交付发布(20261014 release 段执行记录,沿用户既定委托链):**
+  - PR #536 squash merged → main `21c3965`(分支保护要求 review 而作者即当前账号,按 wave2 确立的先例 `--squash --admin` 直合)。
+  - Release [v1.4.83](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.83) 已发布(target=main)。
+  - 部署链 run 38513212543 **8 作业全绿一次过**:quality-gate / prepare / prepare-deps / build-next / build-nest / staging-test / switch-traffic / restart-nginx。
+  - 交付结论:**已部署**。批次程序(断点阶梯)至此全程序闭环:site 六域(批次1-6)+ 组件库层(本 change)+ 全域零裸值守卫在位。
 
 ## 知识评估
 
