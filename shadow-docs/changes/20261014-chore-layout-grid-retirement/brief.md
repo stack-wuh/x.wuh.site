@@ -34,7 +34,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "pr:540",
-    "planHash": "243e275748db92d83e9fb064bc8da2ed790b7baba41b42040b8b6a085cf7158d",
+    "planHash": "e0d03051f6ab7c83c9b7667fd9c8e90ef5e2b2ab0e260773f731ea89b1293a90",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -52,6 +52,26 @@
         "shadow-docs/signals.md"
       ],
       "message": "docs(signals): SGN-006 命中+1、SGN-016 新录 canary 错误签名纪律"
+    },
+    "release": {
+      "files": [
+        "AGENTS.md",
+        "packages/components/col",
+        "packages/components/flex/index.tsx",
+        "packages/components/flex/readme.md",
+        "packages/components/layout-typecheck.test.mjs",
+        "packages/components/row",
+        "packages/components/stagger",
+        "packages/components/test/structure-baseline.json",
+        "packages/components/tsconfig.layout.guard.json",
+        "shadow-docs/changes/20261014-chore-layout-grid-retirement/brief.md",
+        "shadow-docs/knowledge/component-standard.md",
+        "shadow-docs/knowledge/layout-components.md",
+        "shadow-docs/signals.md"
+      ],
+      "message": "chore(components): retire zero-consumption Row/Col/Stagger layout family",
+      "title": "chore(components): retire zero-consumption Row/Col/Stagger layout family",
+      "body": "## 变更\n- Row/Col/Stagger 三目录整删(自创建起全仓零消费,三形态 grep 证死;合计 557 行,布局族守卫 40→22)\n- 联动同步:structure-baseline 三名单除名(missing-types/dual-export/styles-inline)、layout-typecheck 守卫域注释与 tsconfig include 死 glob 三条移除、flex index/readme 悬空包指针改写为历史事实、AGENTS.md 组件清单出账(退役注释留档)\n- 知识收口:layout-components 卡「四层组合」收成 Flex+编译口双层(栅格段改退役注记,重写契约要点留档)、component-standard 过渡形态名单收窄\n- 保留不动:themes/responsive 编译口、RESPONSIVE_LADDER、spacing、OFF_LADDER 登记制\n\n## 影响\n- 行为/触发面变化:无(被删组件无任何页面/组件消费;desktop 同名 Row 为本地 styled 定义)\n- 将来再现分栏/错峰需求:从 git history 拣回或照卡内退役注记契约重写\n\n## 验证\n- 守卫网:structure 18/18、breakpoint-raw-scan 6/6、布局族 22/22、hooks 两波 20/20 全绿\n- 根 tsc RC=0、lint:next 0/0、next build RC=0 全路由(SGN-012 直调)\n- 残留引用三形态 0 命中;site 名集基线 diff head 独有=空(零新增红,SGN-011 法;基线独有 5 项为解包树缺 @wuh.site/core 依赖伪影)\n\nCloses #539\nbrief: shadow-docs/changes/20261014-chore-layout-grid-retirement/brief.md"
     }
   },
   "knowledge": {
