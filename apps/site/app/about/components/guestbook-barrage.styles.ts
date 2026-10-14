@@ -12,8 +12,6 @@ export const GuestbookTrigger = styled(Button)`
   --guestbook-trigger-cta: var(--text-secondary);
 
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
   gap: 14px;
   width: 100%;
   padding: 14px 16px;
@@ -88,10 +86,14 @@ export const GuestbookTrigger = styled(Button)`
     transition: none;
   }
 
-  @media (max-width: 520px) {
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: flex-start;
-  }
+  /* 断点阶梯收编（备忘⑪打包）：≤520 两列左对齐，521+ 三列居中（sm 槽翻转，桌面档显式写回原值=⑬回退税） */
+  ${responsive(
+    [
+      'grid-template-columns: auto minmax(0, 1fr); align-items: flex-start;',
+      'grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;',
+    ],
+    (v) => v,
+  )}
 `
 
 export const GuestbookTriggerAvatars = styled.span`
@@ -171,10 +173,11 @@ export const GuestbookTriggerCta = styled.span`
     transition: none;
   }
 
-  @media (max-width: 520px) {
-    grid-column: 2;
-    margin-top: 2px;
-  }
+  /* 断点阶梯收编（⑬双判据）：≤520 落第二列带 2px 上移，521+ 显式写回 auto/0 初始值（宿主为 grid 子项，不可惰性直落） */
+  ${responsive(
+    ['grid-column: 2; margin-top: 2px;', 'grid-column: auto; margin-top: 0;'],
+    (v) => v,
+  )}
 `
 
 /* ====== Dialog Inner ====== */

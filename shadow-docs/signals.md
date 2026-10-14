@@ -115,8 +115,8 @@
 - 深度: unit
 - 域/scope: 验证工具链 · apps/site/test/*.test.mjs
 - 证据: changes/20261013-refactor-shared-event-hooks/brief.md——分支 204 tests/27 fail vs main 基线 193/32，`comm -23` 分支独有失败=空即零新增红；27 项红为存量（样式字面量守卫与现码漂移，如 site-header-theme-toggle 6 项双侧同名红、image-role-contract 3 项）；CI 仅跑根 tsc+oxlint，未含 .mjs 守卫。注意基线 worktree 若有文件级加载失败（如 seo-p1/p14/p17）会被 node --test 折叠成单行 ✖、总数不同（193 vs 204）——计数差≠回归，比对以失败名集为准；守卫结论只取单条成功输出（呼应 SGN-001 拆单配方）
-- 命中: 1（最近 2026-10-14）
-- 增补证据: changes/20261014-refactor-shared-hooks-wave2/brief.md——site 域 head 红集 28 与基线名集 `comm -23` 为空判零新增红（wave1 的 site-header 6 项、music-wiring 3 项、image-role-contract 3 项等存量漂移原样在位）；基线对照改用 `git archive main | tar -x` 解纯文本树（比 worktree 轻且不动当前 checkout），解包树缺 shadow-docs 致 3 个 seo 套件文件级加载失败折叠成 ✖ 行——**计数差是解包伪影，名集 diff 为准的纪律再证**
+- 命中: 2（最近 2026-10-14）
+- 增补证据: changes/20261014-refactor-shared-hooks-wave2/brief.md——site 域 head 红集 28 与基线名集 `comm -23` 为空判零新增红（wave1 的 site-header 6 项、music-wiring 3 项、image-role-contract 3 项等存量漂移原样在位）；基线对照改用 `git archive main | tar -x` 解纯文本树（比 worktree 轻且不动当前 checkout），解包树缺 shadow-docs 致 3 个 seo 套件文件级加载失败折叠成 ✖ 行——**计数差是解包伪影，名集 diff 为准的纪律再证**；changes/20261014-refactor-responsive-sweep/brief.md 同日二次复用：全守卫网（site+components+hooks 合并清单）base 37 vs head 31、comm 空，解包伪影形态再复现（基线树无本次新守卫文件）
 - 退役条件: 守卫集纳入 CI 且转全绿，或存量红清零
 
 ## SGN-013 · 跨包新增 import 面须同步消费包域守卫 tsconfig paths，root tsc 绿不代表域 guard 绿
@@ -150,6 +150,8 @@
 - 深度: unit
 - 域/scope: 验证工具链 · win 本地 pnpm 脚本执行（build:next 等 Unix 行内 env 形态）
 - 证据: changes/20261013-refactor-shared-event-hooks/brief.md——`pnpm build:next` 报 `'NODE_OPTIONS' 不是内部或外部命令`（pnpm 委托 cmd 不认 Unix 行内 env）；等价跑法 `cd apps/site && NODE_OPTIONS=--max-old-space-size=2048 ./node_modules/.bin/next build` RC=0 一遍过、17 路由全出。CI（ubuntu）按脚本原样可跑，差异仅本地；呼应 SGN-006 绕 pnpm 直调二进制
+- 命中: 1（最近 2026-10-14）
+- 增补证据: changes/20261014-refactor-responsive-sweep/brief.md——同一配方二次实证：`pnpm build:next` 行内 env 失败原样复现，直调 `next build` + 2048 限堆 RC=0（14 路由），零排查成本直接套配方
 - 退役条件: 脚本改 cross-env 等跨平台形态，或本地验收迁 WSL
 
 ## SGN-008 · 动效「看不见」先量出生计数与 computed opacity，再谈调参

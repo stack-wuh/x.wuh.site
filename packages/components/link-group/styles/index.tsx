@@ -2,6 +2,7 @@
 
 import styled, { keyframes, css } from 'styled-components'
 import { buttonTokens } from '../../button'
+import { BREAKPOINTS } from '../../themes/breakpoints'
 import type { LinkGroupSize } from '../types'
 
 const pulse = keyframes`
@@ -34,8 +35,9 @@ const getSizeVars = (size: LinkGroupSize) => {
 export const SItem = styled.li<{ $hideOnMobile?: boolean }>`
   display: inline-flex;
 
+  // ⑩ 族保留手写：媒体块由 $hideOnMobile transient 条件包裹（实例驱动，非编译口槽值射程），仅断点值常量化
   ${(p) => p.$hideOnMobile && css`
-    @media (max-width: 520px) {
+    @media (max-width: ${BREAKPOINTS.small}px) {
       display: none;
     }
   `}

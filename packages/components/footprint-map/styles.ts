@@ -2,6 +2,7 @@
 
 import styled from 'styled-components';
 import Image from '@wuh.site/components/image';
+import { OFF_LADDER_BREAKPOINTS } from '../themes/breakpoints';
 
 export const MapContainer = styled.div<{ $height?: string }>`
   width: 100%;
@@ -16,7 +17,7 @@ export const FullLayout = styled.div`
   height: calc(100vh - 120px);
   min-height: 600px;
 
-  @media (max-width: 768px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.mapStack}px) {
     flex-direction: column;
     height: auto;
   }
@@ -29,7 +30,7 @@ export const MapPanel = styled.div`
   overflow: hidden;
   height: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.mapStack}px) {
     height: 400px;
   }
 `;
@@ -42,7 +43,7 @@ export const ContentPanel = styled.div`
   flex-direction: column;
   gap: 16px;
 
-  @media (max-width: 768px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.mapStack}px) {
     width: 100%;
   }
 `;

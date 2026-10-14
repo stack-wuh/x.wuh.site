@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { useKeyPress } from '@wuh.site/hooks/useKeyPress'
 import { useScrollLock } from '@wuh.site/hooks/useScrollLock'
+import { BREAKPOINTS } from '../themes/breakpoints'
 import { useLocale } from '@wuh.site/components/locales'
 import {
   Barrier,
@@ -24,7 +25,7 @@ function resolvePlacement(
   placement: DialogProps['placement'],
 ): 'center' | 'bottom' {
   if (placement) return placement
-  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches) {
+  if (typeof window !== 'undefined' && window.matchMedia(`(max-width: ${BREAKPOINTS.mobile}px)`).matches) {
     return 'bottom'
   }
   return 'center'

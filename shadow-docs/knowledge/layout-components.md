@@ -1,13 +1,14 @@
 ---
 title: 响应式布局组件族
 domain: components
-keywords: [布局, Row, Col, Flex, Stagger, 栅格, 12分栏, 断点数组, 断点阶梯, RESPONSIVE_LADDER, 响应式, grid, 错峰入场, 组合式]
+keywords: [布局, Row, Col, Flex, Stagger, 栅格, 12分栏, 断点数组, 断点阶梯, RESPONSIVE_LADDER, 响应式, grid, 错峰入场, 组合式, OFF_LADDER_BREAKPOINTS, 阶梯外常量, breakpoint-raw-scan]
 scope:
   - packages/components/flex
   - packages/components/row
   - packages/components/col
   - packages/components/stagger
   - packages/components/themes/responsive.ts
+  - packages/components/themes/breakpoints.ts
 status: active
 source:
   - changes/20261006-feature-responsive-layout-components/brief.md
@@ -18,9 +19,10 @@ source:
   - changes/20261007-refactor-responsive-layout-batch3/brief.md
   - changes/20261007-refactor-responsive-layout-batch4/brief.md
   - changes/20261007-refactor-responsive-layout-batch5/brief.md
-verified: 2026-10-07
-verified-depth: unit
-verified-scope: 守卫 40/40 绿（responsive 阶梯 10（含嵌套选择器透传例）+ spacing 3 + flex 8（含 maxWidth 用例）+ row 5 + col 6 + stagger 7 + layout typecheck guard）、域 guard tsc 手动实跑 EXIT=0、oxlint 0/0；站点消费累计（#495/#504 与批次3 八处：home PostRow/PostMeta/PostTags/ProjectLink/ProjectMeta、guestbook PageWrapper、TypewriterMotto maxWidth 首消费、GuestbookCard 编译口直用）apps/site tsc 计数与错误 (file,line,col,TSxxxx) 位集双侧持平（35=35）、逐块 prop 等价走查；批次4 post 域十处（9 编译口直用 + TopRow Flex-ify，aside/details/Link/grid 载体）worktree site tsc 与基线位集逐条相同、oxlint 0/0、JSX 消费端零 diff；批次5 music 域 20 处编译口（styles.ts 全文件，九宫格 11 组件含伪元素嵌套组与逐实例槽）+ 2 处选择器级条件组保留注记，终态位集 EMPTY diff 35=35、导出 38 项与基线逐项一致、逐块声明多重集全 diff 走查闭合；runtime 目检随部署链补
+  - changes/20261014-refactor-responsive-sweep/brief.md
+verified: 2026-10-14
+verified-depth: runtime
+verified-scope: 守卫 40/40 绿（responsive 阶梯 10（含嵌套选择器透传例）+ spacing 3 + flex 8（含 maxWidth 用例）+ row 5 + col 6 + stagger 7 + layout typecheck guard）、域 guard tsc 手动实跑 EXIT=0、oxlint 0/0；站点消费累计（#495/#504 与批次3 八处：home PostRow/PostMeta/PostTags/ProjectLink/ProjectMeta、guestbook PageWrapper、TypewriterMotto maxWidth 首消费、GuestbookCard 编译口直用）apps/site tsc 计数与错误 (file,line,col,TSxxxx) 位集双侧持平（35=35）、逐块 prop 等价走查；批次4 post 域十处（9 编译口直用 + TopRow Flex-ify，aside/details/Link/grid 载体）worktree site tsc 与基线位集逐条相同、oxlint 0/0、JSX 消费端零 diff；批次5 music 域 20 处编译口（styles.ts 全文件，九宫格 11 组件含伪元素嵌套组与逐实例槽）+ 2 处选择器级条件组保留注记，终态位集 EMPTY diff 35=35、导出 38 项与基线逐项一致、逐块声明多重集全 diff 走查闭合；组件库清扫（20261014）breakpoint-raw-scan 6/6（零裸值全域出账 31→0）、名集基线 diff 零新增、next build RC=0，收编块 CSSOM 规则形态+当前视口 computed 值生产实测（barrage 521 双块/GAP 641/dialog 641 含⑬显式回退形态）
 ---
 
 # 响应式布局组件族
@@ -37,9 +39,11 @@ verified-scope: 守卫 40/40 绿（responsive 阶梯 10（含嵌套选择器透�
 
 **断点阶梯语法（全族唯一契约，移动优先四档）**：编译口唯一——`themes/responsive.ts` 的 `responsive(value, decl)`。`TResponsive<T> = T | readonly (T | undefined)[]`，数组按视口升序占位 `[base, sm?, md?, lg?]`：index0 `base` 为 0+ 移动优先基线（含超窄段）；上三档边界由 `RESPONSIVE_LADDER = [BREAKPOINTS.small + 1(521), BREAKPOINTS.mobile + 1(641), BREAKPOINTS.tablet(1024)]` 派生，各自生成一个 `min-width` media 块。**缺位槽跳过、低档声明经媒体级联自然延续**——故「仅桌面变档」写作 `[base, , , lg]`（补两个缺位到 index3），**不是** `[base, lg]`。四档边界由语义常量 +1 翻转派生，源码不落裸断点。历史迁移：两槽时代 `[base, tablet]` 的第二槽是 1024，阶梯化后第二槽变 `sm`(521)，旧式 `[a,b]` 语义随之下移——凡「仅 1024 变」的旧写法必须补成 `[a, , , b]`（组件零消费者窗口期完成，readme 与站点替换批按此改写）。**布局 props 的顶层数组一律 = 阶梯槽**——旧 gap `[row, column]` / padding 四值盒式简写让位，非对称间距走 CSS 字符串值。
 
+**阶梯外具名常量登记制（20261014 组件库清扫新增）**：`themes/breakpoints.ts` 的 `OFF_LADDER_BREAKPOINTS` 收纳历史组件专用断点（previewMobile 767 / paginationCompact 480 / mapStack 768），**数值冻结、不是 RESPONSIVE_LADDER 成员**——「归槽」即边界移动改行为，禁止；消费点媒体条件一律模板插值（CSS 与 JS `matchMedia`/`useMediaQuery` 共用同一常量，双源收敛，image-preview 先例）。全站媒体行（含 site 与组件库）由 `packages/components/test/breakpoint-raw-scan.test.mjs` 棘轮钉死**零裸数值**：收编项走 `responsive()`、保留项必须同时具备语义常量插值与 ⑩/⑭ 族范围外注记（守卫双断言）；新保留块入册须先登记理由。批次7 非目标台账：audio-player 族 ~28 处 `${BREAKPOINTS.mobile}` 手写合规未收编、image-preview 767 族 9 块、max-height STAGE_TIER 6 处。
+
 ## 执行约束
 
-- 布局组件族的断点逻辑只能经 `themes/responsive.ts` + `BREAKPOINTS` 语义常量；组件源码零 `@media` 字面量、零裸断点（各目录 `index.test.mjs` 剥注释扫描钉死）。
+- 布局组件族的断点逻辑只能经 `themes/responsive.ts` + `BREAKPOINTS` 语义常量；组件源码零 `@media` 字面量、零裸断点（各目录 `index.test.mjs` 剥注释扫描钉死）；全域媒体行零裸值由 `breakpoint-raw-scan.test.mjs` 跨目录钉死（含 JS 侧 matchMedia/useMediaQuery 形态）。
 - 共享内核（flex/row/col）禁 `--motion-*` 引用、禁 hex 色值、禁 JS 事件监听；Stagger 允许自持 keyframes 但时序一律字面值、禁 `var(--`——console 无主题变量亦可消费。
 - 纯 styled 布局组件必须挂 `'use client'` 首行（styled-components 内部 `useContext(ThemeContext)` 在 RSC 下不可渲染）；重写前的旧 flex 未挂是零消费历史遗留，不作先例。
 - `span` 与 `offset` 必须**逐档 carry-forward 合成**单条 `grid-column`：某档任一 prop 有槽则该档出块、缺位方沿用最近低档值，禁止两 prop 各自独立出 media 块（互相错位）；上档全缺则回落标量，不产出空 media。

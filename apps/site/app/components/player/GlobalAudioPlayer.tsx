@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRequest } from 'ahooks'
 import { scheduleIdle } from '@wuh.site/hooks/scheduleIdle'
 import styled from 'styled-components'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { useLocale } from '@wuh.site/components/locales'
 import {
   AudioMiniPlayer,
@@ -38,8 +39,6 @@ const fetchDefaultPlaylistTracks = async (): Promise<{ tracks?: Track[]; name?: 
 
 const PlaylistNotice = styled.div`
   position: fixed;
-  left: 24px;
-  bottom: 124px;
   z-index: 2400;
   display: inline-flex;
   align-items: center;
@@ -53,10 +52,11 @@ const PlaylistNotice = styled.div`
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
 
-  @media (max-width: 640px) {
-    left: 12px;
-    bottom: 104px;
-  }
+  /* 断点阶梯收编（备忘⑪打包形态）：≤640 贴边收底，641+ 桌面原位（md 槽翻转，声明打包单槽串） */
+  ${responsive(
+    ['left: 12px; bottom: 104px;', undefined, 'left: 24px; bottom: 124px;'],
+    (v) => v,
+  )}
 `
 
 const RetryButton = styled.button`

@@ -1,6 +1,7 @@
 'use client'
 
 import styled, { css, keyframes } from 'styled-components'
+import { responsive } from '../../themes/responsive'
 
 // Enter animations
 const enterCenter = keyframes`
@@ -273,23 +274,23 @@ export const DialogBody = styled.div<{ $variant: 'default' | 'paper' }>`
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 12px 22px 18px;
   overflow-y: auto;
   color: inherit;
 
-  @media (max-width: 640px) {
-    padding: 12px 16px 16px;
-  }
+  /* 断点阶梯收编：≤640 收紧留白，641+ 桌面原值（md 槽翻转，缺位槽经级联延续——批次6 SiteHeader 同形态） */
+  ${responsive(
+    ['12px 16px 16px', undefined, '12px 22px 18px'],
+    (v) => `padding: ${v};`,
+  )}
 
   /* paper：内容区留白与纸面呼吸感对齐 */
   ${({ $variant }) =>
     $variant === 'paper' &&
     css`
-      padding: 20px 22px 22px;
-
-      @media (max-width: 640px) {
-        padding: 12px 16px 16px;
-      }
+      ${responsive(
+        ['12px 16px 16px', undefined, '20px 22px 22px'],
+        (v) => `padding: ${v};`,
+      )}
     `}
 `
 

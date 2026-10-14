@@ -160,6 +160,8 @@ const coverShell = css`
     to { opacity: 1; transform: scale(1); }
   }
 
+  // 几何全幅族保留手写（同文件头 :13 order 注记 #508 同族）：width 负 margin 出血/圆点令牌/aspect-ratio/order 混合声明，
+  // 载体为 article 头部 grid 子项非可换基座——断点值已常量化（20261014 responsive-sweep）
   @media (max-width: ${BREAKPOINTS.mobile}px) {
     --post-cover-radius: 0;
     width: calc(100% + 48px);

@@ -1,6 +1,7 @@
 'use client'
 
 import styled from 'styled-components'
+import { responsive } from '../../themes/responsive'
 import type { ResultStatus } from './types'
 
 export const Root = styled.section`
@@ -19,15 +20,18 @@ export const Card = styled.div`
   border: 1px solid var(--normal-300);
   background: var(--background-100);
   box-shadow: var(--elevation-soft);
-  padding: 36px 40px;
   display: grid;
-  grid-template-columns: 64px 1fr;
   gap: 24px;
 
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    padding: 28px 24px;
-  }
+  /* 断点阶梯收编：≤640 单列折叠，641+ 双轨（md 槽翻转，缺位级联延续） */
+  ${responsive(
+    ['28px 24px', undefined, '36px 40px'],
+    (v) => `padding: ${v};`,
+  )}
+  ${responsive(
+    ['1fr', undefined, '64px 1fr'],
+    (v) => `grid-template-columns: ${v};`,
+  )}
 
   html[data-color-scheme='dark'] & {
     background: var(--normal-800);

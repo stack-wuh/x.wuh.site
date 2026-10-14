@@ -1,6 +1,7 @@
 'use client'
 
 import styled, { css, keyframes } from 'styled-components'
+import { OFF_LADDER_BREAKPOINTS } from '../../themes/breakpoints'
 
 const enter = keyframes`
   from {
@@ -42,7 +43,7 @@ export const Backdrop = styled.div<{ $open: boolean; $disableMotion: boolean }>`
     transition: none;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     padding: 0;
   }
 `
@@ -73,7 +74,7 @@ export const PreviewSurface = styled.div<{ $disableMotion: boolean }>`
     animation: none;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     border-radius: 0;
   }
 `
@@ -86,7 +87,7 @@ export const Header = styled.header`
   gap: 12px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     padding: max(env(safe-area-inset-top, 0px), 8px) 12px 8px;
     gap: 8px;
   }
@@ -113,7 +114,7 @@ export const Subtitle = styled.span`
   color: rgba(226, 232, 240, 0.65);
   letter-spacing: 0.02em;
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     display: none;
   }
 `
@@ -147,7 +148,7 @@ export const IconButton = styled.button<{ $active?: boolean }>`
     cursor: not-allowed;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     width: 44px;
     height: 44px;
     border-radius: 12px;
@@ -220,7 +221,7 @@ export const PreviewImage = styled.img<{
     transition: none;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     max-width: 100%;
     max-height: 100%;
   }
@@ -233,7 +234,7 @@ export const Footer = styled.footer`
   padding: 12px clamp(16px, 2vw, 32px) 16px;
   border-top: 1px solid rgba(148, 163, 184, 0.2);
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     padding: 8px 12px max(env(safe-area-inset-bottom, 0px), 8px);
     gap: 8px;
   }
@@ -340,7 +341,7 @@ export const KeyboardLegend = styled.div`
   letter-spacing: 0.05em;
   animation: ${fadeUp} 0.28s ease both;
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     display: none;
   }
 `
@@ -348,7 +349,7 @@ export const KeyboardLegend = styled.div`
 export const MobileNavArrow = styled.button<{ $side: 'left' | 'right' }>`
   display: none;
 
-  @media (max-width: 767px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     display: flex;
     position: absolute;
     top: 50%;
