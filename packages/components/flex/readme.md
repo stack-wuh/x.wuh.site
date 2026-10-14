@@ -60,4 +60,4 @@ true 档编译 `display: none`、false 档按 `$inline` 恢复 `flex`/`inline-fl
 ## 别名（收敛后的最小集）
 
 `Column` `ColumnReverse` `Center` `CenterHorizontal` `CenterVertical` `SpaceBetween` `SpaceAround` `SpaceEvenly` `InlineFlex`。
-旧 `Row`/`RowReverse`/`Wrap`/`FlexEnd`/`AlignTop`/`Full*` 等单 prop 糖已删：方向别名归 `@wuh.site/components/row`，其余用 props 直给。
+旧 `Row`/`RowReverse`/`Wrap`/`FlexEnd`/`AlignTop`/`Full*` 等单 prop 糖已删，其余用 props 直给（曾承接方向别名的 `Row`/`Col` 12 分栏栅格族与 `Stagger` 错峰入场层自创建起零消费，已于 20261014 退役，git history 可拣回）。

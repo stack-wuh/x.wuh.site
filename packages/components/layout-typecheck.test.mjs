@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
-// 布局组件域（themes/responsive + flex + row + col + stagger）类型清零守卫。
+// 布局组件域（themes/responsive + flex）类型清零守卫。
 // 根 `tsc --noEmit` 的 include 仅覆盖 packages 下的 src 目录，而 packages/components 无 src/，
 // 布局域从不被根命令覆盖——#449/#450 型空转漏检（site 又 ignoreBuildErrors）。
 // 本守卫以域专属 tsconfig 全量编译布局文件，结构性拦阻漏引（TS2304）、ref 错型（TS2769）、

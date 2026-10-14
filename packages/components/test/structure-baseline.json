@@ -4,11 +4,8 @@
   ],
   "missing-types": [
     "analytics",
-    "col",
     "cursor",
-    "icons",
-    "row",
-    "stagger"
+    "icons"
   ],
   "missing-readme": [
     "analytics",
@@ -34,17 +31,11 @@
     "tag"
   ],
   "dual-export": [
-    "col",
     "flex",
     "footprint-map",
-    "image-preview",
-    "row",
-    "stagger"
+    "image-preview"
   ],
   "styles-inline": [
-    "col",
-    "cursor",
-    "row",
-    "stagger"
+    "cursor"
   ]
 }
