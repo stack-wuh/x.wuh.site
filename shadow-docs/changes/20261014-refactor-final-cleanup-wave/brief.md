@@ -4,7 +4,7 @@
   "name": "20261014-refactor-final-cleanup-wave",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-final-cleanup-wave",
   "files": [
@@ -26,8 +26,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 541,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/541",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 542,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/542"
   },
   "review": {
     "conclusion": "pending",
@@ -36,8 +36,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "a5368df71127bea4414d65aa61451b919d3c5b33",
-    "planHash": "8dbefb77ddf514d10f312c261dcaf8729617da84810efa1128df23b237ae9ab5",
+    "checkpoint": "pr:542",
+    "planHash": "a6fd2d2b007efbd5e105faf67417c6636f17448cfc9642e6f5dfbea9da04d540",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
