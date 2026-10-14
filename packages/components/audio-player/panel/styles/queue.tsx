@@ -2,7 +2,7 @@
 
 /* 队列：遮罩 + 翻页屏 + 队列行（桌面抽屉与移动目次共用）（20261005 自 PlayerPanel.tsx 拆出） */
 import styled from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { equalize } from '../../mini/styles'
 import { EASE, FOLD_DUR, FOLD_LIFT_SHADOW, FOLD_REST_ANGLE, FOLD_WIDTH_PX, HAIRLINE, INK_FAINT, INK_MUTED, QUICK, focusRing, reducedMotion } from './tokens'
 
@@ -21,9 +21,7 @@ export const DrawerScrim = styled.button`
   transition: opacity ${QUICK} ${EASE}, visibility 0s linear ${QUICK};
   visibility: hidden;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: inline-block;'], (v) => v)}
 `
 
 /* ===== 队列翻页屏（桌面，20261001 定稿）：右缘热区 + 斜倚屏 =====
@@ -60,9 +58,7 @@ export const QZone = styled.div`
     }
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: block;'], (v) => v)}
 `
 
 /* 屏本体：静止斜倚 -40°（= 动画起点）半透明可读不可点；转正 = 0° 实墨可点选。
@@ -89,9 +85,7 @@ export const QScreen = styled.div`
   transition-delay: 0s, 160ms, 0s;
   backface-visibility: hidden;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: flex;'], (v) => v)}
 
   ${reducedMotion}
 `

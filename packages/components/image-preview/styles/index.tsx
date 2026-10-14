@@ -3,6 +3,9 @@
 import styled, { css, keyframes } from 'styled-components'
 import { OFF_LADDER_BREAKPOINTS } from '../../themes/breakpoints'
 
+/* 阶梯外保留族（批次7 终态）：previewMobile 767 值冻结不可归槽——归槽即边界移动改行为
+   （layout-components 卡条款）；与 index.tsx JS 侧 useMediaQuery 双源同常量 */
+
 const enter = keyframes`
   from {
     opacity: 0;

@@ -1,5 +1,5 @@
 import { fetcher, type QueryRecord, type RequestOptions, type FetchResult, type FetchError } from './fetcher'
-import { useRequest } from 'ahooks'
+import { useRequest } from '../useRequest'
 import { API_BASE } from './apiBase'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'

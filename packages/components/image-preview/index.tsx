@@ -128,6 +128,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
   const [isDismissing, setIsDismissing] = React.useState(false)
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
   const [swipeOffsetX, setSwipeOffsetX] = React.useState(0)
+  // 阶梯外保留：previewMobile 767 与 styles 侧双源同常量（归槽即行为变更，批次7 判归保留族）
   const isMobile = useMediaQuery(`(max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px)`)
 
   const overlayRef = React.useRef<HTMLDivElement | null>(null)

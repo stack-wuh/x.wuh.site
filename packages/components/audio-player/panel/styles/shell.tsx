@@ -2,7 +2,7 @@
 
 /* 面板壳与右上工具组：晕染纸底五层配方 + 网格舞台 + 关闭钮（20261005 自 PlayerPanel.tsx 拆出） */
 import styled, { css } from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { DUR_PANEL, EASE, GRAIN, HAIRLINE, INK_MUTED, QUICK, focusRing, reducedMotion } from './tokens'
 
 /* ===== 封面晕染纸底：照片 → 大模糊成色场 → 纸色罩压平 → 纸纹叠印 ===== */
@@ -43,18 +43,11 @@ export const Backdrop = styled.div<{ $visible: boolean }>`
 
 export const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
   position: fixed;
-  inset: 48px;
   z-index: 2610;
-  max-width: 1160px;
   margin-inline: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-areas: 'stage' 'dock';
   background: var(--background-100);
-  border: 1px solid ${HAIRLINE};
-  border-radius: var(--radius-card);
-  box-shadow: var(--elevation-card);
   color: var(--text-color);
   font-family: var(--font-sans);
   /* clip（而非 hidden）：面板壳必须不是滚动容器——它是可滚容器时，子元素滚动定位 API
@@ -92,19 +85,17 @@ export const Panel = styled.div<{ $visible: boolean; $drag?: number | null }>`
 
   ${reducedMotion}
 
-  /* 移动端：全屏沉浸册页 —— 横翻对页（词页/目次）/ 页缘翻页钮 / dock 吸底（20260930 定稿形态保留） */
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    inset: 0;
-    max-width: none;
-    padding: 0;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto auto;
-    grid-template-areas: 'pages' 'ticks' 'dock';
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    overflow: clip;
-  }
+  /* 移动端：全屏沉浸册页 —— 横翻对页（词页/目次）/ 页缘翻页钮 / dock 吸底（20260930 定稿形态保留）；
+     回退税：桌面值（inset/max-width/行列模板/边框圆角阴影）md 槽显式写回；
+     padding 两侧同值 0（initial）逐条论证后归并省略 */
+  ${responsive([
+    `inset: 0; max-width: none; grid-template-rows: minmax(0, 1fr) auto auto;
+     grid-template-areas: 'pages' 'ticks' 'dock'; border: none; border-radius: 0; box-shadow: none;`,
+    undefined,
+    `inset: 48px; max-width: 1160px; grid-template-rows: minmax(0, 1fr) auto;
+     grid-template-areas: 'stage' 'dock'; border: 1px solid ${HAIRLINE};
+     border-radius: var(--radius-card); box-shadow: var(--elevation-card);`,
+  ], (v) => v)}
 `
 
 export const CloseButton = styled.button`
@@ -149,13 +140,9 @@ export const TopTools = styled.div`
   right: calc(var(--space-base) + 48px);
   /* z12（20261006）：恒高于翻页屏两态（含转正 z10）——转正热区不得劫持詞/列表钮 */
   z-index: 12;
-  display: flex;
   align-items: center;
   gap: var(--space-xs);
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: flex;'], (v) => v)}
 `
 
 /* 词卷开关：印章字钮「詞」——印章字形跨语言不变（i18n 卡先例），语义走 aria。

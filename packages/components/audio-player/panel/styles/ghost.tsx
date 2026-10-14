@@ -2,7 +2,7 @@
 
 /* 墨痕歌词：竖排五列两翼（20261005 自 PlayerPanel.tsx 拆出） */
 import styled from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { EASE, GHOST_FONT, GHOST_LIFT } from './tokens'
 
 /* ===== 墨痕歌词：竖排五列两翼 · 三阶墨阶（纯装饰） =====
@@ -15,9 +15,7 @@ export const GhostLayer = styled.div`
   overflow: hidden;
   pointer-events: none;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: block;'], (v) => v)}
 `
 
 export const GhostLine = styled.span`

@@ -1,8 +1,9 @@
 'use client'
 
-/* 桌面舞台：装裱封面碟化 + 题名手卷 + 界格笺题跋（20261005 自 PlayerPanel.tsx 拆出） */
+/* 桌面舞台：装裱封面碟化 + 题名手卷 + 界格笺题跋（20261005 自 PlayerPanel.tsx 拆出）。
+   阶梯外保留块：max-height STAGE_TIER 轴非 min-width 编译口射程（批次7 判归保留族），常量插值合规 */
 import styled, { css, keyframes } from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { marquee, MARQUEE_GAP_PX } from '../../useMarquee'
 import { HAIRLINE, INK_GHOST, INK_MUTED, RULE_LINE, STAGE_TIER_COMPACT, STAGE_TIER_SHORT } from './tokens'
 
@@ -18,9 +19,7 @@ export const NowStage = styled.div`
   align-items: center;
   padding: var(--space-xl) var(--space-2xl) 0;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: flex;'], (v) => v)}
 `
 
 /* 主舞台后一团主题色暖晕，让居中构图贴住纸面不悬浮 */

@@ -75,12 +75,18 @@ test('image-preview CSS/JS 双源收敛到同一常量', () => {
   }
 })
 
-test('收编台账：纯声明块已走 responsive() 编译口（dialog/site-styles/GAP/barrage）', () => {
+test('收编台账：纯声明块已走 responsive() 编译口（dialog/site-styles/GAP/barrage/audio-player 族）', () => {
   for (const rel of [
     'packages/components/dialog/styles/index.tsx',
     'apps/site/app/styles/index.ts',
     'apps/site/app/components/player/GlobalAudioPlayer.tsx',
     'apps/site/app/about/components/guestbook-barrage.styles.ts',
+    'packages/components/audio-player/mini/styles.tsx',
+    'packages/components/audio-player/panel/styles/dock.tsx',
+    'packages/components/audio-player/panel/styles/queue.tsx',
+    'packages/components/audio-player/panel/styles/shell.tsx',
+    'packages/components/audio-player/panel/styles/ghost.tsx',
+    'packages/components/audio-player/panel/styles/words.tsx',
   ]) {
     const src = read(rel)
     assert.match(src, /from '@wuh\.site\/components\/themes\/responsive'|from '\.\.\/\.\.\/\.\.\/packages\/components\/themes\/responsive'|themes\/responsive/, `${rel} 应引用编译口`)
@@ -96,7 +102,7 @@ test('阶梯边界不受扩编影响：RESPONSIVE_LADDER 仍由 BREAKPOINTS 派�
   assert.equal(RAW_MEDIA.test(src.replace(/\$\{[^}]*\}/g, 'V')), false, 'responsive.ts 本体不得出现裸数值 @media')
 })
 
-test('site 保留项注记与常量双在位：post/SiteHeader/guestbook/pagination/cssVariableProvider/link-group', () => {
+test('site+组件保留项注记与常量双在位：post/SiteHeader/guestbook/pagination/cssVariableProvider/link-group/image-preview/audio-player 保留块', () => {
   const retained = [
     'apps/site/app/post/styles/post-floating.ts',
     'apps/site/app/post/styles/post-header.ts',
@@ -105,10 +111,14 @@ test('site 保留项注记与常量双在位：post/SiteHeader/guestbook/paginat
     'packages/components/pagination/styles/index.tsx',
     'packages/components/themes/cssVariableProvider.tsx',
     'packages/components/link-group/styles/index.tsx',
+    'packages/components/image-preview/styles/index.tsx',
+    'packages/components/image-preview/index.tsx',
+    'packages/components/audio-player/panel/styles/mobile.tsx',
+    'packages/components/audio-player/panel/styles/stage.tsx',
   ]
   for (const rel of retained) {
     const src = read(rel)
-    assert.match(src, /BREAKPOINTS|OFF_LADDER_BREAKPOINTS/, `${rel} 保留媒体行必须引用语义常量`)
+    assert.match(src, /BREAKPOINTS|OFF_LADDER_BREAKPOINTS|STAGE_TIER/, `${rel} 保留媒体行必须引用语义常量`)
     assert.match(src, /保留|范围外|⑩|⑭|批次|阶梯外|非编译口射程|transient|瞬态/, `${rel} 保留块必须有范围外注记`)
   }
 })
