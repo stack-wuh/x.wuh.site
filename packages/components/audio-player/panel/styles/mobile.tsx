@@ -2,7 +2,7 @@
 
 /* 移动端册页：装裱图版 + 短词窗 + 目次对页横翻（20261005 自 PlayerPanel.tsx 拆出） */
 import styled, { css } from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { EASE, HAIRLINE, INK_FAINT, INK_GHOST, INK_MUTED, QUICK, focusRing, STAGE_TIER_COMPACT, STAGE_TIER_SHORT } from './tokens'
 
 /* ===== 移动端册页（20260930 定稿形态保留）：装裱图版 + 短词窗 + 目次对页横翻 ===== */
@@ -16,7 +16,7 @@ export const GrabHandle = styled.div`
   z-index: 6;
   width: 48px;
   height: 24px;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   touch-action: none;
@@ -30,45 +30,40 @@ export const GrabHandle = styled.div`
     background: color-mix(in oklab, var(--text-color) 22%, transparent);
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: flex;
-  }
+  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
 `
 
-/* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径 */
+/* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径。
+   移动独显：块内声明按备忘⑬惰性判据直落 base（grid-area/滚动容器声明桌面惰性无回退税） */
 export const LeafPages = styled.div`
-  display: none;
+  grid-area: pages;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-area: pages;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    min-height: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  &::-webkit-scrollbar {
+    display: none;
   }
+
+  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
 `
 
 export const LeafPage = styled.section`
-  display: none;
+  flex: 0 0 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 var(--space-base);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    flex: 0 0 100%;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 0 var(--space-base);
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
+  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
 `
 
 /* 装裱图版：纸框发丝线 + 纸边；图面也是下滑关闭的拖拽面 */
@@ -84,7 +79,8 @@ export const LeafPlate = styled.figure`
   flex-shrink: 0;
 `
 
-/* 移动册页图版：方形封面自持（桌面碟化不影响移动端册页定稿形态） */
+/* 移动册页图版：方形封面自持（桌面碟化不影响移动端册页定稿形态）；
+   阶梯外保留块：max-height 轴非 min-width 编译口射程（批次7 判归保留族），常量插值合规 */
 export const LeafPlateArt = styled.div<{ $src?: string }>`
   width: min(252px, calc((100vh - 96px) * 0.3));
   aspect-ratio: 1;
@@ -203,18 +199,16 @@ export const WordEmpty = styled.div`
 /* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走行内自定义属性（免疫机制，
    见 music-player.md——选择器驱动激活态两连败），选中条宽度切换走 scaleX */
 export const PageTicks = styled.div`
-  display: none;
+  grid-area: ticks;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 2px 0 6px;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    grid-area: ticks;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-sm);
-    padding: 2px 0 6px;
-  }
+  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
 `
 
 export const PageTick = styled.button`

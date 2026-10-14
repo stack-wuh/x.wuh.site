@@ -1,7 +1,7 @@
 ---
-title: 共享 Hooks 契约（packages/hooks 事件四件套 + 副作用二波）
+title: 共享 Hooks 契约（packages/hooks 事件四件套 + 副作用二波 + 请求三波）
 domain: hooks
-keywords: [事件监听, addEventListener, useEventListener, useMediaQuery, useKeyPress, useClickOutside, useScrollLock, useLocalStorageState, readStorage, writeStorage, scheduleIdle, 副作用清理, SSR, enabled 条件挂载, 外点收起, Esc 关闭, 滚动锁, localStorage 持久化, requestIdleCallback, 白名单棘轮, hooks 包]
+keywords: [事件监听, addEventListener, useEventListener, useMediaQuery, useKeyPress, useClickOutside, useScrollLock, useLocalStorageState, readStorage, writeStorage, scheduleIdle, useRequest, cacheKey, SWR, 副作用清理, SSR, enabled 条件挂载, 外点收起, Esc 关闭, 滚动锁, localStorage 持久化, requestIdleCallback, 白名单棘轮, hooks 包]
 scope:
   - packages/hooks
   - packages/components
@@ -10,6 +10,7 @@ status: active
 source:
   - changes/20261013-refactor-shared-event-hooks/brief.md
   - changes/20261014-refactor-shared-hooks-wave2/brief.md
+  - changes/20261014-refactor-final-cleanup-wave/brief.md
 verified: 2026-10-14
 verified-depth: runtime
 verified-scope: 事件四件套契约（wave1，runtime：Esc/外点/enabled 条件挂载有生产观察点；matchMedia 系统跟随链因 WKWebView 新实例语义退 code-read，见 SGN-009）+ 二波三件套契约（wave2，runtime：useScrollLock fixed 配方四值锁定/还原+scrollY 归位在 Dialog 生产实例实测，useLocalStorageState 惰性读+write-through 与 scheduleIdle 消费参数由守卫+原语链路 runtime 佐证——语言读写、主题写+SSR 注入恢复、折叠态两路、昵称+footprint 自动补齐均有观察点；visibilitychange 标题换装因 WKWebView visibilityState 不可伪造退 code-read+守卫钉形态，见 SGN-014）。
@@ -57,6 +58,10 @@ active=false 或非浏览器环境跳过；条件挂载一律传组合布尔，�
 ### 空闲调度 scheduleIdle（非 hook，包内共享浏览器能力先例）
 
 `scheduleIdle(callback, { timeout? = 2000, fallbackMs? = timeout }) → cancel()`：requestIdleCallback 可用走 idle（timeout 上限），否则 setTimeout（fallbackMs）；返回闭包按实际分支收敛 cancel（消除手写版「idle API 存在但走了 setTimeout 分支时跨 id 空间 cancel」的理论错位）。SSR 返回空函数。消费参数：GAP `{timeout:2000}`、locales 预取 `{timeout:3000, fallbackMs:1500}`、FontPrefetch `{timeout:3000}`（回落=3000）。
+
+### 请求 hook useRequest（三波，替代 ahooks——20261014 final-cleanup-wave）
+
+`useRequest(service, { manual?, onSuccess?, onError?, cacheKey? }) → { data, loading, error, run, runAsync, refresh }`。**框架无关内核 `runner.ts` + React 薄绑定**（useSyncExternalStore），行为契约钉于 `useRequest/useRequest.test.mjs` UR1–UR7：auto 挂载即发 / `run` 吞错（错误只进 state）`runAsync` 抛出 / `refresh` 沿 lastArgs / **stale 响应保护**（callId 计数，迟到的旧响应丢弃）/ service·options 走 latest-ref（渲染期闭包更新下次请求生效）。**cacheKey=挂载种子 + SWR 重校验**（staleTime=0：remount 时 start() 先秒显模块级 Map 缓存值、后台必重发一次；与 ahooks 的有意差异=种子延迟到挂载 effect，构造与 SSR 期不读缓存，保证 hydrate 首帧与服务器 HTML 一致）。消费：createService 底层、AboutView×2（含 `cacheKey:'about-unified-activity'`）、AppProviders（manual+runAsync 作 trackResolver）、GlobalAudioPlayer（manual+onSuccess/onError）。ahooks 依赖已出账（apps/site package.json）。
 
 ### 白名单（允许手写 addEventListener / localStorage 的站点，各有已证实的不适用理由，守卫棘轮锁定）
 

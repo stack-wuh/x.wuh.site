@@ -242,9 +242,6 @@ importers:
       '@wuh.site/hooks':
         specifier: workspace:^
         version: link:../../packages/hooks
-      ahooks:
-        specifier: 3.7.1
-        version: 3.7.1(react@19.2.5)
       html-to-image:
         specifier: ^1.11.13
         version: 1.11.13

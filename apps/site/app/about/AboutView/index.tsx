@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { useRequest } from 'ahooks'
+import { useRequest } from '@wuh.site/hooks/useRequest'
 import dynamic from 'next/dynamic'
 import LinkGroup from '@wuh.site/components/link-group'
 import { IconMusic, IconDiscord } from '@wuh.site/components/icons'

@@ -2,7 +2,7 @@
 
 /* 词卷展开态：题头小装裱 + 竖排朱丝栏（20261005 自 PlayerPanel.tsx 拆出） */
 import styled, { css } from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { HAIRLINE, INK_GHOST, INK_MUTED, RULE_LINE } from './tokens'
 
 /* ===== 词卷展开态（桌面）：题头小装裱 + 竖排朱丝栏词卷 ===== */
@@ -17,9 +17,7 @@ export const WordsView = styled.div`
   padding: var(--space-xl) var(--space-2xl) var(--space-sm);
   background: color-mix(in oklab, var(--background-100) 88%, transparent);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: flex;'], (v) => v)}
 `
 
 export const WordsHead = styled.div`

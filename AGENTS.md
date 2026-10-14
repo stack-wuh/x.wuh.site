@@ -15,7 +15,6 @@ packages/
 ├── hooks              # 共享 hooks @wuh.site/hooks (useTheme, useFetch, useDialog, etc.)
 ├── core               # 核心共享 @wuh.site/core (DTO 类型 + API 端点 + 站点常量)
 └── docs               # 文档预留
-codex/                 # Codex 工作流历史，可参考但不再使用
 ```
 
 ## 技术栈
@@ -99,7 +98,8 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 - `useDialog` - Dialog 打开/关闭状态，提供 `bind: { open, onClose }`
 - `useImagePreview` - 图片预览索引/循环状态，提供 `bind: { open, currentIndex, onClose, onIndexChange }`
 - `useTokens` / `useTheme` - 从 ThemeProvider context 获取主题令牌
-- `useFetch` - 请求封装（fetcher + createService 工厂，基于 ahooks useRequest）
+- `useFetch` - 请求封装（fetcher + createService 工厂，基于自研 `useRequest`）
+- `useRequest` - 自研请求 hook（替代 ahooks：auto/manual + `runAsync`/`refresh`/`onSuccess`·`onError`/`cacheKey` 挂载种子+SWR 重校验；行为契约钉于 `useRequest/useRequest.test.mjs` UR1–UR7）
 - `useLocale` - 三语 locale / 词典 / `t()`（LocaleProvider context）
 - `useEventListener` - 事件监听统一入口（target 省略=window/'window'/'document'/元素/ref，handler 最新值 ref 免重绑，`enabled` 条件挂载）；契约见 `shadow-docs/knowledge/shared-hooks.md`
 - `useMediaQuery` / `useKeyPress` / `useClickOutside` - 事件四件套合成（布尔订阅 / keydown 订阅 / 外点收起，同上卡片）

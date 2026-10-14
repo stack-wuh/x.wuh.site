@@ -2,7 +2,7 @@
 
 /* 迷你播放器样式：纸卡 dock + 书耳/印章 + 跑马灯标题 + 等化器/涟漪（20261005 自 MiniPlayer.tsx 拆出） */
 import styled, { css, keyframes } from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { IconMusic } from '@wuh.site/components/icons'
 import { marquee, MARQUEE_GAP_PX } from '../useMarquee'
 
@@ -37,45 +37,31 @@ export const ripple = keyframes`
 /* ===== 展开态：桌面 dock 卡 / 移动端全宽底栏 ===== */
 export const MiniCard = styled.div<{ $visible: boolean }>`
   position: fixed;
-  left: 24px;
-  bottom: 24px;
   z-index: 2500;
-  width: 440px;
-  height: ${CARD_HEIGHT};
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto;
-  grid-template-areas:
-    'open actions'
-    'progress progress';
   align-items: center;
-  column-gap: var(--space-sm);
-  row-gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-base) var(--space-sm);
   background: var(--background-100);
-  border: 1px solid ${HAIRLINE};
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--elevation-soft);
   color: var(--text-color);
   font-family: var(--font-sans);
 
   ${showHide('translateY(14px)')}
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    height: auto;
-    grid-template-areas: 'open actions';
-    gap: var(--space-xs);
-    padding: var(--space-xs) var(--space-sm);
-    padding-bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
-    border: none;
-    border-top: 1px solid ${HAIRLINE};
-    border-radius: 0;
-    box-shadow: none;
-  }
+  /* 回退税：桌面全量几何/盒模型 md 槽显式写回（right 桌面实际值 = initial auto，逐条论证） */
+  ${responsive([
+    `left: 0; right: 0; bottom: 0; width: auto; height: auto;
+     grid-template-areas: 'open actions'; gap: var(--space-xs);
+     padding: var(--space-xs) var(--space-sm);
+     padding-bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
+     border: none; border-top: 1px solid ${HAIRLINE}; border-radius: 0; box-shadow: none;`,
+    undefined,
+    `left: 24px; right: auto; bottom: 24px; width: 440px; height: ${CARD_HEIGHT};
+     grid-template-areas: 'open actions' 'progress progress';
+     column-gap: var(--space-sm); row-gap: var(--space-xs);
+     padding: var(--space-sm) var(--space-base) var(--space-sm);
+     border: 1px solid ${HAIRLINE}; border-radius: var(--border-radius-lg); box-shadow: var(--elevation-soft);`,
+  ], (v) => v)}
 `
 
 /* 耳页共享交互语言：墨转朱砂、纸面染淡朱砂 */
@@ -99,7 +85,6 @@ export const EarTab = styled.button`
   transform: translateY(-50%);
   width: 24px;
   height: 44px;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -121,9 +106,7 @@ export const EarTab = styled.button`
 
   ${earHover}
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: inline-flex;'], (v) => v)}
 `
 
 /* 收起态小耳：耳页从卡片上脱落，贴屏幕左缘、与展开耳同一水平线；播放中换装墨柱等化器指示声源 */
@@ -134,7 +117,6 @@ export const CollapsedEar = styled.button<{ $visible: boolean; $playing: boolean
   z-index: 2500;
   width: 28px;
   height: 48px;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -156,9 +138,7 @@ export const CollapsedEar = styled.button<{ $visible: boolean; $playing: boolean
 
   ${earHover}
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: inline-flex;'], (v) => v)}
 `
 
 /* 收起态（移动端）：朱砂「音」印章钮；播放中外圈泛涟漪环提示声源 */
@@ -169,7 +149,6 @@ export const SealButton = styled.button<{ $visible: boolean; $playing: boolean }
   z-index: 2500;
   width: 48px;
   height: 48px;
-  display: none;
   align-items: center;
   justify-content: center;
   background: var(--primary-color);
@@ -213,9 +192,7 @@ export const SealButton = styled.button<{ $visible: boolean; $playing: boolean }
     }
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: inline-flex;
-  }
+  ${responsive(['display: inline-flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 /* 封面 + 曲名区：整体可点开面板 */
@@ -245,17 +222,12 @@ export const OpenPanelButton = styled.button`
 
 export const Cover = styled.div<{ $src?: string }>`
   position: relative;
-  width: 48px;
-  height: 48px;
   flex-shrink: 0;
   border-radius: var(--border-radius-base);
   background: ${(p) => (p.$src ? `url(${p.$src}) center/cover` : 'color-mix(in oklab, var(--normal-400) 24%, transparent)')};
   box-shadow: inset 0 0 0 1px ${HAIRLINE};
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 44px;
-    height: 44px;
-  }
+  ${responsive(['width: 44px; height: 44px;', undefined, 'width: 48px; height: 48px;'], (v) => v)}
 `
 
 export const CoverFallback = styled(IconMusic).attrs({ size: 18, 'aria-hidden': true })`
@@ -388,12 +360,12 @@ export const ProgressRow = styled.div`
   align-items: center;
   gap: var(--space-xs);
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-  }
+  /* 回退税：position/top/left/right 桌面实际值 = initial（static/auto），逐条论证后显式写回 */
+  ${responsive([
+    'position: absolute; top: 0; left: 0; right: 0;',
+    undefined,
+    'position: static; top: auto; left: auto; right: auto;',
+  ], (v) => v)}
 `
 
 /* 进度线由共享 Progress size="sm" 承担（@wuh.site/components/progress），此处只保留布局行与时间文案 */
@@ -405,36 +377,22 @@ export const ProgressText = styled.span`
   color: ${INK_FAINT};
   white-space: nowrap;
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: inline;'], (v) => v)}
 `
 
 export const ActionGroup = styled.div`
   grid-area: actions;
-  display: flex;
   align-items: center;
   gap: var(--space-xs);
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: flex;'], (v) => v)}
 `
 
 export const MobileActionGroup = styled.div`
   grid-area: actions;
-  display: none;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-  }
+  ${responsive(['display: flex; align-items: center; gap: var(--space-xs);', undefined, 'display: none;'], (v) => v)}
 `
 
 export const IconButton = styled.button`
-  width: 40px;
-  height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -456,10 +414,7 @@ export const IconButton = styled.button`
     outline-offset: 2px;
   }
 
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 44px;
-    height: 44px;
-  }
+  ${responsive(['width: 44px; height: 44px;', undefined, 'width: 40px; height: 40px;'], (v) => v)}
 `
 
 /* 朱砂印主播放钮 */
@@ -479,9 +434,7 @@ export const PlayButton = styled(IconButton)`
 `
 
 export const PanelButton = styled(IconButton)`
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: inline-flex;'], (v) => v)}
 `
 
 /* 标题溢出测量与滚动轨道由 useMarquee 共享基建承担（./useMarquee） */

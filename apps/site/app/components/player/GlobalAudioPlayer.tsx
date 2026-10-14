@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { useRequest } from 'ahooks'
+import { useRequest } from '@wuh.site/hooks/useRequest'
 import { scheduleIdle } from '@wuh.site/hooks/scheduleIdle'
 import styled from 'styled-components'
 import { responsive } from '@wuh.site/components/themes/responsive'

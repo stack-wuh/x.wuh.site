@@ -2,7 +2,7 @@
 
 /* dock：進度印 + 单行钮群 + 音量 popover 样式（20261005 自 PlayerPanel.tsx 拆出） */
 import styled from 'styled-components'
-import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
+import { responsive } from '@wuh.site/components/themes/responsive'
 import { EASE, HAIRLINE, INK_FAINT, INK_MUTED, QUICK, focusRing } from './tokens'
 
 /* ===== dock（桌面 + 移动共用）：進度 + 单行钮群 ===== */
@@ -15,12 +15,13 @@ export const NowDock = styled.div`
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 0 var(--space-lg) var(--space-xl);
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    padding: var(--space-sm) var(--space-base) calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
-    border-top: 1px solid ${HAIRLINE};
-  }
+  /* 回退税：border-top 桌面实际值 = 无（initial 无边框，显式写回 none） */
+  ${responsive([
+    `padding: var(--space-sm) var(--space-base) calc(var(--space-base) + env(safe-area-inset-bottom, 0px));
+     border-top: 1px solid ${HAIRLINE};`,
+    undefined,
+    'padding: 0 var(--space-lg) var(--space-xl); border-top: none;',
+  ], (v) => v)}
 `
 
 /* 进度行：时间码两端，中段为共享 Progress 交互态；桌面 460px 居中 */
@@ -42,16 +43,14 @@ export const TimeCode = styled.span<{ $now?: boolean }>`
 
 /* 单行钮群：模式 | 上一曲/播放/下一曲 | 音量（playbar 同构） */
 export const ControlRow = styled.div`
-  margin-top: var(--space-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    margin-top: var(--space-sm);
-    gap: var(--space-lg);
-  }
+  ${responsive([
+    'margin-top: var(--space-sm); gap: var(--space-lg);',
+    undefined,
+    'margin-top: var(--space-base); gap: var(--space-sm);',
+  ], (v) => v)}
 `
 
 /* 幽灵传输钮：去常驻描边，纸面安静，hover 才显性 */
@@ -81,8 +80,7 @@ export const SkipButton = styled.button`
    position: relative 是环的包含块——缺位时 ::after 落到 NowDock，白环画成横贯 dock 的巨椭圆（v1.4.54 生产实证） */
 export const PlayButton = styled(SkipButton)`
   position: relative;
-  width: 64px;
-  height: 64px;
+  ${responsive(['width: 52px; height: 52px;', undefined, 'width: 64px; height: 64px;'], (v) => v)}
   background: var(--primary-color);
   color: var(--background-100);
   box-shadow: var(--elevation-soft);
@@ -103,11 +101,6 @@ export const PlayButton = styled(SkipButton)`
 
   &:active {
     transform: scale(0.96);
-  }
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    width: 52px;
-    height: 52px;
   }
 `
 
@@ -137,11 +130,7 @@ export const ModeButton = styled.button`
 /* 音量：钮群右端图标钮 + 上弹竖向滑杆小纸卡 */
 export const VolWrap = styled.span`
   position: relative;
-  display: inline-flex;
-
-  @media (max-width: ${BREAKPOINTS.mobile}px) {
-    display: none;
-  }
+  ${responsive(['display: none;', undefined, 'display: inline-flex;'], (v) => v)}
 `
 
 export const VolumeButton = styled(SkipButton)``
