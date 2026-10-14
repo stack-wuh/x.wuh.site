@@ -4,7 +4,7 @@
   "name": "20261014-refactor-responsive-sweep",
   "type": "refactor",
   "scope": "packages/components,apps/site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-responsive-sweep",
   "files": [
@@ -31,8 +31,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 535,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/535",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 536,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/536"
   },
   "review": {
     "conclusion": "passed",
@@ -41,7 +41,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:535",
+    "checkpoint": "pr:536",
     "planHash": "3dcd79c2e1c55937c59902718a32ee09bb539a8f2ea7d40dc930ab93751a6021",
     "updatedAt": null,
     "lastError": null,
