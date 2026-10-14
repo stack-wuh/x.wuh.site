@@ -4,7 +4,7 @@
   "name": "20261014-chore-layout-grid-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-layout-grid-retirement",
   "files": [
@@ -28,13 +28,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d8de906b00b29b76c4616fcd5a6cfff97a1f5c1a",
-    "verifiedAt": "2026-10-14T08:42:21.672Z"
+    "verifiedCommit": "e83828583d503fa45ece1ecc325df9dd72a2dfa5",
+    "verifiedAt": "2026-10-14T08:46:46.064Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:540",
-    "planHash": "e0d03051f6ab7c83c9b7667fd9c8e90ef5e2b2ab0e260773f731ea89b1293a90",
+    "planHash": "d96a6eb5d9fc27bb422946c152311f9ae052da0d07511153077cb7c05aba3a67",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -48,10 +48,9 @@
     },
     "commit": {
       "files": [
-        "shadow-docs/changes/20261014-chore-layout-grid-retirement/brief.md",
-        "shadow-docs/signals.md"
+        "shadow-docs/changes/20261014-chore-layout-grid-retirement/brief.md"
       ],
-      "message": "docs(signals): SGN-006 命中+1、SGN-016 新录 canary 错误签名纪律"
+      "message": "docs(shadow): review verifiedCommit 钉正至 main e838285"
     },
     "release": {
       "files": [
@@ -77,7 +76,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "布局族契约双层化、栅格三目录退役事实、过渡形态名单收窄均已按删后实测落卡（守卫 40→22、structure 18 复跑绿）；SGN-006 命中+1 与 SGN-016 新录随本 change 写回"
+    "reason": "verifiedCommit 钉正至合并后 main（e838285）：守卫网在 main 复跑全绿（structure 18/breakpoint 6/布局 22/hooks 20），信号写回与 brief 状态 commit 均为 docs 增量"
   }
 }
 ---
