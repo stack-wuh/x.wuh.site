@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 import type { TBaseColorLevel, Tokens } from './tokens'
 import { palettes } from './generator-color'
+import { BREAKPOINTS } from './breakpoints'
 
 /** Layer 1: emit all raw palette CSS variables into a single selector */
 function emitLayer1(): string {
@@ -187,8 +188,10 @@ export const CssVariableStyles = createGlobalStyle`
     overflow-x: clip;
   }
 
-  /* 移动端行高收紧：小屏短行宽下大行高显松，桌面保持原值 */
-  @media (max-width: 640px) {
+  /* 移动端行高收紧：小屏短行宽下大行高显松，桌面保持原值
+     （:root 级全局令牌切换非编译口 decl 射程——responsive() 产 styled 组件级片段，此处为
+      createGlobalStyle 全局串；断点值已常量化，保留手写媒体块，范围外注记见批次6 同族） */
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     :root {
       --line-height-body: 1.7;
       --line-height-heading: 1.3;

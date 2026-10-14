@@ -136,6 +136,7 @@ export const LikeButton = styled(Button)<{ $compact?: boolean }>`
 
   transition: ${hoverTransition};
 
+  // ⑩ 族保留手写（同文件头 #512 注记的兄弟块）：块内 flex/height 吃 $compact transient，非编译口槽值射程
   @media (min-width: ${BREAKPOINTS.mobile}px) {
     flex: ${({ $compact }) => ($compact ? '1' : '0 0 auto')};
     height: ${({ $compact }) => ($compact ? '32px' : '36px')};

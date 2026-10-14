@@ -2,6 +2,7 @@
 
 import styled from 'styled-components'
 import { Flex } from '@wuh.site/components/flex'
+import { BREAKPOINTS } from '@wuh.site/components/themes/breakpoints'
 
 export const PageWrapper = styled(Flex).attrs({
   direction: 'column',
@@ -64,7 +65,8 @@ export const BackLink = styled.a`
 
 /* ====== Timeline ====== */
 /* 注：本段 ≤640 三处块改的是 padding-left/伪元素 left/圆点尺寸等绝对定位几何，
-   非 Flex 阶梯词汇射程（无 position/pseudo 语义），维持手写媒体查询（批次3 射程判定，#508） */
+   非 Flex 阶梯词汇射程（无 position/pseudo 语义），维持手写媒体查询（批次3 射程判定，#508）；
+   断点值已常量化（20261014 responsive-sweep），保留手写形态不变 */
 
 export const Timeline = styled.div`
   position: relative;
@@ -84,7 +86,7 @@ export const Timeline = styled.div`
     }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     padding-left: 22px;
 
     &::before {
@@ -115,7 +117,7 @@ export const TimelineDot = styled.span`
   box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary-color) 30%, transparent);
   z-index: 1;
 
-  @media (max-width: 640px) {
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     left: -16px;
     width: 7px;
     height: 7px;
@@ -143,7 +145,7 @@ export const TimelineDateLabel = styled.div`
     z-index: 1;
     transform: translateY(-50%);
 
-    @media (max-width: 640px) {
+    @media (max-width: ${BREAKPOINTS.mobile}px) {
       left: -16px;
       width: 7px;
       height: 7px;

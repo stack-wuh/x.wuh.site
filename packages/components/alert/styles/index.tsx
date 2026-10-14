@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { BREAKPOINTS } from '../../themes/breakpoints'
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error'
 
@@ -78,7 +79,8 @@ export const AlertContainer = styled.section<{ $variant: AlertVariant; $framed: 
         `)}
   }
 
-  @media (max-width: 640px) {
+  // ⑩ 族保留手写：块内声明吃 $framed transient（非编译口槽值射程），仅断点值常量化
+  @media (max-width: ${BREAKPOINTS.mobile}px) {
     ${({ $framed }) => ($framed
       ? css`
           padding: 12px;

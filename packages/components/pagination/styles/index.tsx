@@ -2,6 +2,7 @@
 
 import styled from 'styled-components'
 import Link from 'next/link'
+import { OFF_LADDER_BREAKPOINTS } from '../../themes/breakpoints'
 
 export const Nav = styled.nav`
   display: flex;
@@ -12,7 +13,7 @@ export const Nav = styled.nav`
   margin-top: var(--space-lg);
   flex-wrap: wrap;
 
-  @media (max-width: 480px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.paginationCompact}px) {
     gap: 8px;
   }
 `
@@ -22,7 +23,7 @@ export const LetterGroup = styled.div`
   align-items: center;
   gap: 10px;
 
-  @media (max-width: 480px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.paginationCompact}px) {
     gap: 6px;
   }
 `
@@ -92,7 +93,8 @@ export const SvgIcon = styled.svg<{ $size: number }>`
   stroke-linecap: round;
   stroke-linejoin: round;
 
-  @media (max-width: 480px) {
+  // ⑩ 族保留手写：块内声明吃 $size transient（非编译口槽值射程），仅断点值常量化
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.paginationCompact}px) {
     width: ${({ $size }) => Math.round($size * 0.85)}px;
     height: ${({ $size }) => Math.round($size * 0.85)}px;
   }
@@ -102,7 +104,7 @@ export const PageNum = styled.span`
   font-size: 18px;
   line-height: 1;
 
-  @media (max-width: 480px) {
+  @media (max-width: ${OFF_LADDER_BREAKPOINTS.paginationCompact}px) {
     font-size: 15px;
   }
 `

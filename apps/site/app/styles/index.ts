@@ -246,11 +246,11 @@ export const ProjectName = styled.span`
 export const ProjectDesc = styled.span`
   font-size: var(--font-size-sm);
   color: var(--text-muted);
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
-  @media (max-width: 520px) { white-space: normal; }
+  /* 断点阶梯收编：≤520 换行、521+ 单行省略（sm 槽，同文件 flex-wrap 先例） */
+  ${responsive(['normal', 'nowrap'], (v) => `white-space: ${v};`)}
 `
 
 export const ProjectMeta = styled(Flex).attrs({
