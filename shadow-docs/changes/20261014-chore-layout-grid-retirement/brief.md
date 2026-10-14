@@ -34,7 +34,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "37ab2b567ecc947c0d210f376631ef7ad4a49dfd",
-    "planHash": "d96a6eb5d9fc27bb422946c152311f9ae052da0d07511153077cb7c05aba3a67",
+    "planHash": "5b10f07af875618deadf7fdc27f4ce639ad719e2638d8f8d6793d3a583663a8c",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -50,7 +50,7 @@
       "files": [
         "shadow-docs/changes/20261014-chore-layout-grid-retirement/brief.md"
       ],
-      "message": "docs(shadow): review verifiedCommit 钉正至 main e838285"
+      "message": "docs(shadow): 交付回写 PR #540 merged/Release v1.4.85/部署 502 重跑全绿"
     },
     "release": {
       "files": [
@@ -144,6 +144,8 @@
   - 根 `tsc --noEmit` RC=0、`lint:next` 0/0(124 文件)、`next build` RC=0 全路由出(SGN-012 直调 `apps/site/node_modules/.bin/next build`)。
   - 残留扫描:包路径形态 0、相对导入形态 0;JSX `<Row>` 命中仅 apps/desktop 五处,逐一核实为本地 styled 定义(Heatmap/CapsulePanel/SettingRow/PickerShell 局部 const Row,与组件库无关)。
   - 名集基线 diff(SGN-011 法,base=main@2795ab1 解树):基线 31 红 vs head 26 红,`comm -23` head 独有 = **空(零新增红)**;基线独有 5 项(seo-p1/p14/p17 文件级折叠 + 2 条 sitemap 测试级)实测原因为解包树缺 workspace 链接 `ERR_MODULE_NOT_FOUND @wuh.site/core`,伪影非修复,类别与本轮无关。
+  - review 复验:守卫网于 PR head 复跑全绿(53+20 例),diff 逐文件走查干净;信号写回 SGN-006 命中+1、SGN-016 新录(canary 只包传输面错误,PLAN_HASH_INVALID 即停)随 PR 入卡库。
+- 交付: PR #540 squash merged → main `e838285`(verifiedCommit 钉正于此,合并后 main 守卫复跑全绿);Release **v1.4.85** 发布触发 CI-CD;首次部署 `prepare-deps` 红——根因服务器侧 `docker.m.daocloud.io` HEAD `node:20-alpine` 返回 **502**(基础设施瞬断,与本变更无关,quality-gate 双绿佐证),`gh run rerun --failed` 幂等续跑后 **8 作业全绿**(quality-gate/prepare-deps/prepare/build-nest/build-next/staging-test/restart-nginx/switch-traffic)。推送链路本轮新增实证:publish execute 7 轮 GIT_PUSH_FAILED 后第 25 轮成,`created:false` 证实假失败轮已半成(见 SGN-006 增补)。
 
 ## 知识评估
 
