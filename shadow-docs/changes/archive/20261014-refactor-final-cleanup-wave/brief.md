@@ -4,7 +4,7 @@
   "name": "20261014-refactor-final-cleanup-wave",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-final-cleanup-wave",
   "files": [
@@ -31,13 +31,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "276db03aec356f495120d8b0d7e5ae765d9e12c8",
-    "verifiedAt": "2026-10-14T11:04:35.151Z"
+    "verifiedCommit": "bcc7fcab59ff8ee711950fb93bda276a955321a3",
+    "verifiedAt": "2026-10-14T11:18:25.435Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "763900d40be8363534ad4501b0e981971fb45d61",
-    "planHash": "908f80a9678a7bf3e0a9d5b6c4fe468f3591d33ce700c64fdaa6e3e4ccdcb478",
+    "checkpoint": "merged-pr:542",
+    "planHash": "f6bef0154187eede10c6a40577404fda8e25615c7b7c33e92d1aa80eecf17383",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -61,7 +61,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/shared-hooks.md",
-    "reason": "verifiedCommit 钉正至合并后 main（276db03）：守卫网在 main 复跑全绿（hooks 27/audio-player 29/breakpoint 6/structure 18、根 tsc RC=0）"
+    "reason": "verifiedCommit 随交付回写钉正至 HEAD；v1.4.86 部署 8 作业一次全绿，交付证据已入 brief"
   }
 }
 ---

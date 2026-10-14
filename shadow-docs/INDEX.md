@@ -115,5 +115,6 @@
 | 20261013-refactor-shared-event-hooks | ✅ 完成 | shadow-docs/changes/archive/20261013-refactor-shared-event-hooks/brief.md |
 | 20261014-chore-dead-components-retirement | ✅ 完成 | shadow-docs/changes/archive/20261014-chore-dead-components-retirement/brief.md |
 | 20261014-chore-layout-grid-retirement | ✅ 完成 | shadow-docs/changes/archive/20261014-chore-layout-grid-retirement/brief.md |
+| 20261014-refactor-final-cleanup-wave | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-final-cleanup-wave/brief.md |
 | 20261014-refactor-responsive-sweep | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-responsive-sweep/brief.md |
 | 20261014-refactor-shared-hooks-wave2 | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-shared-hooks-wave2/brief.md |
