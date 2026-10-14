@@ -154,12 +154,15 @@ test('AppearanceOptions 语言三选平铺（中｜英｜日，aria-pressed 直�
   assert.match(appearanceSource, /preloadDictionaries\(\)/)
 })
 
+// 20261014-wave2：idle 调度收口至 @wuh.site/hooks/scheduleIdle——本文件钉消费参数（timeout 3000 / 回落 1500）；
+// 「requestIdleCallback + setTimeout 回落」骨架改由 packages/hooks/test/wave2-hooks.test.mjs 钉实现处，意图不变
 test('词典空闲预取：requestIdleCallback 回退 setTimeout，双语言槽，失败静默回落', () => {
   assert.match(indexSource, /export function preloadDictionaries/)
   // 预取必须经单一入口：只热 webpack 模块缓存不等于「可渲染」，词典要落进缓存槽
   assert.match(indexSource, /ensureDict\(target\)\.catch\(\(\) => \{\}\)/)
-  assert.match(indexSource, /window\.requestIdleCallback\(\(\) => cb\(\), \{ timeout: 3000 \}\)/)
-  assert.match(indexSource, /window\.setTimeout\(cb, 1500\)/)
+  assert.match(indexSource, /from '@wuh\.site\/hooks\/scheduleIdle'/)
+  assert.match(indexSource, /scheduleIdle\([\s\S]*?\{ timeout: 3000, fallbackMs: 1500 \}/)
+  assert.doesNotMatch(indexSource, /window\.requestIdleCallback\(/)
 })
 
 test('词典 zh/en/ja 均为可类型剥离的纯对象模块（node 直读无副作用）', () => {

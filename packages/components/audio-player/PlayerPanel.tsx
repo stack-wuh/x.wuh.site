@@ -3,6 +3,7 @@
 /* 播放面板组合入口：状态 / effects / Escape 分层 / 滚动锁 + JSX 骨架——样式按区块拆至 panel/styles/*（20261005 拆分） */
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useEventListener } from '@wuh.site/hooks/useEventListener'
+import { useScrollLock } from '@wuh.site/hooks/useScrollLock'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
 import { useLocale } from '@wuh.site/components/locales'
@@ -144,28 +145,8 @@ export const AudioPlayerPanel = () => {
     setFoldLatch(false)
   }, [state.isPanelOpen])
 
-  // 弹层滚动锁：面板打开期间锁 body 滚动（复用 Dialog 的 lockScroll 配方，position:fixed 兼顾 iOS），关闭还原滚动位置
-  useEffect(() => {
-    if (!state.isPanelOpen || typeof document === 'undefined') return
-    const scrollY = window.scrollY
-    const originalOverflow = document.body.style.overflow
-    const originalPosition = document.body.style.position
-    const originalTop = document.body.style.top
-    const originalWidth = document.body.style.width
-
-    document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${scrollY}px`
-    document.body.style.width = '100%'
-
-    return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.position = originalPosition
-      document.body.style.top = originalTop
-      document.body.style.width = originalWidth
-      window.scrollTo(0, scrollY)
-    }
-  }, [state.isPanelOpen])
+  // 弹层滚动锁：面板打开期间锁 body 滚动（Dialog 同款 fixed 配方，@wuh.site/hooks 单一实现处）
+  useScrollLock(state.isPanelOpen)
 
   // 播放列表定位到当前曲（抽屉）：手动 scrollTop。定位一律手动只滚目标容器，禁用原生滚动定位 API
   // （scroll-into-view 类）——它沿祖先链滚动所有可滚容器：桌面会连带滚走 overflow 壳的面板

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRequest } from 'ahooks'
+import { scheduleIdle } from '@wuh.site/hooks/scheduleIdle'
 import styled from 'styled-components'
 import { useLocale } from '@wuh.site/components/locales'
 import {
@@ -33,22 +34,6 @@ const fetchDefaultPlaylistTracks = async (): Promise<{ tracks?: Track[]; name?: 
     if ((error as Error).name === 'AbortError') throw error
   }
   return fetchPlaylistTracks(FALLBACK_PLAYLIST_ID)
-}
-
-// 只在浏览器运行，统一走 window 上的定时器：Node 与 DOM 的 Timer 返回类型不同名
-const scheduleIdle = (callback: () => void, timeout = 2000): number => {
-  if (typeof window.requestIdleCallback === 'function') {
-    return window.requestIdleCallback(callback, { timeout })
-  }
-  return window.setTimeout(callback, timeout)
-}
-
-const cancelIdle = (id: number): void => {
-  if (typeof window.cancelIdleCallback === 'function') {
-    window.cancelIdleCallback(id)
-    return
-  }
-  window.clearTimeout(id)
 }
 
 const PlaylistNotice = styled.div`
@@ -124,10 +109,9 @@ export const GlobalAudioPlayer = () => {
 
   useEffect(() => {
     if (queue.length > 0) return
-    const idleId = scheduleIdle(() => loadDefaultQueue(), 2000)
-    return () => {
-      cancelIdle(idleId)
-    }
+    // 空闲预载默认队列：timeout 2000（共享 scheduleIdle，cancel 闭包按实际分支收敛）
+    const cancel = scheduleIdle(() => loadDefaultQueue(), { timeout: 2000 })
+    return cancel
   }, [queue.length, loadDefaultQueue])
 
   return (

@@ -2,7 +2,14 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useEventListener } from '@wuh.site/hooks/useEventListener'
+import { readStorage, writeStorage } from '@wuh.site/hooks/useLocalStorageState'
 import type { ThemeFamily, ColorScheme } from '@wuh.site/components/themes/tokens'
+import {
+  COLOR_SCHEME_MODE_VALUES,
+  COLOR_SCHEME_STORAGE_KEY,
+  THEME_FAMILY_VALUES,
+  THEME_STORAGE_KEY,
+} from '@wuh.site/components/themes/themeStorage'
 
 export type Theme = ThemeFamily
 export type ColorSchemeMode = 'system' | ColorScheme
@@ -15,12 +22,11 @@ type ThemeContextValue = {
   setColorSchemeMode: (mode: ColorSchemeMode) => void
 }
 
-const THEME_STORAGE_KEY = 'wuh.site.theme'
-const COLOR_SCHEME_STORAGE_KEY = 'wuh.site.color-scheme-mode'
+// 持久化 key 与取值集合定义见 @wuh.site/components/themes/themeStorage（与 SSR anti-FOUC 脚本共享，单一来源）
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 function isValidTheme(value: unknown): value is ThemeFamily {
-  return value === 'wine' || value === 'plain'
+  return typeof value === 'string' && (THEME_FAMILY_VALUES as readonly unknown[]).includes(value)
 }
 
 function parseTheme(value: unknown): ThemeFamily {
@@ -28,7 +34,7 @@ function parseTheme(value: unknown): ThemeFamily {
 }
 
 function isValidColorSchemeMode(value: unknown): value is ColorSchemeMode {
-  return value === 'system' || value === 'light' || value === 'dark'
+  return typeof value === 'string' && (COLOR_SCHEME_MODE_VALUES as readonly unknown[]).includes(value)
 }
 
 function parseColorSchemeMode(value: unknown): ColorSchemeMode {
@@ -56,15 +62,9 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
   const [resolvedColorScheme, setResolvedColorScheme] = useState<ColorScheme>('light')
 
   useEffect(() => {
-    let storedTheme: unknown = null
-    let storedMode: unknown = null
-    try {
-      storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
-      storedMode = window.localStorage.getItem(COLOR_SCHEME_STORAGE_KEY)
-    } catch {}
-
-    const nextTheme = parseTheme(storedTheme)
-    const nextMode = parseColorSchemeMode(storedMode)
+    // 静默读（SSR/抛异常归 undefined）→ parse 回落默认值，与原 try/catch+null 语义等价
+    const nextTheme = parseTheme(readStorage(THEME_STORAGE_KEY))
+    const nextMode = parseColorSchemeMode(readStorage(COLOR_SCHEME_STORAGE_KEY))
     const nextScheme = nextMode === 'system' ? getSystemColorScheme() : nextMode
 
     setThemeFamilyState(nextTheme)
@@ -97,9 +97,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
   const setThemeFamily = useCallback((family: ThemeFamily) => {
     setThemeFamilyState(family)
     applyThemeFamily(family)
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, family)
-    } catch {}
+    writeStorage(THEME_STORAGE_KEY, family)
   }, [])
 
   const setColorSchemeMode = useCallback((mode: ColorSchemeMode) => {
@@ -107,9 +105,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     setColorSchemeModeState(mode)
     setResolvedColorScheme(nextScheme)
     applyColorScheme(nextScheme)
-    try {
-      window.localStorage.setItem(COLOR_SCHEME_STORAGE_KEY, mode)
-    } catch {}
+    writeStorage(COLOR_SCHEME_STORAGE_KEY, mode)
   }, [])
 
   const value = useMemo<ThemeContextValue>(() => ({

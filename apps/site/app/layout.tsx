@@ -2,6 +2,12 @@ import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, AUTHOR_NAME, AUTHOR_URL } from '@wuh.site/core'
+import {
+  COLOR_SCHEME_MODE_VALUES,
+  COLOR_SCHEME_STORAGE_KEY,
+  THEME_FAMILY_VALUES,
+  THEME_STORAGE_KEY,
+} from '@wuh.site/components/themes/themeStorage'
 import AppProviders from './components/AppProviders'
 import CursorLayer from '@wuh.site/components/cursor'
 import FontPrefetch from './components/FontPrefetch'
@@ -84,21 +90,22 @@ export default function RootLayout({
   // Force reflow so the transition:none rule is applied
   void document.documentElement.offsetHeight;
 
-  // Step 2: restore persisted theme family
-  var family = 'wine';
+  // Step 2: restore persisted theme family（key 与取值集合来自 themeStorage 单一来源，SSR 生成期注入）
+  var family = ${JSON.stringify(THEME_FAMILY_VALUES[0])};
   try {
-    var storedFamily = window.localStorage.getItem('wuh.site.theme');
-    if (storedFamily === 'wine' || storedFamily === 'plain') family = storedFamily;
+    var storedFamily = window.localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
+    if (${JSON.stringify(THEME_FAMILY_VALUES)}.includes(storedFamily)) family = storedFamily;
   } catch (_) {}
   document.documentElement.dataset.themeFamily = family;
 
   // Step 3: restore display mode and resolve the effective color scheme
-  var mode = 'system';
+  var mode = ${JSON.stringify(COLOR_SCHEME_MODE_VALUES[0])};
   try {
-    var storedMode = window.localStorage.getItem('wuh.site.color-scheme-mode');
-    if (storedMode === 'system' || storedMode === 'light' || storedMode === 'dark') mode = storedMode;
+    var storedMode = window.localStorage.getItem(${JSON.stringify(COLOR_SCHEME_STORAGE_KEY)});
+    if (${JSON.stringify(COLOR_SCHEME_MODE_VALUES)}.includes(storedMode)) mode = storedMode;
   } catch (_) {}
-  var scheme = mode === 'light' || mode === 'dark'
+  // 三值白名单之外无可能值：非默认 mode 即最终 scheme
+  var scheme = mode !== ${JSON.stringify(COLOR_SCHEME_MODE_VALUES[0])}
     ? mode
     : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.dataset.colorScheme = scheme;

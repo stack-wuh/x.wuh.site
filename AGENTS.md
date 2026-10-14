@@ -89,16 +89,22 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 ## 组件库清单
 
 ### 已实现组件
-`Alert`, `Button`, `Card`, `Dialog`, `Empty`, `Skeleton`, `Result`, `Flex`（响应式分布原语）, `Row`/`Col`（12 分栏栅格，断点数组语法 `[base, tablet]`）, `Stagger`（子项错峰入场动效层）, `Image`, `ImagePreview`, `LinkGroup`, `SharedLinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main) — 布局族契约见 `shadow-docs/knowledge/layout-components.md`
+`Alert`, `Button`, `Card`, `Dialog`, `Divider`, `Empty`, `Skeleton`, `Result`, `Flex`（响应式分布原语）, `Row`/`Col`（12 分栏栅格，断点数组语法 `[base, tablet]`）, `Stagger`（子项错峰入场动效层）, `Image`, `ImagePreview`, `LinkGroup`, `SharedLinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main) — 布局族契约见 `shadow-docs/knowledge/layout-components.md`
 
 ### 占位组件（使用前需实现）
-`ConfigProvider`, `Divider`, `FloatButton`, `Modal`, `Space`, `Spin`, `VideoPlayer`
+`ConfigProvider`, `FloatButton`, `Modal`, `Space`, `Spin`, `VideoPlayer`
 
 ### Hooks
 - `useDialog` - Dialog 打开/关闭状态，提供 `bind: { open, onClose }`
 - `useImagePreview` - 图片预览索引/循环状态，提供 `bind: { open, currentIndex, onClose, onIndexChange }`
 - `useTokens` / `useTheme` - 从 ThemeProvider context 获取主题令牌
-- `useFetch` - 请求封装
+- `useFetch` - 请求封装（fetcher + createService 工厂，基于 ahooks useRequest）
+- `useLocale` - 三语 locale / 词典 / `t()`（LocaleProvider context）
+- `useEventListener` - 事件监听统一入口（target 省略=window/'window'/'document'/元素/ref，handler 最新值 ref 免重绑，`enabled` 条件挂载）；契约见 `shadow-docs/knowledge/shared-hooks.md`
+- `useMediaQuery` / `useKeyPress` / `useClickOutside` - 事件四件套合成（布尔订阅 / keydown 订阅 / 外点收起，同上卡片）
+- `useScrollLock` - 弹层滚动锁，`mode: 'fixed'`（body 四值+position:fixed，默认）| `'simple'`（documentElement overflow）
+- `useLocalStorageState` - 惰性同步读 + write-through 持久化状态；延迟写站点用同文件底层 `readStorage`/`writeStorage` 原语
+- `scheduleIdle` - 纯函数空闲调度（requestIdleCallback + setTimeout 回落，返回 cancel 闭包）
 
 ## 后端模块架构
 

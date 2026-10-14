@@ -1,9 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { readStorage, writeStorage } from '@wuh.site/hooks/useLocalStorageState'
 import Button from '@wuh.site/components/button'
 import Divider from '@wuh.site/components/divider'
-import { useLocale, type Locale, type TranslateParams } from '@wuh.site/components/locales'
+import { INTL_LOCALE, useLocale, type TranslateParams } from '@wuh.site/components/locales'
 import { IconGithub, IconTag } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import message from '@wuh.site/components/message'
@@ -12,8 +13,7 @@ import { NICKNAME_STORAGE_KEY, type PostComment, type PostCommentsProps } from '
 
 type TranslateFn = (key: string, params?: TranslateParams) => string
 
-/** toLocaleDateString 的 locale 参数随界面语言切换 */
-const DATE_LOCALES: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
+// toLocaleDateString 的 locale 参数随界面语言切换——映射单源在 locales（INTL_LOCALE）
 
 function formatTime(dateStr: string | undefined, t: TranslateFn, dateLocale: string): string {
   if (!dateStr) return ''
@@ -82,10 +82,9 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
 
   useEffect(() => {
     fetchComments()
-    try {
-      const saved = window.localStorage.getItem(NICKNAME_STORAGE_KEY)
-      if (saved) setNickname(saved)
-    } catch { /* noop */ }
+    // 昵称读存储走原语（SSR/缺失/异常静默归 undefined，if 守卫回落不写——与原手写等价）
+    const saved = readStorage(NICKNAME_STORAGE_KEY)
+    if (saved) setNickname(saved)
   }, [fetchComments])
 
   const trimmedNickname = nickname.trim()
@@ -112,7 +111,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
         throw new Error(data.message || t('post.comments.submitFailed'))
       }
 
-      try { window.localStorage.setItem(NICKNAME_STORAGE_KEY, trimmedNickname) } catch { /* noop */ }
+      writeStorage(NICKNAME_STORAGE_KEY, trimmedNickname)
 
       const optimistic: PostComment = {
         _id: data._id || `optimistic-${Date.now()}`,
@@ -167,7 +166,7 @@ export default function PostComments({ issueNumber }: PostCommentsProps) {
             <S.CommentBody>
               <S.CommentMeta>
                 <S.CommentAuthor>{getDisplayName(comment, t('post.comments.anonymous'))}</S.CommentAuthor>
-                <S.CommentTime>{formatTime(comment.createdAtGitHub || comment.createdAt, t, DATE_LOCALES[locale])}</S.CommentTime>
+                <S.CommentTime>{formatTime(comment.createdAtGitHub || comment.createdAt, t, INTL_LOCALE[locale])}</S.CommentTime>
                 {isGithubComment(comment) ? (
                   <S.CommentSource><IconGithub /> GitHub</S.CommentSource>
                 ) : (

@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { useKeyPress } from '@wuh.site/hooks/useKeyPress'
+import { useScrollLock } from '@wuh.site/hooks/useScrollLock'
 import { useLocale } from '@wuh.site/components/locales'
 import {
   Barrier,
@@ -122,27 +123,8 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     { enabled: open && closeOnEsc, preventDefault: true }
   )
 
-  React.useEffect(() => {
-    if (!open || !lockScroll || typeof document === 'undefined') return
-    const scrollY = window.scrollY
-    const originalOverflow = document.body.style.overflow
-    const originalPosition = document.body.style.position
-    const originalTop = document.body.style.top
-    const originalWidth = document.body.style.width
-
-    document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${scrollY}px`
-    document.body.style.width = '100%'
-
-    return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.position = originalPosition
-      document.body.style.top = originalTop
-      document.body.style.width = originalWidth
-      window.scrollTo(0, scrollY)
-    }
-  }, [open, lockScroll])
+  // 弹层滚动锁：fixed 配方（body 四值暂存 + 位置补偿），开态才锁、关态对称还原
+  useScrollLock(open && lockScroll)
 
   React.useEffect(() => {
     if (open && internalRef.current) {

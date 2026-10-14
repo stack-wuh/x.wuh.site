@@ -1,7 +1,8 @@
 'use client'
 
 /* 迷你播放器：收起态声源指示（桌面书耳/移动印章）+ 跑马灯标题 + 跳过提示——样式拆至 mini/styles（20261005） */
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useLocalStorageState } from '@wuh.site/hooks/useLocalStorageState'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
 import { useLocale } from '@wuh.site/components/locales'
@@ -53,14 +54,10 @@ export const AudioMiniPlayer = () => {
     state,
     actions: { togglePlay, playNext, playPrevious, togglePanel }
   } = useAudioPlayer()
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return window.localStorage.getItem(COLLAPSE_STORAGE_KEY) === 'true'
+  // 折叠态持久化：惰性初始化同步读 + write-through（@wuh.site/hooks 单一实现处）
+  const [collapsed, setCollapsed] = useLocalStorageState<boolean>(COLLAPSE_STORAGE_KEY, false, {
+    deserialize: (raw) => raw === 'true'
   })
-
-  useEffect(() => {
-    window.localStorage.setItem(COLLAPSE_STORAGE_KEY, String(collapsed))
-  }, [collapsed])
 
   const toggleCollapsed = () => setCollapsed((prev) => !prev)
   const name = currentTrack?.name ?? t('player.mini.waiting')
