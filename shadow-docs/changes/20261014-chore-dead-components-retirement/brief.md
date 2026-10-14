@@ -4,7 +4,7 @@
   "name": "20261014-chore-dead-components-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-dead-components-retirement",
   "files": [
@@ -21,8 +21,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 537,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/537",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 538,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/538"
   },
   "review": {
     "conclusion": "passed",
@@ -31,7 +31,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:537",
+    "checkpoint": "pr:538",
     "planHash": "1f736514fe71e432d8833b31b09092eb4a8ab7effe22e8c6c9ee45ee626b428c",
     "updatedAt": null,
     "lastError": null,
