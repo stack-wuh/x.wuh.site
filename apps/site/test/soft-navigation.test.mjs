@@ -69,10 +69,8 @@ test('styled.a 定义零增长白名单——新站内锚点须走 styled(Link)'
     'apps/site/app/components/ContactCard.tsx#LinkButton', // 邮箱/外链
     'apps/site/app/styles/index.ts#ProjectLink', // 仓库外链
     'apps/site/app/guestbook/GuestbookPageView/styles/index.tsx#BackLink', // 消费侧 as 覆盖
-    'packages/components/result/styles/index.tsx#LinkItem',
-    'packages/components/alert/styles/index.tsx#MetaLink',
-    'packages/components/alert/styles/index.tsx#LabelLink',
-    'packages/components/shared-link-group/styles/index.tsx#SLink',
+    // 20261014 chore-dead-components-retirement：result#LinkItem / alert#MetaLink / alert#LabelLink /
+    // shared-link-group#SLink 随组件整删出账（零消费退役）
     'packages/components/button/styles/index.tsx#StyledLink', // Button 根内部按 href 切 Link
   ])
   const unlisted = []

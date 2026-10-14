@@ -75,10 +75,9 @@ test('image-preview CSS/JS 双源收敛到同一常量', () => {
   }
 })
 
-test('收编台账：纯声明块已走 responsive() 编译口（dialog/result/site-styles/GAP/barrage）', () => {
+test('收编台账：纯声明块已走 responsive() 编译口（dialog/site-styles/GAP/barrage）', () => {
   for (const rel of [
     'packages/components/dialog/styles/index.tsx',
-    'packages/components/result/styles/index.tsx',
     'apps/site/app/styles/index.ts',
     'apps/site/app/components/player/GlobalAudioPlayer.tsx',
     'apps/site/app/about/components/guestbook-barrage.styles.ts',
@@ -97,13 +96,12 @@ test('阶梯边界不受扩编影响：RESPONSIVE_LADDER 仍由 BREAKPOINTS 派�
   assert.equal(RAW_MEDIA.test(src.replace(/\$\{[^}]*\}/g, 'V')), false, 'responsive.ts 本体不得出现裸数值 @media')
 })
 
-test('site 保留项注记与常量双在位：post/SiteHeader/guestbook/alert/pagination/cssVariableProvider/link-group', () => {
+test('site 保留项注记与常量双在位：post/SiteHeader/guestbook/pagination/cssVariableProvider/link-group', () => {
   const retained = [
     'apps/site/app/post/styles/post-floating.ts',
     'apps/site/app/post/styles/post-header.ts',
     'apps/site/app/components/SiteHeader/styles/index.ts',
     'apps/site/app/guestbook/GuestbookPageView/styles/index.tsx',
-    'packages/components/alert/styles/index.tsx',
     'packages/components/pagination/styles/index.tsx',
     'packages/components/themes/cssVariableProvider.tsx',
     'packages/components/link-group/styles/index.tsx',
