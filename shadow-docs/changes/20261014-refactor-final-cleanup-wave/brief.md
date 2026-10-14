@@ -4,7 +4,7 @@
   "name": "20261014-refactor-final-cleanup-wave",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-final-cleanup-wave",
   "files": [
@@ -31,13 +31,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "21b938807cea735466b8eec76aa5e0b01980a61e",
-    "verifiedAt": "2026-10-14T10:59:17.725Z"
+    "verifiedCommit": "276db03aec356f495120d8b0d7e5ae765d9e12c8",
+    "verifiedAt": "2026-10-14T11:04:35.151Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:542",
-    "planHash": "ae7ef8734dd30b6a76967df5477dcc3e0f52cd5a467a5d7c9ca2563c94b657cc",
+    "planHash": "908f80a9678a7bf3e0a9d5b6c4fe468f3591d33ce700c64fdaa6e3e4ccdcb478",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -52,15 +52,16 @@
     "worktree": "D:\\works\\x.wuh.final-cleanup",
     "commit": {
       "files": [
-        "shadow-docs/changes/20261014-refactor-final-cleanup-wave/brief.md"
+        "shadow-docs/changes/20261014-refactor-final-cleanup-wave/brief.md",
+        "shadow-docs/signals.md"
       ],
-      "message": "docs(shadow): review passed——useRequest 契约与批次7 终态落卡"
+      "message": "docs(shadow): v1.4.86 交付回写+SGN-016 增补（plan 态一次性教训）"
     }
   },
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/shared-hooks.md",
-    "reason": "useRequest 三波契约入卡（runner 内核+UR1–UR7 行为面+cacheKey 挂载种子语义与 ahooks 差异声明）；layout-components 批次 7 终态台账同步（27 收编/保留族入册）；verified 待 release 后按部署实测更新"
+    "reason": "verifiedCommit 钉正至合并后 main（276db03）：守卫网在 main 复跑全绿（hooks 27/audio-player 29/breakpoint 6/structure 18、根 tsc RC=0）"
   }
 }
 ---
@@ -130,7 +131,7 @@
   - **Phase 2:** 全族实测 **27 处** max-width:640(brief 预估 ~28 分布 8 文件)全部迁 `responsive()` 两档槽:纯隐藏 12 块、回退税 13 块(桌面值显式写回:Panel inset48/1160/行列模板/边框阴影、MiniCard 440/right:auto、ControlRow margin/gap、PlayButton 64、IconButton 40、Cover 48、ProgressRow static 等)、⑬惰性直落 2 块(mobile.tsx LeafPages/LeafPage+PageTicks 3 组件——grid-area/滚动容器声明桌面惰性);保留族:STAGE_TIER max-height 5 处(编译口无 max-height 轴)+image-preview previewMobile 9 块+hover/reduced-motion 14 处(非宽度轴),全部注记入册。守卫台账同步:收编台账 4→10 文件、保留清单 7→11 文件,`breakpoint-raw-scan` 6/6 绿;audio-player 域守卫 58 例+typecheck guard 全绿;根 tsc RC=0、lint 0/0、`next build` RC=0。
   - **Phase 2 runtime(CSSOM):** worktree 生产实例(3003,已关停)/music 页实测——`min-width:641px` 24 条规则,Panel 桌面回退(inset 48px+max-width 1160px)与 MiniCard(440px+right:auto)逐条在位,`desktop-only-hide`/`restore:inline-flex` 形态正确,**移动声明零泄漏**(leaked640=空);剩余 1 条 max-width:640 归属 `:root/[data-theme-family]`(site 主题变量层,非本变更两族,常量插值合规)。
   - **Phase 3:** AGENTS.md `codex/` 死引用删除+useRequest 入册 Hooks 清单;4 条已合并本地分支删除(`git branch -d` 全部成功,远端仅剩 desktop-submodule 与 master 非 main 遗留,不在本变更处置面);3000/3001 保留(偏差①)。
-- 交付: (待 release 阶段回填)
+- 交付: PR #542 squash merged → main `276db03`(verifiedCommit 钉正于此,main 守卫复跑全绿);Release **v1.4.86** → CI-CD 部署链 **8 作业一次全绿**(quality-gate/prepare/prepare-deps/build-next/build-nest/staging-test/switch-traffic/restart-nginx)。推送链路:publish 首轮 GIT_PUSH_FAILED 后 canary 80 轮全烧 PLAN_HASH_INVALID(首轮失败已消费 plan 态,SGN-016 场景自食——重 plan+execute 一轮即成,已作为该信号增补证据)。
 
 ## 知识评估
 

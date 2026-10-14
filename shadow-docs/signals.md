@@ -171,5 +171,6 @@
 - 深度: field
 - 域/scope: 执行纪律 · shadow-dev CLI plan/execute 复合链（commit/publish/release）与一切后台重试循环
 - 证据: changes/20261014-chore-layout-grid-retirement/brief.md——publish plan 用内联 `--body` 而 execute 换 `--body-file`（内容相同），CLI 视输入不同拒 `PLAN_HASH_INVALID`；canary 循环把它当网络失败连烧 44 轮（16:17–16:38，日志每轮同签名错误）。修法是重新成对 plan+execute（同参数）后再起 canary；本轮真实网络问题随后第 25 轮自行恢复
-- 陈述: 起后台重试循环前先在前台同步跑一次 execute——确认错误签名属于传输/超时面（GIT_PUSH_FAILED、socket disconnected）而非参数/校验面；循环体内若连续两轮以上同确定性签名，立即停止并回看参数配对（shadow-dev 要求 plan 与 execute 输入完全一致，`--body` 与 `--body-file` 不等价）。
+- 增补证据: changes/20261014-refactor-final-cleanup-wave/brief.md——**第二种消费形态（纪律自食）**：参数配对无误的首轮 execute 报 GIT_PUSH_FAILED 后，CLI 已消费/改写 plan 态，同参数 canary 重放 80 轮全拒 `PLAN_HASH_INVALID`（约 35 分钟白烧）。教训升级：**传输面失败重试前必须先重 plan 再 execute**（plan 态是一次性的，成功或失败都失效）；「参数配对」检查要包含「plan 是否已被上一轮 execute 消费」
+- 陈述: 起后台重试循环前先在前台同步跑一次 execute——确认错误签名属于传输/超时面（GIT_PUSH_FAILED、socket disconnected）而非参数/校验面；循环体内若连续两轮以上同确定性签名，立即停止并回看参数配对（shadow-dev 要求 plan 与 execute 输入完全一致，`--body` 与 `--body-file` 不等价）；**每次 execute 失败后的重试都必须重新 plan**（plan 态一次性）。
 - 退役条件: CLI 对 execute 放宽为 plan 参数回退（帮助文本宣称「缺省回退持久化 plan 参数」实际未覆盖 body 形态差异）或该差异消除
