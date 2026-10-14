@@ -4,7 +4,7 @@
   "name": "20261014-chore-dead-components-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-dead-components-retirement",
   "files": [
@@ -26,13 +26,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "d6acc886a76f34c2e4e6df98369b0606fa3a98fb",
-    "verifiedAt": "2026-10-14T06:38:00.822Z"
+    "verifiedCommit": "f13c985bfc44bac79f2f4a02bbd6a5dae4304bfe",
+    "verifiedAt": "2026-10-14T06:51:09.366Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:538",
-    "planHash": "1f736514fe71e432d8833b31b09092eb4a8ab7effe22e8c6c9ee45ee626b428c",
+    "checkpoint": "merged-pr:538",
+    "planHash": "aad6478a56df7d339e285b16704270b6485d2ac7a073c31dd386ce6c1a9f8a2b",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -65,7 +65,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "五组件零消费三形态证死后整删;tsc RC=0 兜底漏引用;守卫名集基线 diff 零新增红且顺带修复 seo-p15 死契约(main 既有红);Knowledge 卡登记面复查 components.md/component-standard.md 对被删组件无断言(唯一 Skeleton 字样指 image 内部状态),仅 AGENTS.md 已同步——长期知识无变化"
+    "reason": "main 同源复核:squash 后 HEAD f13c985;验证证据沿用 apply 期(tsc RC=0/lint 0/0/build RC=0/守卫名集零新增+seo-p15 修复);部署链 8 作业全绿已部署;Knowledge 登记面复查无涉"
   }
 }
 ---
@@ -137,6 +137,7 @@
   - 守卫网: structure 18/18(动态扫描自然出账,baseline 无被删目录登记免重采)、breakpoint-raw-scan 6/6(⑥/④两处清单同步后)、seo-p15 修后 1/1 绿(原 main 基线红修复)。
   - **名集基线 diff(SGN-011 法):** 当前 main 解树基线 37 红 vs head 30 红,`comm -23` head 独有 = **空(零新增红)**;差 7 项中 3 项为基线解包缺 shadow-docs 的文件级伪影,4 项为真实修复(seo-p15 两 case + 其文件级折叠行、skeleton/无关联计数漂移)。
   - 判定分组保留项复核: Row/Col/Stagger/占位×6/styled facade 原样在位(stagger/col 零消费事实已在 brief 动机段留档,供后续消费决策参考)。
+- **交付发布(20261014 release 段执行记录,沿用户既定委托链):** PR #538 squash merged(admin 直合先例)→ main `f13c985`;Release [v1.4.84](https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.84) 已发布;部署链 8 作业全绿(quality-gate / prepare / prepare-deps / build-nest / build-next / staging-test / switch-traffic / restart-nginx)。交付结论:**已部署**。
 
 ## 知识评估
 
