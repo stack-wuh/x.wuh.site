@@ -9,7 +9,8 @@ status: active
 source:
   - changes/20261008-refactor-component-standard/brief.md
   - changes/20261011-refactor-site-structure-standard-base/brief.md
-verified: 2026-10-08
+  - changes/20261014-chore-layout-grid-retirement/brief.md
+verified: 2026-10-14
 verified-depth: unit
 verified-scope: 条款由 2026-10-08 对 40 个组件目录全量普查归纳（文件构成、导出语句、readme 标题、引用点逐一 grep）；结构约束由 packages/components/test/structure.test.mjs + structure-baseline.json 棘轮守卫可重复验证，验证方式段给出复跑命令。site 章节待 20261011 基座 change 的守卫实测后更新 verified。
 ---
@@ -34,7 +35,7 @@ packages/components 组件目录的结构契约与接口设计约定。标杆参
 - **导出形态按目录产品数分类**（消费者 import 风格与之对应）：
   - 单一产品目录（主组件是唯一定制品）：`export default` 主组件；伴生常量/类型可额外命名导出（如 buttonTokens、`export type`），不算混用。
   - 多产品目录（复合组件/hook 齐售，如 audio-player、icons、message-card）：仅命名导出，无 default。
-  - **过渡形态**：default + 同名组件的命名双导出（现存 row/col/flex/stagger 等）登记入 baseline 棘轮，新组件禁用；消费者 import 两种写法都能工作，readme 与新增代码统一展示 default。
+  - **过渡形态**：default + 同名组件的命名双导出（现存 flex/footprint-map/image-preview；原在册 row/col/stagger 目录已零消费整删，20261014）登记入 baseline 棘轮，新组件禁用；消费者 import 两种写法都能工作，readme 与新增代码统一展示 default。
 
 ### 接口设计约定（新组件必须；存量触碰时收敛）
 

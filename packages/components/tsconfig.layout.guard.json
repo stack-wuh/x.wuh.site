@@ -20,10 +20,7 @@
   "include": [
     "themes/**/*.ts",
     "flex/**/*.ts",
-    "flex/**/*.tsx",
-    "row/**/*.tsx",
-    "col/**/*.tsx",
-    "stagger/**/*.tsx"
+    "flex/**/*.tsx"
   ],
   "exclude": ["node_modules", "dist", "**/*.test.mjs"]
 }

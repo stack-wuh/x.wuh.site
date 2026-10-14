@@ -171,5 +171,5 @@ export const SpaceEvenly = styled(Flex).attrs<IFlexProps>({
 /**
  * @NOTE 旧 20 个别名已收敛：单 bool/尺寸糖（Wrap/NoWrap/FlexEnd/FlexStart/
  * AlignTop/AlignBottom/FullWidth/FullHeight/FullSize）由对应 props 直给，
- * Row/RowReverse 让位给 @wuh.site/components/row 的栅格 Row——本包零消费者，无兼容义务。
+ * Row/RowReverse 曾让位给 row/col 栅格目录，该栅格族亦零消费退役（20261014，历史可拣回）——本包无兼容义务。
  */

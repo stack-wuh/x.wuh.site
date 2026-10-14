@@ -89,8 +89,8 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 ## 组件库清单
 
 ### 已实现组件
-`Button`, `Dialog`, `Divider`, `Empty`, `Flex`（响应式分布原语）, `Row`/`Col`（12 分栏栅格，断点数组语法 `[base, tablet]`）, `Stagger`（子项错峰入场动效层）, `Image`, `ImagePreview`, `LinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main) — 布局族契约见 `shadow-docs/knowledge/layout-components.md`
-（20261014 退役：`Alert`、`Card`、`Result`、`Skeleton`、`SharedLinkGroup` 全仓零消费，随 chore/20261014-chore-dead-components-retirement 整删）
+`Button`, `Dialog`, `Divider`, `Empty`, `Flex`（响应式分布原语）, `Image`, `ImagePreview`, `LinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main) — 布局族契约见 `shadow-docs/knowledge/layout-components.md`
+（20261014 退役：`Alert`、`Card`、`Result`、`Skeleton`、`SharedLinkGroup` 全仓零消费，随 chore/20261014-chore-dead-components-retirement 整删；`Row`/`Col`（12 分栏栅格）、`Stagger`（错峰入场层）自创建起零消费，布局地基由 Flex + `themes/responsive` 编译口承接，随 chore/20261014-chore-layout-grid-retirement 整删）
 
 ### 占位组件（使用前需实现）
 `ConfigProvider`, `FloatButton`, `Modal`, `Space`, `Spin`, `VideoPlayer`

@@ -79,7 +79,8 @@
 - 深度: field
 - 域/scope: 网络交付链 · git push / gh api / shadow-dev release execute / 一切 GitHub 写操作（本会话沙箱）
 - 证据: changes/20261007-refactor-responsive-layout-batch3/brief.md——`release execute` 连续两次 GIT_PUSH_FAILED，`git ls-remote` 75s connect 超时；同窗口 `curl https://github.com` 一度 200、api.github.com（.168）通而 github.com 解析唯一记录 20.205.243.166 持续不可达，140.82.114.4 可达——判定为 DNS 单记录漂移非全断网；canary（`git -c http.connectTimeout=15 ls-remote`）第 2 轮恢复后**同方式**续跑一次成功；部署 run 的 SSH 255 红（v1.4.69/70 同签名）为 runner→服务器另一独立通路
-- 命中: 1（最近 2026-10-07）
+- 命中: 2（最近 2026-10-14）
+- 增补证据: changes/20261014-chore-layout-grid-retirement/brief.md——publish execute 连续 7 轮 GIT_PUSH_FAILED（形态=ls-remote 短探测可通、push/TLS 长会话优先被掐，down/ok 交替碎网），第 25 轮恢复后同参数续跑成功；回执 `created:false` 证实中间某「假失败」轮 push+建 PR 实际已半成（幂等续跑对判定误差安全）；但 16:17–16:38 有一段 canary 白烧系参数面错误混入传输面重试（见 SGN-016）
 - 退役条件: 沙箱 DNS/egress 对 github.com 多记录稳定解析
 - 陈述: GitHub 写操作失败先分层定位——ls-remote/curl 探测解析 IP 与 api 域各自可达性，区分「egress 单 IP 抖动」与「全断网」与「服务器侧掉线」；抖动时以 canary 探测 + 原命令同方式重试（幂等断点续跑），禁止切 SSH/改 hosts 换方式旁路；同窗口部署链红要单独判 SSH 签名，勿混为一谈。
 
@@ -163,3 +164,12 @@
 - 命中: 1（最近 2026-10-09）
 - 退役条件: 无（常驻方法论）
 - 陈述: 报「动效看不见/不好」时，第一步永远是数出生计数（按类名统计池内活跃元素）与 computed opacity 区间，区分「没出生」与「出生了但看不见」两类根因；不要直接去调浓度/时长参数。
+
+## SGN-016 · canary 循环只包传输面错误；确定性错误签名（PLAN_HASH_INVALID 等）必须即停
+- 方向: negative
+- 权重: 3
+- 深度: field
+- 域/scope: 执行纪律 · shadow-dev CLI plan/execute 复合链（commit/publish/release）与一切后台重试循环
+- 证据: changes/20261014-chore-layout-grid-retirement/brief.md——publish plan 用内联 `--body` 而 execute 换 `--body-file`（内容相同），CLI 视输入不同拒 `PLAN_HASH_INVALID`；canary 循环把它当网络失败连烧 44 轮（16:17–16:38，日志每轮同签名错误）。修法是重新成对 plan+execute（同参数）后再起 canary；本轮真实网络问题随后第 25 轮自行恢复
+- 陈述: 起后台重试循环前先在前台同步跑一次 execute——确认错误签名属于传输/超时面（GIT_PUSH_FAILED、socket disconnected）而非参数/校验面；循环体内若连续两轮以上同确定性签名，立即停止并回看参数配对（shadow-dev 要求 plan 与 execute 输入完全一致，`--body` 与 `--body-file` 不等价）。
+- 退役条件: CLI 对 execute 放宽为 plan 参数回退（帮助文本宣称「缺省回退持久化 plan 参数」实际未覆盖 body 形态差异）或该差异消除
