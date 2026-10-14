@@ -4,7 +4,7 @@
   "name": "20261014-chore-layout-grid-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-layout-grid-retirement",
   "files": [
@@ -27,14 +27,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/540"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "d8de906b00b29b76c4616fcd5a6cfff97a1f5c1a",
+    "verifiedAt": "2026-10-14T08:42:21.672Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:540",
-    "planHash": "4695fa9b7812f0f10fa87a5a5364cc06196971fd249fb504495b4eb6438457fe",
+    "planHash": "bca4f06136fdef4d988dafc1e67b392ce8bfdf936b2ea383bafea1aec5af443e",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -48,27 +48,16 @@
     },
     "commit": {
       "files": [
-        "AGENTS.md",
-        "packages/components/col/index.test.mjs",
-        "packages/components/col/index.tsx",
-        "packages/components/col/readme.md",
-        "packages/components/flex/index.tsx",
-        "packages/components/flex/readme.md",
-        "packages/components/layout-typecheck.test.mjs",
-        "packages/components/row/index.test.mjs",
-        "packages/components/row/index.tsx",
-        "packages/components/row/readme.md",
-        "packages/components/stagger/index.test.mjs",
-        "packages/components/stagger/index.tsx",
-        "packages/components/stagger/readme.md",
-        "packages/components/test/structure-baseline.json",
-        "packages/components/tsconfig.layout.guard.json",
-        "shadow-docs/changes/20261014-chore-layout-grid-retirement/",
-        "shadow-docs/knowledge/component-standard.md",
-        "shadow-docs/knowledge/layout-components.md"
+        "shadow-docs/changes/20261014-chore-layout-grid-retirement/brief.md",
+        "shadow-docs/signals.md"
       ],
-      "message": "chore(components): retire zero-consumption Row/Col/Stagger layout family"
+      "message": "docs(signals): SGN-006 命中+1、SGN-016 新录 canary 错误签名纪律"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/layout-components.md",
+    "reason": "布局族契约双层化、栅格三目录退役事实、过渡形态名单收窄均已按删后实测落卡（守卫 40→22、structure 18 复跑绿）；SGN-006 命中+1 与 SGN-016 新录随本 change 写回"
   }
 }
 ---
