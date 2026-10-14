@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { scheduleIdle } from '@wuh.site/hooks/scheduleIdle'
 
 /**
  * 空闲时预热非首屏字重，减少渲染时的 FOUT 阻塞。
@@ -20,12 +21,9 @@ export default function FontPrefetch() {
       })
     }
 
-    if ('requestIdleCallback' in window) {
-      const id = (window as any).requestIdleCallback(warmUp, { timeout: 3000 })
-      return () => (window as any).cancelIdleCallback(id)
-    }
-    const timer = window.setTimeout(warmUp, 3000)
-    return () => window.clearTimeout(timer)
+    // 共享 scheduleIdle：idle timeout 3000，旧 Safari 回落 setTimeout 3000，cancel 闭包按分支收敛
+    const cancel = scheduleIdle(warmUp, { timeout: 3000 })
+    return cancel
   }, [])
 
   return null

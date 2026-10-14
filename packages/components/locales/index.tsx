@@ -1,6 +1,8 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { readStorage, writeStorage } from '@wuh.site/hooks/useLocalStorageState'
+import { scheduleIdle } from '@wuh.site/hooks/scheduleIdle'
 import { translate, type TranslateDicts } from './translate'
 import zh from './dictionaries/zh'
 import type { DeepPartial, Dict } from './dictionaries/zh'
@@ -28,6 +30,9 @@ const LANG_BY_LOCALE: Record<Locale, string> = {
   en: 'en',
   ja: 'ja',
 }
+
+// locale → Intl 地区码：与 LANG_BY_LOCALE 同一映射（zh 需显式 zh-CN），单点导出消除 Barrage/footprint 双源
+export const INTL_LOCALE = LANG_BY_LOCALE
 
 /**
  * en/ja 词典首次需要时才拉取（首屏纪律：默认中文用户零增量）。
@@ -71,12 +76,9 @@ function ensureDict(target: Locale): Promise<void> {
 const LocaleContext = createContext<LocaleContextValue | null>(null)
 
 function readStoredLocale(): Locale {
-  if (typeof window === 'undefined') return 'zh'
-  try {
-    const stored = window.localStorage.getItem(LOCALE_STORAGE_KEY)
-    if (stored === 'en' || stored === 'ja') return stored
-  } catch {}
-  return 'zh'
+  // readStorage 将 SSR/键缺失/存储抛异常统一归 undefined → 回落 zh（与原手写形态等价）
+  const stored = readStorage(LOCALE_STORAGE_KEY, (raw) => raw === 'en' || raw === 'ja')
+  return stored === 'en' || stored === 'ja' ? stored : 'zh'
 }
 
 /**
@@ -112,9 +114,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     setDicts({ ...dictCache })
     setLocaleState(next)
     applyDocumentLang(next)
-    try {
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, next)
-    } catch {}
+    writeStorage(LOCALE_STORAGE_KEY, next)
   }, [])
 
   /**
@@ -148,19 +148,14 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
           if (requestId === requestIdRef.current) commitLocale(stored)
         })
     }
-    // 空闲预取：requestIdleCallback 不可用（旧 Safari）退 setTimeout
+    // 空闲预取：requestIdleCallback timeout 3000，不可用（旧 Safari）退 setTimeout 1500——统一走 scheduleIdle
     let cancelled = false
-    const scheduleIdle = (cb: () => void): number =>
-      typeof window.requestIdleCallback === 'function'
-        ? window.requestIdleCallback(() => cb(), { timeout: 3000 })
-        : window.setTimeout(cb, 1500)
-    const handle = scheduleIdle(() => {
+    const cancel = scheduleIdle(() => {
       if (!cancelled) preloadDictionaries()
-    })
+    }, { timeout: 3000, fallbackMs: 1500 })
     return () => {
       cancelled = true
-      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(handle)
-      else window.clearTimeout(handle)
+      cancel()
     }
   }, [commitLocale])
 

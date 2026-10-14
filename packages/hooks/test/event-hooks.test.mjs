@@ -34,6 +34,8 @@ const MIGRATED = [
   'apps/site/app/post/usePostImagePreview.ts',
   'apps/site/app/about/components/GuestbookBarrageDialog.tsx',
   'apps/site/app/blog/components/TitleWithTooltip/index.tsx',
+  // wave2（20261014）：兑现「触碰时收敛」条款，ahooks useEventListener 已替换为 @wuh.site/hooks 原语
+  'apps/site/app/components/AppProviders.tsx',
 ]
 
 // 白名单=已登记非目标（brief「执行偏差」）与唯一实现处，出现 addEventListener 合法

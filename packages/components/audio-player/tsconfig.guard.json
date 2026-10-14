@@ -14,7 +14,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "..",
     "paths": {
-      "@wuh.site/components/*": ["./*"]
+      "@wuh.site/components/*": ["./*"],
+      "@wuh.site/hooks/*": ["../hooks/*"]
     }
   },
   "include": ["./**/*.ts", "./**/*.tsx"],

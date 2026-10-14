@@ -31,16 +31,22 @@ test('主题 Provider 暴露主题家族和三态显示模式', () => {
   assert.match(providerSource, /setColorSchemeMode:/)
 })
 
+// 20261014-wave2：key 与三态白名单单源化到 themeStorage——断言改钉「provider 消费共享常量」形态，意图不变（独立持久化 + 仅 system 响应系统）
 test('主题 Provider 独立持久化显示模式并仅在 system 下响应系统变化', () => {
-  assert.match(providerSource, /wuh\.site\.color-scheme-mode/)
-  assert.match(providerSource, /value === 'system' \|\| value === 'light' \|\| value === 'dark'/)
+  assert.match(providerSource, /COLOR_SCHEME_STORAGE_KEY/)
+  assert.match(providerSource, /from '@wuh\.site\/components\/themes\/themeStorage'/)
+  assert.match(providerSource, /COLOR_SCHEME_MODE_VALUES as readonly unknown\[\]\)\.includes\(value\)/)
+  assert.match(providerSource, /readStorage\(COLOR_SCHEME_STORAGE_KEY\)/)
+  assert.match(providerSource, /writeStorage\(COLOR_SCHEME_STORAGE_KEY, mode\)/)
   assert.match(providerSource, /colorSchemeMode === 'system'/)
   assert.match(providerSource, /applyColorScheme/)
 })
 
 test('首屏脚本在渲染前恢复主题家族和三态显示模式', () => {
-  assert.match(layoutSource, /wuh\.site\.color-scheme-mode/)
-  assert.match(layoutSource, /mode === 'light' \|\| mode === 'dark'/)
+  assert.match(layoutSource, /from '@wuh\.site\/components\/themes\/themeStorage'/)
+  assert.match(layoutSource, /JSON\.stringify\(COLOR_SCHEME_STORAGE_KEY\)/)
+  assert.match(layoutSource, /JSON\.stringify\(COLOR_SCHEME_MODE_VALUES\)\}\.includes\(storedMode\)/)
+  assert.match(layoutSource, /mode !== \$\{JSON\.stringify\(COLOR_SCHEME_MODE_VALUES\[0\]\)\}/)
   assert.match(layoutSource, /prefers-color-scheme: dark/)
   assert.match(layoutSource, /dataset\.themeFamily/)
   assert.match(layoutSource, /dataset\.colorScheme/)

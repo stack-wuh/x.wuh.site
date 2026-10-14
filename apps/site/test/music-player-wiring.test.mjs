@@ -30,12 +30,13 @@ test('歌单加载失败不再静默吞掉，给出可见失败态与重试入�
   assert.match(globalPlayer, /onClick=\{retryPlaylist\}/)
 })
 
+// 20261014-wave2：idle 降级收口至 @wuh.site/hooks/scheduleIdle——「window 定时器避免跨平台返回类型分叉」
+// 由实现处守卫（packages/hooks/test/wave2-hooks.test.mjs）钉死；本文件只保证消费方走共享 hook、无本地裸定时器
 test('idle 回调降级使用 window 上的定时器，避免跨平台返回类型分叉', () => {
-  assert.match(globalPlayer, /window\.requestIdleCallback/)
-  assert.match(globalPlayer, /window\.setTimeout/)
-  assert.match(globalPlayer, /window\.cancelIdleCallback/)
-  assert.match(globalPlayer, /window\.clearTimeout/)
-  assert.doesNotMatch(globalPlayer, /typeof requestIdleCallback !== 'undefined'/)
+  assert.match(globalPlayer, /from '@wuh\.site\/hooks\/scheduleIdle'/)
+  assert.match(globalPlayer, /scheduleIdle\(\(\) => loadDefaultQueue\(\)/)
+  assert.doesNotMatch(globalPlayer, /requestIdleCallback|cancelIdleCallback/)
+  assert.doesNotMatch(globalPlayer, /window\.setTimeout\(/)
 })
 
 test('失败提示不遮挡迷你播放器且只用主题令牌', () => {

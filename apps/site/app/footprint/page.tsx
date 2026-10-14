@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { BilibiliPlayer } from "@wuh.site/components/footprint-map/bilibili";
-import { useLocale, type Locale } from "@wuh.site/components/locales";
+import { INTL_LOCALE, useLocale } from "@wuh.site/components/locales";
 import type { FootprintData } from "@wuh.site/components/footprint-map";
 
 const FootprintMap = dynamic(
@@ -25,8 +25,7 @@ import {
 } from "@wuh.site/components/footprint-map/styles";
 import * as S from "./styles";
 
-/** locale → Intl 地区码（zh 需显式 zh-CN） */
-const INTL_LOCALE: Record<Locale, string> = { zh: "zh-CN", en: "en", ja: "ja" };
+// locale → Intl 地区码映射单源在 locales（INTL_LOCALE），本文件直接 import
 
 export default function FootprintPage() {
   const { t, locale } = useLocale();

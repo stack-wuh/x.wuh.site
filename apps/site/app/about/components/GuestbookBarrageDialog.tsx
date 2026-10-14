@@ -5,7 +5,8 @@ import Link from 'next/link'
 import Dialog from '@wuh.site/components/dialog'
 import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { IconArrowRight } from '@wuh.site/components/icons'
-import { useLocale, type Locale } from '@wuh.site/components/locales'
+import { readStorage, writeStorage } from '@wuh.site/hooks/useLocalStorageState'
+import { INTL_LOCALE, useLocale } from '@wuh.site/components/locales'
 import {
   MessageAvatar,
   MessageContent,
@@ -76,8 +77,7 @@ const sampleMessages = [
   { id: 'sample-3', nickname: '远方的朋友', contentKey: 'about.barrage.sampleLookBack', timeKey: 'about.barrage.timeMinutesAgo' },
 ] as const
 
-/** locale → Intl 地区码（zh 需显式 zh-CN） */
-const INTL_LOCALE: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
+// locale → Intl 地区码映射单源在 locales（INTL_LOCALE），本文件直接 import
 
 const getAvatarText = (nickname: string) => nickname.trim().charAt(0).toUpperCase() || '?'
 const formatDraftTime = (createdAt: string, locale: string) =>
@@ -138,19 +138,16 @@ export default function GuestbookBarrageDialog() {
   }, [localMessages, persistedMessages, t, locale])
 
   useEffect(() => {
-    try {
-      const cachedNickname = window.localStorage.getItem(NICKNAME_STORAGE_KEY)
-      if (cachedNickname) setNickname(cachedNickname)
-      const cachedFootprint = window.localStorage.getItem(FOOTPRINT_STORAGE_KEY)
-      if (cachedFootprint) {
-        setFootprint(cachedFootprint)
-      } else {
-        const nextFootprint = createFootprint()
-        window.localStorage.setItem(FOOTPRINT_STORAGE_KEY, nextFootprint)
-        setFootprint(nextFootprint)
-      }
-    } catch {
-      setFootprint(createFootprint())
+    // 按键静默读（原整块 try/catch → 键级归 undefined）：异常态终态一致（内存新 footprint），见 wave2 偏差登记
+    const cachedNickname = readStorage(NICKNAME_STORAGE_KEY)
+    if (cachedNickname) setNickname(cachedNickname)
+    const cachedFootprint = readStorage(FOOTPRINT_STORAGE_KEY)
+    if (cachedFootprint) {
+      setFootprint(cachedFootprint)
+    } else {
+      const nextFootprint = createFootprint()
+      writeStorage(FOOTPRINT_STORAGE_KEY, nextFootprint)
+      setFootprint(nextFootprint)
     }
   }, [])
 
@@ -251,11 +248,7 @@ export default function GuestbookBarrageDialog() {
     setNickname(next)
     const trimmed = next.trim()
     if (trimmed) {
-      try {
-        window.localStorage.setItem(NICKNAME_STORAGE_KEY, trimmed)
-      } catch {
-        // Ignore storage failures; the current input still works.
-      }
+      writeStorage(NICKNAME_STORAGE_KEY, trimmed)
     }
   }
 

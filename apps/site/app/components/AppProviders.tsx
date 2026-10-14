@@ -5,7 +5,8 @@ import ThemeProvider from '@wuh.site/components/themes/themeProvider'
 import { CssVariableStyles } from '@wuh.site/components/themes/cssVariableProvider'
 import { LocaleProvider, useLocale } from '@wuh.site/components/locales'
 import { MotionStyles } from '@/app/styles/motion'
-import { useEventListener, useRequest } from 'ahooks'
+import { useRequest } from 'ahooks'
+import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { useRef } from 'react'
 import type { ReactNode } from 'react'
 import Footer from '@wuh.site/components/layout/footer'
@@ -34,6 +35,7 @@ function LocalizedDocumentTitle() {
   const previousTitle = useRef<string | null>(null)
   const siteTitle = t('site.title')
 
+  // 目标按规范取 document（visibilitychange 的派发目标）；ahooks 默认 window 依赖冒泡，收敛为显式声明
   useEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       previousTitle.current = document.title
@@ -45,7 +47,7 @@ function LocalizedDocumentTitle() {
       document.title = previousTitle.current
       previousTitle.current = null
     }
-  })
+  }, 'document')
 
   return null
 }

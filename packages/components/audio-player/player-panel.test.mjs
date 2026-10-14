@@ -172,11 +172,12 @@ test('循环模式钮：icon-only 三态换装 + 点击循环 + modeDialLabel ar
   assert.match(src, /t\('player\.panel\.modeDialLabel'/)
 })
 
+// 20261014-wave2：滚动锁收口至 @wuh.site/hooks/useScrollLock——本文件钉消费形态；
+// fixed 配方骨架（body 四值 + position:fixed + scrollTo 还原）改由 packages/hooks/test/wave2-hooks.test.mjs 钉实现处，意图不变
 test('弹层滚动锁：面板打开锁 body 滚动（Dialog lockScroll 配方），关闭还原滚动位置', () => {
-  assert.match(src, /document\.body\.style\.overflow = 'hidden'/)
-  assert.match(src, /document\.body\.style\.position = 'fixed'/)
-  assert.match(src, /top = `-\$\{scrollY\}px`/)
-  assert.match(src, /window\.scrollTo\(0, scrollY\)/)
+  assert.match(src, /from '@wuh\.site\/hooks\/useScrollLock'/)
+  assert.match(src, /useScrollLock\(state\.isPanelOpen\)/)
+  assert.doesNotMatch(src, /document\.body\.style\.position/)
 })
 
 test('册页横翻：MobileTabs/MobileSection 退役，scroll-snap 对页 + 页缘翻页钮', () => {

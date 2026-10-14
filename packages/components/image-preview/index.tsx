@@ -34,8 +34,8 @@ import type { ImagePreviewItem, ImagePreviewProps, ToolbarRenderProps } from './
 
 import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { useMediaQuery } from '@wuh.site/hooks/useMediaQuery'
+import { useScrollLock } from '@wuh.site/hooks/useScrollLock'
 import { useControllableState } from './hooks/useControllableState'
-import { useLockScroll } from './hooks/useLockScroll'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useGesture } from './hooks/useGesture'
 import { ImagePreviewToolbar } from './Toolbar'
@@ -145,7 +145,8 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
     setMounted(true)
   }, [])
 
-  useLockScroll(open, lockScrollProp)
+  // 轻量滚动锁：documentElement overflow 暂存/还原（simple 配方，本地 useLockScroll 上提至共享包）
+  useScrollLock(open && lockScrollProp, { mode: 'simple' })
 
   const handleClose = React.useCallback(() => {
     setOpen(false)

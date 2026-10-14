@@ -115,7 +115,34 @@
 - 深度: unit
 - 域/scope: 验证工具链 · apps/site/test/*.test.mjs
 - 证据: changes/20261013-refactor-shared-event-hooks/brief.md——分支 204 tests/27 fail vs main 基线 193/32，`comm -23` 分支独有失败=空即零新增红；27 项红为存量（样式字面量守卫与现码漂移，如 site-header-theme-toggle 6 项双侧同名红、image-role-contract 3 项）；CI 仅跑根 tsc+oxlint，未含 .mjs 守卫。注意基线 worktree 若有文件级加载失败（如 seo-p1/p14/p17）会被 node --test 折叠成单行 ✖、总数不同（193 vs 204）——计数差≠回归，比对以失败名集为准；守卫结论只取单条成功输出（呼应 SGN-001 拆单配方）
+- 命中: 1（最近 2026-10-14）
+- 增补证据: changes/20261014-refactor-shared-hooks-wave2/brief.md——site 域 head 红集 28 与基线名集 `comm -23` 为空判零新增红（wave1 的 site-header 6 项、music-wiring 3 项、image-role-contract 3 项等存量漂移原样在位）；基线对照改用 `git archive main | tar -x` 解纯文本树（比 worktree 轻且不动当前 checkout），解包树缺 shadow-docs 致 3 个 seo 套件文件级加载失败折叠成 ✖ 行——**计数差是解包伪影，名集 diff 为准的纪律再证**
 - 退役条件: 守卫集纳入 CI 且转全绿，或存量红清零
+
+## SGN-013 · 跨包新增 import 面须同步消费包域守卫 tsconfig paths，root tsc 绿不代表域 guard 绿
+- 方向: positive
+- 权重: 3
+- 深度: unit
+- 域/scope: 验证工具链 · packages/components 各域 tsconfig.guard.json（typecheck.test.mjs spawn 的域编译）
+- 证据: changes/20261014-refactor-shared-hooks-wave2/brief.md——wave1 给 PlayerPanel/PanelVolume 加 `@wuh.site/hooks/*` import 后，audio-player 域 guard 在 main 上即红（guard paths 只有 `@wuh.site/components/*` 映射，TS2307×6 骑入部署，根 tsc 与 CI quality-gate 均不覆盖该 guard）；本轮补 `"@wuh.site/hooks/*": ["../hooks/*"]`（baseUrl=".." 形态与 root/site tsconfig 对齐）后域内清零，icons 域外同根错误一并消除。纪律：给消费包新增跨包子路径时，检查该包全部域 guard 的 paths 并同批修
+- 退役条件: 域 guard 纳入 CI，或 guard 改继承 root tsconfig
+
+## SGN-014 · WKWebView document.visibilityState 非 configurable，visibilitychange 观察点不可合成
+- 方向: negative
+- 权重: 3
+- 深度: runtime
+- 域/scope: 验证工具链 · IAB · visibilitychange / Page Visibility 类验收（标题换装、后台轮询暂停等）
+- 证据: changes/20261014-refactor-shared-hooks-wave2/brief.md——AppProviders 标题换装 runtime 抽检：`Object.defineProperty(document, 'visibilityState', {get})` 抛 `TypeError: Cannot redefine property`（document 实例 own 属性不可配置，区别于 SGN-009 的 matchMedia 新实例根因）；真实切后台不可控时序，该观察点退回 code-read + 守卫钉消费形态（wave2 守卫⑦钉 @wuh.site/hooks import 与显式 'document' target）
+- 退役条件: IAB 注入环境支持 page visibility 覆写，或验收迁真浏览器
+- 陈述: 验收前把观察点按「可合成事件面」过滤——matchMedia 新实例（SGN-009）、visibilityState 不可重定义（本信号）是 IAB 禁区名单的两位成员，命中即改 code-read+守卫双钉，不烧重试预算
+
+## SGN-015 · IAB 窗格下 Dialog 退出动画 animationend 不自动到达，关闭链验收须先合成事件
+- 方向: positive
+- 权重: 2
+- 深度: runtime
+- 域/scope: 验证工具链 · IAB · packages/components/dialog 及一切带退出动画的弹层（body 锁 release 依赖 closing→animationend）
+- 证据: changes/20261014-refactor-shared-hooks-wave2/brief.md——生产实例上 Esc 与 ×（`__reactProps` expando 可靠路径）均不能使 Dialog 走完关闭：内部停在 closing、body 四值锁不释放；向 closing 节点合成 `dispatchEvent(new Event('animationend', {bubbles:true}))` 后四值还原 + scrollY 归位立即全绿。归因：动画完成事件在 IAB 后台窗格不派发，与滚动锁迁移无关（旧手写 effect 依赖同一关闭链，同不可测）——判锁还原是否回归前，先合成 animationend 排除动画链
+- 退役条件: IAB 前台窗格真实驱动 CSS 动画完成事件
 
 ## SGN-012 · Windows/Git Bash 下 package.json scripts 的行内 `NODE_OPTIONS=…` 赋值失败，直调包内二进制等价
 - 方向: positive
