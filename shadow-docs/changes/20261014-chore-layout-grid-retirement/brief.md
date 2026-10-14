@@ -4,7 +4,7 @@
   "name": "20261014-chore-layout-grid-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-layout-grid-retirement",
   "files": [
@@ -23,8 +23,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 539,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/539",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 540,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/540"
   },
   "review": {
     "conclusion": "pending",
@@ -33,8 +33,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "ac2c4992dc5ecea3dff0a78d7081fdf41aec91c8",
-    "planHash": "9e2fa7f3d96cfecebbc174292d9b2d2176e377a823f4adcc6af0a2fcf1f2337e",
+    "checkpoint": "pr:540",
+    "planHash": "e1a82afa08a6afb24622f21f0c78d9b41f4fea842f73e4303009a953f69573e8",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
