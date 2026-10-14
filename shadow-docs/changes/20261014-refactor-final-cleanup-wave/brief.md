@@ -4,7 +4,7 @@
   "name": "20261014-refactor-final-cleanup-wave",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-final-cleanup-wave",
   "files": [
@@ -36,7 +36,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:542",
+    "checkpoint": "4ae26a19cb1925c745df393e003a145aa5c66a86",
     "planHash": "d891a716ac2d37baf5368ae2efbb187458c267a0e0fe423da446328ee3e74c32",
     "updatedAt": null,
     "lastError": null,
