@@ -4,7 +4,7 @@
   "name": "20261014-refactor-shared-hooks-wave2",
   "type": "refactor",
   "scope": "packages/hooks,packages/components,apps/site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "refactor/20261014-refactor-shared-hooks-wave2",
   "files": [
@@ -33,8 +33,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 533,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/533",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 534,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/534"
   },
   "review": {
     "conclusion": "passed",
@@ -43,7 +43,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:533",
+    "checkpoint": "pr:534",
     "planHash": "8e5df3407efd7e6efb47f88b00a5fb3057e2aecaba1ae5b1d9f9624d86bad014",
     "updatedAt": null,
     "lastError": null,
