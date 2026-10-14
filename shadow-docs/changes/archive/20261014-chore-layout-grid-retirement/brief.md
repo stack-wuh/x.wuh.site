@@ -4,7 +4,7 @@
   "name": "20261014-chore-layout-grid-retirement",
   "type": "chore",
   "scope": "packages/components",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "chore/20261014-chore-layout-grid-retirement",
   "files": [
@@ -28,13 +28,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e83828583d503fa45ece1ecc325df9dd72a2dfa5",
-    "verifiedAt": "2026-10-14T08:46:46.064Z"
+    "verifiedCommit": "5543d85b7e9e09aa1a89bb27456b6ba47f9283c7",
+    "verifiedAt": "2026-10-14T09:00:02.417Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "e99bf323771d464a5c7846e643216ecd2c7f8c2d",
-    "planHash": "5b10f07af875618deadf7fdc27f4ce639ad719e2638d8f8d6793d3a583663a8c",
+    "checkpoint": "merged-pr:540",
+    "planHash": "1850c15ae21190336be8690119e15f9fe803251ee4e71949054d242a04874c53",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -76,7 +76,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "verifiedCommit 钉正至合并后 main（e838285）：守卫网在 main 复跑全绿（structure 18/breakpoint 6/布局 22/hooks 20），信号写回与 brief 状态 commit 均为 docs 增量"
+    "reason": "verifiedCommit 随交付回写钉正至 HEAD；部署链 rerun 后 8 作业全绿，交付证据已入 brief 结果段"
   }
 }
 ---
