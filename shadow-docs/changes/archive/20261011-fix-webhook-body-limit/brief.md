@@ -4,7 +4,7 @@
   "name": "20261011-fix-webhook-body-limit",
   "type": "fix",
   "scope": "apps/server",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261011-fix-webhook-body-limit",
   "files": [
@@ -19,13 +19,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e0e09a119bee0cc3e7e5687633e4695c41f5a447",
-    "verifiedAt": "2026-10-11T14:31:46.231Z"
+    "verifiedCommit": "68cc5dbfe19889b5fada6b61b4c448fb5a0c1733",
+    "verifiedAt": "2026-10-14T12:32:54.925Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:528",
-    "planHash": "9c01ad9715e81314acbfd46d67e14dd706deb9af79ea86deb36e99fd7a244e6a",
+    "checkpoint": "merged-pr:528",
+    "planHash": "2098b7771e0edc2640fca8f48e7bdb19cbd735d17fc254a4ee77f2485d7fb5b1",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -45,7 +45,11 @@
       "message": "fix: webhook 大 payload 超 express 默认 100kb 拒收——全局 body limit 提至 5mb"
     }
   },
-  "knowledge": null
+  "knowledge": {
+    "action": "无需变更",
+    "target": null,
+    "reason": "补归档钉正：PR #528 已于 2026-10-11 merged 并随 v1.4.x 交付，review 结论按交付后事实补记 passed（该 change 实施于现行流程成熟前，行为面早已受生产与后续 change 检验）"
+  }
 }
 ---
 
