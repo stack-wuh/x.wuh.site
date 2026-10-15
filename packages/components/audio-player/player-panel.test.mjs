@@ -189,15 +189,17 @@ test('册页横翻：MobileTabs/MobileSection 退役，scroll-snap 对页 + 页�
   assert.match(src, /scroll-snap-align: start/)
   const tickBlock = src.slice(src.indexOf('const PageTicks ='), src.indexOf('const MODE_LABEL_KEYS'))
   assert.ok(tickBlock.length > 0, 'PageTicks 定义缺失')
-  assert.match(tickBlock, /scaleX\(/)
+  // 点号指示（20261015 定稿）：激活=实心朱砂+印晕 / 未激活=空心墨环——scaleX 刻度条退役
+  assert.match(tickBlock, /width: 7px/)
+  assert.match(tickBlock, /var\(--tick-ring, /)
+  assert.match(tickBlock, /var\(--tick-halo, transparent\)/)
   const tickButtonBlock = src.slice(src.indexOf('const PageTick ='), src.indexOf('const WordBloom ='))
   assert.ok(tickButtonBlock.length > 0, 'PageTick 定义缺失')
   // 选中态走行内自定义属性驱动（与 ModeButton 同一免疫机制），aria-current 语义保留
-  assert.match(tickButtonBlock, /background: var\(--tick-line, /)
-  assert.match(tickButtonBlock, /scaleX\(var\(--tick-fill, 0\.44\)\)/)
+  assert.match(tickButtonBlock, /background: var\(--tick-line, transparent\)/)
   assert.doesNotMatch(tickButtonBlock, /&\[aria-current=/)
   assert.doesNotMatch(tickButtonBlock, /\$active/)
-  assert.match(src, /'--tick-fill': 1/)
+  assert.match(src, /'--tick-halo': 'color-mix\(in oklab, var\(--primary-color\) 45%, transparent\)'/)
   assert.match(src, /aria-current=/)
   assert.match(src, /onScroll=\{/)
 })
@@ -221,12 +223,16 @@ test('册页图版：纸框发丝线 + 纸边 + 图面内发丝线 + mono 朱砂
   assert.match(titleBlock, /text-overflow: ellipsis/)
 })
 
-test('短词窗：mask 渐隐 + 点按跳播 + 「全体欣赏音乐」印章空态', () => {
+test('短词窗：mask 渐隐 + 点按跳播 + 印章空态三态（20261015 词窗定稿）', () => {
   const winBlock = src.slice(src.indexOf('const WordWindow ='), src.indexOf('const WordLine ='))
   assert.ok(winBlock.length > 0, 'WordWindow 定义缺失')
   assert.match(winBlock, /mask-image: linear-gradient/)
   assert.match(winBlock, /overflow: hidden/)
-  const lineBlock = src.slice(src.indexOf('const WordLine ='), src.indexOf('const WordEmpty ='))
+  // 词窗布局定稿（20261015）：锚底退役——紧跟题名 + 剩余空间垂直居中（首尾弹性垫层，溢出滚动可达）
+  assert.match(winBlock, /margin-top: var\(--space-lg\)/)
+  assert.match(winBlock, /flex: 1 1 auto/)
+  assert.doesNotMatch(winBlock, /margin-top: auto/)
+  const lineBlock = src.slice(src.indexOf('const WordLine ='), src.indexOf('const stampIn ='))
   assert.ok(lineBlock.length > 0, 'WordLine 定义缺失')
   assert.match(lineBlock, /font-family: var\(--font-serif\)/)
   assert.match(lineBlock, /text-align: center/)
@@ -234,8 +240,28 @@ test('短词窗：mask 渐隐 + 点按跳播 + 「全体欣赏音乐」印章空
   const emptyBlock = src.slice(src.indexOf('const WordEmpty ='), src.indexOf('const PageTicks ='))
   assert.ok(emptyBlock.length > 0, 'WordEmpty 定义缺失')
   assert.match(emptyBlock, /var\(--primary-color\)/)
-  // 印章空态文案已迁 i18n 词典（zh 仍为「全体欣赏音乐」），守卫改为断言 t() 调用形状
-  assert.match(src, /t\('player\.panel\.wordEmpty'\)/)
+  // 钤印进场（20261015 定稿）：空态印 write 档入场；换态/换曲 key 重挂载重钤
+  assert.match(emptyBlock, /animation: \$\{stampIn\}/)
+  assert.match(src, /key=\{`\$\{wordPhase\}-\$\{currentTrack\?\.id \?\? 'idle'\}`\}/)
+  // 三态文案经 wordPhase 切换：加载中=wordEmpty（全体欣赏音乐）、纯音乐=pureMusic（新 key）
+  assert.match(src, /wordPhase === 'pure' \? 'player\.panel\.pureMusic' : 'player\.panel\.wordEmpty'/)
+})
+
+test('移动墨流（20261015 定稿）：前景歌词零动画 + 墨柱生命期绑播放时钟 + 无词隐去', () => {
+  // INV-1 前景歌词零动画：前景行渲染块不携带 animation（动效只存在于背景墨柱层与空态印）
+  const fgBlock = src.slice(src.indexOf('const WordLine ='), src.indexOf('const stampIn ='))
+  assert.ok(fgBlock.length > 0, 'WordLine 定义缺失')
+  assert.doesNotMatch(fgBlock, /animation\s*:/, '前景歌词行不得携带动画')
+  // INV-3 隐去条件：墨柱只在有词态铺底（无词自动隐去语言延续）
+  assert.match(src, /wordPhase === 'lines' && \(\s*<InkLayer/)
+  // INV-2 生命期绑播放时钟：句 tenure 由 progress 映射（暂停停走 = progress 停走），三段相位钉死；
+  // 分母防 0/0（换算口径纪律）
+  assert.match(src, /const inkFrac = Math\.min\(Math\.max\(\(progress - inkStart\) \/ Math\.max\(inkEnd - inkStart, 0\.001\), 0\), 1\)/)
+  assert.match(src, /frac < 0\.25/)
+  assert.match(src, /frac < 0\.72/)
+  // 站位常量与桌面墨痕同址（ghost.tsx INK_STATIONS），渲染经行内自定义属性写入（INV-4 行内机制）
+  assert.match(src, /INK_STATIONS\.map/)
+  assert.match(src, /'--ink-gx': station\.gx/)
 })
 
 test('最爱印：本卷 playCount 最高曲目播放时进度印为「愛」，其余「樂」，音量印恒「樂」', () => {

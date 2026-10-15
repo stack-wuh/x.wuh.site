@@ -56,3 +56,13 @@ export const GhostLine = styled.span`
   }
 `
 
+/* ===== 移动墨柱站位（20261015 移动墨流定稿）：桌面五站锚点的移动收束——4 站，
+   站 0 为当前句主柱（生命期：入墨→定影→化墨，由 PanelMobile 按句内进度写行内样式），
+   其余为前行回声；仅移动词页词窗层，无词/加载中隐去 */
+export const INK_STATIONS = [
+  { gx: '8%', gs: '24px', go: 0.15 },
+  { gx: '82%', gs: '20px', go: 0.07 },
+  { gx: '62%', gs: '18px', go: 0.05 },
+  { gx: '32%', gs: '22px', go: 0.06 },
+] as const
+
