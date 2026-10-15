@@ -196,8 +196,11 @@ test('显隐态组件走行内样式驱动（动态类规则删除竞态免疫�
   assert.doesNotMatch(panel, /<DrawerScrim \$open/)
   assert.doesNotMatch(panel, /<DrawerCard \$open/)
   assert.doesNotMatch(panel, /<WordsToggle \$on/)
-  // JSX 行内挂载在场
-  assert.ok(panel.includes("'--tick-fill': 1"), 'PageTick 选中态行内自定义属性缺失')
+  // JSX 行内挂载在场（点号激活三件套：实心朱砂 / 印晕 / 环透明）
+  assert.ok(
+    panel.includes("'--tick-halo': 'color-mix(in oklab, var(--primary-color) 45%, transparent)'"),
+    'PageTick 选中态行内自定义属性缺失',
+  )
 })
 
 test('舞台预算：封面为因变量（帽与面板高度同源）+ 题名/歌手空间承诺（20261001 精修）', () => {

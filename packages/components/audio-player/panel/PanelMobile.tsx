@@ -8,8 +8,11 @@ import { useLocale } from '@wuh.site/components/locales'
 import type { LyricLine } from '../utils'
 import type { Track } from '../types'
 import { QueueRows } from './PanelQueue'
+import { INK_STATIONS } from './styles/ghost'
 import {
   GrabHandle,
+  InkCol,
+  InkLayer,
   LeafArtist,
   LeafPage,
   LeafPages,
@@ -41,6 +44,8 @@ interface PanelMobileProps {
   playTrack: (trackId: number) => void
   /** 真实播放态（目次 QueueRows 等化器暂停停走用） */
   playing: boolean
+  /** 播放进度（秒）——墨柱生命期时钟（暂停停走：progress 停走即冻结） */
+  progress: number
   onDragStart: (event: React.TouchEvent) => void
   onDragMove: (event: React.TouchEvent) => void
   onDragEnd: () => void
@@ -63,6 +68,7 @@ export const PanelMobile = ({
   seek,
   playTrack,
   playing,
+  progress,
   onDragStart,
   onDragMove,
   onDragEnd
@@ -73,6 +79,38 @@ export const PanelMobile = ({
   const mobileQueueRef = useRef<HTMLUListElement | null>(null)
   const pagesRef = useRef<HTMLDivElement | null>(null)
   const [mobilePage, setMobilePage] = useState<'words' | 'queue'>('words')
+
+  // 词窗三态：加载中（缺曲/曲目未解析——streamUrl 与歌词同批落位）→「全体欣赏音乐」；
+  // 解析毕无词 →「纯音乐 · 请欣赏」；有词 → 正常渲染
+  const wordPhase: 'loading' | 'pure' | 'lines' =
+    !currentTrack || !currentTrack.streamUrl ? 'loading' : lyrics.length ? 'lines' : 'pure'
+
+  // 墨柱生命期时钟：句 tenure = 当前行 time → 下一行 time；progress 停走即冻结（暂停停走纪律）
+  const inkIdx = activeLyric >= 0 ? activeLyric : 0
+  const inkStart = lyrics[inkIdx]?.time ?? 0
+  const inkEnd = lyrics[inkIdx + 1]?.time ?? inkStart + 8
+  const inkFrac = Math.min(Math.max((progress - inkStart) / Math.max(inkEnd - inkStart, 0.001), 0), 1)
+
+  // 站 0 生命期样式：入墨(0–25%) 晕开锐化 → 定影(25–72%) 墨迹缓洇 → 化墨(72–100%) 烟散上浮；
+  // 只写背景墨柱（前景歌词零动画）
+  const inkLifeStyle = (frac: number): React.CSSProperties => {
+    let o: number, s: number, b: number, ty: number
+    if (frac < 0.25) {
+      const t = frac / 0.25
+      o = 0.04 + t * 0.14; s = 0.72 + t * 0.28; b = 6 * (1 - t); ty = 0
+    } else if (frac < 0.72) {
+      const t = (frac - 0.25) / 0.47
+      o = 0.18 - t * 0.03; s = 1 + t * 0.05; b = 0; ty = 0
+    } else {
+      const t = (frac - 0.72) / 0.28
+      o = 0.15 * (1 - t); s = 1.05 + t * 0.05; b = 10 * t; ty = -10 * t
+    }
+    return {
+      opacity: o.toFixed(3),
+      transform: `translateY(-50%) scale(${s.toFixed(3)}) translateY(${ty.toFixed(1)}px)`,
+      filter: `blur(${b.toFixed(1)}px)`,
+    }
+  }
 
   // 拖拽关闭：手柄与图版是拖拽面（位移态在主文件 dragY，驱动面板壳 transform），松手过阈值关闭、否则回弹
   const dragHandlers = {
@@ -148,8 +186,33 @@ export const PanelMobile = ({
           <LeafTitle title={stageName}>{stageName}</LeafTitle>
           <LeafArtist title={artist}>{artist}</LeafArtist>
           <WordWindow ref={mobileLyricsRef}>
+            {/* 移动墨柱：只在有词态铺底（无词自动隐去）；生命期写行内样式，前景歌词零动画 */}
+            {wordPhase === 'lines' && (
+              <InkLayer aria-hidden='true'>
+                {INK_STATIONS.map((station, k) => {
+                  const lineIdx = Math.max(inkIdx - k, 0)
+                  const line = lyrics[lineIdx]
+                  if (!line) return null
+                  return (
+                    <InkCol
+                      key={`${k}-${lineIdx}`}
+                      style={
+                        {
+                          '--ink-gx': station.gx,
+                          '--ink-gs': station.gs,
+                          '--ink-go': station.go,
+                          ...(k === 0 ? inkLifeStyle(inkFrac) : {}),
+                        } as React.CSSProperties
+                      }
+                    >
+                      {line.text}
+                    </InkCol>
+                  )
+                })}
+              </InkLayer>
+            )}
             <WordBloom ref={mobileBloomRef} aria-hidden='true' />
-            {lyrics.length ? (
+            {wordPhase === 'lines' ? (
               lyrics.map((line, index) => (
                 <WordLine
                   key={`${line.time}-${index}`}
@@ -163,8 +226,9 @@ export const PanelMobile = ({
                 </WordLine>
               ))
             ) : (
-              <WordEmpty>
-                <span>{t('player.panel.wordEmpty')}</span>
+              /* 加载中/纯音乐共用印框：key 换态/换曲重挂载重钤（钤印进场动画） */
+              <WordEmpty key={`${wordPhase}-${currentTrack?.id ?? 'idle'}`}>
+                <span>{t(wordPhase === 'pure' ? 'player.panel.pureMusic' : 'player.panel.wordEmpty')}</span>
               </WordEmpty>
             )}
           </WordWindow>
@@ -177,13 +241,18 @@ export const PanelMobile = ({
         </LeafPage>
       </LeafPages>
 
-      {/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走行内自定义属性（显隐纪律） */}
+      {/* 页缘翻页钮：swipe 的键盘/读屏等价路径；点号激活走行内自定义属性（显隐纪律） */}
       <PageTicks role='group' aria-label={t('player.panel.ticksAria')}>
         <PageTick
           type='button'
           style={
             mobilePage === 'words'
-              ? ({ '--tick-line': 'var(--primary-color)', '--tick-fill': 1, '--tick-dim': 1 } as React.CSSProperties)
+              ? ({
+                  '--tick-line': 'var(--primary-color)',
+                  '--tick-halo': 'color-mix(in oklab, var(--primary-color) 45%, transparent)',
+                  '--tick-ring': 'transparent',
+                  '--tick-dim': 1,
+                } as React.CSSProperties)
               : undefined
           }
           aria-current={mobilePage === 'words' ? 'true' : undefined}
@@ -194,7 +263,12 @@ export const PanelMobile = ({
           type='button'
           style={
             mobilePage === 'queue'
-              ? ({ '--tick-line': 'var(--primary-color)', '--tick-fill': 1, '--tick-dim': 1 } as React.CSSProperties)
+              ? ({
+                  '--tick-line': 'var(--primary-color)',
+                  '--tick-halo': 'color-mix(in oklab, var(--primary-color) 45%, transparent)',
+                  '--tick-ring': 'transparent',
+                  '--tick-dim': 1,
+                } as React.CSSProperties)
               : undefined
           }
           aria-current={mobilePage === 'queue' ? 'true' : undefined}

@@ -64,6 +64,15 @@
 
 后续将出现 Desktop 工具作为博客系统统一操作台（维护/发布/推送），因此管线核心沉淀为共享包 `packages/publisher`，`apps/server` 只做薄 admin API 封装，本次不做 console UI。
 
+## 复杂度评级
+
+- **评级:** M
+- **理由:** 门生效前（20260903）遗留提案补录：按 files 触及面（apps/server publisher 模块 + packages/publisher 共享包，约 19 文件）记 M；提案 status=proposed 从未开工，评级仅为过契约门的补录，不代表方案已审。
+
+## 领域模型
+
+- **限界上下文:** 服务端内容发布（apps/server publisher 薄封装 + packages/publisher 管线共享包）——源文件规范、Notion 端发布与图片 OSS 永久化；博客真相源仍在 stack-wuh/blog。
+
 ## 引用规范
 
 - `shadow-docs/knowledge/content-api.md`

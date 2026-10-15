@@ -41,6 +41,7 @@ export const player = {
     queuePage: '播放列表页',
     plateNo: '曲 · {index} / {total}',
     wordEmpty: '全体欣赏音乐',
+    pureMusic: '纯音乐 · 请欣赏',
     queueHeadingMobile: '目 次',
     ticksAria: '册页翻页',
   },
