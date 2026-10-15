@@ -1,7 +1,7 @@
 'use client'
 
 /* 移动端册页：装裱图版 + 短词窗 + 目次对页横翻（20261005 自 PlayerPanel.tsx 拆出） */
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { responsive } from '@wuh.site/components/themes/responsive'
 import { EASE, HAIRLINE, INK_FAINT, INK_GHOST, INK_MUTED, QUICK, focusRing, STAGE_TIER_COMPACT, STAGE_TIER_SHORT } from './tokens'
 
@@ -16,7 +16,6 @@ export const GrabHandle = styled.div`
   z-index: 6;
   width: 48px;
   height: 24px;
-  display: flex;
   align-items: center;
   justify-content: center;
   touch-action: none;
@@ -30,16 +29,16 @@ export const GrabHandle = styled.div`
     background: color-mix(in oklab, var(--text-color) 22%, transparent);
   }
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 /* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径。
-   移动独显：块内声明按备忘⑬惰性判据直落 base（grid-area/滚动容器声明桌面惰性无回退税） */
+   移动独显：display 走阶梯两档（base 显 / md 槽隐——首槽缺位会让编译口整体返回空串、
+   桌面写回静默丢失，20261015 生产回归）；其余块内声明按备忘⑬惰性判据直落 base */
 export const LeafPages = styled.div`
   grid-area: pages;
   position: relative;
   z-index: 1;
-  display: flex;
   min-height: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -50,20 +49,19 @@ export const LeafPages = styled.div`
     display: none;
   }
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 export const LeafPage = styled.section`
   flex: 0 0 100%;
   min-width: 0;
-  display: flex;
   flex-direction: column;
   overflow: hidden;
   padding: 0 var(--space-base);
   scroll-snap-align: start;
   scroll-snap-stop: always;
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 /* 装裱图版：纸框发丝线 + 纸边；图面也是下滑关闭的拖拽面 */
@@ -135,14 +133,24 @@ export const LeafArtist = styled.p`
   text-overflow: ellipsis;
 `
 
-/* 短词窗：mask 上下渐隐，当前句加重、相邻淡化；点按行跳播 */
+/* 短词窗：紧跟题名（锚底退役，20261015 移动墨流定稿修订）+ 剩余空间垂直居中——
+   首尾 flex 弹性垫层承担居中（不用 justify-content：内容溢出时滚动可达性不受居中裁切），
+   mask 上下渐隐，当前句加重、相邻淡化；点按行跳播 */
 export const WordWindow = styled.div`
   position: relative;
-  margin-top: auto;
-  flex: 0 1 148px;
+  margin-top: var(--space-lg);
+  flex: 1 1 auto;
   min-height: 96px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   mask-image: linear-gradient(180deg, transparent, black 22%, black 78%, transparent);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1 0 0;
+  }
 `
 
 export const WordLine = styled.button<{ $active?: boolean; $near?: boolean }>`
@@ -174,7 +182,14 @@ export const WordLine = styled.button<{ $active?: boolean; $near?: boolean }>`
   ${focusRing}
 `
 
-/* 无词空态：印章式「全体欣赏音乐」；拉丁文语境字距降档 */
+/* 无词/加载空态：印章式（「全体欣赏音乐」/「纯音乐 · 请欣赏」）；拉丁文语境字距降档。
+   钤印进场（20261015 定稿）：scale 1.18→1 按印入纸，write 档；换态/换曲由 JSX key 重挂载重钤 */
+const stampIn = keyframes`
+  0% { opacity: 0; transform: scale(1.18); }
+  62% { opacity: 0.92; transform: scale(0.985); }
+  100% { opacity: 0.78; transform: scale(1); }
+`
+
 export const WordEmpty = styled.div`
   height: 100%;
   display: flex;
@@ -189,6 +204,7 @@ export const WordEmpty = styled.div`
     font-size: var(--font-size-sm);
     letter-spacing: 0.28em;
     color: color-mix(in oklab, var(--primary-color) 78%, transparent);
+    animation: ${stampIn} 400ms var(--motion-ease-out-soft) both;
   }
 
   [lang='en'] & > span {
@@ -196,39 +212,70 @@ export const WordEmpty = styled.div`
   }
 `
 
-/* 页缘翻页钮：swipe 的键盘/读屏等价路径；选中态走行内自定义属性（免疫机制，
-   见 music-player.md——选择器驱动激活态两连败），选中条宽度切换走 scaleX */
+/* ===== 移动墨柱（20261015 移动墨流定稿）：词窗背景淡墨竖列——桌面五列两翼的移动收束。
+   前景歌词零动画（前景零动画不变量）：动效只在本层，生命期由 PanelMobile 按句内进度写行内样式。
+   站位/字号/基础墨阶常量在 ghost.tsx（INK_STATIONS，与桌面 GHOST_STATIONS 同址） */
+export const InkLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+`
+
+export const InkCol = styled.span`
+  position: absolute;
+  top: 50%;
+  left: var(--ink-gx);
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: var(--ink-gs);
+  letter-spacing: 0.22em;
+  color: var(--text-color);
+  opacity: var(--ink-go);
+  -webkit-mask-image: linear-gradient(180deg, transparent, black 16%, black 84%, transparent);
+  mask-image: linear-gradient(180deg, transparent, black 16%, black 84%, transparent);
+  transition:
+    opacity 150ms linear,
+    filter 150ms linear,
+    transform 150ms linear;
+`
+
+/* 页缘翻页钮容器（页缘点号见 PageTick）：swipe 的键盘/读屏等价路径 */
 export const PageTicks = styled.div`
   grid-area: ticks;
   position: relative;
   z-index: 1;
-  display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
   padding: 2px 0 6px;
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
+/* 页缘翻页钮：swipe 的键盘/读屏等价路径；点号指示（20261015 定稿）——激活=实心朱砂+印晕、
+   未激活=空心墨环；选中态走行内自定义属性（免疫机制，见 music-player.md——选择器驱动激活态两连败） */
 export const PageTick = styled.button`
-  padding: 10px 8px;
+  padding: 13px 11px;
   display: inline-flex;
   align-items: center;
   background: none;
   border: none;
   cursor: pointer;
 
-  /* 选中态经行内自定义属性驱动（自定义属性继承进 ::before） */
   &::before {
     content: '';
-    width: 18px;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--tick-line, ${HAIRLINE});
-    transform: scaleX(var(--tick-fill, 0.44));
-    opacity: var(--tick-dim, 0.6);
-    transition: transform ${QUICK} ${EASE}, opacity ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--tick-line, transparent);
+    box-shadow:
+      inset 0 0 0 1.5px var(--tick-ring, ${INK_MUTED}),
+      0 0 0 3px var(--tick-halo, transparent);
+    opacity: var(--tick-dim, 0.85);
+    transition: box-shadow ${QUICK} ${EASE}, background-color ${QUICK} ${EASE};
   }
 
   ${focusRing}

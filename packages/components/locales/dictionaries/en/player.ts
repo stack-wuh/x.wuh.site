@@ -43,6 +43,7 @@ export const player: DeepPartial<Dict['player']> = {
     queuePage: 'Playlist page',
     plateNo: 'Track {index} / {total}',
     wordEmpty: 'Enjoy the music',
+    pureMusic: 'Instrumental · Enjoy',
     queueHeadingMobile: 'Index',
     ticksAria: 'Flip pages',
   },

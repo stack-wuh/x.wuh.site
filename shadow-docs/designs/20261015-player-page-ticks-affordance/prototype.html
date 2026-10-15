@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>页缘翻页钮 · 启示性打磨 — 20261015</title>
+<style>
+/* ============================================================
+   真 token（值抄自源码，出处随注）：
+   - 酒红族 palette: packages/components/themes/generator-color.ts:6-9,22-40
+     (light primary-500 #C94A44 / dark #E36A64; light text #2A1E16;
+      light bg-100 #FFFBF8; dark bg 近 #0a0404 派生)
+   - 面板墨阶: packages/components/audio-player/panel/styles/tokens.ts:7-10
+     (INK_MUTED text72% / INK_FAINT 56% / INK_GHOST 38% / RULE_LINE 9%)
+   - motion: packages/components/themes/index.ts:56-58
+   - spacing: packages/components/themes/index.ts:24-28
+   - 字体: packages/components/themes/cssVariableProvider.tsx:281-283
+   - 题签字距: panel/styles/mobile.tsx PlateNo (0.3em CJK / 0.14em en)
+   ============================================================ */
+:root {
+  --motion-dur-quick: 150ms;
+  --motion-ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --space-xs: 8px; --space-sm: 16px; --space-base: 12px;
+  --font-sans: 'Noto Sans SC', 'Microsoft YaHei', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', ui-monospace, monospace;
+  --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', Georgia, serif;
+}
+/* 暗（默认，用户当前主题） */
+html[data-theme='dark'] {
+  --paper: #161010;
+  --paper-veil: rgba(22, 16, 16, 0.72);
+  --ink: rgba(255, 255, 255, 0.72);
+  --ink-muted: rgba(255, 255, 255, 0.52);
+  --ink-faint: rgba(255, 255, 255, 0.40);
+  --ink-ghost: rgba(255, 255, 255, 0.27);
+  --rule: rgba(255, 255, 255, 0.09);
+  --hairline: rgba(255, 255, 255, 0.13);
+  --zhu: #E36A64;
+  --zhu-dim: rgba(227, 106, 100, 0.45);
+  --seal-text: #1a0f0e;
+}
+/* 明 */
+html[data-theme='light'] {
+  --paper: #FFFBF8;
+  --paper-veil: rgba(255, 251, 248, 0.72);
+  --ink: rgba(42, 30, 22, 0.92);
+  --ink-muted: rgba(42, 30, 22, 0.66);
+  --ink-faint: rgba(42, 30, 22, 0.53);
+  --ink-ghost: rgba(42, 30, 22, 0.36);
+  --rule: rgba(42, 30, 22, 0.09);
+  --hairline: rgba(42, 30, 22, 0.16);
+  --zhu: #C94A44;
+  --zhu-dim: rgba(201, 74, 68, 0.45);
+  --seal-text: #FFFBF8;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background: #0c0a09;
+  color: var(--ink);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 28px 16px 48px; gap: 18px;
+}
+html[data-theme='light'] body { background: #E9E2DA; }
+
+/* ===== 顶栏：场景切换 + 主题 ===== */
+.bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.bar button {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+  padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(255,255,255,0.65);
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+html[data-theme='light'] .bar button { border-color: rgba(42,30,22,0.25); color: rgba(42,30,22,0.7); }
+.bar button.on { background: var(--zhu); border-color: var(--zhu); color: #fff; }
+.note { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; line-height: 1.8; max-width: 560px; }
+html[data-theme='light'] .note { color: rgba(42,30,22,0.55); }
+.note b { color: rgba(255,255,255,0.8); }
+html[data-theme='light'] .note b { color: rgba(42,30,22,0.85); }
+
+/* ===== 手机画框：册页底部区域（词页/目次 + 页缘钮 + dock 上缘） ===== */
+.frame {
+  width: 375px; border-radius: 24px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+html[data-theme='light'] .frame { border-color: rgba(42,30,22,0.15); box-shadow: 0 24px 60px rgba(42,30,22,0.25); }
+.screen {
+  height: 620px; display: flex; flex-direction: column; position: relative;
+  background:
+    radial-gradient(90% 40% at 50% 30%, rgba(201, 74, 68, 0.06), transparent 70%),
+    var(--paper);
+}
+html[data-theme='dark'] .screen {
+  background:
+    radial-gradient(90% 40% at 50% 30%, rgba(227, 106, 100, 0.07), transparent 70%),
+    var(--paper);
+}
+
+/* —— 页内容区（词页 / 目次 两对页） —— */
+.pages { flex: 1; position: relative; overflow: hidden; }
+.page {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 26px 24px 8px;
+  transition: opacity 240ms var(--motion-ease-out-soft), transform 240ms var(--motion-ease-out-soft);
+}
+.page[data-hide='true'] { opacity: 0; transform: translateX(-14px); pointer-events: none; }
+.plate {
+  width: 148px; height: 148px; border-radius: 4px; padding: 9px;
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+}
+html[data-theme='dark'] .plate .art { background: #241a18; }
+.plate .art { width: 100%; height: 100%; border-radius: 2px; background: #e8ddd2; }
+.plate-no {
+  margin-top: 14px; font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.3em; text-indent: 0.3em; color: var(--zhu);
+}
+html[lang-en] .plate-no { letter-spacing: 0.14em; }
+.leaf-title { margin-top: 10px; font-family: var(--font-serif); font-size: 19px; font-weight: 600; color: var(--ink); }
+.empty-seal {
+  margin: auto 0;
+  padding: 10px 18px; border: 1px solid var(--zhu-dim); border-radius: 4px;
+  font-family: var(--font-serif); font-size: 13px; letter-spacing: 0.28em; text-indent: 0.28em;
+  color: var(--zhu); opacity: 0.78;
+}
+/* 目次页 */
+.toc { width: 100%; padding-top: 6px; }
+.toc .head {
+  font-family: var(--font-sans); font-size: 12px; letter-spacing: 0.3em; text-indent: 0.3em;
+  color: var(--ink-faint); display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+}
+.toc .head::before, .toc .head::after { content: ''; height: 1px; flex: 1; background: var(--rule); }
+.toc .head::before { max-width: 28px; background: var(--zhu); }
+.row {
+  display: flex; align-items: center; gap: 12px; padding: 11px 4px;
+  border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--ink-muted);
+}
+.row .no { font-family: var(--font-mono); font-size: 12px; color: var(--ink-ghost); }
+.row.cur { color: var(--zhu); }
+.row .dur { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--ink-ghost); }
+
+/* ============================================================
+   页缘翻页钮 —— 五个场景的受审对象
+   ============================================================ */
+.tickzone {
+  height: 52px; display: flex; align-items: center; justify-content: center;
+}
+/* —— 旧（现状对照）：18×2 刻度线 —— */
+.ticks-old { display: flex; gap: var(--space-sm); }
+.tick-old {
+  width: 18px; height: 2px; border-radius: 2px; border: none; cursor: pointer;
+  background: var(--hairline); opacity: 0.6; transform: scaleX(0.44); padding: 12px 8px;
+  background-clip: content-box; transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.tick-old[aria-current='true'] { background: var(--zhu); opacity: 1; transform: scaleX(1); }
+
+/* —— 构 A「笺题字钮」：mono 题签 + 朱砂下划标（最直白） —— */
+.ticks-a { display: flex; gap: 6px; }
+.tick-a {
+  position: relative; border: none; background: none; cursor: pointer;
+  padding: 14px 18px; font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: 0.28em; text-indent: 0.28em; color: var(--ink-faint);
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+html[lang-en] .tick-a { letter-spacing: 0.12em; text-indent: 0.12em; }
+.tick-a::after {
+  content: ''; position: absolute; left: 18px; right: 18px; bottom: 8px; height: 2px;
+  border-radius: 2px; background: var(--hairline);
+  transform: scaleX(0.44); opacity: 0.6; transform-origin: center;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.tick-a[aria-current='true'] { color: var(--zhu); }
+.tick-a[aria-current='true']::after { background: var(--zhu); transform: scaleX(1); opacity: 1; }
+
+/* —— 构 B「页码钤印」：当前页白文方印 + 对页淡墨页码（最印章） —— */
+.ticks-b { display: flex; align-items: center; gap: 22px; }
+.seal-b {
+  width: 26px; height: 26px; border-radius: 4px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--ink-ghost); background: none;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.seal-b[aria-current='true'] {
+  background: var(--zhu); color: var(--seal-text);
+  box-shadow: inset 0 0 0 1px var(--zhu), 0 2px 8px rgba(0,0,0,0.25);
+}
+.spine-b { width: 1px; height: 20px; background: var(--rule); }
+
+/* —— 构 C「翼标箭羽」：朱砂羽签 + 双翼箭羽 + 首开轻推（最方向） —— */
+.ticks-c { display: flex; align-items: center; gap: 10px; }
+.wing-c {
+  width: 30px; height: 30px; border: none; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-ghost); transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.wing-c:hover { color: var(--ink-faint); }
+.wing-c svg { display: block; }
+.feather-c {
+  width: 26px; height: 4px; border-radius: 4px; border: none; cursor: pointer; padding: 0;
+  background: var(--zhu); position: relative;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.feather-c::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px;
+  border-radius: 50%; transform: translate(-50%, -50%);
+  background: var(--paper);
+}
+.feather-c[data-pos='r'] { background: var(--hairline); transform: scaleX(0.5); }
+/* 首开轻推：一次性 hint（真实实现挂面板可见态 + reduced-motion 瞬切） */
+.ticks-c.hint .wing-c svg { animation: nudgeL 600ms var(--motion-ease-out-soft) 400ms 1 both; }
+.ticks-c.hint .wing-c:last-child svg { animation-name: nudgeR; }
+@keyframes nudgeL { 0%,100% { transform: translateX(0); } 45% { transform: translateX(-3px); } }
+@keyframes nudgeR { 0%,100% { transform: translateX(0); } 45% { transform: translateX(3px); } }
+
+/* —— 构 D「对页地图」：摊开对页俯瞰 + 朱砂界格包边（最密度） —— */
+.ticks-d { display: flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.half-d {
+  width: 96px; padding: 9px 0; border: none; cursor: pointer; position: relative;
+  font-family: var(--font-serif); font-size: 12px; letter-spacing: 0.24em; text-indent: 0.24em;
+  color: var(--ink-ghost); background: none;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.half-d + .half-d { border-left: 1px dashed var(--hairline); }
+.half-d[aria-current='true'] { color: var(--zhu); box-shadow: inset 0 0 0 1px var(--zhu-dim); background: rgba(201,74,68,0.05); }
+html[data-theme='dark'] .half-d[aria-current='true'] { background: rgba(227,106,100,0.07); }
+
+/* —— 构 E「点号」（用户拍板方向）：实心朱砂=当前 / 空心墨环=他页 —— */
+.ticks-e { display: flex; gap: 6px; }
+.dot-e {
+  border: none; background: none; cursor: pointer; position: relative;
+  padding: 13px 11px; border-radius: 50%;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.dot-e::before {
+  content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 7px; height: 7px; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-muted);
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.dot-e[aria-current='true']::before {
+  background: var(--zhu);
+  box-shadow: inset 0 0 0 1.5px var(--zhu), 0 0 0 3px var(--zhu-dim);
+}
+.dot-e:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; }
+
+/* ===== 场景 W：词窗三态（加载中 / 纯音乐 / 有词） ===== */
+.chipbar {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 5;
+}
+.chip {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+  padding: 5px 10px; border-radius: 999px; border: 1px solid var(--hairline);
+  background: none; color: var(--ink-faint); cursor: pointer; white-space: nowrap;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.chip.on { border-color: var(--zhu); color: var(--zhu); box-shadow: inset 0 0 0 1px var(--zhu-dim); }
+.wordstage {
+  flex: 1; align-self: stretch; position: relative;
+  margin: 10px 0 4px; min-height: 96px;
+  display: flex; align-items: center; justify-content: center;
+}
+/* 墨痕歌词（移动端提案）：词窗背后 2–3 列淡墨竖排回声——桌面五列两翼的移动收束版；
+   无词/加载中隐去（「无词自动隐去」语言），reduced-motion 真实实现瞬切 */
+.ghost { position: absolute; inset: -14px -4px; pointer-events: none; animation: ghostFade 600ms var(--motion-ease-out-soft) both; }
+@keyframes ghostFade { from { opacity: 0; } }
+.gcol {
+  position: absolute; top: 50%; left: var(--gx); transform: translateY(-50%);
+  writing-mode: vertical-rl; white-space: nowrap;
+  font-family: var(--font-serif); font-size: var(--gs, 24px); letter-spacing: 0.22em;
+  color: var(--ink); opacity: var(--go, 0.1);
+  -webkit-mask-image: linear-gradient(180deg, transparent, black 16%, black 84%, transparent);
+  mask-image: linear-gradient(180deg, transparent, black 16%, black 84%, transparent);
+}
+.wfront { position: relative; z-index: 1; }
+
+/* ===== 场景 K：墨流——动画只在背景墨柱，前景歌词正常展示无动画 ===== */
+.kfg-prev, .kfg-next {
+  font-family: var(--font-serif); font-size: 13px; line-height: 2;
+  letter-spacing: 0.2em; color: var(--ink-ghost); opacity: 0.6;
+}
+.kfg-cur {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 600;
+  line-height: 2.1; color: var(--ink); position: relative;
+}
+.kfg-cur::before {
+  content: ''; position: absolute; left: -18px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 15px; border-radius: 2px; background: var(--zhu);
+}
+.kprog { width: 148px; height: 2px; border-radius: 2px; background: var(--rule); margin: 18px auto 0; overflow: hidden; }
+.kprog i { display: block; height: 100%; width: 0%; background: var(--zhu); border-radius: 2px; transition: width 120ms linear; }
+.kghost { position: absolute; inset: -14px -4px; pointer-events: none; }
+.kghost .gcol { transition: opacity 140ms linear, filter 140ms linear; }
+/* 钤印进场：scale 1.18→1 按印入纸（400ms = --motion-dur-write 档）；
+   reduced-motion 真实实现瞬切（面板级 reducedMotion 已覆盖） */
+.sealbox {
+  padding: 10px 18px; border: 1px solid var(--zhu-dim); border-radius: 4px;
+  font-family: var(--font-serif); font-size: 13px; letter-spacing: 0.28em; text-indent: 0.28em;
+  color: var(--zhu);
+  animation: stampIn 400ms var(--motion-ease-out-soft) both;
+}
+@keyframes stampIn {
+  0% { opacity: 0; transform: scale(1.18); }
+  62% { opacity: 0.92; transform: scale(0.985); }
+  100% { opacity: 0.78; transform: scale(1); }
+}
+/* 有词：逐句书写显现（站内 writeIn 既有语言的缩影），当前句朱砂侧标 */
+.wline {
+  font-family: var(--font-serif); font-size: 14px; line-height: 2.15; text-align: center;
+  color: var(--ink-ghost); position: relative;
+  animation: writeIn 400ms var(--motion-ease-out-soft) both;
+}
+.wline.cur { color: var(--ink); font-size: 15px; font-weight: 600; }
+.wline.cur::before {
+  content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 14px; border-radius: 2px; background: var(--zhu);
+}
+@keyframes writeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* —— dock 上缘（进度行，上下文用） —— */
+.dock {
+  border-top: 1px solid var(--hairline); padding: 12px 16px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.dock .tc { font-family: var(--font-mono); font-size: 12px; color: var(--ink-ghost); }
+.track { flex: 1; height: 3px; border-radius: 3px; background: var(--rule); position: relative; }
+.track i { position: absolute; left: 0; top: 0; bottom: 0; width: 34%; border-radius: 3px; background: var(--zhu); }
+.seal { width: 15px; height: 15px; border-radius: 3px; background: var(--zhu); color: var(--seal-text);
+  font-size: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); }
+</style>
+</head>
+<body>
+  <div class="bar" id="scenes">
+    <button data-s='old'>旧 · 现状对照</button>
+    <button data-s='e'>E 点号</button>
+    <button data-s='w'>W 词窗三态</button>
+    <button data-s='k'>K 墨流</button>
+    <button data-s='a'>A 笺题字钮</button>
+    <button data-s='b'>B 页码钤印</button>
+    <button data-s='c'>C 翼标箭羽</button>
+    <button data-s='d'>D 对页地图</button>
+    <button id='lang'>EN</button>
+    <button id='theme'>明</button>
+  </div>
+  <p class='note' id='note'></p>
+
+  <div class='frame'>
+    <div class='screen'>
+      <div class='pages'>
+        <!-- 词页 -->
+        <div class='page' id='page-words'>
+          <div class='chipbar' id='chipbar' hidden>
+            <button class='chip on' data-w='load'>加载中</button>
+            <button class='chip' data-w='pure'>纯音乐</button>
+            <button class='chip' data-w='lines'>有词</button>
+            <button class='chip on' id='ghostchip'>墨痕 开</button>
+          </div>
+          <div class='chipbar' id='kbar' hidden>
+            <button class='chip on' id='ghostsw'>墨痕 动画</button>
+            <button class='chip on' id='kplay'>暂停</button>
+          </div>
+          <div class='plate'><div class='art'></div></div>
+          <div class='plate-no'>曲 · 02 / 10</div>
+          <div class='leaf-title'>燕无歇</div>
+          <div class='empty-seal'>全体欣赏音乐</div>
+          <div class='wordstage' id='wordstage' hidden></div>
+        </div>
+        <!-- 目次页 -->
+        <div class='page' id='page-queue' data-hide='true'>
+          <div class='toc'>
+            <div class='head' data-i18n='toc'>目 次</div>
+            <div class='row'><span class='no'>01</span>风月缠绵<span class='dur'>03:21</span></div>
+            <div class='row cur'><span class='no'>02</span>燕无歇<span class='dur'>03:21</span></div>
+            <div class='row'><span class='no'>03</span>爱意（金风玉露变奏）<span class='dur'>02:19</span></div>
+            <div class='row'><span class='no'>04</span>座位<span class='dur'>03:28</span></div>
+            <div class='row'><span class='no'>05</span>素颜<span class='dur'>03:58</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 受审对象：五构同位替换（空间承诺—— dock 永不挪位） -->
+      <div class='tickzone' id='tickzone'></div>
+
+      <div class='dock'>
+        <span class='tc'>00:24</span>
+        <div class='track'><i></i></div>
+        <span class='seal'>樂</span>
+        <span class='tc'>03:21</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ===== 词典（真实实现走 t()；key 提案见 note） ===== */
+const I18N = {
+  zh: { words: '词页', queue: '目次', toc: '目 次', note: {} },
+  en: { words: 'Words', queue: 'Queue', toc: 'INDEX', note: {} },
+}
+let lang = 'zh'
+
+const NOTES = {
+  old: "<b>旧 · 现状对照</b> — 18×2 刻度线，未选中 scaleX(.44)+opacity .6：无「可点」之形、无「去哪」之义、无「还有一页」之向。",
+  e: "<b>E 点号 · 用户拍板方向</b> — 激活=实心朱砂点+微印晕，未激活=空心墨环；点间 gap 6px、触控目标 ~35px；150ms quick 渐变无位移。已转译进印/墨语言（朱砂/淡墨、印晕），非通用灰点轮播。跨语言零翻译成本。",
+  w: "<b>W 词窗三态 · 加载中 / 纯音乐 / 有词</b> — 加载中=「全体欣赏音乐」钤印进场（400ms write 档：scale 1.18→1 按印入纸，reduced-motion 瞬切）；纯音乐=「纯音乐 · 请欣赏」同印框、换态走重挂载重钤（换景渐变纪律，禁闪切）；有词=逐句 writeIn 书写显现（站内既有语言）。点上排 chip 感受重钤。<b>决策点：桌面题跋「暂无歌词」纯文字行是否一并统一为印语言。</b>",
+  k: "<b>K 墨流 · 动画只在背景墨柱（讨论稿）</b> — <b>前景歌词正常展示、无任何动画</b>（上/当前/下句静态窗口）；背景墨柱跟随播放进度走水墨生命期：<b>入墨</b>（句起 25% 进度：scale .72→1、blur 6→0 晕开锐化）→ <b>定影</b>（句中：墨迹缓洇 scale→1.05）→ <b>化墨</b>（句尾 28%：blur 烟散 + 上浮淡出）。顶部细线=句内进度；「暂停」冻结在当前帧（暂停停走）；「墨痕 关」对比素版。reduced-motion 真实实现瞬切（整层静止淡墨）。",
+  a: "<b>A 笺题字钮 · 最直白</b> — 刻度换 mono 题签「词页 / 目次」（ PlateNo 题签语言同族），选中=朱砂字+下划标（站内选中语言）。一眼可读可点、点哪去哪。需新增词典 key（player.panel.pageWords/pageQueue）；en 走 Words/Queue 字距降档。",
+  b: "<b>B 页码钤印 · 最印章</b> — 当前页=白文方印（樂/卷/詞印家族的页缘小钤），对页=淡墨页码，中缝书脊线。语言纯印章、跨语言零翻译成本；但「1/2」不直说去哪，语义最含蓄。",
+  c: "<b>C 翼标箭羽 · 最方向</b> — 朱砂羽签（现刻度升级）+ 双翼箭羽暗示横翻，首开轻推一次（reduced-motion 瞬切、播放暂停不停走纪律不涉及——一次性 hint 不随播放）。方向感最强；箭羽为图形、跨语言不变量。",
+  d: "<b>D 对页地图 · 最密度</b> — 摊开对页俯瞰：双格题字「词 / 目」，当前格朱砂界格包边。既显当前也显他页；衬线题字需新词典 key；格宽 96px 对 en「Words/Queue」安全。",
+}
+
+const tickzone = document.getElementById('tickzone')
+const notes = document.getElementById('note')
+
+/* 各构渲染器：返回 (page)=>void 的挂载函数；激活态一律行内自定义属性/aria（免疫机制同真实现） */
+const RENDER = {
+  old(mount) {
+    tickzone.innerHTML = `<div class='ticks-old'>
+      <button class='tick-old' data-p='words' aria-label='歌词页'></button>
+      <button class='tick-old' data-p='queue' aria-label='播放列表页'></button></div>`
+  },
+  e(mount) {
+    tickzone.innerHTML = `<div class='ticks-e'>
+      <button class='dot-e' data-p='words' aria-label='歌词页'></button>
+      <button class='dot-e' data-p='queue' aria-label='播放列表页'></button></div>`
+  },
+  w(mount) {
+    // 词窗三态场景：页缘钮沿用 E 点号（受审对象是词窗区，见 chipbar）
+    RENDER.e(mount)
+  },
+  k(mount) {
+    // 墨流场景：页缘钮沿用 E 点号（受审对象是当前句水墨生命期，见 kbar）
+    RENDER.e(mount)
+  },
+  a(mount) {
+    tickzone.innerHTML = `<div class='ticks-a'>
+      <button class='tick-a' data-p='words'></button>
+      <button class='tick-a' data-p='queue'></button></div>`
+  },
+  b(mount) {
+    tickzone.innerHTML = `<div class='ticks-b'>
+      <button class='seal-b' data-p='words' aria-label='歌词页 · 第 1 页'>一</button>
+      <span class='spine-b'></span>
+      <button class='seal-b' data-p='queue' aria-label='播放列表页 · 第 2 页'>二</button></div>`
+  },
+  c(mount) {
+    tickzone.innerHTML = `<div class='ticks-c hint'>
+      <button class='wing-c' data-p='words' aria-label='上一页（歌词页）'>
+        <svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M8 1.5 L3.5 6 L8 10.5' stroke='currentColor' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button>
+      <button class='feather-c' data-p='words' aria-label='歌词页'></button>
+      <button class='feather-c' data-p='queue' aria-label='播放列表页' data-pos='r'></button>
+      <button class='wing-c' data-p='queue' aria-label='下一页（播放列表页）'>
+        <svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M4 1.5 L8.5 6 L4 10.5' stroke='currentColor' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div>`
+  },
+  d(mount) {
+    tickzone.innerHTML = `<div class='ticks-d'>
+      <button class='half-d' data-p='words'></button>
+      <button class='half-d' data-p='queue'></button></div>`
+  },
+}
+
+let scene = 'a'
+let page = 'words'
+
+function label(p) { return I18N[lang][p] }
+
+function renderTicks() {
+  RENDER[scene]()
+  tickzone.querySelectorAll('[data-p]').forEach((btn) => {
+    btn.addEventListener('click', () => goto(btn.dataset.p))
+  })
+  paint()
+}
+
+function paint() {
+  // 内容对页切换
+  document.getElementById('page-words').dataset.hide = page !== 'words'
+  document.getElementById('page-queue').dataset.hide = page !== 'queue'
+  // 受审对象激活态（aria-current + 行内自定义属性——与真实现同机制）
+  tickzone.querySelectorAll('[data-p]').forEach((btn) => {
+    const on = btn.dataset.p === page
+    if (on) btn.setAttribute('aria-current', 'true')
+    else btn.removeAttribute('aria-current')
+    if (btn.classList.contains('tick-a')) {
+      btn.textContent = label(btn.dataset.p)
+      btn.style.setProperty('--tick-line', on ? 'var(--zhu)' : '')
+    }
+    if (btn.classList.contains('half-d')) btn.textContent = label(btn.dataset.p)
+    if (btn.classList.contains('feather-c')) btn.style.opacity = on ? '1' : ''
+    if (btn.classList.contains('feather-c') && !on) btn.setAttribute('data-pos', 'r')
+    else if (btn.classList.contains('feather-c')) btn.removeAttribute('data-pos')
+  })
+  // 场景头词（目次眉标）
+  document.querySelector('[data-i18n="toc"]').textContent = I18N[lang].toc
+}
+
+function goto(p) {
+  page = p
+  paint()
+}
+
+/* ===== 场景 W：词窗三态（重挂载 = 动画重放，换景渐变纪律） ===== */
+const WORD_LINES =
+  `<div class='wline'>月光洒在窗台上</div>` +
+  `<div class='wline cur' style='animation-delay:120ms'>夜风翻动书页响</div>` +
+  `<div class='wline' style='animation-delay:240ms'>谁在灯下轻轻唱</div>`
+/* 移动端墨痕：3 列淡墨（当前句列 + 两翼回声），站位为词窗区百分比（桌面五站锚点的移动收束） */
+const GHOST_HTML =
+  `<div class='ghost' aria-hidden='true'>` +
+  `<span class='gcol' style='--gx: 8%; --go: 0.15; --gs: 25px'>夜风翻动书页响</span>` +
+  `<span class='gcol' style='--gx: 80%; --go: 0.07; --gs: 21px'>月光洒在窗台上</span>` +
+  `<span class='gcol' style='--gx: 62%; --go: 0.05; --gs: 19px'>谁在灯下轻轻唱</span>` +
+  `</div>`
+const WORD_STATES = {
+  load: `<div class='sealbox'>全体欣赏音乐</div>`,
+  pure: `<div class='sealbox'>纯音乐 · 请欣赏</div>`,
+  lines: `<div class='wfront'>${WORD_LINES}</div>`,
+}
+let wordState = 'load'
+let ghostOn = true
+
+function renderWordStage() {
+  // 墨痕只在有词态铺底（「无词自动隐去」语言）；重挂载 = 动画重放
+  const ghost = wordState === 'lines' && ghostOn ? GHOST_HTML : ''
+  document.getElementById('wordstage').innerHTML = ghost + WORD_STATES[wordState]
+}
+
+function applyWordScene(on) {
+  document.getElementById('chipbar').hidden = !on
+  document.querySelector('#page-words .empty-seal').style.display = on ? 'none' : ''
+  if (on) renderWordStage()
+}
+
+function applyKScene(on) {
+  document.getElementById('kbar').hidden = !on
+  document.querySelector('#page-words .empty-seal').style.display = on ? 'none' : ''
+  if (on) kStart()
+  else kStop()
+}
+
+document.querySelectorAll('#chipbar .chip').forEach((c) =>
+  c.addEventListener('click', () => {
+    if (c.id === 'ghostchip') {
+      ghostOn = !ghostOn
+      c.textContent = ghostOn ? '墨痕 开' : '墨痕 关'
+      c.classList.toggle('on', ghostOn)
+      renderWordStage()
+      return
+    }
+    wordState = c.dataset.w
+    document.querySelectorAll('#chipbar .chip[data-w]').forEach((x) => x.classList.toggle('on', x === c))
+    renderWordStage()
+  }))
+
+/* ===== 场景 K：墨流引擎——前景正常展示，背景墨柱随播放进度入墨→定影→化墨 ===== */
+const K_LINES = ['月光洒在窗台上', '夜风翻动书页响', '谁在灯下轻轻唱', '一盏灯温着旧时光']
+const K_GX = ['6%', '84%', '64%', '22%']
+const K_GS = ['25px', '21px', '19px', '23px']
+const K_TENURE = 2800
+let kGhostOn = true
+let kPlaying = true
+let kTimer = null
+let kElapsed = 0
+let kIdx = 0
+
+function kBuildStage() {
+  const cols = K_LINES.map((t, i) =>
+    `<span class='gcol' style='--gx: ${K_GX[i]}; --go: 0.06; --gs: ${K_GS[i]}'>${t}</span>`).join('')
+  document.getElementById('wordstage').innerHTML =
+    `<div class='kghost' aria-hidden='true' style='position:absolute;inset:-14px -4px;pointer-events:none'>${cols}</div>` +
+    `<div class='wfront' style='text-align:center'>` +
+    `<div class='kfg-prev'></div><div class='kfg-cur'></div><div class='kfg-next'></div>` +
+    `<div class='kprog'><i id='kfill'></i></div></div>`
+}
+
+function kPaintTexts() {
+  const n = K_LINES.length
+  document.querySelector('.kfg-prev').textContent = K_LINES[(kIdx + n - 1) % n]
+  document.querySelector('.kfg-cur').textContent = K_LINES[kIdx]
+  document.querySelector('.kfg-next').textContent = K_LINES[(kIdx + 1) % n]
+}
+
+/* 背景墨柱生命期（跟随播放进度）：入墨(frac 0–.25) 晕开锐化 → 定影(.25–.72) 墨迹缓洇 → 化墨(.72–1) 烟散上浮；
+   前景歌词不参与任何动画。暂停 = tick 停走，样式停在最后写入帧 */
+function kPaintColumns() {
+  const cols = document.querySelectorAll('.kghost .gcol')
+  const frac = kElapsed / K_TENURE
+  cols.forEach((c, i) => {
+    if (!kGhostOn || i !== kIdx) {
+      c.style.opacity = kGhostOn ? '' : '0'
+      c.style.filter = ''
+      c.style.transform = ''
+      return
+    }
+    let o, s, b, ty
+    if (frac < 0.25) {
+      const t = frac / 0.25
+      o = 0.04 + t * 0.14; s = 0.72 + t * 0.28; b = 6 * (1 - t); ty = 0
+    } else if (frac < 0.72) {
+      const t = (frac - 0.25) / 0.47
+      o = 0.18 - t * 0.03; s = 1 + t * 0.05; b = 0; ty = 0
+    } else {
+      const t = (frac - 0.72) / 0.28
+      o = 0.15 * (1 - t); s = 1.05 + t * 0.05; b = 10 * t; ty = -10 * t
+    }
+    c.style.opacity = o
+    c.style.transform = `translateY(-50%) scale(${s.toFixed(3)}) translateY(${ty.toFixed(1)}px)`
+    c.style.filter = `blur(${b.toFixed(1)}px)`
+  })
+}
+
+function kTick() {
+  if (!kPlaying) return
+  kElapsed += 80
+  if (kElapsed >= K_TENURE) {
+    kIdx = (kIdx + 1) % K_LINES.length
+    kElapsed = 0
+    kPaintTexts()
+  }
+  const fill = document.getElementById('kfill')
+  if (fill) fill.style.width = (kElapsed / K_TENURE) * 100 + '%'
+  kPaintColumns()
+}
+
+function kSetPlaying(p) {
+  kPlaying = p
+  const btn = document.getElementById('kplay')
+  btn.textContent = p ? '暂停' : '播放'
+  btn.classList.toggle('on', p)
+}
+
+function kStart() {
+  kStop()
+  kIdx = 0
+  kElapsed = 0
+  kBuildStage()
+  kPaintTexts()
+  kPaintColumns()
+  kTimer = setInterval(kTick, 80)
+}
+
+function kStop() {
+  if (kTimer) { clearInterval(kTimer); kTimer = null }
+}
+
+document.querySelectorAll('#kbar .chip').forEach((c) =>
+  c.addEventListener('click', () => {
+    if (c.id === 'ghostsw') {
+      kGhostOn = !kGhostOn
+      c.textContent = kGhostOn ? '墨痕 动画' : '墨痕 关'
+      c.classList.toggle('on', kGhostOn)
+      kPaintColumns()
+      return
+    }
+    if (c.id === 'kplay') { kSetPlaying(!kPlaying); return }
+  }))
+
+/* ===== 场景 K 结束 ===== */
+
+function setScene(s) {
+  scene = s
+  notes.innerHTML = NOTES[s]
+  document.querySelectorAll('#scenes button[data-s]').forEach((b) =>
+    b.classList.toggle('on', b.dataset.s === s))
+  renderTicks()
+  applyWordScene(s === 'w')
+  applyKScene(s === 'k')
+  // wordstage 由 W/K 两场景共享，显隐在此统一裁决
+  document.getElementById('wordstage').hidden = !(s === 'w' || s === 'k')
+}
+
+document.querySelectorAll('#scenes button[data-s]').forEach((b) =>
+  b.addEventListener('click', () => setScene(b.dataset.s)))
+
+document.getElementById('lang').addEventListener('click', (e) => {
+  lang = lang === 'zh' ? 'en' : 'zh'
+  document.documentElement.toggleAttribute('lang-en', lang === 'en')
+  e.target.textContent = lang === 'zh' ? 'EN' : '中'
+  paint()
+})
+
+document.getElementById('theme').addEventListener('click', (e) => {
+  const html = document.documentElement
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark'
+  html.dataset.theme = next
+  e.target.textContent = next === 'dark' ? '明' : '暗'
+})
+
+/* 入口：默认暗色 + 构 E（用户拍板方向）；?scene= 直达 */
+const params = new URLSearchParams(location.search)
+document.documentElement.dataset.theme = 'dark'
+setScene(params.get('scene') || 'e')
+</script>
+</body>
+</html>

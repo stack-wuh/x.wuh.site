@@ -455,6 +455,7 @@ export const AudioPlayerPanel = () => {
           seek={seek}
           playTrack={playTrack}
           playing={playing}
+          progress={state.progress}
           onDragStart={onDragTouchStart}
           onDragMove={onDragTouchMove}
           onDragEnd={onDragTouchEnd}
