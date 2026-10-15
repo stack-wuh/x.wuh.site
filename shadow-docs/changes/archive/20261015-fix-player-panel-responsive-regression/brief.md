@@ -4,7 +4,7 @@
   "name": "20261015-fix-player-panel-responsive-regression",
   "type": "fix",
   "scope": "components",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261015-fix-player-panel-responsive-regression",
   "files": [
@@ -21,13 +21,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "33fcc002dfdafc71565259ebb8749447313107f9",
-    "verifiedAt": "2026-10-15T11:12:30.345Z"
+    "verifiedCommit": "9fa1d4fe4e02b6cad23075911c4d76eb49a34408",
+    "verifiedAt": "2026-10-15T11:34:00.581Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:545",
-    "planHash": "d9c276251ba47aca89215ebc110b82ad2b5ff039cb14cd1d1eb94aff4d6cb345",
+    "checkpoint": "merged-pr:545",
+    "planHash": "f848e6d44bacd4b62c11a950b84c4a6131ce7fc54b00947880227d7f2a83d822",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -58,7 +58,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/layout-components.md",
-    "reason": "批次 7 收编段补记「responsive 首槽缺位 → 编译口整体返回空串」生产回归教训（#543）：两档槽迁移时移动独显组件的桌面隐藏写回必须以已定义首槽编码（display 入 base 槽），禁首槽 undefined 形态；守卫台账增两条语义断言（全仓首槽缺位扫描 + 四组件真编译口产物探针），发布后刷新 verified。"
+    "reason": "批次 7 收编段补记「responsive 首槽缺位 → 编译口整体返回空串」生产回归教训（#543）：两档槽迁移时移动独显组件的桌面隐藏写回必须以已定义首槽编码（display 入 base 槽），禁首槽 undefined 形态；守卫台账增两条语义断言（全仓首槽缺位扫描 + 四组件真编译口产物探针），发布后刷新 verified。已随 PR #545 合入 main（9fa1d4f），卡片回写在位。"
   }
 }
 ---
