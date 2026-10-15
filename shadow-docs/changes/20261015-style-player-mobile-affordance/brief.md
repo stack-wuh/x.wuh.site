@@ -4,7 +4,7 @@
   "name": "20261015-style-player-mobile-affordance",
   "type": "style",
   "scope": "components",
-  "status": "reviewed",
+  "status": "committed",
   "baseBranch": "fix/20261015-fix-player-panel-responsive-regression",
   "branch": "style/20261015-style-player-mobile-affordance",
   "files": [
@@ -33,7 +33,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "783dc68291a74c28fe90d3a964deec817ca35e5a",
+    "checkpoint": "33123c892d17893379d7c8b941603aa14e98023c",
     "planHash": "2bc95c5493f506a1feeb1a0d744460215305d7ec212a83af5e6041d590f51bd1",
     "updatedAt": null,
     "lastError": null,
