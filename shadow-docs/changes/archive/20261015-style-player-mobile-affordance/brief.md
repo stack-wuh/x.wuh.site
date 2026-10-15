@@ -4,7 +4,7 @@
   "name": "20261015-style-player-mobile-affordance",
   "type": "style",
   "scope": "components",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "fix/20261015-fix-player-panel-responsive-regression",
   "branch": "style/20261015-style-player-mobile-affordance",
   "files": [
@@ -28,13 +28,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "eed8452b5ff272b5f6f4f702916a20cc7c28d0fa",
-    "verifiedAt": "2026-10-15T10:22:38.684Z"
+    "verifiedCommit": "07ee1064048242ff1a1b81ec29724c766782eaf9",
+    "verifiedAt": "2026-10-15T11:34:57.917Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:546",
-    "planHash": "60073a3d5affa822e96035acbbf95c25de87a60bbdf28040503d699c1327adf2",
+    "checkpoint": "merged-pr:546",
+    "planHash": "fc81885d3140cebb0d6cc41b827da799ae3321f7df2fed4a867180487835e32d",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -64,7 +64,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "移动册页定稿显式修订（页缘点号/词窗三态钤印/移动墨柱/词窗居中）与三段式墨柱生命期均为长期形态事实，交付后须回写 music-player.md 对应段落并补 verified-depth=runtime（mock 后端全链路目检：三态切换/墨柱随播演化/暂停冻结/点号双态实测）；桌面五列两翼与留白独奏形态不变。另记实现偏差：词窗三态解析信号未按 brief 扩契约（types/provider 零改动），以既有 currentTrack.streamUrl 就位信号满足——原子性与向后兼容优于预设方案。"
+    "reason": "移动册页定稿显式修订（页缘点号/词窗三态钤印/移动墨柱/词窗居中）与三段式墨柱生命期已回写 music-player.md 并补 verified（mock 后端 runtime 实测：三态/墨柱随播演化/暂停冻结/点号双态）；桌面五列两翼与留白独奏形态不变；已随 PR #546/#545 合入 main。实现偏差记录：三态解析信号取既有 currentTrack.streamUrl，契约零扩展。"
   }
 }
 ---
