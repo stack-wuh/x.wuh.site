@@ -102,6 +102,27 @@ test('阶梯边界不受扩编影响：RESPONSIVE_LADDER 仍由 BREAKPOINTS 派�
   assert.equal(RAW_MEDIA.test(src.replace(/\$\{[^}]*\}/g, 'V')), false, 'responsive.ts 本体不得出现裸数值 @media')
 })
 
+test('responsive() 调用首槽必已定义：编译口对缺位首槽返回空声明、上档写回全丢（change 20261015-fix-player-panel-responsive-regression）', () => {
+  // 编译口契约：base 槽缺位 → 整体返回空串（responsive.ts 显式兜底）。任何「mobile-only
+  // 在桌面隐藏」写成首槽缺位数组，其上档 display 写回从不发射——失效无报错，只能靠本扫描拦。
+  const offenders = []
+  for (const file of allFiles) {
+    const src = readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
+    for (const m of src.matchAll(/\bresponsive\s*\(/g)) {
+      let i = m.index + m[0].length
+      while (i < src.length && /\s/.test(src[i])) i += 1
+      if (src[i] !== '[') continue
+      i += 1
+      while (i < src.length && /\s/.test(src[i])) i += 1
+      if (src.startsWith('undefined', i) || src[i] === ',') {
+        const line = src.slice(0, m.index).split('\n').length
+        offenders.push(`${file.split(/[\\/]/).slice(-3).join('/')}:${line}`)
+      }
+    }
+  }
+  assert.deepEqual(offenders, [], `responsive 首槽缺位 ${offenders.length} 处（上档写回静默丢失）：\n${offenders.join('\n')}`)
+})
+
 test('site+组件保留项注记与常量双在位：post/SiteHeader/guestbook/pagination/cssVariableProvider/link-group/image-preview/audio-player 保留块', () => {
   const retained = [
     'apps/site/app/post/styles/post-floating.ts',

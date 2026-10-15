@@ -16,7 +16,6 @@ export const GrabHandle = styled.div`
   z-index: 6;
   width: 48px;
   height: 24px;
-  display: flex;
   align-items: center;
   justify-content: center;
   touch-action: none;
@@ -30,16 +29,16 @@ export const GrabHandle = styled.div`
     background: color-mix(in oklab, var(--text-color) 22%, transparent);
   }
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 /* 横翻对页容器：scroll-snap 手势翻页；页缘翻页钮（PageTicks）是键盘/读屏等价路径。
-   移动独显：块内声明按备忘⑬惰性判据直落 base（grid-area/滚动容器声明桌面惰性无回退税） */
+   移动独显：display 走阶梯两档（base 显 / md 槽隐——首槽缺位会让编译口整体返回空串、
+   桌面写回静默丢失，20261015 生产回归）；其余块内声明按备忘⑬惰性判据直落 base */
 export const LeafPages = styled.div`
   grid-area: pages;
   position: relative;
   z-index: 1;
-  display: flex;
   min-height: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -50,20 +49,19 @@ export const LeafPages = styled.div`
     display: none;
   }
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 export const LeafPage = styled.section`
   flex: 0 0 100%;
   min-width: 0;
-  display: flex;
   flex-direction: column;
   overflow: hidden;
   padding: 0 var(--space-base);
   scroll-snap-align: start;
   scroll-snap-stop: always;
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 /* 装裱图版：纸框发丝线 + 纸边；图面也是下滑关闭的拖拽面 */
@@ -202,13 +200,12 @@ export const PageTicks = styled.div`
   grid-area: ticks;
   position: relative;
   z-index: 1;
-  display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
   padding: 2px 0 6px;
 
-  ${responsive([undefined, undefined, 'display: none;'], (v) => v)}
+  ${responsive(['display: flex;', undefined, 'display: none;'], (v) => v)}
 `
 
 export const PageTick = styled.button`

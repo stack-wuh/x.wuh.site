@@ -3,7 +3,20 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { registerHooks } from 'node:module'
 import { PANEL_SOURCES, readPanelSource } from './panel-sources.mjs'
+
+// node 原生 type stripping 不重写无扩展名 import（responsive.ts 内部引 ./breakpoints），
+// 注册解析钩子补 .ts 后缀——四组件显隐探针直接消费真编译口（themes/responsive.test.mjs 同款机制）。
+registerHooks({
+  resolve (specifier, context, next) {
+    if (specifier.startsWith('./') && !/\.[a-z]+$/i.test(specifier)) {
+      return next(new URL(`${specifier}.ts`, context.parentURL).href, context)
+    }
+    return next(specifier, context)
+  },
+})
+const { RESPONSIVE_LADDER, responsive } = await import('../themes/responsive.ts')
 
 // 播放器样式纪律门禁（shadow-docs/knowledge/design-system.md + norms/ui-patterns.md）：
 // 颜色只走主题变量、断点只用 BREAKPOINTS 语义常量、动效不碰布局属性、
@@ -347,4 +360,30 @@ test('封面碟化：黑胶圆碟 + 播放随转/暂停冻结（20261002 定稿�
   assert.match(plateBlock, /animation-play-state:\s*\$\{\(p\) => \(p\.\$playing/, '碟旋转未接播放态')
   // reduced-motion 静止（面板级 reducedMotion 之外的局部双保险）
   assert.match(plateBlock, /prefers-reduced-motion[\s\S]*?animation: none/, '碟旋转缺 reduced-motion 降级')
+})
+
+test('移动独显四组件显隐：基线 display:flex + 桌面档 display:none 写回（经真编译口断言产物，INV-2）', () => {
+  // 编译口对首槽缺位返回空串（responsive.ts 显式兜底）——20261015 生产回归根因：
+  // GrabHandle/LeafPages/LeafPage/PageTicks 的桌面隐藏从不发射，移动册页在桌面全量渲染。
+  // 探针提取四组件的阶梯数组实参喂给真 responsive()，断言编译产物语义，不做正则镜像。
+  const source = readSource('panel/styles/mobile.tsx')
+  const mdMedia = `@media (min-width: ${RESPONSIVE_LADDER[1]}px)`
+  for (const name of ['GrabHandle', 'LeafPages', 'LeafPage', 'PageTicks']) {
+    const start = source.indexOf(`export const ${name} =`)
+    assert.notEqual(start, -1, `mobile.tsx 缺组件 ${name}`)
+    const end = source.indexOf('export const', start + 1)
+    const block = source.slice(start, end === -1 ? source.length : end)
+    const call = block.match(/responsive\(\s*(\[[\s\S]*?\])\s*,/)
+    assert.ok(call, `${name} 缺 responsive 阶梯数组`)
+    const slots = new Function(`return ${call[1]}`)()
+    const compiled = responsive(slots, (v) => v)
+    assert.match(compiled, /display:\s*flex/, `${name} 基线档应有 display: flex（移动独显）`)
+    const mdIdx = compiled.indexOf(mdMedia)
+    assert.notEqual(mdIdx, -1, `${name} 编译产物缺桌面档媒体块（${mdMedia}）——首槽缺位或阶梯错位`)
+    assert.match(
+      compiled.slice(mdIdx),
+      /display:\s*none/,
+      `${name} 桌面档媒体块内缺 display: none 写回——移动册页将在桌面泄漏`,
+    )
+  }
 })
