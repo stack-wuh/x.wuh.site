@@ -27,7 +27,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "31af9aa1411db7200a6a004a313a7b6c0fdc76e4",
-    "planHash": "b75e860ee56f8d355a852d25ffb7f193a5a16af954194984b3109b84e947e104",
+    "planHash": "12d09efb6a293e1ccec58130f8892c6b769dde0ecd1f7f94c7dc4e00a9dfdc92",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -41,10 +41,9 @@
     },
     "commit": {
       "files": [
-        "shadow-docs/changes/20260903-feature-notion-publisher/brief.md",
         "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md"
       ],
-      "message": "docs(shadow): fix brief 改判 L 级补先红记录与 INV 对账表；notion-publisher 门前遗留提案补评级过契约门 (#543)"
+      "message": "docs(shadow): 移除误入 brief 的发布阶段任务位（交付发布属 release 阶段，团队惯例不占 brief 任务位）(#543)"
     }
   }
 }
@@ -100,7 +99,6 @@ v1.4.86（PR #542）批次 7 响应式收编把 `panel/styles/mobile.tsx` 四处
 ### Phase 3 验证与交付
 - [x] 守卫网回归：responsive/flex/style/player-panel/mini-player/wiring 全绿 + 根 tsc + lint:next + build:next
 - [x] runtime 双断点目检：桌面视口「留白独奏」形态（无拖拽柄/册页/页缘钮，翻页屏 hover 与 pinned 正常）、移动视口册页形态（拖拽柄/横翻/页缘钮在场）、词卷展开态
-- [ ] 交付发布 v1.4.87（release 阶段第 4 步，部署链全绿后方可归档）
 
 ## 结果
 
