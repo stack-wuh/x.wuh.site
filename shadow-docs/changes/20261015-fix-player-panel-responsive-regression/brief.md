@@ -4,7 +4,7 @@
   "name": "20261015-fix-player-panel-responsive-regression",
   "type": "fix",
   "scope": "components",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261015-fix-player-panel-responsive-regression",
   "files": [
@@ -16,8 +16,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 543,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/543",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 545,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/545"
   },
   "review": {
     "conclusion": "passed",
@@ -26,7 +26,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "3c83bc15a2fd11017b3f9a90dbaa7fd7ab8b44dc",
+    "checkpoint": "pr:545",
     "planHash": "15b92462f86dd9715ebdbd74e3d0ab9515b8c26820ece346b96ef535f141acbe",
     "updatedAt": null,
     "lastError": null,
