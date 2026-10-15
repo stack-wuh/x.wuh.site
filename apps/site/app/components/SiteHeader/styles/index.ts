@@ -397,8 +397,8 @@ export const ThemeIcon = styled.span`
   color: var(--primary-color);
 `
 
-/* 语言三段：与「明暗」行同一分段语言（发丝线分隔 + 渐隐下划线选中），中｜英｜日平铺直选。
-   自称名为跨语言不变量（中/英/日），不进词典 */
+/* 语言三段：与「明暗」行同一分段语言（发丝线分隔 + 渐隐下划线选中），中｜EN｜日本語平铺直选。
+   自称名为跨语言不变量（中/EN/日本語），不进词典 */
 export const LanguageOptions = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
