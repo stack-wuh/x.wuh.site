@@ -4,7 +4,7 @@
   "name": "20261015-fix-player-panel-responsive-regression",
   "type": "fix",
   "scope": "components",
-  "status": "branched",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261015-fix-player-panel-responsive-regression",
   "files": [
@@ -26,7 +26,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:543",
+    "checkpoint": "761d9d260c74f1d1c4a978dca8e9570c530cd4ef",
     "planHash": "751ac9ab031aad9bbd0888268049118027cbd1d7a437d1493834ba3a3cb43ba0",
     "updatedAt": null,
     "lastError": null,
