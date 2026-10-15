@@ -34,7 +34,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "pr:546",
-    "planHash": "90433e858de290a6987eefba2bdd1260d664ee28c8ca8fc3b164464ef15bd762",
+    "planHash": "abd9c846c11a8a28767fe94f2bf0e83baf7022a0036d31a80f4f7651767851b8",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -57,11 +57,9 @@
     },
     "release": {
       "files": [
-        "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md",
-        "shadow-docs/changes/20261015-style-player-mobile-affordance/brief.md",
-        "shadow-docs/knowledge/layout-components.md"
+        "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md"
       ],
-      "message": "docs(shadow): fix brief 终态同步与叠层对齐——review 钉正随 style 发布 (#543, #544)",
+      "message": "docs(shadow): fix brief 终态同步（review 钉正 + published 回写）随叠层对齐 (#543)",
       "title": "style(components): 播放器移动端启示性打磨——页缘点号/词窗三态钤印/移动墨流",
       "body": "## 变更\n- 页缘翻页钮改点号：激活实心朱砂+印晕、未激活空心墨环（行内 --tick-* 自定义属性驱动）\n- 词窗三态：加载中「全体欣赏音乐」钤印进场（stampIn 400ms）/ 纯音乐「纯音乐 · 请欣赏」（新词典 key）/ 有词正常展示\n- 移动墨流：前景歌词零动画，背景 4 列墨柱随句内进度走「入墨→定影→化墨」生命期（暂停冻结）\n- 词窗布局：锚底改紧跟题名 + 剩余空间垂直居中\n\n## 影响\n- 行为/触发面变化：移动端播放面板启示性形态（桌面留白独奏与五列两翼墨痕不受影响）\n- 明确不受影响的范围：组件公开契约零扩展（三态解析信号取既有 currentTrack.streamUrl）；桌面几何参数未变\n\n## 验证\n- 命令与结果：域套件+断点扫描 68/68 绿；根 tsc RC=0；oxlint 0/0；next build RC=0\n- 未覆盖项：wiring 套件 3 项 main 既有红（#517 起过期镜像守卫，与两变更均无关）；墨柱生命期为 mock 后端实测（三态切换/opacity 0.171→0.162 演化/暂停冻结 0.161/点号双态 computed），生产复验随部署\n\n## 关联\n- Closes #544\n- brief: shadow-docs/changes/20261015-style-player-mobile-affordance/brief.md"
     }
