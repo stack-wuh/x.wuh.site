@@ -42,11 +42,11 @@ const SCHEME_OPTIONS: Array<{ value: ColorSchemeMode; labelKey: string }> = [
   { value: 'dark', labelKey: 'site.appearance.dark' },
 ]
 
-/** 界面语言三选平铺（中｜英｜日直选）；自称名为跨语言不变量，不进词典。 */
+/** 界面语言三选平铺（中｜EN｜日本語直选）；自称名为跨语言不变量，不进词典。 */
 const LANGUAGE_OPTIONS: Array<{ value: Locale; label: string }> = [
   { value: 'zh', label: '中' },
-  { value: 'en', label: '英' },
-  { value: 'ja', label: '日' },
+  { value: 'en', label: 'EN' },
+  { value: 'ja', label: '日本語' },
 ]
 
 /**
