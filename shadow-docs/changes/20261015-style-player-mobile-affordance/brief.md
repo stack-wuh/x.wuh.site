@@ -4,7 +4,7 @@
   "name": "20261015-style-player-mobile-affordance",
   "type": "style",
   "scope": "components",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "fix/20261015-fix-player-panel-responsive-regression",
   "branch": "style/20261015-style-player-mobile-affordance",
   "files": [
@@ -33,8 +33,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:546",
-    "planHash": "abd9c846c11a8a28767fe94f2bf0e83baf7022a0036d31a80f4f7651767851b8",
+    "checkpoint": "5f2b24fabef931f1e59b1ac3125d92567b544bd9",
+    "planHash": "04b9619a3e56800bf2cae1bccae8e1f137b2aa5635e92bde34022e7250213caa",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -48,12 +48,9 @@
     },
     "commit": {
       "files": [
-        "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md",
-        "shadow-docs/changes/20261015-style-player-mobile-affordance/brief.md",
-        "shadow-docs/knowledge/layout-components.md",
-        "shadow-docs/knowledge/music-player.md"
+        "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md"
       ],
-      "message": "docs(shadow): 播放器双变更知识闭环——layout/music 卡回写 + 两 brief review 结论落盘 (#543, #544)"
+      "message": "docs(shadow): fix brief 终态对齐（附 PR #545 发布回写）随叠层同步 (#543)"
     },
     "release": {
       "files": [
