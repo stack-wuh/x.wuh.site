@@ -4,7 +4,7 @@
   "name": "20261015-fix-player-panel-responsive-regression",
   "type": "fix",
   "scope": "components",
-  "status": "committed",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "fix/20261015-fix-player-panel-responsive-regression",
   "files": [
@@ -20,14 +20,14 @@
     "pullRequestUrl": null
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "65b5bc953e77d51e910c424bac11f7f4a3c3f623",
+    "verifiedAt": "2026-10-15T10:24:31.169Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "3c83bc15a2fd11017b3f9a90dbaa7fd7ab8b44dc",
-    "planHash": "12d09efb6a293e1ccec58130f8892c6b769dde0ecd1f7f94c7dc4e00a9dfdc92",
+    "planHash": "087c4e26b1f729a1fa298bdf9c0ee9cefb0a635f64093778492ecfb7f1162eea",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -45,6 +45,11 @@
       ],
       "message": "docs(shadow): 移除误入 brief 的发布阶段任务位（交付发布属 release 阶段，团队惯例不占 brief 任务位）(#543)"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/layout-components.md",
+    "reason": "批次 7 收编段补记「responsive 首槽缺位 → 编译口整体返回空串」生产回归教训（#543）：两档槽迁移时移动独显组件的桌面隐藏写回必须以已定义首槽编码（display 入 base 槽），禁首槽 undefined 形态；守卫台账增两条语义断言（全仓首槽缺位扫描 + 四组件真编译口产物探针），发布后刷新 verified。"
   }
 }
 ---
