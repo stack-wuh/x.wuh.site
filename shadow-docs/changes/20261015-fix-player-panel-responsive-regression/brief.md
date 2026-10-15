@@ -27,7 +27,7 @@
   "workflow": {
     "operation": null,
     "checkpoint": "761d9d260c74f1d1c4a978dca8e9570c530cd4ef",
-    "planHash": "751ac9ab031aad9bbd0888268049118027cbd1d7a437d1493834ba3a3cb43ba0",
+    "planHash": "b75e860ee56f8d355a852d25ffb7f193a5a16af954194984b3109b84e947e104",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -41,12 +41,10 @@
     },
     "commit": {
       "files": [
-        "packages/components/audio-player/panel/styles/mobile.tsx",
-        "packages/components/audio-player/style.test.mjs",
-        "packages/components/test/breakpoint-raw-scan.test.mjs",
+        "shadow-docs/changes/20260903-feature-notion-publisher/brief.md",
         "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md"
       ],
-      "message": "fix(components): responsive 首槽缺位致桌面档隐藏规则静默丢失——mobile.tsx 四处补首槽定义 + 全仓扫描与四组件真编译口两条语义守卫 (#543)"
+      "message": "docs(shadow): fix brief 改判 L 级补先红记录与 INV 对账表；notion-publisher 门前遗留提案补评级过契约门 (#543)"
     }
   }
 }
@@ -60,8 +58,8 @@ v1.4.86（PR #542）批次 7 响应式收编把 `panel/styles/mobile.tsx` 四处
 
 ## 复杂度评级
 
-- **评级:** M
-- **理由:** 契约变更无（纯回归修复 + 守卫增量）；触及面小（1 源文件 4 调用点 + 2 守卫文件）；可发现性是核心风险——「编译口首槽缺位静默空串」曾穿透整套守卫网直达生产，故验证须含语义级守卫探针（先红后绿）与桌面/移动双断点 runtime 目检。
+- **评级:** L
+- **理由:** 本变更修改全仓守卫基建（breakpoint-raw-scan 跨目录棘轮 + 真编译口语义探针），守卫网变更按 L 级律审视；「首槽缺位静默空串」曾穿透整套守卫网直达生产，可发现性风险以语义守卫先红后绿 + 双断点 runtime 目检双保险兑现。
 - **期望验证深度:** runtime（unit 探针为门槛，双断点目检为完成证据）
 - **取证策略:** assert-first（两条守卫对未修复代码先红、修复后转绿；目检为 observation 补充）
 
@@ -107,7 +105,13 @@ v1.4.86（PR #542）批次 7 响应式收编把 `panel/styles/mobile.tsx` 四处
 ## 结果
 
 - 实际耗时: —
-- 验证: —
+- 验证:
+  - 先红记录（取证策略 assert-first）：
+    - `node --test packages/components/test/breakpoint-raw-scan.test.mjs` → 新增首槽扫描对未修复代码红：responsive 首槽缺位 4 处（panel/styles/mobile.tsx），无第 5 处；
+    - `node --test packages/components/audio-player/style.test.mjs` → 新增四组件真编译口探针对未修复代码红（GrabHandle 基线档断言首败）。
+  - | INV-1 responsive 首槽纪律 | 观察点：node --test packages/components/test/breakpoint-raw-scan.test.mjs → 先红转绿（29/29，全仓扫描零缺位调用） |
+  - | INV-2 移动独显四组件显隐 | 观察点：node --test packages/components/audio-player/style.test.mjs → 守卫②先红转绿（真编译口产物含基线 flex 与 min-width:641 档 none）；runtime getComputedStyle @1440px 四组件 display:none、@375px 三组件 display:flex |
+  - | INV-3 桌面留白独奏形态完整 | 观察点：本地 dev 双断点目检——1440×900 桌面 stage/dock 网格 + inset48/1160/居中碟面（截图），375×812 册页三件在场（截图）；桌面/移动渲染互不渗漏 |
 
 ## 知识评估
 
