@@ -4,7 +4,7 @@
   "name": "20261015-fix-player-panel-responsive-regression",
   "type": "fix",
   "scope": "components",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261015-fix-player-panel-responsive-regression",
   "files": [
@@ -16,18 +16,18 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 543,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/543",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 545,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/545"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "65b5bc953e77d51e910c424bac11f7f4a3c3f623",
-    "verifiedAt": "2026-10-15T10:24:31.169Z"
+    "verifiedCommit": "33fcc002dfdafc71565259ebb8749447313107f9",
+    "verifiedAt": "2026-10-15T11:12:30.345Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "3c83bc15a2fd11017b3f9a90dbaa7fd7ab8b44dc",
-    "planHash": "087c4e26b1f729a1fa298bdf9c0ee9cefb0a635f64093778492ecfb7f1162eea",
+    "checkpoint": "pr:545",
+    "planHash": "d9c276251ba47aca89215ebc110b82ad2b5ff039cb14cd1d1eb94aff4d6cb345",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -44,6 +44,15 @@
         "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md"
       ],
       "message": "docs(shadow): 移除误入 brief 的发布阶段任务位（交付发布属 release 阶段，团队惯例不占 brief 任务位）(#543)"
+    },
+    "release": {
+      "files": [
+        "shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md",
+        "shadow-docs/knowledge/layout-components.md"
+      ],
+      "message": "docs(shadow): fix brief 终态与 layout 卡知识回写——L 级对账 + 首槽缺位守卫台账增量 (#543)",
+      "title": "fix(components): 播放面板响应式收编回归——首槽缺位隐藏写回恢复",
+      "body": "## 变更\n- `panel/styles/mobile.tsx` 四处 `responsive([undefined, …])` 首槽补齐 `display: flex`（桌面隐藏写回恢复）\n- 守卫①：全仓 `responsive(` 首槽缺位扫描（breakpoint-raw-scan），多行数组形态一并覆盖\n- 守卫②：移动独显四组件数组实参过真编译口断言产物（style.test）\n\n## 影响\n- 行为/触发面变化：桌面端播放面板恢复「留白独奏」形态（无拖拽柄/册页图版/页缘钮）；移动端册页形态不受影响\n- 明确不受影响的范围：组件公开 API、词典与桌面舞台几何参数、交互行为均未变\n\n## 验证\n- 命令与结果：域套件+断点扫描 68/68 绿（守卫先红后绿）；根 tsc RC=0；oxlint 0/0；next build RC=0\n- 未覆盖项：wiring 套件 3 项 main 既有红（#517 起过期镜像守卫，与本改动零交集，已在 brief 归因）\n\n## 关联\n- Closes #543\n- brief: shadow-docs/changes/20261015-fix-player-panel-responsive-regression/brief.md"
     }
   },
   "knowledge": {
