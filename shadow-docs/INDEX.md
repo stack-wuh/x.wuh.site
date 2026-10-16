@@ -118,5 +118,7 @@
 | 20261014-refactor-final-cleanup-wave | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-final-cleanup-wave/brief.md |
 | 20261014-refactor-responsive-sweep | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-responsive-sweep/brief.md |
 | 20261014-refactor-shared-hooks-wave2 | ✅ 完成 | shadow-docs/changes/archive/20261014-refactor-shared-hooks-wave2/brief.md |
+| 20261015-fix-language-switcher-labels | published | shadow-docs/changes/20261015-fix-language-switcher-labels/brief.md |
 | 20261015-fix-player-panel-responsive-regression | ✅ 完成 | shadow-docs/changes/archive/20261015-fix-player-panel-responsive-regression/brief.md |
 | 20261015-style-player-mobile-affordance | ✅ 完成 | shadow-docs/changes/archive/20261015-style-player-mobile-affordance/brief.md |
+| 20261016-feature-image-progressive-reveal | ✅ 完成 | shadow-docs/changes/archive/20261016-feature-image-progressive-reveal/brief.md |

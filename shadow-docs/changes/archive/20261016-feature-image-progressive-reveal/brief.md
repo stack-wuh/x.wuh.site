@@ -4,7 +4,7 @@
   "name": "20261016-feature-image-progressive-reveal",
   "type": "feature",
   "scope": "components+site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261016-feature-image-progressive-reveal",
   "files": [
@@ -27,13 +27,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "2949c40ea2994b9bc1de967a3a326e5e951cfdda",
-    "verifiedAt": "2026-10-16T08:45:00.108Z"
+    "verifiedCommit": "b85398473f923077ed5cf6cd6d59498fa45dac9b",
+    "verifiedAt": "2026-10-16T08:59:54.600Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:548",
-    "planHash": "38e0d93454fc1060510be66b6f19e551863416c15849e2bc6919b07a141a5786",
+    "checkpoint": "merged-pr:548",
+    "planHash": "074af9b66135063b5fa630ce5e55dd54defb95822a050d70152ff9f9c3b19a8e",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -58,7 +58,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/post-cover.md",
-    "reason": "封面失败行为按 D3 有意修订：整块塌陷隐藏 → 组件内装裱题注占位（佚印+图题），16:9 版面节奏保留；卡片「加载失败隐藏」条款随 release 知识闭环原位更新并追加本 brief 为 source"
+    "reason": "封面失败行为按 D3 有意修订：整块塌陷隐藏 → 组件内装裱题注占位（佚印+图题），16:9 版面节奏保留；卡片「加载失败隐藏」条款随 release 知识闭环原位更新并追加本 brief 为 source（main squash 漂移后重打）"
   }
 }
 ---
