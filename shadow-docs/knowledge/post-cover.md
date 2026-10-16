@@ -15,7 +15,10 @@ source:
   - changes/archive/20260725-P-semantic-image-roles/brief.md
   - changes/archive/20260823-feature-post-cover-redesign/brief.md
   - changes/20261008-fix-post-cover-lead-dedupe/brief.md
-verified: 2026-10-08
+  - changes/20261016-feature-image-progressive-reveal/brief.md
+verified: 2026-10-16
+verified-depth: unit
+verified-scope: 失败分支行为与装裱结构断言由 packages/components/image/index.test.mjs 可重复验证（node --experimental-strip-types --test，5/5），镜像页运行时（esbuild 实包真组件）实证失败 DOM；真页面四主题目检为已登记证据缺口（20261016 brief 结果段）
 ---
 
 # 博客封面图
@@ -30,7 +33,7 @@ verified: 2026-10-08
 
 **无显式封面**：后端 `withDerivedCover`（content.controller + content-cover.util.extractFirstImageAndClean）将正文首图升格为派生封面并同步从 body/bodyHtml 移除——此场景前端去重天然 no-op，两层不叠加。无图可派生时渲染纯 CSS 生成式封面，承载完整文章头图——主题渐变背景 + 山峦装饰线 + h1 标题 + 摘要（有 summary 时）+ 作者行（名字/日期/浏览量）+ 落款「wuh.site」。此时 PostHeader 不再渲染，避免双标题；生成式标题是页面唯一 h1。无 title 时不渲染封面区域。
 
-**有封面图时**：封面渲染为 16:9「杂志卡」——1px 主题色细边框 + 12px 圆角 + 底部轻渐变过渡（40% 黑 → 40% 透明，不压暗图片主体）。封面不承载元信息（日期/标签/浏览量由 PostHeader 展示，避免重复）。图片加载失败时隐藏封面区域，不保留破图区域，PostHeader 正常展示。
+**有封面图时**：封面渲染为 16:9「杂志卡」——1px 主题色细边框 + 12px 圆角 + 底部轻渐变过渡（40% 黑 → 40% 透明，不压暗图片主体）。封面不承载元信息（日期/标签/浏览量由 PostHeader 展示，避免重复）。图片加载失败时（20261016 D3 修订）封面区域内呈现「装裱题注」占位——内界格发丝线 + 衬线图题（取 alt，无 alt 回落 title/词典文案）+ 右下朱砂「佚」印（印面为跨语言装饰字，语义经 role='alert' 屏读文本播报），不再整块塌陷返回 null；PostHeader 照常渲染，h1 唯一性保持（有图分支 h1 本就由 PostHeader 提供，与生成式封面分支不同构）。
 
 移动端（< 768px）封面铺满横向宽度（-24px 两侧出血），高度由 clamp 限制，无圆角与左右边框。封面动效为短暂淡入和极轻微缩放，`prefers-reduced-motion: reduce` 时不播放。
 
@@ -38,7 +41,7 @@ verified: 2026-10-08
 
 - 去重只发生在渲染层且只收导语区：仅删与显式封面同 URL 的正文图与等强标题的导语首 heading；不得为封面展示改写数据层内容（RSS/导出源保持完整文档形态）；后端首图派生删除与前端导语去重不叠加、不二次删图。
 - 有封面时 PostHeader 正常渲染；无封面时生成式封面承载 Header 信息，PostHeader 不重复渲染，页面 h1 保持唯一。
-- 加载失败不得保留破图区域。
+- 加载失败不得保留破图区域：以装裱题注设计占位呈现（组件 errorFallback 默认形态），不得回退为整块隐藏或浏览器破图。
 
 ## 适用边界
 

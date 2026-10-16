@@ -7,6 +7,23 @@ import rehypeShiki from '@shikijs/rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeStringify from 'rehype-stringify'
 
+const CONTENT_IMG_TAG_RE = /<img\b[^>]*>/gi
+
+/**
+ * 正文图片渐进式加载基线（20261016 brief D4）：渲染出口统一补
+ * `loading="lazy"` / `decoding="async"`——markdown 图片不进 next/image 优化器，
+ * 懒加载与异步解码是慢网「闪一下」在正文域的最低基线。
+ * 确定性字符串运算，幂等（已带属性的原样保留），与排印变换同一纪律。
+ */
+export function enhanceContentImages(html: string): string {
+  return html.replace(CONTENT_IMG_TAG_RE, (tag) => {
+    let next = tag
+    if (!/\sloading\s*=/i.test(next)) next = next.replace(/<img\b/i, '<img loading="lazy"')
+    if (!/\sdecoding\s*=/i.test(next)) next = next.replace(/<img\b/i, '<img decoding="async"')
+    return next
+  })
+}
+
 export async function renderMarkdown(md: string): Promise<string> {
   const result = await unified()
     .use(remarkParse)
@@ -25,7 +42,7 @@ export async function renderMarkdown(md: string): Promise<string> {
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(md)
 
-  return String(result)
+  return enhanceContentImages(String(result))
 }
 
 type MarkdownNode = {
