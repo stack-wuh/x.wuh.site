@@ -4,7 +4,7 @@
   "name": "20261016-feature-image-progressive-reveal",
   "type": "feature",
   "scope": "components+site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20261016-feature-image-progressive-reveal",
   "files": [
@@ -22,8 +22,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 548,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/548"
   },
   "review": {
     "conclusion": "passed",
@@ -32,7 +32,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:548",
     "planHash": "38e0d93454fc1060510be66b6f19e551863416c15849e2bc6919b07a141a5786",
     "updatedAt": null,
     "lastError": null,
