@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Image from '@wuh.site/components/image'
 import { useLocale } from '@wuh.site/components/locales'
 import { formatFullDate } from '@/app/lib/date'
@@ -27,7 +26,8 @@ const MountainOrnament = () => (
 
 /**
  * 博客详情封面：
- * - 有封面图：杂志卡（细边框 + 底部轻渐变过渡），加载失败时隐藏，不保留破图区域
+ * - 有封面图：杂志卡（细边框 + 底部轻渐变过渡）；加载失败时组件内呈现「装裱题注」
+ *   占位（佚印 + 图题），保留 16:9 版面节奏不再整块塌陷（D3 修订，post-cover 卡随行更新）
  * - 无封面图：生成式封面，承载完整文章头图（标题/摘要/作者/日期/浏览量/落款），
  *   PostHeader 不再重复渲染
  */
@@ -41,10 +41,6 @@ export default function PostCover({
   summary,
 }: PostCoverProps) {
   const { t } = useLocale()
-  const [failed, setFailed] = useState(false)
-
-  // 加载失败：隐藏封面，不保留破图区域（PostHeader 正常展示）
-  if (failed) return null
 
   if (!src) {
     if (!title) return null
@@ -77,16 +73,13 @@ export default function PostCover({
         role='cover'
         borderRadius='var(--post-cover-radius)'
         src={src}
-        alt={alt}
+        alt={alt || title}
         fill
         ratio='16:9'
         priority
         /* 双栏网格 ≥1024 时图列定宽 526px（容器 1100px 半宽），其余单栏全宽；
            fill 模式不传 sizes 会回落 100vw，浏览器按视口选档造成超需 */
         sizes='(max-width: 1023px) 100vw, 526px'
-        onStatusChange={(status) => {
-          if (status === 'error') setFailed(true)
-        }}
       />
       <CoverGradient aria-hidden='true' />
     </CoverFrame>

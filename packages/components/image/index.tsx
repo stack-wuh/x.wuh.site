@@ -9,11 +9,13 @@ import {
   ImgWrapper,
   Skeleton,
   Fallback,
+  FallbackCaption,
+  FallbackSeal,
+  FallbackVisuallyHidden,
   type ImageVariant,
   type ImageAppearance,
   type ImageStatus,
 } from './styles'
-import { IconFallbackImage } from '../icons'
 import { ROLE_PRESETS, type AspectRatio, type ImageProps, type ImageRole } from './types'
 
 export type { ImageVariant, ImageAppearance }
@@ -35,12 +37,26 @@ function parseRatio(ratio?: AspectRatio): number | undefined {
   return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined
 }
 
-const DefaultFallback = ({ compact, appearance }: { compact: boolean; appearance: ImageAppearance }) => {
+// 失败态「装裱题注」：图题取 alt（语义从破图占位文字升格为著录图题），
+// 无 alt 回落词典文案；印面「佚」为跨语言装饰字（aria-hidden），语义由屏读文本承担
+const DefaultFallback = ({
+  compact,
+  appearance,
+  caption,
+}: {
+  compact: boolean
+  appearance: ImageAppearance
+  caption: string
+}) => {
   const { t } = useLocale()
+  const loadFailed = t('components.image.loadFailed')
   return (
     <Fallback role='alert' aria-live='polite' $compactFallback={compact} $appearance={appearance}>
-      <IconFallbackImage />
-      {!compact && <span>{t('components.image.loadFailed')}</span>}
+      <FallbackVisuallyHidden>{loadFailed}</FallbackVisuallyHidden>
+      {!compact && <FallbackCaption>{caption || loadFailed}</FallbackCaption>}
+      <FallbackSeal $compactFallback={compact} aria-hidden='true'>
+        佚
+      </FallbackSeal>
     </Fallback>
   )
 }
@@ -70,6 +86,8 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     src,
     sizes,
     loading,
+    placeholder,
+    blurDataURL,
     alt = '',
     ...restNativeProps
   } = props
@@ -90,11 +108,22 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   // Next 16 起解耦 priority 与 fetchPriority：priority 只映射 preload link 与禁 lazy，
   // img 元素上的 fetchpriority="high" 需显式传入，LCP 竞速信号才完整
   const resolvedFetchPriority = priority ? ('high' as const) : undefined
+  // blur 占位必须同时具备策略与数据才生效（next/image 对缺数据的 blur 只会白屏）
+  const hasBlur = placeholder === 'blur' && Boolean(blurDataURL)
 
   const [inView, setInView] = React.useState(!shouldLazy)
   const [status, setStatus] = React.useState<ImageStatus>('idle')
   const [skipLazy, setSkipLazy] = React.useState(false)
   const wrapperRef = React.useRef<HTMLDivElement>(null)
+  const imgRef = React.useRef<HTMLImageElement | null>(null)
+  const setImgRef = React.useCallback(
+    (node: HTMLImageElement | null) => {
+      imgRef.current = node
+      if (typeof ref === 'function') ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref]
+  )
 
   React.useEffect(() => {
     if (process.env.NODE_ENV !== 'production' && !role) {
@@ -128,13 +157,21 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     return () => observer.disconnect()
   }, [shouldLazy, skipLazy, inView, rootMargin])
 
-  React.useEffect(() => {
-    setStatus(inView ? (resolvedShowSkeleton ? 'visible' : 'idle') : 'idle')
+  // 状态复位与缓存命中判定合并为一个 layout effect：complete 判定必须先于浏览器
+  // paint（passive effect 在绘制后跑，缓存命中仍会画出一帧骨架）。缓存命中（回访/
+  // 软导航返回/预加载完成）直达 loaded；error 场景 naturalWidth 为 0 不会误标
+  React.useLayoutEffect(() => {
+    if (!inView) {
+      setStatus('idle')
+      return
+    }
+    const node = imgRef.current
+    if (node?.complete && node.naturalWidth > 0) {
+      setStatus('loaded')
+      return
+    }
+    setStatus(resolvedShowSkeleton ? 'visible' : 'idle')
   }, [src, inView, resolvedShowSkeleton])
-
-  React.useEffect(() => {
-    if (inView && status === 'idle') setStatus('visible')
-  }, [inView, status])
 
   React.useEffect(() => {
     onStatusChange?.(status)
@@ -149,7 +186,7 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     [onError]
   )
 
-  const showSkel = resolvedShowSkeleton && status !== 'loaded' && status !== 'error'
+  const showSkel = resolvedShowSkeleton && !hasBlur && status !== 'loaded' && status !== 'error'
   const showError = status === 'error'
 
   return (
@@ -168,7 +205,7 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
       {inView && !showError && (
         <ImgWrapper
           {...restNativeProps}
-          ref={ref}
+          ref={setImgRef}
           className={imageClassName}
           style={imageStyle}
           src={src}
@@ -180,15 +217,21 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
           fetchPriority={resolvedFetchPriority}
           priority={priority}
           loading={loading}
+          placeholder={hasBlur ? 'blur' : undefined}
+          blurDataURL={blurDataURL}
           $objectFit={resolvedVariant}
           $status={status === 'loaded' ? 'loaded' : 'visible'}
           $stretch={shouldStretch}
+          $blur={hasBlur}
           onLoad={handleLoad}
           onError={handleError}
         />
       )}
 
-      {showError && (errorFallback ?? <DefaultFallback compact={compactFallback} appearance={resolvedAppearance} />)}
+      {showError &&
+        (errorFallback ?? (
+          <DefaultFallback compact={compactFallback} appearance={resolvedAppearance} caption={alt.trim()} />
+        ))}
     </Wrapper>
   )
 })

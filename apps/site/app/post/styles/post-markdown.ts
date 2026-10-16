@@ -331,6 +331,65 @@ export const MarkdownBody = styled.article`
     outline-offset: 2px;
   }
 
+  /* 失败图「装裱题注」占位（20261016 brief D4）——与 packages/components/image 失败态同源语言
+     （纸底 + 界格发丝线 + 衬线图题 + 朱砂佚印，token 值与组件 Fallback 互为镜像）；
+     img 由 usePostImagePreview 失败捕获隐藏、占位 figure 插于其后；阅读区纯静态 */
+  img.md-img-lost {
+    display: none;
+  }
+
+  .md-img-mount {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 28px 40px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid color-mix(in oklab, var(--normal-400) 35%, transparent);
+    background: var(--background-100);
+  }
+
+  .md-img-mount::before {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border: 1px solid color-mix(in oklab, var(--text-color) 9%, transparent);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+
+  .md-img-mount-caption {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .md-img-mount-seal {
+    position: absolute;
+    right: 16px;
+    bottom: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1px solid color-mix(in oklab, var(--primary-color) 55%, transparent);
+    border-radius: var(--border-radius-xs, 2px);
+    color: var(--primary-color);
+    background-color: color-mix(in oklab, var(--primary-color) 6%, transparent);
+    font-family: var(--font-serif);
+    font-size: 10px;
+    line-height: 1;
+  }
+
   /* hr 渐隐朱砂线：与 Divider ornament / 牌记开线同语言（原生 border 线不吃 background，必须去边框自绘） */
   hr {
     border: none;

@@ -28,6 +28,37 @@ export const usePostImagePreview = (bodyHtml?: string) => {
   })
   const { openPreview, open: previewOpen, index: previewIndex, closePreview, setIndex } = preview
 
+  // 失败图转「装裱题注」占位（与组件库 Image 失败态同源语言，样式落 post-markdown.ts）：
+  // img 隐藏、原图后插入 figure；佚印为装饰字，语义经 role='alert' 播报
+  const markImageLost = useCallback(
+    (image: HTMLImageElement) => {
+      if (image.dataset.lost) return true
+      // 水合前已失败的图不派发可见 error 事件，靠 complete 探测兜住
+      if (!(image.complete && image.naturalWidth === 0)) return false
+      image.dataset.lost = 'true'
+      image.classList.add('md-img-lost')
+      if (!image.nextElementSibling?.classList.contains('md-img-mount')) {
+        const figure = document.createElement('figure')
+        figure.className = 'md-img-mount'
+        figure.setAttribute('role', 'alert')
+        const caption = document.createElement('span')
+        caption.className = 'md-img-mount-caption'
+        caption.textContent =
+          image.getAttribute('alt')?.trim() ||
+          image.getAttribute('title')?.trim() ||
+          t('components.image.loadFailed')
+        const seal = document.createElement('span')
+        seal.className = 'md-img-mount-seal'
+        seal.setAttribute('aria-hidden', 'true')
+        seal.textContent = '佚'
+        figure.append(caption, seal)
+        image.insertAdjacentElement('afterend', figure)
+      }
+      return true
+    },
+    [t]
+  )
+
   const decorateAndCollectImages = useCallback(() => {
     const root = containerRef.current
     if (!root) return [] as ImagePreviewItem[]
@@ -36,6 +67,9 @@ export const usePostImagePreview = (bodyHtml?: string) => {
     const collected: ImagePreviewItem[] = []
 
     images.forEach((image) => {
+      // 失败图不进画廊：跳过收集，索引按剩余图重排保持 DOM 与 state 一致
+      if (markImageLost(image)) return
+
       const src = image.getAttribute('src')?.trim()
       if (!src) return
 
@@ -74,7 +108,7 @@ export const usePostImagePreview = (bodyHtml?: string) => {
     })
 
     return collected
-  }, [t])
+  }, [t, markImageLost])
 
   const openPreviewByTarget = useCallback(
     (target: EventTarget | null) => {
@@ -95,7 +129,9 @@ export const usePostImagePreview = (bodyHtml?: string) => {
 
       const root = containerRef.current
       if (!root) return false
-      const images = Array.from(root.querySelectorAll<HTMLImageElement>('.markdown-body img'))
+      const images = Array.from(root.querySelectorAll<HTMLImageElement>('.markdown-body img')).filter(
+        (img) => !img.dataset.lost
+      )
       const fallbackIndex = images.findIndex((img) => img === imageNode)
       if (fallbackIndex < 0) return false
 
@@ -142,7 +178,19 @@ export const usePostImagePreview = (bodyHtml?: string) => {
     })
 
     setPreviewItems(decorateAndCollectImages())
-  }, [bodyHtml, decorateAndCollectImages, t])
+    // 补扫：SSR HTML 里的图在解析期就开始加载，快速 404 可能落在
+    // 「挂载时 complete 探测之后、error 监听生效之前」的窗口里，延迟补一次探测
+    const resweep = window.setTimeout(() => {
+      const node = containerRef.current
+      if (!node) return
+      let newlyLost = false
+      node.querySelectorAll<HTMLImageElement>('.markdown-body img').forEach((image) => {
+        if (markImageLost(image)) newlyLost = true
+      })
+      if (newlyLost) setPreviewItems(decorateAndCollectImages())
+    }, 500)
+    return () => window.clearTimeout(resweep)
+  }, [bodyHtml, decorateAndCollectImages, t, markImageLost])
 
   // 正文图片/链接的预览捕获层：容器节点持久（bodyHtml 更新只换子树），
   // openPreviewByTarget 经 hook 的最新 handler 取用，无需随其身份重绑
@@ -163,6 +211,18 @@ export const usePostImagePreview = (bodyHtml?: string) => {
 
   useEventListener('click', handleClick, containerRef, { capture: true })
   useEventListener('keydown', handleKeydown, containerRef, { capture: true })
+
+  // error 不冒泡但 capture 相位可达：容器级监听覆盖全部正文图片，
+  // 容器节点持久（bodyHtml 更新只换子树），handler 经 hook 最新值取用不重绑
+  const handleImageError = useCallback(
+    (event: Event) => {
+      const image = event.target instanceof HTMLImageElement ? event.target : null
+      if (!image || !image.closest('.markdown-body')) return
+      if (markImageLost(image)) setPreviewItems(decorateAndCollectImages())
+    },
+    [markImageLost, decorateAndCollectImages]
+  )
+  useEventListener('error', handleImageError, containerRef, { capture: true })
 
   const previewProps = useMemo<PreviewProps>(
     () => ({

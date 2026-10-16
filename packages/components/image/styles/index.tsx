@@ -45,11 +45,14 @@ export const ImgWrapper = styled(NextImage)<{
   $objectFit: ImageVariant
   $status: ImageStatus
   $stretch: boolean
+  $blur: boolean
 }>`
   display: block;
   object-fit: ${(p) => p.$objectFit};
-  opacity: ${(p) => (p.$status === 'loaded' ? 1 : 0)};
-  transition: opacity 0.35s ease;
+  /* blur 模式下图片以模糊占位打底自挂载即可见（next/image 原生 placeholder），
+     不走 opacity 门；非 blur 保持加载完成后淡入揭示 */
+  opacity: ${(p) => (p.$blur || p.$status === 'loaded' ? 1 : 0)};
+  transition: opacity 0.3s ease-out;
   ${(p) =>
     p.$stretch
       ? css`
@@ -79,17 +82,80 @@ export const Skeleton = styled.div<{ $visible: boolean }>`
   }
 `
 
+// 失败态「装裱题注」（构 A，D1）：纸底 + 内界格发丝线 + 衬线图题 + 朱砂「佚」印。
+// 纯静态（阅读区与组件库均不动画）；plain 外观无界格（透明底上留白更静）
 export const Fallback = styled.div<{ $compactFallback: boolean; $appearance: ImageAppearance }>`
   position: absolute;
   inset: 0;
   border-radius: inherit;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: ${(p) => (p.$compactFallback ? '0' : '8px')};
-  text-align: center;
-  padding: ${(p) => (p.$compactFallback ? '4px' : '16px')};
+  padding: ${(p) => (p.$compactFallback ? '4px' : '24px 40px')};
+  overflow: hidden;
   color: var(--text-secondary, #475467);
   background-color: ${(p) => (p.$appearance === 'plain' ? 'transparent' : p.$appearance === 'qr' ? '#fff' : 'var(--background-100, #fff)')};
+  ${(p) =>
+    p.$appearance !== 'plain' &&
+    css`
+      &::before {
+        content: '';
+        position: absolute;
+        inset: ${(inner) => (inner.$compactFallback ? '4px' : '9px')};
+        border: 1px solid color-mix(in oklab, var(--text-color, #2a1e16) 9%, transparent);
+        border-radius: inherit;
+        pointer-events: none;
+      }
+    `}
+`
+
+export const FallbackCaption = styled.span`
+  font-family: var(--font-serif, Georgia, 'Songti SC', SimSun, serif);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--text-secondary, #8a6e5c);
+  text-align: center;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+export const FallbackSeal = styled.span<{ $compactFallback: boolean }>`
+  position: absolute;
+  ${(p) =>
+    p.$compactFallback
+      ? css`
+          right: 50%;
+          bottom: 50%;
+          transform: translate(50%, 50%);
+        `
+      : css`
+          right: 16px;
+          bottom: 13px;
+        `}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: ${(p) => (p.$compactFallback ? '13px' : '16px')};
+  height: ${(p) => (p.$compactFallback ? '13px' : '16px')};
+  border: 1px solid color-mix(in oklab, var(--primary-color, #c94a44) 55%, transparent);
+  border-radius: var(--border-radius-xs, 2px);
+  color: var(--primary-color, #c94a44);
+  background-color: color-mix(in oklab, var(--primary-color, #c94a44) 6%, transparent);
+  font-family: var(--font-serif, Georgia, 'Songti SC', SimSun, serif);
+  font-size: ${(p) => (p.$compactFallback ? '8px' : '10px')};
+  line-height: 1;
+`
+
+export const FallbackVisuallyHidden = styled.span`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 `
