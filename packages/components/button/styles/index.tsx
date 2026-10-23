@@ -117,10 +117,10 @@ export const StyledButton = styled.button<ButtonTransientProps>`
   border-radius: var(--btn-radius);
   cursor: pointer;
   transition:
-    background-color ${buttonTokens.transitionDuration} ease,
-    color ${buttonTokens.transitionDuration} ease,
-    border-color ${buttonTokens.transitionDuration} ease,
-    box-shadow ${buttonTokens.transitionDuration} ease;
+    background-color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out),
+    color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out),
+    border-color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out),
+    box-shadow ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out);
 
   width: ${(p) => (p.$fullWidth ? '100%' : 'auto')};
   position: relative;
@@ -141,7 +141,7 @@ export const StyledButton = styled.button<ButtonTransientProps>`
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.08) 0%, transparent 70%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 300ms ease;
+    transition: opacity var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
   }
   &:active:not(:disabled)::after {
     opacity: 1;
@@ -182,10 +182,10 @@ export const StyledLink = styled.a<ButtonTransientProps>`
   cursor: pointer;
   text-decoration: none;
   transition:
-    background-color ${buttonTokens.transitionDuration} ease,
-    color ${buttonTokens.transitionDuration} ease,
-    border-color ${buttonTokens.transitionDuration} ease,
-    box-shadow ${buttonTokens.transitionDuration} ease;
+    background-color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out),
+    color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out),
+    border-color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out),
+    box-shadow ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out);
 
   width: ${(p) => (p.$fullWidth ? '100%' : 'auto')};
   position: relative;
@@ -201,7 +201,7 @@ export const StyledLink = styled.a<ButtonTransientProps>`
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.08) 0%, transparent 70%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 300ms ease;
+    transition: opacity var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
   }
   &:active::after {
     opacity: 1;

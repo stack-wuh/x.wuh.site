@@ -13,7 +13,7 @@ const componentSource = (name) =>
 
 test('留言板入口使用纸张轻染并同步过渡交互状态', () => {
   const trigger = componentSource('GuestbookTrigger')
-  assert.match(trigger, /transition:[\s\S]*220ms ease/)
+  assert.match(trigger, /transition:[\s\S]*var\(--motion-dur-base\) var\(--motion-ease-out-soft\)/)
   assert.match(trigger, /linear-gradient\(\s*105deg,[\s\S]*var\(--primary-color\)/)
   assert.doesNotMatch(trigger, /linear-gradient\([^)]*var\(--accent-color\)/)
   assert.match(trigger, /\[data-color-scheme=["']dark["']\]\s*&/)
@@ -34,6 +34,6 @@ test('留言板入口文字层级使用统一颜色过渡', () => {
     ['GuestbookTriggerCta', null],
   ]) {
     const source = componentSource(name, nextName)
-    assert.match(source, /transition:\s*color 220ms ease/)
+    assert.match(source, /transition:\s*color var\(--motion-dur-base\) var\(--motion-ease-out-soft\)/)
   }
 })

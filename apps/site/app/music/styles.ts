@@ -145,9 +145,9 @@ export const RailItem = styled.button`
     background: var(--background-color);
     border: 1px solid color-mix(in oklab, var(--normal-500) 60%, transparent);
     transition:
-      background-color var(--motion-dur-quick) ease,
-      border-color var(--motion-dur-quick) ease,
-      box-shadow var(--motion-dur-quick) ease;
+      background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+      box-shadow var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   &:hover {
@@ -299,7 +299,7 @@ export const CoverDisc = styled.span<{
   transform: rotate(${(p) => p.$rotation}deg);
   transition:
     transform ${(p) => (p.$fast ? 240 : 620)}ms var(--motion-ease-out-soft),
-    opacity ${(p) => (p.$fast ? 60 : 160)}ms ease;
+    opacity ${(p) => (p.$fast ? 60 : 160)}ms var(--motion-ease-out-soft);
 
   /* 主轴孔 */
   &::after {
@@ -418,7 +418,7 @@ export const TrackRow = styled.li`
   border-bottom: 1px solid color-mix(in oklab, var(--normal-400) 30%, transparent);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  transition: background-color var(--motion-dur-quick) ease;
+  transition: background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   /* 移动端两行制落位：桌面 flex 上下文惰性的列定义直落基线静态 */
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -489,7 +489,7 @@ export const IndexNum = styled.span.attrs({ className: 'track-idx-num' })`
   inset: 0;
   display: flex;
   align-items: center;
-  transition: opacity var(--motion-dur-quick) ease;
+  transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const IndexPlay = styled.span.attrs({ className: 'track-idx-play' })`
@@ -499,7 +499,7 @@ export const IndexPlay = styled.span.attrs({ className: 'track-idx-play' })`
   align-items: center;
   opacity: 0;
   color: var(--primary-color);
-  transition: opacity var(--motion-dur-quick) ease;
+  transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   svg {
     width: 11px;
@@ -567,7 +567,7 @@ export const TrackName = styled.span`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  transition: color var(--motion-dur-quick) ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   ${responsive(['var(--font-size-base)', undefined, 'var(--font-size-sm)'], (v) => `font-size: ${v};`)}
   ${responsive(['1.55', undefined, 'normal'], (v) => `line-height: ${v};`)}

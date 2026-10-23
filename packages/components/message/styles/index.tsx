@@ -98,7 +98,7 @@ export const MessageItem = styled.div<{ $type: MessageType; $leaving: boolean }>
   line-height: 1.5;
   max-width: min(560px, calc(100vw - 32px));
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-  animation: ${(props) => (props.$leaving ? fadeOut : fadeIn)} 0.22s ease;
+  animation: ${(props) => (props.$leaving ? fadeOut : fadeIn)} var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -174,8 +174,8 @@ export const MessageCloseButton = styled.button`
   cursor: pointer;
   flex: 0 0 auto;
   transition:
-    color 0.2s ease,
-    background-color 0.2s ease;
+    color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out),
+    background-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   svg {
     width: 14px;

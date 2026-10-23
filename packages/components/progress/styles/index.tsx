@@ -16,7 +16,7 @@ const inkTravel = keyframes`
   100%   { transform: translateX(-110%); }
 `
 
-/* 播放态呼吸晕（站点「微光呼吸」语言；时长自持字面量——共享组件不得引用 motion tokens） */
+/* 播放态呼吸晕（站点「微光呼吸」语言；时长自持字面量——呼吸为自有节奏不进词表（motion 引用须带 fallback，console 安全）） */
 const breathe = keyframes`
   0%, 100% {
     box-shadow:
@@ -76,7 +76,7 @@ export const SFill = styled.div<{ $fill: number }>`
   background: var(--progress-fill-color, var(--primary-color));
   transform: scaleX(${(p) => p.$fill});
   transform-origin: left center;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -97,7 +97,7 @@ export const SStroke = styled.div`
     transparent
   );
   transform: translateX(-110%);
-  animation: ${css`${inkTravel} 1.9s cubic-bezier(0.45, 0, 0.25, 1) infinite`};
+  animation: ${css`${inkTravel} 1.9s var(--motion-ease-in-out-soft, ease-in-out) infinite`};
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;

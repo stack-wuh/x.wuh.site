@@ -61,7 +61,7 @@ const ActionArea = styled(Button).attrs({ variant: "outlined", color: "secondary
   flex-shrink: 0;
   transform: translateY(var(--ty, 0px)) perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transform-style: preserve-3d;
-  transition: transform var(--motion-dur-quick) ease-out, box-shadow var(--motion-dur-quick) ease-out;
+  transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft), box-shadow var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   /* 错峰入场：落笔（信息区 80ms、提示区 160ms） */
   animation-name: write-fade;
@@ -95,7 +95,7 @@ const ActionArea = styled(Button).attrs({ variant: "outlined", color: "secondary
     );
     opacity: 0;
     transform: translateZ(34px);
-    transition: opacity var(--transition-fast) ease-out;
+    transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft);
     pointer-events: none;
   }
 

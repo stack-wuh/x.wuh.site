@@ -35,5 +35,5 @@ export const TitleTooltip = styled.div<{ $visible: boolean }>`
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
   transform: translateY(${({ $visible }) => ($visible ? '0' : '4px')});
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft), transform var(--motion-dur-quick) var(--motion-ease-out-soft), visibility var(--motion-dur-quick) var(--motion-ease-out-soft);
 `

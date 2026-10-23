@@ -148,7 +148,7 @@ export const Barrier = styled.div<{ $zIndex: number; $fullScreen: boolean; $clos
   pointer-events: auto;
   background: ${({ $closing }) => ($closing ? 'transparent' : 'rgba(0, 0, 0, 0.4)')};
   backdrop-filter: ${({ $closing }) => ($closing ? 'blur(0)' : 'blur(2px)')};
-  transition: background 250ms ease, backdrop-filter 250ms ease;
+  transition: background var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out), backdrop-filter var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -256,7 +256,7 @@ export const CloseButton = styled.button`
   justify-content: center;
   padding: 0;
   border-radius: 8px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &:hover {
     background-color: var(--background-200, rgba(15, 23, 42, 0.04));

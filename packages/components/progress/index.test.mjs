@@ -40,7 +40,8 @@ test('Progress renders the intaglio seal thumb with glyph and breathing props', 
 
 test('Progress styles use theme tokens only', () => {
   assert.doesNotMatch(stylesSource, /#[0-9a-fA-F]{3,8}\b/)
-  assert.doesNotMatch(stylesSource, /--motion-/)
+  // 20261023-style-site-motion-foundation 修订：共享组件可引用 motion 令牌，但必须带 fallback（console 不注入令牌仍可渲染）
+  assert.doesNotMatch(stylesSource, /var\(--motion-[a-z-]+\)/, 'motion 引用必须带 fallback 形式')
   assert.doesNotMatch(stylesSource, /--text-secondary/)
 })
 

@@ -87,7 +87,7 @@ export const NavLink = styled(Link)`
   color: color-mix(in oklab, var(--text-color) 78%, transparent);
   font-size: var(--header-fs);
   padding: var(--space-xs) var(--space-base);
-  transition: color var(--transition-fast) ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   /* 下划线是一支运笔：scaleX 从左行笔到右（一横的笔顺），不再是透明度淡入——
      静态语言不变，但出现的方式有了方向和速度 */
@@ -101,7 +101,7 @@ export const NavLink = styled(Link)`
     background: linear-gradient(90deg, transparent, var(--primary-color) 18%, var(--primary-color) 82%, transparent);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform var(--transition-fast) ease-out;
+    transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   &:hover,
@@ -157,7 +157,7 @@ export const MobileToggle = styled.button`
   color: var(--text-primary);
   font: inherit;
   cursor: pointer;
-  transition: transform var(--transition-fast) ease, background var(--transition-fast) ease, border-color var(--transition-fast) ease;
+  transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft), background var(--motion-dur-quick) var(--motion-ease-out-soft), border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   svg {
     display: block;
@@ -210,7 +210,7 @@ export const ThemeSeal = styled.span<{ $open?: boolean }>`
   font-family: var(--font-serif);
   font-size: var(--font-size-xs);
   line-height: 1;
-  transition: border-color var(--transition-fast) ease;
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover { border-color: var(--primary-color); }
 
@@ -250,7 +250,7 @@ export const DesktopAppearancePopover = styled.div`
   border-radius: var(--border-radius-base);
   background: var(--background-100);
   box-shadow: var(--elevation-soft);
-  animation: appearance-enter 200ms ease-out;
+  animation: appearance-enter 200ms var(--motion-ease-out-soft);
 
   @keyframes appearance-enter {
     from { opacity: 0; transform: translateY(-5px); }
@@ -289,7 +289,7 @@ export const ThemeSwatch = styled.button`
   color: var(--text-primary);
   font: inherit;
   cursor: pointer;
-  transition: border-color var(--transition-fast) ease;
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover { border-color: color-mix(in oklab, var(--primary-color) 35%, var(--normal-300) 65%); }
   &[aria-pressed='true'] { border-color: var(--primary-color); }
@@ -338,7 +338,7 @@ export const SwatchLabel = styled.span`
     border-radius: 50%;
     background: var(--primary-color);
     opacity: 0;
-    transition: opacity var(--transition-fast) ease;
+    transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   [aria-pressed='true'] & { color: var(--text-color); }
@@ -363,7 +363,7 @@ export const SchemeOption = styled.button`
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
   font: inherit;
   cursor: pointer;
-  transition: color var(--transition-fast) ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   & + & { border-left: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent); }
 
@@ -414,7 +414,7 @@ export const LanguageOption = styled.button`
   font: inherit;
   letter-spacing: 0.08em;
   cursor: pointer;
-  transition: color var(--transition-fast) ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   & + & { border-left: 1px solid color-mix(in oklab, var(--normal-300) 55%, transparent); }
 
@@ -447,7 +447,7 @@ export const ThemeChevron = styled.span<{ $open?: boolean }>`
   height: 16px;
   color: color-mix(in oklab, var(--text-color) 72%, transparent);
   transform: rotate(${({ $open }) => ($open ? '180deg' : '0')});
-  transition: transform var(--transition-fast, 180ms) ease-out;
+  transition: transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `
@@ -486,7 +486,7 @@ export const MobileItem = styled(Link)`
   font-size: var(--font-size-base);
   background: transparent;
   border: 1px solid transparent;
-  transition: background var(--transition-fast) ease, border-color var(--transition-fast) ease;
+  transition: background var(--motion-dur-quick) var(--motion-ease-out-soft), border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     background: color-mix(in oklab, var(--background-200) 80%, transparent);
@@ -531,9 +531,9 @@ export const MobileAppearanceAction = styled.button`
   cursor: pointer;
   touch-action: manipulation;
   transition:
-    background-color var(--transition-fast, 180ms) ease-out,
-    border-color var(--transition-fast, 180ms) ease-out,
-    box-shadow var(--transition-fast, 180ms) ease-out;
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    box-shadow var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     border-color: color-mix(in oklab, var(--primary-color) 46%, var(--normal-300) 54%);
@@ -557,7 +557,7 @@ export const MobileAppearanceOptions = styled.div<{ $expanded: boolean }>`
   display: grid;
   grid-template-rows: ${({ $expanded }) => ($expanded ? '1fr' : '0fr')};
   opacity: ${({ $expanded }) => ($expanded ? 1 : 0)};
-  transition: grid-template-rows 200ms ease, opacity 160ms ease;
+  transition: grid-template-rows var(--motion-dur-base) var(--motion-ease-out-soft), opacity var(--motion-dur-base) var(--motion-ease-out-soft);
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `

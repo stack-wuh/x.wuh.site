@@ -118,7 +118,7 @@ export const ProfileAvatarLink = styled.a`
   display: inline-flex;
   flex-shrink: 0;
   border-radius: 50%;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--motion-dur-quick);
 
   &:hover {
     opacity: 0.82;
@@ -211,7 +211,7 @@ export const PlatformCard = styled.div`
   background: var(--background-100);
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.04);
-  transition: background var(--transition-fast);
+  transition: background var(--motion-dur-quick);
 
   &:hover {
     background: var(--background-200);
@@ -292,7 +292,7 @@ export const TimelineRow = styled.div`
   gap: 12px;
   padding: 8px 8px;
   border-radius: 6px;
-  transition: background var(--transition-fast), padding-left var(--transition-fast);
+  transition: background var(--motion-dur-quick), padding-left var(--motion-dur-quick);
 
   &:hover {
     background: color-mix(in oklab, var(--accent-color) 6%, transparent);
@@ -399,7 +399,7 @@ export const GuestbookSubmit = styled(Button)`
   font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft), transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     opacity: 0.9;
@@ -437,7 +437,7 @@ export const GuestbookCard = styled.div`
   border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--normal-300);
   background: var(--background-100);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--motion-dur-quick);
 
   &:hover {
     border-color: color-mix(in oklab, var(--primary-color) 30%, var(--normal-300));

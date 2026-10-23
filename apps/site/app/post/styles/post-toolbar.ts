@@ -28,7 +28,7 @@ export const ToolbarMeta = styled.div`
     gap: 4px;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: color 180ms ease;
+    transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
     svg {
       width: 12px;
@@ -57,13 +57,13 @@ export const SpreadTitle = styled.span`
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
-  transition: color 180ms ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const SpreadArrow = styled.span`
   flex-shrink: 0;
   color: var(--text-muted);
-  transition: color 180ms ease, transform 180ms ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft), transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const Spread = styled.div`

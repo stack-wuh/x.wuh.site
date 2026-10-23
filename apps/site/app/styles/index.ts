@@ -151,7 +151,7 @@ export const PostRow = styled(Link)`
   border-radius: 6px;
   text-decoration: none;
   color: inherit;
-  transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
+  transition: background-color var(--motion-dur-quick) var(--motion-ease-out-soft), padding-left var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
@@ -223,7 +223,7 @@ export const ProjectLink = styled.a`
   text-decoration: none;
   color: inherit;
   transition:
-    background-color var(--transition-fast) ease,
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
     transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {

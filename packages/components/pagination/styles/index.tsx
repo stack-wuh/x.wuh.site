@@ -34,7 +34,7 @@ export const LetterLink = styled(Link)<{ $active: boolean }>`
   text-decoration: none;
   color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-muted)')};
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
-  transition: color 0.15s ease;
+  transition: color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &:hover {
     color: var(--primary-color);
@@ -55,7 +55,7 @@ export const NavLink = styled(Link)<{ $disabled: boolean }>`
   text-decoration: none;
   pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
   opacity: ${({ $disabled }) => ($disabled ? 0.4 : 1)};
-  transition: color 0.15s ease, opacity 0.15s ease;
+  transition: color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), opacity var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &:hover {
     color: ${({ $disabled }) => ($disabled ? 'var(--text-muted)' : 'var(--primary-color)')};
@@ -66,7 +66,7 @@ export const NavLabelPrev = styled.span`
   max-width: 0;
   overflow: hidden;
   white-space: nowrap;
-  transition: max-width 0.2s ease;
+  transition: max-width var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
 
   ${NavLink}:hover & {
     max-width: 52px;
@@ -77,7 +77,7 @@ export const NavLabelNext = styled.span`
   max-width: 0;
   overflow: hidden;
   white-space: nowrap;
-  transition: max-width 0.2s ease;
+  transition: max-width var(--motion-dur-base, 220ms) var(--motion-ease-out-soft, ease-out);
 
   ${NavLink}:hover & {
     max-width: 52px;

@@ -11,7 +11,7 @@ export const Chip = styled.span<{ $color: string }>`
   color: var(--text-primary);
   border-left: 2.5px solid color-mix(in oklab, ${({ $color }) => $color} 50%, var(--text-muted) 50%);
   white-space: nowrap;
-  transition: background-color var(--transition-fast) ease, border-color var(--transition-fast) ease;
+  transition: background-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), border-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &:hover {
     background: color-mix(in oklab, ${({ $color }) => $color} 20%, var(--background-100) 80%);

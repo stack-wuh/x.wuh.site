@@ -173,7 +173,7 @@ test('下划线是运笔动画：scaleX 从左行笔到右，弃用透明度显�
   const link = block('export const NavLink = styled\\(Link\\)')
   assert.match(link, /transform: scaleX\(0\);/)
   assert.match(link, /transform-origin: left center;/)
-  assert.match(link, /transition: transform var\(--transition-fast\) ease-out;/)
+  assert.match(link, /transition: transform var\(--motion-dur-quick\) var\(--motion-ease-out-soft\);/)
   assert.match(link, /&:hover::after,[\s\S]*?&:focus-visible::after \{\s*transform: scaleX\(1\);\s*\}/)
   // 整块不得再出现 opacity 显隐（渐变背景里的 stop 不算属性声明）
   assert.doesNotMatch(link, /^\s*opacity:/m, '下划线显隐不得回退为 opacity 淡入')

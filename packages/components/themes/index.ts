@@ -56,6 +56,7 @@ export const DefaultTheme: Tokens = {
     'ease-out-soft': 'cubic-bezier(0.22, 1, 0.36, 1)',
     'ease-in-out-soft': 'cubic-bezier(0.45, 0, 0.25, 1)',
     'dur-quick': '150ms',
+    'dur-base': '220ms',
     'dur-reveal': '600ms',
     'dur-write': '400ms'
   }

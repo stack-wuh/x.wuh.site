@@ -88,7 +88,7 @@ export const Glow = styled.span`
   filter: blur(7px);
   opacity: 0.3;
   pointer-events: none;
-  transition: left 120ms ease;
+  transition: left 120ms var(--motion-ease-out-soft);
 `
 
 export const ParticleDot = styled.span`
@@ -98,7 +98,7 @@ export const ParticleDot = styled.span`
   border-radius: 50%;
   background: var(--primary-color);
   pointer-events: none;
-  animation: tk-particle-out 600ms ease-out forwards;
+  animation: tk-particle-out var(--motion-dur-reveal) var(--motion-ease-out-soft) forwards;
 
   @keyframes tk-particle-out {
     0% {

@@ -51,7 +51,7 @@ export const buttonTokens = {
     pressed: 0.12,
   },
   /** 过渡时间 */
-  transitionDuration: '200ms',
+  transitionDuration: 'var(--motion-dur-quick, 150ms)',
 } as const
 
 export type ButtonVariant = 'filled' | 'outlined' | 'text'

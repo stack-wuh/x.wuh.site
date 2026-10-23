@@ -15,7 +15,7 @@ export const Container = styled.div`
   margin: 0 auto;
   padding: clamp(24px, 5vw, 72px) clamp(16px, 4vw, 24px);
   color: var(--text-color);
-  animation: contentEnter 0.25s ease-out;
+  animation: contentEnter 0.25s var(--motion-ease-out-soft);
 
   @keyframes contentEnter {
     from {
