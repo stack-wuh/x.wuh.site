@@ -71,7 +71,7 @@ export const PreviewSurface = styled.div<{ $disableMotion: boolean }>`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: ${(p) => (p.$disableMotion ? 'none' : css`${enter} 0.3s ease both`)};
+  animation: ${(p) => (p.$disableMotion ? 'none' : css`${enter} 0.3s var(--motion-ease-out-soft, ease-out) both`)};
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -138,7 +138,7 @@ export const IconButton = styled.button<{ $active?: boolean }>`
   border-radius: 10px;
   background: ${(p) => (p.$active ? 'rgba(251, 191, 36, 0.18)' : 'rgba(15, 23, 42, 0.6)')};
   color: ${(p) => (p.$active ? 'var(--primary-color, #fbbf24)' : 'rgba(248, 250, 252, 0.92)')};
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  transition: background var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), border-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
   cursor: pointer;
 
   &:hover:not(:disabled) {
@@ -295,7 +295,7 @@ export const ThumbnailButton = styled.button<{ $active: boolean }>`
     height: 100%;
     object-fit: cover;
     opacity: ${(p) => (p.$active ? 1 : 0.8)};
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: transform var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), opacity var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
   }
 
   &:hover img {
@@ -342,7 +342,7 @@ export const KeyboardLegend = styled.div`
   font-size: 0.75rem;
   color: rgba(148, 163, 184, 0.8);
   letter-spacing: 0.05em;
-  animation: ${fadeUp} 0.28s ease both;
+  animation: ${fadeUp} 0.28s var(--motion-ease-out-soft, ease-out) both;
 
   @media (max-width: ${OFF_LADDER_BREAKPOINTS.previewMobile}px) {
     display: none;
@@ -379,7 +379,7 @@ export const MoreMenuOverlay = styled.div`
   z-index: 1500;
   background: rgba(2, 6, 23, 0.6);
   backdrop-filter: blur(4px);
-  animation: ${fadeUp} 0.2s ease both;
+  animation: ${fadeUp} var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out) both;
 `
 
 export const MoreMenuContainer = styled.div`
@@ -392,7 +392,7 @@ export const MoreMenuContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  animation: ${fadeUp} 0.25s ease both;
+  animation: ${fadeUp} 0.25s var(--motion-ease-out-soft, ease-out) both;
 `
 
 export const MoreMenuItem = styled.button`

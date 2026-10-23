@@ -29,8 +29,8 @@ export const GuestbookTrigger = styled(Button)`
   text-align: left;
   cursor: pointer;
   transition:
-    background 220ms ease,
-    border-color 220ms ease;
+    background var(--motion-dur-base) var(--motion-ease-out-soft),
+    border-color var(--motion-dur-base) var(--motion-ease-out-soft);
 
   svg {
     width: 15px;
@@ -142,7 +142,7 @@ export const GuestbookTriggerTitle = styled.strong`
   color: var(--guestbook-trigger-title);
   font-size: 14px;
   font-weight: 700;
-  transition: color 220ms ease;
+  transition: color var(--motion-dur-base) var(--motion-ease-out-soft);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -153,7 +153,7 @@ export const GuestbookTriggerPreview = styled.span`
   color: var(--guestbook-trigger-preview);
   font-size: 12px;
   line-height: 1.55;
-  transition: color 220ms ease;
+  transition: color var(--motion-dur-base) var(--motion-ease-out-soft);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -167,7 +167,7 @@ export const GuestbookTriggerCta = styled.span`
   color: var(--guestbook-trigger-cta);
   font-size: 12px;
   white-space: nowrap;
-  transition: color 220ms ease;
+  transition: color var(--motion-dur-base) var(--motion-ease-out-soft);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -311,7 +311,7 @@ export const ComposerSend = styled(Button)`
   color: var(--background-100);
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.2s ease;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
   line-height: 0;
 
   &:hover:not(:disabled) {
@@ -348,7 +348,7 @@ export const ComposerBadge = styled(Button)`
   color: var(--text-secondary);
   cursor: pointer;
   flex-shrink: 0;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
   font: inherit;
   font-size: 0.78rem;
   font-weight: 600;
@@ -395,7 +395,7 @@ export const NewMessageBanner = styled.button`
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 1px 2px color-mix(in oklab, var(--normal-700) 14%, transparent);
-  transition: background 180ms ease, border-color 180ms ease;
+  transition: background var(--motion-dur-quick) var(--motion-ease-out-soft), border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     background: color-mix(in oklab, var(--background-100) 82%, var(--primary-color) 18%);
@@ -424,7 +424,7 @@ export const GuestbookFooterLink = styled.a`
   font-size: 0.72rem;
   color: var(--text-muted);
   text-decoration: none;
-  transition: color 160ms ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     color: var(--primary-color);

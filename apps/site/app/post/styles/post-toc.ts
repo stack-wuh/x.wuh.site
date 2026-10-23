@@ -158,7 +158,7 @@ export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
   padding: 5px 4px 5px 14px;
   margin-left: ${({ $depth }) => `${Math.max(0, ($depth ?? 2) - 2) * 12}px`};
   color: ${({ $active }) => ($active ? 'var(--primary-color)' : 'var(--text-secondary)')};
-  transition: color 180ms ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &::before {
     content: '';
@@ -170,7 +170,7 @@ export const TocItemLink = styled.a<{ $active?: boolean; $depth?: number }>`
     height: 0;
     border-radius: 999px;
     background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
-    transition: height 200ms ease;
+    transition: height var(--motion-dur-base) var(--motion-ease-out-soft);
   }
 
   ${({ $active }) => ($active ? '&::before { height: 14px; }' : '')}

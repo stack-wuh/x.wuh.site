@@ -21,7 +21,7 @@ export const ScrollAreaScrollbar = styled(ScrollAreaPrimitive.ScrollAreaScrollba
   user-select: none;
   padding: 1px;
   opacity: 0;
-  transition: opacity 180ms ease, background-color 180ms ease;
+  transition: opacity var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), background-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &[data-state='visible'] {
     opacity: 1;
@@ -50,7 +50,7 @@ export const ScrollAreaThumb = styled(ScrollAreaPrimitive.ScrollAreaThumb)`
   flex: 1;
   border-radius: 99px;
   background: color-mix(in oklab, var(--primary-color) 38%, transparent);
-  transition: background-color 180ms ease;
+  transition: background-color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &:hover {
     background: color-mix(in oklab, var(--primary-color) 58%, transparent);

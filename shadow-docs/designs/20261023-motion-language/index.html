@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>统一动效语言 · 三构原型（20261023）</title>
+<style>
+/* ============================================================
+   真 token 抄录（出处注明）：
+   · 色板：packages/components/themes/generator-color.ts（wine 家族）
+     wl primary-500 #C94A44 · normal-100 #F8F3EE · normal-700 #8A6E5C · normal-900 #2A1E16 · background-900 #F5F0EC
+     wd primary-500 #E36A64 · normal-500 #adadad · normal-600 #dcdcdc · normal-900 #f8f8f8 · background-900 #2f2a2a
+     （wd normal/background 由 @ant-design/colors generate('#ffffff'/'#0a0404', {theme:'dark'}) 实算）
+   · accent 金：packages/components/themes/cssVariableProvider.tsx --accent-color #E3B567
+   · 页底渐变 --page-bg：同文件（亮=纵向 5% 朱晕；暗=双 radial 暖晕）
+   · motion 令牌：packages/components/themes/index.ts motion 段
+     ease-out-soft cubic-bezier(0.22,1,0.36,1) · ease-in-out-soft (0.45,0,0.25,1)
+     dur-quick 150ms · dur-write 400ms · dur-reveal 600ms
+     ★ dur-base 220ms 为本提案新增（状态过渡基档，归位现有 220 散值）
+   · 字体栈：cssVariableProvider --font-serif/sans/mono（本稿零依赖走系统回退，同站点加载前行为）
+   · 家族语言参照：wuh.site.desktop 素笺渲染语言（h1 渐隐墨线 / 引用朱线 / 行内码纸面凹槽）
+   ============================================================ */
+:root {
+  --primary-500: #C94A44;
+  --normal-100: #F8F3EE;
+  --normal-500: #B9A998;
+  --normal-700: #8A6E5C;
+  --normal-900: #2A1E16;
+  --background-100: #FDF3EC;
+  --background-900: #F5F0EC;
+  --accent-color: #E3B567;
+  --text-primary: var(--normal-900);
+  --text-secondary: var(--normal-700);
+  --text-muted: var(--normal-700);
+  --border-ink: color-mix(in oklab, var(--normal-900) 16%, transparent);
+  --card-bg: color-mix(in oklab, var(--background-900) 60%, #fff);
+  --elevation-soft: 0 4px 14px rgba(0, 0, 0, .06);
+  --elevation-card: 0 20px 40px rgba(0, 0, 0, .08);
+  --page-bg: linear-gradient(180deg,
+    var(--background-900) 0%,
+    color-mix(in oklab, var(--background-900) 95%, var(--primary-500)) 100%);
+  --font-serif: 'Noto Serif SC', Georgia, 'Songti SC', 'SimSun', serif;
+  --font-sans: 'Noto Sans SC', ui-sans-serif, system-ui, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  --motion-ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-in-out-soft: cubic-bezier(0.45, 0, 0.25, 1);
+  --motion-dur-quick: 150ms;
+  --motion-dur-base: 220ms;   /* ★ 提案新增 */
+  --motion-dur-write: 400ms;
+  --motion-dur-reveal: 600ms;
+}
+html[data-scheme='dark'] {
+  --primary-500: #E36A64;
+  --normal-100: #2c2c2c;
+  --normal-500: #adadad;
+  --normal-700: #dcdcdc;
+  --normal-900: #f8f8f8;
+  --background-100: #0f0f0f;
+  --background-900: #2f2a2a;
+  --text-primary: var(--normal-900);
+  --text-secondary: var(--normal-600, #dcdcdc);
+  --text-muted: var(--normal-500);
+  --border-ink: color-mix(in oklab, var(--normal-900) 18%, transparent);
+  --card-bg: color-mix(in oklab, var(--background-900) 72%, #000);
+  --elevation-soft: 0 4px 14px rgba(0, 0, 0, .25);
+  --elevation-card: 0 18px 36px rgba(0, 0, 0, .45);
+  --page-bg:
+    radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--primary-500) 18%, transparent), transparent 55%),
+    radial-gradient(circle at 88% 18%, color-mix(in oklab, var(--accent-color) 18%, transparent), transparent 52%),
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--background-900) 92%, var(--primary-500)),
+      var(--background-900));
+}
+
+* { box-sizing: border-box; }
+html, body { max-width: 100vw; overflow-x: clip; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--page-bg, var(--background-900));
+  min-height: 100vh;
+  /* 本稿不设通配过渡税——主题切换走 scoped（见 html[data-theme-switching]），这是提案本体之一 */
+}
+
+/* ===== 顶栏（视觉稿导航，非站点件） ===== */
+nav.mock {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+  padding: 8px 16px;
+  background: color-mix(in oklab, var(--background-900) 86%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in oklab, var(--border-ink) 50%, transparent);
+  font-size: 12px;
+}
+nav.mock a {
+  color: var(--text-muted); text-decoration: none;
+  padding: 4px 10px; border-radius: 6px;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+nav.mock a:hover { color: var(--text-primary); background: color-mix(in oklab, var(--normal-900) 6%, transparent); }
+html[data-scheme='dark'] nav.mock a:hover { background: color-mix(in oklab, var(--normal-900) 8%, transparent); }
+nav.mock a.on { color: var(--primary-500); background: color-mix(in oklab, var(--primary-500) 8%, transparent); }
+nav.mock .spacer { flex: 1; }
+nav.mock .group { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid color-mix(in oklab, var(--border-ink) 70%, transparent); border-radius: 8px; }
+nav.mock .group button {
+  font: inherit; color: var(--text-muted); background: transparent;
+  border: none; border-radius: 6px; padding: 3px 10px; cursor: pointer;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+nav.mock .group button.on { color: #FFFDFB; background: var(--primary-500); }
+nav.mock button.replay {
+  font: inherit; color: var(--text-muted); background: transparent;
+  border: 1px solid color-mix(in oklab, var(--border-ink) 80%, transparent);
+  border-radius: 999px; padding: 3px 12px; cursor: pointer;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    transform 80ms var(--motion-ease-out-soft);
+}
+nav.mock button.replay:hover { color: var(--primary-500); border-color: var(--primary-500); }
+nav.mock button.replay:active { transform: translateY(1px); } /* 落按 */
+
+main { padding: 72px 20px 64px; }
+.scene { display: none; }
+.scene.on { display: block; }
+
+/* ============================================================
+   场景一 · 首页（720 单列：hero + 打字机 + 文章时间线）
+   ============================================================ */
+.col { width: min(720px, 100%); margin: 0 auto; }
+
+.site-header {
+  display: flex; align-items: center; gap: 20px;
+  padding: 4px 2px 20px;
+  font-size: 14px;
+}
+.site-header .logo { display: inline-flex; align-items: center; gap: 8px; color: var(--text-primary); text-decoration: none; font-family: var(--font-serif); letter-spacing: .04em; }
+.site-header nav { display: flex; gap: 2px; margin-left: auto; }
+.site-header nav a {
+  color: var(--text-muted); text-decoration: none;
+  padding: 5px 10px; border-radius: 6px; font-size: 13.5px;
+  /* 墨显 */
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.site-header nav a:hover { color: var(--text-primary); background: color-mix(in oklab, var(--primary-500) 7%, transparent); }
+.site-header nav a[aria-current='page'] { color: var(--primary-500); }
+
+.hero { text-align: center; padding: 40px 0 12px; }
+.hero .wmark { display: block; margin: 0 auto 14px; }
+.hero h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 500;
+  letter-spacing: .04em; margin: 0 0 6px; color: var(--text-primary);
+  position: relative; display: inline-block; padding-bottom: 10px;
+}
+/* h1 渐隐墨线（家族语言：desktop 素笺题阶同源） */
+.hero h1::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(to right, color-mix(in oklab, var(--text-primary) 22%, transparent), transparent 62%);
+}
+.hero .tagline {
+  font-family: var(--font-serif); font-size: 13px; color: var(--text-muted);
+  letter-spacing: .06em; margin: 0;
+}
+.motto {
+  text-align: center; font-family: var(--font-serif); font-size: 14px;
+  color: var(--text-secondary); min-height: 1.8em; margin: 18px 0 4px;
+}
+.motto::after { content: '▏'; color: var(--primary-500); animation: caret 1.1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.ctas { display: flex; justify-content: center; gap: 12px; margin: 14px 0 8px; }
+
+/* 站点按钮（outlined 参照 @wuh.site/components/button） */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 16px; border-radius: 8px; cursor: pointer;
+  font: inherit; font-size: 13.5px; text-decoration: none;
+  color: var(--primary-500);
+  border: 1px solid color-mix(in oklab, var(--primary-500) 55%, transparent);
+  background: transparent;
+  /* 浮墨：颜色/边框 150 + 落按 */
+  transition:
+    color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    transform 80ms var(--motion-ease-out-soft);
+}
+.btn:hover {
+  border-color: var(--primary-500);
+  background: color-mix(in oklab, var(--primary-500) 6%, transparent);
+}
+.btn:active { transform: translateY(1px); }
+.btn.ghost { color: var(--text-secondary); border-color: color-mix(in oklab, var(--normal-700) 45%, transparent); }
+.btn.ghost:hover { color: var(--text-primary); border-color: var(--normal-700); background: color-mix(in oklab, var(--normal-900) 5%, transparent); }
+
+.ornament { display: flex; align-items: center; gap: 14px; max-width: 360px; margin: 30px auto; color: var(--text-muted); opacity: .55; }
+.ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: currentColor; opacity: .35; }
+.ornament svg { flex: none; }
+
+.section-title {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 500;
+  color: var(--text-primary); letter-spacing: .03em; margin: 0;
+}
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.section-head .more {
+  font-size: 13px; color: var(--text-muted); text-decoration: none;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.section-head .more:hover { color: var(--primary-500); }
+
+.year-label {
+  font-family: var(--font-serif); font-size: 13px; color: var(--text-muted);
+  letter-spacing: .05em; padding: 8px 0 6px;
+  border-bottom: 1px solid color-mix(in oklab, var(--text-muted) 25%, transparent);
+}
+.year-group { display: flex; flex-direction: column; gap: 2px; margin-top: 14px; }
+
+/* 文章行：墨显 + 墨点提墨 */
+.post-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 8px; border-radius: 6px; text-decoration: none; color: inherit;
+  transition:
+    background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    padding-left var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.post-row:hover { background: color-mix(in oklab, var(--primary-500) 7%, transparent); padding-left: 13px; }
+.ink-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex: none;
+  background: var(--accent-color); opacity: .55;
+  transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft),
+    transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.post-row:hover .ink-dot { opacity: 1; transform: scale(1.15); }
+.post-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.post-meta { flex: none; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+.tag {
+  flex: none; font-size: 11px; padding: 1px 8px; border-radius: 999px;
+  color: var(--text-secondary); text-decoration: none;
+  border: 1px solid color-mix(in oklab, var(--accent-color) 55%, transparent);
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.tag:hover { color: var(--accent-color); border-color: var(--accent-color); }
+
+/* ============================================================
+   场景二 · 文章页（题阶 + TOC 行墨 + 正文）
+   ============================================================ */
+.article-wrap { display: grid; grid-template-columns: minmax(0, 640px); gap: 40px; justify-content: center; }
+@media (min-width: 1080px) {
+  .article-wrap { grid-template-columns: minmax(0, 640px) 180px; }
+}
+.article-head { padding-top: 24px; }
+.article-head h1 {
+  font-family: var(--font-serif); font-size: 30px; font-weight: 500;
+  letter-spacing: .02em; line-height: 1.35; margin: 0 0 14px; padding-bottom: 16px;
+  position: relative;
+}
+/* h1 渐隐墨线（家族语言） */
+.article-head h1::after {
+  content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
+  background: linear-gradient(to right, color-mix(in oklab, var(--text-primary) 20%, transparent), transparent 60%);
+}
+.article-meta { display: flex; gap: 14px; font-size: 12.5px; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 34px; }
+
+.prose h2 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 500;
+  margin: 40px 0 16px; padding-bottom: 10px; position: relative;
+}
+/* h2 短朱线（家族语言：desktop 素笺题阶） */
+.prose h2::after {
+  content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
+  background: linear-gradient(to right, color-mix(in oklab, var(--primary-500) 26%, transparent), transparent 70%);
+}
+.prose h3 { font-family: var(--font-serif); font-size: 18px; font-weight: 500; margin: 30px 0 12px; }
+.prose p { font-size: 15px; line-height: 1.9; text-align: justify; color: var(--text-primary); margin: 0 0 18px; }
+.prose blockquote {
+  margin: 22px 0; padding: 10px 18px;
+  border-left: 2px solid color-mix(in oklab, var(--primary-500) 72%, transparent);
+  background: linear-gradient(to right, color-mix(in oklab, var(--text-primary) 5%, transparent), transparent 72%);
+  color: var(--text-secondary);
+}
+.prose code {
+  font-family: var(--font-mono); font-size: 13px;
+  padding: 2px 6px; border-radius: 4px;
+  border: 1px solid color-mix(in oklab, var(--normal-900) 10%, transparent);
+  box-shadow: inset 0 1px 3px color-mix(in oklab, var(--normal-900) 8%, transparent);
+  background: color-mix(in oklab, var(--background-900) 88%, var(--normal-900));
+}
+.prose a {
+  color: var(--text-primary); text-decoration: none;
+  border-bottom: 1px dashed color-mix(in oklab, var(--accent-color) 48%, transparent);
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft), color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.prose a:hover { border-bottom-style: solid; border-bottom-color: var(--accent-color); color: color-mix(in oklab, var(--text-primary) 88%, var(--accent-color)); }
+
+/* TOC：行墨（状态切换 220ms = 新 dur-base） */
+.toc { position: sticky; top: 84px; align-self: start; padding-top: 24px; font-size: 13px; }
+.toc .toc-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; color: var(--text-muted); margin-bottom: 10px; }
+.toc button {
+  display: block; width: 100%; text-align: left;
+  font-family: var(--font-serif); font-size: 13.5px; line-height: 1.5;
+  padding: 5px 10px; margin: 0; border: none; border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0; background: transparent; color: var(--text-muted); cursor: pointer;
+  /* 行墨 */
+  transition:
+    color var(--motion-dur-base) var(--motion-ease-out-soft),
+    border-left-color var(--motion-dur-base) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-base) var(--motion-ease-out-soft);
+}
+.toc button:hover { color: var(--text-primary); }
+.toc button.l2 { padding-left: 20px; font-size: 12.5px; }
+.toc button.active {
+  color: var(--text-primary);
+  border-left-color: var(--primary-500);
+  background: color-mix(in oklab, var(--primary-500) 5%, transparent);
+}
+.toc .hint { margin-top: 14px; font-size: 11px; color: var(--text-muted); opacity: .8; }
+
+/* ============================================================
+   场景三 · 交互词表 + 手感对照
+   ============================================================ */
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 18px; }
+.specimen {
+  padding: 16px 18px; border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid color-mix(in oklab, var(--border-ink) 60%, transparent);
+  /* 浮墨 */
+  transition:
+    border-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    box-shadow var(--motion-dur-quick) var(--motion-ease-out-soft),
+    transform var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.specimen:hover {
+  border-color: color-mix(in oklab, var(--primary-500) 40%, transparent);
+  box-shadow: var(--elevation-soft);
+  transform: translateY(-1px);
+}
+.specimen .word { font-family: var(--font-serif); font-size: 15px; color: var(--text-primary); }
+.specimen .word small { font-family: var(--font-mono); font-size: 10.5px; color: var(--accent-color); margin-left: 8px; letter-spacing: .08em; }
+.specimen .desc { font-size: 12.5px; color: var(--text-muted); margin: 6px 0 14px; line-height: 1.7; }
+.specimen .demo { min-height: 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* 墨显 demo */
+.demo-ink { font-size: 14.5px; color: var(--text-secondary); cursor: default; padding: 4px 10px; border-radius: 6px;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft), background-color var(--motion-dur-quick) var(--motion-ease-out-soft); }
+.demo-ink:hover { color: var(--text-primary); background: color-mix(in oklab, var(--primary-500) 7%, transparent); }
+
+/* 行墨 demo（点击换目标） */
+.demo-lines { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+.demo-lines button {
+  text-align: left; font: inherit; font-size: 13.5px; padding: 6px 10px; border: none;
+  border-left: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 0 6px 6px 0;
+  transition:
+    color var(--motion-dur-base) var(--motion-ease-out-soft),
+    border-left-color var(--motion-dur-base) var(--motion-ease-out-soft),
+    background-color var(--motion-dur-base) var(--motion-ease-out-soft);
+}
+.demo-lines button.active { color: var(--text-primary); border-left-color: var(--primary-500); background: color-mix(in oklab, var(--primary-500) 5%, transparent); }
+
+/* 谱系条 */
+.scale-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.scale-chip {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  border: 1px dashed color-mix(in oklab, var(--border-ink) 90%, transparent);
+  border-radius: 8px; padding: 8px 12px; cursor: default;
+}
+.scale-chip b { color: var(--primary-500); font-weight: 500; }
+
+/* 手感对照条：现状税 vs 统一后 */
+.compare { margin-top: 34px; }
+.compare h3 { font-family: var(--font-serif); font-size: 16px; font-weight: 500; margin: 0 0 4px; }
+.compare .sub { font-size: 12px; color: var(--text-muted); margin: 0 0 14px; }
+.compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 720px) { .compare-row { grid-template-columns: 1fr; } }
+.compare-cell { padding: 14px 16px; border-radius: 12px; background: var(--card-bg); border: 1px solid color-mix(in oklab, var(--border-ink) 60%, transparent); }
+.compare-cell .label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; color: var(--text-muted); margin-bottom: 10px; }
+.compare-cell.bad .label { color: var(--primary-500); }
+/* 现状：通配税（0.3s ease，起步慢） */
+.tax-hover {
+  display: block; padding: 9px 12px; border-radius: 8px; text-decoration: none; color: var(--text-secondary);
+  font-size: 14px; border: 1px solid transparent;
+  transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+}
+.tax-hover:hover { background: color-mix(in oklab, var(--primary-500) 8%, transparent); color: var(--text-primary); border-color: color-mix(in oklab, var(--primary-500) 30%, transparent); }
+/* 统一后：150ms ease-out-soft（起步快、收尾软） */
+.uni-hover {
+  display: block; padding: 9px 12px; border-radius: 8px; text-decoration: none; color: var(--text-secondary);
+  font-size: 14px; border: 1px solid transparent;
+  transition: background-color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    color var(--motion-dur-quick) var(--motion-ease-out-soft),
+    border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
+}
+.uni-hover:hover { background: color-mix(in oklab, var(--primary-500) 8%, transparent); color: var(--text-primary); border-color: color-mix(in oklab, var(--primary-500) 30%, transparent); }
+
+/* ============================================================
+   浓时刻 · 三构（body[data-construct] 切换；.stage.play 触发一次）
+   总长守 ≤900ms 入场纪律；reduced-motion 全关
+   ============================================================ */
+
+/* —— 构 1 · 书写：语义分批阶梯，题名先行（write-fade 升格） —— */
+@keyframes write-fade { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+body[data-construct='1'] .stage.play .beat { animation: write-fade var(--motion-dur-write) var(--motion-ease-out-soft) both; }
+body[data-construct='1'] .stage.play .beat-1 { animation-delay: 0ms; }
+body[data-construct='1'] .stage.play .beat-2 { animation-delay: 80ms; }
+body[data-construct='1'] .stage.play .beat-3 { animation-delay: 160ms; }
+body[data-construct='1'] .stage.play .beat-4 { animation-delay: 240ms; }
+body[data-construct='1'] .stage.play .beat-5 { animation-delay: 320ms; }
+body[data-construct='1'] .stage.play .beat-6 { animation-delay: 400ms; }
+
+/* —— 构 2 · 晕开：题名墨线一划 + 内容自题名处向下洇开 —— */
+@keyframes ink-sweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ink-bleed {
+  from { clip-path: inset(0 0 100% 0); opacity: .3; filter: blur(5px); }
+  to { clip-path: inset(0 0 0 0); opacity: 1; filter: blur(0); }
+}
+body[data-construct='2'] .stage.play .ink-title { animation: write-fade 260ms var(--motion-ease-out-soft) both; }
+body[data-construct='2'] .stage.play .ink-title::after {
+  animation: ink-sweep var(--motion-dur-write) var(--motion-ease-out-soft) both;
+  transform-origin: left center;
+}
+body[data-construct='2'] .stage.play .ink-body {
+  animation: ink-bleed var(--motion-dur-reveal) var(--motion-ease-out-soft) both;
+  animation-delay: 140ms;
+}
+
+/* —— 构 3 · 纸落：内容列落定（≤12px）+ 阴影收拢，区块随后 —— */
+@keyframes paper-settle {
+  from { opacity: 0; translate: 0 -12px; box-shadow: 0 24px 48px rgba(0, 0, 0, .16); }
+  to { opacity: 1; translate: 0 0; box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
+}
+@keyframes soft-rise { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+body[data-construct='3'] .stage.play .paper-col { animation: paper-settle 320ms var(--motion-ease-out-soft) both; }
+body[data-construct='3'] .stage.play .beat { animation: soft-rise 300ms var(--motion-ease-out-soft) both; }
+body[data-construct='3'] .stage.play .beat-2 { animation-delay: 120ms; }
+body[data-construct='3'] .stage.play .beat-3 { animation-delay: 200ms; }
+body[data-construct='3'] .stage.play .beat-4 { animation-delay: 280ms; }
+body[data-construct='3'] .stage.play .beat-5 { animation-delay: 360ms; }
+body[data-construct='3'] .stage.play .beat-6 { animation-delay: 440ms; }
+
+/* 提案内的主题切换 scoped 过渡（换墨）：仅切换瞬间挂 html[data-theme-switching] */
+html[data-theme-switching] body,
+html[data-theme-switching] body * {
+  transition: background-color .3s var(--motion-ease-in-out-soft),
+    color .3s var(--motion-ease-in-out-soft),
+    border-color .3s var(--motion-ease-in-out-soft) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  .motto::after { animation: none; }
+}
+
+.note { text-align: center; margin-top: 44px; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+.scene-title { text-align: center; font-family: var(--font-serif); font-size: 17px; margin: 0 0 6px; }
+.scene-sub { text-align: center; font-size: 12px; color: var(--text-muted); margin: 0 0 30px; }
+</style>
+</head>
+<body data-construct="2">
+
+<nav class="mock">
+  <a href="?scene=home" data-s="home">首页时刻</a>
+  <a href="?scene=article" data-s="article">文章时刻</a>
+  <a href="?scene=vocab" data-s="vocab">交互词表</a>
+  <span class="spacer"></span>
+  <span class="group" id="constructGroup" title="浓时刻三构">
+    <button data-c="1">构 1 · 书写</button>
+    <button data-c="2">构 2 · 晕开</button>
+    <button data-c="3">构 3 · 纸落</button>
+  </span>
+  <button class="replay" id="replayBtn">再演一次</button>
+  <button class="replay" id="schemeBtn">暗色</button>
+</nav>
+
+<main>
+
+<!-- ============ 场景 · 首页 ============ -->
+<section class="scene" id="home">
+  <h2 class="scene-title">首页 · 浓时刻（当前构触发入场）</h2>
+  <p class="scene-sub">顶栏切构再点「再演一次」，对比三种入场性格；打字机/墨点悬停为既有签名件手感</p>
+  <div class="col stage" id="homeStage">
+    <div class="paper-col">
+      <header class="site-header beat beat-1">
+        <a class="logo" href="#">
+          <svg width="26" height="16" viewBox="0 0 84 60" fill="none" aria-hidden="true">
+            <path d="M12 8 L27 44 L42 8" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M42 8 L57 44 L72 8" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="80" y="10" width="4" height="26" rx="1.5" fill="#C94A44"/>
+          </svg>
+          wuh.site
+        </a>
+        <nav>
+          <a href="#" aria-current="page">博客</a>
+          <a href="#">关于</a>
+          <a href="#">足迹</a>
+          <a href="#">留言板</a>
+          <a href="#">音乐</a>
+        </nav>
+      </header>
+
+      <div class="hero">
+        <svg class="wmark beat beat-1" width="84" height="52" viewBox="0 0 84 60" fill="none" aria-hidden="true">
+          <path d="M12 8 L27 44 L42 8" stroke="var(--text-primary)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M42 8 L57 44 L72 8" stroke="var(--text-primary)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="80" y="10" width="4" height="26" rx="1.5" fill="var(--primary-500)"/>
+        </svg>
+        <div class="ink-title beat beat-2"><h1>wuh.site · 一盏茶的距离</h1></div>
+        <p class="tagline beat beat-3">字是墨，页是纸，慢一点没关系</p>
+      </div>
+
+      <div class="ink-body">
+        <p class="motto" id="motto" aria-live="off"></p>
+        <div class="ctas beat beat-4">
+          <a class="btn" href="#">看看博客</a>
+          <a class="btn ghost" href="#">关于我</a>
+        </div>
+
+        <div class="ornament beat beat-5" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 10 10"><rect x="2.2" y="2.2" width="5.6" height="5.6" transform="rotate(45 5 5)" fill="var(--text-muted)"/></svg>
+        </div>
+
+        <section class="beat beat-6">
+          <div class="section-head">
+            <h3 class="section-title">精选</h3>
+            <a class="more" href="#">全部文章 →</a>
+          </div>
+          <div class="year-label">2026</div>
+          <div class="year-group">
+            <a class="post-row" href="#">
+              <span class="ink-dot"></span>
+              <span class="post-title">把博客写成一本手记：素笺形态的半年</span>
+              <span class="tag">随笔</span>
+              <span class="post-meta"><span>10-18</span><span>·</span><span>1.2k 阅读</span></span>
+            </a>
+            <a class="post-row" href="#">
+              <span class="ink-dot"></span>
+              <span class="post-title">CodeMirror 6 即时渲染的装饰层契约</span>
+              <span class="tag">技术</span>
+              <span class="post-meta"><span>09-27</span><span>·</span><span>2.4k 阅读</span></span>
+            </a>
+          </div>
+          <div class="year-label" style="margin-top:18px">2025</div>
+          <div class="year-group">
+            <a class="post-row" href="#">
+              <span class="ink-dot"></span>
+              <span class="post-title">在 GitHub Issues 里养一个 CMS</span>
+              <span class="tag">工程</span>
+              <span class="post-meta"><span>12-03</span><span>·</span><span>3.1k 阅读</span></span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <p class="note">入场总长 ≤900ms · 正文区不挂滚动动画（守 animation-system 卡约束） · reduced-motion 全关</p>
+</section>
+
+<!-- ============ 场景 · 文章页 ============ -->
+<section class="scene" id="article">
+  <h2 class="scene-title">文章 · 浓时刻 + 行墨 TOC</h2>
+  <p class="scene-sub">入场只动题阶与首屏（正文阅读区不动画）；右侧 TOC 点击体验行墨 220ms</p>
+  <div class="stage" id="articleStage">
+    <div class="article-wrap">
+      <article class="paper-col">
+        <header class="article-head">
+          <div class="ink-title"><h1>把博客写成一本手记：素笺形态的半年</h1></div>
+          <div class="article-meta beat beat-2">
+            <span>2026-10-18</span><span>·</span><span>1,204 阅读</span><span>·</span><span>随笔</span>
+          </div>
+        </header>
+        <div class="ink-body">
+          <div class="prose">
+            <p>写字这件事，工具换了十几轮，最后留下来的还是最像纸的那一个。今年上半年把编辑器重建了一遍——不是为了功能，是为了让「写」这个动作本身慢下来、静下来。</p>
+            <p>素笺形态的核心只有一句话：<a href="#">缓冲区的字节就是事实源</a>，屏幕上的一切都只是纸面的痕迹。痕迹可以任意打扮，纸不动。</p>
+            <h2 id="s1">纸的边界</h2>
+            <p>把编辑区做成一张 760px 的窄纸，四周留出呼吸。顶栏平时隐去 72% 的墨，悬停才显影——工具不应该比文字更急于被看见。</p>
+            <blockquote>字是墨，页是纸。墨可以浓淡，纸永远安静。</blockquote>
+            <h2 id="s2">墨的层次</h2>
+            <p>标题走衬线题阶：一级配渐隐墨线，二级配短朱线。当前正在写的那一行保持源码态——「墨迹未干」，离开即沉淀成排版。这套语言后来也长到了网站上，你正在看的这一页就是。</p>
+            <h3>细节一：骑缝</h3>
+            <p>发布过的文章，纸缘叠口会染上一层朱——像书被翻过留下的口红线。</p>
+            <h3>细节二：落墨</h3>
+            <p>保存成功时，纸面轻轻一沉。代码里只有一行 <code>translateY(1px)</code>，手感却是「墨落到了纸上」。</p>
+          </div>
+        </div>
+      </article>
+      <aside class="toc beat beat-3">
+        <div class="toc-title">目 次</div>
+        <button class="active" data-t="s1">一、纸的边界</button>
+        <button class="l2" data-t="s1">留白与显影</button>
+        <button data-t="s2">二、墨的层次</button>
+        <button class="l2" data-t="s2">细节一：骑缝</button>
+        <button class="l2" data-t="s2">细节二：落墨</button>
+        <p class="hint">点击换章 —— 行墨 220ms</p>
+      </aside>
+    </div>
+  </div>
+  <p class="note">题阶墨线/引用朱线/行内码凹槽 = 家族语言（与 desktop 素笺渲染同源）· 链接虚线→实线 150ms</p>
+</section>
+
+<!-- ============ 场景 · 交互词表 ============ -->
+<section class="scene" id="vocab">
+  <h2 class="scene-title">静交互词表 · 全站一套语法</h2>
+  <p class="scene-sub">交互层快而克制；动效预算留给浓时刻。以下均为可交互实物</p>
+  <div class="col stage">
+    <div class="vocab-grid">
+      <div class="specimen">
+        <div class="word">墨显 <small>HOVER · 150ms</small></div>
+        <p class="desc">文字与行的悬停：颜色/底色小步渐变，起步快收尾软</p>
+        <div class="demo">
+          <span class="demo-ink">把鼠标放在这里</span>
+          <a class="demo-ink" href="#" onclick="return false">导航链接也是</a>
+        </div>
+      </div>
+      <div class="specimen">
+        <div class="word">浮墨 <small>HOVER · 150–220ms</small></div>
+        <p class="desc">卡片与按钮：边框/阴影/位移 ≤2px，本卡片自身即是</p>
+        <div class="demo"><a class="btn" href="#" onclick="return false">按钮</a><span class="tag">标签</span></div>
+      </div>
+      <div class="specimen">
+        <div class="word">落按 <small>PRESS · ≤100ms</small></div>
+        <p class="desc">按压下沉 1px，松手即回——「按进了纸面」</p>
+        <div class="demo"><button class="btn" onclick="return false">按住我试试</button></div>
+      </div>
+      <div class="specimen">
+        <div class="word">行墨 <small>STATE · 220ms ★新 dur-base</small></div>
+        <p class="desc">选中态/目录当前章：朱线滑移 + 底色渐变，替代 0ms 跳变</p>
+        <div class="demo demo-lines" id="vocabLines">
+          <button class="active">第一章 · 纸</button>
+          <button>第二章 · 墨</button>
+          <button>第三章 · 装帧</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="scale-strip">
+      <span class="scale-chip"><b>150</b> 墨显/浮墨 · dur-quick</span>
+      <span class="scale-chip"><b>220</b> 行墨/状态 · dur-base ★</span>
+      <span class="scale-chip"><b>400</b> 书写/bloom · dur-write</span>
+      <span class="scale-chip"><b>600</b> 晕开/reveal · dur-reveal</span>
+      <span class="scale-chip">缓动统一 <b>ease-out-soft</b>（ease 裸值清零）</span>
+    </div>
+
+    <div class="compare">
+      <h3>手感对照 · 现状 vs 统一后</h3>
+      <p class="sub">同样的悬停目标，左边是现在全站的通配过渡税（0.3s · ease 起步慢），右边是统一后（150ms · ease-out-soft）。来回悬停，感受「闷」与「跟手」的差别</p>
+      <div class="compare-row">
+        <div class="compare-cell bad">
+          <div class="label">现状 · * { transition: .3s ease }</div>
+          <a class="tax-hover" href="#" onclick="return false">← 悬停我（迟半拍）</a>
+        </div>
+        <div class="compare-cell">
+          <div class="label">统一后 · 150ms ease-out-soft</div>
+          <a class="uni-hover" href="#" onclick="return false">← 悬停我（跟手）</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">换墨（主题切换）= 仅切换瞬间 scoped 过渡——本页右上「暗色」钮即实装：切一次感受颜色 300ms 内外收场，之后交互零负担</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  // ---- 场景 ----
+  var scenes = ['home', 'article', 'vocab'];
+  var scene = scenes.indexOf(params.get('scene')) >= 0 ? params.get('scene') : 'home';
+  document.getElementById(scene).classList.add('on');
+  document.querySelectorAll('nav.mock a[data-s]').forEach(function (a) {
+    if (a.dataset.s === scene) a.classList.add('on');
+  });
+  // ---- 构 ----
+  var construct = ['1', '2', '3'].indexOf(params.get('c')) >= 0 ? params.get('c') : '2';
+  document.body.dataset.construct = construct;
+  // ---- 明暗（换墨：scoped 演示） ----
+  var scheme = params.get('scheme') === 'dark' ? 'dark' : 'light';
+  applyScheme(scheme, false);
+  function applyScheme(s, animate) {
+    var root = document.documentElement;
+    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.setAttribute('data-theme-switching', '');
+      setTimeout(function () { root.removeAttribute('data-theme-switching'); }, 340);
+    }
+    root.setAttribute('data-scheme', s);
+    document.getElementById('schemeBtn').textContent = s === 'dark' ? '亮色' : '暗色';
+  }
+  document.getElementById('schemeBtn').addEventListener('click', function () {
+    scheme = scheme === 'dark' ? 'light' : 'dark';
+    params.set('scheme', scheme);
+    history.replaceState(null, '', '?' + params.toString());
+    applyScheme(scheme, true);
+  });
+  document.querySelectorAll('#constructGroup button').forEach(function (b) {
+    if (b.dataset.c === construct) b.classList.add('on');
+    b.addEventListener('click', function () {
+      params.set('c', b.dataset.c);
+      history.replaceState(null, '', '?' + params.toString());
+      document.body.dataset.construct = b.dataset.c;
+      document.querySelectorAll('#constructGroup button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      play();
+    });
+  });
+
+  // ---- 入场演出（切构/重演触发一次） ----
+  var currentStage = { home: 'homeStage', article: 'articleStage' }[scene];
+  function play() {
+    var el = document.getElementById(currentStage);
+    if (!el) return;
+    el.classList.remove('play');
+    void el.offsetWidth;
+    setTimeout(function () { el.classList.add('play'); }, 30);
+  }
+  document.getElementById('replayBtn').addEventListener('click', play);
+  play();
+
+  // ---- 行墨 cycler（词表 + 文章 TOC） ----
+  function wireLines(container) {
+    if (!container) return;
+    container.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        container.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+      });
+    });
+  }
+  wireLines(document.getElementById('vocabLines'));
+  wireLines(document.querySelector('#article .toc'));
+
+  // ---- 打字机格言（既有签名件示意；reduced-motion 直接全文） ----
+  var motto = document.getElementById('motto');
+  if (motto) {
+    var text = '「 写字的人，先要有一张安静的纸。 」';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      motto.textContent = text;
+    } else {
+      var i = 0;
+      (function type() {
+        motto.textContent = text.slice(0, i);
+        if (i <= text.length) { i++; setTimeout(type, 90); }
+        else { setTimeout(function () { i = 0; setTimeout(type, 2600); }, 3600); }
+      })();
+    }
+  }
+})();
+</script>
+</body>
+</html>

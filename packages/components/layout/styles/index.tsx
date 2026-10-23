@@ -7,7 +7,7 @@ const hoverFade = 'color-mix(in oklab, var(--primary-color) 45%, transparent)'
 
 const linkUnderline = `
   position: relative;
-  transition: color var(--transition-fast, 180ms) ease-out;
+  transition: color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   &::after {
     content: '';
@@ -19,7 +19,7 @@ const linkUnderline = `
     height: 1px;
     background: linear-gradient(to right, transparent, ${hoverFade}, transparent);
     opacity: 0;
-    transition: opacity var(--transition-fast, 180ms) ease-out;
+    transition: opacity var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
   }
 
   &:hover {
@@ -181,7 +181,7 @@ export const StyledFooter = styled.div`
     color: color-mix(in oklab, var(--text-muted) 80%, transparent);
     border-radius: var(--border-radius-sm);
     cursor: default;
-    transition: color var(--transition-fast, 180ms) ease-out;
+    transition: color var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
   }
 
   .footer-data-item:hover {
@@ -220,8 +220,8 @@ export const StyledFooter = styled.div`
     visibility: hidden;
     pointer-events: none;
     z-index: 20;
-    transition: opacity var(--transition-fast, 180ms) ease-out, transform var(--transition-fast, 180ms) ease-out,
-      visibility var(--transition-fast, 180ms);
+    transition: opacity var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out), transform var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out),
+      visibility var(--motion-dur-quick, 150ms);
   }
 
   .footer-data-item:hover .footer-tip,

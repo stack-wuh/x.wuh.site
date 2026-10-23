@@ -116,7 +116,6 @@ export const CssVariableStyles = createGlobalStyle`
     --text-secondary: var(--normal-700);
     --text-muted: var(--normal-700);
     --background-color: var(--background-900);
-    --transition-fast: 180ms;
     --elevation-soft: 0 4px 14px rgba(0,0,0,.06);
     --elevation-card: 0 20px 40px rgba(0,0,0,0.08);
     --elevation-card-hover: 0 30px 50px rgba(0,0,0,0.12);
@@ -289,7 +288,11 @@ export const CssVariableStyles = createGlobalStyle`
     transition: none !important;
   }
 
-  *, *::before, *::after {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  /* 换墨（20261023-style-site-motion-foundation）：主题切换瞬间的 scoped 颜色过渡——
+     ThemeModeProvider 挂 data-theme-switching ≤340ms 后卸载；交互不再常态化背负通配过渡税 */
+  html[data-theme-switching] *,
+  html[data-theme-switching] *::before,
+  html[data-theme-switching] *::after {
+    transition: background-color 0.3s var(--motion-ease-in-out-soft), color 0.3s var(--motion-ease-in-out-soft), border-color 0.3s var(--motion-ease-in-out-soft), box-shadow 0.3s var(--motion-ease-in-out-soft) !important;
   }
 `

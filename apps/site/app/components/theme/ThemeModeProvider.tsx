@@ -56,6 +56,20 @@ function applyThemeFamily(family: ThemeFamily) {
   document.documentElement.dataset.themeFamily = family
 }
 
+// 换墨（20261023-style-site-motion-foundation）：用户切换主题/外观的瞬间挂 data-theme-switching，
+// 由 cssVariableProvider 的 scoped 过渡接管颜色渐变，340ms 后卸载；初始恢复与 reduced-motion 不挂
+let themeSwitchingTimer: ReturnType<typeof setTimeout> | undefined
+
+function flagThemeSwitching() {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  document.documentElement.setAttribute('data-theme-switching', '')
+  clearTimeout(themeSwitchingTimer)
+  themeSwitchingTimer = setTimeout(() => {
+    document.documentElement.removeAttribute('data-theme-switching')
+  }, 340)
+}
+
 export function ThemeModeProvider({ children }: { children: ReactNode }) {
   const [themeFamily, setThemeFamilyState] = useState<ThemeFamily>('wine')
   const [colorSchemeMode, setColorSchemeModeState] = useState<ColorSchemeMode>('system')
@@ -88,6 +102,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
         const nextScheme: ColorScheme = event.matches ? 'dark' : 'light'
         setResolvedColorScheme(nextScheme)
         applyColorScheme(nextScheme)
+        flagThemeSwitching()
       }
     },
     darkSchemeQuery,
@@ -97,6 +112,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
   const setThemeFamily = useCallback((family: ThemeFamily) => {
     setThemeFamilyState(family)
     applyThemeFamily(family)
+    flagThemeSwitching()
     writeStorage(THEME_STORAGE_KEY, family)
   }, [])
 
@@ -105,6 +121,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     setColorSchemeModeState(mode)
     setResolvedColorScheme(nextScheme)
     applyColorScheme(nextScheme)
+    flagThemeSwitching()
     writeStorage(COLOR_SCHEME_STORAGE_KEY, mode)
   }, [])
 

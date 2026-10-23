@@ -63,7 +63,7 @@ const controlStyles = css<{ $size: LinkGroupSize }>`
   text-decoration: none;
   font-size: var(--fs);
   position: relative;
-  transition: transform ${buttonTokens.transitionDuration} ease, box-shadow ${buttonTokens.transitionDuration} ease, border-color ${buttonTokens.transitionDuration} ease, background-color ${buttonTokens.transitionDuration} ease, color ${buttonTokens.transitionDuration} ease, border-radius ${buttonTokens.transitionDuration} ease;
+  transition: transform ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), box-shadow ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), border-color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), background-color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), border-radius ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out);
   overflow: hidden;
   will-change: transform;
   cursor: pointer;
@@ -72,7 +72,7 @@ const controlStyles = css<{ $size: LinkGroupSize }>`
     transform: translateY(-2px) scale(1.06);
     background: var(--background-200);
     border-radius: 50%;
-    animation: ${pulse} 900ms ease;
+    animation: ${pulse} 900ms var(--motion-ease-out-soft, ease-out);
   }
   &:focus-visible {
     outline: none;
@@ -110,7 +110,7 @@ export const SIcon = styled.span`
   align-items: center;
   justify-content: center;
   color: var(--primary-color);
-  transition: color ${buttonTokens.transitionDuration} ease, transform ${buttonTokens.transitionDuration} ease;
+  transition: color ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), transform ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out);
   will-change: transform;
   svg {
     width: 1em;
@@ -118,7 +118,7 @@ export const SIcon = styled.span`
   }
   ${SControl}:hover &, ${SLink}:hover & {
     transform: translateY(-1px);
-    animation: ${iconSpin} 420ms ease;
+    animation: ${iconSpin} 420ms var(--motion-ease-out-soft, ease-out);
   }
 `
 
@@ -135,7 +135,7 @@ export const STitle = styled.span`
   padding: 4px 8px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity ${buttonTokens.transitionDuration} ease, transform ${buttonTokens.transitionDuration} ease;
+  transition: opacity ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out), transform ${buttonTokens.transitionDuration} var(--motion-ease-out-soft, ease-out);
   white-space: nowrap;
   ${SLink}:hover & {
     opacity: 1;

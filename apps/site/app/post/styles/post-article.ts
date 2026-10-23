@@ -85,7 +85,7 @@ export const RelatedPostTitle = styled.span`
   line-height: 1.7;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  transition: color 180ms ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const RelatedPostSummary = styled.span`
@@ -114,14 +114,14 @@ export const RelatedPostLeader = styled.span`
   overflow: hidden;
   border-bottom: 1px dotted color-mix(in oklab, var(--normal-400) 60%, transparent);
   transform: translateY(-5px);
-  transition: border-color 180ms ease;
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const RelatedPostArrow = styled.span`
   flex: none;
   color: var(--text-muted);
   font-size: var(--font-size-sm);
-  transition: color 180ms ease, transform 180ms ease;
+  transition: color var(--motion-dur-quick) var(--motion-ease-out-soft), transform var(--motion-dur-quick) var(--motion-ease-out-soft);
 `
 
 export const RelatedPostLink = styled(Link)`
@@ -188,7 +188,7 @@ export const ColophonMeta = styled.p`
     color: var(--accent-color);
     text-decoration: none;
     border-bottom: 1px dashed color-mix(in oklab, var(--accent-color) 42%, transparent);
-    transition: border-color 0.2s ease;
+    transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   a:hover {

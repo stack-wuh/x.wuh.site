@@ -74,7 +74,7 @@ export const Skeleton = styled.div<{ $visible: boolean }>`
   background-size: 400% 100%;
   animation: ${shimmer} 1.6s ease-in-out infinite;
   opacity: ${(p) => (p.$visible ? 1 : 0)};
-  transition: opacity 0.2s ease;
+  transition: opacity var(--motion-dur-quick, 150ms) var(--motion-ease-out-soft, ease-out);
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;

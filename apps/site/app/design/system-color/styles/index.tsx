@@ -36,7 +36,7 @@ export const SwatchRow = styled.div`
     font-size: 11px;
     font-weight: 500;
     font-family: var(--font-mono);
-    transition: all 0.3s ease;
+    transition: all var(--motion-dur-base) var(--motion-ease-out-soft);
     cursor: pointer;
 
     &:hover {
@@ -66,7 +66,7 @@ export const ThemeChip = styled(Button)`
   border-radius: var(--border-radius-base);
   font-size: var(--font-size-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     border-color: var(--primary-color);

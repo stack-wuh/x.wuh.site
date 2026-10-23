@@ -111,7 +111,7 @@ export const MarkdownBody = styled.article`
     color: var(--primary-color);
     text-decoration: none;
     border-bottom: 1px dashed color-mix(in oklab, var(--primary-color) 45%, transparent);
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft), color var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   a:hover {
@@ -160,7 +160,7 @@ export const MarkdownBody = styled.article`
     color: var(--text-secondary);
     padding: 4px 10px;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    transition: background var(--motion-dur-quick) var(--motion-ease-out-soft), color var(--motion-dur-quick) var(--motion-ease-out-soft), border-color var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   .copy-btn:hover {
@@ -178,7 +178,7 @@ export const MarkdownBody = styled.article`
     text-decoration: none;
     border-bottom: none;
     color: var(--text-secondary);
-    transition: opacity 0.2s ease;
+    transition: opacity var(--motion-dur-quick) var(--motion-ease-out-soft);
   }
 
   h1:hover .anchor,

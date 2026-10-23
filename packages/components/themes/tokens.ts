@@ -70,6 +70,7 @@ export interface Tokens {
     'ease-out-soft': string
     'ease-in-out-soft': string
     'dur-quick': string
+    'dur-base': string
     'dur-reveal': string
     'dur-write': string
   }

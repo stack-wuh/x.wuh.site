@@ -88,7 +88,7 @@ export const FilterSummary = styled.summary`
   cursor: pointer;
   list-style: none;
   user-select: none;
-  transition: border-color var(--transition-fast) ease, color var(--transition-fast) ease, background-color var(--transition-fast) ease;
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft), color var(--motion-dur-quick) var(--motion-ease-out-soft), background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &::-webkit-details-marker {
     display: none;
@@ -136,7 +136,7 @@ export const FilterOption = styled(Link)<{ $active: boolean }>`
   background: ${({ $active }) => ($active ? 'color-mix(in oklab, var(--accent-color) 20%, var(--background-100, #fff))' : 'transparent')};
   font-size: var(--font-size-sm);
   text-decoration: none;
-  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+  transition: background-color var(--motion-dur-quick) var(--motion-ease-out-soft), color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     color: var(--primary-color);
@@ -162,7 +162,7 @@ export const FilterToken = styled(Link)`
   background: color-mix(in oklab, var(--accent-color) 18%, var(--background-100, #fff));
   font-size: var(--font-size-xs);
   text-decoration: none;
-  transition: border-color var(--transition-fast) ease, background-color var(--transition-fast) ease;
+  transition: border-color var(--motion-dur-quick) var(--motion-ease-out-soft), background-color var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     border-color: color-mix(in oklab, var(--accent-color) 70%, var(--background-100, #fff));
@@ -207,7 +207,7 @@ export const PostRow = styled(Flex).attrs({
   padding: var(--space-xs) 8px;
   border-radius: 6px;
   color: inherit;
-  transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
+  transition: background-color var(--motion-dur-quick) var(--motion-ease-out-soft), padding-left var(--motion-dur-quick) var(--motion-ease-out-soft);
 
   &:hover {
     background-color: color-mix(in oklab, var(--accent-color) 8%, transparent);
