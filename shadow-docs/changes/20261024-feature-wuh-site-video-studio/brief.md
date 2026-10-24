@@ -4,7 +4,7 @@
   "name": "20261024-feature-wuh-site-video-studio",
   "type": "feature",
   "scope": "video-materials",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20261024-feature-wuh-site-video-studio",
   "files": [
@@ -18,8 +18,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 551,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/551"
   },
   "review": {
     "conclusion": "passed",
@@ -28,7 +28,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:551",
     "planHash": "bafd77c5a957f9a3a9c3839e47fb9f207164aeb3874694953e8842abf71b8648",
     "updatedAt": null,
     "lastError": null,
