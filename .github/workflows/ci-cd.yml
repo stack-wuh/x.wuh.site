@@ -83,6 +83,10 @@ jobs:
       # buildx：普通 docker driver 不支持 cache 导出（v1.4.89 实测失败），用 gha cache 后端
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
+        env:
+          # 关 build record 导出：.dockerbuild artifact 下载不稳拖死 transfer（v1.4.91/92 实测）
+          DOCKER_BUILD_SUMMARY: 'false'
+          DOCKER_BUILD_RECORD_UPLOAD: 'false'
 
       - name: Build image (${{ matrix.target }})
         uses: docker/build-push-action@v6
@@ -123,6 +127,9 @@ jobs:
       - name: Download image tarballs
         uses: actions/download-artifact@v4
         with:
+          # 只下镜像 tar；build-push-action 的 dockerbuild build-record artifact
+          # 下载不稳（v1.4.91/92 实测拖死本步），不下载它
+          pattern: image-*
           path: deploy-images
 
       - name: Normalize tarball paths
