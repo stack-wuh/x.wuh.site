@@ -397,18 +397,27 @@ CRON
       exit 1
     fi
 
-    echo "⏳ Waiting for health checks (max 120s)..."
+    echo "⏳ Waiting for health checks (2s interval, max 180s)..."
+    # 20261026 优化：原 5s 间隔轮询在服务 10~20s 就绪时也要 1~2 分钟才命中，
+    # 改 2s 间隔 + 分服务探测日志，nest 先就绪即可先打点，两端都绿才算过
     HEALTHY=false
-    for i in $(seq 1 24); do
-      if curl -sf http://localhost:3201/v2/health > /dev/null 2>&1 && \
-         curl -sf http://localhost:3001/ > /dev/null 2>&1; then
-        echo ""
+    NEST_OK=false
+    NEXT_OK=false
+    for i in $(seq 1 90); do
+      if [ "$NEST_OK" = false ] && curl -sf http://localhost:3201/v2/health > /dev/null 2>&1; then
+        NEST_OK=true
+        echo "  ✅ nest staging ready (t=$((i*2))s)"
+      fi
+      if [ "$NEXT_OK" = false ] && curl -sf http://localhost:3001/ > /dev/null 2>&1; then
+        NEXT_OK=true
+        echo "  ✅ next staging ready (t=$((i*2))s)"
+      fi
+      if [ "$NEST_OK" = true ] && [ "$NEXT_OK" = true ]; then
         echo "✅ Health check passed"
         HEALTHY=true
         break
       fi
-      printf "."
-      sleep 5
+      sleep 2
     done
 
     if [ "$HEALTHY" = false ]; then

@@ -11,22 +11,28 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 6
+    env:
+      # 站点公网域名。勿用 x.wuh.site（仓库名，DNS 无记录，20261026 实测 NXDOMAIN）
+      SITE: https://wuh.site
     steps:
       - name: runner 直访公网（不经服务器）
         shell: bash
         run: |
           echo "════ DNS ════"
-          getent hosts x.wuh.site || echo "DNS 解析失败"
+          getent hosts wuh.site || echo "DNS 解析失败"
           echo "════ 公网首页响应头 ════"
-          curl -s -D - -o /tmp/pub.html --max-time 20 https://x.wuh.site/ | grep -iE "HTTP/|cache|age:|server:|cf-|x-vercel|x-nextjs|content-type" || echo "curl 失败: $?"
+          curl -s -D - -o /tmp/pub.html --max-time 20 "$SITE/" | grep -iE "HTTP/|cache|age:|server:|cf-|x-vercel|x-nextjs|content-type" || echo "curl 失败: $?"
+          echo "════ API 健康检查 ════"
+          curl -s --max-time 15 "$SITE/api/health" || echo "health 失败: $?"
+          echo ""
           echo "════ 首页块指纹 ════"
           for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pub.html | sort -u | head -8); do
-            N=$(curl -s --max-time 15 "https://x.wuh.site$c" | grep -c "252px")
+            N=$(curl -s --max-time 15 "$SITE$c" | grep -c "252px")
             echo "$c -> 252px x$N"
           done
           echo "════ /music 页块指纹 ════"
-          curl -s --max-time 20 https://x.wuh.site/music -o /tmp/pubmusic.html
+          curl -s --max-time 20 "$SITE/music" -o /tmp/pubmusic.html
           for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pubmusic.html | sort -u | head -10); do
-            N=$(curl -s --max-time 15 "https://x.wuh.site$c" | grep -c "252px")
+            N=$(curl -s --max-time 15 "$SITE$c" | grep -c "252px")
             echo "$c -> 252px x$N"
           done

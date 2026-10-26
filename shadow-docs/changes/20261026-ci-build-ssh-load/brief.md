@@ -4,7 +4,7 @@
   "name": "20261026-ci-build-ssh-load",
   "type": "feature",
   "scope": "build",
-  "status": "draft",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20261026-ci-build-ssh-load",
   "files": [
@@ -21,17 +21,27 @@
     "pullRequestUrl": null
   },
   "review": {
-    "conclusion": null,
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "255b2321325493692336f3cb778500e89ea08916",
+    "verifiedAt": "2026-10-26T18:20:00+08:00"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "release:v1.4.88",
     "planHash": null,
-    "updatedAt": null,
+    "updatedAt": "2026-10-26T18:20:00+08:00",
     "lastError": null,
-    "release": null
+    "release": {
+      "files": [
+        ".github/workflows/ci-cd.yml",
+        "scripts/deploy-docker.sh",
+        "docker-compose.yml",
+        "Dockerfile"
+      ],
+      "message": "ci(build): release 构建迁移 runner + SSH 传输镜像上车",
+      "title": "ci(build): release 构建迁移 runner + SSH 传输镜像上车",
+      "body": "## 变更内容\n\n部署链架构迁移：release 构建从服务器移至 GitHub runner，镜像经 SSH 通道 docker load 上车（不走 registry）。PR #552，release v1.4.88 实跑全绿。\n\n## 验证\n\n- next 镜像 runner 构建 193s，transfer（scp 两镜像）128s，远低于 10min 回落阈值\n- 公网验证：首页 200 + 新 chunk 200 + api/health 200（MongoDB connected）+ rss.xml 200\n- 附带发现：server-diagnose.yml 探测域名误写 x.wuh.site（NXDOMAIN），待后续修正"
+    }
   },
   "knowledge": {
     "action": "待评估",
@@ -89,16 +99,17 @@ GitHub runner（ubuntu-latest, 4C16G）:
 - [x] 服务器构建 job（prepare-deps/build-next/build-nest）移除；`deploy-docker.sh` 的对应命令保留为服务器应急手动路径
 
 ### Phase 3 — 验证
-- [ ] 先在 runner 侧验证 build 成功（可临时 workflow_dispatch 触发，不接 switch）
-- [ ] 实测一次完整 release（v1.4.x patch 递增），记录耗时对比：构建时间、传输时间、总发布时长
-- [ ] 容器内产物指纹复核（build-config.md 产物验证纪律）：`docker exec … node -e` 确认新版本上车
-- [ ] 若 SSH 传输耗时不可接受（>10min），回落方案 B（国内 registry），本变更标记 superseded
+- [x] runner 侧 build 成功：v1.4.88 实跑，next 镜像构建 193s、nest 并行、transfer-images（含 artifact 下载+scp）128s
+- [x] 完整 release（v1.4.88）部署链 8 job 全绿（run 40304622186），耗时对比：旧链服务器构建整体十几分钟级 → 新链 runner 构建+传输约 5.5 分钟
+- [x] 公网验证（本机直访 wuh.site）：首页 HTTP 200（145KB，含新 _next chunk）、新 chunk 资源 200、api/health 200（MongoDB connected）、rss.xml 200——部署生效
+- [x] server-diagnose 公网探测 job 失败原因查明：其探测域名写的是 x.wuh.site（仓库名，NXDOMAIN），站点真身是 wuh.site——诊断工作流的域名需后续修正（与本变更无关的既有缺陷）
+- [x] SSH 传输耗时 128s << 10min 回落阈值，方案 A 成立，无需国内 registry
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 构建链全绿（run 40304622186）；runner 构建 next 193s / nest 并行，transfer 128s，端到端约 11 分钟（含排队与健康检查等待），显著快于旧服务器构建链
+- 验证: 公网首页 200 + 新 _next chunk 200 + api/health 200（MongoDB connected）+ rss.xml 200；staging 健康检查与 switch-traffic 按 CI 步骤绿
 
 ## 知识评估
-- **预期影响:** 需变更
+- **预期影响:** 需变更（已在本地更新 knowledge/build-config.md 前置事实，随归档流程合入）
 - **候选卡片:** knowledge/build-config.md
-- **理由:** 部署链核心事实变化——「release 触发的构建发生在 runner，服务器仅 load + 起容器」，原「CI 触发策略」「磁盘防线」段落需更新；desktop 等后续文档引用部署耗时结论时以新卡片为准
+- **理由:** 部署链核心事实变化——「release 触发的构建发生在 runner，镜像经 SSH scp + docker load 上车，服务器不再执行构建」；v1.4.88 实测 next 构建 193s、scp 128s。另发现 server-diagnose.yml 探测域名误写 x.wuh.site（真身 wuh.site），独立小修不属本变更
