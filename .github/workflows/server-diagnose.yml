@@ -15,8 +15,10 @@ jobs:
       # 站点公网域名。勿用 x.wuh.site（仓库名，DNS 无记录，20261026 实测 NXDOMAIN）
       SITE: https://wuh.site
     steps:
+      # shell 用非 -e 模式：指纹循环里 grep -c 无匹配返回 1（20261026 实测把整步判 fail），
+      # 诊断脚本允许单项失败，以汇总输出为准
       - name: runner 直访公网（不经服务器）
-        shell: bash
+        shell: bash {0}
         run: |
           echo "════ DNS ════"
           getent hosts wuh.site || echo "DNS 解析失败"
@@ -27,12 +29,14 @@ jobs:
           echo ""
           echo "════ 首页块指纹 ════"
           for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pub.html | sort -u | head -8); do
-            N=$(curl -s --max-time 15 "$SITE$c" | grep -c "252px")
+            N=$(curl -s --max-time 15 "$SITE$c" | grep -c "252px" || true)
             echo "$c -> 252px x$N"
           done
           echo "════ /music 页块指纹 ════"
           curl -s --max-time 20 "$SITE/music" -o /tmp/pubmusic.html
           for c in $(grep -oE '/_next/static/[^"]*\.(js|css)' /tmp/pubmusic.html | sort -u | head -10); do
-            N=$(curl -s --max-time 15 "$SITE$c" | grep -c "252px")
+            N=$(curl -s --max-time 15 "$SITE$c" | grep -c "252px" || true)
             echo "$c -> 252px x$N"
           done
+          echo "════ 汇总 ════"
+          echo "诊断输出完毕（以上各段独立判读）"
