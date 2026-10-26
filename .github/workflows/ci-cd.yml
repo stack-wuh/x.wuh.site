@@ -96,6 +96,9 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.target }}
           cache-to: type=gha,scope=${{ matrix.target }},mode=max
           tags: ${{ matrix.tag }}
+          # provenance attestation 会额外生成 .dockerbuild artifact（v1.4.91 实测其下载不稳
+          # 拖死 transfer 步骤）且给 tar 加 unknown/unknown 附件，关掉
+          provenance: false
           # 直接输出 docker 格式 tar 包，省掉后续 docker save 步骤
           outputs: type=docker,dest=/tmp/${{ matrix.tar }}
 
