@@ -77,13 +77,30 @@ jobs:
         with:
           submodules: false
 
+      - name: Set up BuildKit cache (per-target)
+        uses: actions/cache@v4
+        with:
+          # deps 层的 pnpm store + next build 增量缓存；按 target 分键避免互踩
+          path: |
+            /tmp/.buildx-cache-${{ matrix.target }}
+          key: buildx-${{ matrix.target }}-${{ github.sha }}
+          restore-keys: |
+            buildx-${{ matrix.target }}-
+
       - name: Build image (${{ matrix.target }})
         run: |
           docker build \
             --target ${{ matrix.target }} \
             --build-arg BASE_IMAGE=node:20-alpine \
             --build-arg NPM_REGISTRY=https://registry.npmjs.org \
+            --cache-from type=local,src=/tmp/.buildx-cache-${{ matrix.target }} \
+            --cache-to type=local,dest=/tmp/.buildx-cache-${{ matrix.target }}-new,mode=max \
             --tag ${{ matrix.tag }} .
+
+      - name: Rotate cache (move new over old)
+        run: |
+          rm -rf /tmp/.buildx-cache-${{ matrix.target }}
+          mv /tmp/.buildx-cache-${{ matrix.target }}-new /tmp/.buildx-cache-${{ matrix.target }}
 
       - name: Save image to tarball
         run: docker save ${{ matrix.tag }} | gzip > /tmp/${{ matrix.tar }}
