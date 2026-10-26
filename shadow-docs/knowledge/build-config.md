@@ -1,7 +1,7 @@
 ---
 title: 构建与部署配置
 domain: build
-keywords: [构建配置, Docker, NestJS, MongoDB, dotenv, 部署, Console, nginx, 健康检查, CI, release, 发布, 上线, 交付, 触发, styled-components, 磁盘, 清理, disk-guard]
+keywords: [构建配置, Docker, NestJS, MongoDB, dotenv, 部署, Console, nginx, 健康检查, CI, release, 发布, 上线, 交付, 触发, styled-components, 磁盘, 清理, disk-guard, runner, scp, docker load, 镜像传输]
 scope:
   - Dockerfile
   - docker-compose.yml
@@ -20,7 +20,8 @@ source:
   - changes/archive/20260916-style-contact-dialog-paper/brief.md
   - changes/20260928-feature-music-player/brief.md
   - changes/20261001-fix-mini-player-marquee-undefined/brief.md
-verified: 2026-10-01
+  - changes/archive/20261026-ci-build-ssh-load/brief.md
+verified: 2026-10-26
 ---
 
 # 构建与部署配置
@@ -33,13 +34,15 @@ NestJS 通过 dotenv 自动加载项目根目录 `.env` 文件。MongooseModule 
 
 styled-components 必须开启 `compiler.styledComponents`（SWC 转换，Next 16 Turbopack/webpack 共用），且所有样式文件必须从 `styled-components` **原包**导入：`@wuh.site/components/styled` 纯再导出不被 SWC 识别，组件 ID 会按各端 bundle 内组件创建顺序编号，SSR 与客户端分叉 → 水合后 DOM 重建、SSR 样式表被清空、级联随导航路径漂移。变体差异（如三钮组 compact 尺寸）必须写成「同一声明内的条件值」（媒体查询内直接输出 32/36px），禁止尾部插值覆盖块——styled-components 展平时 @media 被提升到普通规则之后，尾部覆盖永远失效。
 
-磁盘防线（2026-09-03 磁盘满拖垮同机 mongod 事故后建立）：`deploy-docker.sh` 的 disk_guard 在 build* 命令前检查根分区——可用 <6G 自动清理（builder prune 保留最近 6GB 增量缓存 + 悬空镜像 + 停止容器 + journal 收缩 200M），清理后仍 <3G 放弃构建；`disk-clean` workflow 每天北京时间 04:35 定时自洁（workflow_dispatch 可手动触发）。`clean` 命令与守卫共用同一清理策略。**2026-10-01 复发与处置（v1.4.50 排障）**：磁盘满同分钟杀死 mongod.service（Result: signal）与双 Docker 构建（日志特征：`wait: remote command exited without exit status` / 无错误输出的 ELIFECYCLE）——**构建突然全挂先查磁盘与 mongod**；`gh workflow run disk-clean.yml` 恢复构建后，staging-test 若因 staging/prod nest ECONNREFUSED 27017 失败即 Mongo 未回：`gh run rerun --failed` 前先 `sudo systemctl start mongod`（mongod 为宿主 systemd 服务，不在 compose 内，disk-clean 不会拉起它）。**部署产物验证纪律（同日第二课）**：`build:next` 产物在 `dist/site/` 而非 `.next/`（BUILD_ID 在 `dist/site/BUILD_ID`）；CI build-next 绿 ≠ 新产物上车——连续被杀的构建之后 BuildKit 缓存可产出「成功但陈旧」的镜像（v1.4.50 首次部署 switch-traffic 全绿而容器仍是 v1.4.49），复核必须以**容器内产物指纹**为准（注意：runner 镜像可能无 grep，用 `docker exec … node -e` 全盘扫；styled-components 样式串在 JS 块不在 .css）。修复配方：`docker compose build --no-cache next && docker compose up -d --force-recreate next`。
+磁盘防线（2026-09-03 磁盘满拖垮同机 mongod 事故后建立；20261026 构建迁 runner 后服务器不再产生 build cache，防线降级为兜底保留）：`deploy-docker.sh` 的 disk_guard 在 build* 命令前检查根分区——可用 <6G 自动清理（builder prune 保留最近 6GB 增量缓存 + 悬空镜像 + 停止容器 + journal 收缩 200M），清理后仍 <3G 放弃构建；`disk-clean` workflow 每天北京时间 04:35 定时自洁（workflow_dispatch 可手动触发）。`clean` 命令与守卫共用同一清理策略。**2026-10-01 复发与处置（v1.4.50 排障）**：磁盘满同分钟杀死 mongod.service（Result: signal）与双 Docker 构建（日志特征：`wait: remote command exited without exit status` / 无错误输出的 ELIFECYCLE）——**构建突然全挂先查磁盘与 mongod**；`gh workflow run disk-clean.yml` 恢复构建后，staging-test 若因 staging/prod nest ECONNREFUSED 27017 失败即 Mongo 未回：`gh run rerun --failed` 前先 `sudo systemctl start mongod`（mongod 为宿主 systemd 服务，不在 compose 内，disk-clean 不会拉起它）。**部署产物验证纪律（同日第二课）**：`build:next` 产物在 `dist/site/` 而非 `.next/`（BUILD_ID 在 `dist/site/BUILD_ID`）；CI build-next 绿 ≠ 新产物上车——连续被杀的构建之后 BuildKit 缓存可产出「成功但陈旧」的镜像（v1.4.50 首次部署 switch-traffic 全绿而容器仍是 v1.4.49），复核必须以**容器内产物指纹**为准（注意：runner 镜像可能无 grep，用 `docker exec … node -e` 全盘扫；styled-components 样式串在 JS 块不在 .css）。修复配方：`docker compose build --no-cache next && docker compose up -d --force-recreate next`。
 
 Docker 多阶段构建：deps、builder、runner。Console 使用 `nginx:alpine` 运行 Vite 构建产物，支持 SPA 路由 fallback（`try_files $uri $uri/ /index.html`）。端口规划：生产 next:3000、nest:3200、console:3300；staging 对应 3001、3201、3301。部署脚本提供 build、staging health、switch、diagnose、cancel 和 rollback 能力。
 
-CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链（prepare → build → staging-test → switch-traffic）。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。
+CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。
 
-**常备运维工作流（2026-10-01 起，workflow_dispatch 手动触发，Actions secrets 持 SSH 凭据）**：`server-diagnose.yml`（runner 直访公网验 DNS/响应头/产物块指纹 + 服务器侧系统与容器健康）；`server-repair-nginx.yml`（sudo 拉起 nginx——公网入口 80/443，挂掉时全站不可达但源站 localhost 全绿，2026-10-01 实案）；`server-repair-mongo.yml`（sudo 拉起 mongod，见磁盘防线段）；`server-repair-rebuild.yml`（next 镜像 `--no-cache` 重建 + 强制重建容器，见产物验证纪律段）。排障顺序建议：先 diagnose，再按症状选 repair。注意本机开发环境若挂代理（fake-ip DNS），沙箱到站点 TLS 必失败——远程视点用 runner 工作流，勿信本机 curl。
+**部署链架构（20261026 起，v1.4.88 实跑全绿，PR #552/#553/#554）**：release 构建发生在 GitHub runner（不再在服务器上构建），镜像不走 registry（国内服务器拉 GHCR/Docker Hub 不稳定，用户实测退回）——runner 侧 matrix 并行 `docker build`（`BASE_IMAGE=node:20-alpine` + 官方 npm 源，`Dockerfile` ARG 参数化，服务器应急构建默认国内源不变）→ `docker save | gzip` 经 artifact 中转 + `appleboy/scp-action` 传服务器 `/tmp/deploy-images/` → `deploy-docker.sh load-images`（gunzip + `docker load` + 固定 tag 就绪校验 + 传输产物清理）→ staging-test → switch-traffic。compose `next`/`nest` 固定 `image: xwuhsite-*:xwuhsite`，load 顶替同名 tag 后 `up` 即用新镜像，compose 不再隐式触发远端 pull；服务器本地 `build-deps/build-next/build-nest` 全保留为应急回退。实测：next 镜像 runner 构建 193s、scp 两镜像 128s（远低于 10min 回落阈值，方案成立）；#553 再加 BuildKit local cache（per-target 键轮转）+ staging 健康检查 2s 间隔分服务打点（原 5s 轮询 145s 是最大压缩点），预期端到端 9.5min → 4.5~5.5min。**服务器构建死循环教训**：曾因「registry 拉不动 → 回服务器构建 → 构建慢且两次拖垮 mongod」，破局点是发现 SSH 通道稳定可靠，让镜像走 SSH 而非 registry。
+
+**常备运维工作流（2026-10-01 起，workflow_dispatch 手动触发，Actions secrets 持 SSH 凭据）**：`server-diagnose.yml`（runner 直访公网验 DNS/响应头/产物块指纹 + 服务器侧系统与容器健康；20261026 起探测域名必须用 `wuh.site`——曾误写仓库名 `x.wuh.site` 致 NXDOMAIN 永远探测失败，且脚本须用非 `-e` shell 防单条 grep 无匹配误判整步失败）；`server-repair-nginx.yml`（sudo 拉起 nginx——公网入口 80/443，挂掉时全站不可达但源站 localhost 全绿，2026-10-01 实案）；`server-repair-mongo.yml`（sudo 拉起 mongod，见磁盘防线段）；`server-repair-rebuild.yml`（next 镜像 `--no-cache` 重建 + 强制重建容器，见产物验证纪律段）。排障顺序建议：先 diagnose，再按症状选 repair。注意本机开发环境若挂代理（fake-ip DNS），沙箱到站点 TLS 必失败——远程视点用 runner 工作流，勿信本机 curl。
 
 发布流程（2026-09-03 起实际执行，v1.4.21–v1.4.25 五个 release 一致）：手动 `gh release create vX.Y.Z --title "vX.Y.Z <名称>" --notes-file <结构化 changelog> --target <main head>`，Release 创建即触发部署链，部署全绿（`gh run watch --exit-status`）才算交付完成。版本号唯一来源是 GitHub Release tag（v1.4.x 按 patch 递增，与变更类型无关）；**`--target` 必须传完整 40 位 SHA 或分支名**——传短 SHA（如 `39881cf`）会被 Releases API 拒为 `HTTP 422: Release.target_commitish is invalid`（并连带报 tag_name 无效，容易误判成 tag 冲突）；`package.json` version 与 CHANGELOG 停在 1.4.16 不再 bump——standard-version 流程已停用，`scripts/release.sh` 虽在但已废弃（其 `--generate-notes --title "Release $tag"` 输出格式与实际标题惯例不符，勿照其执行）。**PR merged ≠ 已部署**：shadow-dev 工作流的 release 阶段在 PR 之后必须执行本段发布步骤。
 
