@@ -122,3 +122,4 @@
 | 20261015-fix-player-panel-responsive-regression | ✅ 完成 | shadow-docs/changes/archive/20261015-fix-player-panel-responsive-regression/brief.md |
 | 20261015-style-player-mobile-affordance | ✅ 完成 | shadow-docs/changes/archive/20261015-style-player-mobile-affordance/brief.md |
 | 20261016-feature-image-progressive-reveal | ✅ 完成 | shadow-docs/changes/archive/20261016-feature-image-progressive-reveal/brief.md |
+| 20261026-ci-build-ssh-load | ✅ 完成 | shadow-docs/changes/archive/20261026-ci-build-ssh-load/brief.md |
