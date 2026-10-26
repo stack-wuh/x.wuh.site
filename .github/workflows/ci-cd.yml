@@ -34,11 +34,15 @@ jobs:
       - name: Frontend lint (oxlint)
         run: pnpm run lint:next
 
+  # ── 构建阶段：runner 侧构建镜像，docker save 后经 SSH 传输（不走 registry）──
+  # 服务器内存小、拉取 registry 镜像不稳定，故构建在 runner 完成，服务器只 load + 起容器
   prepare:
     needs: [quality-gate]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
+      # 服务器代码必须同步到 release 提交：staging/switch 跑的是服务器侧 checkout
+      # 的 deploy-docker.sh（含 load-images 命令）与 docker-compose.yml（image 字段）
       - name: Pull latest code
         uses: appleboy/ssh-action@master
         with:
@@ -53,63 +57,82 @@ jobs:
             git reset --hard origin/main
             git clean -fd
 
-  prepare-deps:
-    needs: [prepare]
+  build-images:
+    needs: [quality-gate]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: runner-next
+            tag: xwuhsite-next:xwuhsite
+            tar: next.tar.gz
+          - target: runner-nest
+            tag: xwuhsite-nest:xwuhsite
+            tar: nest.tar.gz
     steps:
-      - name: Install dependencies
-        uses: appleboy/ssh-action@master
+      - uses: actions/checkout@v4
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          command_timeout: '30m'
-          script: |
-            set -e
-            cd /github/x.wuh.site
-            ./scripts/deploy-docker.sh build-deps
+          submodules: false
 
-  build-next:
-    needs: [prepare-deps]
-    if: github.event_name == 'release'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build Next.js
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          command_timeout: '30m'
-          script: |
-            set -e
-            cd /github/x.wuh.site
-            ./scripts/deploy-docker.sh build-next
+      - name: Build image (${{ matrix.target }})
+        run: |
+          docker build \
+            --target ${{ matrix.target }} \
+            --build-arg BASE_IMAGE=node:20-alpine \
+            --build-arg NPM_REGISTRY=https://registry.npmjs.org \
+            --tag ${{ matrix.tag }} .
 
-  build-nest:
-    needs: [prepare-deps]
-    if: github.event_name == 'release'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build NestJS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          command_timeout: '30m'
-          script: |
-            set -e
-            cd /github/x.wuh.site
-            ./scripts/deploy-docker.sh build-nest
+      - name: Save image to tarball
+        run: docker save ${{ matrix.tag }} | gzip > /tmp/${{ matrix.tar }}
 
-  staging-test:
-    needs: [build-next, build-nest]
+      - name: Show tarball size
+        run: ls -lh /tmp/${{ matrix.tar }}
+
+      - name: Upload tarball (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-${{ matrix.target }}
+          path: /tmp/${{ matrix.tar }}
+          retention-days: 3
+
+  transfer-images:
+    needs: [build-images, prepare]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Download image tarballs
+        uses: actions/download-artifact@v4
+        with:
+          path: deploy-images
+
+      - name: Normalize tarball paths
+        run: |
+          # artifact 目录名即 matrix target（image-runner-*），tar 包在子目录下；拍平到统一目录
+          mkdir -p flat
+          find deploy-images -name '*.tar.gz' -exec mv {} flat/ \;
+          ls -lh flat/
+
+      - name: Transfer images to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: 'flat/*.tar.gz'
+          target: '/tmp/deploy-images'
+          strip_components: 1
+          command_timeout: '40m'
+
+  load-and-stage:
+    needs: [transfer-images]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
-      - name: Run staging test
+      - name: Load images and start staging
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -118,10 +141,11 @@ jobs:
           script: |
             set -e
             cd /github/x.wuh.site
+            ./scripts/deploy-docker.sh load-images
             ./scripts/deploy-docker.sh staging-test
 
   switch-traffic:
-    needs: [staging-test]
+    needs: [load-and-stage]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:

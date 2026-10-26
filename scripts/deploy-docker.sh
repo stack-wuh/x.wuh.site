@@ -12,6 +12,7 @@ Commands:
   build-deps     Install npm dependencies only (caches layer)
   build-next     Build Next.js image only (CI step)
   build-nest     Build NestJS image only (CI step)
+  load-images    Load images from /tmp/deploy-images/*.tar.gz (runner 构建产物上车)
   staging-test   Start staging + health check (CI step)
   staging-down   Tear down staging containers
   switch-traffic Stop old containers, start new ones (CI step)
@@ -221,7 +222,8 @@ cmd_cancel() {
   rm -f /tmp/git-xwuhsite.lock 2>/dev/null && echo "  ✅ Removed git lock" || echo "  ℹ️  No lock file"
 
   echo "── Cleaning temp logs ──"
-  rm -f /tmp/deploy-*.log 2>/dev/null && echo "  ✅ Removed temp logs" || echo "  ℹ️  No temp logs"
+  rm -f /tmp/git-xwuhsite.lock /tmp/deploy-*.log 2>/dev/null
+  rm -rf /tmp/deploy-images 2>/dev/null || echo "  ℹ️  No temp logs"
 
   echo "✅ Cancel complete"
 }
@@ -347,6 +349,40 @@ CRON
       exit 1
     fi
     prune_old_images
+    ;;
+
+  load-images)
+    # CI runner 侧 docker save 的 tar.gz（含 next/nest 镜像）经 scp 落到
+    # /tmp/deploy-images/，本命令 load 后统一 tag 到 compose 引用的固定 tag。
+    # load 后的旧镜像变 dangling，由 switch-traffic 末尾 prune_old_images 收尾。
+    echo "📦 Loading images from /tmp/deploy-images"
+    disk_guard
+    mkdir -p /tmp/deploy-images
+    TARS=$(ls /tmp/deploy-images/*.tar.gz 2>/dev/null || true)
+    if [ -z "$TARS" ]; then
+      echo "❌ /tmp/deploy-images 下没有 *.tar.gz — runner 侧构建/传输可能失败"
+      exit 1
+    fi
+    for tar in $TARS; do
+      echo "── Loading $tar ──"
+      gunzip -c "$tar" | docker load 2>&1 | tee /tmp/deploy-load.log
+      if [ ${PIPESTATUS[0]} -ne 0 ] && [ ${PIPESTATUS[1]} -ne 0 ]; then
+        echo ""
+        echo "── 错误诊断 ──"
+        diagnose_error /tmp/deploy-load.log
+        exit 1
+      fi
+    done
+    # runner 侧 save 时已用固定 tag，这里兜底重 tag，防止 save 端 tag 漂移
+    docker image inspect xwuhsite-next:xwuhsite >/dev/null 2>&1 \
+      && docker tag xwuhsite-next:xwuhsite xwuhsite-next:xwuhsite \
+      || echo "⚠️  xwuhsite-next:xwuhsite 不存在（runner save 未带该 tag？），请检查 CI"
+    docker image inspect xwuhsite-nest:xwuhsite >/dev/null 2>&1 \
+      && echo "✅ xwuhsite-nest:xwuhsite 就绪" \
+      || echo "⚠️  xwuhsite-nest:xwuhsite 不存在（runner save 未带该 tag？），请检查 CI"
+    # 传输产物用后即删，避免堆积 /tmp
+    rm -f /tmp/deploy-images/*.tar.gz
+    echo "✅ Images loaded"
     ;;
 
   staging-test)

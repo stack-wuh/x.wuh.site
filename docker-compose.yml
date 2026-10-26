@@ -1,5 +1,8 @@
 services:
+  # 镜像 tag 固定，CI 链由 runner docker build + save/load 顶替该 tag 后 up；
+  # 保留 build 段作为服务器本地应急构建路径（deploy-docker.sh build-*）
   next:
+    image: xwuhsite-next:xwuhsite
     build:
       context: .
       target: runner-next
@@ -17,6 +20,7 @@ services:
     restart: unless-stopped
 
   nest:
+    image: xwuhsite-nest:xwuhsite
     build:
       context: .
       target: runner-nest

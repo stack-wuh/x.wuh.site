@@ -1,7 +1,12 @@
 # Stage 1: base
-FROM docker.m.daocloud.io/library/node:20-alpine AS base
+# BASE_IMAGE 可被 --build-arg 覆盖：国内/服务器构建用 daocloud 镜像源（默认），
+# GitHub runner（海外）构建传 node:20-alpine 直连 Docker Hub 更快更稳
+ARG BASE_IMAGE=docker.m.daocloud.io/library/node:20-alpine
+FROM ${BASE_IMAGE} AS base
+# npm registry 同理：runner 上用官方源，npmmirror 国内加速
+ARG NPM_REGISTRY=https://registry.npmmirror.com
 ENV CI=true
-RUN npm install -g pnpm@10.23.0 --registry=https://registry.npmmirror.com \
+RUN npm install -g pnpm@10.23.0 --registry=${NPM_REGISTRY} \
   && apk add --no-cache curl
 WORKDIR /app
 
