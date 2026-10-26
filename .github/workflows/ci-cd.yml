@@ -66,12 +66,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # tar: buildx 输出的未压缩 tar 名；gztar: 压缩后传服务器的名字
           - target: runner-next
             tag: xwuhsite-next:xwuhsite
-            tar: next.tar.gz
+            tar: next.tar
+            gztar: next.tar.gz
           - target: runner-nest
             tag: xwuhsite-nest:xwuhsite
-            tar: nest.tar.gz
+            tar: nest.tar
+            gztar: nest.tar.gz
     steps:
       - uses: actions/checkout@v4
         with:
@@ -99,13 +102,13 @@ jobs:
       - name: Compress tarball
         run: |
           gzip /tmp/${{ matrix.tar }}
-          ls -lh /tmp/${{ matrix.tar }}.gz
+          ls -lh /tmp/${{ matrix.gztar }}
 
       - name: Upload tarball (artifact)
         uses: actions/upload-artifact@v4
         with:
           name: image-${{ matrix.target }}
-          path: /tmp/${{ matrix.tar }}.gz
+          path: /tmp/${{ matrix.gztar }}
           retention-days: 3
 
   transfer-images:
