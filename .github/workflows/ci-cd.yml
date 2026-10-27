@@ -199,11 +199,18 @@ jobs:
           path: /tmp/${{ matrix.gztar }}
           retention-days: 3
 
-  transfer-images:
+  # ── 传输通道：OSS 中转（v1.4.95 实测 scp 国际链路波动 8 倍，94s ↔ 14m12s）──
+  # runner 公网上传 OSS（海外入口稳定），服务器内网 endpoint 下载（同 region 跑满带宽）
+  upload-images:
     needs: [build-images, prepare]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
+    env:
+      OSS_REGION: ${{ secrets.OSS_REGION }}
+      OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
+      # 需要的 Secrets：OSS_REGION（如 cn-hangzhou）、OSS_BUCKET、OSS_ACCESS_KEY_ID、OSS_ACCESS_KEY_SECRET
+      # 服务器侧需 ~/.ossutilconfig（endpoint 用 oss-<region>-internal.aliyuncs.com）
     steps:
       - name: Download image tarballs
         uses: actions/download-artifact@v4
@@ -220,23 +227,23 @@ jobs:
           find deploy-images -name '*.tar.gz' -exec mv {} flat/ \;
           ls -lh flat/
 
-      - name: Transfer images to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          source: 'flat/*.tar.gz'
-          target: '/tmp/deploy-images'
-          strip_components: 1
-          command_timeout: '40m'
+      - name: Upload images to OSS
+        run: |
+          # ossutil 官方镜像；海外 runner 走公网 endpoint 上传（分片+重试内建）
+          docker run --rm \
+            -v "$PWD/flat:/files" \
+            -e OSS_ACCESS_KEY_ID=${{ secrets.OSS_ACCESS_KEY_ID }} \
+            -e OSS_ACCESS_KEY_SECRET=${{ secrets.OSS_ACCESS_KEY_SECRET }} \
+            registry.cn-hangzhou.aliyuncs.com/aliyunoss/ossutil:latest \
+            cp -rf --recursive /files/ oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/
+          echo "uploaded to oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/"
 
   load-and-stage:
-    needs: [transfer-images]
+    needs: [upload-images]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
-      - name: Load images and start staging
+      - name: Pull images from OSS (internal endpoint) and start staging
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -245,6 +252,7 @@ jobs:
           script: |
             set -e
             cd /github/x.wuh.site
+            ./scripts/deploy-docker.sh pull-images '${{ github.event.release.tag_name }}'
             ./scripts/deploy-docker.sh load-images
             ./scripts/deploy-docker.sh staging-test
 
