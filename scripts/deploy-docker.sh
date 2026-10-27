@@ -365,13 +365,18 @@ CRON
     echo "⬇️  Pulling images from OSS (internal) for $TAG"
     disk_guard
     command -v ossutil >/dev/null 2>&1 || { echo "❌ ossutil 未安装——见 brief 20261027-ci-oss-transfer 服务器准备段"; exit 1; }
-    [ -n "${OSS_BUCKET:-}" ] || { echo "❌ OSS_BUCKET 未设置（服务器 .env 或环境变量）"; exit 1; }
+    # ssh-action 非交互 shell 不加载 .env（compose 会读它），这里兜底只取 OSS_BUCKET 一个变量
+    if [ -z "${OSS_BUCKET:-}" ] && [ -f .env ]; then
+      OSS_BUCKET=$(grep -E '^OSS_BUCKET=' .env | tail -1 | cut -d= -f2-)
+    fi
+    [ -n "${OSS_BUCKET:-}" ] || { echo "❌ OSS_BUCKET 未设置（环境变量或项目 .env）"; exit 1; }
     mkdir -p /tmp/deploy-images
-    ossutil cp -rf "oss://${OSS_BUCKET}/xwuhsite/${TAG}/" /tmp/deploy-images/ 2>&1 | tee /tmp/deploy-oss-pull.log
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    # if ! 写法在 set -o pipefail 下诊断分支才可达（PIPESTATUS 检查会先被 set -e 拦下）
+    if ! ossutil cp -r -f "oss://${OSS_BUCKET}/xwuhsite/${TAG}/" /tmp/deploy-images/ 2>&1 | tee /tmp/deploy-oss-pull.log; then
       echo ""
       echo "── 错误诊断 ──"
       diagnose_error /tmp/deploy-oss-pull.log
+      echo "ℹ️ 若本次是 rerun failed jobs：OSS 前缀在首次运行时已清理，请改选 Re-run all jobs 重新上传"
       exit 1
     fi
     TARS=$(ls /tmp/deploy-images/*.tar.gz 2>/dev/null || true)
@@ -381,11 +386,13 @@ CRON
     fi
     echo "✅ Pulled: $(ls /tmp/deploy-images/*.tar.gz | xargs -n1 basename | tr '\n' ' ')"
     # 下载完成即清理 OSS 侧该 release 前缀（内网流量免计费，对象删除防堆积）
-    ossutil rm -rf "oss://${OSS_BUCKET}/xwuhsite/${TAG}/" 2>&1 | tee -a /tmp/deploy-oss-pull.log || true
+    if ! ossutil rm -r -f "oss://${OSS_BUCKET}/xwuhsite/${TAG}/" 2>&1 | tee -a /tmp/deploy-oss-pull.log; then
+      echo "⚠️ OSS 前缀清理失败（不影响本次发布，需手动清理 oss://${OSS_BUCKET}/xwuhsite/${TAG}/）"
+    fi
     ;;
 
   load-images)
-    # CI runner 侧 docker save 的 tar.gz 经 scp 落到 /tmp/deploy-images/，
+    # CI runner 侧 docker save 的 tar.gz 经 OSS 中转落到 /tmp/deploy-images/，
     # 本命令 load 后统一 tag 到 compose 引用的固定 tag。
     # 按需构建（20261027）：runner 只构建有变更的端，tar 有哪个 load 哪个，
     # 只校验「本次有 tar 的镜像」的固定 tag；两个 tar 都没有才报错。

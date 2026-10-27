@@ -228,15 +228,21 @@ jobs:
           ls -lh flat/
 
       - name: Upload images to OSS
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
-          # ossutil 官方镜像；海外 runner 走公网 endpoint 上传（分片+重试内建）
-          docker run --rm \
-            -v "$PWD/flat:/files" \
-            -e OSS_ACCESS_KEY_ID=${{ secrets.OSS_ACCESS_KEY_ID }} \
-            -e OSS_ACCESS_KEY_SECRET=${{ secrets.OSS_ACCESS_KEY_SECRET }} \
-            registry.cn-hangzhou.aliyuncs.com/aliyunoss/ossutil:latest \
-            cp -rf --recursive /files/ oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/
-          echo "uploaded to oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/"
+          # 与服务器同版本二进制（issue #560 安装的 v1.7.18）；阿里云 ACR 不支持匿名
+          # docker pull（实测 401），且 v1 只认 -i/-k/-e 参数或 config 文件（不读环境
+          # 变量），docker 镜像方案不可行
+          curl -sSfL https://gosspublic.alicdn.com/ossutil/1.7.18/ossutil64 -o ossutil
+          chmod +x ossutil
+          OSS_URL="oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/"
+          # 先清同 tag 前缀：正常 release 下为空；rerun all jobs 时清掉半成功残留，保证重传幂等
+          ./ossutil rm -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" "$OSS_URL" || true
+          # 公网 endpoint 上传（分片+重试内建）
+          ./ossutil cp -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" flat/ "$OSS_URL"
+          echo "uploaded to $OSS_URL"
 
   load-and-stage:
     needs: [upload-images]
