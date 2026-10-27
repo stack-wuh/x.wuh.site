@@ -3,6 +3,11 @@ name: oss-smoke-test
 # 临时冒烟测试（brief 20261027-ci-oss-transfer）：验证 runner 公网上传 OSS 全链路，
 # 不触碰服务器。验证通过后删除本文件。
 on:
+  # workflow_dispatch 需 workflow 在默认分支才能触发；临时文件只在 feature 分支，
+  # 用 push 监听自身变化触发（验证通过后删除本文件）
+  push:
+    paths:
+      - '.github/workflows/oss-smoke-test.yml'
   workflow_dispatch:
 
 jobs:
