@@ -52,11 +52,13 @@ jobs:
       - name: Resolve previous release tag
         id: prev
         run: |
-          # 上一个 release tag = 当前 target 提交上最近的 tag。
+          # 上一个 release tag = 当前 tag 提交上最近的 tag。
           # 注意：Release 创建时 tag 已存在但指向同一提交——describe 会命中本次 tag 自己，
           # 导致 base=target 无 diff → 全 false。排除法：取 tag 的父提交上的最近 tag。
+          # 用当前 tag 而非 main 做 committish：release 检出是 detached HEAD，本地无 main
+          # 分支（v1.4.96 实测 git 2.56 起不再 DWIM 到 origin/main，报 malformed object name）
           CURRENT_TAG='${{ github.event.release.tag_name }}'
-          PREV=$(git tag --sort=-creatordate --merged '${{ github.event.release.target_commitish }}' | grep -v "^${CURRENT_TAG}$" | head -1)
+          PREV=$(git tag --sort=-creatordate --merged "$CURRENT_TAG" | grep -v "^${CURRENT_TAG}$" | head -1)
           echo "prev_tag=${PREV}" >> "$GITHUB_OUTPUT"
           echo "previous release tag: ${PREV:-<none, 首次或无 tag>}"
 
@@ -211,6 +213,8 @@ jobs:
       OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
       # 需要的 Secrets：OSS_REGION（如 cn-hangzhou）、OSS_BUCKET、OSS_ACCESS_KEY_ID、OSS_ACCESS_KEY_SECRET
       # 服务器侧需 ~/.ossutilconfig（endpoint 用 oss-<region>-internal.aliyuncs.com）
+    outputs:
+      has_images: ${{ steps.normalize.outputs.has_images }}
     steps:
       - name: Download image tarballs
         uses: actions/download-artifact@v4
@@ -221,13 +225,23 @@ jobs:
           path: deploy-images
 
       - name: Normalize tarball paths
+        id: normalize
         run: |
           # artifact 目录名即 matrix target（image-runner-*），tar 包在子目录下；拍平到统一目录
           mkdir -p flat
-          find deploy-images -name '*.tar.gz' -exec mv {} flat/ \;
-          ls -lh flat/
+          find deploy-images -name '*.tar.gz' -exec mv {} flat/ \; 2>/dev/null || true
+          TARS=$(ls flat/*.tar.gz 2>/dev/null || true)
+          if [ -z "$TARS" ]; then
+            # 两端均无变更的 release：无镜像可上车，跳过上传，下游部署链随之空跑绿过
+            echo "ℹ️ 无镜像产物（两端均无变更），跳过 OSS 上传"
+            echo "has_images=false" >> "$GITHUB_OUTPUT"
+          else
+            ls -lh flat/
+            echo "has_images=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Upload images to OSS
+        if: steps.normalize.outputs.has_images == 'true'
         env:
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
@@ -254,7 +268,7 @@ jobs:
 
   load-and-stage:
     needs: [upload-images]
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && needs.upload-images.outputs.has_images == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Pull images from OSS (internal endpoint) and start staging
@@ -272,7 +286,8 @@ jobs:
 
   switch-traffic:
     needs: [load-and-stage]
-    if: github.event_name == 'release'
+    # result == 'success'：load-and-stage 被跳过（无镜像）或失败时都不切流，级联空跑
+    if: github.event_name == 'release' && needs.load-and-stage.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Switch traffic
@@ -287,7 +302,7 @@ jobs:
             ./scripts/deploy-docker.sh switch-traffic
   restart-nginx:
     needs: [switch-traffic]
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && needs.switch-traffic.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
