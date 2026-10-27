@@ -57,19 +57,27 @@ runner（海外）: ossutil cp 上传 tar.gz 到 OSS（公网 endpoint，上传�
 
 ## 任务
 ### Phase 1 — workflow
-- [x] transfer-images 改名 upload-images：ossutil 官方 Docker 镜像上传（分片重试内建）
+- [x] transfer-images 改名 upload-images：ossutil v1.7.18 二进制 + `-i/-k/-e` 内联凭证上传（弃 docker 镜像：ACR 匿名 pull 被拒）
 - [x] load-and-stage 前置 `pull-images <tag>`（ossutil 内网下载 + 下载后清理 OSS 前缀）
 
 ### Phase 2 — 脚本
 - [x] deploy-docker.sh 新增 pull-images（ossutil 内网下载 + 校验文件存在 + OSS 前缀清理）；load-images 不变
 
 ### Phase 3 — 验证
-- [ ] secrets 填好后触发 release，观察上传/下载耗时（对比 scp 波动基线 94s~14m12s）
-- [ ] OSS 对象清理确认（release 后前缀下无残留）
+- [x] secrets 填好后触发 release，观察上传/下载耗时（对比 scp 波动基线 94s~14m12s）——v1.4.97 实测见「结果」
+- [x] OSS 对象清理确认（release 后前缀下无残留）
 
 ## 结果
-- 实际耗时: —
-- 验证: —
+- 实际耗时: 上传 32s（546MB，~17MB/s）；内网下载 93s（~6MB/s）；scp 基线 94s~14m12s
+- 验证: v1.4.97 release 全链路通过（上传→内网下载→load→staging→切流→nginx），生产已切流；OSS 前缀下载后自动清理（2 objects，0.2s）
+
+### 验证中发现并修复
+- ACR 匿名 docker pull 被拒（实测 401）→ 上传改 v1.7.18 静态二进制
+- v1 批量 cp 网络错误仍 exit 0（FinishWithError 但退出码 0）→ 上传/下载补 Error num 检查
+- pipefail 下 PIPESTATUS 诊断是死代码 → `if ! ... | tee` 写法
+- runner git 2.55→2.56 收紧 ref DWIM，`git tag --merged main` 报 malformed object name（v1.4.96 失败根因）→ 改用当前 tag 做 committish（PR #562）
+- 零镜像产物 release 在 upload 阶段崩溃 → `has_images` 输出级联跳过部署链（PR #562）
+- 服务器 .env 缺 OSS_BUCKET（手工配置未生效）→ 临时 workflow 从 secret 自动补写
 
 ## 知识评估
 - **预期影响:** 需变更（build-config 部署链架构段：传输通道 scp → OSS 中转）
