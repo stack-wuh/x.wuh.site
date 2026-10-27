@@ -1,0 +1,32 @@
+name: oss-fix-server-env
+
+# 临时修复（v1.4.97 验证）：从 GitHub secret 取值，幂等写入服务器 .env 的
+# OSS_BUCKET 行（issue #560 步骤 5 自动补做），并验证 ossutil 内网连接与对象存在。
+# 完成后删除本文件。
+on:
+  push:
+    paths:
+      - '.github/workflows/oss-fix-server-env.yml'
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Append OSS_BUCKET to server .env and verify
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          command_timeout: '4m'
+          script: |
+            set -e
+            cd /github/x.wuh.site
+            if grep -q '^OSS_BUCKET=' .env; then
+              echo "already present: $(grep '^OSS_BUCKET=' .env)"
+            else
+              echo "OSS_BUCKET=${{ secrets.OSS_BUCKET }}" >> .env
+              echo "appended: $(grep '^OSS_BUCKET=' .env)"
+            fi
+            ossutil ls "oss://${{ secrets.OSS_BUCKET }}/xwuhsite/v1.4.97/" | head -8
