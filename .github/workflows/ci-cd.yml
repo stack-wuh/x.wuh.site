@@ -240,8 +240,16 @@ jobs:
           OSS_URL="oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/"
           # 先清同 tag 前缀：正常 release 下为空；rerun all jobs 时清掉半成功残留，保证重传幂等
           ./ossutil rm -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" "$OSS_URL" || true
-          # 公网 endpoint 上传（分片+重试内建）
-          ./ossutil cp -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" flat/ "$OSS_URL"
+          # 公网 endpoint 上传（分片+重试内建）。
+          # 注意：v1 批量 cp 网络错误时仍以 0 退出（冒烟测试实测 FinishWithError 但 exit 0），
+          # 必须额外检查输出里的 Error num
+          ./ossutil cp -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" flat/ "$OSS_URL" > /tmp/oss-upload.log 2>&1
+          RC=$?
+          cat /tmp/oss-upload.log
+          if [ $RC -ne 0 ] || grep -q 'Error num: [1-9]' /tmp/oss-upload.log; then
+            echo "❌ OSS 上传失败（退出码 $RC，见上方日志）"
+            exit 1
+          fi
           echo "uploaded to $OSS_URL"
 
   load-and-stage:

@@ -379,6 +379,14 @@ CRON
       echo "ℹ️ 若本次是 rerun failed jobs：OSS 前缀在首次运行时已清理，请改选 Re-run all jobs 重新上传"
       exit 1
     fi
+    # v1 批量 cp 网络错误时仍返回 0（实测 FinishWithError 但 exit 0），额外检查 Error num，
+    # 防止部分 tar 下载失败被误判为「该端无变更按需跳过」
+    if grep -q 'Error num: [1-9]' /tmp/deploy-oss-pull.log; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-oss-pull.log
+      exit 1
+    fi
     TARS=$(ls /tmp/deploy-images/*.tar.gz 2>/dev/null || true)
     if [ -z "$TARS" ]; then
       echo "❌ 下载完成但 /tmp/deploy-images 下没有 *.tar.gz——检查 OSS 前缀 oss://${OSS_BUCKET}/xwuhsite/${TAG}/"
