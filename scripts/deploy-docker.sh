@@ -352,8 +352,10 @@ CRON
     ;;
 
   load-images)
-    # CI runner 侧 docker save 的 tar.gz（含 next/nest 镜像）经 scp 落到
-    # /tmp/deploy-images/，本命令 load 后统一 tag 到 compose 引用的固定 tag。
+    # CI runner 侧 docker save 的 tar.gz 经 scp 落到 /tmp/deploy-images/，
+    # 本命令 load 后统一 tag 到 compose 引用的固定 tag。
+    # 按需构建（20261027）：runner 只构建有变更的端，tar 有哪个 load 哪个，
+    # 只校验「本次有 tar 的镜像」的固定 tag；两个 tar 都没有才报错。
     # load 后的旧镜像变 dangling，由 switch-traffic 末尾 prune_old_images 收尾。
     echo "📦 Loading images from /tmp/deploy-images"
     disk_guard
@@ -363,6 +365,8 @@ CRON
       echo "❌ /tmp/deploy-images 下没有 *.tar.gz — runner 侧构建/传输可能失败"
       exit 1
     fi
+    LOADED_NEXT=false
+    LOADED_NEST=false
     for tar in $TARS; do
       echo "── Loading $tar ──"
       gunzip -c "$tar" | docker load 2>&1 | tee /tmp/deploy-load.log
@@ -372,14 +376,26 @@ CRON
         diagnose_error /tmp/deploy-load.log
         exit 1
       fi
+      case "$tar" in
+        *next*) LOADED_NEXT=true ;;
+        *nest*) LOADED_NEST=true ;;
+      esac
     done
-    # runner 侧 save 时已用固定 tag，这里兜底重 tag，防止 save 端 tag 漂移
-    docker image inspect xwuhsite-next:xwuhsite >/dev/null 2>&1 \
-      && docker tag xwuhsite-next:xwuhsite xwuhsite-next:xwuhsite \
-      || echo "⚠️  xwuhsite-next:xwuhsite 不存在（runner save 未带该 tag？），请检查 CI"
-    docker image inspect xwuhsite-nest:xwuhsite >/dev/null 2>&1 \
-      && echo "✅ xwuhsite-nest:xwuhsite 就绪" \
-      || echo "⚠️  xwuhsite-nest:xwuhsite 不存在（runner save 未带该 tag？），请检查 CI"
+    # 只校验本次有 tar 的镜像（按需构建下另一端不重建，服务器沿用现有镜像）
+    if [ "$LOADED_NEXT" = true ]; then
+      docker image inspect xwuhsite-next:xwuhsite >/dev/null 2>&1 \
+        && echo "✅ xwuhsite-next:xwuhsite 就绪" \
+        || { echo "❌ next tar 已 load 但 xwuhsite-next:xwuhsite 不存在——runner save 端 tag 漂移，请检查 CI"; exit 1; }
+    else
+      echo "ℹ️  next 无变更，跳过（沿用服务器现有镜像）"
+    fi
+    if [ "$LOADED_NEST" = true ]; then
+      docker image inspect xwuhsite-nest:xwuhsite >/dev/null 2>&1 \
+        && echo "✅ xwuhsite-nest:xwuhsite 就绪" \
+        || { echo "❌ nest tar 已 load 但 xwuhsite-nest:xwuhsite 不存在——runner save 端 tag 漂移，请检查 CI"; exit 1; }
+    else
+      echo "ℹ️  nest 无变更，跳过（沿用服务器现有镜像）"
+    fi
     # 传输产物用后即删，避免堆积 /tmp
     rm -f /tmp/deploy-images/*.tar.gz
     echo "✅ Images loaded"

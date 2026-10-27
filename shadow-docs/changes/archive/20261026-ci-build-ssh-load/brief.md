@@ -104,10 +104,16 @@ GitHub runner（ubuntu-latest, 4C16G）:
 - [x] 公网验证（本机直访 wuh.site）：首页 HTTP 200（145KB，含新 _next chunk）、新 chunk 资源 200、api/health 200（MongoDB connected）、rss.xml 200——部署生效
 - [x] server-diagnose 公网探测 job 失败原因查明：其探测域名写的是 x.wuh.site（仓库名，NXDOMAIN），站点真身是 wuh.site——诊断工作流的域名需后续修正（与本变更无关的既有缺陷）
 - [x] SSH 传输耗时 128s << 10min 回落阈值，方案 A 成立，无需国内 registry
+- [x] **提速增强与 buildx 三连坑（#553/#554/#556 + v1.4.89~93 五连 release 实测）**：
+  - v1.4.89：docker build 的 docker driver 不支持 `--cache-from/to type=local` 导出 → 改 buildx（#554）
+  - v1.4.90：matrix 变量 `tar: next.tar.gz` 与 buildx `outputs dest` 撞后缀，gzip 拒绝已 .gz 文件 → 拆 tar/gztar 两变量（#556）
+  - v1.4.91：build-push-action 默认 provenance 生成 `.dockerbuild` artifact，下载重试 5 次失败拖死 transfer → `provenance: false`（v1.4.92 仍挂：build record 导出在 actions 层独立于 provenance）
+  - v1.4.92：`DOCKER_BUILD_RECORD_UPLOAD=false` + `DOCKER_BUILD_SUMMARY=false` 关 build record，且 download-artifact 加 `pattern: image-*` 只下镜像包（双保险）
+  - **v1.4.93 全链首绿（run 40445461065）**：端到端 10m44s（gha cache 首次建仓无命中，下次 release 起为公平对比基线）
 
 ## 结果
-- 实际耗时: 构建链全绿（run 40304622186）；runner 构建 next 193s / nest 并行，transfer 128s，端到端约 11 分钟（含排队与健康检查等待），显著快于旧服务器构建链
-- 验证: 公网首页 200 + 新 _next chunk 200 + api/health 200（MongoDB connected）+ rss.xml 200；staging 健康检查与 switch-traffic 按 CI 步骤绿
+- 实际耗时: 构建链全绿（run 40304622186）；runner 构建 next 193s / nest 并行，transfer 128s，端到端约 11 分钟（含排队与健康检查等待），显著快于旧服务器构建链；v1.4.93 起含 gha cache，后续 release 观察缓存命中后的构建耗时
+- 验证: 公网首页 200 + 新 _next chunk 200 + api/health 200（MongoDB connected）+ rss.xml 200；staging 健康检查与 switch-traffic 按 CI 步骤绿；v1.4.93 全链 8 job 绿且公网复验通过（首页 200 / health ok mongodb connected）
 
 ## 知识评估
 - **预期影响:** 需变更（已在本地更新 knowledge/build-config.md 前置事实，随归档流程合入）

@@ -34,6 +34,71 @@ jobs:
       - name: Frontend lint (oxlint)
         run: pnpm run lint:next
 
+  # ── 按需构建判定：对比本次 release target 与上一个 release tag 的变更文件 ──
+  # 依赖图：next ← site+components+hooks+core；nest ← server+hooks+core；
+  # 交集（core/hooks/根配置/Dockerfile）→ 双建。规则取保守（宁可多建不漏建）。
+  changes:
+    needs: [quality-gate]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    outputs:
+      next: ${{ steps.filter.outputs.next }}
+      nest: ${{ steps.filter.outputs.nest }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve previous release tag
+        id: prev
+        run: |
+          # 上一个 release tag = 当前 target 提交上最近的 tag。
+          # 注意：Release 创建时 tag 已存在但指向同一提交——describe 会命中本次 tag 自己，
+          # 导致 base=target 无 diff → 全 false。排除法：取 tag 的父提交上的最近 tag。
+          CURRENT_TAG='${{ github.event.release.tag_name }}'
+          PREV=$(git tag --sort=-creatordate --merged '${{ github.event.release.target_commitish }}' | grep -v "^${CURRENT_TAG}$" | head -1)
+          echo "prev_tag=${PREV}" >> "$GITHUB_OUTPUT"
+          echo "previous release tag: ${PREV:-<none, 首次或无 tag>}"
+
+      - name: Detect changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          # 有上一个 tag 就和它比（增量）；没有（首次）时 base 退化为 target 自身 →
+          # diff 为空 → 全 false → 两端都跳过，部署链空跑绿过（无新东西可上车，安全）
+          base: ${{ steps.prev.outputs.prev_tag || github.event.release.target_commitish }}
+          filters: |
+            next:
+              - 'apps/site/**'
+              - 'packages/components/**'
+              - 'packages/core/**'
+              - 'packages/hooks/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - '.npmrc'
+              - 'tsconfig.json'
+              - 'tsconfig.base.json'
+              - 'Dockerfile'
+              - 'docker-compose.yml'
+              - '.github/workflows/ci-cd.yml'
+            nest:
+              - 'apps/server/**'
+              - 'packages/core/**'
+              - 'packages/hooks/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - '.npmrc'
+              - 'tsconfig.json'
+              - 'tsconfig.base.json'
+              - 'Dockerfile'
+              - 'docker-compose.yml'
+              - '.github/workflows/ci-cd.yml'
+
+      - name: Summary
+        run: |
+          echo "build next: ${{ steps.filter.outputs.next }}"
+          echo "build nest: ${{ steps.filter.outputs.nest }}"
+
   # ── 构建阶段：runner 侧构建镜像，docker save 后经 SSH 传输（不走 registry）──
   # 服务器内存小、拉取 registry 镜像不稳定，故构建在 runner 完成，服务器只 load + 起容器
   prepare:
@@ -58,7 +123,7 @@ jobs:
             git clean -fd
 
   build-images:
-    needs: [quality-gate]
+    needs: [quality-gate, changes]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -71,17 +136,30 @@ jobs:
             tag: xwuhsite-next:xwuhsite
             tar: next.tar
             gztar: next.tar.gz
+            need: next
           - target: runner-nest
             tag: xwuhsite-nest:xwuhsite
             tar: nest.tar
             gztar: nest.tar.gz
+            need: nest
+        # 该端无变更时整个 matrix leg 跳过（无 artifact 上传，下游按实际有的处理）
     steps:
+      # 该端无变更时直接跳过整个 job（跳过的 leg 无 artifact 上传，下游 pattern 过滤自然适配）
+      - name: Skip if no changes
+        id: gate
+        run: |
+          if [ "${{ needs.changes.outputs[matrix.need] }}" != "true" ]; then
+            echo "no changes for ${{ matrix.target }}, skipping all build steps"
+            exit 0
+          fi
       - uses: actions/checkout@v4
+        if: needs.changes.outputs[matrix.need] == 'true'
         with:
           submodules: false
 
       # buildx：普通 docker driver 不支持 cache 导出（v1.4.89 实测失败），用 gha cache 后端
       - name: Set up Buildx
+        if: needs.changes.outputs[matrix.need] == 'true'
         uses: docker/setup-buildx-action@v3
         env:
           # 关 build record 导出：.dockerbuild artifact 下载不稳拖死 transfer（v1.4.91/92 实测）
@@ -89,6 +167,7 @@ jobs:
           DOCKER_BUILD_RECORD_UPLOAD: 'false'
 
       - name: Build image (${{ matrix.target }})
+        if: needs.changes.outputs[matrix.need] == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -107,11 +186,13 @@ jobs:
           outputs: type=docker,dest=/tmp/${{ matrix.tar }}
 
       - name: Compress tarball
+        if: needs.changes.outputs[matrix.need] == 'true'
         run: |
           gzip /tmp/${{ matrix.tar }}
           ls -lh /tmp/${{ matrix.gztar }}
 
       - name: Upload tarball (artifact)
+        if: needs.changes.outputs[matrix.need] == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: image-${{ matrix.target }}
@@ -182,7 +263,6 @@ jobs:
             set -e
             cd /github/x.wuh.site
             ./scripts/deploy-docker.sh switch-traffic
-
   restart-nginx:
     needs: [switch-traffic]
     if: github.event_name == 'release'
