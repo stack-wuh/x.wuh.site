@@ -199,11 +199,18 @@ jobs:
           path: /tmp/${{ matrix.gztar }}
           retention-days: 3
 
-  transfer-images:
+  # ── 传输通道：OSS 中转（v1.4.95 实测 scp 国际链路波动 8 倍，94s ↔ 14m12s）──
+  # runner 公网上传 OSS（海外入口稳定），服务器内网 endpoint 下载（同 region 跑满带宽）
+  upload-images:
     needs: [build-images, prepare]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
+    env:
+      OSS_REGION: ${{ secrets.OSS_REGION }}
+      OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
+      # 需要的 Secrets：OSS_REGION（如 cn-hangzhou）、OSS_BUCKET、OSS_ACCESS_KEY_ID、OSS_ACCESS_KEY_SECRET
+      # 服务器侧需 ~/.ossutilconfig（endpoint 用 oss-<region>-internal.aliyuncs.com）
     steps:
       - name: Download image tarballs
         uses: actions/download-artifact@v4
@@ -220,23 +227,37 @@ jobs:
           find deploy-images -name '*.tar.gz' -exec mv {} flat/ \;
           ls -lh flat/
 
-      - name: Transfer images to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          source: 'flat/*.tar.gz'
-          target: '/tmp/deploy-images'
-          strip_components: 1
-          command_timeout: '40m'
+      - name: Upload images to OSS
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+          # 与服务器同版本二进制（issue #560 安装的 v1.7.18）；阿里云 ACR 不支持匿名
+          # docker pull（实测 401），且 v1 只认 -i/-k/-e 参数或 config 文件（不读环境
+          # 变量），docker 镜像方案不可行
+          curl -sSfL https://gosspublic.alicdn.com/ossutil/1.7.18/ossutil64 -o ossutil
+          chmod +x ossutil
+          OSS_URL="oss://${OSS_BUCKET}/xwuhsite/${{ github.event.release.tag_name }}/"
+          # 先清同 tag 前缀：正常 release 下为空；rerun all jobs 时清掉半成功残留，保证重传幂等
+          ./ossutil rm -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" "$OSS_URL" || true
+          # 公网 endpoint 上传（分片+重试内建）。
+          # 注意：v1 批量 cp 网络错误时仍以 0 退出（冒烟测试实测 FinishWithError 但 exit 0），
+          # 必须额外检查输出里的 Error num
+          ./ossutil cp -r -f -i "$OSS_ACCESS_KEY_ID" -k "$OSS_ACCESS_KEY_SECRET" -e "oss-${OSS_REGION}.aliyuncs.com" flat/ "$OSS_URL" > /tmp/oss-upload.log 2>&1
+          RC=$?
+          cat /tmp/oss-upload.log
+          if [ $RC -ne 0 ] || grep -q 'Error num: [1-9]' /tmp/oss-upload.log; then
+            echo "❌ OSS 上传失败（退出码 $RC，见上方日志）"
+            exit 1
+          fi
+          echo "uploaded to $OSS_URL"
 
   load-and-stage:
-    needs: [transfer-images]
+    needs: [upload-images]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
-      - name: Load images and start staging
+      - name: Pull images from OSS (internal endpoint) and start staging
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -245,6 +266,7 @@ jobs:
           script: |
             set -e
             cd /github/x.wuh.site
+            ./scripts/deploy-docker.sh pull-images '${{ github.event.release.tag_name }}'
             ./scripts/deploy-docker.sh load-images
             ./scripts/deploy-docker.sh staging-test
 

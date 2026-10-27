@@ -12,6 +12,7 @@ Commands:
   build-deps     Install npm dependencies only (caches layer)
   build-next     Build Next.js image only (CI step)
   build-nest     Build NestJS image only (CI step)
+  pull-images    Pull images from OSS internal endpoint (pull-images <tag>)
   load-images    Load images from /tmp/deploy-images/*.tar.gz (runner 构建产物上车)
   staging-test   Start staging + health check (CI step)
   staging-down   Tear down staging containers
@@ -351,8 +352,55 @@ CRON
     prune_old_images
     ;;
 
+  pull-images)
+    # 从 OSS 内网 endpoint 下载本次 release 的镜像 tar.gz 到 /tmp/deploy-images/。
+    # 同 region 内网下载跑满带宽、免公网流量费、不受国际链路波动影响（scp 实测 94s~14m12s 波动）。
+    # 前置：服务器已安装 ossutil 并配置 ~/.ossutilconfig（endpoint 用 oss-<region>-internal.aliyuncs.com），
+    #       env OSS_BUCKET 由服务器侧 .env 或环境提供。
+    TAG="${2:-}"
+    if [ -z "$TAG" ]; then
+      echo "❌ pull-images 需要 release tag 参数：pull-images <tag>"
+      exit 1
+    fi
+    echo "⬇️  Pulling images from OSS (internal) for $TAG"
+    disk_guard
+    command -v ossutil >/dev/null 2>&1 || { echo "❌ ossutil 未安装——见 brief 20261027-ci-oss-transfer 服务器准备段"; exit 1; }
+    # ssh-action 非交互 shell 不加载 .env（compose 会读它），这里兜底只取 OSS_BUCKET 一个变量
+    if [ -z "${OSS_BUCKET:-}" ] && [ -f .env ]; then
+      OSS_BUCKET=$(grep -E '^OSS_BUCKET=' .env | tail -1 | cut -d= -f2-)
+    fi
+    [ -n "${OSS_BUCKET:-}" ] || { echo "❌ OSS_BUCKET 未设置（环境变量或项目 .env）"; exit 1; }
+    mkdir -p /tmp/deploy-images
+    # if ! 写法在 set -o pipefail 下诊断分支才可达（PIPESTATUS 检查会先被 set -e 拦下）
+    if ! ossutil cp -r -f "oss://${OSS_BUCKET}/xwuhsite/${TAG}/" /tmp/deploy-images/ 2>&1 | tee /tmp/deploy-oss-pull.log; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-oss-pull.log
+      echo "ℹ️ 若本次是 rerun failed jobs：OSS 前缀在首次运行时已清理，请改选 Re-run all jobs 重新上传"
+      exit 1
+    fi
+    # v1 批量 cp 网络错误时仍返回 0（实测 FinishWithError 但 exit 0），额外检查 Error num，
+    # 防止部分 tar 下载失败被误判为「该端无变更按需跳过」
+    if grep -q 'Error num: [1-9]' /tmp/deploy-oss-pull.log; then
+      echo ""
+      echo "── 错误诊断 ──"
+      diagnose_error /tmp/deploy-oss-pull.log
+      exit 1
+    fi
+    TARS=$(ls /tmp/deploy-images/*.tar.gz 2>/dev/null || true)
+    if [ -z "$TARS" ]; then
+      echo "❌ 下载完成但 /tmp/deploy-images 下没有 *.tar.gz——检查 OSS 前缀 oss://${OSS_BUCKET}/xwuhsite/${TAG}/"
+      exit 1
+    fi
+    echo "✅ Pulled: $(ls /tmp/deploy-images/*.tar.gz | xargs -n1 basename | tr '\n' ' ')"
+    # 下载完成即清理 OSS 侧该 release 前缀（内网流量免计费，对象删除防堆积）
+    if ! ossutil rm -r -f "oss://${OSS_BUCKET}/xwuhsite/${TAG}/" 2>&1 | tee -a /tmp/deploy-oss-pull.log; then
+      echo "⚠️ OSS 前缀清理失败（不影响本次发布，需手动清理 oss://${OSS_BUCKET}/xwuhsite/${TAG}/）"
+    fi
+    ;;
+
   load-images)
-    # CI runner 侧 docker save 的 tar.gz 经 scp 落到 /tmp/deploy-images/，
+    # CI runner 侧 docker save 的 tar.gz 经 OSS 中转落到 /tmp/deploy-images/，
     # 本命令 load 后统一 tag 到 compose 引用的固定 tag。
     # 按需构建（20261027）：runner 只构建有变更的端，tar 有哪个 load 哪个，
     # 只校验「本次有 tar 的镜像」的固定 tag；两个 tar 都没有才报错。
