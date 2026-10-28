@@ -8,9 +8,8 @@ import {
   IconReset,
   IconRotate,
   IconDownload,
-  IconFullscreen,
-  IconExitFullscreen,
 } from '../icons'
+import FullscreenToggleIcon from './FullscreenToggleIcon'
 import { MoreMenuOverlay, MoreMenuContainer, MoreMenuItem } from './styles'
 
 type Props = {
@@ -71,7 +70,7 @@ export const MoreMenu: React.FC<Props> = ({
         )}
         {allowFullscreen && (
           <MoreMenuItem onClick={() => select(toggleFullscreen)}>
-            {isNativeFullscreen ? <IconExitFullscreen /> : <IconFullscreen />}
+            <FullscreenToggleIcon active={isNativeFullscreen} />
             {isNativeFullscreen ? t('components.preview.exitFullscreen') : t('components.preview.fullscreen')}
           </MoreMenuItem>
         )}

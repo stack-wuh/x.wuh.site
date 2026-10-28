@@ -6,13 +6,12 @@ import { useEventListener } from '@wuh.site/hooks/useEventListener'
 import { useScrollLock } from '@wuh.site/hooks/useScrollLock'
 import { useAudioPlayer } from './provider'
 import { findActiveLyricIndex, formatDuration, parseLyrics } from './utils'
+import PlayPauseIcon from './PlayPauseIcon'
 import { useLocale } from '@wuh.site/components/locales'
 import Progress from '@wuh.site/components/progress'
 import { MARQUEE_GAP_PX, MARQUEE_SPEED_PX_PER_S, useMarqueeOverflow } from './useMarquee'
 import {
   IconListMusic,
-  IconPause,
-  IconPlay,
   IconRepeat,
   IconRepeatOne,
   IconShuffle,
@@ -383,7 +382,7 @@ export const AudioPlayerPanel = () => {
               <IconSkipBack size={20} />
             </SkipButton>
             <PlayButton type='button' aria-label={playing ? t('player.panel.pause') : t('player.panel.play')} onClick={togglePlay}>
-              {playing ? <IconPause size={24} /> : <IconPlay size={24} />}
+              <PlayPauseIcon playing={playing} size={24} />
             </PlayButton>
             <SkipButton type='button' aria-label={t('player.panel.next')} onClick={playNext}>
               <IconSkipForward size={20} />

@@ -12,10 +12,9 @@ import {
   IconReset,
   IconRotateRight,
   IconDownload,
-  IconFullscreen,
-  IconExitFullscreen,
   IconMore,
 } from '../icons'
+import FullscreenToggleIcon from './FullscreenToggleIcon'
 import { Toolbar, IconButton } from './styles'
 
 type Props = ToolbarRenderProps & {
@@ -96,7 +95,7 @@ export const ImagePreviewToolbar: React.FC<Props> = (props) => {
           aria-label={isFullscreen ? t('components.preview.exitFullscreen') : t('components.preview.enterFullscreen')}
           onClick={toggleFullscreen}
         >
-          {isFullscreen ? <IconExitFullscreen /> : <IconFullscreen />}
+          <FullscreenToggleIcon active={isFullscreen} />
         </IconButton>
       )}
     </Toolbar>
