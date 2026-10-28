@@ -4,7 +4,7 @@
   "name": "20261028-refactor-ternary-icon-switches",
   "type": "refactor",
   "scope": "components",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "refactor/20261028-refactor-ternary-icon-switches",
   "files": [
@@ -24,13 +24,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "da9a110d026d65086b1a1c492c1654f83e3c3724",
-    "verifiedAt": "2026-10-28T15:39:42.500Z"
+    "verifiedCommit": "831ebdeaf85e4a213965916259e7537f5236f643",
+    "verifiedAt": "2026-10-28T16:20:34.173Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:565",
-    "planHash": "68405088f81b12c4c3967d5d85297e1c3150372e9a0d52767e11c6537012f7ed",
+    "checkpoint": "merged-pr:565",
+    "planHash": "4f4efdbacd95818c29525008e3d2d31e2d5e2c6a5f7331f1bf8648950a195d2e",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -60,7 +60,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "纯内部重组：PlayPauseIcon/FullscreenToggleIcon 为目录内部文件、不进公开入口，不构成新的公开名词或长期条款；component-standard 卡已覆盖内部文件先例与守卫约束，shared-hooks 边界未被触碰。结构守卫 18 pass、audio-player 5 探针与 tsc 全绿，不变量 3/3 有观察点，true 分支按证据缺口标注。"
+    "reason": "归档前置重跑：release squash 后 HEAD 由 da9a110 变为 831ebde（PR #565），代码内容与此前 passed review 一致；在 main 上对同一不变量集（结构契约/公开 Props 契约/白名单棘轮）重新落结论，知识判定维持无需变更。"
   }
 }
 ---
@@ -131,6 +131,7 @@ apps/site 与 packages/components 中 `A ? <X/> : <Y/>` 形态的组件级三目
   - 白名单棘轮：diff 中无新增手写 addEventListener/localStorage，走查确认。
   - runtime（localhost:3001，node 22.23.2）：3 个播放按钮各渲染 1 个 svg（MiniPlayer ×2 size=20、PlayerPanel size=24，与传参一致；playing=false 走 IconPlay 分支）；图片预览 1280 宽下 Toolbar 渲染「进入全屏」按钮、窄视口 MoreMenu 全屏项同图标（glyph `iconarrows-alt` 与 `icons/icofont.tsx:89` 的 IconFullscreen 单源一致）——4 个消费点全部命中。
   - 证据缺口：active/true 分支（IconExitFullscreen/IconPause）未能在页面内翻转——Fullscreen API 在后台 pane 拒绝合成点击（无用户激活）、歌曲播放依赖的后端未启动（歌单 API 500）。替代观察点：两组件内部三目为原表达式逐字迁移，true 分支图标与已验证的 false 分支在同一 import 语句同源，tsc 全绿。
+- 交付发布: PR #565 已合并（squash `831ebde`，2026-10-29）。按 `shadow-docs/knowledge/build-config.md`：合并不触发部署，生产更新由 GitHub Release published 触发，发版走 `shadow-dev-publish` 独立入口（可攒版）——本 change 无独立发布链待等。
 
 ## 知识评估
 - **预期影响:** 无需变更

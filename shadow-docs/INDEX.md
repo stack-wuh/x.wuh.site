@@ -122,4 +122,9 @@
 | 20261015-fix-player-panel-responsive-regression | ✅ 完成 | shadow-docs/changes/archive/20261015-fix-player-panel-responsive-regression/brief.md |
 | 20261015-style-player-mobile-affordance | ✅ 完成 | shadow-docs/changes/archive/20261015-style-player-mobile-affordance/brief.md |
 | 20261016-feature-image-progressive-reveal | ✅ 完成 | shadow-docs/changes/archive/20261016-feature-image-progressive-reveal/brief.md |
+| 20261023-style-site-motion-foundation | published | shadow-docs/changes/20261023-style-site-motion-foundation/brief.md |
+| 20261024-feature-wuh-site-video-studio | published | shadow-docs/changes/20261024-feature-wuh-site-video-studio/brief.md |
 | 20261026-ci-build-ssh-load | ✅ 完成 | shadow-docs/changes/archive/20261026-ci-build-ssh-load/brief.md |
+| 20261027-ci-oss-transfer | draft | shadow-docs/changes/20261027-ci-oss-transfer/brief.md |
+| 20261027-ci-selective-build | draft | shadow-docs/changes/20261027-ci-selective-build/brief.md |
+| 20261028-refactor-ternary-icon-switches | ✅ 完成 | shadow-docs/changes/archive/20261028-refactor-ternary-icon-switches/brief.md |
