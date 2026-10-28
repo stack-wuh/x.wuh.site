@@ -4,7 +4,7 @@
   "name": "20261028-refactor-ternary-icon-switches",
   "type": "refactor",
   "scope": "components",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "refactor/20261028-refactor-ternary-icon-switches",
   "files": [
@@ -19,8 +19,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 564,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/564",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 565,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/565"
   },
   "review": {
     "conclusion": "passed",
@@ -29,7 +29,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:564",
+    "checkpoint": "pr:565",
     "planHash": "68405088f81b12c4c3967d5d85297e1c3150372e9a0d52767e11c6537012f7ed",
     "updatedAt": null,
     "lastError": null,
