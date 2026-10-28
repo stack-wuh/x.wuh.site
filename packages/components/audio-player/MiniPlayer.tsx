@@ -5,6 +5,7 @@ import React from 'react'
 import { useLocalStorageState } from '@wuh.site/hooks/useLocalStorageState'
 import { useAudioPlayer } from './provider'
 import { formatDuration } from './utils'
+import PlayPauseIcon from './PlayPauseIcon'
 import { useLocale } from '@wuh.site/components/locales'
 import Progress from '@wuh.site/components/progress'
 import {
@@ -12,8 +13,6 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconListMusic,
-  IconPause,
-  IconPlay,
   IconSkipBack,
   IconSkipForward
 } from '@wuh.site/components/icons'
@@ -111,7 +110,7 @@ export const AudioMiniPlayer = () => {
             <IconSkipBack size={18} />
           </IconButton>
           <PlayButton type='button' aria-label={playing ? t('player.mini.pause') : t('player.mini.play')} onClick={togglePlay}>
-            {playing ? <IconPause size={20} /> : <IconPlay size={20} />}
+            <PlayPauseIcon playing={playing} size={20} />
           </PlayButton>
           <IconButton type='button' aria-label={t('player.mini.next')} onClick={playNext}>
             <IconSkipForward size={18} />
@@ -123,7 +122,7 @@ export const AudioMiniPlayer = () => {
 
         <MobileActionGroup>
           <PlayButton type='button' aria-label={playing ? t('player.mini.pause') : t('player.mini.play')} onClick={togglePlay}>
-            {playing ? <IconPause size={20} /> : <IconPlay size={20} />}
+            <PlayPauseIcon playing={playing} size={20} />
           </PlayButton>
           <IconButton type='button' aria-label={t('player.mini.collapse')} onClick={toggleCollapsed}>
             <IconChevronDown size={20} />
