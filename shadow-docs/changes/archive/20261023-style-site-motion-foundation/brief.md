@@ -4,7 +4,7 @@
   "name": "20261023-style-site-motion-foundation",
   "type": "style",
   "scope": "apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261023-style-site-motion-foundation",
   "files": [
@@ -54,13 +54,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "09d6a2376c831469f7ace82a05ddf67ee7633534",
-    "verifiedAt": "2026-10-23T15:42:52.189Z"
+    "verifiedCommit": "4a309739a33b9bd5840ae23cb4c7cdfcfdbdb0fd",
+    "verifiedAt": "2026-10-29T00:41:45.190Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:550",
-    "planHash": "ae3955f3fca44584eb2c06bc5d9c67c132e9c083b446d5a8e20f64a3515dda2a",
+    "checkpoint": "merged-pr:550",
+    "planHash": "bbd3f2f8057021e95bafe2f035ff06a66609ea3c6307939ce5082da14e2bacf7",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -72,7 +72,7 @@
         "style"
       ]
     },
-    "worktree": "/Users/wuhong/shadow-desktop/github/x.wuh.site/.claude/worktrees/20261023-style-site-motion-foundation",
+    "worktree": null,
     "release": {
       "files": [
         "apps/site/app/about/components/guestbook-barrage.styles.ts",
@@ -121,7 +121,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/animation-system.md",
-    "reason": "全站交互动效统一为家族语法：五词静交互词表（墨显/浮墨/落按/行墨/换墨）+ --motion-dur-base 220ms 新增 + --transition-fast 退役 + 通配过渡税拆除（换墨改 data-theme-switching scoped）+ 共享组件经 fallback 形式纳入（console 安全，旧禁令有意修订）；真机走查 + grep 探针 + tsc 全绿，verified-depth: runtime"
+    "reason": "merged HEAD 复核（a94edbf 合入后 main 4a30973）：变更文件与审阅态一致；知识已于 release 阶段落 animation-system.md 并随 PR #550 合并"
   }
 }
 ---
@@ -193,8 +193,17 @@
 
 ## 结果
 
-- 实际耗时: —
-- 验证: —（L 级逐条对账：每条不变量 → 观察点命令与输出摘要，或标注证据缺口与替代观察点）
+- 实际耗时: 同日立项→PR #550（2026-10-23）；2026-10-23 合入 main（merge commit a94edbf），同日部署链绿
+- 验证: L 级 6/6 不变量逐条对账——
+  - INV-1 通配税拆除：`grep -n "^\s*\*, \*::before\|data-theme-switching\|data-no-transition" cssVariableProvider.tsx` → 仅 285–295 两块 scoped（data-no-transition 既有 + data-theme-switching 新增），通配块已删
+  - INV-2 换墨 scoped：ThemeModeProvider `flagThemeSwitching`（340ms 卸载 + reduced-motion 早退 + clearTimeout 防叠加）；真机走查外观弹层切主题/明暗，颜色 300ms 内收场后交互零负担
+  - INV-3 令牌唯一来源：`grep -rn "transition-fast" apps packages` 空；裸 ease/裸时长清零，白名单=audio-player（卡片自持例外）+ image/styles:55（源码测试锁定的既有滞后揭示节奏）
+  - INV-4 共享组件 fallback：`grep -rn "var(--motion-[a-z-]+)" packages/components`（排除 audio-player）仅命中 cssVariableProvider 自身定义处，共享组件均为 `var(--motion-*, fallback)` 形式
+  - INV-5 关键帧唯一来源与降级：`git diff | grep "^+.*@keyframes"` 空（零新增）；`git diff | grep "^-.*prefers-reduced-motion"` 空（降级零删除）
+  - INV-6 行墨：post-toc.ts TocItemLink 指示条 height `var(--motion-dur-base)` 220ms + 色 150ms；真机 TOC 换章渐变通过
+  - 机器探针：`tsc --noEmit` rc=0；progress/image/responsive/spacing 批 27/27 绿（含 progress fallback 断言同步）；guestbook/header 触及断言绿；6 个存量失败经 main 检出对照实验原样复现，归因为存量债务非本变更
+  - 真机走查（用户执行）：hover 跟手 / 换墨 / TOC 行墨 / 四主题明暗，通过
+- 交付: PR [stack-wuh/x.wuh.site#550](https://github.com/stack-wuh/x.wuh.site/pull/550) merged；部署触发 = push main → ci-cd.yml，[run 39986552747](https://github.com/stack-wuh/x.wuh.site/actions/runs/39986552747) success（2026-10-23T16:24:50Z）
 
 ## 知识评估
 
