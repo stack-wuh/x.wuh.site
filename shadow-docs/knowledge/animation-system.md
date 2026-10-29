@@ -13,7 +13,7 @@ status: active
 source:
   - changes/archive/20260828-P-site-animation-system/brief.md
   - changes/20260929-feature-mini-player-title-marquee/brief.md
-  - changes/20261023-style-site-motion-foundation/brief.md
+  - changes/archive/20261023-style-site-motion-foundation/brief.md
 verified: 2026-10-23
 verified-depth: runtime
 verified-scope: 20261023 静交互词表统一（grep 三连：通配税零/transition-fast 零/裸 ease 清零白名单=audio-player+image:55 测试锁定；tsc rc=0；探针批 progress/image/responsive/spacing 27 用例绿 + guestbook/header 触及断言绿，6 失败经 main 对照归因存量；真机四主题走查 hover 跟手/换墨 scoped/TOC 行墨通过）
