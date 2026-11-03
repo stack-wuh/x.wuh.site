@@ -4,7 +4,7 @@
   "name": "20261104-style-state-transition-motion",
   "type": "style",
   "scope": "site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "style/20261104-style-state-transition-motion",
   "files": [
@@ -30,13 +30,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "0cbe78b47d3b7c326743effff382ae8760677562",
-    "verifiedAt": "2026-11-03T23:42:24.632Z"
+    "verifiedCommit": "74c414bdb2455559c985c33c458e10eac540836c",
+    "verifiedAt": "2026-11-03T23:56:28.855Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:567",
-    "planHash": "5bca044eebced8a99f8e06fa372210c30f6fec44a1a0a014f0d4599ee2256533",
+    "checkpoint": "merged-pr:567",
+    "planHash": "8f1db1aa7649d54fc723a3a0471b4d1dd22ed97a66266b6165cf2535965248d6",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -79,7 +79,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/animation-system.md",
-    "reason": "换幕（状态切换内容区过渡双层机制）入 animation-system 词表：层 1 交叉淡化（content-swap + useViewTransition）、层 2 mount 入场（mount-rise + 身份 key 重挂）、出场语言=入场即过渡；连带更新 music-player.md（/music 切年换幕段）与 shared-hooks.md（新增 useViewTransition 行）；verified-depth: runtime（music 切年 + footprint 选点真机全链路实证、换幕跳过拒绝吸收修复实测）；另发现两项待对账基线漂移：裸 ease 白名单（image:43,218/dialog:123）与 music 移动端 wiring 守卫 3 条旧正则失配"
+    "reason": "同 propose 结论（squash 后 main 复核）：换幕双层机制入 animation-system 词表，连带 music-player/shared-hooks；知识写入已随 PR #567 落 main，本execute仅复核漂移后闭环"
   }
 }
 ---

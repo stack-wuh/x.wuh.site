@@ -128,3 +128,4 @@
 | 20261027-ci-oss-transfer | draft | shadow-docs/changes/20261027-ci-oss-transfer/brief.md |
 | 20261027-ci-selective-build | draft | shadow-docs/changes/20261027-ci-selective-build/brief.md |
 | 20261028-refactor-ternary-icon-switches | ✅ 完成 | shadow-docs/changes/archive/20261028-refactor-ternary-icon-switches/brief.md |
+| 20261104-style-state-transition-motion | ✅ 完成 | shadow-docs/changes/archive/20261104-style-state-transition-motion/brief.md |
