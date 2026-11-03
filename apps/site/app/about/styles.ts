@@ -314,6 +314,18 @@ export const TimelineTitle = styled.span`
   color: var(--text-primary);
 `
 
+export const TimelineEntryLink = styled.a`
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+`
+
 export const TimelineSelect = styled.select`
   border: 1px solid color-mix(in oklab, var(--normal-300) 45%, transparent);
   background: transparent;
