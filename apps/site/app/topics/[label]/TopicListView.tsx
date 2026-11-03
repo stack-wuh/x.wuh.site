@@ -40,7 +40,8 @@ export default function TopicListView({ label, posts, total }: TopicListViewProp
             actions={[{ label: t("blog.topic.backToBlog"), href: "/blog" }]}
           />
         ) : (
-          <S.Timeline>
+          /* 换幕层 2：按话题身份挂 key，话题间软导航重挂重播 YearGroup 既有入场（复用 blog styles） */
+          <S.Timeline key={label}>
             <S.YearGroup>
               <S.YearLabel>Topic</S.YearLabel>
               {posts.map((post) => (

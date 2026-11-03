@@ -5,6 +5,7 @@ import Empty from '@wuh.site/components/empty'
 import { Equalizer, useAudioPlayer } from '@wuh.site/components/audio-player'
 import { useLocale } from '@wuh.site/components/locales'
 import { useEventListener } from '@wuh.site/hooks/useEventListener'
+import { useViewTransition } from '@wuh.site/hooks/useViewTransition'
 import { fetcher } from '@wuh.site/hooks/useFetch/fetcher'
 import {
   formatTrackDuration,
@@ -65,6 +66,7 @@ const yearOf = (name: string): string => name.match(/(?:19|20)\d{2}/)?.[0] ?? na
 export default function MusicView({ playlistId, playlist, annualPlaylists }: MusicViewProps) {
   const { t } = useLocale()
   const { state, currentTrack, actions } = useAudioPlayer()
+  const { withTransition } = useViewTransition()
   const initialId = Number(playlistId)
   const [selectedId, setSelectedId] = useState<number | null>(Number.isFinite(initialId) ? initialId : null)
   const [selectedPlaylist, setSelectedPlaylist] = useState<MusicPlaylist | null>(playlist)
@@ -156,12 +158,15 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
         setSelectedId(previousId)
         return
       }
-      setSelectedPlaylist(data)
-      if (typeof window !== 'undefined') {
-        window.history.replaceState(null, '', `/music?playlist=${id}`)
-      }
+      /* 换幕层 1：数据提交经 startViewTransition 交叉淡化（回落分支不影响失败路径语义） */
+      withTransition(() => {
+        setSelectedPlaylist(data)
+        if (typeof window !== 'undefined') {
+          window.history.replaceState(null, '', `/music?playlist=${id}`)
+        }
+      })
     },
-    [selectedId, loading, playlist]
+    [selectedId, loading, playlist, withTransition]
   )
 
   const onRailKeyDown = useCallback(

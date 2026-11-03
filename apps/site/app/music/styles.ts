@@ -229,6 +229,8 @@ export const RailCount = styled.span`
 export const Content = styled.div`
   position: relative;
   min-width: 0;
+  /* 换幕层 1：切年内容区交叉淡化目标（view-transition-name 同页唯一，动画档在 MotionStyles） */
+  view-transition-name: content-swap;
 `
 
 export const Watermark = styled.span`

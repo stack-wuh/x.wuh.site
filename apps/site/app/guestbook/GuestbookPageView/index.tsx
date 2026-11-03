@@ -94,7 +94,12 @@ export default function GuestbookPageView({
           </S.BackLink>
         </S.EmptyState>
       ) : (
-        <S.CommentList aria-label={t('guestbook.page.listAria')}>
+        /* 换幕层 2：按页身份挂 key，翻页数据替换时重挂重播 mount-rise（MotionStyles 定档） */
+        <S.CommentList
+          key={currentPage}
+          className="mount-rise"
+          aria-label={t('guestbook.page.listAria')}
+        >
           <S.Timeline>
             {grouped.map((group) => (
               <S.TimelineItem key={group.date}>

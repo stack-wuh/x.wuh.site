@@ -307,7 +307,9 @@ export default function PostView({ issue, prevIssue, nextIssue, total, position 
 
   return (
     <Container ref={containerRef}>
-      <ContentGrid>
+      {/* 换幕层 2：按文章号身份挂 key，上一篇/下一篇软导航整域重挂重播 mount-rise；
+          容器 ref 与图片预览壳留在外层稳定 */}
+      <ContentGrid key={issue.number} className="mount-rise">
         <MainColumn>
           <PostLead>
             {issue.metadata?.cover ? (

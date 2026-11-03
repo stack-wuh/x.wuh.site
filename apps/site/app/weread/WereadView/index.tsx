@@ -43,7 +43,8 @@ export default function WereadView({ books, total, currentPage, totalPages }: We
             description={t('weread.page.emptyDesc')}
           />
         ) : (
-          <S.BookList>
+          /* 换幕层 2：按页身份挂 key，翻页数据替换时重挂重播 mount-rise（MotionStyles 定档） */
+          <S.BookList key={currentPage} className="mount-rise">
             {books.map((book) => (
               <S.BookRow key={book.bookId}>
                 <S.BookCover role='book-cover' src={book.cover || ''} alt={book.title} width={40} height={54} />

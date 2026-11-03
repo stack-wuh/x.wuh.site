@@ -92,7 +92,9 @@ export default function BlogListView({ posts, pagination, activeLabels, availabl
         {posts.length === 0 ? (
           <Empty icon={<IconBookOpen />} title={t('blog.empty.title')} description={t('blog.empty.description')} actions={[{ label: t('site.backHome'), href: '/' }]} />
         ) : (
-          <S.Timeline>
+          /* 换幕层 2：按「页码+筛选」身份挂 key，软导航数据替换时整树重挂，
+             YearGroup 既有 blogRowRise 自动重播（零新 CSS）；身份未变不重挂 */
+          <S.Timeline key={`${pagination.currentPage}|${[...activeLabels].sort().join(',')}`}>
             {yearGroups.map(([year, yearPosts]) => (
               <S.YearGroup key={year}>
                 <S.YearLabel>{year}</S.YearLabel>
