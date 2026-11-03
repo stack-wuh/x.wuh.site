@@ -4,7 +4,7 @@
   "name": "20261104-style-state-transition-motion",
   "type": "style",
   "scope": "site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "style/20261104-style-state-transition-motion",
   "files": [
@@ -25,8 +25,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 566,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/566",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 567,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/567"
   },
   "review": {
     "conclusion": "passed",
@@ -35,7 +35,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:566",
+    "checkpoint": "pr:567",
     "planHash": "5bca044eebced8a99f8e06fa372210c30f6fec44a1a0a014f0d4599ee2256533",
     "updatedAt": null,
     "lastError": null,
