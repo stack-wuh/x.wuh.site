@@ -4,7 +4,7 @@
   "name": "20261104-feature-about-recent-logs",
   "type": "feature",
   "scope": "about",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "feature/20261104-feature-about-recent-logs",
   "files": [
@@ -20,8 +20,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 569,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/569"
   },
   "review": {
     "conclusion": "passed",
@@ -30,7 +30,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:569",
     "planHash": "fdf6bd5c12272410edda3b4423ea272d87ba4210df432667aae7dbbf4a914eb5",
     "updatedAt": null,
     "lastError": null,
