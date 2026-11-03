@@ -42,6 +42,9 @@ export const ContentPanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* 换幕层 1：地图选点内容面板交叉淡化目标（view-transition-name 同页唯一；
+     挂在外层稳定壳上，EmptyPanel 条件渲染内层不持名；动画档在站点 MotionStyles） */
+  view-transition-name: content-swap;
 
   @media (max-width: ${OFF_LADDER_BREAKPOINTS.mapStack}px) {
     width: 100%;

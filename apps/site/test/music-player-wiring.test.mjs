@@ -106,3 +106,17 @@ test('卷名随队列流入面板卷题签：两消费者 loadQueue 均带 playl
   // fetch 层类型必须透传 name（窄化成 { tracks } 会让 data.name 编译期消失）
   assert.match(globalPlayer, /Promise<\{ tracks\?: Track\[\]; name\?: string \}>/)
 })
+
+test('换幕层 1：切年数据提交经 useViewTransition 交叉淡化，失败回落路径不进换幕（20261104）', () => {
+  // 换幕只包视觉提交：setSelectedPlaylist + replaceState 在回调内；不支持/降级环境行为=直切
+  assert.match(musicView, /useViewTransition\(\)/)
+  assert.match(
+    musicView,
+    /withTransition\(\(\) => \{\s*setSelectedPlaylist\(data\)\s*if \(typeof window !== 'undefined'\) \{\s*window\.history\.replaceState/,
+    '数据提交经换幕包装'
+  )
+  // INV-3：切年失败回落 previousId 的拒绝路径保持原状（不进换幕回调）
+  assert.match(musicView, /setSelectedId\(previousId\)/)
+  // Content 内容区持 content-swap 名（MotionStyles 定 ::view-transition 档）
+  assert.match(musicStyles, /view-transition-name: content-swap/)
+})

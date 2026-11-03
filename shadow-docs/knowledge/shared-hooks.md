@@ -1,7 +1,7 @@
 ---
 title: 共享 Hooks 契约（packages/hooks 事件四件套 + 副作用二波 + 请求三波）
 domain: hooks
-keywords: [事件监听, addEventListener, useEventListener, useMediaQuery, useKeyPress, useClickOutside, useScrollLock, useLocalStorageState, readStorage, writeStorage, scheduleIdle, useRequest, cacheKey, SWR, 副作用清理, SSR, enabled 条件挂载, 外点收起, Esc 关闭, 滚动锁, localStorage 持久化, requestIdleCallback, 白名单棘轮, hooks 包]
+keywords: [事件监听, addEventListener, useEventListener, useMediaQuery, useKeyPress, useClickOutside, useScrollLock, useLocalStorageState, readStorage, writeStorage, scheduleIdle, useRequest, cacheKey, SWR, 副作用清理, SSR, enabled 条件挂载, 外点收起, Esc 关闭, 滚动锁, localStorage 持久化, requestIdleCallback, 白名单棘轮, hooks 包, useViewTransition, startViewTransition, 换幕]
 scope:
   - packages/hooks
   - packages/components
@@ -11,9 +11,10 @@ source:
   - changes/20261013-refactor-shared-event-hooks/brief.md
   - changes/20261014-refactor-shared-hooks-wave2/brief.md
   - changes/20261014-refactor-final-cleanup-wave/brief.md
-verified: 2026-10-14
+  - changes/20261104-style-state-transition-motion/brief.md
+verified: 2026-11-04
 verified-depth: runtime
-verified-scope: 事件四件套契约（wave1，runtime：Esc/外点/enabled 条件挂载有生产观察点；matchMedia 系统跟随链因 WKWebView 新实例语义退 code-read，见 SGN-009）+ 二波三件套契约（wave2，runtime：useScrollLock fixed 配方四值锁定/还原+scrollY 归位在 Dialog 生产实例实测，useLocalStorageState 惰性读+write-through 与 scheduleIdle 消费参数由守卫+原语链路 runtime 佐证——语言读写、主题写+SSR 注入恢复、折叠态两路、昵称+footprint 自动补齐均有观察点；visibilitychange 标题换装因 WKWebView visibilityState 不可伪造退 code-read+守卫钉形态，见 SGN-014）。
+verified-scope: useViewTransition 契约（20261104，runtime：SSR/特性不支持/reduced-motion 三分支直接 commit、flushSync wiring、commit 透传、ready/finished 拒绝吸收无 unhandledRejection——行为级契约 7/7（module.register 桩替换 react/react-dom，faithful stub）+ /music 切年与 /footprint 选点浏览器全链路实证（vtLog called→cb-enter→cb-exit）；换幕跳过修复后 dev 日志零新增）。历史：事件四件套契约（wave1，runtime：Esc/外点/enabled 条件挂载有生产观察点；matchMedia 系统跟随链因 WKWebView 新实例语义退 code-read，见 SGN-009）+ 二波三件套契约（wave2，runtime：useScrollLock fixed 配方四值锁定/还原+scrollY 归位在 Dialog 生产实例实测，useLocalStorageState 惰性读+write-through 与 scheduleIdle 消费参数由守卫+原语链路 runtime 佐证——语言读写、主题写+SSR 注入恢复、折叠态两路、昵称+footprint 自动补齐均有观察点；visibilitychange 标题换装因 WKWebView visibilityState 不可伪造退 code-read+守卫钉形态，见 SGN-014）。
 ---
 
 # 共享 Hooks 契约（事件四件套 + 副作用二波）
@@ -62,6 +63,10 @@ active=false 或非浏览器环境跳过；条件挂载一律传组合布尔，�
 ### 请求 hook useRequest（三波，替代 ahooks——20261014 final-cleanup-wave）
 
 `useRequest(service, { manual?, onSuccess?, onError?, cacheKey? }) → { data, loading, error, run, runAsync, refresh }`。**框架无关内核 `runner.ts` + React 薄绑定**（useSyncExternalStore），行为契约钉于 `useRequest/useRequest.test.mjs` UR1–UR7：auto 挂载即发 / `run` 吞错（错误只进 state）`runAsync` 抛出 / `refresh` 沿 lastArgs / **stale 响应保护**（callId 计数，迟到的旧响应丢弃）/ service·options 走 latest-ref（渲染期闭包更新下次请求生效）。**cacheKey=挂载种子 + SWR 重校验**（staleTime=0：remount 时 start() 先秒显模块级 Map 缓存值、后台必重发一次；与 ahooks 的有意差异=种子延迟到挂载 effect，构造与 SSR 期不读缓存，保证 hydrate 首帧与服务器 HTML 一致）。消费：createService 底层、AboutView×2（含 `cacheKey:'about-unified-activity'`）、AppProviders（manual+runAsync 作 trackResolver）、GlobalAudioPlayer（manual+onSuccess/onError）。ahooks 依赖已出账（apps/site package.json）。
+
+### 换幕提交 useViewTransition（20261104，浏览器能力封装）
+
+`useViewTransition() → { withTransition }`，`withTransition(commit: () => void)`：换幕可用（支持 `startViewTransition` 且未 reduced-motion）时在 `startViewTransition` 回调内 `flushSync(commit)` 同步落 DOM（浏览器对挂 `view-transition-name: content-swap` 的内容区做 220ms 交叉淡化），否则三分支直接 commit（无 document / 特性不支持 / reduced-motion，回落无损）。`ready/finished` 拒绝吸收（连切/文档隐藏导致的换幕跳过属正常业务态）；`updateCallbackDone` 不吞——真实 commit 失败保持响亮。实现为模块级纯函数 + `useCallback` 稳定引用，闭包不依赖渲染上下文；commit 只包视觉提交（setState 等），数据失败回落等拒绝路径不得进回调。行为契约钉于 `view-transition-hooks.test.mjs` 7 用例（`module.register` 桩替换 react/react-dom——flushSync 桩=同步执行并透传，faithful stub；node ≥ 23 原生类型剥离导入 .ts，SGN-002 同源豁免）。消费：MusicView 切年、footprint 选点。动效语言语义归 animation-system 卡（换幕两层），本卡只钉 hook 契约。
 
 ### 白名单（允许手写 addEventListener / localStorage 的站点，各有已证实的不适用理由，守卫棘轮锁定）
 

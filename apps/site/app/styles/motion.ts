@@ -5,6 +5,10 @@ import { createGlobalStyle } from 'styled-components'
  * - 关键帧与 Reveal 滚动渐入模式为全站唯一动画来源，业务组件引用时不重定义
  * - 滚动渐入走纯 CSS scroll-driven（animation-timeline: view()），不支持则直显
  * - 页面切换仅覆盖同源硬导航（@view-transition），Next 软导航保持瞬时
+ * - 换幕（20261104-style-state-transition-motion）：状态切换内容区过渡——
+ *   层 1 交叉淡化（view-transition-name: content-swap + useViewTransition 提交），
+ *   层 2 mount 入场（.mount-rise + 内容区按身份 key 重挂）；
+ *   出场语言为「入场即过渡」，被移除 DOM 不做出场动画
  */
 export const MotionStyles = createGlobalStyle`
   /* 区块渐入：被晨光照亮 */
@@ -66,9 +70,26 @@ export const MotionStyles = createGlobalStyle`
     }
   }
 
-  /* 打印时滚动渐入无时间线进度，必须显式可见 */
+  /* 换幕·层 1（20261104-style-state-transition-motion）：本地 state 切换的内容区交叉淡化——
+     消费方内容区挂 view-transition-name: content-swap（同页唯一），useViewTransition 提交；
+     时长走状态过渡基档，与硬导航 root 过渡共用淡出/上浮淡入关键帧 */
+  ::view-transition-old(content-swap) {
+    animation: var(--motion-dur-base) var(--motion-ease-out-soft) both vt-fade-out;
+  }
+  ::view-transition-new(content-swap) {
+    animation: var(--motion-dur-base) var(--motion-ease-out-soft) both vt-fade-in-rise;
+  }
+
+  /* 换幕·层 2：软导航内容区按身份 key 重挂后的 mount 入场——
+     复用 rise-fade 关键帧（不走 .reveal 的 view() 时间线，重挂即重放），状态过渡基档 */
+  .mount-rise {
+    animation: rise-fade var(--motion-dur-base) var(--motion-ease-out-soft) both;
+  }
+
+  /* 打印时滚动渐入无时间线进度、mount 入场无重挂时机，必须显式可见 */
   @media print {
-    .reveal {
+    .reveal,
+    .mount-rise {
       animation: none !important;
     }
   }

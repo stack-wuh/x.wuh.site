@@ -1,22 +1,24 @@
 ---
 title: 动画规范
 domain: frontend
-keywords: [动画, 动效, motion, 滚动渐入, view-timeline, view-transition, 书写显现, reduced-motion, MotionStyles, reveal, 静交互, 浓时刻, 墨显, 浮墨, 落按, 行墨, 换墨, dur-base, transition-fast, 过渡税, 主题切换]
+keywords: [动画, 动效, motion, 滚动渐入, view-timeline, view-transition, 书写显现, reduced-motion, MotionStyles, reveal, 静交互, 浓时刻, 墨显, 浮墨, 落按, 行墨, 换墨, 换幕, content-swap, mount-rise, useViewTransition, dur-base, transition-fast, 过渡税, 主题切换]
 scope:
   - apps/site/app/styles/motion.ts
   - packages/components/themes/tokens.ts
   - packages/components/themes/index.ts
   - packages/components/themes/cssVariableProvider.tsx
   - apps/site/app/components/theme/ThemeModeProvider.tsx
+  - packages/hooks/useViewTransition/index.ts
   - apps/site/app/HomeView
 status: active
 source:
   - changes/archive/20260828-P-site-animation-system/brief.md
   - changes/20260929-feature-mini-player-title-marquee/brief.md
   - changes/archive/20261023-style-site-motion-foundation/brief.md
-verified: 2026-10-23
+  - changes/20261104-style-state-transition-motion/brief.md
+verified: 2026-11-04
 verified-depth: runtime
-verified-scope: 20261023 静交互词表统一（grep 三连：通配税零/transition-fast 零/裸 ease 清零白名单=audio-player+image:55 测试锁定；tsc rc=0；探针批 progress/image/responsive/spacing 27 用例绿 + guestbook/header 触及断言绿，6 失败经 main 对照归因存量；真机四主题走查 hover 跟手/换墨 scoped/TOC 行墨通过）
+verified-scope: 20261104 换幕上线（20261104-style-state-transition-motion：/music 切年与 /footprint 选点 startViewTransition 全链路真机实证——vtLog called→cb-enter→cb-exit、Content computed content-swap、MotionStyles 换幕三规则经 document.styleSheets 下发、--motion-dur-base 实测 220ms；换幕跳过 unhandledRejection 修复后 dev 日志零新增；hook 契约测试 7/7（loader 桩行为级）；根 tsc 0、oxlint 0 err、next build 14/14（ambient node24+1400 配方）；两项基线漂移记为待对账存量：裸 ease 白名单（image:43,218/dialog:123）、music 移动端 wiring 3 条旧正则失配）
 ---
 
 # 动画规范
@@ -35,6 +37,8 @@ verified-scope: 20261023 静交互词表统一（grep 三连：通配税零/tran
 
 页面切换为纯 CSS `@view-transition { navigation: auto }` + 350ms 交叉淡入淡出，仅覆盖同源硬导航（地址栏/外链进入）；Next 软导航保持瞬时。Next 16 已移除 `experimental.viewTransition`，React 19.2 稳定版无 `<ViewTransition>` 组件，软导航过渡需 JS 包装或 React canary，届时单独评估。
 
+**换幕（20261104-style-state-transition-motion 起）**=用户操作触发的状态切换内容区过渡，双层按 DOM 提交时机分治：**层 1 交叉淡化**——本地 state 场景经共享 hook `useViewTransition().withTransition(commit)` 提交（`startViewTransition` 回调内 `flushSync` 同步落 DOM），消费方内容区挂 `view-transition-name: content-swap`（**同页唯一、挂外层稳定壳**，条件渲染的内层不持名），`::view-transition-old/new(content-swap)` 走 `--motion-dur-base` + ease-out-soft 并复用硬导航 vt-fade-out/vt-fade-in-rise 关键帧；**层 2 mount 入场**——软导航 `router.push` 提交时机不可控（startViewTransition 回调无法同步等到新内容），内容子树按身份（页码+筛选/页码/文章号/label）挂 key 强制重挂 + `.mount-rise` 模式（复用 rise-fade 关键帧，不走 view() 时间线，重挂即重放）。**出场语言=「入场即过渡」**：被移除 DOM 不做出场动画（React 移除即瞬时；framer-motion AnimatePresence 双缓冲仅 image-preview 弹层特例，非列表先例），出场突兀由「旧内容停留到新数据到达」的等待期掩盖。hook 三分支回落（无 document / 特性不支持 / reduced-motion → 直接 commit，功能零变化），`ready/finished` 拒绝吸收（连切/文档隐藏导致的换幕跳过属正常业务态；`updateCallbackDone` 不吞——真实 commit 失败保持响亮）。软导航自身的导航过渡（区别于页内状态切换）仍属届时单独评估项。
+
 浓时刻入场三构中已定稿**构 2·晕开**（题名墨线一划 + 内容自题名处向下洇开，视觉稿 `shadow-docs/designs/20261023-motion-language/index.html`），实现拆后继变更（依赖 dur-base 令牌已就位）。
 
 ## 执行约束
@@ -46,6 +50,8 @@ verified-scope: 20261023 静交互词表统一（grep 三连：通配税零/tran
 - 禁止为动画重新引入 JS scroll/resize 监听器
 - packages/components 共享组件引用 motion 令牌必须带 fallback：`var(--motion-dur-quick, 150ms)`（console 不注入主题变量时走 fallback 仍可渲染，20261023 起 fallback 形式即合规；裸 `var(--motion-*)` 引用禁止）；audio-player 仍为站点专属自持例外
 - 正文阅读区与评论区不做入场动画；reduced-motion 与 print 必须有降级
+- **状态切换内容区过渡走换幕两层（20261104）**：本地 state → 层 1 `withTransition` + content-swap；软导航 → 层 2 身份 key + `.mount-rise`；时长一律 dur-base 档，禁另起时长
+- **换幕纪律**：content-swap 同页唯一且挂外层稳定壳；hook 的 commit 只包视觉提交（setState 等），数据失败回落等拒绝路径不得进回调；消费方不得自行吞 commit 异常（跳过拒绝吸收已内聚在 hook）
 
 ## 适用边界
 

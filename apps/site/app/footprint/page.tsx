@@ -12,6 +12,7 @@ const FootprintMap = dynamic(
 );
 import ImagePreview from "@wuh.site/components/image-preview";
 import useImagePreview from "@wuh.site/hooks/useImagePreview";
+import { useViewTransition } from "@wuh.site/hooks/useViewTransition";
 import {
   FullLayout,
   MapPanel,
@@ -29,6 +30,7 @@ import * as S from "./styles";
 
 export default function FootprintPage() {
   const { t, locale } = useLocale();
+  const { withTransition } = useViewTransition();
   const [footprints, setFootprints] = useState<FootprintData[]>([]);
   const [selected, setSelected] = useState<FootprintData | null>(null);
   const imagePreview = useImagePreview();
@@ -45,7 +47,8 @@ export default function FootprintPage() {
   }, []);
 
   const handleMarkerClick = (fp: FootprintData) => {
-    setSelected(fp);
+    /* 换幕层 1：选点提交交叉淡化（首载数据到达不算用户操作，不换幕） */
+    withTransition(() => setSelected(fp));
   };
 
   const handlePhotoClick = (index: number) => {
