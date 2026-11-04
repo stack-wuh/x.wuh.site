@@ -4,7 +4,7 @@
   "name": "20261104-feature-about-recent-logs",
   "type": "feature",
   "scope": "about",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261104-feature-about-recent-logs",
   "files": [
@@ -25,13 +25,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "0cbe78b47d3b7c326743effff382ae8760677562",
-    "verifiedAt": "2026-11-03T23:52:14.228Z"
+    "verifiedCommit": "c7e5245d88ba4ea3e99402c7dc1920460eaa6e92",
+    "verifiedAt": "2026-11-04T00:07:36.944Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:569",
-    "planHash": "fdf6bd5c12272410edda3b4423ea272d87ba4210df432667aae7dbbf4a914eb5",
+    "checkpoint": "merged-pr:569",
+    "planHash": "7905d7e038e1d0478384a95c2735189be4404b2a417fd4942203d8e7a0550a2e",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -63,7 +63,7 @@
   "knowledge": {
     "action": "新增",
     "target": "shadow-docs/knowledge/about-timeline.md",
-    "reason": "全新跨源聚合契约（/v2/about/timeline 部分降级语义、TIMELINE_PLATFORMS/CATEGORIES 枚举、provider 插拔约束、link 禁 # 占位、双 feed 单挂保另一 feed），超出 about-activity 卡片边界需独立卡片；卡片落地时须同步 shadow-docs/menu.md 路由（About 数据行）并带 source/scope/verified"
+    "reason": "全新跨源聚合契约（/v2/about/timeline 部分降级语义、TIMELINE_PLATFORMS/CATEGORIES 枚举、provider 插拔约束、link 禁 # 占位、双 feed 单挂保另一 feed），超出 about-activity 卡片边界需独立卡片；卡片已落地并同步 menu.md 路由（About 数据行），source/scope/verified 齐备"
   }
 }
 ---
