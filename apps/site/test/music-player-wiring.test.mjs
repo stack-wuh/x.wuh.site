@@ -67,7 +67,9 @@ test('迷你播放器默认队列跟随年度歌单，年度链路失败回落�
 test('移动端年谱刻度带：滚动条全隐藏、两端渐隐 mask、切年滚到居中', () => {
   assert.match(musicStyles, /scrollbar-width: none/)
   assert.match(musicStyles, /&::-webkit-scrollbar \{\s*display: none;/)
-  assert.match(musicStyles, /mask: linear-gradient\(90deg, transparent/)
+  // 20261015 起渐隐 mask 经 responsive() 模板发射（两端 20px 渐隐），字面声明形态退役
+  assert.match(musicStyles, /linear-gradient\(90deg, transparent, #000 20px, #000 calc\(100% - 20px\), transparent\)/)
+  assert.match(musicStyles, /-webkit-mask: \$\{v\};\s*mask: \$\{v\};/)
   assert.match(musicView, /scrollIntoView\(\{ behavior: reduce \? 'auto' : 'smooth', inline: 'center', block: 'nearest' \}\)/)
 })
 
@@ -78,9 +80,11 @@ test('移动端刻度带桌面可拖拽横滑且不劫持触屏原生滚动', ()
 })
 
 test('曲目行两行制：右列归组桌面溶入行布局、移动端竖排，触控目标 54px', () => {
-  assert.match(musicStyles, /export const TrackSide = styled\.span`\s*display: contents;/)
+  // 桌面 contents 溶入单行布局、移动端 grid 两行右锚（20261015 起经 responsive 发射）
+  assert.match(musicStyles, /responsive\(\['grid', undefined, 'contents'\], \(v\) => `display: \$\{v\};`\)/)
   assert.match(musicStyles, /grid-template-columns: auto minmax\(0, 1fr\) auto/)
-  assert.match(musicStyles, /min-height: 54px/)
+  // 54px 触控目标经 responsive 发射（移动 54px / 桌面 unset 由行内容决定）
+  assert.match(musicStyles, /responsive\(\['54px', undefined, 'unset'\], \(v\) => `min-height: \$\{v\};`\)/)
   assert.match(musicView, /<TrackSide>/)
 })
 
@@ -94,7 +98,8 @@ test('正在播放等化器接替红点（20261006 #487）：/music 当前行三
   assert.match(musicStyles, /export const PlayingSlot = styled\.span`/, '等宽防抖槽位缺失')
   // 槽位 13px（三柱 3×3px + 双 gap 2px），移动端维持「歌名主色+编号翻播放键」触控语言不占空间
   assert.match(musicStyles, /width: 13px/)
-  assert.match(musicStyles, /PlayingSlot[\s\S]*?@media \(max-width: \$\{BREAKPOINTS\.mobile\}px\)[\s\S]*?display: none/)
+  // 移动端槽位隐藏经 responsive 发射（20261015 起），语义=移动 none / 桌面 inline-flex
+  assert.match(musicStyles, /export const PlayingSlot = styled\.span`[\s\S]*?responsive\(\['none', undefined, 'inline-flex'\], \(v\) => `display: \$\{v\};`\)/)
   assert.doesNotMatch(musicStyles, /PlayingDot/, 'styles 侧红点同退')
 })
 
