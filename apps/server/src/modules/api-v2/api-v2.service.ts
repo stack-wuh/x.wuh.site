@@ -413,6 +413,35 @@ export class ApiV2Service {
         ],
       },
 
+      // About APIs
+      {
+        path: '/v2/about/timeline',
+        method: 'GET',
+        description: '获取「最近日志」跨平台动态时间线（GitHub/豆瓣/微信读书/站内，部分降级聚合，按时间降序）',
+        tags: ['about'],
+        responses: [
+          {
+            status: 200,
+            description: '动态条目列表与各源状态',
+            schema: {
+              type: 'object',
+              properties: {
+                updatedAt: { type: 'string', description: '聚合时间（ISO 8601）' },
+                entries: {
+                  type: 'array',
+                  description: '按 timestamp 降序的动态条目',
+                  items: { $ref: '#/components/schemas/TimelineEntry' },
+                },
+                sources: {
+                  type: 'array',
+                  description: '各数据源状态（单源失败不整体失败）',
+                },
+              },
+            },
+          },
+        ],
+      },
+
       // Admin APIs
       {
         path: '/v2/admin/content/{id}/metadata',

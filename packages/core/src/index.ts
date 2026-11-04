@@ -178,6 +178,7 @@ export interface GitHubProfileDto {
 
 // API v2
 export * from './about-activity.dto';
+export * from './about-timeline.dto';
 
 export interface ApiEndpoint {
   path: string;

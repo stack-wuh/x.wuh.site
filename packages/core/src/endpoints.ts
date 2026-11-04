@@ -31,6 +31,10 @@ export const aboutActivityService = defineService({
   getActivity: { url: '/about/activity', method: 'GET' },
 })
 
+export const aboutTimelineService = defineService({
+  getTimeline: { url: '/about/timeline', method: 'GET' },
+})
+
 export const wereadService = defineService({
   getBooks: { url: '/weread/books', method: 'GET' },
 })

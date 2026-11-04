@@ -18,7 +18,7 @@
 | Repos API | 仓库 GitHub GraphQL 缓存 | knowledge/repos-api.md |
 | RSS | RSS 订阅 XML | knowledge/rss.md |
 | SEO | SEO sitemap metadata JSON-LD canonical | knowledge/seo.md |
-| About 数据 | About 热力图 活跃度 | knowledge/about-activity.md |
+| About 数据 | About 热力图 活跃度 最近日志 时间线 跨平台动态 provider | knowledge/about-activity.md, knowledge/about-timeline.md |
 | About 结构 | About 拆分 目录 组件边界 | knowledge/about-code-structure.md |
 | 微信读书 | 微信读书 书架 排序 分页 | knowledge/weread-shelf-order.md |
 | 音乐播放器 | 音乐 播放器 歌单 年度歌单 网易云 netease NeteaseCloudMusicApi 歌词 音频 不可播跳过 MUSIC_U /music | knowledge/music-player.md, knowledge/design-system.md, knowledge/site-navigation.md |

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useRequest } from '@wuh.site/hooks/useRequest'
 import dynamic from 'next/dynamic'
 import LinkGroup from '@wuh.site/components/link-group'
@@ -8,7 +8,8 @@ import { IconMusic, IconDiscord } from '@wuh.site/components/icons'
 import Image from '@wuh.site/components/image'
 import { Heatmap, type HeatmapData } from '@wuh.site/components/heatmap'
 import { useLocale, type Locale } from '@wuh.site/components/locales'
-import type { UnifiedActivityHeatmap } from '@wuh.site/core'
+import type { TimelineResponse, UnifiedActivityHeatmap } from '@wuh.site/core'
+import Empty from '@wuh.site/components/empty'
 
 const Dialog = dynamic(() => import('@wuh.site/components/dialog'))
 const ContactCard = dynamic(() => import('../../components/ContactCard'), {
@@ -25,11 +26,11 @@ import {
   ProfileRow, ProfileAvatarLink, Avatar, AvatarLetter, ProfileInfo, ProfileName, ProfileNameLink, ProfileRole,
   Bio, TagRow, Tag,
   PlatformList, PlatformCard, PlatformName, PlatformDesc,
-  TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineSelect,
+  TimelineList, TimelineRow, TimelineDate, TimelineTitle, TimelineEntryLink, TimelineSelect,
 } from '../styles'
 import {
-  blogTags, timelineFilters,
-  timelineLogs, formatMonthDay,
+  blogTags, timelineFilters, isWithinFilter, formatMonthDay,
+  type TimelineFilterValue,
 } from '../data'
 import { CONTACT_CONFIG, type ContactType } from '../../components/ContactConfig'
 import GuestbookBarrageDialog from '../components/GuestbookBarrageDialog'
@@ -87,6 +88,21 @@ const AboutView = ({ profile }: AboutViewProps) => {
       const json = await res.json()
       return json.data || []
     }
+  )
+
+  const { data: timelineData, loading: timelineLoading, error: timelineError } = useRequest<TimelineResponse, []>(
+    async () => {
+      const res = await fetch('/api/about/timeline')
+      if (!res.ok) throw new Error('Failed to fetch recent timeline')
+      return res.json()
+    },
+    { cacheKey: 'about-recent-timeline' }
+  )
+
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilterValue>('90d')
+  const timelineEntries = useMemo(
+    () => (timelineData?.entries ?? []).filter((entry) => isWithinFilter(entry.timestamp, timelineFilter)),
+    [timelineData, timelineFilter]
   )
 
   const [activeContact, setActiveContact] = useState<ContactType | null>(null)
@@ -235,20 +251,35 @@ const AboutView = ({ profile }: AboutViewProps) => {
       <section>
         <SectionHeader className='reveal'>
           <SectionLabel>{t('about.timeline.section')}</SectionLabel>
-          <TimelineSelect defaultValue={t(timelineFilters[0])}>
-            {timelineFilters.map((key) => (
-              <option key={key} value={t(key)}>{t(key)}</option>
+          <TimelineSelect
+            value={timelineFilter}
+            onChange={(event) => setTimelineFilter(event.target.value as TimelineFilterValue)}
+            aria-label={t('about.timeline.section')}
+          >
+            {timelineFilters.map((filter) => (
+              <option key={filter.value} value={filter.value}>{t(filter.labelKey)}</option>
             ))}
           </TimelineSelect>
         </SectionHeader>
-        <TimelineList>
-          {timelineLogs.map((log) => (
-            <TimelineRow key={log.date} className='reveal'>
-              <TimelineDate>{formatMonthDay(log.date, INTL_LOCALE[locale])}</TimelineDate>
-              <TimelineTitle>{t(log.summaryKey)}</TimelineTitle>
-            </TimelineRow>
-          ))}
-        </TimelineList>
+        {timelineError ? (
+          <Empty title={t('about.timeline.error')} />
+        ) : !timelineLoading && timelineEntries.length === 0 ? (
+          <Empty title={t('about.timeline.empty')} />
+        ) : (
+          <TimelineList>
+            {timelineEntries.map((entry) => (
+              <TimelineRow key={entry.id} className='reveal'>
+                <TimelineDate>{formatMonthDay(entry.timestamp, INTL_LOCALE[locale])}</TimelineDate>
+                <TimelineTitle>
+                  <TimelineEntryLink href={entry.link} target='_blank' rel='noopener noreferrer'>
+                    <Tag>{t(`about.timeline.category.${entry.category}`)}</Tag>
+                    {entry.title}
+                  </TimelineEntryLink>
+                </TimelineTitle>
+              </TimelineRow>
+            ))}
+          </TimelineList>
+        )}
       </section>
 
       <section>
