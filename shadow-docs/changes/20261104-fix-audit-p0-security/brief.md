@@ -4,7 +4,7 @@
   "name": "20261104-fix-audit-p0-security",
   "type": "fix",
   "scope": "server",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261104-fix-audit-p0-security",
   "files": [],
@@ -12,8 +12,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 573,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/573"
   },
   "review": {
     "conclusion": "pending",
@@ -22,8 +22,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "ceb218f9f2f3510fb27f358dc8379ba6984dba06",
-    "planHash": "c79bc85f4fd8aad6d838cc01ad398a3d757517a6178a6c23a32cd61ca9302c01",
+    "checkpoint": "pr:573",
+    "planHash": "63f452bc92d57be2260d337e6fdfc5c283411e8e3c0042be173ff36863ca7b0e",
     "updatedAt": null,
     "lastError": null,
     "commit": {
