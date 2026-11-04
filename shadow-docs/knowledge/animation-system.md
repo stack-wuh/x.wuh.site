@@ -18,7 +18,7 @@ source:
   - changes/20261104-style-state-transition-motion/brief.md
 verified: 2026-11-04
 verified-depth: runtime
-verified-scope: 20261104 换幕上线（20261104-style-state-transition-motion：/music 切年与 /footprint 选点 startViewTransition 全链路真机实证——vtLog called→cb-enter→cb-exit、Content computed content-swap、MotionStyles 换幕三规则经 document.styleSheets 下发、--motion-dur-base 实测 220ms；换幕跳过 unhandledRejection 修复后 dev 日志零新增；hook 契约测试 7/7（loader 桩行为级）；根 tsc 0、oxlint 0 err、next build 14/14（ambient node24+1400 配方）；两项基线漂移记为待对账存量：裸 ease 白名单（image:43,218/dialog:123）、music 移动端 wiring 3 条旧正则失配）
+verified-scope: 20261104 换幕上线（20261104-style-state-transition-motion：/music 切年与 /footprint 选点 startViewTransition 全链路真机实证——vtLog called→cb-enter→cb-exit、Content computed content-swap、MotionStyles 换幕三规则经 document.styleSheets 下发、--motion-dur-base 实测 220ms；换幕跳过 unhandledRejection 修复后 dev 日志零新增；hook 契约测试 7/7（loader 桩行为级）；根 tsc 0、oxlint 0 err、next build 14/14（ambient node24+1400 配方）；两项基线漂移已由 20261104-docs-knowledge-reconcile 对账：裸 ease 白名单修正见验证方式段、music 移动端 wiring 3 条旧正则由 20261104-test-music-guards-realign 对齐）
 ---
 
 # 动画规范
@@ -59,7 +59,7 @@ verified-scope: 20261104 换幕上线（20261104-style-state-transition-motion�
 
 ## 验证方式
 
-检查 MotionStyles 中关键帧唯一性与降级块；grep html/body 的 overflow-x 为 clip；新增动画引用 motion tokens 且带 reduced-motion 降级。静交互词表探针（20261023 起）：`grep -rn "transition-fast" apps packages` 应为空；grep 通配 `* { transition` 应仅剩 data-no-transition/data-theme-switching 两块 scoped；裸 ease 清零（白名单=audio-player 自持 + image/styles:55 源码测试锁定的既有节奏）。
+检查 MotionStyles 中关键帧唯一性与降级块；grep html/body 的 overflow-x 为 clip；新增动画引用 motion tokens 且带 reduced-motion 降级。静交互词表探针（20261023 起）：`grep -rn "transition-fast" apps packages` 应为空；grep 通配 `* { transition` 应仅剩 data-no-transition/data-theme-switching 两块 scoped。裸 ease 白名单（**20261104 考古对账修正**，原「image:55」行号漂移且漏计 dialog）：audio-player 自持节奏 + `image-preview/styles/index.tsx:43,218`（源自 517fe7d3 ImagePreview 初版）+ `dialog/styles/index.tsx:123`（源自 41db5be6 dialog 重设计，出场 `ease` 与入场过冲 cubic-bezier 有意区分）——三处均先于本卡定稿存在（foundation 合并前夜 831ebdea 即在位），属口径漂移非回归；各带手调手感，保留各自节奏，强推 ease-out-soft 属行为变更需单独评估。
 
 ## 关联知识
 
