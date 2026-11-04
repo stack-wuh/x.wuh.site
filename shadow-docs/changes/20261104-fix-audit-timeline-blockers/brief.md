@@ -4,7 +4,7 @@
   "name": "20261104-fix-audit-timeline-blockers",
   "type": "fix",
   "scope": "about",
-  "status": "branched",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261104-fix-audit-timeline-blockers",
   "files": [],
@@ -22,7 +22,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "66c1ea68b93a1f7d26347be0e6216276d225f3e9",
     "planHash": "f4a044cf0fe7a908e1f5129f181c2f2ac481f0c175c5c8db3d8d7ea88d1445db",
     "updatedAt": null,
     "lastError": null,
