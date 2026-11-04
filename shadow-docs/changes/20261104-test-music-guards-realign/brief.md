@@ -4,7 +4,7 @@
   "name": "20261104-test-music-guards-realign",
   "type": "test",
   "scope": "site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "test/20261104-test-music-guards-realign",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 570,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/570"
   },
   "review": {
     "conclusion": "passed",
@@ -24,7 +24,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:570",
     "planHash": "cb8eaa0667cfea32ed494f93ec4d6c9312eb6659d14e85fdb06461190c94041b",
     "updatedAt": null,
     "lastError": null,
