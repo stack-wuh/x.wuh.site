@@ -4,6 +4,7 @@ import {
   Param,
   Body,
   Req,
+  UseGuards,
   BadRequestException,
   Logger,
 } from '@nestjs/common';
@@ -11,6 +12,8 @@ import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import * as crypto from 'crypto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RootGuard } from '../auth/root.guard';
 import { SyncService } from '../sync/sync.service';
 
 function buildDispatchBody(issueNumber: number, repo: string): string {
@@ -111,9 +114,13 @@ export class WebhookController {
   }
 
   @Post('sync/:issueNumber')
-  @ApiOperation({ summary: 'Direct sync a single issue (no webhook required)' })
+  @ApiOperation({ summary: 'Direct sync a single issue (root only; the public GitHub webhook is the unattended path)' })
+  @UseGuards(JwtAuthGuard, RootGuard)
   async syncIssueDirectly(@Param('issueNumber') issueNumber: string) {
     const num = parseInt(issueNumber, 10)
+    if (!Number.isInteger(num) || num <= 0) {
+      throw new BadRequestException('issueNumber must be a positive integer')
+    }
     await this.syncService.syncIssue(num)
     this.logger.log(`Direct sync completed for issue #${num}`)
     return { success: true, issueNumber: num }

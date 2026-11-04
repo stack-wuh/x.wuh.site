@@ -3,6 +3,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
+import { resolveJwtExpiration } from '../../common/utils/jwt-expiration';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -17,7 +18,7 @@ import { RootGuard } from './root.guard';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: parseInt(configService.get<string>('JWT_EXPIRATION') || '86400'),
+          expiresIn: resolveJwtExpiration(configService.get<string>('JWT_EXPIRATION')),
         },
       }),
     }),
