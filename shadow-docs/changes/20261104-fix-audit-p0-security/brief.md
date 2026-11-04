@@ -4,7 +4,7 @@
   "name": "20261104-fix-audit-p0-security",
   "type": "fix",
   "scope": "server",
-  "status": "branched",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261104-fix-audit-p0-security",
   "files": [],
@@ -22,7 +22,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "ceb218f9f2f3510fb27f358dc8379ba6984dba06",
     "planHash": "c79bc85f4fd8aad6d838cc01ad398a3d757517a6178a6c23a32cd61ca9302c01",
     "updatedAt": null,
     "lastError": null,
