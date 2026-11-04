@@ -4,7 +4,7 @@
   "name": "20261105-chore-ci-frozen-lockfile",
   "type": "chore",
   "scope": ".github",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261105-chore-ci-frozen-lockfile",
   "files": [
@@ -24,15 +24,15 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:574",
-    "planHash": "78783813a9c73bbcfff65a6f4db0e8b0d202304b08fcd6fafa4ae871ddefd28a",
+    "checkpoint": "138143278a54687b427fdcf6d1c27df8fb676754",
+    "planHash": "4379fb62bbe38927204e11e98108c4b7a6f8d7263efc7c88ca4957588de560df",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
         ".github/workflows/ci-cd.yml"
       ],
-      "message": "chore(ci): quality-gate 安装改 frozen-lockfile——依赖漂移即红"
+      "message": "chore(ci): quality-gate 补 PR 触发 + 安装 frozen-lockfile——机器门覆盖 PR 合并前"
     }
   }
 }
