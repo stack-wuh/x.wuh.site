@@ -4,7 +4,7 @@
   "name": "20261104-docs-knowledge-reconcile",
   "type": "docs",
   "scope": "docs",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261104-docs-knowledge-reconcile",
   "files": [
@@ -16,8 +16,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 571,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/571"
   },
   "review": {
     "conclusion": "passed",
@@ -26,7 +26,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:571",
     "planHash": "f02c7ed98baff309b4f99bb9d209e467af7a9cc0ad985d858e20200eca97f5cd",
     "updatedAt": null,
     "lastError": null,
