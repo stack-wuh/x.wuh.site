@@ -4,7 +4,7 @@
   "name": "20261105-chore-ci-frozen-lockfile",
   "type": "chore",
   "scope": ".github",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261105-chore-ci-frozen-lockfile",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 574,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/574"
   },
   "review": {
     "conclusion": "pending",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "1d0ae31abb6c4376ac6d1093e463d8d538d0eb8f",
-    "planHash": "41774ef94e5ae8ffcae6d74399f069cc1ffe8e23a42e2fea01b780079f9f8b56",
+    "checkpoint": "pr:574",
+    "planHash": "78783813a9c73bbcfff65a6f4db0e8b0d202304b08fcd6fafa4ae871ddefd28a",
     "updatedAt": null,
     "lastError": null,
     "commit": {
