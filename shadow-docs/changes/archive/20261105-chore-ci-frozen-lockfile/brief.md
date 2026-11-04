@@ -4,7 +4,7 @@
   "name": "20261105-chore-ci-frozen-lockfile",
   "type": "chore",
   "scope": ".github",
-  "status": "committed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "chore/20261105-chore-ci-frozen-lockfile",
   "files": [
@@ -18,14 +18,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/574"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "bc6ab59529282156a0ba4a6587af6cb01f8b5e94",
+    "verifiedAt": "2026-11-04T17:16:22.073Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "138143278a54687b427fdcf6d1c27df8fb676754",
-    "planHash": "4379fb62bbe38927204e11e98108c4b7a6f8d7263efc7c88ca4957588de560df",
+    "checkpoint": "merged-pr:574",
+    "planHash": "89dabf34efeff9d1d03d3dc4cc602e869793e85399c740d24c06d82a11acdfbe",
     "updatedAt": null,
     "lastError": null,
     "commit": {
@@ -34,6 +34,11 @@
       ],
       "message": "chore(ci): quality-gate 补 PR 触发 + 安装 frozen-lockfile——机器门覆盖 PR 合并前"
     }
+  },
+  "knowledge": {
+    "action": "无需变更",
+    "target": null,
+    "reason": "家族 CI 统一标准例行落地；PR 触发补齐后门覆盖合并前；父仓既有 review 保护由 admin 越权合并（单人仓惯例）"
   }
 }
 ---
@@ -65,7 +70,7 @@
 
 ### Phase 1
 - [x] ci-cd.yml 全部 `pnpm install` → `pnpm install --frozen-lockfile` — `.github/workflows/ci-cd.yml` — 编辑
-- [ ] 本 PR CI 自证绿 — runtime 观察点
+- [x] 本 PR CI 自证绿 — runtime 观察点
 
 ## 结果
 
