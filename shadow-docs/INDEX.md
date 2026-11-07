@@ -128,11 +128,11 @@
 | 20261027-ci-oss-transfer | draft | shadow-docs/changes/20261027-ci-oss-transfer/brief.md |
 | 20261027-ci-selective-build | draft | shadow-docs/changes/20261027-ci-selective-build/brief.md |
 | 20261028-refactor-ternary-icon-switches | ✅ 完成 | shadow-docs/changes/archive/20261028-refactor-ternary-icon-switches/brief.md |
-| 20261104-docs-knowledge-reconcile | published | shadow-docs/changes/20261104-docs-knowledge-reconcile/brief.md |
+| 20261104-docs-knowledge-reconcile | reviewed | shadow-docs/changes/20261104-docs-knowledge-reconcile/brief.md |
 | 20261104-feature-about-recent-logs | ✅ 完成 | shadow-docs/changes/archive/20261104-feature-about-recent-logs/brief.md |
-| 20261104-fix-audit-p0-security | published | shadow-docs/changes/20261104-fix-audit-p0-security/brief.md |
-| 20261104-fix-audit-timeline-blockers | published | shadow-docs/changes/20261104-fix-audit-timeline-blockers/brief.md |
+| 20261104-fix-audit-p0-security | reviewed | shadow-docs/changes/20261104-fix-audit-p0-security/brief.md |
+| 20261104-fix-audit-timeline-blockers | reviewed | shadow-docs/changes/20261104-fix-audit-timeline-blockers/brief.md |
 | 20261104-style-state-transition-motion | ✅ 完成 | shadow-docs/changes/archive/20261104-style-state-transition-motion/brief.md |
-| 20261104-test-music-guards-realign | published | shadow-docs/changes/20261104-test-music-guards-realign/brief.md |
+| 20261104-test-music-guards-realign | ✅ 完成 | shadow-docs/changes/archive/20261104-test-music-guards-realign/brief.md |
 | 20261105-chore-ci-frozen-lockfile | ✅ 完成 | shadow-docs/changes/archive/20261105-chore-ci-frozen-lockfile/brief.md |
 | 20261107-chore-audit-quality-gates | ✅ 完成 | shadow-docs/changes/archive/20261107-chore-audit-quality-gates/brief.md |

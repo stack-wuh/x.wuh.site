@@ -4,7 +4,7 @@
   "name": "20261104-test-music-guards-realign",
   "type": "test",
   "scope": "site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "test/20261104-test-music-guards-realign",
   "files": [
@@ -19,13 +19,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "6b41f7e406ce916845bb45e09916905b9a671ce3",
-    "verifiedAt": "2026-11-04T15:15:29.137Z"
+    "verifiedCommit": "292da0afdabed767a04e5b7888a7250f01a76984",
+    "verifiedAt": "2026-11-07T08:35:27.212Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:570",
-    "planHash": "cb8eaa0667cfea32ed494f93ec4d6c9312eb6659d14e85fdb06461190c94041b",
+    "checkpoint": "merged-pr:570",
+    "planHash": "60c9dff85333593f6f8ad41ac2780f329504eaf44d8caaf3f3f51784df939bdb",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -41,7 +41,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "S 级纯测试断言对齐：三条失配正则改为 responsive() 发射形态，断言语义不变（mask 渐隐/contents 溶入/移动隐藏/54px 触控目标全数在场），13/13 全绿；music-player 卡 20261015 段已如实记录该形态，无新长期事实"
+    "reason": "归档补跑漂移门：变更已于 PR #570 合并、内容在 main 同源在案，按当日 brief 结论复申"
   }
 }
 ---
