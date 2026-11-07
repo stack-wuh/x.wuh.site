@@ -70,7 +70,16 @@ for (const file of quarantined) {
 const result = spawnSync(
   process.execPath,
   ['--test', ...active.map((file) => resolve(repoRoot, file))],
-  { cwd: repoRoot, stdio: 'inherit' }
+  {
+    cwd: repoRoot,
+    stdio: 'inherit',
+    // workspace 包钉源码单源 + 相对导入补 .ts（见 scripts/test-resolve.mjs 头注释）；
+    // transform-types：core 源码含 TS enum（UserRole），strip-only 不支持
+    env: {
+      ...process.env,
+      NODE_OPTIONS: ['--import', resolve(repoRoot, 'scripts', 'test-register.mjs'), '--experimental-transform-types'].join(' ')
+    }
+  }
 )
 
 if (result.error) {
