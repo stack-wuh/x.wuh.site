@@ -73,7 +73,7 @@ export class ReposService {
 
       return repos;
     } catch (error) {
-      this.logger.error(`Failed to fetch repos: ${error.message}`);
+      this.logger.error(`Failed to fetch repos: ${error instanceof Error ? error.message : String(error)}`);
       // Return cached data if available, even if expired
       if (this.cache) {
         return this.cache.data;
@@ -108,7 +108,7 @@ export class ReposService {
       this.profileCache = { data: profile, timestamp: Date.now() };
       return profile;
     } catch (error) {
-      this.logger.error(`Failed to fetch user profile: ${error.message}`);
+      this.logger.error(`Failed to fetch user profile: ${error instanceof Error ? error.message : String(error)}`);
       if (this.profileCache) {
         return this.profileCache.data;
       }

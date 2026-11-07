@@ -35,7 +35,8 @@ export class WereadService {
       }),
     });
 
-    const data = await res.json();
+    // undici fetch 的 res.json() 返回 Promise<unknown>，显式收敛响应形状
+    const data = (await res.json()) as { errcode?: number; errmsg?: string; books?: WeReadBook[] };
     if (data.errcode && data.errcode !== 0) {
       throw new Error(`WeRead API error: ${data.errmsg || 'unknown'}`);
     }

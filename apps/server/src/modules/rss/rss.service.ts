@@ -72,7 +72,7 @@ export class RssService {
 
       return xml;
     } catch (error) {
-      this.logger.error(`Failed to generate RSS feed: ${error.message}`);
+      this.logger.error(`Failed to generate RSS feed: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }

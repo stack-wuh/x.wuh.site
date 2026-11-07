@@ -30,7 +30,7 @@ export class SyncService {
       await this.syncAllIssues();
       this.logger.log('Full sync completed successfully');
     } catch (error) {
-      this.logger.error(`Full sync failed: ${error.message}`);
+      this.logger.error(`Full sync failed: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -60,7 +60,7 @@ export class SyncService {
 
         page++;
       } catch (error) {
-        this.logger.error(`Error syncing page ${page}: ${error.message}`);
+        this.logger.error(`Error syncing page ${page}: ${error instanceof Error ? error.message : String(error)}`);
         throw error;
       }
     }
@@ -103,7 +103,7 @@ export class SyncService {
 
       this.logger.debug(`Synced issue #${issueNumber}`);
     } catch (error) {
-      this.logger.error(`Failed to sync issue #${issueNumber}: ${error.message}`);
+      this.logger.error(`Failed to sync issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -134,7 +134,7 @@ export class SyncService {
         page++;
       }
     } catch (error) {
-      this.logger.error(`Failed to sync comments for #${issueNumber}: ${error.message}`);
+      this.logger.error(`Failed to sync comments for #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -170,7 +170,7 @@ export class SyncService {
 
       this.logger.debug(`Synced comment #${commentId}`);
     } catch (error) {
-      this.logger.error(`Failed to sync comment #${commentId}: ${error.message}`);
+      this.logger.error(`Failed to sync comment #${commentId}: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -192,7 +192,7 @@ export class SyncService {
         url: comment.html_url,
       };
     } catch (error) {
-      this.logger.error(`Failed to post comment to GitHub: ${error.message}`);
+      this.logger.error(`Failed to post comment to GitHub: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }

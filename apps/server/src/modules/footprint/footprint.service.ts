@@ -1,12 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Footprint, FootprintDocument } from './footprint.schema';
 
 @Injectable()
 export class FootprintService {
-  private logger = new Logger(FootprintService.name);
-
   constructor(
     @InjectModel(Footprint.name) private footprintModel: Model<FootprintDocument>,
   ) {}

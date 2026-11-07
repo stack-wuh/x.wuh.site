@@ -39,7 +39,7 @@ export class CommentService {
       });
       return await comment.save();
     } catch (error) {
-      this.logger.error(`Failed to create comment: ${error.message}`);
+      this.logger.error(`Failed to create comment: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -63,7 +63,7 @@ export class CommentService {
       ]);
       return buildPaginatedResult(data, total, page, limit);
     } catch (error) {
-      this.logger.error(`Failed to find comments: ${error.message}`);
+      this.logger.error(`Failed to find comments: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -147,7 +147,7 @@ ${comment.body}`
         )
         .exec();
     } catch (error) {
-      this.logger.error(`Failed to post comment to GitHub: ${error.message}`);
+      this.logger.error(`Failed to post comment to GitHub: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
