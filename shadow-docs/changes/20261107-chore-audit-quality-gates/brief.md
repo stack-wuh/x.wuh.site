@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -41,7 +41,9 @@
     "packages/components/progress/types.ts",
     "packages/hooks/useFetch/createService.ts",
     "pnpm-lock.yaml",
-    "scripts/run-tests.mjs"
+    "scripts/run-tests.mjs",
+    "scripts/test-register.mjs",
+    "scripts/test-resolve.mjs"
   ],
   "github": {
     "repository": "stack-wuh/x.wuh.site",
@@ -57,8 +59,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "411bd33a34822c3fcc297ff9ef132acda5525ff3fd008921c2af93dab22c67d1",
+    "checkpoint": "56edcb046eea6586be8de31b379736667bc44ab3",
+    "planHash": "0fb4ea17ee602ccc5d60668f5e2bb54b2d55c9191f0098890e1606ffcc95c2d6",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -72,9 +74,11 @@
     },
     "commit": {
       "files": [
-        "apps/site/app/components/ContactCard.tsx"
+        "scripts/run-tests.mjs",
+        "scripts/test-register.mjs",
+        "scripts/test-resolve.mjs"
       ],
-      "message": "fix(site): ContactCard QR 守卫改直接判 qrSrc（Boolean 不产生类型收窄，next/image src 必填）"
+      "message": "fix(build): 测试 sweep 钉 workspace 源码单源——resolve loader 映射 core/hooks + 相对导入补 .ts + transform-types 兼 enum（审计 #568 P1-22 在 CI 揭红的桥接根治）"
     }
   }
 }
