@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -54,13 +54,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "1d079b39467aeced8458602a267a4d8e38b918e7",
-    "verifiedAt": "2026-11-07T08:28:17.194Z"
+    "verifiedCommit": "20e1ad1a57ed2afee9f746defc7b11914ece6161",
+    "verifiedAt": "2026-11-07T08:33:52.884Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "be5183c3d232fec45f4583f80397190c70b7bb75201730ee56ba4682c8d815f2",
+    "checkpoint": "merged-pr:576",
+    "planHash": "4138fdf32523354946fec9cc6665ee204a6d245e053255bec85a4379e71d8155",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -95,7 +95,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/build-config.md",
-    "reason": "quality-gate 升级三步真闸（typecheck 四域+test sweep+去 ignoreBuildErrors）；类型分治口径修正（site 存量 35 错清零、allowImportingTsExtensions 开启、core 双解析面以 sweep loader 桥接）；signals.md SGN-001 同步增补 app 级 tsc 139×6 与 sweep 挂起新形态；INV-3 完整 build 绿随 release 链 build-images 补证"
+    "reason": "squash 漂移门复验：main 20e1ad1 同源重申——质量门三步真闸契约、类型分治修正、SGN-001 增补均已随 77b1d70 入 main；无新增漂移"
   }
 }
 ---
