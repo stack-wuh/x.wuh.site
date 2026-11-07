@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -17,8 +17,27 @@
     "apps/server/src/modules/sync/sync.service.ts",
     "apps/server/src/modules/webhook/webhook.controller.ts",
     "apps/server/src/modules/weread/weread.service.ts",
+    "apps/site/app/about/AboutView/index.tsx",
+    "apps/site/app/components/ContactCard.tsx",
+    "apps/site/app/components/TypewriterMotto/index.tsx",
+    "apps/site/app/design/system-color/page.tsx",
+    "apps/site/app/design/system-color/styles/index.tsx",
+    "apps/site/app/footprint/page.tsx",
+    "apps/site/app/post/components/PostToolbar/index.tsx",
+    "apps/site/app/post/styles/index.ts",
+    "apps/site/app/post/styles/post-toolbar.ts",
     "apps/site/next.config.ts",
+    "apps/site/tsconfig.json",
     "package.json",
+    "packages/components/dialog/index.tsx",
+    "packages/components/empty/types.ts",
+    "packages/components/image-preview/Toolbar.tsx",
+    "packages/components/image/styles/index.tsx",
+    "packages/components/message/types.ts",
+    "packages/components/package.json",
+    "packages/components/progress/types.ts",
+    "packages/hooks/useFetch/createService.ts",
+    "pnpm-lock.yaml",
     "scripts/run-tests.mjs"
   ],
   "github": {
@@ -35,8 +54,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "b4a01797b1c67f0e64d77aa250b47008530f183e396e55b0de4ce086fa8d9e50",
+    "checkpoint": "6019515d2067da1164fad0e2451ee734babbf0d3",
+    "planHash": "da5b3fe82520edb53cbce3460087e782f58243759668d882eacca520c1ccedeb",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -50,16 +69,27 @@
     },
     "commit": {
       "files": [
-        "apps/server/src/modules/comment/comment.service.ts",
-        "apps/server/src/modules/content/content.service.ts",
-        "apps/server/src/modules/footprint/footprint.service.ts",
-        "apps/server/src/modules/repos/repos.service.ts",
-        "apps/server/src/modules/rss/rss.service.ts",
-        "apps/server/src/modules/sync/sync.service.ts",
-        "apps/server/src/modules/webhook/webhook.controller.ts",
-        "apps/server/src/modules/weread/weread.service.ts"
+        "apps/site/app/about/AboutView/index.tsx",
+        "apps/site/app/components/ContactCard.tsx",
+        "apps/site/app/components/TypewriterMotto/index.tsx",
+        "apps/site/app/design/system-color/page.tsx",
+        "apps/site/app/design/system-color/styles/index.tsx",
+        "apps/site/app/footprint/page.tsx",
+        "apps/site/app/post/components/PostToolbar/index.tsx",
+        "apps/site/app/post/styles/index.ts",
+        "apps/site/app/post/styles/post-toolbar.ts",
+        "apps/site/tsconfig.json",
+        "packages/components/dialog/index.tsx",
+        "packages/components/empty/types.ts",
+        "packages/components/image-preview/Toolbar.tsx",
+        "packages/components/image/styles/index.tsx",
+        "packages/components/message/types.ts",
+        "packages/components/package.json",
+        "packages/components/progress/types.ts",
+        "packages/hooks/useFetch/createService.ts",
+        "pnpm-lock.yaml"
       ],
-      "message": "fix(server): CI 类型闸揭红就地清零——catch 收窄惯用法 16 处 + weread 响应显式类型 + 死 logger 移除（审计 #568 P0-4）"
+      "message": "fix(site,components): 类型闸揭红存量清零——35 处类型错误就地修复，顺带收掉 footprint 灯箱（P1-12）与 design 页 themeFamily（P1-13）"
     }
   }
 }
