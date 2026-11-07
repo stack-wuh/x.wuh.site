@@ -4,7 +4,7 @@
   "name": "20261107-test-guard-realign-batch2",
   "type": "test",
   "scope": "site",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "test/20261107-test-guard-realign-batch2",
   "files": [
@@ -29,14 +29,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/578"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "34cce4c6e2e1863e36882f616983919afebd10c6",
+    "verifiedAt": "2026-11-07T14:15:52.115Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:578",
-    "planHash": "b27d3d3677c4c53c6c4945c5545f007a9ba0e9c070b843317663ea94eaa611eb",
+    "planHash": "38d4b5671674b71e15cc7b1edd96ae42f72a18642de13bcaec103c5b1a72d6a3",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -63,7 +63,21 @@
         "scripts/run-tests.mjs"
       ],
       "message": "test(site,components): 红守卫对账批次 2——10 文件 22 用例漂移等强对齐，隔离棘轮清零（seo-p14 甄别为环境误报出清单）"
+    },
+    "release": {
+      "files": [
+        "shadow-docs/changes/20261107-test-guard-realign-batch2/brief.md",
+        "shadow-docs/knowledge/build-config.md"
+      ],
+      "message": "docs(shadow): 红守卫对账批次 2 收口——sweep 段隔离棘轮清零记录",
+      "title": "test(site,components): 红守卫对账批次 2——隔离棘轮清零、gate 恢复 41 文件全量（审计 #568）",
+      "body": "PR #578 收尾：build-config.md sweep 段棘轮清零记录 + brief 终态回填。对账明细见前序提交。"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/build-config.md",
+    "reason": "测试 sweep 段收口：隔离棘轮 11→0（seo-p14 环境误报出清单、10 文件漂移等强对齐），gate 恢复 41 文件全量 265 用例；CI run 42380543853 fresh runner node22 全绿为证（259 pass/0 fail/6 skip 基线）"
   }
 }
 ---
@@ -133,7 +147,7 @@
 
 ### Phase 2（收口）
 - [x] task 8 — `scripts/run-tests.mjs` — QUARANTINE 清零（11→0），头注释同步
-- [ ] task 9 — 全量 sweep 双 node 绿（node22 mise + node24 ambient，含 CI 模拟态）；CI run 绿
+- [x] task 9 — 全量 sweep 双 node 绿（node22 mise + node24 ambient，含 CI 模拟态）；CI run 绿
 
 ## 结果
 
