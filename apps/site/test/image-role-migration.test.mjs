@@ -37,10 +37,14 @@ test('首页和微信读书页书封使用 book-cover role', () => {
   assert.doesNotMatch(weread, /const BookCover[\s\S]*border-radius:\s*4px/)
 })
 
-test('文章作者头像迁移到共享 avatar role 并保留 accent ring', () => {
-  assert.match(postHeader, /<AuthorAvatar[\s\S]*role='avatar'/)
-  assert.match(postHeaderStyles, /AuthorAvatarFrame/)
-  assert.match(postHeaderStyles, /border:\s*2px solid/)
+test('文章作者区收敛为钤印形态，不出现散置头像图（20261107 对账）', () => {
+  // 文章头重设计：作者身份由钤印承载，原 AuthorAvatar 整体出账；
+  // 未来恢复作者头像必须走共享 avatar role 语义（PostComments/AboutView 为现行消费方），不得裸 img
+  assert.doesNotMatch(postHeader, /AuthorAvatar/)
+  assert.doesNotMatch(postCover, /AuthorAvatar/)
+  assert.doesNotMatch(postHeader, /role='avatar'/)
+  assert.doesNotMatch(postHeader, /<img[\s>]/)
+  assert.doesNotMatch(postCover, /<img[\s>]/)
 })
 
 test('评论头像图片使用 avatar role 并保留首字母 fallback', () => {

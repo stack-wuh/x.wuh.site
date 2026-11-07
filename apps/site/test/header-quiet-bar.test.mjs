@@ -35,9 +35,10 @@ test('页头不使用 --font-size-sm，展示档只经令牌', () => {
   assert.match(block('export const MobileItem = styled\\(Link\\)'), /font-size: var\(--font-size-base\);/)
   // 导航行是主动线入口：平板带局部 13px（无四主题稳定 13px 令牌，理由见样式注释），
   // PC 带（≥1024 语义断点）升 base 档 15px，均不落 12px 辅助档
-  const rootBlock = block('export const HeaderRoot = styled\\.header')
-  assert.match(rootBlock, /--header-fs: 13px;/)
-  assert.match(rootBlock, /@media \(min-width: \$\{BREAKPOINTS\.tablet\}px\) \{ --header-fs: var\(--font-size-base\); \}/)
+  // 20261107 对账：--header-fs 分档迁 responsive() 编译口（平板 13px / ≥lg base 档，四槽语义断点）；
+  // interpolation 内的转义反引号会截断 block() 提取，断言锚全文件（--header-fs 仅 HeaderRoot 发射）
+  assert.match(styles, /responsive\(\['13px', undefined, undefined, 'var\(--font-size-base\)'\]/)
+  assert.match(styles, /--header-fs: \\?\$\{v\};/)
   assert.match(block('export const NavLink = styled\\(Link\\)'), /font-size: var\(--header-fs\);/)
 })
 
@@ -75,10 +76,11 @@ test('外观入口图标化：桌面触发器不再携带文字与箭头', () =>
   const trigger = tsx.match(/<S\.AppearanceTrigger[\s\S]*?<\/S\.AppearanceTrigger>/)?.[0] ?? ''
   assert.ok(trigger, '未找到 AppearanceTrigger')
   assert.doesNotMatch(trigger, /ThemeChevron/)
-  // 可访问名保留当前主题信息（图标按钮无可见文字）
-  assert.match(trigger, /aria-label=\{`外观设置，当前/)
+  // 20261107 对账：可访问名 i18n 化——变量注入 + triggerAria 键保留主题/明暗插值，语义等强
+  assert.match(tsx, /const appearanceTriggerAria = t\('site\.appearance\.triggerAria', \{ theme: themeLabel, scheme: schemeLabel \}\)/)
+  assert.match(trigger, /aria-label=\{appearanceTriggerAria\}/)
   // 移动端菜单行仍保留文字+chevron（面板行不是导航入口）
-  assert.match(tsx, /<S\.MobileThemeTitle>外观设置<\/S\.MobileThemeTitle>/)
+  assert.match(tsx, /<S\.MobileThemeTitle>\{t\('site\.appearance\.group'\)}<\/S\.MobileThemeTitle>/)
 })
 
 test('胶囊底色退场：触发器无背景', () => {
@@ -154,17 +156,18 @@ test('主题入口是朱砂印「墨」：钤印开弹层，印面即装饰', ()
   assert.doesNotMatch(block('export const AppearanceTrigger = styled\\.button'), /&::after/, '印钮不再需要下划线装饰')
   const triggerEl = tsx.match(/<S\.AppearanceTrigger[\s\S]*?<\/S\.AppearanceTrigger>/)?.[0] ?? ''
   assert.doesNotMatch(triggerEl, /IconPalette/, '桌面入口弃用通用调色盘图标')
-  assert.match(triggerEl, /title='外观设置'/, '原生悬停提示补可发现性')
+  assert.match(triggerEl, /title=\{t\('site\.appearance\.group'\)\}/, '原生悬停提示补可发现性')
   // 移动端外观行是列表行不是印，保留调色盘图标+文字
   assert.match(tsx, /IconPalette size=\{18\}/)
 })
 
 test('分组文案用用户视角：主题/明暗', () => {
-  assert.match(opts, /<S\.AppearanceLabel>主题<\/S\.AppearanceLabel>/)
-  assert.match(opts, /<S\.AppearanceLabel>明暗<\/S\.AppearanceLabel>/)
+  // 20261107 对账：文案 i18n 化，键位落 zh 词典（themeLabel='主题'/schemeLabel='明暗'）
+  assert.match(opts, /<S\.AppearanceLabel>\{t\('site\.appearance\.themeLabel'\)\}<\/S\.AppearanceLabel>/)
+  assert.match(opts, /<S\.AppearanceLabel>\{t\('site\.appearance\.schemeLabel'\)\}<\/S\.AppearanceLabel>/)
   // 无障碍名保留系统全称，不随装饰性可见文案收窄
-  assert.match(opts, /aria-label='主题风格'/)
-  assert.match(opts, /aria-label='显示模式'/)
+  assert.match(opts, /aria-label=\{t\('site\.appearance\.themeGroup'\)\}/)
+  assert.match(opts, /aria-label=\{t\('site\.appearance\.schemeGroup'\)\}/)
 })
 
 // —— 导航运笔：下划线从「淡入」升级为「行笔」，当前页常驻，外链有标记 ——
@@ -200,5 +203,5 @@ test('外链标记 ↗：桌面+移动双处，装饰性隐藏、无障碍名交
   assert.doesNotMatch(ext, /transition|:hover/)
   assert.equal((tsx.match(/<S\.ExternalMark aria-hidden='true'>↗<\/S\.ExternalMark>/g) ?? []).length, 2,
     '知识库在桌面导航与移动菜单各出现一次')
-  assert.equal((tsx.match(/aria-label='知识库（在新窗口打开）'/g) ?? []).length, 2)
+  assert.equal((tsx.match(/t\('site\.nav\.knowledgeAria'\)/g) ?? []).length, 2)
 })
