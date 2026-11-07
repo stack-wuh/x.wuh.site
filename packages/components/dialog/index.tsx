@@ -17,7 +17,7 @@ import {
   DialogFooter,
   DragHandle,
 } from './styles'
-import type { DialogProps } from './types'
+import type { DialogProps, FooterRenderer } from './types'
 
 export type { DialogControlBridge, DialogProps, FooterRenderer } from './types'
 

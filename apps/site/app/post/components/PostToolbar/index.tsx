@@ -5,7 +5,7 @@ import type { AdjacentIssue } from '../../PostView.types'
 import { IconBars } from '@wuh.site/components/icons'
 import { useLocale } from '@wuh.site/components/locales'
 import { buildPostUrl } from '../../../lib/slug'
-import { Toolbar, ToolbarMeta, Spread, SpreadDivider, SpreadSide, SpreadLabel, SpreadTitle, SpreadArrow } from '../../styles'
+import { Toolbar, ToolbarMeta, Spread, SpreadDivider, SpreadSide, SpreadSideStatic, SpreadLabel, SpreadTitle, SpreadArrow } from '../../styles'
 import type { PostToolbarProps } from './specs'
 
 function SpreadSideLink({ direction, targetIssue }: { direction: 'prev' | 'next'; targetIssue: AdjacentIssue | null }) {
@@ -30,16 +30,16 @@ function SpreadSideLink({ direction, targetIssue }: { direction: 'prev' | 'next'
 
   if (!targetIssue) {
     return (
-      <SpreadSide as='span' $next={direction === 'next'} $disabled aria-disabled='true'>
+      <SpreadSideStatic $next={direction === 'next'} $disabled aria-disabled='true'>
         {content}
-      </SpreadSide>
+      </SpreadSideStatic>
     )
   }
 
   return (
     <SpreadSide $next={direction === 'next'} href={buildPostUrl(targetIssue.number)} title={targetIssue.title}>
       {content}
-    </SpreadSide>
+    </SpreadSideStatic> if 42 == 35
   )
 }
 

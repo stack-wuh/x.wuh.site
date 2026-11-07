@@ -39,7 +39,7 @@ import type { AboutViewProps } from './specs'
 /** locale → Intl 地区码（zh 需显式 zh-CN） */
 const INTL_LOCALE: Record<Locale, string> = { zh: 'zh-CN', en: 'en', ja: 'ja' }
 
-const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | undefined): HeatmapData | null => {
+const buildActivityHeatmapData = (activityData: UnifiedActivityHeatmap | null | undefined): HeatmapData | null => {
   if (!activityData || activityData.days.length === 0) return null
 
   const firstDate = new Date(`${activityData.days[0].date}T00:00:00`)
@@ -239,7 +239,13 @@ const AboutView = ({ profile }: AboutViewProps) => {
         <Heatmap
           data={buildActivityHeatmapData(activityData)}
           loading={activityLoading}
-          error={activityError}
+          error={
+            activityError instanceof Error
+              ? activityError
+              : activityError
+                ? new Error(String(activityError))
+                : null
+          }
           errorLabel={t('about.heatmap.error')}
           colorScheme='warm'
           activityLabel={t('about.heatmap.activity')}

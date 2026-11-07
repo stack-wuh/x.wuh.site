@@ -53,7 +53,7 @@ export const ToggleBar = styled.div`
   margin: 16px 0 32px;
 `;
 
-export const ThemeChip = styled(Button)`
+export const ThemeChip = styled(Button)<{ $active?: boolean }>`
   padding: 6px 16px;
   border: 1px solid
     ${(p) => (p.$active ? "var(--primary-color)" : "var(--normal-300)")};

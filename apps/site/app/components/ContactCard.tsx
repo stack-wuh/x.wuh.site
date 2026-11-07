@@ -296,7 +296,8 @@ const ContactCard = ({
   // deps 含 hasLink：二维码/链接模式切换会重建 ActionArea 的 DOM 节点（button↔a），
   // 需重新挂载监听器
   useEffect(() => {
-    const el = actionRef.current
+    // 联合类型收成单类型：泛型 addEventListener 重载在联合接收者上会退化为 string 重载
+    const el = actionRef.current as HTMLButtonElement | null
     if (!el) return
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return

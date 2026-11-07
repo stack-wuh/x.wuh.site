@@ -96,11 +96,11 @@ export default function FootprintPage() {
                     ))}
                   </PhotoGrid>
                   <ImagePreview
-                    bind={imagePreview.bind}
-                    images={selected.photos.map((src) => ({
+                    items={selected.photos.map((src) => ({
                       src,
                       alt: selected.name,
                     }))}
+                    {...imagePreview.bind}
                   />
                 </div>
               )}

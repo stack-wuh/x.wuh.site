@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Link from 'next/link'
 import { responsive } from '@wuh.site/components/themes/responsive'
 
@@ -84,7 +84,8 @@ export const SpreadDivider = styled.div`
   ${responsive(['width: auto; height: 1px; justify-self: stretch;', undefined, 'width: 1px; height: 44px; justify-self: center;'], (v) => v)}
 `
 
-export const SpreadSide = styled(Link)<{ $next?: boolean; $disabled?: boolean }>`
+/* as='span' 在 v6 下不收窄 styled(自定义组件) 的必填 href（TS2769），禁用态拆静态载体 */
+const spreadSideBase = css<{ $next?: boolean; $disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -126,4 +127,12 @@ export const SpreadSide = styled(Link)<{ $next?: boolean; $disabled?: boolean }>
       transform: none;
     }
   }
+`
+
+export const SpreadSide = styled(Link)<{ $next?: boolean; $disabled?: boolean }>`
+  ${spreadSideBase}
+`
+
+export const SpreadSideStatic = styled.span<{ $next?: boolean; $disabled?: boolean }>`
+  ${spreadSideBase}
 `
