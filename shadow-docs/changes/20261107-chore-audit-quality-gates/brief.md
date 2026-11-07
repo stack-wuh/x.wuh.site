@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -54,8 +54,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "50fbd412e356b5f3573c1010e6bb81314e1ff1bffd6439bcb139b7415363be0f",
+    "checkpoint": "129bb11f0ed3b37f93c17cca59a3f8d86bacad52",
+    "planHash": "7681ac07b43c2e4b0f5a4acd224b695c431b27a7db25a8528b5605f665a278b7",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -69,27 +69,9 @@
     },
     "commit": {
       "files": [
-        "apps/site/app/about/AboutView/index.tsx",
-        "apps/site/app/components/ContactCard.tsx",
-        "apps/site/app/components/TypewriterMotto/index.tsx",
-        "apps/site/app/design/system-color/page.tsx",
-        "apps/site/app/design/system-color/styles/index.tsx",
-        "apps/site/app/footprint/page.tsx",
-        "apps/site/app/post/components/PostToolbar/index.tsx",
-        "apps/site/app/post/styles/index.ts",
-        "apps/site/app/post/styles/post-toolbar.ts",
-        "apps/site/tsconfig.json",
-        "packages/components/dialog/index.tsx",
-        "packages/components/empty/types.ts",
-        "packages/components/image-preview/Toolbar.tsx",
-        "packages/components/image/styles/index.tsx",
-        "packages/components/message/types.ts",
-        "packages/components/package.json",
-        "packages/components/progress/types.ts",
-        "packages/hooks/useFetch/createService.ts",
-        "pnpm-lock.yaml"
+        "apps/site/app/post/components/PostToolbar/index.tsx"
       ],
-      "message": "fix(site,components): 类型闸揭红存量清零——35 处类型错误就地修复，顺带收掉 footprint 灯箱（P1-12）与 design 页 themeFamily（P1-13）"
+      "message": "fix(site): PostToolbar 启用分支闭合标签误替换修正（SpreadSideStatic 拆分收尾）"
     }
   }
 }
