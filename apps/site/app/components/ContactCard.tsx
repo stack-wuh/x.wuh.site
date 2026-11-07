@@ -119,7 +119,8 @@ const QRImage = styled(Image)`
   height: 160px;
 `
 
-const LinkButton = styled.a`
+// 唯一用法即静态 span 标签（v6 的 as 收窄对 styled 载体不放宽必填属性，直接改 span 载体）
+const LinkButton = styled.span`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -344,7 +345,7 @@ const ContactCard = ({
               </QrMat>
             )}
             {hasLink && (
-              <LinkButton as='span'>
+              <LinkButton>
                 <LinkIcon>{linkIconMap[badge]}</LinkIcon>
                 {displayLinkLabel}
               </LinkButton>

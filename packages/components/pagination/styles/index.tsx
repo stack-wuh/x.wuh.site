@@ -1,6 +1,6 @@
 'use client'
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Link from 'next/link'
 import { OFF_LADDER_BREAKPOINTS } from '../../themes/breakpoints'
 
@@ -46,7 +46,8 @@ export const Ellipsis = styled.span`
   font-size: var(--font-size-sm);
 `
 
-export const NavLink = styled(Link)<{ $disabled: boolean }>`
+/* as='span' 在 v6 下不收窄 styled(Link) 的必填 href（TS2769），禁用态拆静态载体 */
+const navLinkBase = css<{ $disabled: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -60,6 +61,14 @@ export const NavLink = styled(Link)<{ $disabled: boolean }>`
   &:hover {
     color: ${({ $disabled }) => ($disabled ? 'var(--text-muted)' : 'var(--primary-color)')};
   }
+`
+
+export const NavLink = styled(Link)<{ $disabled: boolean }>`
+  ${navLinkBase}
+`
+
+export const NavLinkStatic = styled.span<{ $disabled: boolean }>`
+  ${navLinkBase}
 `
 
 export const NavLabelPrev = styled.span`

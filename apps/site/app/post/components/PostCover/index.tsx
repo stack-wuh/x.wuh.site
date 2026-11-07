@@ -73,7 +73,7 @@ export default function PostCover({
         role='cover'
         borderRadius='var(--post-cover-radius)'
         src={src}
-        alt={alt || title}
+        alt={alt || title || ''}
         fill
         ratio='16:9'
         priority
