@@ -39,7 +39,7 @@ function SpreadSideLink({ direction, targetIssue }: { direction: 'prev' | 'next'
   return (
     <SpreadSide $next={direction === 'next'} href={buildPostUrl(targetIssue.number)} title={targetIssue.title}>
       {content}
-    </SpreadSideStatic> if 42 == 35
+    </SpreadSide>
   )
 }
 
