@@ -1,12 +1,24 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Octokit } from '@octokit/rest';
 import type { TimelineEntry } from '@wuh.site/core';
 
+/** Octokit events 的 payload 是松散联合，这里只收敛本 provider 消费的字段 */
+interface CreateEventPayload {
+  ref_type?: string;
+}
+
+interface ReleaseEventPayload {
+  release?: {
+    html_url?: string;
+    name?: string | null;
+    tag_name?: string | null;
+  };
+}
+
 /** GitHub 公开事件 → 动态条目（排除 PushEvent/WatchEvent 等噪音源） */
 @Injectable()
 export class GithubTimelineProvider {
-  private readonly logger = new Logger(GithubTimelineProvider.name);
   private readonly octokit: Octokit;
   private readonly login: string;
 
@@ -26,8 +38,10 @@ export class GithubTimelineProvider {
     const entries: TimelineEntry[] = [];
 
     for (const event of events) {
-      // CreateEvent(repository)：开源新仓库
-      if (event.type === 'CreateEvent' && event.payload?.repository_type === 'repository') {
+      // CreateEvent(repository)：开源新仓库（GitHub Events API 字段为 ref_type，
+      // 此前误写 repository_type 导致该类别永不产生——审计 #568 P1-44）
+      const createPayload = event.payload as CreateEventPayload | undefined;
+      if (event.type === 'CreateEvent' && createPayload?.ref_type === 'repository') {
         entries.push({
           id: `github:${event.id}`,
           platform: 'github',
@@ -41,7 +55,7 @@ export class GithubTimelineProvider {
 
       // ReleaseEvent：发布版本
       if (event.type === 'ReleaseEvent') {
-        const release = event.payload?.release;
+        const release = (event.payload as ReleaseEventPayload | undefined)?.release;
         if (!release?.html_url) continue;
         entries.push({
           id: `github:${event.id}`,

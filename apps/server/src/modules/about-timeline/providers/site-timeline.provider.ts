@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
-import type { TimelineEntry } from '@wuh.site/core';
+import { SITE_URL, type TimelineEntry } from '@wuh.site/core';
 import { Content, ContentDocument } from '../../content/schemas/content.schema';
 import { Comment, CommentDocument } from '../../comment/schemas/comment.schema';
 
@@ -18,7 +18,9 @@ export class SiteTimelineProvider {
     @InjectModel(Content.name) contentModel: Model<ContentDocument>,
     @InjectModel(Comment.name) commentModel: Model<CommentDocument>,
   ) {
-    this.siteUrl = configService.get<string>('SITE_URL') || 'https://x.wuh.site';
+    // 兜底走 core 单源常量（main.ts/rss.service 同款路径），
+    // 此前硬编码 x.wuh.site 与 core 的 wuh.site 双源漂移——审计 #568 P2
+    this.siteUrl = configService.get<string>('SITE_URL') || SITE_URL;
     this.contentModel = contentModel;
     this.commentModel = commentModel;
   }
@@ -50,16 +52,22 @@ export class SiteTimelineProvider {
 
     const commentEntries: TimelineEntry[] = comments
       .filter((comment) => comment.createdAtGitHub)
-      .map((comment) => ({
-        id: `site:comment:${comment.externalId}`,
-        platform: 'site',
-        category: 'comment',
-        title: summarizeComment(comment.body),
-        link: comment.page === 'about-guestbook'
-          ? `${this.siteUrl}/about`
-          : `${this.siteUrl}/post/${comment.issueNumber}`,
-        timestamp: new Date(comment.createdAtGitHub).toISOString(),
-      }));
+      .map((comment) => {
+        // 留言（guestbook repo / about-guestbook 页 / 无 issueNumber 的历史留言）
+        // 一律回 About，否则会生成 /post/999999、/post/undefined 死链——审计 #568 P2
+        const isGuestbook = comment.repo === 'guestbook' || comment.page === 'about-guestbook';
+        return {
+          id: `site:comment:${comment.externalId}`,
+          platform: 'site',
+          category: 'comment',
+          title: summarizeComment(comment.body),
+          link:
+            isGuestbook || comment.issueNumber == null
+              ? `${this.siteUrl}/about`
+              : `${this.siteUrl}/post/${comment.issueNumber}`,
+          timestamp: new Date(comment.createdAtGitHub).toISOString(),
+        };
+      });
 
     return [...postEntries, ...commentEntries];
   }
