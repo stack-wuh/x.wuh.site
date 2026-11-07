@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -23,6 +23,7 @@
     "apps/site/app/design/system-color/page.tsx",
     "apps/site/app/design/system-color/styles/index.tsx",
     "apps/site/app/footprint/page.tsx",
+    "apps/site/app/post/components/PostCover/index.tsx",
     "apps/site/app/post/components/PostToolbar/index.tsx",
     "apps/site/app/post/styles/index.ts",
     "apps/site/app/post/styles/post-toolbar.ts",
@@ -35,6 +36,8 @@
     "packages/components/image/styles/index.tsx",
     "packages/components/message/types.ts",
     "packages/components/package.json",
+    "packages/components/pagination/index.tsx",
+    "packages/components/pagination/styles/index.tsx",
     "packages/components/progress/types.ts",
     "packages/hooks/useFetch/createService.ts",
     "pnpm-lock.yaml",
@@ -54,8 +57,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "50fbd412e356b5f3573c1010e6bb81314e1ff1bffd6439bcb139b7415363be0f",
+    "checkpoint": "fa6d9384097ac730b529850849bf6150827b0e68",
+    "planHash": "bce0ac4a5f958869c9592399dec9625eefa5ae7af72f77108a9d5fadfcf6e11b",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -69,9 +72,12 @@
     },
     "commit": {
       "files": [
-        "apps/site/app/post/components/PostToolbar/index.tsx"
+        "apps/site/app/components/ContactCard.tsx",
+        "apps/site/app/post/components/PostCover/index.tsx",
+        "packages/components/pagination/index.tsx",
+        "packages/components/pagination/styles/index.tsx"
       ],
-      "message": "fix(site): PostToolbar 启用分支闭合标签误替换修正（SpreadSideStatic 拆分收尾）"
+      "message": "fix(components,site): next 类型解析打通后的连锁清零——pagination/ContactCard 载体拆静态变体、PostCover alt 空串兜底"
     }
   }
 }
