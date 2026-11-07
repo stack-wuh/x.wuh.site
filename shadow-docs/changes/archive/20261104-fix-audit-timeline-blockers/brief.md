@@ -4,7 +4,7 @@
   "name": "20261104-fix-audit-timeline-blockers",
   "type": "fix",
   "scope": "about",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261104-fix-audit-timeline-blockers",
   "files": [],
@@ -16,14 +16,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/572"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "31b1c3344b617c96489c5e887ca593e3a3a78542",
+    "verifiedAt": "2026-11-07T08:48:21.589Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:572",
-    "planHash": "879adcb6fa9b1a43971ce1ff3fc1dff7e9e3e205ac3a940b1e389ecb0b8f8e6c",
+    "checkpoint": "merged-pr:572",
+    "planHash": "1a5cbdc7958d01067bcf33c682841930b1a2d89cd8b27c31cdd710087c209f72",
     "updatedAt": null,
     "lastError": null,
     "commit": {
@@ -34,6 +34,11 @@
       ],
       "message": "fix(about): 修 timeline 开源仓库判据字段与站内链接双死链源\n\n- github provider CreateEvent 判据 repository_type → ref_type（GitHub Events API 实际字段），\n  「开源仓库」动态此前永不产生（审计 #568 P1-44）；payload 消费字段以本地 interface 收口，\n  顺带清零该文件 3 条存量 tsc 基线错误\n- site provider SITE_URL 兜底改 @wuh.site/core 单源（此前硬编码 x.wuh.site 与 core 漂移）\n- 留言链接守卫：guestbook repo / about-guestbook 页 / issueNumber 缺失一律回 /about，\n  杜绝 /post/999999、/post/undefined 死链"
     }
+  },
+  "knowledge": {
+    "action": "无需变更",
+    "target": null,
+    "reason": "归档补跑漂移门：变更已合并、内容在 main 同源在案，按当日 brief 结论复申（HEAD 随归档推进逐单重验）"
   }
 }
 ---
