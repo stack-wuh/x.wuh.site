@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -54,8 +54,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "6019515d2067da1164fad0e2451ee734babbf0d3",
-    "planHash": "da5b3fe82520edb53cbce3460087e782f58243759668d882eacca520c1ccedeb",
+    "checkpoint": "pr:576",
+    "planHash": "50fbd412e356b5f3573c1010e6bb81314e1ff1bffd6439bcb139b7415363be0f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
