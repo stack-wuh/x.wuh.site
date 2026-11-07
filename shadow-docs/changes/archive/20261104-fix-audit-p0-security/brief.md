@@ -4,7 +4,7 @@
   "name": "20261104-fix-audit-p0-security",
   "type": "fix",
   "scope": "server",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261104-fix-audit-p0-security",
   "files": [],
@@ -16,14 +16,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/573"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "31a60a42d718d5b24ebdd3421932eb583439ac3b",
+    "verifiedAt": "2026-11-07T08:47:50.534Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:573",
-    "planHash": "63f452bc92d57be2260d337e6fdfc5c283411e8e3c0042be173ff36863ca7b0e",
+    "checkpoint": "merged-pr:573",
+    "planHash": "5145244a9d03da80c0e7d2b41c0963c2e7b5af7d534d8c8e22b6fdcb426847f0",
     "updatedAt": null,
     "lastError": null,
     "commit": {
@@ -43,6 +43,11 @@
       ],
       "message": "fix(server): 加固评论/同步端点越权面并修正 JWT 过期截断\n\n- PATCH /comments/:id/approve 与 POST /webhook/sync/:n 挂 JwtAuthGuard+RootGuard（审计 #568 P0-1/P0-3）\n- 公开 GET /comments 默认 approved + findAll 收敛 PII 投影；QueryCommentDto 补 status @IsIn（修复 admin ?status= 死过滤）与四字段 MaxLength（P0-2/P1-11/P2）\n- guestbook 匿名评论创建即 approved（对齐既有注释意图）；syncComment 同步 GitHub 评论写 status approved（此前落默认 pending）\n- 新增 scripts/backfill-comment-status.mjs 一次性归位存量 pending 数据（默认 dry-run，--yes 落库）\n- resolveJwtExpiration：纯数字按秒、带单位透传，修复 parseInt('24h')===24 秒会话（P1-4），auth.module signOptions 同步修复"
     }
+  },
+  "knowledge": {
+    "action": "无需变更",
+    "target": null,
+    "reason": "归档补跑漂移门：变更已合并、内容在 main 同源在案，按当日 brief 结论复申（HEAD 随归档推进逐单重验）"
   }
 }
 ---

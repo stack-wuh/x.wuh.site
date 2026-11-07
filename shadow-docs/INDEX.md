@@ -130,7 +130,7 @@
 | 20261028-refactor-ternary-icon-switches | ✅ 完成 | shadow-docs/changes/archive/20261028-refactor-ternary-icon-switches/brief.md |
 | 20261104-docs-knowledge-reconcile | ✅ 完成 | shadow-docs/changes/archive/20261104-docs-knowledge-reconcile/brief.md |
 | 20261104-feature-about-recent-logs | ✅ 完成 | shadow-docs/changes/archive/20261104-feature-about-recent-logs/brief.md |
-| 20261104-fix-audit-p0-security | reviewed | shadow-docs/changes/20261104-fix-audit-p0-security/brief.md |
+| 20261104-fix-audit-p0-security | ✅ 完成 | shadow-docs/changes/archive/20261104-fix-audit-p0-security/brief.md |
 | 20261104-fix-audit-timeline-blockers | reviewed | shadow-docs/changes/20261104-fix-audit-timeline-blockers/brief.md |
 | 20261104-style-state-transition-motion | ✅ 完成 | shadow-docs/changes/archive/20261104-style-state-transition-motion/brief.md |
 | 20261104-test-music-guards-realign | ✅ 完成 | shadow-docs/changes/archive/20261104-test-music-guards-realign/brief.md |
