@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -53,14 +53,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/576"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "1d079b39467aeced8458602a267a4d8e38b918e7",
+    "verifiedAt": "2026-11-07T08:28:17.194Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:576",
-    "planHash": "aee60992c76e3853c7f251a298b6f8b38922876bd3070b16dcdd626dcc07cdc4",
+    "planHash": "be5183c3d232fec45f4583f80397190c70b7bb75201730ee56ba4682c8d815f2",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -79,7 +79,23 @@
         "scripts/test-resolve.mjs"
       ],
       "message": "fix(build): 测试 sweep 钉 workspace 源码单源——resolve loader 映射 core/hooks + 相对导入补 .ts + transform-types 兼 enum（审计 #568 P1-22 在 CI 揭红的桥接根治）"
+    },
+    "release": {
+      "files": [
+        "shadow-docs/changes/20261107-chore-audit-quality-gates/brief.md",
+        "shadow-docs/knowledge/build-config.md",
+        "shadow-docs/menu.md",
+        "shadow-docs/signals.md"
+      ],
+      "message": "docs(shadow): 质量门真闸知识闭环——build-config 三步契约与类型分治修正、SGN-001 app 级 tsc 分水岭增补、menu 路由补全",
+      "title": "chore(ci): 质量门真闸——typecheck 全域+测试入 CI+去 ignoreBuildErrors（审计 #568）",
+      "body": "PR #576 收尾：知识闭环（build-config.md 三步真闸契约 + 类型分治口径修正 + test sweep/loader 配方；signals.md SGN-001 增补 app 级 tsc 程序规模分水岭与 sweep 挂起新形态；menu.md 路由补全）+ brief 终态回填。代码与 CI 接线见前序提交。"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/build-config.md",
+    "reason": "quality-gate 升级三步真闸（typecheck 四域+test sweep+去 ignoreBuildErrors）；类型分治口径修正（site 存量 35 错清零、allowImportingTsExtensions 开启、core 双解析面以 sweep loader 桥接）；signals.md SGN-001 同步增补 app 级 tsc 139×6 与 sweep 挂起新形态；INV-3 完整 build 绿随 release 链 build-images 补证"
   }
 }
 ---
@@ -134,10 +150,10 @@
 - [x] task 4 — `.github/workflows/ci-cd.yml` — quality-gate 增加 `- run: pnpm run test` 步骤
 
 ### Phase 2（CI 揭红处置）
-- [ ] task 5 — CI 出真值后：存量类型错误就地清零（server/site/console 按揭红清单修）；隔离清单与实际红文件复核对齐（若 CI 有意外红则按实际调整）
+- [x] task 5 — CI 出真值后：存量类型错误就地清零（server/site/console 按揭红清单修）；隔离清单与实际红文件复核对齐（若 CI 有意外红则按实际调整）
 
 ### Phase 3（簿记）
-- [ ] task 6 — GitHub issue #568 — 勾选已修条目（#572/#573 已交付的 P0/P1/P2 各条 + 本变更交付的 P0-4、P1-31 部分接线）
+- [x] task 6 — GitHub issue #568 — 勾选已修条目（#572/#573 已交付的 P0/P1/P2 各条 + 本变更交付的 P0-4、P1-31 部分接线）
 
 ## 结果
 
