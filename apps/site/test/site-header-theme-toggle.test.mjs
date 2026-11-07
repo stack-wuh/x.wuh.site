@@ -54,12 +54,14 @@ test('首屏脚本在渲染前恢复主题家族和三态显示模式', () => {
 
 test('桌面 Header 提供可访问的外观入口和编辑部调色台浮层', () => {
   assert.match(headerSource, /AppearanceTrigger/)
-  assert.match(headerSource, />外观</)
+  // 20261107 对账：触发器文字退场，钤印「墨」承载入口（印面即装饰）
+  assert.match(headerSource, /<S\.ThemeSeal aria-hidden='true' \$open=\{appearanceOpen\}>墨<\/S\.ThemeSeal>/)
   assert.match(headerSource, /aria-haspopup='dialog'/)
   assert.match(headerSource, /aria-expanded=\{appearanceOpen\}/)
   assert.match(headerSource, /DesktopAppearancePopover/)
-  assert.match(appearanceOptionsSource, /主题风格/)
-  assert.match(appearanceOptionsSource, /显示模式/)
+  // 20261107 对账：组名 aria i18n 化（themeGroup/schemeGroup 落词典）
+  assert.match(appearanceOptionsSource, /aria-label=\{t\('site\.appearance\.themeGroup'\)\}/)
+  assert.match(appearanceOptionsSource, /aria-label=\{t\('site\.appearance\.schemeGroup'\)\}/)
   assert.match(appearanceOptionsSource, /aria-pressed=\{themeFamily === option\.value\}/)
   assert.match(appearanceOptionsSource, /aria-pressed=\{colorSchemeMode === option\.value\}/)
 })
@@ -91,7 +93,8 @@ test('外观入口继续使用统一 outline 图标', () => {
 
 test('移动菜单通过外观设置入口内联展开主题选项', () => {
   assert.match(headerSource, /MobileAppearanceAction/)
-  assert.match(headerSource, /外观设置/)
+  // 20261107 对账：行名 i18n 化（group='外观设置' 落词典）
+  assert.match(headerSource, /t\('site\.appearance\.group'\)/)
   assert.match(headerSource, /MobileAppearanceOptions/)
   assert.match(headerSource, /aria-expanded=\{mobileAppearanceExpanded\}/)
   assert.match(headerSource, /aria-controls=\{mobileAppearanceId\}/)
@@ -147,8 +150,10 @@ test('移动端内联外观区域展开后仍满足触摸目标约束', () => {
 test('桌面端外观控件与通用 Button 视觉样式解耦', () => {
   assert.match(stylesSource, /export const AppearanceTrigger = styled\.button/)
   assert.doesNotMatch(stylesSource, /export const AppearanceTrigger = styled\(Button\)/)
-  assert.match(stylesSource, /border-radius:\s*12px/)
-  assert.match(stylesSource, /padding:\s*10px 12px/)
+  // 20261107 对账：间距/圆角全面令牌化（padding 走 --space-*，12px 定值退场）
+  assert.match(stylesSource, /padding: var\(--space-xs\) var\(--space-base\);/)
+  assert.doesNotMatch(stylesSource, /border-radius:\s*12px/)
+  assert.doesNotMatch(stylesSource, /padding:\s*10px 12px/)
 })
 
 test('桌面和移动端复用共享外观选项组件', () => {
@@ -159,9 +164,11 @@ test('桌面和移动端复用共享外观选项组件', () => {
   assert.match(appearanceOptionsSource, /aria-pressed=\{colorSchemeMode === option\.value\}/)
 })
 
-test('酒红和素雅色板使用各自固定主题色预览', () => {
-  assert.match(appearanceOptionsSource, /preview: 'linear-gradient\(135deg, #C94A44 0 48%, #FFFBF8 48% 100%\)'/)
-  assert.match(appearanceOptionsSource, /preview: 'linear-gradient\(135deg, #C89060 0 48%, #FFFDF9 48% 100%\)'/)
+test('酒红和素雅色板走原始调色板 token 三键（零复制漂移）', () => {
+  // 20261107 对账：preview 渐变复制退场，墨签样本改 paper/ink/line 直引 --_pl-* 原始调色板
+  assert.match(appearanceOptionsSource, /value: 'wine',[\s\S]*?paper: 'var\(--_pl-background-900\)',[\s\S]*?ink:/)
+  assert.match(appearanceOptionsSource, /value: 'plain',[\s\S]*?paper: 'var\(--_pl-background-900\)',[\s\S]*?ink:/)
+  assert.doesNotMatch(appearanceOptionsSource, /#C94A44|#C89060/)
   assert.doesNotMatch(stylesSource, /background:\s*linear-gradient\(135deg, var\(--primary-color\)/)
 })
 
@@ -176,7 +183,8 @@ test('桌面主导航只使用渐隐装饰下划线反馈', () => {
   assert.match(navLinkSource, /position:\s*relative/)
   assert.match(navLinkSource, /&::after\s*\{[\s\S]*height:\s*1px/)
   assert.match(navLinkSource, /linear-gradient\(90deg,\s*transparent,[\s\S]*var\(--primary-color\)[\s\S]*transparent\)/)
-  assert.match(navLinkSource, /&:hover::after,[\s\S]*&:focus-visible::after\s*\{[\s\S]*opacity:\s*1/)
+  // 20261107 对账：下划线改运笔形态——hover/focus 触发 scaleX(1)（不再是 opacity 显隐）
+  assert.match(navLinkSource, /&:hover::after,[\s\S]*&:focus-visible::after\s*\{[\s\S]*transform: scaleX\(1\)/)
   assert.match(navLinkSource, /&:hover,[\s\S]*&:focus-visible\s*\{[\s\S]*text-decoration:\s*none/)
   assert.doesNotMatch(navLinkSource, /border-radius:\s*999px/)
   assert.doesNotMatch(navLinkSource, /background:\s*color-mix/)
@@ -185,10 +193,11 @@ test('桌面主导航只使用渐隐装饰下划线反馈', () => {
 
 test('桌面外观入口采用导航同款轻量样式', () => {
   const triggerSource = stylesSource.match(/export const AppearanceTrigger = styled\.button`([\s\S]*?)`/)?.[1] ?? ''
-  assert.match(triggerSource, /padding:\s*10px 12px/)
+  // 20261107 对账：触发器收敛极简（透明底+focus outline），间距走令牌，印面语言由 ThemeSeal 承载
+  assert.match(triggerSource, /padding: var\(--space-xs\) var\(--space-base\);/)
   assert.match(triggerSource, /border:\s*0/)
-  assert.match(triggerSource, /border-radius:\s*12px/)
-  assert.match(triggerSource, /color-mix\(in oklab, var\(--primary-color\) 8%, transparent\)/)
+  assert.match(triggerSource, /background: transparent;/)
+  assert.match(triggerSource, /&:focus-visible/)
   assert.doesNotMatch(triggerSource, /border-radius:\s*999px/)
   assert.doesNotMatch(triggerSource, /box-shadow:\s*inset/)
   assert.doesNotMatch(triggerSource, /translateY/)

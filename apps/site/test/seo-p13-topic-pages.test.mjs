@@ -29,7 +29,8 @@ test('blog post tags link to stable topic pages', () => {
 
 
 test('blog rows avoid nested anchors by using separate title and topic links', () => {
-  assert.match(blogStylesSource, /export const PostRow = styled\.div/)
+  // 20261107 对账：PostRow 载体迁 Flex 原语（responsive 编译口），标题/题签分离锚点语义不变
+  assert.match(blogStylesSource, /export const PostRow = styled\(Flex\)/)
   assert.match(blogListViewSource, /PostTitleLink href=\{buildPostUrl\(post\.number\)\}/)
   assert.match(blogListViewSource, /PostTagLink key=\{`\$\{post.id\}-\$\{label.name\}`\} href=\{buildTopicUrl\(label.name\)\}/)
 })

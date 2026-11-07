@@ -18,33 +18,38 @@ test('related posts fetch candidates by labels with parallel requests', () => {
 })
 
 test('related posts render as a literary thread when candidates exist', () => {
+  // 20261107 对账：文案全面 i18n 化（t('post.related.*')），字面量断言改词典键位等强替换
   assert.match(relatedPostsSource, /posts\.length === 0\) return null/)
   assert.match(relatedPostsSource, /RelatedPostsSection aria-labelledby='related-posts-title'/)
   assert.match(relatedPostsSource, /RelatedPostsHeader/)
-  assert.match(relatedPostsSource, /id='related-posts-title'>继续阅读/)
-  assert.match(relatedPostsSource, /读罢意犹未尽/)
-  assert.match(relatedPostsSource, /拾遗 \{posts\.length\} 则/)
+  assert.match(relatedPostsSource, /id='related-posts-title'>\{t\('post\.related\.heading'\)\}/)
+  assert.match(relatedPostsSource, /t\('post\.related\.intro'\)/)
+  assert.match(relatedPostsSource, /t\('post\.related\.count', \{ n: posts\.length \}\)/)
   assert.match(relatedPostsSource, /summary && <RelatedPostSummary>/)
-  assert.match(relatedPostsSource, /线索 \/ \{sharedLabels\}/)
-  assert.match(relatedPostsSource, /aria-label=\{`继续阅读：\$\{post\.title\}`\}/)
+  assert.match(relatedPostsSource, /t\('post\.related\.clues', \{ labels: sharedLabels \}\)/)
+  assert.match(relatedPostsSource, /aria-label=\{t\('post\.related\.itemAria', \{ title: post\.title \}\)\}/)
+  assert.match(relatedPostsSource, /RelatedPostMarker aria-hidden='true'/)
   assert.match(relatedPostsSource, /RelatedPostArrow aria-hidden='true'/)
   assert.match(relatedPostsSource, /buildPostUrl\(post\.number\)/)
 })
 
 test('related posts use the tokenized thread-in-card style', () => {
+  // 20261107 对账：文学线视觉由 Leader 点线 + Link 悬停态承载，Section 收敛为版式留白；
+  // 载体已是 styled(Link)（soft-navigation 白名单同源），禁用装饰残留断言一并等强迁移
   const relatedSection = postArticleStyles.match(/export const RelatedPostsSection = styled\.section`([\s\S]*?)`/)?.[1] || ''
-  const relatedLink = postArticleStyles.match(/export const RelatedPostLink = styled\.a`([\s\S]*?)`/)?.[1] || ''
+  const relatedLink = postArticleStyles.match(/export const RelatedPostLink = styled\(Link\)`([\s\S]*?)`/)?.[1] || ''
+  const relatedLeader = postArticleStyles.match(/export const RelatedPostLeader = styled\.span`([\s\S]*?)`/)?.[1] || ''
 
   assert.match(postArticleStyles, /export const RelatedPostsHeader/)
   assert.match(postArticleStyles, /export const RelatedPostSummary/)
   assert.match(postArticleStyles, /export const RelatedPostArrow/)
   assert.doesNotMatch(postArticleStyles, /export const RelatedPostIndex/)
-  assert.match(relatedSection, /border:/)
-  assert.match(relatedSection, /border-radius:/)
-  assert.match(relatedSection, /background:/)
-  assert.match(relatedSection, /border-radius: 50%/)
-  assert.match(relatedSection, /width: 1px/)
-  assert.match(relatedLink, /min-height: 44px;/)
+  assert.match(relatedSection, /margin-top: var\(--space-xl\)/)
+  assert.match(relatedSection, /font-family: var\(--font-serif\)/)
+  assert.match(relatedLeader, /border-bottom: 1px dotted color-mix/)
+  assert.match(relatedLeader, /transition: border-color var\(--motion-dur-quick\)/)
+  assert.match(relatedLink, /padding: var\(--space-xs\) 0;/)
   assert.match(relatedLink, /prefers-reduced-motion: reduce/)
-  assert.doesNotMatch(relatedLink, /border-radius:|box-shadow:|translateY|border-bottom-left-radius/)
+  assert.match(relatedLink, /&:focus-visible/)
+  assert.doesNotMatch(relatedLink, /box-shadow:|translateY/)
 })

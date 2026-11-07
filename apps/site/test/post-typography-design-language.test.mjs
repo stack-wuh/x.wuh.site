@@ -52,6 +52,8 @@ test('正文图片限高且保留既有内容视觉规范', () => {
 })
 
 test('更新提示线仅在文章真正编辑过时显示', () => {
+  // 20261107 对账：文案 i18n 化（t('post.view.updatedAt')），「真编辑过才显示」条件语义等强保留
   assert.match(postView, /issue\.updated_at !== issue\.created_at/)
-  assert.match(postView, /更新于/)
+  assert.match(postView, /updatedDate && <UpdateDivider>/)
+  assert.match(postView, /t\('post\.view\.updatedAt'/)
 })

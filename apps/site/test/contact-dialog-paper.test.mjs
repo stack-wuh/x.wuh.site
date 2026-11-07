@@ -44,10 +44,12 @@ test('七渠道钤印字符映射齐备', () => {
 
 /* ===== 响应式与硬编码禁令 ===== */
 
-test('ContactCard 清除 560 裸断点，与 BREAKPOINTS.mobile(640) 同轴', () => {
+test('ContactCard 断点彻底退场，单列布局为常形态', () => {
+  // 20261107 对账：560 裸断点清除后卡片单列化收敛（无任何 media 查询/断点导入）；
+  // 未来引入响应式必须走 themes/responsive 编译口（与 blog PostRow 同法），不回退裸断点
   assert.doesNotMatch(card, /max-width: 560px/)
-  assert.match(card, /import \{ BREAKPOINTS \} from '@wuh\.site\/components\/themes\/breakpoints'/)
-  assert.match(card, /@media \(max-width: \$\{BREAKPOINTS\.mobile\}px\)/)
+  assert.doesNotMatch(card, /@media \(max-width:\s*\d+px\)/)
+  assert.doesNotMatch(card, /BREAKPOINTS/)
 })
 
 test('ActionArea 无硬编码 rgba 边框，走 color-mix 语义 token', () => {

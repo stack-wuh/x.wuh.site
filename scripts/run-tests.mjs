@@ -24,31 +24,10 @@ const extraTestFiles = [
   'packages/components/cursor/typecheck.test.mjs'
 ]
 
-/* 隔离清单——逐条原因（2026-11-04 基线盘点，11 文件 25 用例） */
-const QUARANTINE = {
-  'apps/site/test/contact-dialog-paper.test.mjs':
-    'ContactCard 断点轴（560 vs 640）与站内裸锚点守卫漂移，待对账',
-  'apps/site/test/header-quiet-bar.test.mjs':
-    '页头令牌（--font-size-sm）与外观入口形态守卫漂移，待对账',
-  'apps/site/test/image-role-migration.test.mjs':
-    'Image 语义角色/头像 accent ring 守卫漂移，待对账',
-  'apps/site/test/post-typography-design-language.test.mjs':
-    '文章排版（更新提示线、related thread 样式）守卫漂移，待对账',
-  'apps/site/test/seo-p12-related-posts.test.mjs':
-    'related posts 文学线视觉守卫漂移（related-posts.test.mjs 为绿，双守卫口径冲突），待对账',
-  'apps/site/test/seo-p13-topic-pages.test.mjs':
-    'topics 页守卫漂移，待对账',
-  'apps/site/test/seo-p14-sitemap-noindex.test.mjs':
-    'sitemap noindex 守卫红——真回归嫌疑，优先甄别',
-  'apps/site/test/site-header-theme-toggle.test.mjs':
-    '主题入口钤印「墨」与调色台守卫漂移，待对账',
-  'apps/site/test/soft-navigation.test.mjs':
-    '站内裸 a 锚点守卫红——真回归嫌疑（同文档存续=全局播放器不断播前提），优先甄别',
-  'apps/site/test/typewriter-motto-stability.test.mjs':
-    '打字机 PHRASES 推导与覆盖层结构守卫漂移，待对账',
-  'packages/components/test/image-role-contract.test.mjs':
-    'Image 组件语义角色集合契约守卫漂移，待对账'
-}
+/* 隔离清单——20261107-test-guard-realign-batch2 对账后清零（11→0，棘轮单调不增保持）：
+   seo-p14 甄别为 SGN 环境误报直接出清单；其余 10 文件 22 红全为守卫漂移，断言等强对齐后回 gate。
+   新测试文件不允许进清单；再有漂移按对账三分类处理（漂移/真回归/环境误报）。 */
+const QUARANTINE = {}
 
 const listTests = (dir) =>
   readdirSync(join(repoRoot, dir))

@@ -37,15 +37,23 @@ function openingTagSlice(source, matchIndex) {
   return source.slice(matchIndex, matchIndex + 400)
 }
 
+// 剥块注释：JSX `<a` 扫描不识别注释语境，注释里的「Link→<a>」示例曾是误报源
+// （20261107 对账：app/styles/index.ts 备注块）。行注释与字符串一律不动，避免误伤 URL。
+const stripBlockComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ''))
+
 // 结构性豁免文件：其原生锚点由下方专项断言锁死（页脚资源项 native 分支）
 const FILE_EXEMPT = ['layout/footer.tsx']
 
 test('站内路径禁止裸 a 锚点——同文档存续是全局播放器不断播的前提', async () => {
-  const sources = [...(await collectTsx(resolve(siteRoot, 'app'))), ...(await collectTsx(pkgRoot))]
+  // JSX `<a>` 只可能出现在 .tsx——.ts 里的命中全是注释/字符串（20261107 对账收窄）
+  const sources = [
+    ...(await collectTsx(resolve(siteRoot, 'app'))),
+    ...(await collectTsx(pkgRoot))
+  ].filter((file) => file.endsWith('.tsx'))
   const violations = []
   for (const file of sources) {
     if (FILE_EXEMPT.some((ex) => file.endsWith(ex))) continue
-    const src = await readFile(file, 'utf8')
+    const src = stripBlockComments(await readFile(file, 'utf8'))
     const re = /<a[\s>]/g
     let m
     while ((m = re.exec(src))) {
@@ -66,7 +74,8 @@ test('styled.a 定义零增长白名单——新站内锚点须走 styled(Link)'
     'apps/site/app/about/styles.ts#ProfileAvatarLink', // GitHub 外链
     'apps/site/app/about/styles.ts#ProfileNameLink', // GitHub 外链
     'apps/site/app/about/components/guestbook-barrage.styles.ts#GuestbookFooterLink', // 消费侧 as 覆盖
-    'apps/site/app/components/ContactCard.tsx#LinkButton', // 邮箱/外链
+    // 20261107 对账：ContactCard#LinkButton（原邮箱/外链白名单项）唯一用法即静态标签，
+    // 载体已改 styled.span，出账
     'apps/site/app/styles/index.ts#ProjectLink', // 仓库外链
     'apps/site/app/guestbook/GuestbookPageView/styles/index.tsx#BackLink', // 消费侧 as 覆盖
     // 20261014 chore-dead-components-retirement：result#LinkItem / alert#MetaLink / alert#LabelLink /
@@ -95,20 +104,23 @@ test('styled.a 定义零增长白名单——新站内锚点须走 styled(Link)'
   assert.match(article, /export const RelatedPostLink = styled\(Link\)/, 'RelatedPostLink 仍是裸锚根')
   assert.match(pagStyles, /export const NavLink = styled\(Link\)/, '分页 NavLink 仍是裸锚根')
   assert.match(pagStyles, /export const LetterLink = styled\(Link\)/, '分页 LetterLink 仍是裸锚根')
-  // 分页禁用态经 as='span' 摘除 Link 的 href 依赖（Link 无 href 会抛）
+  // 分页禁用态走 NavLinkStatic 静态载体（span 无 href）——结构性摘除 href 依赖
+  // （20261107 对账：styled(Link) 的 as='span' 收窄在 v6 下不放宽必填 href，载体拆分）
+  assert.match(pagStyles, /export const NavLinkStatic = styled\.span/, '分页缺禁用态静态载体')
   const pagView = await readPkg('pagination/index.tsx')
-  assert.match(pagView, /as=\{hasPrev \? undefined : 'span'\}/, '分页上页禁用态未摘 href')
-  assert.match(pagView, /as=\{hasNext \? undefined : 'span'\}/, '分页下页禁用态未摘 href')
+  const staticCount = (pagView.match(/<S\.NavLinkStatic/g) || []).length
+  assert.equal(staticCount, 2, '分页上下页禁用态均须走静态载体')
 })
 
 test('页脚站内导航走 Link、RSS 资源项保留原生锚点', async () => {
   const footer = await readPkg('layout/footer.tsx')
-  const specs = await readPkg('layout/specs.tsx')
+  // 20261107 对账：契约数据从已迁走的 specs.tsx 落位 types.ts
+  const footerTypes = await readPkg('layout/types.ts')
   assert.match(footer, /import Link from 'next\/link'/, 'footer 缺 next/link')
   assert.match(footer, /item\.native \?/, 'footer 缺资源项条件渲染')
   assert.match(footer, /<Link key=\{item\.href\} href=\{item\.href\}>/, 'footer 站内项未走 Link')
-  assert.match(specs, /native\?: boolean/, 'FooterNavItem 缺 native 标记类型')
-  assert.match(specs, /href: '\/api\/rss\.xml', native: true/, 'RSS 项未标记原生渲染')
+  assert.match(footerTypes, /native\?: boolean/, 'FooterNavItem 缺 native 标记类型')
+  assert.match(footerTypes, /href: '\/api\/rss\.xml', native: true/, 'RSS 项未标记原生渲染')
 })
 
 test('文章上/下篇与话题题签走 Link 形态', async () => {

@@ -7,26 +7,28 @@ import { dirname, resolve } from 'node:path'
 const testDir = dirname(fileURLToPath(import.meta.url))
 const packageRoot = resolve(testDir, '..')
 const imageSource = await readFile(resolve(packageRoot, 'image/index.tsx'), 'utf8')
+const typesSource = await readFile(resolve(packageRoot, 'image/types.ts'), 'utf8')
 const stylesSource = await readFile(resolve(packageRoot, 'image/styles/index.tsx'), 'utf8')
 
 const roles = ['avatar', 'book-cover', 'content', 'cover', 'thumbnail', 'logo', 'qr']
 
 test('Image 声明完整语义角色集合', () => {
-  assert.match(imageSource, /export type ImageRole/)
-  for (const role of roles) assert.match(imageSource, new RegExp(`'${role}'`))
-  assert.match(imageSource, /role\?: ImageRole/)
+  // 20261107 对账：类型与预设随职责拆分落位 types.ts，守卫同步分域读取
+  assert.match(typesSource, /export type ImageRole/)
+  for (const role of roles) assert.match(typesSource, new RegExp(`'${role}'`))
+  assert.match(typesSource, /role\?: ImageRole/)
 })
 
 test('角色 resolver 使用显式属性覆盖角色默认值', () => {
-  assert.match(imageSource, /ROLE_PRESETS/)
+  assert.match(typesSource, /ROLE_PRESETS/)
   assert.match(imageSource, /borderRadius \?\? preset\?\.borderRadius/)
   assert.match(imageSource, /appearance \?\? preset\?\.appearance/)
   assert.match(imageSource, /variant \?\? preset\?\.variant/)
 })
 
 test('Image 为内部图片提供 className 和 style 通道', () => {
-  assert.match(imageSource, /imageClassName\?: string/)
-  assert.match(imageSource, /imageStyle\?: React\.CSSProperties/)
+  assert.match(typesSource, /imageClassName\?: string/)
+  assert.match(typesSource, /imageStyle\?: React\.CSSProperties/)
   assert.match(imageSource, /className=\{imageClassName\}/)
   assert.match(imageSource, /style=\{imageStyle\}/)
 })
@@ -52,8 +54,8 @@ test('plain 角色的默认错误态保持透明背景', () => {
 })
 
 test('角色预设符合已确认视觉基线', () => {
-  assert.match(imageSource, /'book-cover':[\s\S]*borderRadius: '2px'[\s\S]*variant: 'contain'/)
-  assert.match(imageSource, /avatar:[\s\S]*borderRadius: '50%'[\s\S]*appearance: 'plain'/)
-  assert.match(imageSource, /logo:[\s\S]*borderRadius: '0'[\s\S]*appearance: 'plain'/)
-  assert.match(imageSource, /qr:[\s\S]*borderRadius: '2px'[\s\S]*variant: 'contain'/)
+  assert.match(typesSource, /'book-cover':[\s\S]*borderRadius: '2px'[\s\S]*variant: 'contain'/)
+  assert.match(typesSource, /avatar:[\s\S]*borderRadius: '50%'[\s\S]*appearance: 'plain'/)
+  assert.match(typesSource, /logo:[\s\S]*borderRadius: '0'[\s\S]*appearance: 'plain'/)
+  assert.match(typesSource, /qr:[\s\S]*borderRadius: '2px'[\s\S]*variant: 'contain'/)
 })
