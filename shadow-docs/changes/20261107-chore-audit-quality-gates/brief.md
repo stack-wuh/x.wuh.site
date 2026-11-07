@@ -4,11 +4,19 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
     ".github/workflows/ci-cd.yml",
+    "apps/server/src/modules/comment/comment.service.ts",
+    "apps/server/src/modules/content/content.service.ts",
+    "apps/server/src/modules/footprint/footprint.service.ts",
+    "apps/server/src/modules/repos/repos.service.ts",
+    "apps/server/src/modules/rss/rss.service.ts",
+    "apps/server/src/modules/sync/sync.service.ts",
+    "apps/server/src/modules/webhook/webhook.controller.ts",
+    "apps/server/src/modules/weread/weread.service.ts",
     "apps/site/next.config.ts",
     "package.json",
     "scripts/run-tests.mjs"
@@ -27,8 +35,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "c5e3728edd0765f468440c0efed2a7e2c44a82ae0703250e89160cb5f5f94fb2",
+    "checkpoint": "6f4ab7db508060fc599c1ecc109044970a9f3037",
+    "planHash": "7213e9ba0b9d28cb94091555be4dc16501186016646dae5bcf0fe92d5b900034",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -42,12 +50,16 @@
     },
     "commit": {
       "files": [
-        ".github/workflows/ci-cd.yml",
-        "apps/site/next.config.ts",
-        "package.json",
-        "scripts/run-tests.mjs"
+        "apps/server/src/modules/comment/comment.service.ts",
+        "apps/server/src/modules/content/content.service.ts",
+        "apps/server/src/modules/footprint/footprint.service.ts",
+        "apps/server/src/modules/repos/repos.service.ts",
+        "apps/server/src/modules/rss/rss.service.ts",
+        "apps/server/src/modules/sync/sync.service.ts",
+        "apps/server/src/modules/webhook/webhook.controller.ts",
+        "apps/server/src/modules/weread/weread.service.ts"
       ],
-      "message": "chore(ci): 质量门真闸——typecheck 四域串联+测试 sweep 入 CI+移除 ignoreBuildErrors（审计 #568 P0-4）"
+      "message": "fix(server): CI 类型闸揭红就地清零——catch 收窄惯用法 16 处 + weread 响应显式类型 + 死 logger 移除（审计 #568 P0-4）"
     }
   }
 }
