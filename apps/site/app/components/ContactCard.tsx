@@ -339,7 +339,8 @@ const ContactCard = ({
             aria-label={hasLink ? t('site.contact.goTo', { badge }) : t('site.contact.viewQr', { badge })}
             onClick={hasQR ? () => setPreviewOpen(true) : undefined}
           >
-            {hasQR && (
+            {/* 直接判 qrSrc（Boolean() 不产生类型收窄），语义与 hasQR 等价 */}
+            {qrSrc && (
               <QrMat>
                 <QRImage role='qr' src={qrSrc} alt={t('site.contact.qrAlt', { name, badge })} width={160} height={160} />
               </QrMat>
