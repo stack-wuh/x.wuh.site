@@ -152,6 +152,9 @@ export class SyncService {
         issueId: issueNumber ? Number(issueNumber) : Number(comment.issue_url.split('/').pop()),
         issueNumber: issueNumber ? Number(issueNumber) : Number(comment.issue_url.split('/').pop()),
         repo: this.contentRepoName,
+        // GitHub 上已存在的评论即公开内容，同步进来直接是 approved
+        // （审计 #568 P0-2：此前落 schema 默认 pending，公开端点却不过滤，审核语义名存实亡）
+        status: 'approved' as const,
         body: comment.body,
         bodyHtml: comment.body_html,
         user: {

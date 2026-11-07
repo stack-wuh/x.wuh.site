@@ -51,9 +51,10 @@ export class CommentService {
   ): Promise<PaginatedResult<CommentDocument>> {
     try {
       const skip = (page - 1) * limit;
+      // PII 投影：clientIp/userAgent/email/footprint 不出评论查询链路（审计 #568 P0-2）
       const [data, total] = await Promise.all([
         this.commentModel
-          .find(query || {})
+          .find(query || {}, '-clientIp -userAgent -email -footprint')
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit)

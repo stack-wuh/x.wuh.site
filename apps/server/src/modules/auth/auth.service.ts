@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { AdminAuthResponseDto, AdminPermission, AdminRole, AdminUserDto } from '@wuh.site/core';
+import { resolveJwtExpiration } from '../../common/utils/jwt-expiration';
 import { UserRole } from '../user/schemas/user.schema';
 import { UserService } from '../user/user.service';
 
@@ -65,7 +66,7 @@ export class AuthService {
       },
       {
         secret: this.requireConfig('JWT_SECRET'),
-        expiresIn: Number.parseInt(this.configService.get<string>('JWT_EXPIRATION') || '86400', 10),
+        expiresIn: resolveJwtExpiration(this.configService.get<string>('JWT_EXPIRATION')),
       },
     );
 
