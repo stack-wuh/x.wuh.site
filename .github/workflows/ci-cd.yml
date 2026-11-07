@@ -29,11 +29,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: TypeScript type check
+      - name: TypeScript type check (root + server + site + console)
         run: pnpm run typecheck
 
       - name: Frontend lint (oxlint)
         run: pnpm run lint:next
+
+      # 测试 sweep（隔离清单见 scripts/run-tests.mjs，清单只准缩小不准扩大）
+      - name: Test suite (node:test sweep)
+        run: pnpm run test
 
   # ── 按需构建判定：对比本次 release target 与上一个 release tag 的变更文件 ──
   # 依赖图：next ← site+components+hooks+core；nest ← server+hooks+core；
