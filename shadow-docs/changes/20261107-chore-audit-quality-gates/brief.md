@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -17,8 +17,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 575,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/575",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 576,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/576"
   },
   "review": {
     "conclusion": "pending",
@@ -27,8 +27,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "56f8a17244b8cfe8bc0e83cd53df4901284ac017",
-    "planHash": "2aaf4180ba69853e2959d8f95bbda6b8199cd955dda1dccb8c69b12b58633218",
+    "checkpoint": "pr:576",
+    "planHash": "c5e3728edd0765f468440c0efed2a7e2c44a82ae0703250e89160cb5f5f94fb2",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
