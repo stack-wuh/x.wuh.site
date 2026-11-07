@@ -4,7 +4,7 @@
   "name": "20261107-test-guard-realign-batch2",
   "type": "test",
   "scope": "site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "test/20261107-test-guard-realign-batch2",
   "files": [
