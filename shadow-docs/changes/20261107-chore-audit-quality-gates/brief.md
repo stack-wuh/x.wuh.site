@@ -4,7 +4,7 @@
   "name": "20261107-chore-audit-quality-gates",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "chore/20261107-chore-audit-quality-gates",
   "files": [
@@ -57,8 +57,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:576",
-    "planHash": "411bd33a34822c3fcc297ff9ef132acda5525ff3fd008921c2af93dab22c67d1",
+    "checkpoint": "39dffd27649ad417cb8d231d5b846093f9074829",
+    "planHash": "e689f0a19eb13431aded57fdf76adecf49a3fe492ae34e12a69707d15f8d4d7b",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -72,12 +72,9 @@
     },
     "commit": {
       "files": [
-        "apps/site/app/components/ContactCard.tsx",
-        "apps/site/app/post/components/PostCover/index.tsx",
-        "packages/components/pagination/index.tsx",
-        "packages/components/pagination/styles/index.tsx"
+        "apps/site/app/components/ContactCard.tsx"
       ],
-      "message": "fix(components,site): next 类型解析打通后的连锁清零——pagination/ContactCard 载体拆静态变体、PostCover alt 空串兜底"
+      "message": "fix(site): ContactCard QR 守卫改直接判 qrSrc（Boolean 不产生类型收窄，next/image src 必填）"
     }
   }
 }
