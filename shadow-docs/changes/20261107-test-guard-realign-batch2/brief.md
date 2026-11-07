@@ -4,7 +4,7 @@
   "name": "20261107-test-guard-realign-batch2",
   "type": "test",
   "scope": "site",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "test/20261107-test-guard-realign-batch2",
   "files": [
@@ -25,8 +25,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 577,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/577",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 578,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/578"
   },
   "review": {
     "conclusion": "pending",
@@ -35,8 +35,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "567b9263a0a6df430453d593ba9e17e88b8a8fdb",
-    "planHash": "670756247bf857c0420de7649331af67e51708c5fc8e8f8efc243dbcaa3cf804",
+    "checkpoint": "pr:578",
+    "planHash": "b27d3d3677c4c53c6c4945c5545f007a9ba0e9c070b843317663ea94eaa611eb",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
