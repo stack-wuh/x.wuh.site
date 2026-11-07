@@ -119,7 +119,8 @@ const QRImage = styled(Image)`
   height: 160px;
 `
 
-const LinkButton = styled.a`
+// 唯一用法即静态 span 标签（v6 的 as 收窄对 styled 载体不放宽必填属性，直接改 span 载体）
+const LinkButton = styled.span`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,7 +297,8 @@ const ContactCard = ({
   // deps 含 hasLink：二维码/链接模式切换会重建 ActionArea 的 DOM 节点（button↔a），
   // 需重新挂载监听器
   useEffect(() => {
-    const el = actionRef.current
+    // 联合类型收成单类型：泛型 addEventListener 重载在联合接收者上会退化为 string 重载
+    const el = actionRef.current as HTMLButtonElement | null
     if (!el) return
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -337,13 +339,14 @@ const ContactCard = ({
             aria-label={hasLink ? t('site.contact.goTo', { badge }) : t('site.contact.viewQr', { badge })}
             onClick={hasQR ? () => setPreviewOpen(true) : undefined}
           >
-            {hasQR && (
+            {/* 直接判 qrSrc（Boolean() 不产生类型收窄），语义与 hasQR 等价 */}
+            {qrSrc && (
               <QrMat>
                 <QRImage role='qr' src={qrSrc} alt={t('site.contact.qrAlt', { name, badge })} width={160} height={160} />
               </QrMat>
             )}
             {hasLink && (
-              <LinkButton as='span'>
+              <LinkButton>
                 <LinkIcon>{linkIconMap[badge]}</LinkIcon>
                 {displayLinkLabel}
               </LinkButton>

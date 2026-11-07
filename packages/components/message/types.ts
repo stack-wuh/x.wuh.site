@@ -32,7 +32,8 @@ export interface MessageOptions {
 
 export interface MessageConfig {
   duration?: number
-  placement?: MessagePlacementInput
+  // 内部配置存规范形（kebab 输入形只在 MessageOptions 公开面收），toPlacement 才能以 MessagePlacement 返回
+  placement?: MessagePlacement
   maxCount?: number
   top?: number
   bottom?: number

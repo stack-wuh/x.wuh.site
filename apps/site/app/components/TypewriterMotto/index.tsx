@@ -91,7 +91,8 @@ export default function TypewriterMotto() {
     const x = tr.right - cr.left
     const y = cr.height / 2
     const count = 2 + Math.floor(Math.random() * 2)
-    const batch = Array.from<Particle>({ length: count }, () => ({
+    // 单显式类型参会落到 1 参重载（TS2554）；双参重载由返回值推断，注解锚定
+    const batch: Particle[] = Array.from({ length: count }, () => ({
       id: ++pid,
       x,
       y,

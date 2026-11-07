@@ -97,11 +97,12 @@ export const Fallback = styled.div<{ $compactFallback: boolean; $appearance: Ima
   background-color: ${(p) => (p.$appearance === 'plain' ? 'transparent' : p.$appearance === 'qr' ? '#fff' : 'var(--background-100, #fff)')};
   ${(p) =>
     p.$appearance !== 'plain' &&
+    // 嵌套 css`` 的插值参无泛型上下文，闭包外层已定型的 p
     css`
       &::before {
         content: '';
         position: absolute;
-        inset: ${(inner) => (inner.$compactFallback ? '4px' : '9px')};
+        inset: ${p.$compactFallback ? '4px' : '9px'};
         border: 1px solid color-mix(in oklab, var(--text-color, #2a1e16) 9%, transparent);
         border-radius: inherit;
         pointer-events: none;

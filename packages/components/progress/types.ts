@@ -2,7 +2,8 @@ import type { HTMLAttributes } from 'react'
 
 export type ProgressSize = 'sm' | 'md'
 
-export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
+// onChange 语义是自定义 (value: number)，与原生 ChangeEventHandler 签名冲突，Omit 收敛
+export interface ProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** 进度值 0–100；缺省进入 indeterminate 不确定态（行笔） */
   value?: number
   /** 传入即交互态：原生 range 底座，拖拽/键盘/读屏语义零降级 */

@@ -70,7 +70,7 @@ export class WebhookController {
 
       return { success: true };
     } catch (error) {
-      this.logger.error(`Webhook processing failed: ${error.message}`);
+      this.logger.error(`Webhook processing failed: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -101,7 +101,7 @@ export class WebhookController {
 
       this.logger.log(`Dispatched archive for issue #${issueNumber} → ${repo}`)
     } catch (error) {
-      this.logger.error(`Failed to dispatch archive for issue #${issueNumber}: ${error.message}`)
+      this.logger.error(`Failed to dispatch archive for issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 

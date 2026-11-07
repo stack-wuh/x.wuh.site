@@ -20,6 +20,10 @@ import { Toolbar, IconButton } from './styles'
 type Props = ToolbarRenderProps & {
   isMobile: boolean
   onMoreClick: () => void
+  allowZoom?: boolean
+  allowRotate?: boolean
+  allowDownload?: boolean
+  allowFullscreen?: boolean
 }
 
 export const ImagePreviewToolbar: React.FC<Props> = (props) => {
@@ -30,7 +34,7 @@ export const ImagePreviewToolbar: React.FC<Props> = (props) => {
     canZoomIn, canZoomOut, isFullscreen,
     isMobile, onMoreClick,
     allowZoom = true, allowRotate = true, allowDownload = true, allowFullscreen = true,
-  } = props as Props & { allowZoom?: boolean; allowRotate?: boolean; allowDownload?: boolean; allowFullscreen?: boolean }
+  } = props
 
   // For type safety, use the original props.allowZoom etc. from ToolbarRenderProps doesn't have these,
   // so we use the destructured values from the parent. The parent passes them via closure.

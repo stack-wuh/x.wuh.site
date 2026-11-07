@@ -64,21 +64,23 @@ function Swatch({ colors }: { colors: string[] }) {
 }
 
 export default function DesignTokenPage() {
-  const { theme } = useThemeMode();
+  // ThemeContextValue 上是 themeFamily（写 theme 会取到 undefined，退出预览后整站降级）
+  const { themeFamily } = useThemeMode();
   const [previewTheme, setPreviewTheme] = React.useState<Theme | null>(null);
   const [, forceRender] = React.useState(0);
 
-  const activeTheme = previewTheme ?? theme;
+  const activeTheme = previewTheme ?? themeFamily;
 
   React.useEffect(() => {
     if (!previewTheme) return;
     document.documentElement.dataset.themeFamily = previewTheme;
     forceRender((n) => n + 1);
     return () => {
-      document.documentElement.dataset.themeFamily = theme;
+      // 恢复走单源：还原成页面当前家族而非写死 undefined
+      document.documentElement.dataset.themeFamily = themeFamily;
       forceRender((n) => n + 1);
     };
-  }, [previewTheme, theme]);
+  }, [previewTheme, themeFamily]);
 
   const [currentColors, setCurrentColors] = React.useState<
     Record<string, string[]>

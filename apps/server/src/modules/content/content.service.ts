@@ -21,7 +21,7 @@ export class ContentService {
       const content = new this.contentModel(createContentDto);
       return await content.save();
     } catch (error) {
-      this.logger.error(`Failed to create content: ${error.message}`);
+      this.logger.error(`Failed to create content: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -44,7 +44,7 @@ export class ContentService {
       ]);
       return buildPaginatedResult(data, total, page, limit);
     } catch (error) {
-      this.logger.error(`Failed to find contents: ${error.message}`);
+      this.logger.error(`Failed to find contents: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }

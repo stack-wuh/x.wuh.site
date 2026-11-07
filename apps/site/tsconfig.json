@@ -33,7 +33,8 @@
         "../../packages/hooks/*"
       ]
     },
-    "allowJs": true
+    "allowJs": true,
+    "allowImportingTsExtensions": true
   },
   "include": [
     "./dist/site/types/**/*.ts",

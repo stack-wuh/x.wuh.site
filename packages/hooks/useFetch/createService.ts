@@ -103,7 +103,7 @@ function createUseHook<TResponse, TQuery = Record<string, unknown>, TBody = unkn
         },
       }
     )
-    const clientResult = resolveClientResult(result.data)
+    const clientResult = resolveClientResult(result.data ?? undefined)
 
     return {
       data: clientResult.data,

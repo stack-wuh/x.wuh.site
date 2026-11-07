@@ -8,7 +8,8 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev": "bash scripts/dev.sh",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p apps/server/tsconfig.json && tsc --noEmit -p apps/site/tsconfig.json && tsc --noEmit -p apps/console/tsconfig.json",
+    "test": "node scripts/run-tests.mjs",
     "dev:next": "bash scripts/dev-next.sh",
     "build:next": "pnpm --filter @wuh.site/site run build",
     "start:next": "pnpm --filter @wuh.site/site run start",

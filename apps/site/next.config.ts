@@ -14,9 +14,6 @@ const nextConfig: NextConfig = {
   // 两端一致。
   compiler: { styledComponents: true },
   distDir: isProduction ? './dist/site' : './dist/site-dev',
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       {

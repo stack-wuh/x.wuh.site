@@ -95,13 +95,19 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
 
   return (
     <S.Nav aria-label={t('common.pagination.navAria')}>
-      <S.NavLink
-        as={hasPrev ? undefined : 'span'}
-        $disabled={!hasPrev}
-        href={hasPrev ? getPageUrl(currentPage - 1) : undefined}
-        aria-label={t('common.pagination.prev')}
-        aria-disabled={!hasPrev}
-      ><S.NavLabelPrev>{t('common.pagination.prev')}</S.NavLabelPrev><ArrowLeftIcon /></S.NavLink>
+      {hasPrev ? (
+        <S.NavLink
+          href={getPageUrl(currentPage - 1)}
+          $disabled={false}
+          aria-label={t('common.pagination.prev')}
+        ><S.NavLabelPrev>{t('common.pagination.prev')}</S.NavLabelPrev><ArrowLeftIcon /></S.NavLink>
+      ) : (
+        <S.NavLinkStatic
+          $disabled
+          aria-label={t('common.pagination.prev')}
+          aria-disabled='true'
+        ><S.NavLabelPrev>{t('common.pagination.prev')}</S.NavLabelPrev><ArrowLeftIcon /></S.NavLinkStatic>
+      )}
 
       <S.LetterGroup>
         {items.map((item) => {
@@ -125,13 +131,19 @@ export default function Pagination({ currentPage, totalPages, getPageUrl }: Pagi
         })}
       </S.LetterGroup>
 
-      <S.NavLink
-        as={hasNext ? undefined : 'span'}
-        $disabled={!hasNext}
-        href={hasNext ? getPageUrl(currentPage + 1) : undefined}
-        aria-label={t('common.pagination.next')}
-        aria-disabled={!hasNext}
-      ><ArrowRightIcon /><S.NavLabelNext>{t('common.pagination.next')}</S.NavLabelNext></S.NavLink>
+      {hasNext ? (
+        <S.NavLink
+          href={getPageUrl(currentPage + 1)}
+          $disabled={false}
+          aria-label={t('common.pagination.next')}
+        ><ArrowRightIcon /><S.NavLabelNext>{t('common.pagination.next')}</S.NavLabelNext></S.NavLink>
+      ) : (
+        <S.NavLinkStatic
+          $disabled
+          aria-label={t('common.pagination.next')}
+          aria-disabled='true'
+        ><ArrowRightIcon /><S.NavLabelNext>{t('common.pagination.next')}</S.NavLabelNext></S.NavLinkStatic>
+      )}
     </S.Nav>
   )
 }

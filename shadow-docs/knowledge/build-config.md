@@ -21,7 +21,10 @@ source:
   - changes/20260928-feature-music-player/brief.md
   - changes/20261001-fix-mini-player-marquee-undefined/brief.md
   - changes/archive/20261026-ci-build-ssh-load/brief.md
-verified: 2026-10-26
+  - changes/20261107-chore-audit-quality-gates/brief.md
+verified: 2026-11-07
+verified-depth: runtime
+verified-scope: 20261107 质量门真闸上线（CI run 42355161055 fresh runner 全绿：typecheck 四域串联+oxlint+test sweep 三步；揭红 6 轮迭代即 gate 红/绿双向实证；本机 CI 模拟态（core/dist 移除）sweep 168/168）
 ---
 
 # 构建与部署配置
@@ -38,7 +41,7 @@ styled-components 必须开启 `compiler.styledComponents`（SWC 转换，Next 1
 
 Docker 多阶段构建：deps、builder、runner。Console 使用 `nginx:alpine` 运行 Vite 构建产物，支持 SPA 路由 fallback（`try_files $uri $uri/ /index.html`）。端口规划：生产 next:3000、nest:3200、console:3300；staging 对应 3001、3201、3301。部署脚本提供 build、staging health、switch、diagnose、cancel 和 rollback 能力。
 
-CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。
+CI 触发策略：`pull_request`（#574 就位）与 push 到 main 跑 quality-gate **三步真闸（20261107 起）**——① `pnpm run typecheck` 四域串联（根=core + `-p` apps/server + `-p` apps/site + `-p` apps/console，任一域类型错误 gate 红）；② `pnpm run lint:next`（oxlint）；③ `pnpm run test`（测试 sweep，见下）；GitHub Release 发布（`release: types: [published]`）才触发完整部署链。concurrency 按事件分组：push main 用 `ci-quality`，release 用 `ci-deploy-<ref>`，互不取消。`ignoreBuildErrors` 已移除（20261107）——next build/docker build 即类型闸，类型错误从静默放行变为 build 红。
 
 **部署链架构（20261026 起，v1.4.88 首绿 → v1.4.93 稳定，PR #552/#553/#554/#556）**：release 构建发生在 GitHub runner（不再在服务器上构建），镜像不走 registry（国内服务器拉 GHCR/Docker Hub 不稳定，用户实测退回）——runner 侧 matrix 并行 buildx 构建（`docker/setup-buildx-action` + `build-push-action`，`BASE_IMAGE=node:20-alpine` + 官方 npm 源，`Dockerfile` ARG 参数化，服务器应急构建默认国内源不变）→ `outputs: type=docker` 直出 tar → gzip → artifact 中转 + `appleboy/scp-action` 传服务器 `/tmp/deploy-images/` → `deploy-docker.sh load-images`（gunzip + `docker load` + 固定 tag 就绪校验 + 传输产物清理）→ staging-test → switch-traffic。compose `next`/`nest` 固定 `image: xwuhsite-*:xwuhsite`，load 顶替同名 tag 后 `up` 即用新镜像，compose 不再隐式触发远端 pull；服务器本地 `build-deps/build-next/build-nest` 全保留为应急回退。缓存用 `type=gha`（per-target scope），冷跑建仓 270s、命中后预期 90~150s。**buildx 三连坑（v1.4.89–92 四连 release 实测，v1.4.93 首绿）**：① docker driver 不支持 cache 导出，必须 buildx；② buildx `outputs dest` 文件名勿带 .gz 后缀（gzip 拒绝重复后缀）；③ build-push-action 的 provenance attestation 与 build record 会各生成一个 `.dockerbuild` artifact，下载不稳会拖死 artifact 下载步骤——须 `provenance: false` + `DOCKER_BUILD_RECORD_UPLOAD=false` + `DOCKER_BUILD_SUMMARY=false` 三件套，且 download-artifact 加 `pattern: image-*` 精准过滤。**服务器构建死循环教训**：曾因「registry 拉不动 → 回服务器构建 → 构建慢且两次拖垮 mongod」，破局点是发现 SSH 通道稳定可靠，让镜像走 SSH 而非 registry。
 
@@ -48,7 +51,7 @@ CI 触发策略：push 到 main 只运行 quality-gate（typecheck + lint）；G
 
 Next.js 16 起 `next build` 默认使用 Turbopack（原 webpack），构建产物工具链变化，Docker 构建需在 CI 验证。本机 `pnpm build:next`（脚本内置 `NODE_OPTIONS=--max-old-space-size=2048`）在高 swap 压力下会 SIGSEGV，去掉上限直跑 `apps/site/node_modules/.bin/next build` 稳定；CI/Docker 环境不受影响。
 
-类型检查按 workspace 分治：仓库根的 `pnpm exec tsc --noEmit` 使用根 `tsconfig.json`（include 仅 `packages/*/src`，面向 console），**不覆盖 `apps/site`**——检查站点必须用 `cd apps/site && pnpm exec tsc --noEmit`（或 `pnpm --filter @wuh.site/site exec tsc`）。2026-09 曾因根命令验证空转，导致合并引入的 `SharedLinkGroup is not defined`（TS2304）漏检直达生产；site 尚有约 43 个存量类型错误（FontPrefetch/GlobalAudioPlayer/TypewriterMotto 等），清理前 tsc 通过只能说明"未引入新错误"，需配合 grep 目标文件确认。**2026-10-01 同类第二例（#450）**：`packages/components`（无 `src/` 目录）同样不被根 tsc 覆盖，#449 合入的 MiniPlayer 漏引 `MARQUEE_SPEED_PX_PER_S`（TS2304）叠加 `ignoreBuildErrors: true` 与非类型感知的正则守卫直达生产。组件域守卫配方（audio-player 首发）：`tsconfig.guard.json`（baseUrl 指向包根 + paths `@wuh.site/components/*` → `./*`，include 限本目录，strict 对齐 site 程序）+ `typecheck.test.mjs`（spawn tsc 过滤域内错误行断言清零，域外存量不扩大打击面）；其余组件域触碰时照此复制。
+类型检查（20261107 真闸化）：根 `pnpm run typecheck` 已串联四域（根=core、server、site、console），「假覆盖」时代结束；**site「约 43 个存量类型错误」口径作废**——2026-11-07 CI 揭红实测存量=server 16 + site/components 35（next 类型解析打通后连锁揭出），已全部就地清零（catch 收窄对齐仓内 `instanceof Error` 惯用法、styled 载体拆静态变体替代 `as='span'`、显式响应类型），不放松任何 strict 配置。apps/site tsconfig 已开 `allowImportingTsExtensions`：**app 源码里 `.ts` 结尾的相对导入是 node:test 直载链路（strip-types）的必需形态，不是冗余写法**，tsc 门靠该 flag 兼容，勿「顺手清理」。core 双解析面（审计 P1-22：main→dist 产物不入库）在 fresh clone 的测试 sweep 揭红，桥接方案=sweep 的 resolve loader（`scripts/test-resolve.mjs`）把 `@wuh.site/core` 钉到 src 源码单源 + 相对导入补 `.ts`；根治（main/types 统一指向 + prepare 构建）仍开放。**2026-10-01 同类第二例（#450）**：`packages/components`（无 `src/` 目录）同样不被根 tsc 覆盖，#449 合入的 MiniPlayer 漏引 `MARQUEE_SPEED_PX_PER_S`（TS2304）叠加 `ignoreBuildErrors: true` 与非类型感知的正则守卫直达生产。组件域守卫配方（audio-player 首发）：`tsconfig.guard.json`（baseUrl 指向包根 + paths `@wuh.site/components/*` → `./*`，include 限本目录，strict 对齐 site 程序）+ `typecheck.test.mjs`（spawn tsc 过滤域内错误行断言清零，域外存量不扩大打击面）；其余组件域触碰时照此复制。两个域守卫已收编进根测试 sweep。**测试 sweep（20261107 起，`pnpm run test` → `scripts/run-tests.mjs`）**：枚举 apps/site/test、packages/hooks/test、packages/components/test + audio-player/cursor 域守卫共 41 文件交 `node --test`；11 个已知红守卫文件入 QUARANTINE 隔离清单（逐条原因注释，**只准缩小不准扩大**，对账修复一个删一条）；经 NODE_OPTIONS 注入 `--import scripts/test-register.mjs`（resolve loader）+ `--experimental-transform-types`（core 源码含 TS enum，strip-only 不支持）——node 22/24 双版本实证。
 
 本地 `next build` 的入口卫生（2026-09-28 实测）：Windows 下 `pnpm build:next` 的 `NODE_OPTIONS="--max-old-space-size=2048"` 是 POSIX 语法，cmd 直接报「不是内部或外部命令」，要跑生产构建就用 `cd apps/site && node ./node_modules/next/dist/bin/next build`；另外**新增 workspace 依赖（`pnpm add`）之后应先跑一次 `pnpm install` 再构建**，否则可能因 next 的幽灵依赖未就位而失败——症状是 `packages/components/footprint-map/index.tsx` 报 `Can't resolve 'styled-jsx/style'`（Turbopack），补跑 `pnpm install` 即恢复，与本仓库自身改动无关。
 
