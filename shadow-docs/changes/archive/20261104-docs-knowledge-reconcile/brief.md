@@ -4,7 +4,7 @@
   "name": "20261104-docs-knowledge-reconcile",
   "type": "docs",
   "scope": "docs",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261104-docs-knowledge-reconcile",
   "files": [
@@ -21,13 +21,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "6b41f7e406ce916845bb45e09916905b9a671ce3",
-    "verifiedAt": "2026-11-04T15:29:05.327Z"
+    "verifiedCommit": "1a81c207f74a24dc82d31d5f1cf6591f7cc5e96b",
+    "verifiedAt": "2026-11-07T08:47:40.651Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:571",
-    "planHash": "f02c7ed98baff309b4f99bb9d209e467af7a9cc0ad985d858e20200eca97f5cd",
+    "checkpoint": "merged-pr:571",
+    "planHash": "6b79e7488e0f6ce663cfa813b4193904b6b62700fd8f7297d5c422a55bec796c",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -42,9 +42,9 @@
     }
   },
   "knowledge": {
-    "action": "更新",
-    "target": "shadow-docs/knowledge/animation-system.md",
-    "reason": "本变更即知识写入本体：裸 ease 白名单经考古修正（口径漂移非回归，三处手调节奏保留）；SGN-001 增补 20261104 证据与命中计数；verified 维持 2026-11-04 runtime"
+    "action": "无需变更",
+    "target": null,
+    "reason": "归档补跑漂移门：变更已合并、内容在 main 同源在案，按当日 brief 结论复申（HEAD 随归档推进逐单重验）"
   }
 }
 ---
