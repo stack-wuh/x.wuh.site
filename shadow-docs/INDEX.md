@@ -136,3 +136,4 @@
 | 20261104-test-music-guards-realign | ✅ 完成 | shadow-docs/changes/archive/20261104-test-music-guards-realign/brief.md |
 | 20261105-chore-ci-frozen-lockfile | ✅ 完成 | shadow-docs/changes/archive/20261105-chore-ci-frozen-lockfile/brief.md |
 | 20261107-chore-audit-quality-gates | ✅ 完成 | shadow-docs/changes/archive/20261107-chore-audit-quality-gates/brief.md |
+| 20261107-test-guard-realign-batch2 | ✅ 完成 | shadow-docs/changes/archive/20261107-test-guard-realign-batch2/brief.md |

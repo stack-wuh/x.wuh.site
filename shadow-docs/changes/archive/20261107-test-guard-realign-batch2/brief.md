@@ -4,7 +4,7 @@
   "name": "20261107-test-guard-realign-batch2",
   "type": "test",
   "scope": "site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "test/20261107-test-guard-realign-batch2",
   "files": [
@@ -30,13 +30,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "34cce4c6e2e1863e36882f616983919afebd10c6",
-    "verifiedAt": "2026-11-07T14:15:52.115Z"
+    "verifiedCommit": "521fcf1015ad8d85c521ca486e93efcdddd1759f",
+    "verifiedAt": "2026-11-07T14:19:28.625Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:578",
-    "planHash": "38d4b5671674b71e15cc7b1edd96ae42f72a18642de13bcaec103c5b1a72d6a3",
+    "checkpoint": "merged-pr:578",
+    "planHash": "2023daa571c7af73e8bd9513a2c34223151ee053b0c7481e28431c3311b02db3",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
@@ -77,7 +77,7 @@
   "knowledge": {
     "action": "更新",
     "target": "shadow-docs/knowledge/build-config.md",
-    "reason": "测试 sweep 段收口：隔离棘轮 11→0（seo-p14 环境误报出清单、10 文件漂移等强对齐），gate 恢复 41 文件全量 265 用例；CI run 42380543853 fresh runner node22 全绿为证（259 pass/0 fail/6 skip 基线）"
+    "reason": "squash 漂移门复验：main 同源重申——sweep 41 文件全量 265 用例、棘轮清零记录随 71d6ff4 入 main；无新增漂移"
   }
 }
 ---
