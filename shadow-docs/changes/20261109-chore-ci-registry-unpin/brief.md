@@ -4,7 +4,7 @@
   "name": "20261109-chore-ci-registry-unpin",
   "type": "chore",
   "scope": "ci",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261109-chore-ci-registry-unpin",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 580,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/580"
   },
   "review": {
     "conclusion": "pending",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "8a8bce645ec8a6b4883d96763d72b8d5373ef685",
-    "planHash": "410c0a0cb1f30973451ef287ace4689e0c346900d9403abd0b8b7f2f5f2b6249",
+    "checkpoint": "pr:580",
+    "planHash": "292ef96dfc721d6ede267750f36214a938e5016915ccef34653ae06d484ab519",
     "updatedAt": null,
     "lastError": null,
     "commit": {
