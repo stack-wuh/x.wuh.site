@@ -4,7 +4,7 @@
   "name": "20261109-docs-registry-knowledge",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261109-docs-registry-knowledge",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 581,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/581"
   },
   "review": {
     "conclusion": "pending",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "0eb078ade08da20e1ba21b2f73cc5bf7e42be2d8",
-    "planHash": "f64c4c3337817c17358ddd8238127faf15997bcf3d4094afdd30cc8573dead7c",
+    "checkpoint": "pr:581",
+    "planHash": "6043a12b1dc6dbd5a52e1b2423578928dcfa763c2d93fb03b0f2204ea85129b8",
     "updatedAt": null,
     "lastError": null,
     "commit": {
