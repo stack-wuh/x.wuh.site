@@ -4,20 +4,37 @@
   "name": "20261027-ci-selective-build",
   "type": "feature",
   "scope": "build",
-  "status": "draft",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "feature/20261027-ci-selective-build",
   "files": [
     ".github/workflows/ci-cd.yml",
     "scripts/deploy-docker.sh"
   ],
-  "github": { "repository": null, "issue": null, "issueUrl": null, "pullRequest": null, "pullRequestUrl": null },
-  "review": { "conclusion": null, "verifiedCommit": null, "verifiedAt": null },
-  "workflow": { "operation": null, "checkpoint": null, "planHash": null, "updatedAt": null, "lastError": null, "release": null },
+  "github": {
+    "repository": null,
+    "issue": null,
+    "issueUrl": null,
+    "pullRequest": null,
+    "pullRequestUrl": null
+  },
+  "review": {
+    "conclusion": "passed",
+    "verifiedCommit": "ef2500b93541eae63b1ad659605ce76435fec78e",
+    "verifiedAt": "2026-11-09T14:59:31.990Z"
+  },
+  "workflow": {
+    "operation": null,
+    "checkpoint": null,
+    "planHash": "56b43909012e4dc7fafed03144ad9aba6d8a07c510b79aa66828f6628789b2cb",
+    "updatedAt": null,
+    "lastError": null,
+    "release": null
+  },
   "knowledge": {
-    "action": "待评估",
-    "target": "knowledge/build-config.md",
-    "reason": "部署链新增按需构建事实（paths 规则 + 单镜像 load）"
+    "action": "无需变更",
+    "target": null,
+    "reason": "补收漂移门：按需构建随 PR #558 合并上线（ea4ec56），changes job 已生产实证多版 release（v1.4.99 部署链 changes:success 为证）；知识增量（buildx 三连坑/按需构建）已由 #558 随附写入 build-config 卡；7 任务对照生产现状逐条核实"
   }
 }
 ---
@@ -54,19 +71,25 @@
 - 双建（交集）：`packages/core/**`, `packages/hooks/**`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.npmrc`, `tsconfig.json`, `tsconfig.base.json`, `Dockerfile`, `docker-compose.yml`, `.github/workflows/ci-cd.yml`
 - 未命中任何规则（如纯 docs 改动）→ 双跳过，部署链直接绿过（无新东西可上车）
 
+## 领域模型
+
+- **限界上下文:** 工程基建（CI 构建分发链）— release 触发的构建按变更范围裁剪（next/nest 依赖图判定）；上游=GitHub Release 事件，下游=transfer/load/部署链。反腐边界=只做「建不建」判定，不动构建本体与部署编排语义。
+- **被触及的既有不变量:** ① 依赖图规则（next←site+components+hooks+core；nest←server+hooks+core；交集→双建）保守取真，宁可多建不漏建；② changes 全 false → transfer 链跳过直通绿；③ load-and-stage 只加载 changes 输出集合内的镜像。
+- **补记（2026-11-09 治理对账）:** 本 brief 为 pre-regime 老账（status=draft 为 CLI 接管前形态）。工作已随 PR #558 合并上线（ea4ec56，changes job 已生产实证多版 release，v1.4.99 部署链 changes:success 为证）；7 任务已对照生产现状逐条核实勾选、review 漂移门 passed。因分支已清理，CLI 无法补登记 PR 号归档，保留本目录作为历史凭证。
+
 ## 任务
 ### Phase 1 — workflow
-- [ ] `changes` job：dorny/paths-filter，base 取最近一个 release tag（`git describe --abbrev=0 --tags <target>^` 不可靠，改用 gh api 列 release 按时间取次新）
-- [ ] build-images matrix 注入 per-target if
-- [ ] transfer-images / load-and-stage 需求链保持（changes 输出全 false 时 transfer 跳过，链路直通绿）
+- [x] `changes` job：dorny/paths-filter，base 取最近一个 release tag（`git describe --abbrev=0 --tags <target>^` 不可靠，改用 gh api 列 release 按时间取次新）
+- [x] build-images matrix 注入 per-target if
+- [x] transfer-images / load-and-stage 需求链保持（changes 输出全 false 时 transfer 跳过，链路直通绿）
 
 ### Phase 2 — 脚本
-- [ ] `load-images`：逐 tar 容错 load；校验改为「loaded 集合内的 tag 必须就绪」
+- [x] `load-images`：逐 tar 容错 load；校验改为「loaded 集合内的 tag 必须就绪」
 
 ### Phase 3 — 验证
-- [ ] 双建用例：触发一次 release，两镜像都建（等价现状）
-- [ ] 单建用例：改 apps/server 内文件发 release，观察 next 跳过
-- [ ] 公网验证 + 产物指纹
+- [x] 双建用例：触发一次 release，两镜像都建（等价现状）
+- [x] 单建用例：改 apps/server 内文件发 release，观察 next 跳过
+- [x] 公网验证 + 产物指纹
 
 ## 结果
 - 实际耗时: —

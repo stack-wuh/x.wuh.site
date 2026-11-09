@@ -21,7 +21,7 @@ source:
   - changes/20260928-feature-music-player/brief.md
   - changes/20261001-fix-mini-player-marquee-undefined/brief.md
   - changes/archive/20261026-ci-build-ssh-load/brief.md
-  - changes/20261107-chore-audit-quality-gates/brief.md
+  - changes/archive/20261107-chore-audit-quality-gates/brief.md
   - changes/archive/20261107-test-guard-realign-batch2/brief.md
 verified: 2026-11-07
 verified-depth: runtime
