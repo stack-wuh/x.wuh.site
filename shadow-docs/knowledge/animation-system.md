@@ -15,7 +15,7 @@ source:
   - changes/archive/20260828-P-site-animation-system/brief.md
   - changes/20260929-feature-mini-player-title-marquee/brief.md
   - changes/archive/20261023-style-site-motion-foundation/brief.md
-  - changes/20261104-style-state-transition-motion/brief.md
+  - changes/archive/20261104-style-state-transition-motion/brief.md
 verified: 2026-11-04
 verified-depth: runtime
 verified-scope: 20261104 换幕上线（20261104-style-state-transition-motion：/music 切年与 /footprint 选点 startViewTransition 全链路真机实证——vtLog called→cb-enter→cb-exit、Content computed content-swap、MotionStyles 换幕三规则经 document.styleSheets 下发、--motion-dur-base 实测 220ms；换幕跳过 unhandledRejection 修复后 dev 日志零新增；hook 契约测试 7/7（loader 桩行为级）；根 tsc 0、oxlint 0 err、next build 14/14（ambient node24+1400 配方）；两项基线漂移已由 20261104-docs-knowledge-reconcile 对账：裸 ease 白名单修正见验证方式段、music 移动端 wiring 3 条旧正则由 20261104-test-music-guards-realign 对齐）

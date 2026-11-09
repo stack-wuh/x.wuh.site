@@ -11,7 +11,7 @@ source:
   - changes/20261013-refactor-shared-event-hooks/brief.md
   - changes/20261014-refactor-shared-hooks-wave2/brief.md
   - changes/20261014-refactor-final-cleanup-wave/brief.md
-  - changes/20261104-style-state-transition-motion/brief.md
+  - changes/archive/20261104-style-state-transition-motion/brief.md
 verified: 2026-11-04
 verified-depth: runtime
 verified-scope: useViewTransition 契约（20261104，runtime：SSR/特性不支持/reduced-motion 三分支直接 commit、flushSync wiring、commit 透传、ready/finished 拒绝吸收无 unhandledRejection——行为级契约 7/7（module.register 桩替换 react/react-dom，faithful stub）+ /music 切年与 /footprint 选点浏览器全链路实证（vtLog called→cb-enter→cb-exit）；换幕跳过修复后 dev 日志零新增）。历史：事件四件套契约（wave1，runtime：Esc/外点/enabled 条件挂载有生产观察点；matchMedia 系统跟随链因 WKWebView 新实例语义退 code-read，见 SGN-009）+ 二波三件套契约（wave2，runtime：useScrollLock fixed 配方四值锁定/还原+scrollY 归位在 Dialog 生产实例实测，useLocalStorageState 惰性读+write-through 与 scheduleIdle 消费参数由守卫+原语链路 runtime 佐证——语言读写、主题写+SSR 注入恢复、折叠态两路、昵称+footprint 自动补齐均有观察点；visibilitychange 标题换装因 WKWebView visibilityState 不可伪造退 code-read+守卫钉形态，见 SGN-014）。

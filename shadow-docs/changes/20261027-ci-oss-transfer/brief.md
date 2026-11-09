@@ -55,7 +55,14 @@ runner（海外）: ossutil cp 上传 tar.gz 到 OSS（公网 endpoint，上传�
 4. 服务器安装 ossutil：`curl https://gosspublic.alicdn.com/ossutil/1.7.18/ossutil64 -o /usr/local/bin/ossutil && chmod +x $_`
 5. 服务器配置 `~/.ossutilconfig`（endpoint 用内网：`oss-<region>-internal.aliyuncs.com`）
 
+## 领域模型
+
+- **限界上下文:** 工程基建（构建分发链）— release 镜像从 runner 到服务器的传输通道选型与实现；上游=build-images 产物，下游=load-and-stage/staging-test/switch-traffic。反腐边界=只管传输通道，不改构建判定与部署编排语义。
+- **被触及的既有不变量:** ① transfer→load→staging→切流依赖链不因传输通道替换而断链（changes 全 false 时直通绿保持）；② 产物校验语义「loaded 集合内 tag 必须就绪」在新通道下保持；③ 磁盘防线为兜底保留。
+- **补记（2026-11-09 治理对账）:** 本 brief 为 pre-regime 老账（status=draft 为 CLI 接管前形态）。工作已随 PR #563 合并落库（含 v1.4.97 实测验证回写：上传 32s/下载 93s），传输通道已生产运行。因分支已清理，CLI 无法补登记 PR 号归档，保留本目录作为历史凭证；check-brief 红因即本节缺失，补记后清红。
+
 ## 任务
+
 ### Phase 1 — workflow
 - [x] transfer-images 改名 upload-images：ossutil v1.7.18 二进制 + `-i/-k/-e` 内联凭证上传（弃 docker 镜像：ACR 匿名 pull 被拒）
 - [x] load-and-stage 前置 `pull-images <tag>`（ossutil 内网下载 + 下载后清理 OSS 前缀）
