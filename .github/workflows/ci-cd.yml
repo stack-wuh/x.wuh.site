@@ -15,6 +15,10 @@ jobs:
   quality-gate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # runner 在海外：env 覆盖 .npmrc 的 npmmirror 钉源（self-installer 与 pnpm install 两层同吃此 env），
+    # 国内镜像故障（2026-11-09 npmmirror 500 ×2 连挂）不再拖垮 CI；本地与服务器 .npmrc 加速配置不动
+    env:
+      NPM_CONFIG_REGISTRY: https://registry.npmjs.org
     steps:
       - uses: actions/checkout@v4
 
