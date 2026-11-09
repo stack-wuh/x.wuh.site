@@ -139,3 +139,4 @@
 | 20261107-test-guard-realign-batch2 | ✅ 完成 | shadow-docs/changes/archive/20261107-test-guard-realign-batch2/brief.md |
 | 20261109-chore-ci-registry-unpin | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-ci-registry-unpin/brief.md |
 | 20261109-chore-shadow-docs-governance | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-shadow-docs-governance/brief.md |
+| 20261109-docs-registry-knowledge | ✅ 完成 | shadow-docs/changes/archive/20261109-docs-registry-knowledge/brief.md |

@@ -4,7 +4,7 @@
   "name": "20261109-docs-registry-knowledge",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261109-docs-registry-knowledge",
   "files": [
@@ -18,14 +18,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/581"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "6ac17997855872a5ad8214dd273bdcf556e022fa",
+    "verifiedAt": "2026-11-09T16:00:44.621Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:581",
-    "planHash": "6043a12b1dc6dbd5a52e1b2423578928dcfa763c2d93fb03b0f2204ea85129b8",
+    "checkpoint": "merged-pr:581",
+    "planHash": "cadd622d80d39a1c771349f63e274a374ea5f99af377a0fd83179321f58dd86a",
     "updatedAt": null,
     "lastError": null,
     "commit": {
@@ -34,6 +34,11 @@
       ],
       "message": "docs(shadow): registry 策略行入 build-config 卡（#580 知识闭环尾单）"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/build-config.md",
+    "reason": "卡更新本体已随 PR #581 squash 落 main（6ac1799 同源）；CI registry 策略入卡完成 #580 知识闭环承诺"
   }
 }
 ---
@@ -65,7 +70,7 @@ PR #580（CI registry 解钉）review 承诺「更新 build-config.md」，随�
 
 ## 任务
 ### Phase 1
-- [ ] task 1 — `shadow-docs/knowledge/build-config.md` — CI 段前置 registry 策略行
+- [x] task 1 — `shadow-docs/knowledge/build-config.md` — CI 段前置 registry 策略行
 
 ## 结果
 - 实际耗时: 5 分钟
