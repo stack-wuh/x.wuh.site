@@ -137,5 +137,5 @@
 | 20261105-chore-ci-frozen-lockfile | ✅ 完成 | shadow-docs/changes/archive/20261105-chore-ci-frozen-lockfile/brief.md |
 | 20261107-chore-audit-quality-gates | ✅ 完成 | shadow-docs/changes/archive/20261107-chore-audit-quality-gates/brief.md |
 | 20261107-test-guard-realign-batch2 | ✅ 完成 | shadow-docs/changes/archive/20261107-test-guard-realign-batch2/brief.md |
-| 20261109-chore-ci-registry-unpin | proposed | shadow-docs/changes/20261109-chore-ci-registry-unpin/brief.md |
+| 20261109-chore-ci-registry-unpin | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-ci-registry-unpin/brief.md |
 | 20261109-chore-shadow-docs-governance | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-shadow-docs-governance/brief.md |

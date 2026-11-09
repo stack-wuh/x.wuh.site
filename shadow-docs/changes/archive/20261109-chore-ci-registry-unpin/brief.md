@@ -4,7 +4,7 @@
   "name": "20261109-chore-ci-registry-unpin",
   "type": "chore",
   "scope": "ci",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "chore/20261109-chore-ci-registry-unpin",
   "files": [
@@ -18,14 +18,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/580"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "03cdfad328e01ab24eaa45ccbd04f926aa028784",
+    "verifiedAt": "2026-11-09T15:33:11.787Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:580",
-    "planHash": "292ef96dfc721d6ede267750f36214a938e5016915ccef34653ae06d484ab519",
+    "checkpoint": "merged-pr:580",
+    "planHash": "6a7e47e6d908190623efb92ce39558ef0750370e3ee14c0fd3aa96f4e6ae96aa",
     "updatedAt": null,
     "lastError": null,
     "commit": {
@@ -34,6 +34,11 @@
       ],
       "message": "chore(ci): quality-gate runner 走官方 npm registry——env 覆盖 .npmrc 镜像钉源，npmmirror 故障不再拖垮 CI"
     }
+  },
+  "knowledge": {
+    "action": "更新",
+    "target": "shadow-docs/knowledge/build-config.md",
+    "reason": "CI registry 策略落卡：runner 海外走官方源（env 覆盖 .npmrc 钉源），npmmirror 单点故障不再拖垮 CI——PR #580 自带新 workflow 的 CI 绿为前置实证，合并后 main CI 首跑为终验"
   }
 }
 ---
@@ -65,7 +70,7 @@
 ## 任务
 
 ### Phase 1
-- [ ] task 1 — `.github/workflows/ci-cd.yml` — quality-gate job 级 env 注入官方 registry
+- [x] task 1 — `.github/workflows/ci-cd.yml` — quality-gate job 级 env 注入官方 registry
 
 ## 结果
 
