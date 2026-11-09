@@ -4,7 +4,7 @@
   "name": "20261109-chore-shadow-docs-governance",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261109-chore-shadow-docs-governance",
   "files": [
@@ -19,8 +19,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 579,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/579"
   },
   "review": {
     "conclusion": "pending",
@@ -29,8 +29,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "4b2c5bd45a4a6005b56d878f75af48bc3aed63b0",
-    "planHash": "25660ec6e68c4af0587641fd001188bb8e9520752131d0ddcc258f3126c26e45",
+    "checkpoint": "pr:579",
+    "planHash": "8618cbf3cf7fc6b8c7e0364a7d290008350cce9f6bc9be28249d439bb71b91f4",
     "updatedAt": null,
     "lastError": null,
     "commit": {
