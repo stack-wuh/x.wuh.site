@@ -4,7 +4,7 @@
   "name": "20261109-chore-shadow-docs-governance",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261109-chore-shadow-docs-governance",
   "files": [
@@ -23,14 +23,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/579"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "65c614fbb3ed774dc5aa2db6bae0863a7c049d0c",
+    "verifiedAt": "2026-11-09T15:21:57.563Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:579",
-    "planHash": "8618cbf3cf7fc6b8c7e0364a7d290008350cce9f6bc9be28249d439bb71b91f4",
+    "checkpoint": "merged-pr:579",
+    "planHash": "cd7f42bd734347d01eaeb09fbd3317e4a1ec4b4cbb3ce7076975405e9934d965",
     "updatedAt": null,
     "lastError": null,
     "commit": {
@@ -44,6 +44,11 @@
       ],
       "message": "docs(shadow): pre-regime 老账补票与知识卡 source 移位修正——check-brief 清零（治理 #568 尾单）"
     }
+  },
+  "knowledge": {
+    "action": "无需变更",
+    "target": null,
+    "reason": "合并后漂移门：随 PR #579 squash 落 main（65c614f 同源）；check-brief 3/3 绿在案；CI 红因 npmmirror 源 500 与内容零关；3 任务实际完成已勾"
   }
 }
 ---
@@ -83,9 +88,9 @@
 ## 任务
 
 ### Phase 1
-- [ ] task 1 — `shadow-docs/changes/20261027-ci-oss-transfer/brief.md` — 补领域模型段（限界上下文+被触及不变量+补记 PR #563 落点）
-- [ ] task 2 — `shadow-docs/changes/20261027-ci-selective-build/brief.md` — 同法补段（PR #558 落点；7 任务已对照生产勾选、review 漂移门 passed）
-- [ ] task 3 — 四张知识卡 source 加 archive/ 前缀（animation-system/music-player/shared-hooks/build-config）
+- [x] task 1 — `shadow-docs/changes/20261027-ci-oss-transfer/brief.md` — 补领域模型段（限界上下文+被触及不变量+补记 PR #563 落点）
+- [x] task 2 — `shadow-docs/changes/20261027-ci-selective-build/brief.md` — 同法补段（PR #558 落点；7 任务已对照生产勾选、review 漂移门 passed）
+- [x] task 3 — 四张知识卡 source 加 archive/ 前缀（animation-system/music-player/shared-hooks/build-config）
 
 ## 结果
 

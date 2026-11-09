@@ -126,7 +126,7 @@
 | 20261024-feature-wuh-site-video-studio | ✅ 完成 | shadow-docs/changes/archive/20261024-feature-wuh-site-video-studio/brief.md |
 | 20261026-ci-build-ssh-load | ✅ 完成 | shadow-docs/changes/archive/20261026-ci-build-ssh-load/brief.md |
 | 20261027-ci-oss-transfer | draft | shadow-docs/changes/20261027-ci-oss-transfer/brief.md |
-| 20261027-ci-selective-build | draft | shadow-docs/changes/20261027-ci-selective-build/brief.md |
+| 20261027-ci-selective-build | reviewed | shadow-docs/changes/20261027-ci-selective-build/brief.md |
 | 20261028-refactor-ternary-icon-switches | ✅ 完成 | shadow-docs/changes/archive/20261028-refactor-ternary-icon-switches/brief.md |
 | 20261104-docs-knowledge-reconcile | ✅ 完成 | shadow-docs/changes/archive/20261104-docs-knowledge-reconcile/brief.md |
 | 20261104-feature-about-recent-logs | ✅ 完成 | shadow-docs/changes/archive/20261104-feature-about-recent-logs/brief.md |
@@ -137,3 +137,5 @@
 | 20261105-chore-ci-frozen-lockfile | ✅ 完成 | shadow-docs/changes/archive/20261105-chore-ci-frozen-lockfile/brief.md |
 | 20261107-chore-audit-quality-gates | ✅ 完成 | shadow-docs/changes/archive/20261107-chore-audit-quality-gates/brief.md |
 | 20261107-test-guard-realign-batch2 | ✅ 完成 | shadow-docs/changes/archive/20261107-test-guard-realign-batch2/brief.md |
+| 20261109-chore-ci-registry-unpin | proposed | shadow-docs/changes/20261109-chore-ci-registry-unpin/brief.md |
+| 20261109-chore-shadow-docs-governance | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-shadow-docs-governance/brief.md |
