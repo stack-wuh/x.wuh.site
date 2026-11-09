@@ -4,7 +4,7 @@
   "name": "20261015-fix-language-switcher-labels",
   "type": "fix",
   "scope": "site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261015-fix-language-switcher-labels",
   "files": [
@@ -20,13 +20,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "99558f9732b02c44ba61c72bc0572acfc7777cd7",
-    "verifiedAt": "2026-10-15T12:43:47.825Z"
+    "verifiedCommit": "5b24784312479852e964132d099695f2419f8524",
+    "verifiedAt": "2026-11-09T14:56:03.848Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:547",
-    "planHash": "f08a12fcf9aa11a4a0eb8759749d76f7002c57b5191bbca94707eeb61c6abff8",
+    "checkpoint": "merged-pr:547",
+    "planHash": "1cd1dc29caa999a6c287368160acc2858c0ad34d53a69761266ed8596daf87e3",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -42,7 +42,7 @@
   "knowledge": {
     "action": "无需变更",
     "target": null,
-    "reason": "S 级展示层文案修复：diff 仅 LANGUAGE_OPTIONS 三个 label 常量与两处注释；site 域 tsc 35 条全为存量（触及文件零命中），dev server 渲染目检语言分段为中/EN/日本語、三等分无溢出"
+    "reason": "归档补收漂移门：语言切换标签修复已随 PR #547 合并（2026-10-15），内容在 main 同源在案，S 级纯文案对账无知识增量"
   }
 }
 ---
