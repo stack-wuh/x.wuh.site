@@ -4,7 +4,7 @@
   "name": "20261024-feature-wuh-site-video-studio",
   "type": "feature",
   "scope": "video-materials",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261024-feature-wuh-site-video-studio",
   "files": [
@@ -23,13 +23,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "09d6a2376c831469f7ace82a05ddf67ee7633534",
-    "verifiedAt": "2026-10-24T03:03:53.394Z"
+    "verifiedCommit": "528d5041225acb03a58a584d191fe67729a9169d",
+    "verifiedAt": "2026-11-09T14:56:28.706Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:551",
-    "planHash": "bafd77c5a957f9a3a9c3839e47fb9f207164aeb3874694953e8842abf71b8648",
+    "checkpoint": "merged-pr:551",
+    "planHash": "acb523900077fbbb9794ebc531b41db496fe985708e3cec28f86ed3455047638",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -42,9 +42,9 @@
     }
   },
   "knowledge": {
-    "action": "新增",
-    "target": "wuh.site.video/shadow-docs/knowledge/video-studio-structure.md",
-    "reason": "新上下文首批长期事实：工作室三层结构约定 + 本机渲染工具链口径（node22 直跑、绕沙箱、系统 Chrome、port 3211、卡住杀进程重试）；候选卡片由 release 阶段写入并补 verified 字段"
+    "action": "无需变更",
+    "target": null,
+    "reason": "归档补收漂移门：视频工作室页面已随 PR #551 合并（2026-10-26），内容在 main 同源在案，按当日 brief 结论复申"
   }
 }
 ---
