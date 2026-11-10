@@ -63,8 +63,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  // 不锁双指缩放：WCAG 1.4.4 要求文本可放大至 200%，站内无画布类交互，无锁定收益（P1-20）
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#b91c1c' },
     { media: '(prefers-color-scheme: dark)', color: '#1a0a0a' },

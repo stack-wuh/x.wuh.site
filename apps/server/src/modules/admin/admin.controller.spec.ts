@@ -36,8 +36,9 @@ describe('AdminController', () => {
     const result = await controller.getUsers();
 
     expect(result).toEqual([
-      expect.objectContaining({ login: 'stack-wuh', role: 'root', permissions: expect.arrayContaining(['admin:write']) }),
-      expect.objectContaining({ login: 'guest', role: 'reader', permissions: ['admin:read', 'content:read', 'guestbook:read', 'comment:read'] }),
+      // email 为 OAuth 主邮箱 PII：/admin/users 向所有登录账号开放，永不回传（P1-38 回归守卫）
+      expect.objectContaining({ login: 'stack-wuh', role: 'root', email: undefined, permissions: expect.arrayContaining(['admin:write']) }),
+      expect.objectContaining({ login: 'guest', role: 'reader', email: undefined, permissions: ['admin:read', 'content:read', 'guestbook:read', 'comment:read'] }),
     ]);
   });
 

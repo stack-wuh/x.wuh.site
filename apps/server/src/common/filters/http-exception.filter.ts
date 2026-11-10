@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import * as Sentry from '@sentry/node';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -30,11 +31,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
       ? (exception.getResponse() as any).error || exception.name
       : 'Internal Server Error';
 
-    // Log full error in non-production environments
-    if (process.env.NODE_ENV !== 'production') {
+    // 5xx 与未知异常必须留痕：生产 500 静默是事故黑盒（P1-8）；
+    // 4xx 客户端错误保持 dev-only，避免日志被正常拒绝请求刷屏
+    const serverError = !isHttpException || status >= 500;
+    if (serverError) {
       this.logger.error(
         `${request.method} ${request.url} → ${status}: ${Array.isArray(message) ? message.join(', ') : message}`,
         exception instanceof Error ? exception.stack : undefined,
+      );
+      // 未知的非 Http 异常（真正的 crash）上报 Sentry；已建模的 HttpException 不重复上报
+      if (!isHttpException) {
+        Sentry.captureException(exception);
+      }
+    } else if (process.env.NODE_ENV !== 'production') {
+      this.logger.warn(
+        `${request.method} ${request.url} → ${status}: ${Array.isArray(message) ? message.join(', ') : message}`,
       );
     }
 

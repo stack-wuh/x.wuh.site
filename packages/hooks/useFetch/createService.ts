@@ -31,6 +31,10 @@ type ServerCallOptions<TQuery, TBody> = {
   headers?: Record<string, string>
 }
 
+// SSR 路径的默认超时护栏：nest 挂起时首页/sitemap 等整页 SSR 不能无限悬挂（P1-21）；
+// fetcher 支持 timeout 但此前 serverCall 从未设置
+const SERVER_CALL_TIMEOUT_MS = 15_000
+
 async function serverCall<TResponse, TQuery = Record<string, unknown>, TBody = unknown>(
   endpoint: EndpointDef,
   callOptions: ServerCallOptions<TQuery, TBody> = {}
@@ -43,6 +47,7 @@ async function serverCall<TResponse, TQuery = Record<string, unknown>, TBody = u
     headers: { 'Accept': 'application/json', ...headers },
     query: query as QueryRecord,
     body,
+    timeout: SERVER_CALL_TIMEOUT_MS,
   }
 
   if (revalidate !== undefined) {
@@ -51,7 +56,8 @@ async function serverCall<TResponse, TQuery = Record<string, unknown>, TBody = u
 
   const result: FetchResult<TResponse> = await fetcher<TResponse>(url, fetcherOptions)
 
-  if (!result.ok || !result.data) {
+  // 只以 ok 判失败：data 为合法 falsy（204 空体 / data:0 / ''）不是错误（P1-27）
+  if (!result.ok) {
     return {
       data: null,
       error: result.error || { message: 'Request failed', status: 0 },

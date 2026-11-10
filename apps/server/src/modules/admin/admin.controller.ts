@@ -206,7 +206,8 @@ export class AdminController {
     return {
       githubId: user.githubId,
       login: user.login,
-      email: user.email ?? undefined,
+      // email 是 OAuth 主邮箱 PII，本端点向所有登录账号开放，不再下发（P1-38）；
+      // 用户本人邮箱仅经 auth/me 自查路径可见
       avatarUrl: user.avatarUrl ?? undefined,
       profileUrl: user.profileUrl ?? undefined,
       role,
