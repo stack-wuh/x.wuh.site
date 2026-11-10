@@ -4,7 +4,7 @@
   "name": "20261111-fix-audit-batch3-resilience",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261111-fix-audit-batch3-resilience",
   "files": [
@@ -31,13 +31,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "9cfeef78b0b1a96278483bbc5e736fcc64c886a9",
-    "verifiedAt": "2026-11-10T16:20:48.690Z"
+    "verifiedCommit": "d71bf747784ebbd8c1de6f6024d69bac8ac81fcc",
+    "verifiedAt": "2026-11-10T18:36:52.915Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:582",
-    "planHash": "8924856c81f4fda2788e30146f01cb429874e2b2e48285dbe35dba9e02fed3a9",
+    "checkpoint": "merged-pr:582",
+    "planHash": "75a67cc55edafc5705b9718eb8bfbb89eca1381fe9e733cc24224670b00f8ff5",
     "updatedAt": null,
     "lastError": null,
     "commit": {
