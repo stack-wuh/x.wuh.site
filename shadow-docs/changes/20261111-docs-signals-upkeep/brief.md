@@ -4,7 +4,7 @@
   "name": "20261111-docs-signals-upkeep",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261111-docs-signals-upkeep",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 583,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/583"
   },
   "review": {
     "conclusion": "passed",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "681f2461a53fd5c42bfb5c0482d036e214cb547c",
-    "planHash": "6f147d5a4dcdd6169a6fcc0e08f484a5622dad9a9cbb84fd6f15f57b35d5f2aa",
+    "checkpoint": "pr:583",
+    "planHash": "5bd2ab977ba4f069b83ecb14e2ba9f50e216b756c51cf802bdbf9b2a6dd400be",
     "updatedAt": null,
     "lastError": null,
     "commit": {
