@@ -27,6 +27,8 @@ export default function FloatingActions({ issueNumber, initialLikeCount = 0, ini
     setLoading(true)
     try {
       const res = await fetch(`/api/content/posts/${issueNumber}/like`, { method: 'POST' })
+      // 429/500 等失败先判再动状态——否则失败分支会走"取消赞"错误扣减（P1-14）
+      if (!res.ok) throw new Error(`like API ${res.status}`)
       const data = await res.json()
       if (data.liked) {
         setLiked(true)

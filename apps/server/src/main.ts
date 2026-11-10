@@ -15,7 +15,15 @@ const logger = pino();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bodyParser: false });
   // GitHub webhook payloads carry full issue bodies (long posts exceed express's 100kb default)
-  app.use(json({ limit: '5mb' }));
+  // verify 回调把原始请求字节挂到 request.rawBody——webhook 签名必须对 raw body 校验（P1-1）
+  app.use(
+    json({
+      limit: '5mb',
+      verify: (req, _res, buf) => {
+        (req as unknown as { rawBody?: Buffer }).rawBody = buf;
+      },
+    }),
+  );
   app.use(urlencoded({ extended: true, limit: '5mb' }));
   const configService = app.get(ConfigService);
 

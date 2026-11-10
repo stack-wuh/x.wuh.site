@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, NotFoundException, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, NotFoundException, Post, Req, Res, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
 import { ContentService } from './content.service';
@@ -80,6 +80,8 @@ function withDerivedCover<T extends PostWithCoverSource>(post: T): T {
 @ApiTags('Content')
 @Controller('content')
 export class ContentController {
+  private readonly logger = new Logger(ContentController.name);
+
   constructor(private readonly contentService: ContentService) {}
 
   @Get('posts')
@@ -128,7 +130,10 @@ export class ContentController {
     const anonId = ensureAnonId(req, res);
 
     // fire-and-forget: view count increment doesn't block response
-    this.contentService.incrementViewCount(result.number);
+    // 不 await 但必须显式 catch——unhandled rejection 在 Node 20 默认直接崩进程（P1-6）
+    this.contentService.incrementViewCount(result.number).catch((err: unknown) => {
+      this.logger.warn(`incrementViewCount failed for #${result.number}: ${err instanceof Error ? err.message : String(err)}`);
+    });
 
     const { prev, next, total, position } = await this.contentService.findAdjacentPosts(result, {
       state: 'open',

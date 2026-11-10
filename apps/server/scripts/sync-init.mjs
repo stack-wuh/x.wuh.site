@@ -107,6 +107,8 @@ async function main() {
     if (issues.length === 0) break
 
     for (const issue of issues) {
+      // listForRepo 也会返回 PR（带 pull_request 键）——PR 不是博客文章，跳过（P1-2）
+      if (issue.pull_request) continue
       // listForRepo returns incomplete issue data, fetch full issue
       const { data: full } = await octokit.issues.get({
         owner: CONTENT_REPO_OWNER,

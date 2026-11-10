@@ -55,6 +55,8 @@ export class SyncService {
         }
 
         for (const issue of issues) {
+          // listForRepo 也会返回 PR（带 pull_request 键）——PR 标题/描述不是博客文章，跳过（P1-2）
+          if (issue.pull_request) continue;
           await this.syncIssue(issue.number);
         }
 
