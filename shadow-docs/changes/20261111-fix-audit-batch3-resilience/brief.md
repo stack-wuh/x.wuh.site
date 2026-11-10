@@ -4,7 +4,7 @@
   "name": "20261111-fix-audit-batch3-resilience",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261111-fix-audit-batch3-resilience",
   "files": [
@@ -26,8 +26,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 582,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/582"
   },
   "review": {
     "conclusion": "passed",
@@ -36,8 +36,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "d960bd94ca9e97f61de1e25d0c8cb2b35ed19a82",
-    "planHash": "8dd198674a7fca858d802a83230ebd53691f4fae56c254b16887e9112452af73",
+    "checkpoint": "pr:582",
+    "planHash": "8924856c81f4fda2788e30146f01cb429874e2b2e48285dbe35dba9e02fed3a9",
     "updatedAt": null,
     "lastError": null,
     "commit": {
