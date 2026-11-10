@@ -4,7 +4,7 @@
   "name": "20261111-docs-signals-upkeep",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261111-docs-signals-upkeep",
   "files": [
@@ -19,13 +19,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b8545d6b4eb1f19f3fe170eba6de57abb705fd11",
-    "verifiedAt": "2026-11-10T18:40:53.940Z"
+    "verifiedCommit": "a6f047ff580f0939252a2e7f68372980a7611da2",
+    "verifiedAt": "2026-11-10T18:49:53.379Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:583",
-    "planHash": "5bd2ab977ba4f069b83ecb14e2ba9f50e216b756c51cf802bdbf9b2a6dd400be",
+    "checkpoint": "merged-pr:583",
+    "planHash": "abe8db2b91dca51c5bebb376f0f34ec66db0bf05659c09ecd0152712416580a1",
     "updatedAt": null,
     "lastError": null,
     "commit": {
