@@ -4,7 +4,7 @@
   "name": "20261111-fix-core-prepare-docker-guard",
   "type": "fix",
   "scope": "build",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261111-fix-core-prepare-docker-guard",
   "files": [
@@ -19,13 +19,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "fd3777a6b24a1d9bef8ba555254a6514a875d5eb",
-    "verifiedAt": "2026-11-11T14:56:06.506Z"
+    "verifiedCommit": "f3f61005ee2fbaa2aa5bd91364b219f32bdee0cf",
+    "verifiedAt": "2026-11-11T15:00:29.888Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:586",
-    "planHash": "3a777f8638cdca9a5b1e258428cf848559d3532fb4970fcab9c4e74a2901fa58",
+    "checkpoint": "merged-pr:586",
+    "planHash": "f82f5c8284c585a7727d9c2955b7f3729279afbd5305b0326afee22dafba191f",
     "updatedAt": null,
     "lastError": null,
     "commit": {
