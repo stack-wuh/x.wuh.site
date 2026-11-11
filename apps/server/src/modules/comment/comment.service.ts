@@ -81,20 +81,19 @@ export class CommentService {
 
   async upsert(data: Partial<CommentDocument>): Promise<CommentDocument> {
     const { externalId } = data;
-    const existing = await this.findByExternalId(externalId);
-
-    if (existing) {
-      return this.commentModel
-        .findByIdAndUpdate(existing._id, data, { new: true })
-        .exec();
-    }
-
-    const comment = new this.commentModel(data);
-    return await comment.save();
+    // 原子 upsert：并发 webhook/fullSync 下的读后写竞态会撞 externalId 唯一索引（审计 P1-5）
+    return this.commentModel
+      .findOneAndUpdate({ externalId }, { $set: data }, { upsert: true, new: true })
+      .exec();
   }
 
   async countByIssueNumber(issueNumber: number): Promise<number> {
     return this.commentModel.countDocuments({ issueNumber }).exec();
+  }
+
+  // GitHub 上删除的评论本地同步移除（审计 P1-3）
+  async deleteByExternalId(externalId: number): Promise<void> {
+    await this.commentModel.deleteOne({ externalId }).exec();
   }
 
   async updateStatus(

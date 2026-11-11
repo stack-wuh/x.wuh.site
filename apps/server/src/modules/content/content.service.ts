@@ -72,6 +72,20 @@ export class ContentService {
     return this.contentModel.findOne({ externalId }).exec();
   }
 
+  // GitHub 上删除的 issue 本地同步移除（审计 P1-3：删除动作此前永久漂移）
+  async deleteByExternalId(externalId: number): Promise<void> {
+    await this.contentModel.deleteOne({ externalId }).exec();
+  }
+
+  // fullSync 对账：删除远端已不存在的本地记录（调用方须保证 numbers 为远端成功
+  // 拉取的全集，防止中途失败拿到残缺集合误删）
+  async deleteAllNotIn(numbers: number[]): Promise<{ deletedCount: number }> {
+    const result = await this.contentModel
+      .deleteMany({ number: { $nin: numbers } })
+      .exec();
+    return { deletedCount: result.deletedCount ?? 0 };
+  }
+
   async findBySlugOrNumber(
     slugOrNumber: string,
   ): Promise<ContentDocument | null> {
@@ -163,15 +177,14 @@ export class ContentService {
 
   async upsert(createContentDto: CreateContentDto): Promise<ContentDocument> {
     const { externalId } = createContentDto;
-    const existing = await this.findByExternalId(externalId);
-
-    if (existing) {
-      return this.contentModel
-        .findByIdAndUpdate(existing._id, createContentDto, { new: true })
-        .exec();
-    }
-
-    return this.create(createContentDto);
+    // 原子 upsert：并发 webhook/fullSync 下「读后写」会双双走 create 分支，
+    // 撞 externalId 唯一索引 E11000 使整轮同步失败（审计 P1-5）
+    return this.contentModel
+      .findOneAndUpdate({ externalId }, { $set: createContentDto }, {
+        upsert: true,
+        new: true,
+      })
+      .exec();
   }
 
   async updateCommentCount(externalId: number, count: number): Promise<void> {

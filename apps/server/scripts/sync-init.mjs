@@ -79,6 +79,8 @@ async function syncIssue(issue) {
     comments: issue.comments || 0,
     createdAtGitHub: new Date(issue.created_at),
     updatedAtGitHub: new Date(issue.updated_at),
+    // 发布时间=issue 创建时间（与 sync.service 口径一致，审计 P1-10）
+    publishedAt: new Date(issue.created_at),
   }
 
   await Content.findOneAndUpdate({ externalId: data.externalId }, data, {
