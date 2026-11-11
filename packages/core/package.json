@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": false,
   "main": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": ""
+    "prepare": "pnpm run build"
   },
   "dependencies": {
     "@wuh.site/hooks": "workspace:*"

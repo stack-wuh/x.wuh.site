@@ -90,22 +90,20 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 ### 已实现组件
 `Button`, `Dialog`, `Divider`, `Empty`, `Flex`（响应式分布原语）, `Image`, `ImagePreview`, `LinkGroup`, `Tag`, `Message`, `AudioPlayer` (含 Provider + Mini Player + Panel), `Layout` (footer/main) — 布局族契约见 `shadow-docs/knowledge/layout-components.md`
 （20261014 退役：`Alert`、`Card`、`Result`、`Skeleton`、`SharedLinkGroup` 全仓零消费，随 chore/20261014-chore-dead-components-retirement 整删；`Row`/`Col`（12 分栏栅格）、`Stagger`（错峰入场层）自创建起零消费，布局地基由 Flex + `themes/responsive` 编译口承接，随 chore/20261014-chore-layout-grid-retirement 整删）
-
-### 占位组件（使用前需实现）
-`ConfigProvider`, `FloatButton`, `Modal`, `Space`, `Spin`, `VideoPlayer`
+（20261111 退役：`ConfigProvider`、`FloatButton`、`Modal`、`Space`、`Spin`、`VideoPlayer` 六个 0 字节占位文件全仓零消费，随 fix/20261111-fix-audit-batch4-data-integrity 整删——import 即得 undefined default，先例同 20261014）
 
 ### Hooks
 - `useDialog` - Dialog 打开/关闭状态，提供 `bind: { open, onClose }`
 - `useImagePreview` - 图片预览索引/循环状态，提供 `bind: { open, currentIndex, onClose, onIndexChange }`
-- `useTokens` / `useTheme` - 从 ThemeProvider context 获取主题令牌
 - `useFetch` - 请求封装（fetcher + createService 工厂，基于自研 `useRequest`）
 - `useRequest` - 自研请求 hook（替代 ahooks：auto/manual + `runAsync`/`refresh`/`onSuccess`·`onError`/`cacheKey` 挂载种子+SWR 重校验；行为契约钉于 `useRequest/useRequest.test.mjs` UR1–UR7）
-- `useLocale` - 三语 locale / 词典 / `t()`（LocaleProvider context）
+- `useLocale` - 三语 locale / 词典 / `t()`，**实现在 `@wuh.site/components/locales`**（hooks 包旧入口 20261111 删除：反向依赖 components 且全仓零消费）
 - `useEventListener` - 事件监听统一入口（target 省略=window/'window'/'document'/元素/ref，handler 最新值 ref 免重绑，`enabled` 条件挂载）；契约见 `shadow-docs/knowledge/shared-hooks.md`
 - `useMediaQuery` / `useKeyPress` / `useClickOutside` - 事件四件套合成（布尔订阅 / keydown 订阅 / 外点收起，同上卡片）
 - `useScrollLock` - 弹层滚动锁，`mode: 'fixed'`（body 四值+position:fixed，默认）| `'simple'`（documentElement overflow）
 - `useLocalStorageState` - 惰性同步读 + write-through 持久化状态；延迟写站点用同文件底层 `readStorage`/`writeStorage` 原语
 - `scheduleIdle` - 纯函数空闲调度（requestIdleCallback + setTimeout 回落，返回 cancel 闭包）
+（20261111 删除：`useTokens`/`useTheme` 断别名或空文件全仓零消费——主题令牌读取走 styled-components ThemeProvider 直用）
 
 ## 后端模块架构
 

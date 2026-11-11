@@ -1,1 +1,0 @@
-## ConfigProvider 全局配置注入组件

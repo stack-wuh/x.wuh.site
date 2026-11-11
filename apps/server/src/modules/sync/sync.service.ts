@@ -27,7 +27,15 @@ export class SyncService {
   async fullSync(): Promise<void> {
     this.logger.log('Starting full sync from GitHub...');
     try {
-      await this.syncAllIssues();
+      const remoteNumbers = await this.syncAllIssues();
+      // 对账删除：远端已删除的 issue 本地永久漂移（审计 P1-3）。远端全集拉取
+      // 成功完成才执行——中途失败会 throw，不会拿到残缺集合误删
+      if (remoteNumbers.length > 0) {
+        const { deletedCount } = await this.contentService.deleteAllNotIn(remoteNumbers);
+        if (deletedCount > 0) {
+          this.logger.log(`Reconciled ${deletedCount} locally-orphaned issue(s) not present on GitHub`);
+        }
+      }
       this.logger.log('Full sync completed successfully');
     } catch (error) {
       this.logger.error(`Full sync failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -35,16 +43,20 @@ export class SyncService {
     }
   }
 
-  private async syncAllIssues(): Promise<void> {
+  // 返回远端 issue number 全集（供 fullSync 对账删除孤儿）
+  private async syncAllIssues(): Promise<number[]> {
     let page = 1;
     let hasMore = true;
+    const remoteNumbers: number[] = [];
 
     while (hasMore) {
       try {
+        // state 'all'：closed issue 同样入库（webhook closed 事件本就同步它们），
+        // 且对账删除需要远端全集而非仅 open 子集
         const { data: issues } = await this.octokit.issues.listForRepo({
           owner: this.contentRepoOwner,
           repo: this.contentRepoName,
-          state: 'open',
+          state: 'all',
           per_page: 100,
           page,
         });
@@ -57,6 +69,7 @@ export class SyncService {
         for (const issue of issues) {
           // listForRepo 也会返回 PR（带 pull_request 键）——PR 标题/描述不是博客文章，跳过（P1-2）
           if (issue.pull_request) continue;
+          remoteNumbers.push(issue.number);
           await this.syncIssue(issue.number);
         }
 
@@ -66,6 +79,18 @@ export class SyncService {
         throw error;
       }
     }
+
+    return remoteNumbers;
+  }
+
+  // webhook deleted 事件的删除代理（controller 只注入 SyncService，保持依赖方向）
+  async deleteIssue(externalId: number): Promise<void> {
+    await this.contentService.deleteByExternalId(externalId);
+    this.logger.log(`Deleted issue externalId=${externalId} from local store`);
+  }
+
+  async deleteComment(externalId: number): Promise<void> {
+    await this.commentService.deleteByExternalId(externalId);
   }
 
   async syncIssue(issueNumber: number): Promise<void> {
@@ -95,6 +120,9 @@ export class SyncService {
         comments: issue.comments,
         createdAtGitHub: new Date(issue.created_at),
         updatedAtGitHub: new Date(issue.updated_at),
+        // 发布时间=issue 创建时间（与站点 PostView 口径一致）——schema 有字段但
+        // 此前全服务端无写入路径，最近日志与热力图恒空（审计 P1-10）
+        publishedAt: new Date(issue.created_at),
         ...(extractedMeta && { metadata: extractedMeta }),
       };
 

@@ -77,8 +77,24 @@ export class WebhookController {
     const { action, issue, comment } = payload;
 
     try {
-      if (payload.action === 'opened' || payload.action === 'edited' || payload.action === 'closed') {
-        // Issue event
+      if (payload.action === 'deleted') {
+        // GitHub 侧删除的 issue/comment 本地同步移除（审计 P1-3：删除此前永久漂移）
+        if (payload.comment?.id) {
+          await this.syncService.deleteComment(payload.comment.id);
+          // 评论计数随之变化，重同步宿主 issue
+          if (payload.issue?.number) {
+            await this.syncService.syncIssue(payload.issue.number);
+          }
+          this.logger.log(`Deleted comment #${payload.comment.id} synced`);
+        } else if (payload.issue?.id) {
+          await this.syncService.deleteIssue(payload.issue.id);
+          this.logger.log(`Deleted issue #${payload.issue.number} synced`);
+        }
+        return { success: true };
+      }
+
+      if (payload.action === 'opened' || payload.action === 'edited' || payload.action === 'closed' || payload.action === 'reopened') {
+        // Issue event（reopened 也全量同步：state 回 open 需入库）
         await this.syncService.syncIssue(issue.number);
         this.logger.log(`Synced issue #${issue.number} (${action})`);
 
