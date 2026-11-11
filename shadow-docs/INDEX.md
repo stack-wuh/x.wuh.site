@@ -140,7 +140,7 @@
 | 20261109-chore-ci-registry-unpin | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-ci-registry-unpin/brief.md |
 | 20261109-chore-shadow-docs-governance | ✅ 完成 | shadow-docs/changes/archive/20261109-chore-shadow-docs-governance/brief.md |
 | 20261109-docs-registry-knowledge | ✅ 完成 | shadow-docs/changes/archive/20261109-docs-registry-knowledge/brief.md |
-| 20261111-docs-core-knowledge-close | published | shadow-docs/changes/20261111-docs-core-knowledge-close/brief.md |
+| 20261111-docs-core-knowledge-close | ✅ 完成 | shadow-docs/changes/archive/20261111-docs-core-knowledge-close/brief.md |
 | 20261111-docs-signals-upkeep | ✅ 完成 | shadow-docs/changes/archive/20261111-docs-signals-upkeep/brief.md |
 | 20261111-fix-audit-batch3-resilience | ✅ 完成 | shadow-docs/changes/archive/20261111-fix-audit-batch3-resilience/brief.md |
 | 20261111-fix-audit-batch4-data-integrity | ✅ 完成 | shadow-docs/changes/archive/20261111-fix-audit-batch4-data-integrity/brief.md |

@@ -4,7 +4,7 @@
   "name": "20261111-docs-core-knowledge-close",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261111-docs-core-knowledge-close",
   "files": [
@@ -19,13 +19,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "fd3777a6b24a1d9bef8ba555254a6514a875d5eb",
-    "verifiedAt": "2026-11-11T14:50:59.356Z"
+    "verifiedCommit": "35c7c3cb5e7dec647cc0f77048246a93f59f1811",
+    "verifiedAt": "2026-11-11T15:02:38.352Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:585",
-    "planHash": "fea53eaeaddb045c330fe64ac53b242b90509713c9e25735c53086affa9ecb13",
+    "checkpoint": "merged-pr:585",
+    "planHash": "9a98d01b3fbcd582ec48d0f40203385f8ced36aec825b89532903fc11273a13d",
     "updatedAt": null,
     "lastError": null,
     "commit": {
