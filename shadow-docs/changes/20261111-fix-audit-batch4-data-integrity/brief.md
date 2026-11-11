@@ -4,7 +4,7 @@
   "name": "20261111-fix-audit-batch4-data-integrity",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261111-fix-audit-batch4-data-integrity",
   "files": [
@@ -30,8 +30,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 584,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/584"
   },
   "review": {
     "conclusion": "passed",
@@ -40,8 +40,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "b73864345ca44d0c1d8cd4c8c91f8e7bc5741d2a",
-    "planHash": "c61119b220be379e5de311f38583d64d72fb31edd666fcba84e6fa1746d48bfb",
+    "checkpoint": "pr:584",
+    "planHash": "4ccbfabdccec95ac0d83641b0ae11d4f3d5352cd4c6cc969bd5a91d58e1897bb",
     "updatedAt": null,
     "lastError": null,
     "commit": {
