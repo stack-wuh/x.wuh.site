@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": "pnpm run build"
+    "prepare": "if [ -f tsconfig.json ]; then pnpm run build; fi"
   },
   "dependencies": {
     "@wuh.site/hooks": "workspace:*"
