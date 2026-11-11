@@ -4,7 +4,7 @@
   "name": "20261111-docs-core-knowledge-close",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261111-docs-core-knowledge-close",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 585,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/585"
   },
   "review": {
     "conclusion": "passed",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "eed5a1fba4bd1d07ab30550cc197c3da6e0f3f78",
-    "planHash": "be94aadda207ea6a2f9fea55748f2947f6dc88d5b9db276d79ffe0d156e71701",
+    "checkpoint": "pr:585",
+    "planHash": "fea53eaeaddb045c330fe64ac53b242b90509713c9e25735c53086affa9ecb13",
     "updatedAt": null,
     "lastError": null,
     "commit": {
