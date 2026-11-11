@@ -4,7 +4,7 @@
   "name": "20261111-fix-audit-batch4-data-integrity",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261111-fix-audit-batch4-data-integrity",
   "files": [
@@ -35,13 +35,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "f344607975928ff179b43002e6ac8a8ca8c79e80",
-    "verifiedAt": "2026-11-11T14:44:21.403Z"
+    "verifiedCommit": "24a6b39028244b0bd9c24b67364c72e7eecfff72",
+    "verifiedAt": "2026-11-11T14:48:33.531Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:584",
-    "planHash": "4ccbfabdccec95ac0d83641b0ae11d4f3d5352cd4c6cc969bd5a91d58e1897bb",
+    "checkpoint": "merged-pr:584",
+    "planHash": "a0cfa4dc114f5666700a96fd1aa63ec00da0802d6e61d052fa6c00b79afee8d7",
     "updatedAt": null,
     "lastError": null,
     "commit": {
