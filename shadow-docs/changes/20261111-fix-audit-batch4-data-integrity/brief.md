@@ -40,37 +40,16 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "9dc07f80047ed1c928fa30b2778170819606ec78",
-    "planHash": "5437ee10433f09f41d12a8c7138567b12c0eb5a7942d9faa9f80f658d5cbbc8f",
+    "checkpoint": "b73864345ca44d0c1d8cd4c8c91f8e7bc5741d2a",
+    "planHash": "c61119b220be379e5de311f38583d64d72fb31edd666fcba84e6fa1746d48bfb",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
-        "AGENTS.md",
-        "apps/server/scripts/backfill-published-at.mjs",
-        "apps/server/scripts/sync-init.mjs",
-        "apps/server/src/modules/comment/comment.service.ts",
-        "apps/server/src/modules/content/content.service.ts",
-        "apps/server/src/modules/sync/sync.service.ts",
-        "apps/server/src/modules/webhook/webhook.controller.ts",
-        "packages/components/config-provider/index.tsx",
-        "packages/components/config-provider/readme.md",
-        "packages/components/float-button/index.tsx",
-        "packages/components/float-button/readme.md",
-        "packages/components/modal/index.tsx",
-        "packages/components/modal/readme.md",
-        "packages/components/space/index.tsx",
-        "packages/components/space/readme.md",
-        "packages/components/spin/index.tsx",
-        "packages/components/spin/readme.md",
-        "packages/components/video-player/index.tsx",
-        "packages/components/video-player/readme.md",
-        "packages/core/package.json",
-        "packages/hooks/useLocale/index.ts",
-        "packages/hooks/useTheme/index.ts",
-        "packages/hooks/useTokens/index.ts"
+        "packages/hooks/useTheme/切换站点模式.md",
+        "packages/hooks/useTokens/获取全局注入的token.md"
       ],
-      "message": "fix(server,core): 审计 #568 批次 4——原子 upsert、webhook 删除对账、publishedAt 回填、core 解析面收敛、死代码清退"
+      "message": "chore(hooks): 清退 useTheme/useTokens 目录残留文档（批次 4 显式清单补漏）"
     }
   },
   "knowledge": null
