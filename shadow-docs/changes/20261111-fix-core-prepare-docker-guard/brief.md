@@ -4,7 +4,7 @@
   "name": "20261111-fix-core-prepare-docker-guard",
   "type": "fix",
   "scope": "build",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261111-fix-core-prepare-docker-guard",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 586,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/586"
   },
   "review": {
     "conclusion": "passed",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "da89211ba362d7041324f1e04b63d249ec3460b3",
-    "planHash": "e9f86a8c29d1680f5f68e28636d9b53c4991114b5a32140cee3098fc17eb16e9",
+    "checkpoint": "pr:586",
+    "planHash": "3a777f8638cdca9a5b1e258428cf848559d3532fb4970fcab9c4e74a2901fa58",
     "updatedAt": null,
     "lastError": null,
     "commit": {
