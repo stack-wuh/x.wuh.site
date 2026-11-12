@@ -4,7 +4,7 @@
   "name": "20261112-fix-audit-batch5-timezone-visitstats",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-audit-batch5-timezone-visitstats",
   "files": [
@@ -34,14 +34,14 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/587"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "b692baa711bb626c6f92cd520aabba20ccceb53c",
+    "verifiedAt": "2026-11-12T15:12:48.323Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "8424cdcec91233d1792e2a375b66b15506eaed64",
-    "planHash": "7d6a85d90dfe97a208b1fc5a5f81caf318cbaa195d4ab5e7c6cc653ce786e871",
+    "checkpoint": "pr:587",
+    "planHash": "295e28a499a73a5492d5c0df7addfc77f5351d1a0e0dd97cd34303e3c74d2866",
     "updatedAt": null,
     "lastError": null,
     "commit": {
