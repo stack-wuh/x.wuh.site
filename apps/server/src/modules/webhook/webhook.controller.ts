@@ -12,17 +12,13 @@ import {
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import * as crypto from 'crypto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RootGuard } from '../auth/root.guard';
 import { SyncService } from '../sync/sync.service';
+import { createDeliveryDeduper, isWebhookSecretConfigured, verifyWebhookSignature } from './webhook-signature.util';
 
 // GitHub webhook 原始字节挂在 request.rawBody（main.ts 的 json verify 回调写入）
 type WebhookRequest = Request & { rawBody?: Buffer };
-
-// delivery 去重：GitHub 至少一次投递 + 网络重试会重复投递同一事件，窗口内同 id 只处理一次
-const DEDUP_WINDOW_MS = 5 * 60 * 1000;
-const DEDUP_MAX_ENTRIES = 1000;
 
 function buildDispatchBody(issueNumber: number, repo: string): string {
   return JSON.stringify({
@@ -38,15 +34,12 @@ function buildDispatchBody(issueNumber: number, repo: string): string {
 @Controller('webhook')
 export class WebhookController {
   private logger = new Logger(WebhookController.name);
-  private webhookSecret: string;
-  private readonly seenDeliveries = new Map<string, number>();
+  private readonly deduper = createDeliveryDeduper();
 
   constructor(
     private syncService: SyncService,
     private configService: ConfigService,
-  ) {
-    this.webhookSecret = this.configService.get<string>('GITHUB_WEBHOOK_SECRET');
-  }
+  ) {}
 
   @Post('github')
   @ApiOperation({ summary: 'Handle GitHub webhook events' })
@@ -54,14 +47,15 @@ export class WebhookController {
   @ApiResponse({ status: 400, description: 'Invalid signature' })
   async handleGitHubWebhook(@Req() request: WebhookRequest, @Body() payload: any) {
     // 密钥未配置时公网端点等于无签名裸奔——fail-fast 拒绝处理（P1-1）
-    if (!this.webhookSecret) {
+    const secret = this.configService.get<string>('GITHUB_WEBHOOK_SECRET');
+    if (!isWebhookSecretConfigured(secret)) {
       this.logger.error('GITHUB_WEBHOOK_SECRET not configured; rejecting webhook request');
       throw new ServiceUnavailableException('Webhook secret not configured');
     }
 
     // 重放防护：同一 delivery id 在窗口内只处理一次
     const deliveryId = request.headers['x-github-delivery'] as string | undefined;
-    if (deliveryId && this.pruneAndCheckDelivery(deliveryId)) {
+    if (deliveryId && this.deduper.seen(deliveryId)) {
       this.logger.log(`Duplicate delivery ${deliveryId}, skipped`);
       return { success: true, deduped: true };
     }
@@ -70,7 +64,7 @@ export class WebhookController {
     // 存在转义/空白差异风险），比较用 timingSafeEqual 防时序侧信道（P1-1）
     const rawBody = request.rawBody;
     const signature = request.headers['x-hub-signature-256'] as string | undefined;
-    if (!rawBody || !this.verifySignature(signature, rawBody)) {
+    if (!rawBody || !verifyWebhookSignature(signature, rawBody, secret)) {
       throw new BadRequestException('Invalid webhook signature');
     }
 
@@ -149,30 +143,6 @@ export class WebhookController {
     }
   }
 
-  private pruneAndCheckDelivery(deliveryId: string): boolean {
-    const now = Date.now();
-    if (this.seenDeliveries.size > DEDUP_MAX_ENTRIES) {
-      for (const [id, ts] of this.seenDeliveries) {
-        if (now - ts > DEDUP_WINDOW_MS) this.seenDeliveries.delete(id);
-      }
-      if (this.seenDeliveries.size > DEDUP_MAX_ENTRIES) this.seenDeliveries.clear();
-    }
-    const seen = this.seenDeliveries.get(deliveryId);
-    if (seen !== undefined && now - seen < DEDUP_WINDOW_MS) return true;
-    this.seenDeliveries.set(deliveryId, now);
-    return false;
-  }
-
-  private verifySignature(signature: string | undefined, rawBody: Buffer): boolean {
-    if (!signature) return false;
-    const hash = crypto
-      .createHmac('sha256', this.webhookSecret)
-      .update(rawBody)
-      .digest('hex');
-    const expected = Buffer.from(`sha256=${hash}`, 'utf8');
-    const received = Buffer.from(signature, 'utf8');
-    return expected.length === received.length && crypto.timingSafeEqual(expected, received);
-  }
 
   @Post('sync/:issueNumber')
   @ApiOperation({ summary: 'Direct sync a single issue (root only; the public GitHub webhook is the unattended path)' })

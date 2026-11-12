@@ -31,7 +31,7 @@ function formatTime(dateStr: string | undefined, t: TranslateFn, dateLocale: str
   const diffDay = Math.floor(diffHour / 24)
   if (diffDay < 7) return t('post.comments.daysAgo', { n: diffDay })
 
-  return date.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric', year: 'numeric' })
+  return date.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 }
 
 function getAvatarInitial(name: string): string {

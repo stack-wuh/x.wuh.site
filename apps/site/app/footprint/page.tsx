@@ -76,6 +76,7 @@ export default function FootprintPage() {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
+                    timeZone: "UTC",
                   })}
                 </PlaceDate>
               </div>

@@ -25,3 +25,7 @@ export class VisitRecord {
 
 export const VisitRecordSchema = SchemaFactory.createForClass(VisitRecord);
 VisitRecordSchema.index({ ip: 1, timestamp: -1 });
+// TTL 90 天：visit_records 只服务去重窗口（30min）与「今日」统计，
+// 总访问量走 visit_stats 计数器（backfill-visit-total.mjs 迁移存量），
+// 无 TTL 会让集合无界增长（审计 P1-7/P2）
+VisitRecordSchema.index({ timestamp: 1 }, { expireAfterSeconds: 90 * 24 * 60 * 60 });

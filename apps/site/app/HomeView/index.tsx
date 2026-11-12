@@ -121,7 +121,7 @@ export default function HomeView({ posts, yearlySummaries, wereadBooks, repos, h
                   <S.InkDot />
                   <S.PostTitle>{item.title}</S.PostTitle>
                   <S.PostMeta>
-                    <span>{new Date(item.created_at).toLocaleDateString(locale === 'zh' ? 'zh-CN' : locale, { month: 'short', day: 'numeric' })}</span>
+                    <span>{new Date(item.created_at).toLocaleDateString(locale === 'zh' ? 'zh-CN' : locale, { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>
                   </S.PostMeta>
                 </S.PostRow>
               ))}

@@ -15,6 +15,7 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 const testDirs = [
   'apps/site/test',
+  'apps/server/test',
   'packages/hooks/test',
   'packages/components/test'
 ]
@@ -40,6 +41,10 @@ const testFiles = [...testDirs.flatMap(listTests), ...extraTestFiles]
 
 const active = testFiles.filter((file) => !(file in QUARANTINE))
 const quarantined = testFiles.filter((file) => file in QUARANTINE)
+
+/* server 侧行为契约走 node:test 主通道（apps/server/test/*.test.mjs）：
+   jest/ts-jest 形态曾在 gate 白名单跑过七轮，runner 上 transform + @nestjs 重依赖图
+   内存不稳（OOM 4GB×5，20261112 实测）——node:test ESM 直载零 mock 框架魔法，主通道稳定。 */
 
 console.log(`run-tests: ${active.length} files in gate, ${quarantined.length} quarantined`)
 for (const file of quarantined) {
