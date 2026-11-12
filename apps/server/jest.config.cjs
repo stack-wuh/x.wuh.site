@@ -7,10 +7,12 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  // isolatedModules（纯转译，不建 ts.Program）：类型正确性由 CI typecheck 四域背书。
-  // 默认 diagnostics 会解析 @octokit/@nestjs 巨型类型图，gate 首跑实测 transform
-  // 阶段 OOM 4GB（20261112 两轮实证），isolated+无诊断是标准解法
-  transform: {
-    '^.+\\.ts$': ['ts-jest', { isolatedModules: true, diagnostics: false }],
+  // diagnostics:false（类型由 CI typecheck 四域背书）。不可开 isolatedModules：
+  // 它会让 ts-jest 跳过 jest.mock hoisting——mock 晚于 @octokit/rest 真实包加载，
+  // 实例上无 mock 方法（20261112 gate 五轮实证；webhook spec 曾以默认模式稳定过）
+  globals: {
+    'ts-jest': {
+      diagnostics: false,
+    },
   },
 };

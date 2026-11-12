@@ -43,11 +43,12 @@ const quarantined = testFiles.filter((file) => file in QUARANTINE)
 
 /* server 侧 jest spec（白名单渐进收编，20261111 审计批次 5 起）：
    apps/server 的 spec 是 jest 形态（仓内惯例），不在上面的 node:test 枚举内——
-   白名单列出收编进 gate 的 spec 文件，spawn `jest --runInBand` 逐一执行，退出码透传。
-   存量 10 个 spec 尚未甄别漂移，后批单独对账收编；新 server spec 应直接进本清单。 */
+   白名单列出收编进 gate 的 spec 文件，spawn jest 逐一执行，退出码透传。
+   存量 10 个 spec 尚未甄别漂移，后批单独对账收编；新 server spec 应直接进本清单。
+   注意：sync 链路的用例与 webhook spec 同文件承载（jest mock hoisting × ts-jest
+   isolatedModules 交互下独立 sync spec 文件稳定 OOM，gate 五轮实证见批次 5 brief）。 */
 const serverJestSpecs = [
-  'apps/server/src/modules/webhook/webhook.controller.spec.ts',
-  'apps/server/src/modules/sync/sync.service.spec.ts'
+  'apps/server/src/modules/webhook/webhook.controller.spec.ts'
 ]
 
 console.log(`run-tests: ${active.length} files in gate, ${quarantined.length} quarantined, ${serverJestSpecs.length} server jest specs`)
