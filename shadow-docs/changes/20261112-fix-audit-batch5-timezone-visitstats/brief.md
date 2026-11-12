@@ -4,7 +4,7 @@
   "name": "20261112-fix-audit-batch5-timezone-visitstats",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-audit-batch5-timezone-visitstats",
   "files": [
@@ -40,16 +40,15 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:587",
-    "planHash": "02bd34f9ef044b824135d7c2228fb6a105c8427c778805197fa006652a34b2e9",
+    "checkpoint": "cae9b4b95dd668824f69384324677bab19621609",
+    "planHash": "1b55d3c0400579c1cbdc6d5cfe7a128fa69ed8bf115f93546bb9c0eb5b69ca56",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
-        "apps/server/jest.config.cjs",
-        "apps/server/src/modules/sync/sync.service.spec.ts"
+        "apps/server/jest.config.cjs"
       ],
-      "message": "fix(server): sync spec 去 Octokit 显式 import + ts-jest diagnostics 关闭——修 gate 首跑 OOM"
+      "message": "fix(server): ts-jest isolatedModules 纯转译根修 OOM——上轮仅改本地未随分支发布，本轮补推"
     }
   },
   "knowledge": null
