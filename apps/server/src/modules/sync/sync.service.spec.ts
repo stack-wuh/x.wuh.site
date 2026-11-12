@@ -1,18 +1,17 @@
 import { SyncService } from './sync.service';
 
-jest.mock('@octokit/rest', () => {
-  const m = {
+// 工厂必须自包含（hoisting 后外层变量不可见）；不 import Octokit——显式类型/值
+// import 会让 ts-jest diagnostics 解析 @octokit/rest 巨型类型树直至 OOM（gate 首跑实测）
+jest.mock('@octokit/rest', () => ({
+  Octokit: jest.fn().mockImplementation(() => ({
     issues: {
       listForRepo: jest.fn(),
       get: jest.fn(),
       listComments: jest.fn(),
       getComment: jest.fn(),
     },
-  };
-  return { Octokit: jest.fn(() => m) };
-});
-
-import { Octokit } from '@octokit/rest';
+  })),
+}));
 
 function makeService() {
   const contentService = {
@@ -33,8 +32,8 @@ function makeService() {
     }),
   };
   const service = new SyncService(configService as any, contentService as any, commentService as any);
-  const octokit = (Octokit as any).mock.results[0].value;
-  // syncIssue 内部会拉评论列表；测试不关心评论面，统一空集
+  // octokit 实例经 service 拿（constructor 里 new 被上面工厂 mock）
+  const octokit = (service as unknown as { octokit: { issues: Record<string, jest.Mock> } }).octokit;
   octokit.issues.listComments.mockResolvedValue({ data: [] });
   return { service, contentService, commentService, octokit };
 }
