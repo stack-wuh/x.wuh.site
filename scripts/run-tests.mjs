@@ -79,14 +79,20 @@ if (result.status !== 0) {
   process.exit(result.status ?? 1)
 }
 
-// server jest sweep（jest 二进制按 apps/server 本地依赖解析）
+// server jest sweep（jest 二进制按 apps/server 本地依赖解析）。
+// 不用 --runInBand：单进程顺序加载两个 spec 的模块图（mongoose/@nestjs 全家桶×2）
+// 会堆爆 4GB（gate 20261112 四轮实证），默认 worker 每文件独立进程内存天然隔离；
+// --max-workers=2 控并发，NODE_OPTIONS 限单 worker 堆 4G 双保险
 const jestResult = spawnSync(
   resolve(repoRoot, 'apps/server', 'node_modules', '.bin', process.platform === 'win32' ? 'jest.cmd' : 'jest'),
-  ['--runInBand', '--silent', ...serverJestSpecs.map((file) => resolve(repoRoot, file))],
+  ['--max-workers', '2', '--silent', ...serverJestSpecs.map((file) => resolve(repoRoot, file))],
   {
     cwd: resolve(repoRoot, 'apps/server'),
     stdio: 'inherit',
-    env: process.env
+    env: {
+      ...process.env,
+      NODE_OPTIONS: [process.env.NODE_OPTIONS, '--max-old-space-size=4096'].filter(Boolean).join(' ')
+    }
   }
 )
 
