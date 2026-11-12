@@ -4,10 +4,11 @@
   "name": "20261112-fix-audit-batch5-timezone-visitstats",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-audit-batch5-timezone-visitstats",
   "files": [
+    "apps/server/jest.config.cjs",
     "apps/server/scripts/backfill-visit-total.mjs",
     "apps/server/src/modules/sync/sync.service.spec.ts",
     "apps/server/src/modules/visit-stats/visit-record.schema.ts",
@@ -33,36 +34,22 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/587"
   },
   "review": {
-    "conclusion": "passed",
-    "verifiedCommit": "b0968d0bd727519ca3f768724f878cdc6b87dd0d",
-    "verifiedAt": "2026-11-12T15:04:04.305Z"
+    "conclusion": "pending",
+    "verifiedCommit": null,
+    "verifiedAt": null
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:587",
-    "planHash": "69deb59df56fcba7b04c33f9eb13b69f0ddba068be8584a793472fb898396be5",
+    "checkpoint": "8424cdcec91233d1792e2a375b66b15506eaed64",
+    "planHash": "7d6a85d90dfe97a208b1fc5a5f81caf318cbaa195d4ab5e7c6cc653ce786e871",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
-        "apps/server/scripts/backfill-visit-total.mjs",
-        "apps/server/src/modules/sync/sync.service.spec.ts",
-        "apps/server/src/modules/visit-stats/visit-record.schema.ts",
-        "apps/server/src/modules/visit-stats/visit-stats-total.schema.ts",
-        "apps/server/src/modules/visit-stats/visit-stats.controller.ts",
-        "apps/server/src/modules/visit-stats/visit-stats.module.ts",
-        "apps/server/src/modules/visit-stats/visit-stats.service.ts",
-        "apps/server/src/modules/webhook/webhook.controller.spec.ts",
-        "apps/site/app/HomeView/index.tsx",
-        "apps/site/app/about/data.ts",
-        "apps/site/app/footprint/page.tsx",
-        "apps/site/app/guestbook/GuestbookPageView/index.tsx",
-        "apps/site/app/lib/date.ts",
-        "apps/site/app/post/components/PostComments/index.tsx",
-        "apps/site/app/weread/WereadView/index.tsx",
-        "scripts/run-tests.mjs"
+        "apps/server/jest.config.cjs",
+        "apps/server/src/modules/sync/sync.service.spec.ts"
       ],
-      "message": "fix(server,site): 审计 #568 批次 5——时区口径单源化、访问统计防线与总量迁移、server spec 首次入 gate"
+      "message": "fix(server): sync spec 去 Octokit 显式 import + ts-jest diagnostics 关闭——修 gate 首跑 OOM"
     }
   },
   "knowledge": null
