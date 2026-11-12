@@ -4,7 +4,7 @@
   "name": "20261112-fix-visitstats-id-cast",
   "type": "fix",
   "scope": "apps/server",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-visitstats-id-cast",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 588,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/588"
   },
   "review": {
     "conclusion": "passed",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "bfe9319a46d69e96bd9743cc632f441ece9d092a",
-    "planHash": "bdef53b1797b1751044012c9282d310b104b44480a7458cd28d9e48816ae7b75",
+    "checkpoint": "pr:588",
+    "planHash": "0659e0a552954524a8d3d7ba8ab53b2e330c25a12853bb5553ae5368bc346cd2",
     "updatedAt": null,
     "lastError": null,
     "commit": {
