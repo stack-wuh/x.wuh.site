@@ -4,7 +4,7 @@
   "name": "20261112-fix-audit-batch5-timezone-visitstats",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-audit-batch5-timezone-visitstats",
   "files": [
@@ -40,15 +40,18 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:587",
-    "planHash": "6ee33c387d82f028f8eefead1967f48a20d32760d478a3af26a95bdf22c4d2af",
+    "checkpoint": "560b817e4b275f700a89727665f794043e324a7b",
+    "planHash": "2fbc4050c972a6078fa0952028d44b6dbf4caa87df02c842f29a09324e3747dd",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
+        "apps/server/jest.config.cjs",
+        "apps/server/src/modules/sync/sync.service.spec.ts",
+        "apps/server/src/modules/webhook/webhook.controller.spec.ts",
         "scripts/run-tests.mjs"
       ],
-      "message": "fix(ci): server jest 弃 runInBand 改独立 worker——模块图内存隔离根修 OOM，限堆双保险"
+      "message": "fix(server): sync 用例并入 webhook spec+octokit 实例后置替换（ts-jest 无 hoisting 终解）；弃 isolatedModules；gate 白名单收敛"
     }
   },
   "knowledge": null
