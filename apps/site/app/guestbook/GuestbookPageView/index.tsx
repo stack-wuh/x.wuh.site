@@ -20,6 +20,7 @@ function formatTime(createdAt: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'UTC',
   }).format(new Date(createdAt))
 }
 
@@ -28,20 +29,23 @@ function formatDate(createdAt: string, locale: string): string {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'UTC',
   }).format(new Date(createdAt))
 }
 
 function formatDateKey(createdAt: string): string {
   const d = new Date(createdAt)
-  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+  // 固定 UTC 日历日分组（审计 P1-15）：SSR 与客户端输出一致，消除 hydration mismatch
+  return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`
 }
 
 function formatRelativeDate(createdAt: string, locale: string, t: (key: string) => string): string {
+  // 「今天/昨天」判定同样固定 UTC 日历日，与分组键口径一致
   const now = new Date()
   const date = new Date(createdAt)
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-  const diff = Math.floor((today.getTime() - target.getTime()) / (1000 * 60 * 60 * 24))
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  const target = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  const diff = Math.floor((today - target) / (1000 * 60 * 60 * 24))
 
   if (diff === 0) return t('guestbook.page.today')
   if (diff === 1) return t('guestbook.page.yesterday')

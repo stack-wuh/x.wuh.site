@@ -2,10 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { VisitRecord, VisitRecordDocument } from './visit-record.schema';
+import { VisitStatsTotal, VisitStatsTotalDocument } from './visit-stats-total.schema';
 import { Content, ContentDocument } from '../content/schemas/content.schema';
 import { VisitStatsResponse } from '@wuh.site/core';
 
 const TOTAL_WORDS_TTL_MS = 60 * 60 * 1000;
+const GLOBAL_TOTAL_ID = 'global';
 
 @Injectable()
 export class VisitStatsService {
@@ -17,6 +19,8 @@ export class VisitStatsService {
     private visitRecordModel: Model<VisitRecordDocument>,
     @InjectModel(Content.name)
     private contentModel: Model<ContentDocument>,
+    @InjectModel(VisitStatsTotal.name)
+    private visitStatsModel: Model<VisitStatsTotalDocument>,
   ) {}
 
   /** 记录一次访问，30 分钟窗口内同一 IP 不重复计数 */
@@ -42,8 +46,41 @@ export class VisitStatsService {
       userAgent,
       path,
     });
+    // 总访问量走独立计数器（visit_stats.global.total）：visit_records 有 90 天
+    // TTL（审计 P1-7），count 语义会随 TTL 缩水；计数器与去重记录解耦后互不影响。
+    // 文档缺位时 $setOnInsert 兜底当前 count（正常路径由 backfill-visit-total.mjs 迁移）
+    await this.visitStatsModel
+      .findOneAndUpdate(
+        { _id: GLOBAL_TOTAL_ID },
+        [
+          {
+            $set: {
+              total: { $add: [{ $ifNull: ['$total', 0] }, 1] },
+            },
+          },
+        ],
+        { upsert: true },
+      )
+      .exec();
 
     this.logger.debug(`Recorded visit from ${ip}`);
+  }
+
+  /** 总访问量：读计数器；计数器缺位（首次部署未迁移）时以当前记录数兜底初始化 */
+  private async getTotalVisits(): Promise<number> {
+    const stats = await this.visitStatsModel.findById(GLOBAL_TOTAL_ID).lean().exec();
+    if (stats && typeof stats.total === 'number') {
+      return stats.total;
+    }
+    const baseline = await this.visitRecordModel.countDocuments().exec();
+    await this.visitStatsModel
+      .updateOne(
+        { _id: GLOBAL_TOTAL_ID },
+        { $setOnInsert: { total: baseline } },
+        { upsert: true },
+      )
+      .exec();
+    return baseline;
   }
 
   /** 获取总访问量、今日访问量与全站字数 */
@@ -52,7 +89,7 @@ export class VisitStatsService {
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const [total, today, totalWords] = await Promise.all([
-      this.visitRecordModel.countDocuments().exec(),
+      this.getTotalVisits(),
       this.visitRecordModel.countDocuments({ timestamp: { $gte: todayStart } }).exec(),
       this.getTotalWords(),
     ]);

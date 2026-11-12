@@ -41,7 +41,16 @@ const testFiles = [...testDirs.flatMap(listTests), ...extraTestFiles]
 const active = testFiles.filter((file) => !(file in QUARANTINE))
 const quarantined = testFiles.filter((file) => file in QUARANTINE)
 
-console.log(`run-tests: ${active.length} files in gate, ${quarantined.length} quarantined`)
+/* server 侧 jest spec（白名单渐进收编，20261111 审计批次 5 起）：
+   apps/server 的 spec 是 jest 形态（仓内惯例），不在上面的 node:test 枚举内——
+   白名单列出收编进 gate 的 spec 文件，spawn `jest --runInBand` 逐一执行，退出码透传。
+   存量 10 个 spec 尚未甄别漂移，后批单独对账收编；新 server spec 应直接进本清单。 */
+const serverJestSpecs = [
+  'apps/server/src/modules/webhook/webhook.controller.spec.ts',
+  'apps/server/src/modules/sync/sync.service.spec.ts'
+]
+
+console.log(`run-tests: ${active.length} files in gate, ${quarantined.length} quarantined, ${serverJestSpecs.length} server jest specs`)
 for (const file of quarantined) {
   console.log(`  quarantined: ${file} — ${QUARANTINE[file]}`)
 }
@@ -65,4 +74,24 @@ if (result.error) {
   console.error(`run-tests: spawn 失败: ${result.error}`)
   process.exit(1)
 }
-process.exit(result.status ?? 1)
+if (result.status !== 0) {
+  console.error(`run-tests: node:test sweep 失败 (exit ${result.status})`)
+  process.exit(result.status ?? 1)
+}
+
+// server jest sweep（jest 二进制按 apps/server 本地依赖解析）
+const jestResult = spawnSync(
+  resolve(repoRoot, 'apps/server', 'node_modules', '.bin', process.platform === 'win32' ? 'jest.cmd' : 'jest'),
+  ['--runInBand', '--silent', ...serverJestSpecs.map((file) => resolve(repoRoot, file))],
+  {
+    cwd: resolve(repoRoot, 'apps/server'),
+    stdio: 'inherit',
+    env: process.env
+  }
+)
+
+if (jestResult.error) {
+  console.error(`run-tests: jest spawn 失败: ${jestResult.error}`)
+  process.exit(1)
+}
+process.exit(jestResult.status ?? 1)

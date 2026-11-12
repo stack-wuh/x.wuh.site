@@ -24,5 +24,5 @@ export const isWithinFilter = (
 
 export const formatMonthDay = (isoDate: string, locale: string) => {
   const date = new Date(isoDate)
-  return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' })
+  return date.toLocaleDateString(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' })
 }

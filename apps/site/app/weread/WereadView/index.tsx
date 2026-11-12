@@ -56,7 +56,7 @@ export default function WereadView({ books, total, currentPage, totalPages }: We
                   </S.BookMeta>
                 </S.BookInfo>
                 <S.CountTag>
-                  {new Date(book.readUpdateTime * 1000).toLocaleDateString(INTL_LOCALE[locale], { year: 'numeric', month: 'short', day: 'numeric' })}
+                  {new Date(book.readUpdateTime * 1000).toLocaleDateString(INTL_LOCALE[locale], { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}
                 </S.CountTag>
               </S.BookRow>
             ))}
