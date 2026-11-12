@@ -4,19 +4,21 @@
   "name": "20261112-fix-audit-batch5-timezone-visitstats",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-audit-batch5-timezone-visitstats",
   "files": [
     "apps/server/jest.config.cjs",
     "apps/server/scripts/backfill-visit-total.mjs",
-    "apps/server/src/modules/sync/sync.service.spec.ts",
     "apps/server/src/modules/visit-stats/visit-record.schema.ts",
     "apps/server/src/modules/visit-stats/visit-stats-total.schema.ts",
     "apps/server/src/modules/visit-stats/visit-stats.controller.ts",
     "apps/server/src/modules/visit-stats/visit-stats.module.ts",
     "apps/server/src/modules/visit-stats/visit-stats.service.ts",
+    "apps/server/src/modules/webhook/webhook-signature.util.ts",
     "apps/server/src/modules/webhook/webhook.controller.spec.ts",
+    "apps/server/src/modules/webhook/webhook.controller.ts",
+    "apps/server/test/webhook-sync.contract.test.mjs",
     "apps/site/app/HomeView/index.tsx",
     "apps/site/app/about/data.ts",
     "apps/site/app/footprint/page.tsx",
@@ -35,20 +37,24 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "b692baa711bb626c6f92cd520aabba20ccceb53c",
-    "verifiedAt": "2026-11-12T15:12:48.323Z"
+    "verifiedCommit": "789f929de448b7264ac7fbd5d183d18c05f544f4",
+    "verifiedAt": "2026-11-12T16:06:33.421Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:587",
-    "planHash": "6ee33c387d82f028f8eefead1967f48a20d32760d478a3af26a95bdf22c4d2af",
+    "checkpoint": "badd5d65229706f2d72da3d974173944bbf13b3c",
+    "planHash": "5a6e0b4a85e2a83bf47360dcb65a04c466877d0a862c9c27cb8fc535839c0f43",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
-        "apps/server/src/modules/webhook/webhook.controller.spec.ts"
+        "apps/server/src/modules/webhook/webhook-signature.util.ts",
+        "apps/server/src/modules/webhook/webhook.controller.spec.ts",
+        "apps/server/src/modules/webhook/webhook.controller.ts",
+        "apps/server/test/webhook-sync.contract.test.mjs",
+        "scripts/run-tests.mjs"
       ],
-      "message": "fix(server): spec 补 listComments 空集 stub——第六轮 3 例 destructure 崩点的根因"
+      "message": "fix(server): webhook 防线抽纯函数 util+node:test 契约 8 用例入 sweep 主通道——jest 白名单通道七轮 OOM 实证判死，编排面防线留待 TS loader 基建"
     }
   },
   "knowledge": null
