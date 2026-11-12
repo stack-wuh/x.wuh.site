@@ -4,7 +4,7 @@
   "name": "20261112-fix-audit-batch5-timezone-visitstats",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261112-fix-audit-batch5-timezone-visitstats",
   "files": [
@@ -40,8 +40,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "cae9b4b95dd668824f69384324677bab19621609",
-    "planHash": "1b55d3c0400579c1cbdc6d5cfe7a128fa69ed8bf115f93546bb9c0eb5b69ca56",
+    "checkpoint": "pr:587",
+    "planHash": "6ee33c387d82f028f8eefead1967f48a20d32760d478a3af26a95bdf22c4d2af",
     "updatedAt": null,
     "lastError": null,
     "commit": {
