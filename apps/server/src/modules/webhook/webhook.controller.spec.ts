@@ -176,6 +176,8 @@ function makeSyncService() {
     },
   };
   (service as unknown as { octokit: unknown }).octokit = octokit;
+  // syncIssue 内部会拉评论列表；测试不关心评论面，统一空集
+  octokit.issues.listComments.mockResolvedValue({ data: [] });
   return { service, contentService, octokit };
 }
 
