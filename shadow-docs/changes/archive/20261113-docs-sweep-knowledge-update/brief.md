@@ -4,7 +4,7 @@
   "name": "20261113-docs-sweep-knowledge-update",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "docs/20261113-docs-sweep-knowledge-update",
   "files": [
@@ -19,13 +19,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "5adeeb400d1a80b471d5a9a231e304a7943d8594",
-    "verifiedAt": "2026-11-12T16:34:23.225Z"
+    "verifiedCommit": "3f918c7f6496d10ceec8bd2fb6930b9d091aed84",
+    "verifiedAt": "2026-11-12T16:37:30.218Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:589",
-    "planHash": "863abfba1cd75d36bd7dced4ed22bd663bba4e4bfea40f0e9aa962663ef6761a",
+    "checkpoint": "merged-pr:589",
+    "planHash": "7c90c82663ca47272716f10706d816938a151b68768aeea981a54c23a286f4e6",
     "updatedAt": null,
     "lastError": null,
     "commit": {

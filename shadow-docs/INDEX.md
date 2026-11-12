@@ -146,3 +146,5 @@
 | 20261111-fix-audit-batch4-data-integrity | ✅ 完成 | shadow-docs/changes/archive/20261111-fix-audit-batch4-data-integrity/brief.md |
 | 20261111-fix-core-prepare-docker-guard | ✅ 完成 | shadow-docs/changes/archive/20261111-fix-core-prepare-docker-guard/brief.md |
 | 20261112-fix-audit-batch5-timezone-visitstats | ✅ 完成 | shadow-docs/changes/archive/20261112-fix-audit-batch5-timezone-visitstats/brief.md |
+| 20261112-fix-visitstats-id-cast | reviewed | shadow-docs/changes/20261112-fix-visitstats-id-cast/brief.md |
+| 20261113-docs-sweep-knowledge-update | ✅ 完成 | shadow-docs/changes/archive/20261113-docs-sweep-knowledge-update/brief.md |
