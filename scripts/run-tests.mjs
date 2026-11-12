@@ -15,6 +15,7 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 const testDirs = [
   'apps/site/test',
+  'apps/server/test',
   'packages/hooks/test',
   'packages/components/test'
 ]
@@ -41,17 +42,11 @@ const testFiles = [...testDirs.flatMap(listTests), ...extraTestFiles]
 const active = testFiles.filter((file) => !(file in QUARANTINE))
 const quarantined = testFiles.filter((file) => file in QUARANTINE)
 
-/* server 侧 jest spec（白名单渐进收编，20261111 审计批次 5 起）：
-   apps/server 的 spec 是 jest 形态（仓内惯例），不在上面的 node:test 枚举内——
-   白名单列出收编进 gate 的 spec 文件，spawn jest 逐一执行，退出码透传。
-   存量 10 个 spec 尚未甄别漂移，后批单独对账收编；新 server spec 应直接进本清单。
-   注意：sync 链路的用例与 webhook spec 同文件承载（jest mock hoisting × ts-jest
-   isolatedModules 交互下独立 sync spec 文件稳定 OOM，gate 五轮实证见批次 5 brief）。 */
-const serverJestSpecs = [
-  'apps/server/src/modules/webhook/webhook.controller.spec.ts'
-]
+/* server 侧行为契约走 node:test 主通道（apps/server/test/*.test.mjs）：
+   jest/ts-jest 形态曾在 gate 白名单跑过七轮，runner 上 transform + @nestjs 重依赖图
+   内存不稳（OOM 4GB×5，20261112 实测）——node:test ESM 直载零 mock 框架魔法，主通道稳定。 */
 
-console.log(`run-tests: ${active.length} files in gate, ${quarantined.length} quarantined, ${serverJestSpecs.length} server jest specs`)
+console.log(`run-tests: ${active.length} files in gate, ${quarantined.length} quarantined`)
 for (const file of quarantined) {
   console.log(`  quarantined: ${file} — ${QUARANTINE[file]}`)
 }
@@ -75,30 +70,4 @@ if (result.error) {
   console.error(`run-tests: spawn 失败: ${result.error}`)
   process.exit(1)
 }
-if (result.status !== 0) {
-  console.error(`run-tests: node:test sweep 失败 (exit ${result.status})`)
-  process.exit(result.status ?? 1)
-}
-
-// server jest sweep（jest 二进制按 apps/server 本地依赖解析）。
-// 不用 --runInBand：单进程顺序加载两个 spec 的模块图（mongoose/@nestjs 全家桶×2）
-// 会堆爆 4GB（gate 20261112 四轮实证），默认 worker 每文件独立进程内存天然隔离；
-// --max-workers=2 控并发，NODE_OPTIONS 限单 worker 堆 4G 双保险
-const jestResult = spawnSync(
-  resolve(repoRoot, 'apps/server', 'node_modules', '.bin', process.platform === 'win32' ? 'jest.cmd' : 'jest'),
-  ['--max-workers', '2', '--silent', ...serverJestSpecs.map((file) => resolve(repoRoot, file))],
-  {
-    cwd: resolve(repoRoot, 'apps/server'),
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      NODE_OPTIONS: [process.env.NODE_OPTIONS, '--max-old-space-size=4096'].filter(Boolean).join(' ')
-    }
-  }
-)
-
-if (jestResult.error) {
-  console.error(`run-tests: jest spawn 失败: ${jestResult.error}`)
-  process.exit(1)
-}
-process.exit(jestResult.status ?? 1)
+process.exit(result.status ?? 1)
