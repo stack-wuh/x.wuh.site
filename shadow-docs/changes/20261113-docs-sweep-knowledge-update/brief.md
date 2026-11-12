@@ -4,7 +4,7 @@
   "name": "20261113-docs-sweep-knowledge-update",
   "type": "docs",
   "scope": "shadow-docs",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "docs/20261113-docs-sweep-knowledge-update",
   "files": [
@@ -14,8 +14,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 589,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/589"
   },
   "review": {
     "conclusion": "passed",
@@ -24,8 +24,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "88f1de2adaeaaf909e85a6e9c55baaa82ea01209",
-    "planHash": "02e2b23d090757fdbacea69f59275a659c2b31f610caf1d303cc314c36310563",
+    "checkpoint": "pr:589",
+    "planHash": "863abfba1cd75d36bd7dced4ed22bd663bba4e4bfea40f0e9aa962663ef6761a",
     "updatedAt": null,
     "lastError": null,
     "commit": {
