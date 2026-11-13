@@ -4,7 +4,7 @@
   "name": "20261113-fix-audit-batch6-blog-deploy-agents",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261113-fix-audit-batch6-blog-deploy-agents",
   "files": [
@@ -15,8 +15,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 590,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/590"
   },
   "review": {
     "conclusion": "passed",
@@ -25,8 +25,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "c7d81bce600250d002ff3b537cee6af9dd2d42fa",
-    "planHash": "b7d6165bb22696888aa83c2c24ca93e833727ee0eb3656fc7fac89f04bb7bf4f",
+    "checkpoint": "pr:590",
+    "planHash": "9e0b4813277c09d0a35f49e0f4feb040d9aa78a12b2a975a2723f0ac036f3524",
     "updatedAt": null,
     "lastError": null,
     "commit": {
