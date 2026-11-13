@@ -4,7 +4,7 @@
   "name": "20261113-fix-audit-batch7-console-dialog",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261113-fix-audit-batch7-console-dialog",
   "files": [
@@ -23,13 +23,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "6ab31226699e36cf3c7b1feb9ccb659bd17ac839",
-    "verifiedAt": "2026-11-13T15:39:41.050Z"
+    "verifiedCommit": "3cacd0f48e19ff1549a08766852cdfd6d7828cc9",
+    "verifiedAt": "2026-11-13T15:47:18.472Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:591",
-    "planHash": "de776c409b29aea8ac1e7ae6d8313abab5b2936f315434112a5b3ef9cdd780b0",
+    "checkpoint": "merged-pr:591",
+    "planHash": "944a30d8acadfb320856e5fc9d8b09d59e0c13fb15fcbbfb82a8cb0907540132",
     "updatedAt": null,
     "lastError": null,
     "commit": {

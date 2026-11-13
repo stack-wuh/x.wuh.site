@@ -149,3 +149,4 @@
 | 20261112-fix-visitstats-id-cast | published | shadow-docs/changes/20261112-fix-visitstats-id-cast/brief.md |
 | 20261113-docs-sweep-knowledge-update | ✅ 完成 | shadow-docs/changes/archive/20261113-docs-sweep-knowledge-update/brief.md |
 | 20261113-fix-audit-batch6-blog-deploy-agents | ✅ 完成 | shadow-docs/changes/archive/20261113-fix-audit-batch6-blog-deploy-agents/brief.md |
+| 20261113-fix-audit-batch7-console-dialog | ✅ 完成 | shadow-docs/changes/archive/20261113-fix-audit-batch7-console-dialog/brief.md |
