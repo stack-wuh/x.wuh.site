@@ -4,7 +4,7 @@
   "name": "20261113-fix-audit-batch7-console-dialog",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261113-fix-audit-batch7-console-dialog",
   "files": [
@@ -28,19 +28,15 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:591",
-    "planHash": "41ef5be4819ecdc7d58dff86b88b5473e85bbb8c76a3f35d3f146337c57912aa",
+    "checkpoint": "14133b8a65cf050bb5e269abe9759b197d145cfa",
+    "planHash": "1db1b01c2a33913c2bc4814efffbf3ac1f0e1dbe5ff6e8c111a20ee30e9f1943",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
-        "apps/console/src/pages/comments/CommentsPage.tsx",
-        "apps/console/src/pages/content/PostsPage.tsx",
-        "apps/console/src/pages/guestbook/GuestbookPage.tsx",
-        "packages/components/dialog/index.tsx",
-        "shadow-docs/knowledge/admin-console.md"
+        "packages/components/dialog/index.tsx"
       ],
-      "message": "fix(components,console): 审计 #568 批次 7——Dialog 焦点陷阱/归还/placement hydration 根除、Console 只读壳诚实化、admin-console 卡回写"
+      "message": "fix(components): MQL 订阅改 onchange 属性——守卫语义（元素事件归 useEventListener）不受影响"
     }
   },
   "knowledge": null
