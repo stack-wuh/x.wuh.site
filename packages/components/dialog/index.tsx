@@ -75,8 +75,11 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(function Dialog(pro
     const mq = window.matchMedia(`(max-width: ${BREAKPOINTS.mobile}px)`)
     const update = () => setResponsivePlacement(mq.matches ? 'bottom' : 'center')
     update()
-    mq.addEventListener('change', update)
-    return () => mq.removeEventListener('change', update)
+    // MediaQueryList 用 onchange 属性订阅（元素事件才归 useEventListener 管辖）
+    mq.onchange = update
+    return () => {
+      mq.onchange = null
+    }
   }, [placement])
 
   const setRefs = React.useCallback(
