@@ -4,7 +4,7 @@
   "name": "20261113-fix-audit-batch6-blog-deploy-agents",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261113-fix-audit-batch6-blog-deploy-agents",
   "files": [
@@ -25,8 +25,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "dc4a90d52dde5965d3a5368a64b0e84b547c1985",
-    "planHash": "7ff164f43c0e163fe0aef2be3b2717931579a600348a71afcfba036629be5fdb",
+    "checkpoint": "pr:590",
+    "planHash": "cc59c91d5b126ffa6be36a1f1b73219282bc58f8a2bc87be9e5a2208af2aeadb",
     "updatedAt": null,
     "lastError": null,
     "commit": {
