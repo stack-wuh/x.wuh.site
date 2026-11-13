@@ -24,7 +24,7 @@ export function CommentsPage() {
           { key: 'nickname', title: '昵称', render: (item) => item.nickname },
           { key: 'content', title: '内容', render: (item) => item.body || item.content || '-' },
           { key: 'status', title: '状态', render: (item) => <StatusBadge status={item.status} /> },
-          { key: 'actions', title: '操作', render: () => <PermissionGate fallback={<span>只读</span>}><button>审核</button></PermissionGate> },
+          { key: 'actions', title: '操作', render: () => <span>只读（审核操作尚未接入）</span> },
         ]} />
       )}
     </section>

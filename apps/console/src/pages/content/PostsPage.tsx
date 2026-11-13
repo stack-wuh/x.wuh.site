@@ -26,7 +26,7 @@ export function PostsPage() {
             { key: 'title', title: '标题', render: (post) => post.title },
             { key: 'state', title: '状态', render: (post) => post.state },
             { key: 'labels', title: '标签', render: (post) => post.labels?.join(', ') || '-' },
-            { key: 'actions', title: '操作', render: (post) => <PermissionGate fallback={<span>只读</span>}><button>编辑 #{post.number}</button></PermissionGate> },
+            { key: 'actions', title: '操作', render: (post) => <span>只读（写操作尚未接入）</span> },
           ]}
         />
       )}
