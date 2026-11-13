@@ -4,7 +4,7 @@
   "name": "20261113-fix-audit-batch7-console-dialog",
   "type": "fix",
   "scope": "full",
-  "status": "committed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261113-fix-audit-batch7-console-dialog",
   "files": [
@@ -18,8 +18,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 591,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/591"
   },
   "review": {
     "conclusion": "passed",
@@ -28,8 +28,8 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "cd7e21b6d7f68e14065198f8f1504064b03e2d36",
-    "planHash": "49be3b7cd27da577d86c8dc944f603467127b3115ee4d4d67c88b4ebb2d49f9d",
+    "checkpoint": "pr:591",
+    "planHash": "41ef5be4819ecdc7d58dff86b88b5473e85bbb8c76a3f35d3f146337c57912aa",
     "updatedAt": null,
     "lastError": null,
     "commit": {
