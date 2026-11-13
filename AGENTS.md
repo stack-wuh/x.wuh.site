@@ -19,11 +19,11 @@ packages/
 
 ## 技术栈
 
-- **前端**: Next.js 15.1 (App Router), React 19.2, TypeScript 5, styled-components 6
+- **前端**: Next.js 16.3 (App Router), React 19.2, TypeScript 5, styled-components 6
 - **后端**: NestJS 10, Mongoose 8, Octokit (GitHub API), Pino (日志), Sentry
 - **数据库**: MongoDB (via Mongoose)
 - **包管理**: pnpm workspace, lockfile v9
-- **CI/CD**: GitHub Actions → Docker → SSH 部署
+- **CI/CD**: GitHub Actions → Docker → OSS 中转 → 服务器 load/staging/切流（见 shadow-docs/knowledge/build-config.md）
 - **环境要求**: Node.js >= 20, pnpm >= 9
 
 ## 常用命令
@@ -65,7 +65,7 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 - **SSR 安全**: 浏览器 API（`window`/`document`）需要 `typeof window !== 'undefined'` guard
 - **样式**: 使用 styled-components 瞬态 props（`$` 前缀，如 `$variant`），CSS 变量主题令牌
 - **主题**: `ThemeProvider` → `StyledComponentsRegistry` → `CssVariableStyles`（已在 app layout 中配置）
-- **路由**: `/`(首页), `/blog`(博客列表), `/post/[number]`(博客详情), `/about`, `/design/system-color`
+- **路由**: `/`(首页), `/blog`(博客列表), `/post/[number]`(博客详情), `/about`, `/design/system-color`, `/footprint`(足迹地图), `/guestbook`(留言板), `/music`(音乐), `/topics/[label]`(专题)
 - **数据源**: GitHub API (repos, issues, markdown rendering)，使用 `fetch` + `revalidate` 做 ISR
 
 ### 后端规范
@@ -109,17 +109,22 @@ pnpm exec tsc --noEmit  # TypeScript 类型检查
 
 ```
 src/modules/
-├── content/      # 内容管理 (博客/项目 CRUD)
-├── comment/      # 留言系统 (匿名评论 -> GitHub sync)
-├── sync/         # GitHub Issues 全量/增量同步
-├── webhook/      # GitHub Webhook 事件处理
-├── rss/          # RSS 2.0 订阅源
-├── user/         # 用户角色管理 (root/writer/reader)
-├── auth/         # GitHub OAuth + JWT
-├── admin/        # 管理接口
-├── repos/        # GitHub 仓库数据
-├── weread/       # 微信读书书架同步与展示
-└── api-v2/       # 新版统一 API
+├── content/         # 内容管理 (博客/项目 CRUD)
+├── comment/         # 留言系统 (匿名评论 -> GitHub sync)
+├── sync/            # GitHub Issues 全量/增量同步（含远端全集对账删除）
+├── webhook/         # GitHub Webhook 事件处理（rawBody 签名+delivery 去重）
+├── rss/             # RSS 2.0 订阅源
+├── user/            # 用户角色管理 (root/writer/reader)
+├── auth/            # GitHub OAuth + JWT
+├── admin/           # 管理接口
+├── repos/           # GitHub 仓库数据
+├── weread/          # 微信读书书架同步与展示
+├── api-v2/          # 新版统一 API
+├── about-activity/  # 关于页活动统计（热力图/年度聚合）
+├── about-timeline/  # 关于页最近日志（多 provider 部分降级聚合）
+├── footprint/       # 足迹地图数据
+├── music/           # 网易云音乐（站点播放器数据源）
+└── visit-stats/     # 访问统计（30 分钟去重 + TTL 记录 + 总量计数器）
 ```
 
 ## Knowledge 沉淀
