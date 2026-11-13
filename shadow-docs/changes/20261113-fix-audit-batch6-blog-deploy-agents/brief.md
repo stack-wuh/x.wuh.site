@@ -4,7 +4,7 @@
   "name": "20261113-fix-audit-batch6-blog-deploy-agents",
   "type": "fix",
   "scope": "full",
-  "status": "published",
+  "status": "committed",
   "baseBranch": "main",
   "branch": "fix/20261113-fix-audit-batch6-blog-deploy-agents",
   "files": [
@@ -25,16 +25,15 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:590",
-    "planHash": "9e0b4813277c09d0a35f49e0f4feb040d9aa78a12b2a975a2723f0ac036f3524",
+    "checkpoint": "dc4a90d52dde5965d3a5368a64b0e84b547c1985",
+    "planHash": "7ff164f43c0e163fe0aef2be3b2717931579a600348a71afcfba036629be5fdb",
     "updatedAt": null,
     "lastError": null,
     "commit": {
       "files": [
-        "AGENTS.md",
         "apps/blog"
       ],
-      "message": "fix(blog,docs): 审计 #568 批次 6——blog Pages 部署统一 main+pnpm10/frozen（子模块 pin bump）+ AGENTS.md 事实对齐"
+      "message": "fix(blog): 子模块 pin 再 bump 至 52fbce0——AST 05 frontmatter YAML 修复（Pages main 部署成功实证）"
     }
   },
   "knowledge": null
