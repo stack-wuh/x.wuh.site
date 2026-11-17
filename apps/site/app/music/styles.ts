@@ -226,11 +226,18 @@ export const RailCount = styled.span`
   ${responsive(['none', undefined, 'block'], (v) => `display: ${v};`)}
 `
 
-export const Content = styled.div`
+export const Content = styled.div<{ $dim?: boolean }>`
   position: relative;
   min-width: 0;
   /* 换幕层 1：切年内容区交叉淡化目标（view-transition-name 同页唯一，动画档在 MotionStyles） */
   view-transition-name: content-swap;
+  /* 待卷压暗：切年取数期间旧卷先退（点击即反馈），数据提交时释放 */
+  opacity: ${(props) => (props.$dim ? 0.45 : 1)};
+  transition: opacity var(--motion-dur-base) var(--motion-ease-out-soft);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0.01ms;
+  }
 `
 
 export const Watermark = styled.span`

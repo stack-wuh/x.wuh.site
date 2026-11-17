@@ -102,6 +102,30 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
   const isQueuePlaying =
     state.status === 'playing' && !!currentTrack && tracks.some((track) => track.id === currentTrack.id)
 
+  /* 换卷前奏：点击年份瞬间碟面淡出并保持（待卷反馈）；
+     挂载/失败回退（selectedId 与当前卷一致）直接走换面淡入 */
+  useEffect(() => {
+    if (!selectedPlaylist) return
+    if (discTimerRef.current) {
+      window.clearTimeout(discTimerRef.current)
+      discTimerRef.current = null
+    }
+    setDiscFading(true)
+    if (selectedId !== selectedPlaylist.playlistId) return
+    discTimerRef.current = window.setTimeout(() => {
+      setDiscRotation((deg) => deg + 120)
+      setDiscFading(false)
+    }, fastMode ? 60 : 160)
+    return () => {
+      if (discTimerRef.current) {
+        window.clearTimeout(discTimerRef.current)
+        discTimerRef.current = null
+      }
+    }
+    // 仅由 selectedId 驱动：数据提交时的换面由下方 effect 接管
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId])
+
   /* 切年换面：碟面淡出 → 轻转 120°（累计）→ 淡入；2 秒内连续切换自动收短 */
   useEffect(() => {
     if (discTimerRef.current) {
@@ -144,8 +168,16 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
         target?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' })
       })
 
-      /* 首屏 SSR 已带该卷数据时直接展示，否则按需取数并同步 URL */
-      if (playlist && playlist.playlistId === id) return
+      /* 首屏 SSR 已带该卷数据时仍经换幕提交（修复切回首屏年时面板滞留旧卷），否则按需取数并同步 URL */
+      if (playlist && playlist.playlistId === id) {
+        withTransition(() => {
+          setSelectedPlaylist(playlist)
+          if (typeof window !== 'undefined') {
+            window.history.replaceState(null, '', `/music?playlist=${id}`)
+          }
+        })
+        return
+      }
 
       setLoading(true)
       const { data, error } = await fetcher<MusicPlaylist>('/api/music/playlist', {
@@ -238,6 +270,9 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
     [tracks, actions, selectedPlaylist?.name]
   )
 
+  /* 错峰入场延迟：快速档清零整块同升（复用全局 .mount-rise，不新造 keyframes） */
+  const riseStyle = (ms: number) => (fastMode ? undefined : { animationDelay: `${ms}ms` })
+
   const renderTracks = (list: MusicPlaylistTrack[]) => {
     const maxPlays = list.reduce((max, track) => Math.max(max, track.playCount ?? 0), 0)
     return (
@@ -249,7 +284,12 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
           const playing = isCurrent && isQueuePlaying
           const isFav = (track.playCount ?? 0) === maxPlays && maxPlays > 0
           return (
-            <TrackRow key={`${track.id}-${index}`} onClick={() => playFrom(index)}>
+            <TrackRow
+              key={`${track.id}-${index}`}
+              className="mount-rise"
+              style={riseStyle(150 + Math.min(index, 10) * 24)}
+              onClick={() => playFrom(index)}
+            >
               <TrackIndex aria-hidden="true">
                 <IndexNum>{String(index + 1).padStart(2, '0')}</IndexNum>
                 <IndexPlay>
@@ -351,10 +391,13 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
           </Rail>
         ) : null}
 
-        <Content id="volume-panel" role="tabpanel" aria-label={t('music.page.panelAria')}>
-          <Watermark aria-hidden="true">{selectedYear}</Watermark>
-          <ContentInner>
-            <PanelHead>
+        <Content id="volume-panel" role="tabpanel" aria-label={t('music.page.panelAria')} $dim={loading}>
+          <Watermark key={selectedYear} aria-hidden="true" className="mount-rise">
+            {selectedYear}
+          </Watermark>
+          {/* 换幕层 2：按卷身份重挂，子级错峰入场重播（先例 weread/guestbook） */}
+          <ContentInner key={selectedPlaylist.playlistId}>
+            <PanelHead className="mount-rise">
               <CoverDisc
                 aria-hidden="true"
                 $rotation={discRotation}
@@ -378,16 +421,20 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
               </PanelCopy>
             </PanelHead>
 
-            {selectedPlaylist.description ? <Intro>{selectedPlaylist.description}</Intro> : null}
+            {selectedPlaylist.description ? (
+              <Intro className="mount-rise" style={riseStyle(60)}>
+                {selectedPlaylist.description}
+              </Intro>
+            ) : null}
             {selectedPlaylist.tags?.length ? (
-              <IntroTags>
+              <IntroTags className="mount-rise" style={riseStyle(90)}>
                 {selectedPlaylist.tags.map((tag) => (
                   <TagChip key={tag}>{tag}</TagChip>
                 ))}
               </IntroTags>
             ) : null}
             {favTrack ? (
-              <Epigraph>
+              <Epigraph className="mount-rise" style={riseStyle(120)}>
                 {t('music.page.epigraphPrefix')}
                 <span className="em">{favTrack.name}</span>
                 {t('music.page.epigraphSuffix', { count: favTrack.playCount ?? 0 })}
@@ -397,7 +444,7 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
             {tracks.length ? (
               renderTracks(tracks)
             ) : (
-              <TracksEmpty role="status">
+              <TracksEmpty role="status" className="mount-rise" style={riseStyle(150)}>
                 {loadError ? t('music.page.volumeError') : t('music.page.noTracks')}
               </TracksEmpty>
             )}
