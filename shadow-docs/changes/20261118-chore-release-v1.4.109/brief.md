@@ -4,7 +4,7 @@
   "name": "20261118-chore-release-v1.4.109",
   "type": "chore",
   "scope": "distribution",
-  "status": "published",
+  "status": "reviewed",
   "baseBranch": "main",
   "branch": "chore/20261118-chore-release-v1.4.109",
   "files": [
@@ -19,27 +19,26 @@
     "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/595"
   },
   "review": {
-    "conclusion": "pending",
-    "verifiedCommit": null,
-    "verifiedAt": null
+    "conclusion": "passed",
+    "verifiedCommit": "491e9814e3ae2915e39edd26545533611f65ab32",
+    "verifiedAt": "2026-11-18T16:08:34.520Z"
   },
   "workflow": {
     "operation": null,
     "checkpoint": "pr:595",
-    "planHash": "c8e8fe026e3b3228cc84e5278f879e1a4d0b1f6f2da0d872c85dd766f26db19d",
+    "planHash": "2df8b393258fc79535056f93a672ee408a648981813948b7b7f11122176952f0",
     "updatedAt": null,
     "lastError": null,
     "release": {
       "files": [
-        "CHANGELOG.md",
-        "package.json",
         "shadow-docs/changes/20261118-chore-release-v1.4.109/brief.md"
       ],
-      "message": "chore(release): v1.4.109 版本校正与发版载体",
-      "title": "chore(release): v1.4.109 版本校正与发版载体",
-      "body": "## 变更\n- `package.json` version `1.4.17` → `1.4.109`，校正与 tag 序列长达 91 个版本的脱节\n- `CHANGELOG.md` 手写 1.4.109 条目（standard-version 因缺可用基线无法生成），记录 PR #594 的切年 Loading 修复\n\n## 影响\n- 行为/触发面变化：版本号恢复与 tag 序列同源，后续发版链可用\n- 不影响任何运行时行为：纯版本载体改动，无代码逻辑变更\n\n## 关联\n- brief: shadow-docs/changes/20261118-chore-release-v1.4.109/brief.md\n- 覆盖：PR #594（切年 Loading 修复）+ PR #592（换卷动画初版）"
+      "message": "docs(shadow): v1.4.109 发版结果回填——部署链全绿，线上产物对账通过",
+      "title": "docs(shadow): v1.4.109 发版结果回填",
+      "body": "## 变更\n- 载体 brief 结果段回填：tag `v1.4.109`、Release URL、部署链 run 链接、线上验证证据\n- 任务清单 Phase 2 三项全部勾选\n\n## 关联\n- brief: shadow-docs/changes/20261118-chore-release-v1.4.109/brief.md\n- 承载发版：v1.4.109（PR #595）"
     }
-  }
+  },
+  "knowledge": null
 }
 ---
 
@@ -78,10 +77,22 @@ CHANGELOG 同因缺失：`standard-version` 找不到可用基线，1.4.109 条�
 - [x] task 2 — CHANGELOG.md — 手写 1.4.109 条目（standard-version 无可用基线）
 
 ### Phase 2 — 发版
-- [ ] task 3 — 提交 bump 并合并（release plan + execute）
-- [ ] task 4 — 打 tag `v1.4.109` + 创建 GitHub Release
-- [ ] task 5 — 核对发布链（版本权威 / 资产契约 / 部署结果）
+- [x] task 3 — 提交 bump 并合并（release plan + execute）
+- [x] task 4 — 打 tag `v1.4.109` + 创建 GitHub Release
+- [x] task 5 — 核对发布链（版本权威 / 资产契约 / 部署结果）
 
 ## 结果
 
-（待回填 tag、Release URL、CI run 链接、冒烟结论）
+- **实际耗时:** 约 1.5 小时（含 next 镜像构建与部署链等待）
+- **PR:** #595 squash 合入 main（`491e981`）
+- **tag:** `v1.4.109` → commit `4eb6316`，其 `package.json` = `1.4.109`（版本权威对账通过）
+- **Release:** https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.109
+- **部署链:** run [44341188846](https://github.com/stack-wuh/x.wuh.site/actions/runs/44341188846) 全绿 —— quality-gate / prepare / changes / build-images ×2 / upload-images / load-and-stage / switch-traffic / restart-nginx 全部 success
+- **线上验证:**
+  - `https://wuh.site/music` → 200（热缓存 0.33s）
+  - `https://wuh.site/api/health` → `{"status":"ok","mongodb":{"state":"connected"}}`
+  - 产物对账：线上 chunk `/_next/static/chunks/2gu0q4vc2-o7-.js` 同时含 `tracksLoading` 与 `skeletonSweep`（本次新增标识），确认新代码真实上线
+
+## 未覆盖项
+
+- 未做人工视觉走查（本地 dev server 启动失败，环境态）；线上页面可访问且产物对账成立，视觉效果待用户确认
