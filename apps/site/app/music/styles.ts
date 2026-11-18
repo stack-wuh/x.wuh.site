@@ -226,18 +226,11 @@ export const RailCount = styled.span`
   ${responsive(['none', undefined, 'block'], (v) => `display: ${v};`)}
 `
 
-export const Content = styled.div<{ $dim?: boolean }>`
+export const Content = styled.div`
   position: relative;
   min-width: 0;
   /* 换幕层 1：切年内容区交叉淡化目标（view-transition-name 同页唯一，动画档在 MotionStyles） */
   view-transition-name: content-swap;
-  /* 待卷压暗：切年取数期间旧卷先退（点击即反馈），数据提交时释放 */
-  opacity: ${(props) => (props.$dim ? 0.45 : 1)};
-  transition: opacity var(--motion-dur-base) var(--motion-ease-out-soft);
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.01ms;
-  }
 `
 
 export const Watermark = styled.span`
@@ -676,4 +669,111 @@ export const TracksEmpty = styled.p`
   text-align: center;
   font-size: var(--font-size-sm);
   color: color-mix(in oklab, var(--text-color) 55%, transparent);
+`
+
+/* ===== 换卷取数：列表骨架 + 光扫（只占曲目列表区，面板头保持不动） ===== */
+
+/* 一道柔光由左徐徐掠过：与「书写显现·被照亮」同源，持续状态指示类自持节奏（不受静交互词表约束） */
+const skeletonSweep = keyframes`
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+`
+
+/* 骨架行：复刻 TrackRow 的行高与分栏，确保骨架→真容不跳变 */
+export const SkeletonRow = styled.li`
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  border-bottom: 1px solid color-mix(in oklab, var(--normal-400) 30%, transparent);
+  /* 与真实 TrackRow（两行制移动 54px / 桌面内容撑开约 54px）对齐，避免骨架→真容跳高 */
+  min-height: 54px;
+
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  ${responsive(['grid', undefined, 'flex'], (v) => `display: ${v};`)}
+  ${responsive(['2px 10px', undefined, 'var(--space-sm)'], (v) => `gap: ${v};`)}
+  ${responsive(['9px 4px', undefined, '9px var(--space-xs)'], (v) => `padding: ${v};`)}
+
+  /* 光扫：仅在 .is-sweeping 容器内运行，reduced-motion 由 MotionStyles 全站降级 */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in oklab, var(--primary-color) 10%, transparent) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+  }
+
+  .is-sweeping &::after {
+    animation: skeletonSweep 1.5s var(--motion-ease-in-out-soft) infinite;
+  }
+`
+
+/* 骨架块：低对比底 + 圆角，高由档位控；宽度按需（缺省由容器抻满或最大宽度约束） */
+export const SkeletonBar = styled.span<{ $h: number; $w?: string }>`
+  display: block;
+  height: ${(props) => props.$h}px;
+  border-radius: var(--border-radius-xs);
+  background: color-mix(in oklab, var(--text-color) 9%, transparent);
+  ${(props) => (props.$w ? `width: ${props.$w};` : '')}
+`
+
+/* 骨架行索引：与真实 TrackIndex 同列宽（桌面固定 20px / 移动跨两行） */
+export const SkeletonIndex = styled(SkeletonBar)`
+  width: 20px;
+  flex-shrink: 0;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: center;
+`
+
+/* 骨架行主条（歌名位）：桌面撑满中部，移动占整列，宽度错落由 max-width 控 */
+export const SkeletonMain = styled(SkeletonBar)<{ $w: string }>`
+  flex: 1;
+  min-width: 0;
+  max-width: ${(props) => props.$w};
+  width: auto;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+`
+
+/* 骨架行右列：对齐真实 TrackSide（次数 + 时长两小块） */
+export const SkeletonSide = styled.span`
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+
+  /* 移动端右列落位同 TrackSide：右列第二行 */
+  grid-column: 3;
+  grid-row: 1 / 3;
+  align-self: center;
+`
+
+/* 描述占位：与 Intro 同盒模型（单行正文高度 + 下间距），骨架→真容不跳高 */
+export const IntroSkeleton = styled.div`
+  margin: 0 0 var(--space-xs);
+  max-width: 56ch;
+`
+
+/* 屏幕阅读器专用：骨架可见而真容未到，独占播报「正在加载」 */
+export const SkeletonStatus = styled.span`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 `

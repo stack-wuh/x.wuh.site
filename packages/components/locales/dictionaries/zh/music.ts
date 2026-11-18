@@ -12,6 +12,7 @@ export const music = {
     panelErrorSuffix: ' · 这一卷暂时取不到，稍后再试',
     volumeError: '这一卷暂时取不到，稍后再试',
     noTracks: '这个歌单暂时没有曲目',
+    tracksLoading: '正在翻到这一卷',
     epigraphPrefix: '这一年循环最多的是《',
     epigraphSuffix: '》，听了 {count} 遍。',
     playTrackAria: '播放 {name}',

@@ -26,6 +26,7 @@ import {
   IndexPlay,
   Intro,
   IntroTags,
+  IntroSkeleton,
   PageHeader,
   PageSubtitle,
   PageTitle,
@@ -39,6 +40,12 @@ import {
   RailItem,
   RailYear,
   Section,
+  SkeletonBar,
+  SkeletonIndex,
+  SkeletonMain,
+  SkeletonRow,
+  SkeletonSide,
+  SkeletonStatus,
   TagChip,
   TitleGroup,
   TrackArtist,
@@ -86,6 +93,12 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
     [selectedPlaylist]
   )
 
+  /* 取数期间面板头先显目标卷（纵轨选中项），与水印年份、列表骨架三者同源，
+     避免「已翻到 2025、卷名/水印仍压 2026」的错位感；数据到达后统一由真卷接管 */
+  const targetSummary = loading ? annualPlaylists.find((item) => item.id === selectedId) : undefined
+  const watermarkYear = targetSummary ? yearOf(targetSummary.name) : selectedYear
+  const panelTitle = targetSummary?.name ?? selectedPlaylist?.name ?? t('music.page.playlistFallback')
+
   const selectedIndex = useMemo(
     () => annualPlaylists.findIndex((item) => item.id === selectedId),
     [annualPlaylists, selectedId]
@@ -102,31 +115,8 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
   const isQueuePlaying =
     state.status === 'playing' && !!currentTrack && tracks.some((track) => track.id === currentTrack.id)
 
-  /* 换卷前奏：点击年份瞬间碟面淡出并保持（待卷反馈）；
-     挂载/失败回退（selectedId 与当前卷一致）直接走换面淡入 */
-  useEffect(() => {
-    if (!selectedPlaylist) return
-    if (discTimerRef.current) {
-      window.clearTimeout(discTimerRef.current)
-      discTimerRef.current = null
-    }
-    setDiscFading(true)
-    if (selectedId !== selectedPlaylist.playlistId) return
-    discTimerRef.current = window.setTimeout(() => {
-      setDiscRotation((deg) => deg + 120)
-      setDiscFading(false)
-    }, fastMode ? 60 : 160)
-    return () => {
-      if (discTimerRef.current) {
-        window.clearTimeout(discTimerRef.current)
-        discTimerRef.current = null
-      }
-    }
-    // 仅由 selectedId 驱动：数据提交时的换面由下方 effect 接管
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedId])
-
-  /* 切年换面：碟面淡出 → 轻转 120°（累计）→ 淡入；2 秒内连续切换自动收短 */
+  /* 切年换面：碟面淡出 → 轻转 120°（累计）→ 淡入；2 秒内连续切换自动收短。
+     取数反馈由列表骨架承担，面板头（含碟面）在取数期间保持不动，只在数据到达时换面 */
   useEffect(() => {
     if (discTimerRef.current) {
       window.clearTimeout(discTimerRef.current)
@@ -391,12 +381,13 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
           </Rail>
         ) : null}
 
-        <Content id="volume-panel" role="tabpanel" aria-label={t('music.page.panelAria')} $dim={loading}>
-          <Watermark key={selectedYear} aria-hidden="true" className="mount-rise">
-            {selectedYear}
+        <Content id="volume-panel" role="tabpanel" aria-label={t('music.page.panelAria')}>
+          <Watermark key={`wm-${watermarkYear}`} aria-hidden="true" className="mount-rise">
+            {watermarkYear}
           </Watermark>
-          {/* 换幕层 2：按卷身份重挂，子级错峰入场重播（先例 weread/guestbook） */}
-          <ContentInner key={selectedPlaylist.playlistId}>
+          {/* 换幕层 2：按卷身份重挂，子级错峰入场重播（先例 weread/guestbook）；
+              key 加前缀避免与水印年份 key 撞车（同父兄弟 key 必须唯一） */}
+          <ContentInner key={`vol-${selectedPlaylist.playlistId}`}>
             <PanelHead className="mount-rise">
               <CoverDisc
                 aria-hidden="true"
@@ -412,41 +403,76 @@ export default function MusicView({ playlistId, playlist, annualPlaylists }: Mus
                 />
               </CoverDisc>
               <PanelCopy>
-                <PanelTitle>{selectedPlaylist.name ?? t('music.page.playlistFallback')}</PanelTitle>
+                <PanelTitle>{panelTitle}</PanelTitle>
                 <PanelSub>
-                  {t('music.page.panelSubCount', { count: tracks.length })}
-                  {selectedYear ? t('music.page.panelYearSuffix', { year: selectedYear }) : ''}
-                  {loadError ? t('music.page.panelErrorSuffix') : ''}
+                  {loading ? (
+                    /* 取数期间曲目数/年份未知：面板副题也走骨架占位，不报旧卷数字 */
+                    <>
+                      <SkeletonBar $h={10} $w="64px" />
+                    </>
+                  ) : (
+                    <>
+                      {t('music.page.panelSubCount', { count: tracks.length })}
+                      {selectedYear ? t('music.page.panelYearSuffix', { year: selectedYear }) : ''}
+                      {loadError ? t('music.page.panelErrorSuffix') : ''}
+                    </>
+                  )}
                 </PanelSub>
               </PanelCopy>
             </PanelHead>
 
-            {selectedPlaylist.description ? (
-              <Intro className="mount-rise" style={riseStyle(60)}>
-                {selectedPlaylist.description}
-              </Intro>
-            ) : null}
-            {selectedPlaylist.tags?.length ? (
-              <IntroTags className="mount-rise" style={riseStyle(90)}>
-                {selectedPlaylist.tags.map((tag) => (
-                  <TagChip key={tag}>{tag}</TagChip>
-                ))}
-              </IntroTags>
-            ) : null}
-            {favTrack ? (
-              <Epigraph className="mount-rise" style={riseStyle(120)}>
-                {t('music.page.epigraphPrefix')}
-                <span className="em">{favTrack.name}</span>
-                {t('music.page.epigraphSuffix', { count: favTrack.playCount ?? 0 })}
-              </Epigraph>
-            ) : null}
-
-            {tracks.length ? (
-              renderTracks(tracks)
+            {/* 取数期间：面板头（碟面 + 卷名）先显目标卷保持不变；
+                描述/标签/按语/曲目列表都属旧卷内容，收进骨架边界一起换成占位 */}
+            {loading ? (
+              <>
+                {/* 描述占位：与真实 Intro 同语言（一条正文宽度的淡条），下间距对齐描述文本 */}
+                <IntroSkeleton className="mount-rise">
+                  <SkeletonBar $h={13} $w="56%" />
+                </IntroSkeleton>
+                <TrackList className="is-sweeping" aria-busy="true">
+                  <SkeletonStatus role="status">{t('music.page.tracksLoading')}</SkeletonStatus>
+                  {Array.from({ length: 8 }, (_, index) => (
+                    <SkeletonRow key={index} aria-hidden="true">
+                      <SkeletonIndex $h={12} />
+                      <SkeletonMain $h={13} $w={`${82 - (index % 3) * 16}%`} />
+                      <SkeletonSide>
+                        <SkeletonBar $h={11} $w="24px" />
+                        <SkeletonBar $h={11} $w="34px" />
+                      </SkeletonSide>
+                    </SkeletonRow>
+                  ))}
+                </TrackList>
+              </>
             ) : (
-              <TracksEmpty role="status" className="mount-rise" style={riseStyle(150)}>
-                {loadError ? t('music.page.volumeError') : t('music.page.noTracks')}
-              </TracksEmpty>
+              <>
+                {selectedPlaylist.description ? (
+                  <Intro className="mount-rise" style={riseStyle(60)}>
+                    {selectedPlaylist.description}
+                  </Intro>
+                ) : null}
+                {selectedPlaylist.tags?.length ? (
+                  <IntroTags className="mount-rise" style={riseStyle(90)}>
+                    {selectedPlaylist.tags.map((tag) => (
+                      <TagChip key={tag}>{tag}</TagChip>
+                    ))}
+                  </IntroTags>
+                ) : null}
+                {favTrack ? (
+                  <Epigraph className="mount-rise" style={riseStyle(120)}>
+                    {t('music.page.epigraphPrefix')}
+                    <span className="em">{favTrack.name}</span>
+                    {t('music.page.epigraphSuffix', { count: favTrack.playCount ?? 0 })}
+                  </Epigraph>
+                ) : null}
+
+                {tracks.length ? (
+                  renderTracks(tracks)
+                ) : (
+                  <TracksEmpty role="status" className="mount-rise" style={riseStyle(150)}>
+                    {loadError ? t('music.page.volumeError') : t('music.page.noTracks')}
+                  </TracksEmpty>
+                )}
+              </>
             )}
           </ContentInner>
         </Content>

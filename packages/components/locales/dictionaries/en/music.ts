@@ -14,6 +14,7 @@ export const music: DeepPartial<Dict['music']> = {
     panelErrorSuffix: ' · This volume is unavailable for now, try again later',
     volumeError: 'This volume is unavailable for now, try again later',
     noTracks: 'No tracks in this playlist yet',
+    tracksLoading: 'Turning to this volume',
     epigraphPrefix: 'The most replayed track this year is ',
     epigraphSuffix: ', played {count} times.',
     playTrackAria: 'Play {name}',

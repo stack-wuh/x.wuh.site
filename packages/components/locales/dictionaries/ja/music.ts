@@ -14,6 +14,7 @@ export const music: DeepPartial<Dict['music']> = {
     panelErrorSuffix: ' ・ この巻は現在取得できません。後でお試しください',
     volumeError: 'この巻は現在取得できません。後でお試しください',
     noTracks: 'このプレイリストにはまだ曲がありません',
+    tracksLoading: 'この巻をめくっています',
     epigraphPrefix: '今年最もリピートしたのは',
     epigraphSuffix: '、再生回数 {count} 回。',
     playTrackAria: '{name} を再生',
