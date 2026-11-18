@@ -4,7 +4,7 @@
   "name": "20261118-fix-music-year-loading",
   "type": "fix",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -18,8 +18,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 593,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/593",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 594,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/594"
   },
   "review": {
     "conclusion": "passed",
@@ -28,7 +28,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:593",
+    "checkpoint": "pr:594",
     "planHash": "850c9402fbac66d12a6a53f826ad3cabd02b80a55b048d51d492a5202c3dc541",
     "updatedAt": null,
     "lastError": null,
