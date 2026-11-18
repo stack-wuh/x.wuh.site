@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.109](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.108...v1.4.109) (2026-11-18)
+
+
+### Bug Fixes
+
+* **music:** 切年 Loading 收窄到列表区 + 骨架行光扫 ([#594](https://github.com/stack-wuh/x.wuh.site/issues/594)) ([9da5f66](https://github.com/stack-wuh/x.wuh.site/commit/9da5f66d8c7658b75d285917c28c9b30b8175c6c))
+  - 移除 `Content $dim` 整页压暗，面板头（碟面 + 卷名）取数期间保持可见不动，只有曲目列表区进入 Loading 态
+  - 新增列表 Loading 动效「录年·骨架行 + 光扫」：8 行骨架复刻 `TrackRow` 分栏与 54px 行高，柔光 1.5s 循环掠过
+  - 取数期间卷名/水印先显目标卷，描述/标签/按语/曲目列表收进骨架边界换占位
+  - 读屏经 `role='status'` 播报，三语新增 `music.page.tracksLoading`
+  - 顺带修复 #592 三缺陷：碟面 opacity 卡死、水印撞 key 滞留旧值、面板副题旧卷曲目数
+
 ### [1.4.17](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.79...v1.4.17) (2026-10-11)
 
 ### [1.4.16](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.15...v1.4.16) (2026-09-03)
