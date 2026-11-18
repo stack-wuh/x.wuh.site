@@ -4,7 +4,7 @@
   "name": "20261118-fix-music-year-loading",
   "type": "fix",
   "scope": "apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": null,
   "files": [
@@ -23,13 +23,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "a1a68083ebb0cd7823b042e922bc881a698741a2",
-    "verifiedAt": "2026-11-18T00:48:08.247Z"
+    "verifiedCommit": "9da5f66d8c7658b75d285917c28c9b30b8175c6c",
+    "verifiedAt": "2026-11-18T00:57:17.581Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:594",
-    "planHash": "850c9402fbac66d12a6a53f826ad3cabd02b80a55b048d51d492a5202c3dc541",
+    "checkpoint": "merged-pr:594",
+    "planHash": "fdbdbcb86ad88f96bd8a60817ae6dfe95aa084ea4b10027a259911dc382daa74",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
