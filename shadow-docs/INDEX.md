@@ -151,4 +151,5 @@
 | 20261113-fix-audit-batch6-blog-deploy-agents | ✅ 完成 | shadow-docs/changes/archive/20261113-fix-audit-batch6-blog-deploy-agents/brief.md |
 | 20261113-fix-audit-batch7-console-dialog | ✅ 完成 | shadow-docs/changes/archive/20261113-fix-audit-batch7-console-dialog/brief.md |
 | 20261117-feature-music-year-transition | ✅ 完成 | shadow-docs/changes/archive/20261117-feature-music-year-transition/brief.md |
+| 20261118-chore-release-v1.4.109 | ✅ 完成 | shadow-docs/changes/archive/20261118-chore-release-v1.4.109/brief.md |
 | 20261118-fix-music-year-loading | ✅ 完成 | shadow-docs/changes/archive/20261118-fix-music-year-loading/brief.md |
