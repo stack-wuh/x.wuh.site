@@ -4,7 +4,7 @@
   "name": "20261117-feature-music-year-transition",
   "type": "feature",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "feature/20261117-feature-music-year-transition",
   "files": [
@@ -12,21 +12,21 @@
     "apps/site/app/music/styles.ts"
   ],
   "github": {
-    "repository": null,
+    "repository": "stack-wuh/x.wuh.site",
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 592,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/592"
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "e57603d215679c97d7cf4771cb02dd15ae05349c",
-    "verifiedAt": "2026-11-17T09:50:24.323Z"
+    "verifiedCommit": "d3e48e172b1f87983ca69c5f51a6a87a02c00446",
+    "verifiedAt": "2026-11-18T00:58:03.362Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
-    "planHash": "c19f02c55dbb6fed718c1e781c374bad98276b27843a60a67a9d4aa326519364",
+    "checkpoint": "merged-pr:592",
+    "planHash": "2084b967d6d5c543a96ccf1de9bd0c72829eec66ce8b63d4568ad2fbfe84ee4a",
     "updatedAt": null,
     "lastError": null,
     "release": {
@@ -41,11 +41,7 @@
       "body": "## music 年度歌单切换过渡动画（换卷·洜染）\n\n### 问题\n切年生硬：取数期间面板零反馈，旧内容僵住后一次性替换；只有层 1 平面 crossfade，无入场错峰；切回 SSR 首屏年走早退路径，面板滞留上一卷且 URL 不同步。\n\n### 改动（方向 A，用户拍板）\n- **点击即反馈**：碟立即淡出（前奏 effect keyed on selectedId），面板压暗 0.45（$dim=loading，dur-base 220ms ease-out-soft，自带 reduce 守卫）\n- **数据到达换卷洜染入场**：ContentInner key={playlistId} 重挂，mount-rise 错峰（PanelHead 0 / Intro 60 / Tags 90 / Epigraph 120 / TrackRow 150+min(i,10)*24ms）；Watermark key={selectedYear} 重挂；层 1 VT 与层 2 cascade 叠加\n- **fastMode（2s 窗）**：stagger 清零整块 220ms rise，碟走既有 fast 档\n- **SSR 早退路径修复**：切回首屏年也走 withTransition 提交 + replaceState（修面板滞留，附带变更）\n- 100% 复用 motion.ts keyframes 与 --motion-* 令牌，不新造动画源\n\n### 验证\n- 本次相关：site tsc 0 错、oxlint 0、music-player-wiring + view-transition-hooks 直跑 20/20（含「失败回落路径不进换幕」契约）\n- 本地全门禁环境态红（与本次改动无关）：server tsc 缺 core/dist（20 处 Cannot find module '@wuh.site/core'）；test sweep 42/42 同因 Windows node24 loader ERR_UNSUPPORTED_ESM_URL_SCHEME（含大量未触及文件）。权威门禁以 PR CI（Linux runner）为准\n- 真页交互验证用户指示跳过，v1.4.108 部署后抽查\n\n### 知识\n- music-player.md yearbook 段：切年动效定稿回写（换卷·洜染序列 + SSR 早退修复）"
     }
   },
-  "knowledge": {
-    "action": "更新",
-    "target": "shadow-docs/knowledge/music-player.md",
-    "reason": "换卷·洜染定稿落地：site tsc 0 错、music-player-wiring+view-transition-hooks 直跑 20/20（含失败回落不进换幕契约）、oxlint 0；全 sweep 本地 Windows node24 loader 环境态红（42/42 同因 ERR_UNSUPPORTED_ESM_URL_SCHEME，含未触及文件），权威门禁以 PR CI 为准；真页交互用户指示跳过，v1.4.108 部署后抽查。知识卡 yearbook 段+verified-scope+source 已回写。"
-  }
+  "knowledge": null
 }
 ---
 
