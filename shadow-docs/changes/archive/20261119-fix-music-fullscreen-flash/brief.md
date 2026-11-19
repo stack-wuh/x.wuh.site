@@ -4,7 +4,7 @@
   "name": "20261119-fix-music-fullscreen-flash",
   "type": "fix",
   "scope": "apps/site",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "fix/20261119-fix-music-fullscreen-flash",
   "files": [
@@ -21,13 +21,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "63f2da36a2a2748a3a84a2b02ce052a1e7c8377c",
-    "verifiedAt": "2026-11-19T14:26:57.509Z"
+    "verifiedCommit": "5a2bec431886287622b86ee567b63050158cc2bc",
+    "verifiedAt": "2026-11-19T16:01:42.809Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:597",
-    "planHash": "4332b36190d7b4926f9692422f16c2f4dbf9d1b2dab046c0d8519a296403f7a9",
+    "checkpoint": "merged-pr:597",
+    "planHash": "06c48dfbef8d9e5cb0dbdf41d09d8658951227726ad03bd5e1931539f0093f5f",
     "updatedAt": null,
     "lastError": null,
     "issuePlan": {
