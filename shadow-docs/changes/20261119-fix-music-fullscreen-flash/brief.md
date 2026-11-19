@@ -4,7 +4,7 @@
   "name": "20261119-fix-music-fullscreen-flash",
   "type": "fix",
   "scope": "apps/site",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "fix/20261119-fix-music-fullscreen-flash",
   "files": [
@@ -16,8 +16,8 @@
     "repository": "stack-wuh/x.wuh.site",
     "issue": 596,
     "issueUrl": "https://github.com/stack-wuh/x.wuh.site/issues/596",
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 597,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/597"
   },
   "review": {
     "conclusion": "passed",
@@ -26,7 +26,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "issue:596",
+    "checkpoint": "pr:597",
     "planHash": "4332b36190d7b4926f9692422f16c2f4dbf9d1b2dab046c0d8519a296403f7a9",
     "updatedAt": null,
     "lastError": null,
