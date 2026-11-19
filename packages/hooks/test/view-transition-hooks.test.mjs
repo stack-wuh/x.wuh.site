@@ -140,3 +140,41 @@ test('hook 导出契约：双导出 + 三分支 SSR guard + flushSync 包裹（�
   assert.match(src, /ready\?\.catch/, '换幕跳过拒绝吸收在场')
   assert.match(src, /finished\?\.catch/, 'finished 拒绝吸收在场')
 })
+
+// 20261119 回归：手动换幕不得带整页 root 过渡（startViewTransition 快照整页，
+// 硬导航的 600ms root 淡出会被一并触发＝全屏闪动）。hook 需在换幕期间挂
+// html[data-vt-scoped]，MotionStyles 据此把 root 两端时长压到 0。
+test('root 过渡抑制：换幕期间挂 data-vt-scoped，结束后移除', async (t) => {
+  if (parseInt(process.versions.node) < 23) return t.skip('需 node ≥ 23 原生类型剥离')
+  const attrs = new Set()
+  const documentElement = {
+    setAttribute: (k) => attrs.add(k),
+    removeAttribute: (k) => attrs.delete(k),
+  }
+  globalThis.window = { matchMedia: () => ({ matches: false }) }
+  let finish
+  globalThis.document = {
+    documentElement,
+    startViewTransition: (cb) => {
+      cb()
+      return { finished: new Promise((r) => { finish = r }) }
+    },
+  }
+  t.after(cleanupEnv)
+  const { withTransition } = useViewTransition()
+  withTransition(() => {})
+  assert.ok(attrs.has('data-vt-scoped'), '换幕期间必须挂抑制标记')
+  finish()
+  await new Promise((r) => setTimeout(r, 10))
+  assert.ok(!attrs.has('data-vt-scoped'), '换幕结束后必须移除抑制标记')
+})
+
+test('MotionStyles 含 root 抑制规则（源码文本）', () => {
+  const src = read('apps/site/app/styles/motion.ts')
+  assert.match(
+    src,
+    /html\[data-vt-scoped\][\s\S]{0,200}::view-transition-old\(root\)/,
+    'root 抑制选择器在场'
+  )
+  assert.match(src, /animation-duration:\s*0s/, 'root 过渡时长压到 0')
+})
