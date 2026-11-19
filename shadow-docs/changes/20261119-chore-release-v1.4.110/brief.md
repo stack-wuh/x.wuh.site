@@ -26,18 +26,16 @@
   "workflow": {
     "operation": null,
     "checkpoint": "pr:598",
-    "planHash": "7d29e201a6b5e320cd47d141fd84ae2edc71f0063467e5fa77124ad10a4ce5f2",
+    "planHash": "a321ecc8d7cf40c4dae5cbbe199aadea4a846e5f96ab2057925c67c0c1609623",
     "updatedAt": null,
     "lastError": null,
     "release": {
       "files": [
-        "CHANGELOG.md",
-        "package.json",
         "shadow-docs/changes/20261119-chore-release-v1.4.110/brief.md"
       ],
-      "message": "chore(release): v1.4.110 版本 bump",
-      "title": "chore(release): v1.4.110 版本 bump",
-      "body": "## 变更\n- `package.json` version `1.4.109` → `1.4.110`\n- `CHANGELOG.md` 新增 1.4.110 条目，记录 PR #597 切年全屏闪动修复\n\n## 影响\n- 行为/触发面变化：无，纯版本载体\n- 明确不受影响的范围：所有运行时行为\n\n## 关联\n- brief: shadow-docs/changes/20261119-chore-release-v1.4.110/brief.md\n- 覆盖：PR #597（手动换幕抑制 root 过渡）"
+      "message": "docs(shadow): v1.4.110 发版结果回填——部署链全绿，线上产物双向对账通过",
+      "title": "docs(shadow): v1.4.110 发版结果回填",
+      "body": "## 变更\n- 载体 brief 结果段回填：tag、Release URL、部署 run、线上产物双向对账证据\n\n## 关联\n- brief: shadow-docs/changes/20261119-chore-release-v1.4.110/brief.md"
     }
   },
   "knowledge": null
@@ -68,4 +66,12 @@
 
 ## 结果
 
-（待回填）
+- **PR:** #598 squash 合入 main（`5b51d7e`）
+- **tag:** `v1.4.110`，其 `package.json` = `1.4.110`（版本权威对账通过）
+- **Release:** https://github.com/stack-wuh/x.wuh.site/releases/tag/v1.4.110
+- **部署链:** run [44546396351](https://github.com/stack-wuh/x.wuh.site/actions/runs/44546396351) 全绿 —— quality-gate / changes / prepare / build-images ×2 / upload-images / load-and-stage / switch-traffic / restart-nginx 全部 success
+- **线上验证:**
+  - `https://wuh.site/music` → 200
+  - `/api/health` → `{"status":"ok","mongodb":{"state":"connected"}}`
+  - **产物对账（双向确认）**：JS chunk `/_next/static/chunks/0mqvoy5n7wg16.js` 含 `data-vt-scoped`；SSR HTML 内联样式含 `html[data-vt-scoped]::view-transition-old(root),html[data-vt-scoped]::view-transition-new(root){animation-duration:0s;}`
+- **未覆盖项:** 未做浏览器内人工观感确认（本地 dev server 因 SWC 签名问题不可用）；抑制逻辑已由最小复现页实测（root 0.6s→0s、content-swap 恒 0.22s）与线上产物对账背书
