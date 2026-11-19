@@ -4,7 +4,7 @@
   "name": "20261119-chore-release-v1.4.110",
   "type": "chore",
   "scope": "distribution",
-  "status": "reviewed",
+  "status": "published",
   "baseBranch": "main",
   "branch": "chore/20261119-chore-release-v1.4.110",
   "files": [
@@ -15,8 +15,8 @@
     "repository": null,
     "issue": null,
     "issueUrl": null,
-    "pullRequest": null,
-    "pullRequestUrl": null
+    "pullRequest": 598,
+    "pullRequestUrl": "https://github.com/stack-wuh/x.wuh.site/pull/598"
   },
   "review": {
     "conclusion": "passed",
@@ -25,7 +25,7 @@
   },
   "workflow": {
     "operation": null,
-    "checkpoint": null,
+    "checkpoint": "pr:598",
     "planHash": "7d29e201a6b5e320cd47d141fd84ae2edc71f0063467e5fa77124ad10a4ce5f2",
     "updatedAt": null,
     "lastError": null,
