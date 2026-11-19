@@ -80,6 +80,14 @@ export const MotionStyles = createGlobalStyle`
     animation: var(--motion-dur-base) var(--motion-ease-out-soft) both vt-fade-in-rise;
   }
 
+  /* 手动换幕禁整页 root 过渡：startViewTransition 每次快照整个页面，root 的 600ms 硬导航
+     过渡会被一并触发（整页淡出+上浮＝全屏闪动）。useViewTransition 在换幕期间给 html 挂
+     data-vt-scoped，此处把 root 两端时长压到 0；硬导航不受影响（无该属性）。 */
+  html[data-vt-scoped]::view-transition-old(root),
+  html[data-vt-scoped]::view-transition-new(root) {
+    animation-duration: 0s;
+  }
+
   /* 换幕·层 2：软导航内容区按身份 key 重挂后的 mount 入场——
      复用 rise-fade 关键帧（不走 .reveal 的 view() 时间线，重挂即重放），状态过渡基档 */
   .mount-rise {
