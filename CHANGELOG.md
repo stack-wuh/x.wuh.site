@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.110](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.109...v1.4.110) (2026-11-19)
+
+
+### Bug Fixes
+
+* **next:** 手动换幕抑制 root 过渡——修切年全屏闪动 ([#597](https://github.com/stack-wuh/x.wuh.site/issues/597)) ([c591ffb](https://github.com/stack-wuh/x.wuh.site/commit/c591ffb))
+  - 根因：`startViewTransition` 快照整页，硬导航的 600ms `::view-transition-old/new(root)` 淡出+上浮被手动换幕一并触发
+  - `useViewTransition` 换幕期挂 `html[data-vt-scoped]`，MotionStyles 据此把 root 过渡时长压到 0
+  - 实测 root 过渡 0.6s → 0s，`content-swap` 220ms 交叉淡化保留；`/footprint` 选点同步受益
+
 ### [1.4.109](https://github.com/stack-wuh/x.wuh.site/compare/v1.4.108...v1.4.109) (2026-11-18)
 
 
