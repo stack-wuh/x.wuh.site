@@ -153,5 +153,5 @@
 | 20261117-feature-music-year-transition | ✅ 完成 | shadow-docs/changes/archive/20261117-feature-music-year-transition/brief.md |
 | 20261118-chore-release-v1.4.109 | ✅ 完成 | shadow-docs/changes/archive/20261118-chore-release-v1.4.109/brief.md |
 | 20261118-fix-music-year-loading | ✅ 完成 | shadow-docs/changes/archive/20261118-fix-music-year-loading/brief.md |
-| 20261119-chore-release-v1.4.110 | reviewed | shadow-docs/changes/20261119-chore-release-v1.4.110/brief.md |
+| 20261119-chore-release-v1.4.110 | ✅ 完成 | shadow-docs/changes/archive/20261119-chore-release-v1.4.110/brief.md |
 | 20261119-fix-music-fullscreen-flash | ✅ 完成 | shadow-docs/changes/archive/20261119-fix-music-fullscreen-flash/brief.md |

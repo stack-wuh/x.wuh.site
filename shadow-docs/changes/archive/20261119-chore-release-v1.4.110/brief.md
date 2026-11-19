@@ -4,7 +4,7 @@
   "name": "20261119-chore-release-v1.4.110",
   "type": "chore",
   "scope": "distribution",
-  "status": "published",
+  "status": "archived",
   "baseBranch": "main",
   "branch": "chore/20261119-chore-release-v1.4.110",
   "files": [
@@ -20,13 +20,13 @@
   },
   "review": {
     "conclusion": "passed",
-    "verifiedCommit": "c591ffb118d184192b39386d085acaa7a3b0d5d8",
-    "verifiedAt": "2026-11-19T14:36:51.391Z"
+    "verifiedCommit": "c53e528d2635addf4d06e1867bd1a7994ea0486c",
+    "verifiedAt": "2026-11-19T16:02:42.520Z"
   },
   "workflow": {
     "operation": null,
-    "checkpoint": "pr:598",
-    "planHash": "a321ecc8d7cf40c4dae5cbbe199aadea4a846e5f96ab2057925c67c0c1609623",
+    "checkpoint": "merged-pr:598",
+    "planHash": "f4bb3ac4cf331a908970f3b64d3e65707dc6a9032c39af376ab2903ee47ab197",
     "updatedAt": null,
     "lastError": null,
     "release": {
